@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/lpc/schemas/designation-report.json",
+  "title": "DesignationReport",
+  "description": "An LPC designation report (and the closely related archaeology report) — the published document that establishes a landmark's significance. Reconciles the 'REPORT_URL' link carried by Individual Landmark Sites (buis-pvji), the designation-reports index at nyc.gov/site/lpc/designations/designation-reports.page, and the 'Archaeology Reports Database' (fuzb-9jre, 6 columns). Keyed on LP_NUMBER (designation reports) or Biblioid (archaeology reports).",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/lpc/designations/designation-reports.page",
+    "opendata_report_url": "https://data.cityofnewyork.us/d/buis-pvji",
+    "opendata_archaeology": "https://data.cityofnewyork.us/d/fuzb-9jre"
+  },
+  "properties": {
+    "reportType": {
+      "type": "string",
+      "description": "Kind of report.",
+      "enum": ["Designation Report", "Archaeology Report"]
+    },
+    "landmark": { "$ref": "_common.json#/$defs/LandmarkReference" },
+    "title": { "type": ["string", "null"], "description": "Report title ('Title')." },
+    "author": { "type": ["string", "null"], "description": "'Author' (archaeology reports)." },
+    "biblioId": { "type": ["string", "null"], "description": "'Biblioid' — bibliographic identifier (archaeology reports)." },
+    "abstract": { "type": ["string", "null"], "description": "'Report Abstract' — summary (archaeology reports)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "date": { "type": ["string", "null"], "description": "Report date ('Date' / designation date)." },
+    "reportUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the PDF report ('REPORT_URL')." }
+  },
+  "required": ["reportType"],
+  "additionalProperties": false
+}

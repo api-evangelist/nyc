@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/lpc/schemas/designated-building.json",
+  "title": "DesignatedBuilding",
+  "description": "A single designated building within an individual landmark or historic district — the architectural record beneath a Landmark. Canonical schema reconciling the 'Individual Landmark and Historic District Building Database' (gpmc-yuvp, 37 columns) and its map twin (7mgd-s57w). Keyed on BBL/BIN within a designation (LM_NAME / HIST_DISTRICT).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/gpmc-yuvp",
+    "opendata_map": "https://data.cityofnewyork.us/d/7mgd-s57w"
+  },
+  "properties": {
+    "landmark": { "$ref": "_common.json#/$defs/LandmarkReference" },
+    "propertyName": { "type": ["string", "null"], "description": "'PROP_NAME' — property name." },
+    "designationAddress": { "type": ["string", "null"], "description": "'DESIG_ADDRESS'." },
+    "buildingType": { "type": ["string", "null"], "description": "'BUILD_TYPE'; secondary 'BUILD_TYPE2'." },
+    "buildingType2": { "type": ["string", "null"], "description": "'BUILD_TYPE2'." },
+    "architect": { "type": ["string", "null"], "description": "'ARCHITECT' — original architect." },
+    "alteredArchitect": { "type": ["string", "null"], "description": "'ALT_ARCHITECT'; second in 'ALT_ARCHITECT2'." },
+    "styles": {
+      "type": "array",
+      "description": "Architectural styles ('STYLE1' / 'STYLE2' / 'STYLE3').",
+      "items": { "type": "string" }
+    },
+    "materials": {
+      "type": "array",
+      "description": "Facade materials ('MATERIAL1'..'MATERIAL5').",
+      "items": { "type": "string" }
+    },
+    "originalUse": { "type": ["string", "null"], "description": "'ORIG_USE'; secondary 'ORIG_USE2'." },
+    "historicOwner": { "type": ["string", "null"], "description": "'HIST_OWNER'." },
+    "dateLow": { "type": ["string", "null"], "description": "'DATE_LOW' — earliest construction date." },
+    "dateHigh": { "type": ["string", "null"], "description": "'DATE_HIGH' — latest construction date." },
+    "dateCombo": { "type": ["string", "null"], "description": "'DATE_COMBO' — combined/display date." },
+    "circa": { "type": ["boolean", "string", "null"], "description": "'CIRCA' — approximate-date flag." },
+    "altered": { "type": ["boolean", "string", "null"], "description": "'ALTERED' — alteration flag." },
+    "alterationDate1": { "type": ["string", "null"], "description": "'ALT_DATE1'." },
+    "alterationDate2": { "type": ["string", "null"], "description": "'ALT_DATE2'." },
+    "notes": { "type": ["string", "null"], "description": "'LM_NOTES'." },
+    "taxLot": { "$ref": "_common.json#/$defs/TaxLot" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,164 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DCLA's open funding and cultural-sector data (cultural organizations, program and capital grants, Cultural Institutions Group support, Percent for Art public artworks, Materials for the Arts) and adds apply_for_grant — the net-new write workflow locked today inside the Salesforce Grants Management System.",
+    "openapi": "../openapi/dcla.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.dcla",
+    "title": "NYC Department of Cultural Affairs (DCLA)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Department of Cultural Affairs — the geocoded directory of cultural organizations, DCLA program and capital grant awards, Cultural Institutions Group operating support, completed Percent for Art public artworks, and Materials for the Arts donation summaries from NYC Open Data, plus the net-new ability to apply for and track a Cultural Development Fund grant (grant application) that today lives only in the Salesforce Grants Management System.",
+    "instructions": "Use find_cultural_organizations / get_cultural_organization to locate arts and cultural groups DCLA funds, by borough, discipline, or council district. find_program_funding and find_capital_funding answer 'who did DCLA fund and for how much' by organization and fiscal year; find_cultural_institutions covers the ~34 Cultural Institutions Group members and their operating support. find_public_artworks searches completed Percent for Art commissions by borough, artist, or sponsoring agency. find_materials_for_the_arts returns AGGREGATE creative-reuse donation summaries by year/category (never individual donors). apply_for_grant (net-new) creates a Cultural Development Fund grant application; it requires an authenticated organization and mutates state — confirm the program, project description, and requested amount with the user before submitting."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_cultural_organizations",
+      "title": "Find Cultural Organizations",
+      "description": "Search DCLA's cultural-organization directory by borough, discipline, council district, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "discipline": { "type": "string" },
+          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/cultural-organization.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCulturalOrganizations"
+    },
+    {
+      "name": "get_cultural_organization",
+      "title": "Get Cultural Organization",
+      "description": "Fetch a single cultural organization (discipline, contact, geography, resources) by name or id.",
+      "inputSchema": { "type": "object", "properties": { "orgId": { "type": "string" } }, "required": ["orgId"] },
+      "outputSchema": { "$ref": "../schemas/cultural-organization.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCulturalOrganization"
+    },
+    {
+      "name": "find_program_funding",
+      "title": "Find Program Funding",
+      "description": "Search DCLA program grant awards (the Cultural Development Fund outcome) by organization, fiscal year, or application number.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "organization": { "type": "string" },
+          "fiscalYear": { "type": "string" },
+          "applicationNumber": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/program-funding.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listProgramFunding"
+    },
+    {
+      "name": "find_capital_funding",
+      "title": "Find Capital Funding",
+      "description": "Search DCLA capital funding records (DCLA / City Council / Borough President dollars) by organization or fiscal year.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "organization": { "type": "string" },
+          "fiscalYear": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/capital-funding.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCapitalFunding"
+    },
+    {
+      "name": "find_cultural_institutions",
+      "title": "Find Cultural Institutions (CIG)",
+      "description": "List Cultural Institutions Group members and their annual operating and energy support by fiscal year.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fiscalYear": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/cultural-institution.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCulturalInstitutions"
+    },
+    {
+      "name": "find_public_artworks",
+      "title": "Find Public Artworks",
+      "description": "Search completed Percent for Art public artworks by borough, artist, or sponsoring agency.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "artist": { "type": "string" },
+          "sponsorAgency": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/public-artwork.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPublicArtworks"
+    },
+    {
+      "name": "find_materials_for_the_arts",
+      "title": "Find Materials for the Arts Donations",
+      "description": "Return AGGREGATE Materials for the Arts creative-reuse donation summaries by year and category (donations, distinct donors, declared value, weight). Never returns individual donors.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "year": { "type": "string" },
+          "category": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/materials-for-the-arts.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listMaterialsForTheArts"
+    },
+    {
+      "name": "list_my_grant_applications",
+      "title": "List My Grant Applications",
+      "description": "List the authenticated organization's own Cultural Development Fund grant applications and their status — today visible only inside the Salesforce Grants Management System.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Draft", "Submitted", "In Review", "Panel Review", "Recommended", "Awarded", "Declined", "Withdrawn"] },
+          "fiscalYear": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/grant-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listGrantApplications",
+      "x-auth": "user"
+    },
+    {
+      "name": "apply_for_grant",
+      "title": "Apply for a Grant",
+      "description": "Create a DCLA Cultural Development Fund grant application (apply for a grant). NET-NEW workflow with no public API today — it lives only in the Salesforce Grants Management System (dclagms.nyc.gov). Requires an authenticated organization. Mutates state — confirm the program, project description, and requested amount first.",
+      "inputSchema": { "$ref": "../schemas/grant-application.json" },
+      "outputSchema": { "$ref": "../schemas/grant-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createGrantApplication",
+      "x-auth": "user"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dvs/schemas/assistance-request.json",
+  "title": "AssistanceRequest",
+  "description": "A de-identified DVS assistance-request record — the intake DVS logs when a veteran (or family member) asks for help. This is the published, downstream twin of the live VetConnectNYC referral: it records the issue, engagement, and where the veteran was referred, but never identifies the individual. Canonical schema reconciling 'DVS Assistance Requests' (jup5-7fik, 22 columns) and the 'Historical DVS Client Requests Received and Processed' (44f4-mjxy) / VPC-move (davn-rbxj) request datasets. Note the 'VetConnectNYC (Y/N)' flag linking a request to the coordinated-care platform.",
+  "type": "object",
+  "x-source": {
+    "opendata_assistance_requests": "https://data.cityofnewyork.us/d/jup5-7fik",
+    "opendata_historical_requests": "https://data.cityofnewyork.us/d/44f4-mjxy",
+    "opendata_vpc_moves": "https://data.cityofnewyork.us/d/davn-rbxj"
+  },
+  "properties": {
+    "recordNumber": { "type": ["string", "null"], "description": "De-identified record identifier ('Record#' / 'Request ID')." },
+    "fiscalYear": { "type": ["string", "integer", "null"], "description": "'FY' / 'Report Fiscal Year'." },
+    "fiscalMonth": { "type": ["string", "null"], "description": "'Fiscal Month'." },
+    "intakeDate": { "type": ["string", "null"], "format": "date", "description": "'Intake Date' / 'Request Date' / 'Date of Service Request'." },
+    "closeDate": { "type": ["string", "null"], "format": "date", "description": "'Close Date' / 'Service Request Resolution Date'." },
+    "issueReason": { "type": ["string", "null"], "description": "Presenting issue ('Issue/Reason' / 'Request Category' / 'Service Request Category')." },
+    "requestSubCategory": { "type": ["string", "null"], "description": "'Request Sub-Category' / 'Service Request Sub Category'." },
+    "serviceCategory": { "$ref": "_common.json#/$defs/ServiceCategory" },
+    "vetConnectNyc": { "type": ["boolean", "string", "null"], "description": "Whether the request came through / was routed to VetConnectNYC ('VetConnectNYC (Y/N)')." },
+    "inquirySource": { "type": ["string", "null"], "description": "How the request arrived ('Inquiry Source')." },
+    "referralMadeTo": { "type": ["string", "null"], "description": "Where the veteran was referred ('Referral Made To?' / 'Referred to')." },
+    "engagementLevel": { "type": ["string", "null"], "description": "'Engagement Level'." },
+    "postEngagementMethod": { "type": ["string", "null"], "description": "'Post Engagement Method'." },
+    "postEngagementDate": { "type": ["string", "null"], "format": "date", "description": "'Post Engagement Date'." },
+    "vrcLocation": { "type": ["string", "null"], "description": "Veteran Resource Center location handling the request ('VRC Location')." },
+    "affiliation": { "type": ["string", "null"], "description": "Military affiliation of the requester ('Affiliation' / 'Client Affiliation')." },
+    "branch": { "$ref": "_common.json#/$defs/MilitaryBranch" },
+    "dischargeStatus": { "$ref": "_common.json#/$defs/DischargeStatus" },
+    "homelessnessStatus": { "type": ["string", "null"], "description": "'Homelessness Status' (VPC-move dataset)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "'Council District'." },
+    "zipCode": { "type": ["string", "null"], "description": "'Zip Code'." },
+    "postalCity": { "type": ["string", "null"], "description": "'Postal City' / 'City'." },
+    "state": { "type": ["string", "null"], "description": "'State'." },
+    "country": { "type": ["string", "null"], "description": "'Country'." }
+  },
+  "additionalProperties": false
+}

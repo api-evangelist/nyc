@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/lpc/schemas/violation-order.json",
+  "title": "ViolationOrder",
+  "description": "An LPC enforcement record on a landmark property — a violation (Notice of Violation / warning letter) or the complaint that preceded it. Canonical schema reconciling 'Landmarks Violations' (wycc-5aqt, 20 columns) and 'Landmarks Complaints' (ck4n-5h6x, 18 columns). Keyed on LPC# / Complaint #; joined to property via BBL/BIN.",
+  "type": "object",
+  "x-source": {
+    "opendata_violations": "https://data.cityofnewyork.us/d/wycc-5aqt",
+    "opendata_complaints": "https://data.cityofnewyork.us/d/ck4n-5h6x",
+    "site": "https://www.nyc.gov/site/lpc/violations/violations.page"
+  },
+  "properties": {
+    "recordType": {
+      "type": "string",
+      "description": "Whether this is a filed complaint or an issued violation.",
+      "enum": ["Complaint", "Violation"]
+    },
+    "recordNumber": { "type": ["string", "null"], "description": "'LPC#' (violation) or 'Complaint #' (complaint)." },
+    "landmarkName": { "type": ["string", "null"], "description": "'LANDMARK NAME' / 'Landmark Name'." },
+    "status": { "type": ["string", "null"], "description": "'Status' — e.g. Open, Closed, Cured, Rescinded." },
+    "workReported": { "type": ["string", "null"], "description": "'Work Reported' (complaints) — the work alleged." },
+    "violationText": { "type": ["string", "null"], "description": "'Violation Text' (violations) — description of the violation." },
+    "actionTaken": { "type": ["string", "null"], "description": "'Action Taken' (complaints)." },
+    "streetNumber": { "type": ["string", "null"], "description": "'STREET#' / 'Address #'." },
+    "streetName": { "type": ["string", "null"], "description": "'STREET NAME' / 'Street Name'." },
+    "complaintDate": { "type": ["string", "null"], "format": "date", "description": "'Date' (complaints)." },
+    "violationDate": { "type": ["string", "null"], "format": "date", "description": "'VIO Date' (violations)." },
+    "warningLetterDate": { "type": ["string", "null"], "format": "date", "description": "'WL DATE' — warning letter date (violations)." },
+    "noticeOfViolationDate": { "type": ["string", "null"], "format": "date", "description": "'NOV DATE' — Notice of Violation date (violations)." },
+    "rescindedDate": { "type": ["string", "null"], "format": "date", "description": "'RESCENDED DATE' — date rescinded (violations)." },
+    "taxLot": { "$ref": "_common.json#/$defs/TaxLot" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["recordType"],
+  "additionalProperties": false
+}

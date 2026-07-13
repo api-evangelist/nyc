@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/schemas/_common.json",
+  "title": "SBS — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Department of Small Business Services (SBS) object schemas. Reconciles fields common to the SBS Open Data datasets (data.cityofnewyork.us), nyc.gov/site/sbs, and the MyCity Business portal (nyc-business.nyc.gov). Includes the NYC geography spine, an industry/NAICS block, and SBS's certification vocabulary (M/WBE / EBE / EO50).",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Open Data Latitude / Longitude).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine shared across SBS datasets — the join keys back to the rest of city government.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board ('Community Board')." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district ('Council District')." },
+        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract ('Census Tract (2020)')." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code ('Neighborhood Tabulation Area (NTA) (2020)')." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL')." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." }
+      },
+      "additionalProperties": false
+    },
+    "PostalAddress": {
+      "type": "object",
+      "description": "A mailing / physical address as carried across SBS datasets ('Address_Line_1', 'City', 'State', 'Postcode').",
+      "properties": {
+        "line1": { "type": ["string", "null"], "description": "'Address_Line_1' / 'Address'." },
+        "line2": { "type": ["string", "null"], "description": "'Address_Line_2'." },
+        "city": { "type": ["string", "null"], "description": "'City'." },
+        "state": { "type": ["string", "null"], "description": "'State'." },
+        "postcode": { "type": ["string", "null"], "description": "'Postcode' / 'Zip Code'." }
+      },
+      "additionalProperties": false
+    },
+    "Industry": {
+      "type": "object",
+      "description": "Industry classification block ('NAICS_Sector', 'NAICS_Subsector', 'NAICS_Title', 'ID6_digit_NAICS_code').",
+      "properties": {
+        "naicsCode": { "type": ["string", "null"], "description": "6-digit NAICS code ('ID6_digit_NAICS_code')." },
+        "naicsTitle": { "type": ["string", "null"], "description": "'NAICS_Title'." },
+        "naicsSector": { "type": ["string", "null"], "description": "'NAICS_Sector'." },
+        "naicsSubsector": { "type": ["string", "null"], "description": "'NAICS_Subsector'." },
+        "nigpCodes": { "type": ["string", "null"], "description": "NIGP commodity codes ('NIGP_codes')." }
+      },
+      "additionalProperties": false
+    },
+    "CertificationType": {
+      "type": ["string", "null"],
+      "description": "SBS business certification category ('Certification'). MBE/WBE/M/WBE, EBE (Emerging Business Enterprise), LBE (Locally Based Enterprise), or EO50 (Equal Employment Opportunity).",
+      "enum": ["MBE", "WBE", "MWBE", "EBE", "LBE", "DBE", "EO50", "OTHER", null]
+    },
+    "Ethnicity": {
+      "type": ["string", "null"],
+      "description": "Ownership ethnicity classification used by SBS certification ('Ethnicity')."
+    }
+  }
+}

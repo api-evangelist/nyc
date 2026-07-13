@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doris/schemas/digital-item.json",
+  "title": "DigitalItem",
+  "description": "A single digitized object in the NYC Municipal Archives online Collections — a scanned photograph, map, film still, or record page. Canonical schema reconciling the 'NYC Municipal Archives Data Collection: Digital Objects' dataset (28et-rv7b, 5 columns). The metadata is open, but the actual image/asset lives in the vendor DAMS (Preservica at nycrecords.access.preservica.com; formerly LUNA Imaging at nycma.lunaimaging.com) and is reachable only through that portal, not Open Data.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/28et-rv7b",
+    "collections": "https://www.archives.nyc/",
+    "dams_preservica": "https://nycrecords.access.preservica.com/",
+    "dams_luna_legacy": "https://nycma.lunaimaging.com/"
+  },
+  "properties": {
+    "identifier": { "type": "string", "description": "Digital object identifier ('identifier')." },
+    "recordTitle": { "type": ["string", "null"], "description": "Title/caption of the object ('record_title')." },
+    "objectType": { "type": ["string", "null"], "description": "Object type ('object_type') — e.g. photograph, moving image, map, document." },
+    "dateExpression": { "type": ["string", "null"], "description": "Human-readable date or date range ('date_expression')." },
+    "resourceIdentifier": { "type": ["string", "null"], "description": "Identifier of the parent ArchivalCollection resource ('resource_identifier') — join key to archival-collection.json." },
+    "provenance": { "$ref": "_common.json#/$defs/Provenance" }
+  },
+  "required": ["identifier"],
+  "additionalProperties": false
+}

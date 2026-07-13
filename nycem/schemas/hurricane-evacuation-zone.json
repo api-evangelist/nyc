@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/schemas/hurricane-evacuation-zone.json",
+  "title": "HurricaneEvacuationZone",
+  "description": "A NYC hurricane / coastal-storm evacuation zone polygon — the geospatial unit that tells a resident whether and when they must evacuate. Canonical schema reconciling 'Hurricane Inundation by Evacuation Zone' (uk9f-6y9n) and its map (2234-9r2y). Keyed on Evac_Zone (1 highest-risk through 6) plus borough.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/uk9f-6y9n",
+    "opendata_map": "https://data.cityofnewyork.us/d/2234-9r2y",
+    "finder": "https://www.nyc.gov/site/em/ready/know-your-zone.page"
+  },
+  "properties": {
+    "evacZone": { "$ref": "_common.json#/$defs/EvacuationZone" },
+    "boroCode": { "$ref": "_common.json#/$defs/BoroCode" },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "shapeArea": { "type": ["number", "null"], "description": "Polygon area ('Shape_Area')." },
+    "shapeLength": { "type": ["number", "null"], "description": "Polygon perimeter ('Shape_Leng')." },
+    "geometry": { "$ref": "_common.json#/$defs/Geometry" }
+  },
+  "required": ["evacZone"],
+  "additionalProperties": false
+}

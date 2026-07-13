@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/schemas/_common.json",
+  "title": "DCLA — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Department of Cultural Affairs (DCLA) object schemas. Reconciles fields common to the DCLA Open Data datasets (data.cityofnewyork.us), nyc.gov/site/dcla, and the DCLA Grants Management System (dclagms.nyc.gov — a Salesforce Experience Cloud portal). Includes the NYC geography spine and DCLA's own grantee/application keys (Organization name, Application #, Fiscal Year).",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Open Data Latitude / Longitude).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine shared across DCLA datasets — the join keys back to the rest of city government.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board ('Community Board')." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district ('Council District')." },
+        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract ('Census Tract')." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code ('NTA')." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL')." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." },
+        "postcode": { "type": ["string", "null"], "description": "ZIP / postcode ('Postcode' / 'Zip Code')." }
+      },
+      "additionalProperties": false
+    },
+    "Discipline": {
+      "type": ["string", "null"],
+      "description": "Cultural discipline / field of the organization ('Discipline').",
+      "enum": [
+        "Dance", "Music", "Theater", "Visual Arts", "Literary Arts",
+        "Media Arts", "Museums", "Multi-Discipline / Performing Arts",
+        "Folk Arts", "Arts Services / Councils", "Botanical / Zoological", "Other", null
+      ]
+    },
+    "FiscalYear": {
+      "type": ["string", "integer", "null"],
+      "description": "City fiscal year ('Fiscal Year (FY)' / 'Year'). NYC FY runs July 1 – June 30 and is labeled by the ending calendar year."
+    },
+    "OrganizationReference": {
+      "type": "object",
+      "description": "A reference to a cultural organization (grantee) by name; DCLA funding datasets key on organization name and application number rather than a stable ID.",
+      "properties": {
+        "organization": { "type": "string", "description": "Organization / grantee name ('Organization' / 'Organization Name' / 'Orgname')." },
+        "applicationNumber": { "type": ["string", "null"], "description": "DCLA application number ('Application #' / 'Application Number') for the funding cycle." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN') where the organization is sited, when known." }
+      },
+      "required": ["organization"],
+      "additionalProperties": false
+    }
+  }
+}

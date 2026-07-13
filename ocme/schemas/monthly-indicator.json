@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ocme/schemas/monthly-indicator.json",
+  "title": "MonthlyIndicator",
+  "description": "A single OCME performance indicator with a time series of monthly values — the ONLY dataset filed under the OCME agency label on NYC Open Data ('Monthly Indicators', 8r6c-ydwk). This is a Mayor's Management Report (MMR) reporting artifact, a wide 'indicator × month' pivot whose real values run July 2015 - May 2016; it is not death-investigation data. Modeled here in a normalized (indicator + values[]) shape.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/8r6c-ydwk",
+    "note": "Shared MMR performance-indicator passthrough, not OCME-owned casework."
+  },
+  "properties": {
+    "agencyName": { "type": ["string", "null"], "description": "'Agency Name' — Office of Chief Medical Examiner." },
+    "performanceIndicator": { "type": "string", "description": "'Performance Indicator' — the metric name." },
+    "description": { "type": ["string", "null"], "description": "'Performance Indicator Description'." },
+    "updateFrequency": { "type": ["string", "null"], "description": "'Update Frequency'." },
+    "releaseDate": { "type": ["string", "null"], "format": "date", "description": "'Release Date'." },
+    "values": {
+      "type": "array",
+      "description": "The monthly value series (July 2015 - May 2016 in the source pivot), normalized to month/value pairs.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "month": { "type": "string", "description": "Reporting month, e.g. '2015-07'." },
+          "value": { "type": ["number", "string", "null"], "description": "Reported value for that month." }
+        },
+        "required": ["month"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["performanceIndicator"],
+  "additionalProperties": false
+}

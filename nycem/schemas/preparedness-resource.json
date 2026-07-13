@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/schemas/preparedness-resource.json",
+  "title": "PreparednessResource",
+  "description": "A community-preparedness resource run or convened by NYC Emergency Management — a Community Emergency Response Team (CERT), a Ready NY outreach event, or a Partners in Preparedness organization. One canonical schema reconciling three parallel datasets: 'Community Emergency Response Team (CERT)' (b2gb-nkrq), 'Ready NY Events' (hyur-qpyf), and 'Partners in Preparedness' (h4jn-x3ty).",
+  "type": "object",
+  "x-source": {
+    "opendata_cert": "https://data.cityofnewyork.us/d/b2gb-nkrq",
+    "opendata_ready_ny_events": "https://data.cityofnewyork.us/d/hyur-qpyf",
+    "opendata_partners": "https://data.cityofnewyork.us/d/h4jn-x3ty"
+  },
+  "properties": {
+    "resourceType": {
+      "type": "string",
+      "enum": ["CERT", "Ready NY Event", "Partner"],
+      "description": "Which preparedness program this record comes from."
+    },
+    "name": { "type": ["string", "null"], "description": "Team name ('TEAM_NAME'), event location/title, or partner organization name." },
+    "status": { "type": ["string", "null"], "description": "CERT team status ('CERT_STATUS')." },
+    "communityDistrictNumber": { "type": ["string", "integer", "null"], "description": "CERT community district number ('CD_Number')." },
+    "communityDistrictName": { "type": ["string", "null"], "description": "CERT community district name ('CD_Name')." },
+    "eventType": { "type": ["string", "null"], "description": "Ready NY event type ('Type')." },
+    "eventDescription": { "type": ["string", "null"], "description": "Ready NY event description ('Description')." },
+    "eventAddress": { "type": ["string", "null"], "description": "Ready NY event address ('Event Address' / 'Location of Event')." },
+    "eventDate": { "type": ["string", "null"], "format": "date", "description": "Ready NY event date ('Event Date')." },
+    "startTime": { "type": ["string", "null"], "description": "'Start Time'." },
+    "endTime": { "type": ["string", "null"], "description": "'End Time'." },
+    "actualParticipants": { "type": ["integer", "null"], "description": "Ready NY 'Actual Participants'." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "updated": { "type": ["string", "null"], "format": "date", "description": "Last update ('UPDATED')." }
+  },
+  "required": ["resourceType"],
+  "additionalProperties": false
+}

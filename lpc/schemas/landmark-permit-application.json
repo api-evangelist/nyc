@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/lpc/schemas/landmark-permit-application.json",
+  "title": "LandmarkPermitApplication",
+  "description": "A NEW LPC permit application filed on a landmark or historic-district property — the everyday owner/architect transaction. NET-NEW: there is NO public write API for filing. Today an applicant requests a permit (Certificate of Appropriateness, Certificate of No Effect, or Permit for Minor Work) only inside the Portico portal (portico.lpc.nyc.gov/s/), a Salesforce Experience Cloud community. The issued/processed result eventually appears in the open 'LPC Permit Application Information' dataset (see permit-application.json). This schema serves both the read surface (list/get an applicant's own filings) and the write surface (file a permit application).",
+  "type": "object",
+  "x-source": {
+    "portal": "https://portico.lpc.nyc.gov/s/",
+    "site": "https://www.nyc.gov/site/lpc/applications/apply.page",
+    "guide": "https://www.nyc.gov/site/lpc/applications/permit-application-guide.page",
+    "opendata_issued_twin": "https://data.cityofnewyork.us/d/dpm2-m9mq",
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application / docket number (Portico record ID). Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Draft", "Submitted", "Under Review", "Additional Information Requested", "Scheduled for Hearing", "Approved", "Approved with Modifications", "Denied", "Withdrawn", null],
+      "description": "Application lifecycle status. Set by LPC, not the applicant.",
+      "readOnly": true
+    },
+    "permitType": {
+      "type": "string",
+      "description": "Which LPC approval is being requested.",
+      "enum": ["Certificate of Appropriateness", "Certificate of No Effect", "Permit for Minor Work", "Modification of Use and Bulk", "Advisory Report"]
+    },
+    "landmark": { "$ref": "_common.json#/$defs/LandmarkReference" },
+    "address": { "type": "string", "description": "Property street address subject to the application." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "taxLot": { "$ref": "_common.json#/$defs/TaxLot" },
+    "workTypes": {
+      "type": "array",
+      "description": "Scope(s) of proposed work.",
+      "items": {
+        "type": "string",
+        "enum": ["Facade/Masonry", "Windows", "Doors", "Storefront", "Signage/Awning", "Roof", "Rooftop Addition", "Rear Yard Addition", "New Building", "Demolition", "Sidewalk/Areaway", "Mechanical Equipment", "Interior (designated interior)", "Other"]
+      }
+    },
+    "description": { "type": "string", "description": "Free-text description of the proposed work." },
+    "applicant": {
+      "type": "object",
+      "description": "Applicant of record (owner, architect, expediter, or agent).",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "role": { "type": ["string", "null"], "enum": ["Owner", "Architect", "Expediter", "Attorney", "Agent", "Other", null] },
+        "company": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "owner": {
+      "type": "object",
+      "description": "Property owner (if different from applicant).",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "attachments": {
+      "type": "array",
+      "description": "Supporting documents (drawings, photographs, specifications) referenced by URL or upload token.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string", "enum": ["Drawing", "Photograph", "Specification", "Site Plan", "Other"] },
+          "url": { "type": ["string", "null"], "format": "uri" },
+          "filename": { "type": ["string", "null"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "receivedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "hearingDate": { "type": ["string", "null"], "format": "date", "readOnly": true },
+    "issueDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "required": ["permitType", "address", "workTypes", "description"],
+  "additionalProperties": false
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/schemas/cultural-organization.json",
+  "title": "CulturalOrganization",
+  "description": "A cultural organization in DCLA's constituency — a nonprofit arts/cultural group DCLA funds and serves (the grantee unit). Canonical schema reconciling 'DCLA Cultural Organizations' (u35m-9t32, 16 columns — the geocoded directory) and 'DCLA Cultural Organization Resources' (rb2h-bgai — website/description/area). Keyed on Organization Name.",
+  "type": "object",
+  "x-source": {
+    "opendata_directory": "https://data.cityofnewyork.us/d/u35m-9t32",
+    "opendata_resources": "https://data.cityofnewyork.us/d/rb2h-bgai",
+    "site": "https://www.nyc.gov/site/dcla/index.page"
+  },
+  "properties": {
+    "organizationName": { "type": "string", "description": "Organization name ('Organization Name' / 'Organization') — primary key." },
+    "discipline": { "$ref": "_common.json#/$defs/Discipline" },
+    "area": { "type": ["string", "null"], "description": "Program / service area ('Area', from the Resources dataset)." },
+    "description": { "type": ["string", "null"], "description": "Short description of the organization ('Description', from the Resources dataset)." },
+    "website": { "type": ["string", "null"], "format": "uri", "description": "Organization website ('Website', from the Resources dataset)." },
+    "mainPhone": { "type": ["string", "null"], "description": "Main phone number ('Main Phone #')." },
+    "address": { "type": ["string", "null"], "description": "Street address ('Address')." },
+    "city": { "type": ["string", "null"], "description": "'City'." },
+    "state": { "type": ["string", "null"], "description": "'State'." },
+    "postcode": { "type": ["string", "null"], "description": "'Postcode'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["organizationName"],
+  "additionalProperties": false
+}

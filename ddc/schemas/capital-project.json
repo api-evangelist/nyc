@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ddc/schemas/capital-project.json",
+  "title": "CapitalProject",
+  "description": "A DDC-managed capital construction project — the core unit of the Department of Design and Construction. Canonical schema reconciling DDC's three Active Projects datasets: 'Active Projects' (3ss8-m844, 8 columns), 'Active Projects - Infrastructure (Historical)' (rukc-mmqu, 9 columns), and 'Active Projects - Public Buildings (Historical)' (g9ub-hrve, 9 columns). Keyed on Project ID. NOTE: DDC publishes these only as periodic/historical snapshots — there is no live project-status API.",
+  "type": "object",
+  "x-source": {
+    "opendata_active": "https://data.cityofnewyork.us/d/3ss8-m844",
+    "opendata_infrastructure_historical": "https://data.cityofnewyork.us/d/rukc-mmqu",
+    "opendata_public_buildings_historical": "https://data.cityofnewyork.us/d/g9ub-hrve",
+    "site": "https://www.nyc.gov/site/ddc/projects/projects.page"
+  },
+  "properties": {
+    "projectId": { "type": "string", "description": "DDC Project ID ('Project ID') — primary key." },
+    "description": { "type": ["string", "null"], "description": "Project title / short description ('Description')." },
+    "scope": { "type": ["string", "null"], "description": "Detailed scope of work ('Scope')." },
+    "division": { "$ref": "_common.json#/$defs/Division" },
+    "portfolio": {
+      "type": ["string", "null"],
+      "enum": ["Infrastructure", "Public Buildings", null],
+      "description": "Which capital portfolio the project belongs to (derived from the source dataset / Division)."
+    },
+    "clientAgency": { "type": ["string", "null"], "description": "The sponsoring/owner agency DDC is building for ('Client Agency')." },
+    "status": { "type": ["string", "null"], "description": "Free-text project status ('Status')." },
+    "phase": { "$ref": "_common.json#/$defs/ProjectPhase" },
+    "dollarAmount": { "$ref": "_common.json#/$defs/Money" },
+    "projectedConstructionCompletion": { "type": ["string", "null"], "description": "Projected construction completion date/period ('Projected Construction Completion')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "historical": { "type": ["boolean", "null"], "description": "True when sourced from a '(Historical)' snapshot dataset rather than the current Active Projects feed." }
+  },
+  "required": ["projectId"],
+  "additionalProperties": false
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oti/schemas/open-dataset.json",
+  "title": "OpenDataset",
+  "description": "A NYC Open Data catalog entry — the META entity. OTI operates the citywide open-data platform (data.cityofnewyork.us on Socrata/Tyler), and it publishes the catalog OF ITSELF: the Local Law 251 of 2017 'Published Data Asset Inventory' (5tqd-u88y) and the 'NYC Open Data Release Tracker' (qj2z-ibhs). This schema is the shape of one dataset record in that inventory — the object an owned catalog API would list, get, and register.",
+  "type": "object",
+  "x-source": {
+    "opendata_inventory": "https://data.cityofnewyork.us/d/5tqd-u88y",
+    "opendata_release_tracker": "https://data.cityofnewyork.us/d/qj2z-ibhs",
+    "opendata_help_desk": "https://data.cityofnewyork.us/d/63us-eqtq",
+    "catalog_api": "https://api.us.socrata.com/api/catalog/v1?domains=data.cityofnewyork.us",
+    "site": "https://opendata.cityofnewyork.us/"
+  },
+  "properties": {
+    "uid": { "type": "string", "description": "Socrata four-by-four UID ('UID' / 'U ID') — primary key." },
+    "name": { "type": "string", "description": "Dataset name ('Name' / 'Dataset Name')." },
+    "description": { "type": ["string", "null"], "description": "'Description' / 'Dataset Description'." },
+    "agency": { "$ref": "_common.json#/$defs/Agency" },
+    "category": { "type": ["string", "null"], "description": "Open Data category ('Category')." },
+    "type": { "type": ["string", "null"], "enum": ["dataset", "map", "chart", "file", "href", "filter", "calendar", "story", null], "description": "Asset type ('Type')." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Asset permalink ('url' / 'URL')." },
+    "releaseStatus": { "type": ["string", "null"], "description": "Publication status ('Release Status', e.g. Released, Scheduled, Under Internal Review)." },
+    "updateFrequency": { "type": ["string", "null"], "description": "'Update Frequency' / 'Update: Update Frequency'." },
+    "rowCount": { "type": ["integer", "null"], "description": "'Row Count'." },
+    "columnCount": { "type": ["integer", "null"], "description": "'Column Count'." },
+    "visits": { "type": ["integer", "null"], "description": "Lifetime views ('Visits')." },
+    "downloads": { "type": ["integer", "null"], "description": "'Downloads'." },
+    "dateMadePublic": { "type": ["string", "null"], "format": "date", "description": "'Update: Date Made Public'." },
+    "lastDataUpdated": { "type": ["string", "null"], "format": "date-time", "description": "'Last Data Updated Date (UTC)'." },
+    "lastMetadataUpdated": { "type": ["string", "null"], "format": "date-time", "description": "'Last Metadata Updated Date (UTC)'." },
+    "parentUid": { "type": ["string", "null"], "description": "'Parent UID' — parent asset for derived views." },
+    "derivedView": { "type": ["boolean", "string", "null"], "description": "'Derived View'." },
+    "compliance": {
+      "type": "object",
+      "description": "Local Law 110/2015 & Open Data Law compliance flags carried by the LL251 inventory.",
+      "properties": {
+        "fromOpenDataPlan": { "type": ["boolean", "string", "null"], "description": "'Legislative Compliance: Dataset from the Open Data Plan?'." },
+        "existsExternally": { "type": ["boolean", "string", "null"], "description": "'Legislative Compliance: Exists Externally? (LL 110/2015)'." },
+        "externalFrequency": { "type": ["string", "null"], "description": "'Legislative Compliance: External Frequency (LL 110/2015)'." },
+        "geocoded": { "type": ["boolean", "string", "null"], "description": "'Legislative Compliance: Geocoded?'." },
+        "containsAddress": { "type": ["boolean", "string", "null"], "description": "'Legislative Compliance: Contains Address?'." },
+        "hasDataDictionary": { "type": ["boolean", "string", "null"], "description": "'Legislative Compliance: Has Data Dictionary?'." },
+        "removedRecords": { "type": ["boolean", "string", "null"], "description": "'Legislative Compliance: Removed Records?'." },
+        "canBeAutomated": { "type": ["boolean", "string", "null"], "description": "'Legislative Compliance: Can Dataset Feasibly Be Automated?'." },
+        "automation": { "type": ["string", "null"], "description": "'Update: Automation'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["uid", "name"],
+  "additionalProperties": false
+}

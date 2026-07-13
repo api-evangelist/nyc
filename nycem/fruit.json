@@ -1,0 +1,134 @@
+{
+  "domain": "nycem",
+  "agency": "NYC Emergency Management (NYCEM)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/em (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace) and the Notify NYC subscription host a858-nycnotify.nyc.gov. Probed Notify NYC and found a real machine-readable alert feed: the Notify NYC CAP (Common Alerting Protocol) RSS feed published on the rented Everbridge platform (feeds.everbridge.net/feeds/453003085617722/rss/rss.xml), multilingual with per-message CAP XML. Verified the NYC Open Data agency label 'NYC Emergency Management (NYCEM)' via the Socrata Discovery API (the alternate 'Office of Emergency Management (OEM)' returned zero) and pulled all 13 assets with column schemas.",
+  "related_domains": ["a858-nycnotify.nyc.gov", "feeds.everbridge.net", "data.cityofnewyork.us", "finder.nyc.gov", "weather.gov", "nyc.gov/311"],
+  "headline_findings": [
+    "NYCEM is a rented-alerting domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus Notify NYC — the city's flagship emergency-alert product — running on a rented Everbridge mass-notification SaaS.",
+    "Unusually, the alert stream IS machine-readable: Notify NYC emits a genuine CAP (Common Alerting Protocol) RSS feed on Everbridge (feeds.everbridge.net), republishing each alert across ~14 languages with a per-message CAP XML document. But that feed — and the subscription — are vendor-hosted, not an owned city API.",
+    "Reference and situational data is well published: 13 NYC Open Data datasets covering emergency response incidents (107k views), hurricane inundation/evacuation zones and centers, the NYCEM Emergency Notifications archive, the Hazard Mitigation Plan, and community-preparedness programs (CERT, Ready NY, Partners in Preparedness).",
+    "The gap is the WRITE side: enrolling in Notify NYC (NotifyNYCSubscription) has no public API — a resident subscribes only through the Everbridge Member Portal, an SMS keyword, or a call to 311.",
+    "Live operational status — which cooling centers / emergency supply shelters are open right now — is published only through NYCEM's seasonal Finder tools, not a machine-readable status feed. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "feeds.everbridge.net/feeds/453003085617722/rss/rss.xml", "type": "real-time alert feed (CAP RSS)", "owner": "NYCEM on Everbridge (rented SaaS)", "public": true, "note": "Notify NYC Common Alerting Protocol RSS feed. Real, machine-readable, multilingual (~14 languages), each item linking a per-message CAP XML enclosure. The one live NYCEM alert API — but vendor-hosted, read-only, no owned subscription write." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "13 NYCEM datasets; SODA /resource/<id>.json endpoints. Incidents, evacuation zones/centers, notifications archive, hazard mitigation, CERT / Ready NY. Reference & situational data only." },
+    { "endpoint": "a858-nycnotify.nyc.gov/notifynyc", "type": "alert subscription portal (Everbridge Member Portal)", "owner": "NYCEM (Oracle-free; Everbridge)", "public": "web UI, no write API", "note": "where residents enroll in Notify NYC; server-rendered, no public JSON/OpenAPI subscribe endpoint. Redirects deflect probes for a subscription API." },
+    { "endpoint": "www.nyc.gov/site/em", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "content only — Ready NY, Know Your Zone, hazards. Akamai edge, nginx, Dynatrace RUM. No content API." },
+    { "endpoint": "finder.nyc.gov (cooling centers / evacuation)", "type": "seasonal Finder map", "owner": "NYC (OTI)", "public": "web UI", "note": "live cooling-center / evacuation-center openings; map UI, no documented status API." }
+  ],
+  "fruit": [
+    {
+      "name": "Notify NYC Emergency Alerts",
+      "type": "real-time feed + data table",
+      "entity": "EmergencyNotification",
+      "url": "https://a858-nycnotify.nyc.gov/notifynyc/",
+      "count": "continuous",
+      "machine_readable": "CAP RSS feed (Everbridge) + Open Data archive",
+      "verified": true,
+      "opendata_match": ["NYCEM Emergency Notifications 8vv7-7wx3 (5c)"],
+      "notes": "The flagship product. Real-time via the Everbridge CAP RSS feed (feeds.everbridge.net/feeds/453003085617722/rss/rss.xml), multilingual, per-message CAP XML; also archived on Open Data. Machine-readable READ exists, but the feed is rented and vendor-owned."
+    },
+    {
+      "name": "Hurricane Evacuation Zones",
+      "type": "geospatial data + finder",
+      "entity": "HurricaneEvacuationZone",
+      "url": "https://www.nyc.gov/site/em/ready/know-your-zone.page",
+      "count": "6 zones",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Hurricane Inundation by Evacuation Zone uk9f-6y9n (5c)", "Hurricane Inundation by Evacuation Zone (Map) 2234-9r2y"],
+      "notes": "Answers 'what is my evacuation zone?' — zones 1 (highest-risk) through 6, as inundation polygons keyed on Evac_Zone + BOROCODE."
+    },
+    {
+      "name": "Hurricane Evacuation Centers",
+      "type": "directory + map",
+      "entity": "EvacuationCenter",
+      "url": "https://data.cityofnewyork.us/d/p5md-weyf",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Hurricane Evacuation Centers p5md-weyf (15c)", "Hurricane Evacuation Centers (Map) ayer-cga7"],
+      "notes": "Where residents go when their zone is evacuated; name, address, accessibility, geography. Many double as cooling centers / emergency supply shelters when activated — but live open/closed status is only in the seasonal Finder, not this dataset."
+    },
+    {
+      "name": "Emergency Response Incidents",
+      "type": "data table",
+      "entity": "EmergencyIncident",
+      "url": "https://data.cityofnewyork.us/d/pasr-j7fb",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Emergency Response Incidents pasr-j7fb (7c)"],
+      "notes": "NYCEM's most-viewed dataset (107k). Incident type, location, borough, creation/closed dates — multi-agency events NYCEM coordinates."
+    },
+    {
+      "name": "Hazard Mitigation Plan Actions",
+      "type": "data table",
+      "entity": "MitigationAction",
+      "url": "https://data.cityofnewyork.us/d/veqt-eu3t",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Hazard Mitigation Plan - Mitigation Actions Database veqt-eu3t (28c)", "t7k8-wj6b", "cj2p-e3ej", "hqhh-iv7p"],
+      "notes": "Long-range projects reducing exposure to named hazards (flooding, extreme heat, coastal storm); managing agency, status, funding, capabilities. Four companion tables."
+    },
+    {
+      "name": "Preparedness — CERT / Ready NY / Partners",
+      "type": "data tables",
+      "entity": "PreparednessResource",
+      "url": "https://data.cityofnewyork.us/d/b2gb-nkrq",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Community Emergency Response Team (CERT) b2gb-nkrq", "Ready NY Events hyur-qpyf (18c)", "Partners in Preparedness h4jn-x3ty"],
+      "notes": "Community-preparedness programs — volunteer CERT teams by community district, Ready NY outreach events, and partner organizations."
+    },
+    {
+      "name": "Subscribe to Notify NYC",
+      "type": "sign-up workflow (portal)",
+      "entity": "NotifyNYCSubscription",
+      "url": "https://a858-nycnotify.nyc.gov/notifynyc/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common resident transaction — enroll in Notify NYC alerts by channel, location, and category. No public write API; lives only in the rented Everbridge Member Portal, an SMS keyword, or a call to 311. The net-new WRITE surface for this domain."
+    },
+    {
+      "name": "Find an open cooling center",
+      "type": "live status (finder)",
+      "entity": "EvacuationCenter",
+      "url": "https://finder.nyc.gov/coolingcenters",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Which cooling / warming centers are open right now during a heat or cold emergency — a seasonal Finder map only, no documented status API. A locked live-status surface."
+    }
+  ],
+  "meta": {
+    "short": "NYC Emergency Management (NYCEM)",
+    "verb": "syndicate",
+    "platform": "Informational site on shared NYC.gov Livesite (Akamai/nginx/Dynatrace); Notify NYC alerting rented from Everbridge (a858-nycnotify.nyc.gov + feeds.everbridge.net CAP RSS feed)",
+    "netnew": "NotifyNYCSubscription — subscribe to Notify NYC emergency alerts by channel, location, and category through an owned write API",
+    "accent": "#c24b3b",
+    "tagline": "NYCEM publishes its incidents, evacuation zones, and hazard plans on Open Data and even emits a real machine-readable Notify NYC CAP alert feed — but that feed and the alert subscription both live on a rented Everbridge platform, not an owned city API.",
+    "headline": "Syndicate the rented Everbridge alert stream and NYCEM's open data through one owned, agent-native contract, and add the net-new write surface so subscribing to Notify NYC is a machine-readable call, not a vendor portal form."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 2,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "informational site on shared NYC.gov Livesite; the flagship alerting platform is a rented Everbridge SaaS",
+    "siteApi": "nyc.gov/site/em is content-only — no content API",
+    "openData": "13 datasets — solid on incidents, evacuation zones/centers, notifications archive, hazard mitigation, CERT/Ready NY — but several are duplicate hazard-mitigation variants and maps",
+    "coreData": "the core mission data (real-time alerts) IS machine-readable via the CAP feed and evacuation zones are geospatial, but live cooling-center / shelter activation and the notifications archive are snapshots, not a live status API",
+    "writeApi": "no write API; Notify NYC enrollment is Everbridge Member Portal / SMS keyword / 311 only",
+    "agent": "no MCP or agent-native surface exists today",
+    "ownership": "the alert feed and subscription are rented from Everbridge; the open-data pipeline is owned"
+  }
+}

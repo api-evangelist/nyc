@@ -1,0 +1,374 @@
+openapi: 3.1.0
+info:
+  title: NYC SBS API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Small Business Services — publishing its
+    already-open program data (certified businesses, business improvement districts, Workforce1 events and
+    job listings, service centers, business incentives) as coherent resources, and adding the missing write
+    surface locked inside the MyCity Business portal — applying for M/WBE certification.
+  description: >-
+    Proposed API-first surface for the NYC Department of Small Business Services (SBS), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/sbs and the MyCity Business portal
+    (nyc-business.nyc.gov).
+
+
+    SBS is a **navigator agency**: its whole value is routing businesses and jobseekers to the right
+    program — which licenses you need to open (the Step-by-Step wizard), which incentives you qualify for,
+    how to get certified, and where to hire. Its **program data is reasonably open** on NYC Open Data — 28
+    datasets covering certified vendors, BIDs, Workforce1 events and jobs, service centers, and incentives.
+    But its **transactional and eligibility layer is entirely locked inside a stateful portal**: the MyCity
+    Business application (Spring session + Adobe AEM) hosts the Step-by-Step licensing wizard and the
+    certification/enrollment flows, none of which has an API or an Open Data twin.
+
+
+    This contract does two things: (1) presents the open program datasets as one clean resource model, and
+    (2) adds the one net-new **write** workflow — submitting an **M/WBE certification application** — that
+    today exists only behind the MyCity Business portal.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.sbs.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: CertifiedBusinesses
+    description: SBS-certified M/WBE, EBE, LBE, and EO50 businesses.
+  - name: BIDs
+    description: Business Improvement Districts and their directory/trends.
+  - name: Workforce
+    description: Workforce1 recruitment events and job listings.
+  - name: Locations
+    description: NYC Business Solutions Centers and Workforce1 Career Centers.
+  - name: Incentives
+    description: SBS-administered business incentives (energy savings, abatement, acceleration).
+  - name: Certification
+    description: Apply for and track SBS business certification (read + write). The net-new surface, today locked in the MyCity Business portal.
+
+paths:
+  /certified-businesses:
+    get:
+      operationId: listCertifiedBusinesses
+      summary: List / search SBS certified businesses
+      tags: [CertifiedBusinesses]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: certification
+          in: query
+          schema: { type: string, enum: [MBE, WBE, MWBE, EBE, LBE, DBE, EO50] }
+        - name: naicsCode
+          in: query
+          schema: { type: string }
+        - name: ethnicity
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of certified businesses.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/certified-business.json' } }
+  /certified-businesses/{accountNumber}:
+    get:
+      operationId: getCertifiedBusiness
+      summary: Get a certified business by SBS account number
+      tags: [CertifiedBusinesses]
+      parameters:
+        - name: accountNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The certified business.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/certified-business.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /business-improvement-districts:
+    get:
+      operationId: listBusinessImprovementDistricts
+      summary: List Business Improvement Districts
+      tags: [BIDs]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: neighborhood
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of Business Improvement Districts.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/business-improvement-district.json' } }
+  /business-improvement-districts/{orgId}:
+    get:
+      operationId: getBusinessImprovementDistrict
+      summary: Get a Business Improvement District by id
+      tags: [BIDs]
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The Business Improvement District.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/business-improvement-district.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /workforce-events:
+    get:
+      operationId: listWorkforceEvents
+      summary: List Workforce1 recruitment / hiring events
+      tags: [Workforce]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: jobFamily
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of workforce events.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/workforce-event.json' } }
+
+  /job-listings:
+    get:
+      operationId: listJobListings
+      summary: Search Workforce1 job listings
+      tags: [Workforce]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: sector
+          in: query
+          schema: { type: string }
+        - name: positionType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of job listings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/job-listing.json' } }
+
+  /service-locations:
+    get:
+      operationId: listServiceLocations
+      summary: List NYC Business Solutions Centers and Workforce1 Career Centers
+      tags: [Locations]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: locationType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of service locations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/service-location.json' } }
+
+  /incentives:
+    get:
+      operationId: listBusinessIncentives
+      summary: Search SBS-administered business incentive records
+      tags: [Incentives]
+      parameters:
+        - name: program
+          in: query
+          schema: { type: string, enum: [Energy Cost Savings Program, Industrial & Commercial Abatement Program, Business Acceleration, Other] }
+        - $ref: '#/components/parameters/borough'
+        - name: industry
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of business incentive records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/business-incentive.json' } }
+
+  /mwbe-applications:
+    get:
+      operationId: listMwbeApplications
+      summary: List the authenticated owner's certification applications
+      description: Reads the business owner's own M/WBE certification applications — today only visible inside the MyCity Business portal.
+      tags: [Certification]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Draft, Submitted, Under Review, Additional Info Requested, Approved, Denied, Withdrawn] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the owner's certification applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/mwbe-certification-application.json' } }
+    post:
+      operationId: createMwbeApplication
+      summary: Apply for M/WBE certification (submit an application)
+      description: >-
+        The net-new write surface — an API for submitting an SBS M/WBE / EBE / LBE certification
+        application, replacing the MyCity-portal-only workflow. Once approved, the business appears in the
+        public SBS Certified Business List.
+      tags: [Certification]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/mwbe-certification-application.json' }
+      responses:
+        '201':
+          description: Application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/mwbe-certification-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /mwbe-applications/{applicationId}:
+    get:
+      operationId: getMwbeApplication
+      summary: Get a certification application
+      tags: [Certification]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The certification application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/mwbe-certification-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    CertifiedBusiness: { $ref: '../schemas/certified-business.json' }
+    BusinessImprovementDistrict: { $ref: '../schemas/business-improvement-district.json' }
+    ServiceLocation: { $ref: '../schemas/service-location.json' }
+    WorkforceEvent: { $ref: '../schemas/workforce-event.json' }
+    JobListing: { $ref: '../schemas/job-listing.json' }
+    BusinessIncentive: { $ref: '../schemas/business-incentive.json' }
+    MWBECertificationApplication: { $ref: '../schemas/mwbe-certification-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oti/schemas/api-gateway-service.json",
+  "title": "APIGatewayService",
+  "description": "A service published on the OTI-operated api.nyc.gov citywide API gateway (Microsoft Azure API Management). NET-NEW as a first-class resource: OTI RUNS the gateway (GeoClient, GeoSearch, and other agency APIs), but there is no machine-readable catalog OF the gateway's services or a self-service API for keys/subscriptions — access is subscription-key-gated (HTTP 401 'missing subscription key') and provisioned through a developer portal, not an API. This schema is the shape of one registered gateway service.",
+  "type": "object",
+  "x-source": {
+    "gateway": "https://api.nyc.gov/",
+    "gateway_product": "Microsoft Azure API Management",
+    "geoclient": "https://api.nyc.gov/geo/geoclient/v1/",
+    "geosearch_pelias": "https://geosearch.planninglabs.nyc/v2/search",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "serviceId": { "type": "string", "description": "Stable service/product identifier on the gateway (e.g. 'geoclient', 'geosearch')." },
+    "name": { "type": "string", "description": "Human name of the service (e.g. 'GeoClient', 'GeoSearch')." },
+    "description": { "type": ["string", "null"], "description": "What the service does." },
+    "agency": { "$ref": "_common.json#/$defs/Agency" },
+    "category": { "type": ["string", "null"], "description": "Service category (e.g. Geospatial, Records, Payments, Notifications)." },
+    "basePath": { "type": ["string", "null"], "description": "Gateway base path (e.g. '/geo/geoclient/v1')." },
+    "version": { "type": ["string", "null"], "description": "Published version." },
+    "protocol": { "type": ["string", "null"], "enum": ["REST", "SOAP", "GraphQL", "OGC", null], "description": "Interface style." },
+    "openapiUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the service's OpenAPI/definition, if published." },
+    "authType": {
+      "type": ["string", "null"],
+      "enum": ["subscription-key", "oauth2", "apikey-header", "none", null],
+      "description": "How the service is authenticated. api.nyc.gov uses Azure APIM subscription keys (Ocp-Apim-Subscription-Key)."
+    },
+    "keyRequired": { "type": "boolean", "default": true, "description": "Whether a gateway subscription key is required to call the service." },
+    "portalUrl": { "type": ["string", "null"], "format": "uri", "description": "Developer-portal page where a key/subscription is requested." },
+    "rateLimit": { "type": ["string", "null"], "description": "Documented rate/quota policy, if any." },
+    "status": { "type": ["string", "null"], "enum": ["active", "deprecated", "beta", "retired", null], "description": "Lifecycle status." },
+    "tier": { "type": ["string", "null"], "description": "Access tier (e.g. public, city-agency, partner)." }
+  },
+  "required": ["serviceId", "name"],
+  "additionalProperties": false
+}

@@ -1,0 +1,304 @@
+openapi: 3.1.0
+info:
+  title: OCME API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Office of Chief Medical Examiner — publishing the
+    little OCME data that can responsibly be public (performance indicators, aggregate casework
+    statistics, forensic services, family services centers, NamUs missing-persons listings) as
+    coherent resources, and adding the missing, dignified write surface that today lives only on
+    paper and NYC 311: requesting a decedent's medical-examiner casefile record.
+  description: >-
+    Proposed API-first surface for the New York City Office of Chief Medical Examiner (OCME), from
+    the NYC Modernization low-hanging-fruit assessment of nyc.gov/site/ocme and the 311 records
+    channel.
+
+
+    OCME is the most **data-dark** and most **privacy-sensitive** domain assessed. Only **one**
+    dataset carries its NYC Open Data label — 'Monthly Indicators' (`8r6c-ydwk`), a stale Mayor's
+    Management Report passthrough — and its core object, a **death investigation**, is confidential
+    and can never be published at a per-decedent level. Everything a family actually needs to *do*
+    — above all, **requesting a decedent's casefile record** — happens through paper forms,
+    notarization, and NYC 311, with waits of three to six months or more.
+
+
+    This contract does two things, both respectfully: (1) it presents the small set of responsibly
+    public OCME resources as one clean model — performance indicators, AGGREGATE case statistics
+    (counts by manner of death, never individuals), the forensic-service catalog, family services
+    centers, and NamUs missing-persons listings; and (2) it adds the one net-new **write** workflow
+    — submitting and tracking a **death record request** — that has no machine-readable contract
+    today.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.ocme.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Indicators
+    description: OCME performance indicators (the one Open Data asset).
+  - name: Statistics
+    description: Aggregate, non-identifying death-investigation casework statistics.
+  - name: Services
+    description: Forensic service/discipline catalog.
+  - name: Locations
+    description: Family services centers and forensic pathology centers.
+  - name: MissingPersons
+    description: NamUs missing-persons and unidentified-decedent listings.
+  - name: RecordsRequests
+    description: Request and track a decedent's casefile record (read + write). The net-new surface, today locked in paper forms and NYC 311.
+
+paths:
+  /indicators:
+    get:
+      operationId: listIndicators
+      summary: List OCME monthly performance indicators
+      tags: [Indicators]
+      parameters:
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of performance indicators.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/monthly-indicator.json' } }
+
+  /case-statistics:
+    get:
+      operationId: listCaseStatistics
+      summary: Aggregate death-investigation statistics (non-identifying)
+      description: >-
+        Counts of investigated cases by period, borough, and manner of death. AGGREGATE ONLY — no
+        decedent is ever identifiable; small cells are suppressed. There is no Open Data twin today.
+      tags: [Statistics]
+      parameters:
+        - name: period
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: mannerOfDeath
+          in: query
+          schema: { type: string, enum: [Natural, Accident, Homicide, Suicide, Undetermined, Pending] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate case statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/case-statistics.json' } }
+
+  /services:
+    get:
+      operationId: listServices
+      summary: List OCME forensic services / disciplines
+      tags: [Services]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of forensic services.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/forensic-service.json' } }
+
+  /family-services-centers:
+    get:
+      operationId: listFamilyServicesCenters
+      summary: List family services centers and forensic pathology centers
+      tags: [Locations]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: type
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of centers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/family-services-center.json' } }
+
+  /missing-persons:
+    get:
+      operationId: listMissingPersons
+      summary: List NamUs missing-persons and unidentified-decedent cases
+      description: Public, non-identifying listings that carry only descriptive detail meant to aid identification.
+      tags: [MissingPersons]
+      parameters:
+        - name: caseType
+          in: query
+          schema: { type: string, enum: [Missing Person, Unidentified Person, Unclaimed Person] }
+        - name: status
+          in: query
+          schema: { type: string, enum: [Open, Identified, Resolved, Closed] }
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of missing-persons / unidentified cases.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/missing-person.json' } }
+
+  /record-requests:
+    get:
+      operationId: listRecordRequests
+      summary: List the authenticated requester's death record requests
+      description: Reads the status of casefile record requests the caller submitted — today only trackable by phone or mail.
+      tags: [RecordsRequests]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Verifying Eligibility, Awaiting Notarization, In Progress, Case Not Finalized, Fulfilled, Denied, Cancelled] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the requester's record requests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/death-record-request.json' } }
+    post:
+      operationId: createRecordRequest
+      summary: Request a decedent's casefile record (create a death record request)
+      description: >-
+        The net-new write surface — an API for requesting a medical-examiner casefile record
+        (autopsy report, cause of death, toxicology, or full casefile), replacing today's
+        paper-form-and-311 workflow. Eligibility is limited to next of kin or authorized parties;
+        third-party delivery requires notarization; fulfillment can take three to six months or
+        more pending case finalization.
+      tags: [RecordsRequests]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/death-record-request.json' }
+      responses:
+        '201':
+          description: Record request created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/death-record-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /record-requests/{requestId}:
+    get:
+      operationId: getRecordRequest
+      summary: Get a death record request
+      tags: [RecordsRequests]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The record request.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/death-record-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    MonthlyIndicator: { $ref: '../schemas/monthly-indicator.json' }
+    CaseStatistics: { $ref: '../schemas/case-statistics.json' }
+    ForensicService: { $ref: '../schemas/forensic-service.json' }
+    FamilyServicesCenter: { $ref: '../schemas/family-services-center.json' }
+    MissingPerson: { $ref: '../schemas/missing-person.json' }
+    DeathRecordRequest: { $ref: '../schemas/death-record-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

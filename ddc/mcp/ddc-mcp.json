@@ -1,0 +1,162 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DDC's capital-project / awarded-contract / vendor / division data and the solicitation pipeline, and adds submit_prequalification — the net-new B2G write workflow that today lives only inside citywide PASSPort/MOCS. There is no citizen write in this domain.",
+    "openapi": "../openapi/ddc.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.ddc",
+    "title": "NYC Design & Construction (DDC)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Department of Design and Construction — capital construction projects (infrastructure and public buildings), awarded construction contracts, the firms that hold them, DDC divisions, and open procurement solicitations, plus the net-new ability for a vendor to submit a prequalification / expression of interest that today lives only in the citywide PASSPort system.",
+    "instructions": "Use find_projects / get_project (and get_project_contracts) to locate DDC-managed capital projects by borough, division, portfolio, client agency, or phase and drill into their contracts. NOTE the project datasets are periodic/historical snapshots, not live status. find_contracts / get_contract cover awarded construction contracts (keyed on PIN, firm, value). find_vendors lists firms doing business with DDC (designer/engineer/CM/contractor/consultant, M/WBE). list_divisions rolls the portfolio up by line of business. find_solicitations surfaces open opportunities that are actually released through citywide PASSPort and the City Record. submit_prequalification (net-new) is a vendor/B2G write — it requires an authenticated firm and mutates state; confirm the firm, role, and any target solicitation with the user before submitting. This is a vendor-facing agency: there is no citizen service or write here."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_projects",
+      "title": "Find Projects",
+      "description": "Search DDC capital construction projects by borough, division, portfolio (infrastructure/public buildings), client agency, phase, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", "Citywide"] },
+          "division": { "type": "string", "enum": ["Infrastructure", "Public Buildings", "Program Management", "Other"] },
+          "portfolio": { "type": "string", "enum": ["Infrastructure", "Public Buildings"] },
+          "clientAgency": { "type": "string" },
+          "phase": { "type": "string" },
+          "historical": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/capital-project.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listProjects"
+    },
+    {
+      "name": "get_project",
+      "title": "Get Project",
+      "description": "Fetch a DDC capital project (scope, division, client agency, phase, dollar amount, projected completion) by Project ID.",
+      "inputSchema": { "type": "object", "properties": { "projectId": { "type": "string" } }, "required": ["projectId"] },
+      "outputSchema": { "$ref": "../schemas/capital-project.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getProject"
+    },
+    {
+      "name": "get_project_contracts",
+      "title": "Get Project Contracts",
+      "description": "List the awarded construction contracts tied to a capital project.",
+      "inputSchema": { "type": "object", "properties": { "projectId": { "type": "string" } }, "required": ["projectId"] },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/awarded-contract.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getProjectContracts"
+    },
+    {
+      "name": "find_contracts",
+      "title": "Find Contracts",
+      "description": "Search DDC awarded construction contracts by firm, client agency, dollar value, or free text (keyed on PIN).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "firm": { "type": "string" },
+          "clientAgency": { "type": "string" },
+          "minValue": { "type": "number" },
+          "maxValue": { "type": "number" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/awarded-contract.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listContracts"
+    },
+    {
+      "name": "get_contract",
+      "title": "Get Contract",
+      "description": "Fetch a single awarded construction contract (description, selected firm, value) by PIN.",
+      "inputSchema": { "type": "object", "properties": { "pin": { "type": "string" } }, "required": ["pin"] },
+      "outputSchema": { "$ref": "../schemas/awarded-contract.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getContract"
+    },
+    {
+      "name": "find_vendors",
+      "title": "Find Vendors",
+      "description": "List firms doing business with DDC — designers, engineers, CMs, contractors, subcontractors, consultants — by role, M/WBE status, or prequalification status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "role": { "type": "string" },
+          "mwbe": { "type": "boolean" },
+          "prequalified": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/vendor.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listVendors"
+    },
+    {
+      "name": "list_divisions",
+      "title": "List Divisions",
+      "description": "List DDC divisions (Infrastructure, Public Buildings, and support units) with active-project counts and dollar rollups.",
+      "inputSchema": { "type": "object", "properties": {} },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/division.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listDivisions"
+    },
+    {
+      "name": "find_solicitations",
+      "title": "Find Solicitations",
+      "description": "List open DDC procurement opportunities by category, division, or status. These are actually released through citywide PASSPort and noticed in the City Record — DDC has no owned solicitation API today.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string", "enum": ["Professional Service Contracts", "Construction Contracts", "Not-for-Profit Procurements", "Alternative Delivery", "Other"] },
+          "division": { "type": "string" },
+          "status": { "type": "string", "enum": ["Upcoming", "Open", "Closed", "Awarded", "Cancelled"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/solicitation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listSolicitations"
+    },
+    {
+      "name": "list_my_prequalifications",
+      "title": "List My Prequalifications",
+      "description": "List the authenticated firm's own prequalification / expression-of-interest submissions and their status — today visible only inside citywide PASSPort.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Under Review", "Prequalified", "More Info Needed", "Declined"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/vendor-prequalification.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPrequalifications",
+      "x-auth": "user"
+    },
+    {
+      "name": "submit_prequalification",
+      "title": "Submit Prequalification",
+      "description": "Submit a DDC vendor prequalification / expression of interest (optionally against a specific solicitation). NET-NEW workflow with no DDC-owned API today — it lives only in the citywide PASSPort platform run by MOCS. This is a vendor/B2G transaction (no citizen write exists in this domain). Requires an authenticated firm. Mutates state — confirm firm, role, and any target solicitation first.",
+      "inputSchema": { "$ref": "../schemas/vendor-prequalification.json" },
+      "outputSchema": { "$ref": "../schemas/vendor-prequalification.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createPrequalification",
+      "x-auth": "user"
+    }
+  ]
+}

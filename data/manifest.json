@@ -5330,6 +5330,615 @@
    ]
   },
   {
+   "id": "dcas",
+   "agency": "New York City Department of Citywide Administrative Services (DCAS)",
+   "short": "NYC Citywide Admin Services (DCAS)",
+   "verb": "Transact",
+   "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) content + a fragmented aNNN vendor app layer: City Jobs (ASP.NET Core/Azure), Employee Self-Service (PeopleSoft/NYCAPS), OASys, and the CityStore (Shopify)",
+   "tagline": "DCAS publishes the civil-service machine as open data but hides every transaction behind a rented vendor portal.",
+   "accent": "#6a8fb0",
+   "netnew": "ExamRegistration \u2014 register for a civil-service exam (alt: JobApplication)",
+   "findings": [
+    "DCAS is a fragmented domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a sprawl of separate aNNN vendor applications \u2014 City Jobs (cityjobs.nyc.gov, ASP.NET Core on Azure), Employee Self-Service (a127-ess.nyc.gov, PeopleSoft/NYCAPS), the exam Online Application System (OASys), and the CityStore (a856-citystore.nyc.gov, Shopify) \u2014 none sharing an API.",
+    "The civil-service REFERENCE data is broadly open: 32 NYC Open Data datasets covering job postings (Jobs NYC Postings, 30 columns), civil-service titles, active/terminated/certified eligible lists, the annual exam schedule, DCAS-managed public buildings and their energy, and the municipal fleet.",
+    "But the citizen TRANSACTION layer has no machine-readable surface: you can read the exam schedule as open data, yet there is no API to actually register for an exam or apply to a posting \u2014 those live only inside OASys and the City Jobs portal, behind a login and a fee.",
+    "The most-viewed DCAS datasets are the Civil Service List (Active) (3.5M views) and Civil Service List Certification (1.1M views) \u2014 the eligible-list machine is DCAS's signature, published as static snapshots with no query API of its own beyond Socrata.",
+    "Net-new write surface: register for a civil-service exam (ExamRegistration) \u2014 the DCAS-distinctive citizen transaction, with no API today. An alternative net-new write is JobApplication (apply to a Jobs NYC posting). See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "32 DCAS datasets; SODA /resource/<id>.json endpoints. The one real, open DCAS API \u2014 civil-service reference, buildings, and fleet data only."
+    },
+    {
+     "endpoint": "cityjobs.nyc.gov (was a127-jobs.nyc.gov)",
+     "type": "careers / exam application portal",
+     "owner": "DCAS (ASP.NET Core / Azure)",
+     "public": "login-walled UI, no API",
+     "note": "City Jobs external portal + OASys online application; Kestrel server, x-ms-routing-name (Azure App Service), AspNetCore.Antiforgery. Job applications and exam registrations happen here; no JSON/OpenAPI."
+    },
+    {
+     "endpoint": "a127-ess.nyc.gov",
+     "type": "employee self-service (HR)",
+     "owner": "DCAS/OPA (PeopleSoft / NYCAPS)",
+     "public": "login-walled UI, no API",
+     "note": "NYC Automated Personnel System employee self-service; PeopleSoft (psp/ path, page title). Legacy vendor HR app, no public API."
+    },
+    {
+     "endpoint": "a856-citystore.nyc.gov",
+     "type": "e-commerce store",
+     "owner": "DCAS (Shopify)",
+     "public": "public UI; Shopify API not city-owned",
+     "note": "The official CityStore runs on Shopify (Cloudflare edge, _shopify_* cookies). Storefront/Admin APIs exist but are vendor-tenant, not a DCAS contract."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/dcas",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 32,
+    "schemas": 7,
+    "openapiOps": 12,
+    "mcpTools": 11,
+    "entities": 7
+   },
+   "entities": [
+    "JobPosting",
+    "CivilServiceTitle",
+    "EligibleListEntry",
+    "ExamSchedule",
+    "CityBuilding",
+    "FleetVehicle",
+    "ExamRegistration"
+   ],
+   "files": {
+    "fruit": "dcas/fruit.json",
+    "opendata": "dcas/opendata-dcas.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dcas.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dcas.yaml",
+    "mcp": "mcp/dcas-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "DCAS \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Citywide Administrative Services (DCAS) object schemas. Reconciles fields c"
+    },
+    {
+     "file": "schemas/city-building.json",
+     "title": "CityBuilding",
+     "shared": false,
+     "desc": "A DCAS-managed public building \u2014 the city-owned and leased facilities DCAS operates. Canonical schema reconciling 'DCAS Managed Public Build"
+    },
+    {
+     "file": "schemas/civil-service-title.json",
+     "title": "CivilServiceTitle",
+     "shared": false,
+     "desc": "A NYC civil-service title \u2014 the canonical job classification DCAS maintains for the whole city workforce. Canonical schema reconciling the '"
+    },
+    {
+     "file": "schemas/eligible-list.json",
+     "title": "EligibleListEntry",
+     "shared": false,
+     "desc": "A single candidate's ranked entry on a DCAS civil-service eligible list \u2014 the exam-score-ordered list DCAS certifies to agencies for hiring."
+    },
+    {
+     "file": "schemas/exam-registration.json",
+     "title": "ExamRegistration",
+     "shared": false,
+     "desc": "A candidate's registration/application for a DCAS civil-service examination \u2014 the everyday citizen transaction. NET-NEW: DCAS publishes the "
+    },
+    {
+     "file": "schemas/exam-schedule.json",
+     "title": "ExamSchedule",
+     "shared": false,
+     "desc": "A scheduled DCAS civil-service examination and its application window. Canonical schema reconciling the 'Annual Examination Schedule of Each"
+    },
+    {
+     "file": "schemas/fleet-vehicle.json",
+     "title": "FleetVehicle",
+     "shared": false,
+     "desc": "A city fleet vehicle or fleet metric managed by DCAS Fleet \u2014 the largest municipal fleet in the U.S. Canonical schema reconciling 'NYC Fleet"
+    },
+    {
+     "file": "schemas/job-posting.json",
+     "title": "JobPosting",
+     "shared": false,
+     "desc": "A citywide job posting brokered by DCAS \u2014 the openings residents apply to. Canonical schema reconciling the 'Jobs NYC Postings' dataset (kpa"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/job-postings",
+     "op": "listJobPostings",
+     "summary": "List / search citywide job postings",
+     "tags": [
+      "Jobs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/job-postings/{jobId}",
+     "op": "getJobPosting",
+     "summary": "Get a job posting by Job ID",
+     "tags": [
+      "Jobs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/civil-service-titles",
+     "op": "listCivilServiceTitles",
+     "summary": "List / search civil-service titles",
+     "tags": [
+      "Titles"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/civil-service-titles/{titleCode}",
+     "op": "getCivilServiceTitle",
+     "summary": "Get a civil-service title by Title Code",
+     "tags": [
+      "Titles"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/eligible-lists",
+     "op": "listEligibleListEntries",
+     "summary": "Search civil-service eligible-list entries",
+     "tags": [
+      "EligibleLists"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/exam-schedule",
+     "op": "listExamSchedule",
+     "summary": "List the annual civil-service examination schedule",
+     "tags": [
+      "Exams"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/exam-schedule/{examNumber}",
+     "op": "getExam",
+     "summary": "Get a scheduled exam by Examination Number",
+     "tags": [
+      "Exams"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/exam-registrations",
+     "op": "listExamRegistrations",
+     "summary": "List the authenticated candidate's exam registrations",
+     "tags": [
+      "Exams"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/exam-registrations",
+     "op": "createExamRegistration",
+     "summary": "Register for a civil-service exam",
+     "tags": [
+      "Exams"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/exam-registrations/{registrationId}",
+     "op": "getExamRegistration",
+     "summary": "Get an exam registration",
+     "tags": [
+      "Exams"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/buildings",
+     "op": "listBuildings",
+     "summary": "List / search DCAS-managed public buildings",
+     "tags": [
+      "Buildings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/fleet",
+     "op": "listFleet",
+     "summary": "Search the municipal fleet (service, auctions, fuel efficiency, EV stations)",
+     "tags": [
+      "Fleet"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_job_postings",
+     "title": "Find Job Postings",
+     "desc": "Search citywide job postings brokered by DCAS by agency, category, career level, posting type, title code, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_job_posting",
+     "title": "Get Job Posting",
+     "desc": "Fetch a single citywide job posting by its Job ID.",
+     "write": false
+    },
+    {
+     "name": "find_civil_service_titles",
+     "title": "Find Civil Service Titles",
+     "desc": "Search the DCAS civil-service title catalog (salary bands, standard hours, union/bargaining unit) by free text or union code.",
+     "write": false
+    },
+    {
+     "name": "get_civil_service_title",
+     "title": "Get Civil Service Title",
+     "desc": "Fetch a civil-service title (salary range, union, investigation flag) by its Title Code.",
+     "write": false
+    },
+    {
+     "name": "find_eligible_list_entries",
+     "title": "Find Eligible List Entries",
+     "desc": "Search civil-service eligible-list entries \u2014 the exam-score-ordered lists DCAS certifies to agencies \u2014 by exam number, title code, or list status (active, termi",
+     "write": false
+    },
+    {
+     "name": "find_exam_schedule",
+     "title": "Find Exam Schedule",
+     "desc": "List the annual civil-service examination schedule and application windows by exam type, currently-open status, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_exam",
+     "title": "Get Exam",
+     "desc": "Fetch a scheduled civil-service exam (title, type, application period) by its Examination Number.",
+     "write": false
+    },
+    {
+     "name": "list_my_exam_registrations",
+     "title": "List My Exam Registrations",
+     "desc": "List the authenticated candidate's own civil-service exam registrations and their status \u2014 today visible only inside OASys / the City Jobs portal.",
+     "write": false
+    },
+    {
+     "name": "register_for_exam",
+     "title": "Register for an Exam",
+     "desc": "File a registration/application for a DCAS civil-service exam. NET-NEW workflow with no public API today \u2014 it lives only in the OASys Online Application System ",
+     "write": true
+    },
+    {
+     "name": "find_buildings",
+     "title": "Find Buildings",
+     "desc": "List DCAS-managed public buildings (and their energy usage / benchmarking) by borough, BIN, BBL, benchmarked flag, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_fleet",
+     "title": "Find Fleet",
+     "desc": "Search the municipal fleet DCAS operates \u2014 daily service report, surplus auctions, real-world fuel efficiency, and EV charging stations \u2014 by record type, agency",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "dcla",
+   "agency": "New York City Department of Cultural Affairs (DCLA)",
+   "short": "NYC Cultural Affairs (DCLA)",
+   "verb": "open",
+   "platform": "NYC.gov 'Livesite' v22 info site (Akamai/nginx/Dynatrace) + a separate Salesforce Experience Cloud grants portal (dclagms.nyc.gov, backed by culturalaffairsnyc.my.salesforce.com); 9 Socrata datasets",
+   "tagline": "DCLA publishes who it funds and for how much, but the grant application that produces those outcomes is locked in a Salesforce portal with no API.",
+   "accent": "#b05fa0",
+   "netnew": "Apply for a Cultural Development Fund grant (GrantApplication) \u2014 the core transaction with no API, locked in the Salesforce Grants Management System",
+   "findings": [
+    "DCLA is a grantmaker that publishes outcomes but not the application: 9 NYC Open Data datasets cover program and capital grant awards, Cultural Institutions Group support, a geocoded cultural-organization directory, completed Percent for Art commissions, and Materials for the Arts donation summaries.",
+    "The core transaction \u2014 applying for a Cultural Development Fund grant \u2014 lives only in the Grants Management System (dclagms.nyc.gov), a Salesforce Experience Cloud community reached by login, with no public API and no Open Data twin.",
+    "No owned contract binds an organization to its funding; the funding datasets key on organization name and application # with no stable id, so an agent must stitch names across 9 Socrata IDs by hand.",
+    "Materials for the Arts data is published only in aggregate by year and category; no individual donor is ever exposed.",
+    "Net-new write surface: apply for a grant (GrantApplication) \u2014 the most important interaction between DCLA and its constituency, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "9 DCLA datasets; SODA /resource/<id>.json endpoints. The one real, open DCLA API \u2014 funding-outcome and directory data only."
+    },
+    {
+     "endpoint": "dclagms.nyc.gov/grants/s/",
+     "type": "grants management portal (CRM)",
+     "owner": "DCLA (Salesforce Experience Cloud)",
+     "public": "login-walled UI, no public API",
+     "note": "register an org, create and submit a Cultural Development Fund grant application, track status. Salesforce Lightning Community (LSKey-c$ cookies, /grants/s/ path), backed by culturalaffairsnyc.my.salesforce.com via SAML SSO; no documented public JSON/OpenAPI."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/dcla",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite v22)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM, mPulse. No content API."
+    },
+    {
+     "endpoint": "maps.googleapis.com",
+     "type": "mapping API",
+     "owner": "Google",
+     "public": "vendor",
+     "note": "Google Maps JS embedded on location pages."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 9,
+    "schemas": 7,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 7
+   },
+   "entities": [
+    "CulturalOrganization",
+    "ProgramFunding",
+    "CapitalFunding",
+    "CulturalInstitution",
+    "PublicArtwork",
+    "MaterialsForTheArts",
+    "GrantApplication"
+   ],
+   "files": {
+    "fruit": "dcla/fruit.json",
+    "opendata": "dcla/opendata-dcla.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dcla.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dcla.yaml",
+    "mcp": "mcp/dcla-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "DCLA \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Cultural Affairs (DCLA) object schemas. Reconciles fields common to the DCL"
+    },
+    {
+     "file": "schemas/capital-funding.json",
+     "title": "CapitalFunding",
+     "shared": false,
+     "desc": "A DCLA capital funding record for a cultural organization in a fiscal year \u2014 construction/renovation/equipment dollars, broken out by source"
+    },
+    {
+     "file": "schemas/cultural-institution.json",
+     "title": "CulturalInstitution",
+     "shared": false,
+     "desc": "A member of the Cultural Institutions Group (CIG) and its annual operating support from DCLA \u2014 the ~34 major institutions (museums, zoos, ga"
+    },
+    {
+     "file": "schemas/cultural-organization.json",
+     "title": "CulturalOrganization",
+     "shared": false,
+     "desc": "A cultural organization in DCLA's constituency \u2014 a nonprofit arts/cultural group DCLA funds and serves (the grantee unit). Canonical schema "
+    },
+    {
+     "file": "schemas/grant-application.json",
+     "title": "GrantApplication",
+     "shared": false,
+     "desc": "A Cultural Development Fund (CDF) grant application submitted by a cultural organization to DCLA \u2014 the everyday transaction of DCLA's consti"
+    },
+    {
+     "file": "schemas/materials-for-the-arts.json",
+     "title": "MaterialsForTheArts",
+     "shared": false,
+     "desc": "An annual, category-level summary of donations to Materials for the Arts (MFTA) \u2014 DCLA's creative-reuse program that redistributes donated g"
+    },
+    {
+     "file": "schemas/program-funding.json",
+     "title": "ProgramFunding",
+     "shared": false,
+     "desc": "A DCLA program grant award to a cultural organization for a fiscal year \u2014 the outcome of the Cultural Development Fund (CDF) cycle. Canonica"
+    },
+    {
+     "file": "schemas/public-artwork.json",
+     "title": "PublicArtwork",
+     "shared": false,
+     "desc": "A completed Percent for Art commission \u2014 a permanent public artwork funded under NYC's Percent for Art law (1% of eligible City capital cons"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/cultural-organizations",
+     "op": "listCulturalOrganizations",
+     "summary": "List / search cultural organizations",
+     "tags": [
+      "Organizations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/cultural-organizations/{orgId}",
+     "op": "getCulturalOrganization",
+     "summary": "Get a cultural organization by name/id",
+     "tags": [
+      "Organizations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/program-funding",
+     "op": "listProgramFunding",
+     "summary": "Search DCLA program grant awards",
+     "tags": [
+      "Funding"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/capital-funding",
+     "op": "listCapitalFunding",
+     "summary": "Search DCLA capital funding records",
+     "tags": [
+      "Funding"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/cultural-institutions",
+     "op": "listCulturalInstitutions",
+     "summary": "List Cultural Institutions Group (CIG) members and their operating support",
+     "tags": [
+      "Funding"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/public-artworks",
+     "op": "listPublicArtworks",
+     "summary": "Search completed Percent for Art public artworks",
+     "tags": [
+      "PublicArt"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/materials-for-the-arts",
+     "op": "listMaterialsForTheArts",
+     "summary": "Aggregate Materials for the Arts donation summaries by year and category",
+     "tags": [
+      "MaterialsForTheArts"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/grant-applications",
+     "op": "listGrantApplications",
+     "summary": "List the authenticated organization's grant applications",
+     "tags": [
+      "GrantApplications"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/grant-applications",
+     "op": "createGrantApplication",
+     "summary": "Apply for a grant (create a grant application)",
+     "tags": [
+      "GrantApplications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/grant-applications/{applicationId}",
+     "op": "getGrantApplication",
+     "summary": "Get a grant application",
+     "tags": [
+      "GrantApplications"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_cultural_organizations",
+     "title": "Find Cultural Organizations",
+     "desc": "Search DCLA's cultural-organization directory by borough, discipline, council district, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_cultural_organization",
+     "title": "Get Cultural Organization",
+     "desc": "Fetch a single cultural organization (discipline, contact, geography, resources) by name or id.",
+     "write": false
+    },
+    {
+     "name": "find_program_funding",
+     "title": "Find Program Funding",
+     "desc": "Search DCLA program grant awards (the Cultural Development Fund outcome) by organization, fiscal year, or application number.",
+     "write": false
+    },
+    {
+     "name": "find_capital_funding",
+     "title": "Find Capital Funding",
+     "desc": "Search DCLA capital funding records (DCLA / City Council / Borough President dollars) by organization or fiscal year.",
+     "write": false
+    },
+    {
+     "name": "find_cultural_institutions",
+     "title": "Find Cultural Institutions (CIG)",
+     "desc": "List Cultural Institutions Group members and their annual operating and energy support by fiscal year.",
+     "write": false
+    },
+    {
+     "name": "find_public_artworks",
+     "title": "Find Public Artworks",
+     "desc": "Search completed Percent for Art public artworks by borough, artist, or sponsoring agency.",
+     "write": false
+    },
+    {
+     "name": "find_materials_for_the_arts",
+     "title": "Find Materials for the Arts Donations",
+     "desc": "Return AGGREGATE Materials for the Arts creative-reuse donation summaries by year and category (donations, distinct donors, declared value, weight). Never retur",
+     "write": false
+    },
+    {
+     "name": "list_my_grant_applications",
+     "title": "List My Grant Applications",
+     "desc": "List the authenticated organization's own Cultural Development Fund grant applications and their status \u2014 today visible only inside the Salesforce Grants Manage",
+     "write": false
+    },
+    {
+     "name": "apply_for_grant",
+     "title": "Apply for a Grant",
+     "desc": "Create a DCLA Cultural Development Fund grant application (apply for a grant). NET-NEW workflow with no public API today \u2014 it lives only in the Salesforce Grant",
+     "write": true
+    }
+   ]
+  },
+  {
    "id": "dcwp",
    "agency": "Department of Consumer and Worker Protection (DCWP)",
    "short": "NYC Consumer & Worker Protection (DCWP)",
@@ -5640,6 +6249,314 @@
      "name": "file_complaint",
      "title": "File a Consumer Complaint",
      "desc": "File a consumer complaint against a business with DCWP. NET-NEW workflow with no public API today \u2014 it lives only in 311 or a DCWP web form. Requires an authent",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "ddc",
+   "agency": "New York City Department of Design and Construction (DDC)",
+   "short": "NYC Design & Construction (DDC)",
+   "verb": "surface",
+   "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace + mPulse + AWS ALB) for the informational site; the transaction layer is entirely citywide systems DDC does not own \u2014 PASSPort (MOCS), City Record, Checkbook NYC (Comptroller), plus DDC's own API-less DDC Anywhere portal.",
+   "tagline": "A vendor-facing agency whose own data is thin and historical and whose transactions all run on citywide systems it doesn't own.",
+   "accent": "#7a8a5a",
+   "netnew": "VendorPrequalification \u2014 a firm submits a prequalification / expression of interest (optionally against a solicitation, with an optional City Record notice opt-in). A B2G write; DDC is vendor-facing, so there is no citizen write in this domain.",
+   "findings": [
+    "DDC is a vendor-facing, business-to-government agency \u2014 the City's primary capital construction project manager (550+ active projects, $34B+ portfolio) that builds for other agencies. There is no citizen and no citizen transaction anywhere in the domain.",
+    "DDC exposes NO API of its own. Its only machine-readable data is 4 NYC Open Data datasets (Socrata SODA), three of them frozen '(Historical)' snapshots of active projects, plus a 4-column directory of awarded contracts.",
+    "Every transaction is outsourced to citywide systems DDC does not own: solicitations and vendor prequalification run in PASSPort (managed by MOCS), notices go to the City Record, and contract records live on Checkbook NYC (Comptroller). The one DDC-owned vendor portal (DDC Anywhere) has no API.",
+    "The richer live capital data (Capital Commitment Plan / Capital Project Detail Data) is published under OMB/Comptroller labels, not DDC \u2014 so even DDC's own portfolio is not fully DDC-published.",
+    "Net-new write surface: submit a vendor prequalification / expression of interest (VendorPrequalification) \u2014 a B2G transaction that today lives only inside citywide PASSPort. NOTE: there is no citizen write for this agency. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Only 4 DDC datasets: Active Projects + two '(Historical)' variants and the awarded-contracts directory. SODA /resource/<id>.json endpoints. The one real, open DDC data surface \u2014 thin and mostly historical."
+    },
+    {
+     "endpoint": "nyc.gov/site/mocs/passport (PASSPort)",
+     "type": "procurement platform",
+     "owner": "NYC MOCS (citywide)",
+     "public": "login-walled UI, no API",
+     "note": "Where ALL DDC solicitations are released and responded to; vendor registration + prequalification. Not DDC-owned; no OpenAPI/JSON."
+    },
+    {
+     "endpoint": "a856-cityrecord.nyc.gov",
+     "type": "notices / alerts",
+     "owner": "NYC (DCAS/citywide)",
+     "public": "html + email",
+     "note": "Solicitation and award notices; vendors register for email alerts."
+    },
+    {
+     "endpoint": "checkbooknyc.com",
+     "type": "contract transparency",
+     "owner": "NYC Comptroller",
+     "public": "public; has its own API",
+     "note": "Public record of DDC/City contracts \u2014 but the API belongs to the Comptroller, not DDC."
+    },
+    {
+     "endpoint": "ddcanywhere.nyc",
+     "type": "vendor process portal",
+     "owner": "DDC",
+     "public": "login-walled, no API",
+     "note": "The one DDC-owned vendor system \u2014 design/construction process for contract holders. No machine-readable surface observed."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/ddc",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "Content only; Akamai edge, nginx, Dynatrace + mPulse RUM, AWS ALB. No content API."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 4,
+    "schemas": 6,
+    "openapiOps": 11,
+    "mcpTools": 10,
+    "entities": 6
+   },
+   "entities": [
+    "CapitalProject",
+    "AwardedContract",
+    "Vendor",
+    "Division",
+    "Solicitation",
+    "VendorPrequalification"
+   ],
+   "files": {
+    "fruit": "ddc/fruit.json",
+    "opendata": "ddc/opendata-ddc.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-ddc.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/ddc.yaml",
+    "mcp": "mcp/ddc-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "DDC \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Design and Construction (DDC) object schemas. Reconciles fields common to t"
+    },
+    {
+     "file": "schemas/awarded-contract.json",
+     "title": "AwardedContract",
+     "shared": false,
+     "desc": "A construction contract that DDC has awarded to a firm \u2014 the vendor-award record. Canonical schema reconciling the 'Directory Of Awarded Con"
+    },
+    {
+     "file": "schemas/capital-project.json",
+     "title": "CapitalProject",
+     "shared": false,
+     "desc": "A DDC-managed capital construction project \u2014 the core unit of the Department of Design and Construction. Canonical schema reconciling DDC's "
+    },
+    {
+     "file": "schemas/division.json",
+     "title": "Division",
+     "shared": false,
+     "desc": "A DDC line of business that delivers capital projects \u2014 the organizational lens over the project portfolio. DDC has no dedicated division da"
+    },
+    {
+     "file": "schemas/solicitation.json",
+     "title": "Solicitation",
+     "shared": false,
+     "desc": "A DDC procurement opportunity \u2014 a professional-service, construction, or not-for-profit solicitation open for vendor response. DDC has NO Op"
+    },
+    {
+     "file": "schemas/vendor-prequalification.json",
+     "title": "VendorPrequalification",
+     "shared": false,
+     "desc": "A firm's request to prequalify with DDC and express interest in a solicitation \u2014 the net-new WRITE surface for this vendor-facing agency. DD"
+    },
+    {
+     "file": "schemas/vendor.json",
+     "title": "Vendor",
+     "shared": false,
+     "desc": "A firm doing (or seeking to do) business with DDC \u2014 designer, engineer, construction manager, contractor, subcontractor, or allied consultan"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/projects",
+     "op": "listProjects",
+     "summary": "List / search DDC capital projects",
+     "tags": [
+      "Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/projects/{projectId}",
+     "op": "getProject",
+     "summary": "Get a capital project by Project ID",
+     "tags": [
+      "Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/projects/{projectId}/contracts",
+     "op": "getProjectContracts",
+     "summary": "List the awarded contracts tied to a project",
+     "tags": [
+      "Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/contracts",
+     "op": "listContracts",
+     "summary": "Search awarded construction contracts",
+     "tags": [
+      "Contracts"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/contracts/{pin}",
+     "op": "getContract",
+     "summary": "Get an awarded contract by PIN",
+     "tags": [
+      "Contracts"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/vendors",
+     "op": "listVendors",
+     "summary": "List / search firms doing business with DDC",
+     "tags": [
+      "Vendors"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/divisions",
+     "op": "listDivisions",
+     "summary": "List DDC divisions with portfolio rollups",
+     "tags": [
+      "Divisions"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/solicitations",
+     "op": "listSolicitations",
+     "summary": "List open DDC procurement opportunities",
+     "tags": [
+      "Solicitations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/prequalifications",
+     "op": "listPrequalifications",
+     "summary": "List the authenticated firm's prequalification submissions",
+     "tags": [
+      "Prequalification"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/prequalifications",
+     "op": "createPrequalification",
+     "summary": "Submit a vendor prequalification / expression of interest",
+     "tags": [
+      "Prequalification"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/prequalifications/{prequalificationId}",
+     "op": "getPrequalification",
+     "summary": "Get a prequalification submission",
+     "tags": [
+      "Prequalification"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_projects",
+     "title": "Find Projects",
+     "desc": "Search DDC capital construction projects by borough, division, portfolio (infrastructure/public buildings), client agency, phase, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_project",
+     "title": "Get Project",
+     "desc": "Fetch a DDC capital project (scope, division, client agency, phase, dollar amount, projected completion) by Project ID.",
+     "write": false
+    },
+    {
+     "name": "get_project_contracts",
+     "title": "Get Project Contracts",
+     "desc": "List the awarded construction contracts tied to a capital project.",
+     "write": false
+    },
+    {
+     "name": "find_contracts",
+     "title": "Find Contracts",
+     "desc": "Search DDC awarded construction contracts by firm, client agency, dollar value, or free text (keyed on PIN).",
+     "write": false
+    },
+    {
+     "name": "get_contract",
+     "title": "Get Contract",
+     "desc": "Fetch a single awarded construction contract (description, selected firm, value) by PIN.",
+     "write": false
+    },
+    {
+     "name": "find_vendors",
+     "title": "Find Vendors",
+     "desc": "List firms doing business with DDC \u2014 designers, engineers, CMs, contractors, subcontractors, consultants \u2014 by role, M/WBE status, or prequalification status.",
+     "write": false
+    },
+    {
+     "name": "list_divisions",
+     "title": "List Divisions",
+     "desc": "List DDC divisions (Infrastructure, Public Buildings, and support units) with active-project counts and dollar rollups.",
+     "write": false
+    },
+    {
+     "name": "find_solicitations",
+     "title": "Find Solicitations",
+     "desc": "List open DDC procurement opportunities by category, division, or status. These are actually released through citywide PASSPort and noticed in the City Record \u2014",
+     "write": false
+    },
+    {
+     "name": "list_my_prequalifications",
+     "title": "List My Prequalifications",
+     "desc": "List the authenticated firm's own prequalification / expression-of-interest submissions and their status \u2014 today visible only inside citywide PASSPort.",
+     "write": false
+    },
+    {
+     "name": "submit_prequalification",
+     "title": "Submit Prequalification",
+     "desc": "Submit a DDC vendor prequalification / expression of interest (optionally against a specific solicitation). NET-NEW workflow with no DDC-owned API today \u2014 it li",
      "write": true
     }
    ]
@@ -7076,6 +7993,578 @@
    ]
   },
   {
+   "id": "doris",
+   "agency": "NYC Department of Records & Information Services (DORIS)",
+   "short": "NYC Records (DORIS)",
+   "verb": "retrieve",
+   "platform": "NYC.gov Livesite site + Squarespace (archives.nyc) + Preservica DAMS (formerly LUNA Imaging) + Akamai vital-records portal + OpenRecords; Socrata for the indexes",
+   "tagline": "DORIS publishes rich open indexes to its archives, vital records, and publications, but the records themselves sit in a vendor DAMS and must be ordered by hand.",
+   "accent": "#5a8a7a",
+   "netnew": "RecordsRequest \u2014 request/retrieve a record: order a copy of a historical vital record, an archival item/photo, a library publication, or file a FOIL request",
+   "findings": [
+    "DORIS is a many-doored domain: an informational NYC.gov 'Livesite' site (Akamai/nginx/Dynatrace), a separate Squarespace collections site (archives.nyc), a vendor DAMS for the archive (Preservica, formerly LUNA Imaging), an Akamai-fronted Historical Vital Records ordering portal, and the citywide OpenRecords FOIL system.",
+    "The INDEXES are wide open: 13 NYC Open Data datasets index the historical vital records (birth/death/marriage), the Municipal Archives' digital objects and finding aids, the City Hall Library catalog (the most-viewed DORIS dataset), government publications and required reports, and honorary street names.",
+    "But the OBJECTS are locked in a vendor DAMS. Preservica ships a real REST content API (/api/content/search returns JSON) yet it is token-gated for the public catalog \u2014 no OpenAPI, no open/bulk access, no agent contract; the scans/images never reach Open Data.",
+    "RETRIEVAL has no machine-readable surface at all. Ordering a certified vital-record copy, requesting an archival reproduction, or filing a FOIL request each lives in a separate portal, form, or email \u2014 none has an API.",
+    "Net-new write surface: request a record (RecordsRequest) \u2014 order/retrieve a copy of a vital record, an archival item, or a FOIL request \u2014 the thing researchers actually want, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "13 DORIS datasets; SODA /resource/<id>.json endpoints. The one fully open DORIS API \u2014 indexes/finding aids/catalogs only, never the object itself."
+    },
+    {
+     "endpoint": "nycrecords.access.preservica.com/api/content/",
+     "type": "DAMS content API (Preservica Universal Access)",
+     "owner": "DORIS (Preservica)",
+     "public": "token-gated",
+     "note": "Real REST/JSON API holding the digitized objects; GET /api/content/search returns application/json but 401 not.authenticated no.token.header. No published OpenAPI, no open/bulk access, no agent contract."
+    },
+    {
+     "endpoint": "nycma.lunaimaging.com",
+     "type": "legacy DAMS (LUNA Imaging)",
+     "owner": "DORIS (vendor)",
+     "public": "unreachable at crawl",
+     "note": "Prior Municipal Archives online image platform with a documented servlet/JSON API; connection refused at crawl \u2014 being superseded by Preservica."
+    },
+    {
+     "endpoint": "a860-historicalvitalrecords.nyc.gov",
+     "type": "vital-records search & order portal",
+     "owner": "DORIS (Akamai-fronted app)",
+     "public": "UI, no API",
+     "note": "Search the pre-1949 indexes and order certified/uncertified copies; returns 403 to a bare crawler; no JSON/OpenAPI. The retrieval step for vital records."
+    },
+    {
+     "endpoint": "a860-openrecords.nyc.gov",
+     "type": "FOIL request system (OpenRecords)",
+     "owner": "NYC (citywide)",
+     "public": "UI, no public write API",
+     "note": "File/track FOIL requests; a read-only status rollup is on Open Data (kegn-anvq), but the submit workflow has no public API."
+    },
+    {
+     "endpoint": "www.archives.nyc",
+     "type": "collections marketing site",
+     "owner": "DORIS (Squarespace)",
+     "public": "html",
+     "note": "Front door to the online archive; content only, no content API."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/records/",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "Content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 13,
+    "schemas": 6,
+    "openapiOps": 11,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "GovernmentPublication",
+    "HistoricalVitalRecord",
+    "DigitalItem",
+    "ArchivalCollection",
+    "HonoraryStreetName",
+    "RecordsRequest"
+   ],
+   "files": {
+    "fruit": "doris/fruit.json",
+    "opendata": "doris/opendata-doris.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-doris.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/doris.yaml",
+    "mcp": "mcp/doris-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "DORIS \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Records & Information Services (DORIS) object schemas. Reconciles fields co"
+    },
+    {
+     "file": "schemas/archival-collection.json",
+     "title": "ArchivalCollection",
+     "shared": false,
+     "desc": "A NYC Municipal Archives collection / finding-aid record \u2014 the resource level in the Archives' ArchivesSpace-style hierarchy (collection \u2192 s"
+    },
+    {
+     "file": "schemas/digital-item.json",
+     "title": "DigitalItem",
+     "shared": false,
+     "desc": "A single digitized object in the NYC Municipal Archives online Collections \u2014 a scanned photograph, map, film still, or record page. Canonica"
+    },
+    {
+     "file": "schemas/government-publication.json",
+     "title": "GovernmentPublication",
+     "shared": false,
+     "desc": "A NYC government publication or City Hall Library catalog record \u2014 agency reports, required (mandated) reports, and library holdings collect"
+    },
+    {
+     "file": "schemas/historical-vital-record.json",
+     "title": "HistoricalVitalRecord",
+     "shared": false,
+     "desc": "An index entry for a historical NYC vital record \u2014 birth, death, marriage certificate, or marriage license from the pre-1949 civil registers"
+    },
+    {
+     "file": "schemas/honorary-street-name.json",
+     "title": "HonoraryStreetName",
+     "shared": false,
+     "desc": "A NYC honorary (co-named) street \u2014 the ceremonial secondary name a block or intersection is given by City Council local law, curated by DORI"
+    },
+    {
+     "file": "schemas/records-request.json",
+     "title": "RecordsRequest",
+     "shared": false,
+     "desc": "A request to DORIS to retrieve a record \u2014 order a copy/scan of a historical vital record, an archival photograph or digital item, or a City "
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/collections",
+     "op": "listCollections",
+     "summary": "List / search Municipal Archives collections (finding aids)",
+     "tags": [
+      "Archives"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/collections/{identifier}",
+     "op": "getCollection",
+     "summary": "Get an archival collection by identifier",
+     "tags": [
+      "Archives"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/collections/{identifier}/items",
+     "op": "getCollectionItems",
+     "summary": "List the digitized items within a collection",
+     "tags": [
+      "Archives"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/digital-items",
+     "op": "listDigitalItems",
+     "summary": "Search digitized Municipal Archives objects (photos, maps, films, record pages)",
+     "tags": [
+      "Archives"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/digital-items/{identifier}",
+     "op": "getDigitalItem",
+     "summary": "Get a digitized item by identifier",
+     "tags": [
+      "Archives"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/vital-records",
+     "op": "listVitalRecords",
+     "summary": "Search the historical vital-record indexes (birth, death, marriage)",
+     "tags": [
+      "VitalRecords"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/publications",
+     "op": "listPublications",
+     "summary": "Search government publications, required reports, and the City Hall Library catalog",
+     "tags": [
+      "Publications"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/honorary-street-names",
+     "op": "listHonoraryStreetNames",
+     "summary": "List / search honorary (co-named) streets",
+     "tags": [
+      "HonoraryStreetNames"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/records-requests",
+     "op": "listRecordsRequests",
+     "summary": "List the authenticated requester's own records requests",
+     "tags": [
+      "RecordsRequests"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/records-requests",
+     "op": "createRecordsRequest",
+     "summary": "Request (retrieve/order) a record",
+     "tags": [
+      "RecordsRequests"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/records-requests/{requestId}",
+     "op": "getRecordsRequest",
+     "summary": "Get a records request",
+     "tags": [
+      "RecordsRequests"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_collections",
+     "title": "Find Archival Collections",
+     "desc": "Search NYC Municipal Archives collections / finding aids by description level, whether they have digitized objects, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_collection",
+     "title": "Get Archival Collection",
+     "desc": "Fetch a Municipal Archives collection (finding aid, accession, and instance/container metadata) by identifier.",
+     "write": false
+    },
+    {
+     "name": "find_digital_items",
+     "title": "Find Digital Items",
+     "desc": "Search digitized Municipal Archives objects (photographs, maps, films, record pages) by object type, parent resource, or free text. Metadata only \u2014 the asset it",
+     "write": false
+    },
+    {
+     "name": "get_digital_item",
+     "title": "Get Digital Item",
+     "desc": "Fetch a single digitized Municipal Archives object by identifier, including its provenance link into the DAMS.",
+     "write": false
+    },
+    {
+     "name": "find_vital_records",
+     "title": "Find Historical Vital Records",
+     "desc": "Search the pre-1949 historical vital-record INDEXES (birth, death, marriage certificate, marriage license) by name, Soundex, county, year, or certificate number",
+     "write": false
+    },
+    {
+     "name": "find_publications",
+     "title": "Find Government Publications",
+     "desc": "Search NYC government publications, required (mandated) reports, and the City Hall Library catalog by agency, report type, subject, year, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_honorary_street_names",
+     "title": "Find Honorary Street Names",
+     "desc": "List council-enacted honorary (co-named) streets by borough, category, enactment year, or free text.",
+     "write": false
+    },
+    {
+     "name": "list_my_records_requests",
+     "title": "List My Records Requests",
+     "desc": "List the authenticated requester's own records requests \u2014 vital-record orders, archival reproductions, and FOIL requests \u2014 and their status, today scattered acr",
+     "write": false
+    },
+    {
+     "name": "request_record",
+     "title": "Request a Record",
+     "desc": "Submit a DORIS records request (retrieve/order a record): a certified copy of a historical vital record, an archival reproduction, a library publication, or a F",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "dvs",
+   "agency": "NYC Department of Veterans' Services (DVS)",
+   "short": "NYC Veterans' Services (DVS)",
+   "verb": "coordinate",
+   "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace) for the info site; the care-coordination service layer is VetConnectNYC, a third-party vendor portal on Combined Arms' 'Military Resource Portal' (Next.js on CloudFront) \u2014 a web form, no API.",
+   "tagline": "DVS publishes even its de-identified service data as open data, but the veteran's actual referral runs through a third-party vendor form with no API.",
+   "accent": "#4a6a9a",
+   "netnew": "ServiceReferral \u2014 make a VetConnectNYC care-coordination referral connecting a veteran to services (housing, benefits, VA claims, health, employment, education, food, legal), routed to DVS Care Coordinators with an urgent path to a Veteran Resource Center.",
+   "findings": [
+    "DVS is a connective agency with a vendor service layer: it points veterans to a coordinated-care network via VetConnectNYC, which runs on the third-party Combined Arms 'Military Resource Portal' (nyc.veteranportal.combinedarms.us) \u2014 no API; DVS Care Coordinators process requests manually within 3-5 business days.",
+    "DVS is unusually open: 7 NYC Open Data datasets cover not only reference directories (DVS Resource Map, NYC Veteran Owned Businesses) but de-identified SERVICE data \u2014 assistance requests (with a 'VetConnectNYC (Y/N)' flag), cases, client demographics, and historical request processing.",
+    "But the live referral is locked: the thing a veteran actually does \u2014 submit a VetConnectNYC request and get connected to housing, benefits, VA claims, health, employment, food, or legal help \u2014 has no machine-readable contract at all; it lives only in the Combined Arms web form.",
+    "Veteran/client data is published only de-identified/aggregate (DVS Clients); DVS never exposes an identifiable veteran record to Open Data.",
+    "Vendor correction: VetConnectNYC is Combined Arms, NOT Unite Us (the assignment's tentative guess). See tech-stack.md.",
+    "Net-new write surface: make a VetConnectNYC referral (ServiceReferral) \u2014 connect a veteran to services \u2014 the core resident transaction, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "7 DVS datasets; SODA /resource/<id>.json endpoints. The one real, open DVS API \u2014 and unusually, it reaches into the de-identified service layer (assistance requests, cases, clients), not just reference data."
+    },
+    {
+     "endpoint": "nyc.veteranportal.combinedarms.us (VetConnectNYC)",
+     "type": "care-coordination intake portal",
+     "owner": "Combined Arms (vendor); DVS Care Coordinators work the queue",
+     "public": "registration-gated web form, no API",
+     "note": "The transactional layer \u2014 a veteran submits the VetConnectNYC Request Form to be connected to services. 'CA - Military Resource Portal', Next.js on CloudFront. No JSON/OpenAPI; requests processed manually within 3-5 business days."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/veterans",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite v22)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "combinedarms.us",
+     "type": "vendor platform root",
+     "owner": "Combined Arms",
+     "public": "html",
+     "note": "redirects to www.combinedarms.us; the coordinated-care network behind VetConnectNYC."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 7,
+    "schemas": 6,
+    "openapiOps": 9,
+    "mcpTools": 8,
+    "entities": 6
+   },
+   "entities": [
+    "VeteranResource",
+    "VeteranOwnedBusiness",
+    "AssistanceRequest",
+    "Case",
+    "ClientStatistics",
+    "ServiceReferral"
+   ],
+   "files": {
+    "fruit": "dvs/fruit.json",
+    "opendata": "dvs/opendata-dvs.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dvs.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dvs.yaml",
+    "mcp": "mcp/dvs-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Veterans' Services (DVS) \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Veterans' Services (DVS) object schemas. Reconciles fields common to the DV"
+    },
+    {
+     "file": "schemas/assistance-request.json",
+     "title": "AssistanceRequest",
+     "shared": false,
+     "desc": "A de-identified DVS assistance-request record \u2014 the intake DVS logs when a veteran (or family member) asks for help. This is the published, "
+    },
+    {
+     "file": "schemas/case.json",
+     "title": "Case",
+     "shared": false,
+     "desc": "A de-identified DVS case \u2014 the work DVS Care Coordinators do after an assistance request/referral is opened, including its service type and "
+    },
+    {
+     "file": "schemas/client-statistics.json",
+     "title": "ClientStatistics",
+     "shared": false,
+     "desc": "De-identified demographics of DVS clients \u2014 the veteran/client record, published only in de-identified/aggregate form (never as an identifia"
+    },
+    {
+     "file": "schemas/service-referral.json",
+     "title": "ServiceReferral",
+     "shared": false,
+     "desc": "A VetConnectNYC care-coordination referral \u2014 a request to connect a veteran to services (housing, benefits, VA claims, health, employment, e"
+    },
+    {
+     "file": "schemas/veteran-owned-business.json",
+     "title": "VeteranOwnedBusiness",
+     "shared": false,
+     "desc": "A veteran-owned business in the DVS directory \u2014 a geocoded listing carrying the full NYC geography spine and certifications. Canonical schem"
+    },
+    {
+     "file": "schemas/veteran-resource.json",
+     "title": "VeteranResource",
+     "shared": false,
+     "desc": "A veteran-serving resource / service provider in the DVS Resource Map \u2014 the curated directory DVS points veterans to (walk-in centers, servi"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/veteran-resources",
+     "op": "listVeteranResources",
+     "summary": "List / search DVS Resource Map entries",
+     "tags": [
+      "Resources"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/veteran-resources/{dvsResId}",
+     "op": "getVeteranResource",
+     "summary": "Get a resource by DVS_RES_ID",
+     "tags": [
+      "Resources"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/veteran-owned-businesses",
+     "op": "listVeteranOwnedBusinesses",
+     "summary": "Search NYC veteran-owned businesses",
+     "tags": [
+      "Businesses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/assistance-requests",
+     "op": "listAssistanceRequests",
+     "summary": "Search de-identified assistance-request records",
+     "tags": [
+      "AssistanceRequests"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/cases",
+     "op": "listCases",
+     "summary": "Search de-identified DVS case records",
+     "tags": [
+      "Cases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/client-statistics",
+     "op": "listClientStatistics",
+     "summary": "Aggregate / de-identified client demographics",
+     "tags": [
+      "Clients"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/referrals",
+     "op": "listReferrals",
+     "summary": "List the authenticated veteran's VetConnectNYC referrals",
+     "tags": [
+      "Referrals"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/referrals",
+     "op": "createReferral",
+     "summary": "Make a VetConnectNYC referral (connect a veteran to services)",
+     "tags": [
+      "Referrals"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/referrals/{referralId}",
+     "op": "getReferral",
+     "summary": "Get a VetConnectNYC referral",
+     "tags": [
+      "Referrals"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_veteran_resources",
+     "title": "Find Veteran Resources",
+     "desc": "Search the DVS Resource Map of veteran-serving resources and providers by borough, service, walk-in availability, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_veteran_resource",
+     "title": "Get Veteran Resource",
+     "desc": "Fetch a single DVS Resource Map entry by its DVS_RES_ID.",
+     "write": false
+    },
+    {
+     "name": "find_veteran_owned_businesses",
+     "title": "Find Veteran-Owned Businesses",
+     "desc": "Search the NYC veteran-owned business directory by borough, service, certification, council district, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_assistance_requests",
+     "title": "Find Assistance Requests",
+     "desc": "Search de-identified DVS assistance-request records (issue, engagement, referral-made-to, VetConnectNYC flag) by borough, fiscal year, issue, VetConnectNYC stat",
+     "write": false
+    },
+    {
+     "name": "find_cases",
+     "title": "Find Cases",
+     "desc": "Search de-identified DVS case records (service type, status, outcome) by service type, case status, or calendar year.",
+     "write": false
+    },
+    {
+     "name": "find_client_statistics",
+     "title": "Find Client Statistics",
+     "desc": "Return AGGREGATE / de-identified DVS client demographics (branch, service era, discharge type, race/ethnicity, gender, income band) by calendar year, branch, or",
+     "write": false
+    },
+    {
+     "name": "list_my_referrals",
+     "title": "List My Referrals",
+     "desc": "List the authenticated veteran's own VetConnectNYC care-coordination referrals and their status \u2014 today visible only inside the Combined Arms portal.",
+     "write": false
+    },
+    {
+     "name": "make_referral",
+     "title": "Make a Referral",
+     "desc": "Create a VetConnectNYC care-coordination referral (connect a veteran to services). NET-NEW workflow with no public API today \u2014 it lives only in the third-party ",
+     "write": true
+    }
+   ]
+  },
+  {
    "id": "dycd",
    "agency": "NYC Department of Youth and Community Development (DYCD)",
    "short": "NYC Youth & Community Dev (DYCD)",
@@ -7955,6 +9444,1483 @@
      "name": "apply_for_benefits",
      "title": "Apply for Benefits",
      "desc": "Submit an HRA public-benefit application (SNAP, Cash Assistance, Medicaid, and others). NET-NEW workflow with no public API today \u2014 it lives only in the ACCESS ",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "lpc",
+   "agency": "NYC Landmarks Preservation Commission (LPC)",
+   "short": "NYC Landmarks (LPC)",
+   "verb": "bind",
+   "platform": "NYC.gov 'Livesite' informational site (Akamai/nginx/Dynatrace) + Esri ArcGIS Online (Discover NYC Landmarks map) + Salesforce Experience Cloud (Portico permit portal)",
+   "tagline": "LPC's landmark record is wide open but scattered across three vendor silos \u2014 Socrata data, an ArcGIS map, and a Salesforce permit portal \u2014 with no owned API binding them and no way to file a permit through code.",
+   "accent": "#8a6a4a",
+   "netnew": "LandmarkPermitApplication \u2014 file a Certificate of Appropriateness / No Effect / Minor Work application (today Salesforce Portico only, no API)",
+   "findings": [
+    "LPC is a three-silo domain: an informational NYC.gov 'Livesite' site, the Discover NYC Landmarks map on Esri ArcGIS Online (nyclpc.maps.arcgis.com), and the Portico permit portal on Salesforce Experience Cloud (portico.lpc.nyc.gov/s/) \u2014 none of them an owned LPC API.",
+    "The reference data is unusually OPEN: 15 NYC Open Data datasets covering individual/interior/scenic landmarks, the Individual Landmark and Historic District Building Database (37 columns of architect/style/material/date), historic districts, designation and archaeology reports, complaints, and violations.",
+    "Unlike NYCHA, even the permit record is published \u2014 'LPC Permit Application Information' (dpm2-m9mq, 32 columns) is an open READ twin of issued Certificates of Appropriateness / No Effect. What is missing is the WRITE side.",
+    "Filing a new permit application (Certificate of Appropriateness / No Effect / Minor Work) has no API at all \u2014 it happens only inside the Salesforce Portico community or on paper. That is the net-new write surface.",
+    "Everything is keyed on LP_NUMBER and BBL/BIN, so the three silos can be bound into one owned, LP_NUMBER-keyed contract. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "15 LPC datasets; SODA /resource/<id>.json endpoints. The one real, open LPC API \u2014 designation, building, permit-history, and enforcement data."
+    },
+    {
+     "endpoint": "nyclpc.maps.arcgis.com",
+     "type": "web map application + feature services",
+     "owner": "LPC (on Esri ArcGIS Online)",
+     "public": "map UI; ArcGIS REST feature services",
+     "note": "Discover NYC Landmarks map. Backed by ArcGIS Online hosted feature services (queryable ArcGIS REST), but not documented or owned by LPC as an API."
+    },
+    {
+     "endpoint": "portico.lpc.nyc.gov/s/",
+     "type": "permit application portal (CRM community)",
+     "owner": "LPC (on Salesforce Experience Cloud)",
+     "public": "login-walled UI, no API",
+     "note": "Portico \u2014 file a Certificate of Appropriateness / No Effect / Minor Work application and track its status. Salesforce Lightning/Aura community (/s/ path, force.com, renderCtx/LSKey-c$ cookies); no JSON/OpenAPI surface."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/lpc",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only \u2014 about, designations, permit guide, hearings; Akamai edge, nginx, Dynatrace RUM, AWS ALB. No content API."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 15,
+    "schemas": 7,
+    "openapiOps": 11,
+    "mcpTools": 10,
+    "entities": 7
+   },
+   "entities": [
+    "Landmark",
+    "DesignatedBuilding",
+    "HistoricDistrict",
+    "PermitApplication",
+    "DesignationReport",
+    "ViolationOrder",
+    "LandmarkPermitApplication"
+   ],
+   "files": {
+    "fruit": "lpc/fruit.json",
+    "opendata": "lpc/opendata-lpc.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-lpc.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/lpc.yaml",
+    "mcp": "mcp/lpc-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "LPC \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Landmarks Preservation Commission (LPC) object schemas. Reconciles fields common to the L"
+    },
+    {
+     "file": "schemas/designated-building.json",
+     "title": "DesignatedBuilding",
+     "shared": false,
+     "desc": "A single designated building within an individual landmark or historic district \u2014 the architectural record beneath a Landmark. Canonical sch"
+    },
+    {
+     "file": "schemas/designation-report.json",
+     "title": "DesignationReport",
+     "shared": false,
+     "desc": "An LPC designation report (and the closely related archaeology report) \u2014 the published document that establishes a landmark's significance. "
+    },
+    {
+     "file": "schemas/historic-district.json",
+     "title": "HistoricDistrict",
+     "shared": false,
+     "desc": "A NYC historic district \u2014 an area designation covering many buildings. Canonical schema reconciling the 'Historic Districts' dataset (skyk-m"
+    },
+    {
+     "file": "schemas/landmark-permit-application.json",
+     "title": "LandmarkPermitApplication",
+     "shared": false,
+     "desc": "A NEW LPC permit application filed on a landmark or historic-district property \u2014 the everyday owner/architect transaction. NET-NEW: there is"
+    },
+    {
+     "file": "schemas/landmark.json",
+     "title": "Landmark",
+     "shared": false,
+     "desc": "A NYC landmark designation \u2014 an individual, interior, or scenic landmark site (and its calendared/heard status). Canonical schema reconcilin"
+    },
+    {
+     "file": "schemas/permit-application.json",
+     "title": "PermitApplication",
+     "shared": false,
+     "desc": "An issued/processed LPC permit application on a landmark or historic-district property \u2014 the READ twin of the permit record. Canonical schem"
+    },
+    {
+     "file": "schemas/violation-order.json",
+     "title": "ViolationOrder",
+     "shared": false,
+     "desc": "An LPC enforcement record on a landmark property \u2014 a violation (Notice of Violation / warning letter) or the complaint that preceded it. Can"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/landmarks",
+     "op": "listLandmarks",
+     "summary": "List / search landmark designations",
+     "tags": [
+      "Landmarks"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/landmarks/{lpNumber}",
+     "op": "getLandmark",
+     "summary": "Get a landmark by LP number",
+     "tags": [
+      "Landmarks"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/landmarks/{lpNumber}/buildings",
+     "op": "getLandmarkBuildings",
+     "summary": "List the designated buildings within a landmark or district",
+     "tags": [
+      "Landmarks"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/buildings",
+     "op": "listBuildings",
+     "summary": "Search the landmark & historic-district building database",
+     "tags": [
+      "Landmarks"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/historic-districts",
+     "op": "listHistoricDistricts",
+     "summary": "List / search historic districts",
+     "tags": [
+      "HistoricDistricts"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/designation-reports",
+     "op": "listDesignationReports",
+     "summary": "List designation and archaeology reports",
+     "tags": [
+      "Reports"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/permits",
+     "op": "listPermitApplications",
+     "summary": "Search issued/processed LPC permit history",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/violations",
+     "op": "listViolations",
+     "summary": "Search landmark complaints and violations",
+     "tags": [
+      "Violations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/permit-applications",
+     "op": "listMyPermitApplications",
+     "summary": "List the authenticated applicant's permit applications",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/permit-applications",
+     "op": "createPermitApplication",
+     "summary": "File a landmark permit application",
+     "tags": [
+      "Permits"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/permit-applications/{applicationId}",
+     "op": "getPermitApplication",
+     "summary": "Get a filed permit application",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_landmarks",
+     "title": "Find Landmarks",
+     "desc": "Search NYC landmark designations (individual, interior, scenic) by borough, type, site status, historic district, BBL, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_landmark",
+     "title": "Get Landmark",
+     "desc": "Fetch a landmark designation (status, dates, address, geography) by LP number.",
+     "write": false
+    },
+    {
+     "name": "get_landmark_buildings",
+     "title": "Get Landmark Buildings",
+     "desc": "List the designated buildings (with architect, style, materials, dates) within a landmark or historic district.",
+     "write": false
+    },
+    {
+     "name": "find_buildings",
+     "title": "Find Buildings",
+     "desc": "Search the LPC landmark & historic-district building database by borough, historic district, architect, style, or BBL.",
+     "write": false
+    },
+    {
+     "name": "find_historic_districts",
+     "title": "Find Historic Districts",
+     "desc": "List NYC historic districts by borough, site status, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_designation_reports",
+     "title": "Find Designation Reports",
+     "desc": "List LPC designation reports and archaeology reports by type, borough, LP number, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_permits",
+     "title": "Find Permit History",
+     "desc": "Search LPC's OPEN, issued permit history (Certificates of Appropriateness / No Effect and related permits) by borough, regulation type, work type, BBL, or perio",
+     "write": false
+    },
+    {
+     "name": "find_violations",
+     "title": "Find Violations",
+     "desc": "Search LPC landmark complaints and violations by borough, record type, status, or BBL.",
+     "write": false
+    },
+    {
+     "name": "list_my_permit_applications",
+     "title": "List My Permit Applications",
+     "desc": "List the authenticated applicant's own LPC permit applications and their status \u2014 today visible only inside the Salesforce Portico portal.",
+     "write": false
+    },
+    {
+     "name": "file_permit_application",
+     "title": "File a Permit Application",
+     "desc": "File an LPC landmark permit application (Certificate of Appropriateness, Certificate of No Effect, or Permit for Minor Work). NET-NEW workflow with no public AP",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "nycem",
+   "agency": "NYC Emergency Management (NYCEM)",
+   "short": "NYC Emergency Management (NYCEM)",
+   "verb": "syndicate",
+   "platform": "Informational site on shared NYC.gov Livesite (Akamai/nginx/Dynatrace); Notify NYC alerting rented from Everbridge (a858-nycnotify.nyc.gov + feeds.everbridge.net CAP RSS feed)",
+   "tagline": "NYCEM publishes its incidents, evacuation zones, and hazard plans on Open Data and even emits a real machine-readable Notify NYC CAP alert feed \u2014 but that feed and the alert subscription both live on a rented Everbridge platform, not an owned city API.",
+   "accent": "#c24b3b",
+   "netnew": "NotifyNYCSubscription \u2014 subscribe to Notify NYC emergency alerts by channel, location, and category through an owned write API",
+   "findings": [
+    "NYCEM is a rented-alerting domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus Notify NYC \u2014 the city's flagship emergency-alert product \u2014 running on a rented Everbridge mass-notification SaaS.",
+    "Unusually, the alert stream IS machine-readable: Notify NYC emits a genuine CAP (Common Alerting Protocol) RSS feed on Everbridge (feeds.everbridge.net), republishing each alert across ~14 languages with a per-message CAP XML document. But that feed \u2014 and the subscription \u2014 are vendor-hosted, not an owned city API.",
+    "Reference and situational data is well published: 13 NYC Open Data datasets covering emergency response incidents (107k views), hurricane inundation/evacuation zones and centers, the NYCEM Emergency Notifications archive, the Hazard Mitigation Plan, and community-preparedness programs (CERT, Ready NY, Partners in Preparedness).",
+    "The gap is the WRITE side: enrolling in Notify NYC (NotifyNYCSubscription) has no public API \u2014 a resident subscribes only through the Everbridge Member Portal, an SMS keyword, or a call to 311.",
+    "Live operational status \u2014 which cooling centers / emergency supply shelters are open right now \u2014 is published only through NYCEM's seasonal Finder tools, not a machine-readable status feed. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "feeds.everbridge.net/feeds/453003085617722/rss/rss.xml",
+     "type": "real-time alert feed (CAP RSS)",
+     "owner": "NYCEM on Everbridge (rented SaaS)",
+     "public": true,
+     "note": "Notify NYC Common Alerting Protocol RSS feed. Real, machine-readable, multilingual (~14 languages), each item linking a per-message CAP XML enclosure. The one live NYCEM alert API \u2014 but vendor-hosted, read-only, no owned subscription write."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "13 NYCEM datasets; SODA /resource/<id>.json endpoints. Incidents, evacuation zones/centers, notifications archive, hazard mitigation, CERT / Ready NY. Reference & situational data only."
+    },
+    {
+     "endpoint": "a858-nycnotify.nyc.gov/notifynyc",
+     "type": "alert subscription portal (Everbridge Member Portal)",
+     "owner": "NYCEM (Oracle-free; Everbridge)",
+     "public": "web UI, no write API",
+     "note": "where residents enroll in Notify NYC; server-rendered, no public JSON/OpenAPI subscribe endpoint. Redirects deflect probes for a subscription API."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/em",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only \u2014 Ready NY, Know Your Zone, hazards. Akamai edge, nginx, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "finder.nyc.gov (cooling centers / evacuation)",
+     "type": "seasonal Finder map",
+     "owner": "NYC (OTI)",
+     "public": "web UI",
+     "note": "live cooling-center / evacuation-center openings; map UI, no documented status API."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 13,
+    "schemas": 7,
+    "openapiOps": 9,
+    "mcpTools": 9,
+    "entities": 7
+   },
+   "entities": [
+    "EmergencyNotification",
+    "HurricaneEvacuationZone",
+    "EvacuationCenter",
+    "EmergencyIncident",
+    "MitigationAction",
+    "PreparednessResource",
+    "NotifyNYCSubscription"
+   ],
+   "files": {
+    "fruit": "nycem/fruit.json",
+    "opendata": "nycem/opendata-nycem.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-nycem.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/nycem.yaml",
+    "mcp": "mcp/nycem-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYCEM \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Emergency Management (NYCEM) object schemas. Reconciles fields common to the NYCEM Open D"
+    },
+    {
+     "file": "schemas/emergency-incident.json",
+     "title": "EmergencyIncident",
+     "shared": false,
+     "desc": "An emergency response incident coordinated or logged by NYC Emergency Management \u2014 structural collapses, utility outages, hazardous conditio"
+    },
+    {
+     "file": "schemas/emergency-notification.json",
+     "title": "EmergencyNotification",
+     "shared": false,
+     "desc": "A Notify NYC emergency alert / advisory message (NotifyNYCMessage / EmergencyAlert). Canonical schema reconciling two live surfaces: the 'NY"
+    },
+    {
+     "file": "schemas/evacuation-center.json",
+     "title": "EvacuationCenter",
+     "shared": false,
+     "desc": "A NYC hurricane evacuation center \u2014 where residents in an evacuated zone can go for shelter and services (many double as cooling centers and"
+    },
+    {
+     "file": "schemas/hurricane-evacuation-zone.json",
+     "title": "HurricaneEvacuationZone",
+     "shared": false,
+     "desc": "A NYC hurricane / coastal-storm evacuation zone polygon \u2014 the geospatial unit that tells a resident whether and when they must evacuate. Can"
+    },
+    {
+     "file": "schemas/mitigation-action.json",
+     "title": "MitigationAction",
+     "shared": false,
+     "desc": "A single action in NYC's Hazard Mitigation Plan \u2014 a long-range project or policy that reduces the city's exposure to a named hazard (floodin"
+    },
+    {
+     "file": "schemas/notify-nyc-subscription.json",
+     "title": "NotifyNYCSubscription",
+     "shared": false,
+     "desc": "A resident's subscription to Notify NYC emergency alerts \u2014 the everyday NYCEM transaction. NET-NEW: there is NO public write API for enrolli"
+    },
+    {
+     "file": "schemas/preparedness-resource.json",
+     "title": "PreparednessResource",
+     "shared": false,
+     "desc": "A community-preparedness resource run or convened by NYC Emergency Management \u2014 a Community Emergency Response Team (CERT), a Ready NY outre"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/notifications",
+     "op": "listNotifications",
+     "summary": "List / search Notify NYC emergency notifications",
+     "tags": [
+      "Notifications"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/notifications/{recordId}",
+     "op": "getNotification",
+     "summary": "Get a single Notify NYC notification",
+     "tags": [
+      "Notifications"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/evacuation-zones",
+     "op": "listEvacuationZones",
+     "summary": "List hurricane evacuation zones",
+     "tags": [
+      "EvacuationZones"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/evacuation-centers",
+     "op": "listEvacuationCenters",
+     "summary": "List hurricane evacuation centers",
+     "tags": [
+      "EvacuationZones"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/incidents",
+     "op": "listIncidents",
+     "summary": "Search emergency response incidents",
+     "tags": [
+      "Incidents"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/mitigation-actions",
+     "op": "listMitigationActions",
+     "summary": "Search Hazard Mitigation Plan actions",
+     "tags": [
+      "Mitigation"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/preparedness-resources",
+     "op": "listPreparednessResources",
+     "summary": "List community preparedness resources (CERT, Ready NY, Partners)",
+     "tags": [
+      "Preparedness"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/subscriptions",
+     "op": "createNotifyNycSubscription",
+     "summary": "Subscribe to Notify NYC alerts (create a subscription)",
+     "tags": [
+      "Subscriptions"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/subscriptions/{subscriptionId}",
+     "op": "getNotifyNycSubscription",
+     "summary": "Get the authenticated subscriber's Notify NYC subscription",
+     "tags": [
+      "Subscriptions"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_notifications",
+     "title": "Find Notifications",
+     "desc": "Search Notify NYC emergency notifications by type, category, language, borough, and/or time window \u2014 from the Open Data archive and the real-time CAP feed.",
+     "write": false
+    },
+    {
+     "name": "get_notification",
+     "title": "Get Notification",
+     "desc": "Fetch a single Notify NYC notification (title, body, category, language, CAP link) by record id.",
+     "write": false
+    },
+    {
+     "name": "find_evacuation_zones",
+     "title": "Find Evacuation Zones",
+     "desc": "List NYC hurricane / coastal-storm evacuation zones (1 highest-risk through 6), optionally by zone or borough \u2014 to answer 'what is my evacuation zone?'.",
+     "write": false
+    },
+    {
+     "name": "find_evacuation_centers",
+     "title": "Find Evacuation Centers",
+     "desc": "List NYC hurricane evacuation centers (many also open as cooling centers / emergency supply shelters) by borough, ZIP, accessibility, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_incidents",
+     "title": "Find Incidents",
+     "desc": "Search NYCEM emergency response incidents by type, borough, active status, or date window.",
+     "write": false
+    },
+    {
+     "name": "find_mitigation_actions",
+     "title": "Find Mitigation Actions",
+     "desc": "Search NYC Hazard Mitigation Plan actions by hazard addressed, category, status, or managing agency.",
+     "write": false
+    },
+    {
+     "name": "find_preparedness_resources",
+     "title": "Find Preparedness Resources",
+     "desc": "List NYCEM community-preparedness resources \u2014 CERT teams, Ready NY events, and Partners in Preparedness \u2014 by type, borough, or date window.",
+     "write": false
+    },
+    {
+     "name": "subscribe_notify_nyc",
+     "title": "Subscribe to Notify NYC",
+     "desc": "Create a Notify NYC alert subscription (subscribe to emergency alerts). NET-NEW workflow with no public API today \u2014 it lives only in the rented Everbridge Membe",
+     "write": true
+    },
+    {
+     "name": "get_subscription",
+     "title": "Get My Subscription",
+     "desc": "Read the authenticated subscriber's own Notify NYC subscription (channels, locations, categories, status) \u2014 today visible only inside the Everbridge Member Port",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "ocme",
+   "agency": "NYC Office of Chief Medical Examiner (OCME)",
+   "short": "NYC Medical Examiner (OCME)",
+   "verb": "instrument",
+   "platform": "NYC.gov 'Livesite' shared chassis (Akamai + nginx + AWS ALB + Dynatrace) \u2014 informational only; no OCME application. Transactions run on paper (notarized) forms + NYC 311.",
+   "tagline": "The least-instrumented, most privacy-constrained agency: one stale dataset, no application, and a core object that can never be published.",
+   "accent": "#6a6a6a",
+   "netnew": "DeathRecordRequest \u2014 request and track a decedent's medical-examiner casefile record/report",
+   "findings": [
+    "OCME is the most data-dark agency assessed: exactly ONE dataset carries its NYC Open Data label \u2014 'Monthly Indicators' (8r6c-ydwk), a Mayor's Management Report passthrough whose real months run only July 2015 - May 2016. It is not casework.",
+    "There is no OCME application at all \u2014 no portal, no CRM, no login to fingerprint. The records-request service layer is a notarized paper form and NYC 311, with a three-to-six-month turnaround.",
+    "The core object \u2014 a death investigation \u2014 is confidential by law and is never published, not per-decedent and not in aggregate. Any responsible surface must stay non-identifying.",
+    "What little is public is federated elsewhere: missing-persons visibility lives in federal NamUs, and death certificates are issued by DOHMH. OCME owns almost none of its own digital footprint.",
+    "Net-new write surface: request a decedent's medical-examiner casefile record (DeathRecordRequest) \u2014 the core family transaction, today a notarized PDF plus a 311 case. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Exactly one OCME dataset \u2014 'Monthly Indicators' (8r6c-ydwk), a stale MMR passthrough (real months Jul 2015 - May 2016). Not casework. The only OCME-labeled machine-readable asset."
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "type": "citywide request portal",
+     "owner": "NYC (311 / OTI)",
+     "public": "UI only, no OCME API",
+     "note": "The de facto records-request/service channel for OCME; linked from every OCME service page. Not an OCME system."
+    },
+    {
+     "endpoint": "namus.nij.ojp.gov",
+     "type": "federal missing-persons system",
+     "owner": "US DOJ / NIJ",
+     "public": "UI",
+     "note": "Where OCME's Identification Unit surfaces missing-persons and unidentified-decedent cases. OCME participates; does not own it."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/ocme",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "Content only; Akamai edge, nginx, AWS ALB, Dynatrace RUM. No content API and no application behind it."
+    }
+   ],
+   "counts": {
+    "fruit": 6,
+    "opendata": 1,
+    "schemas": 6,
+    "openapiOps": 8,
+    "mcpTools": 8,
+    "entities": 6
+   },
+   "entities": [
+    "MonthlyIndicator",
+    "CaseStatistics",
+    "ForensicService",
+    "FamilyServicesCenter",
+    "MissingPerson",
+    "DeathRecordRequest"
+   ],
+   "files": {
+    "fruit": "ocme/fruit.json",
+    "opendata": "ocme/opendata-ocme.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-ocme.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/ocme.yaml",
+    "mcp": "mcp/ocme-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "OCME \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Office of Chief Medical Examiner (OCME) object schemas. Reconciles fields common to the o"
+    },
+    {
+     "file": "schemas/case-statistics.json",
+     "title": "CaseStatistics",
+     "shared": false,
+     "desc": "An AGGREGATE, non-identifying summary of OCME death-investigation casework \u2014 counts of cases by period, borough, and manner of death (the st"
+    },
+    {
+     "file": "schemas/death-record-request.json",
+     "title": "DeathRecordRequest",
+     "shared": false,
+     "desc": "A request for a decedent's OCME medical-examiner casefile record or report (autopsy report, cause-of-death, or related casefile documents). "
+    },
+    {
+     "file": "schemas/family-services-center.json",
+     "title": "FamilyServicesCenter",
+     "shared": false,
+     "desc": "An OCME Family Services Center, Forensic Pathology Center, or specialized facility (Charles S. Hirsch Center for Forensic Sciences, World Tr"
+    },
+    {
+     "file": "schemas/forensic-service.json",
+     "title": "ForensicService",
+     "shared": false,
+     "desc": "A forensic discipline or service line offered by OCME \u2014 Forensic Pathology, the Laboratories (Forensic Biology/DNA, Forensic Toxicology), Fo"
+    },
+    {
+     "file": "schemas/missing-person.json",
+     "title": "MissingPerson",
+     "shared": false,
+     "desc": "A public missing-persons or unidentified-decedent case surfaced through OCME's Identification Unit and the federal NamUs system (namus.nij.o"
+    },
+    {
+     "file": "schemas/monthly-indicator.json",
+     "title": "MonthlyIndicator",
+     "shared": false,
+     "desc": "A single OCME performance indicator with a time series of monthly values \u2014 the ONLY dataset filed under the OCME agency label on NYC Open Da"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/indicators",
+     "op": "listIndicators",
+     "summary": "List OCME monthly performance indicators",
+     "tags": [
+      "Indicators"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/case-statistics",
+     "op": "listCaseStatistics",
+     "summary": "Aggregate death-investigation statistics (non-identifying)",
+     "tags": [
+      "Statistics"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/services",
+     "op": "listServices",
+     "summary": "List OCME forensic services / disciplines",
+     "tags": [
+      "Services"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/family-services-centers",
+     "op": "listFamilyServicesCenters",
+     "summary": "List family services centers and forensic pathology centers",
+     "tags": [
+      "Locations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/missing-persons",
+     "op": "listMissingPersons",
+     "summary": "List NamUs missing-persons and unidentified-decedent cases",
+     "tags": [
+      "MissingPersons"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/record-requests",
+     "op": "listRecordRequests",
+     "summary": "List the authenticated requester's death record requests",
+     "tags": [
+      "RecordsRequests"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/record-requests",
+     "op": "createRecordRequest",
+     "summary": "Request a decedent's casefile record (create a death record request)",
+     "tags": [
+      "RecordsRequests"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/record-requests/{requestId}",
+     "op": "getRecordRequest",
+     "summary": "Get a death record request",
+     "tags": [
+      "RecordsRequests"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "list_indicators",
+     "title": "List Indicators",
+     "desc": "List OCME monthly performance indicators (the one dataset filed under OCME on NYC Open Data). Historical MMR snapshot.",
+     "write": false
+    },
+    {
+     "name": "find_case_statistics",
+     "title": "Find Case Statistics",
+     "desc": "Return AGGREGATE, non-identifying death-investigation statistics \u2014 counts of cases by period, borough, and manner of death (Natural/Accident/Homicide/Suicide/Un",
+     "write": false
+    },
+    {
+     "name": "find_services",
+     "title": "Find Forensic Services",
+     "desc": "List OCME forensic services and disciplines \u2014 Forensic Pathology, Forensic Biology (DNA), Forensic Toxicology, Forensic Anthropology, Identification / Missing P",
+     "write": false
+    },
+    {
+     "name": "find_family_services_centers",
+     "title": "Find Family Services Centers",
+     "desc": "List OCME family services centers and forensic pathology centers by borough or type (address, phone, hours).",
+     "write": false
+    },
+    {
+     "name": "find_missing_persons",
+     "title": "Find Missing Persons",
+     "desc": "List public NamUs missing-persons and unidentified-decedent cases associated with OCME by type, status, or borough. Public, non-identifying listings meant to ai",
+     "write": false
+    },
+    {
+     "name": "list_my_record_requests",
+     "title": "List My Record Requests",
+     "desc": "List the authenticated requester's own death record requests and their status \u2014 today only trackable by phone or mail.",
+     "write": false
+    },
+    {
+     "name": "get_record_request",
+     "title": "Get Record Request",
+     "desc": "Fetch a single death record request and its current status by tracking number.",
+     "write": false
+    },
+    {
+     "name": "request_record",
+     "title": "Request a Casefile Record",
+     "desc": "Submit a request for a decedent's OCME medical-examiner casefile record (autopsy report, cause of death, toxicology, or full casefile). NET-NEW workflow with no",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "oti",
+   "agency": "NYC Office of Technology & Innovation (OTI)",
+   "short": "NYC Technology & Innovation (OTI)",
+   "verb": "productize",
+   "platform": "NYC.gov 'Livesite' informational site (Akamai + nginx + mPulse + Dynatrace); OTI OPERATES NYC Open Data (Socrata/Tyler), the api.nyc.gov gateway (Microsoft Azure API Management; GeoClient/GeoSearch), and the 311 pipeline.",
+   "tagline": "The agency that runs the city's data infrastructure, made into a first-class API product.",
+   "accent": "#2f9e8f",
+   "netnew": "One owned, unified gateway + catalog API \u2014 plus two write surfaces: register a dataset, and request an api.nyc.gov gateway key.",
+   "findings": [
+    "OTI is the META case: it is not an agency with data trapped in HTML \u2014 it OPERATES the city's data infrastructure. It runs NYC Open Data (data.cityofnewyork.us on Socrata/Tyler), the api.nyc.gov gateway (Microsoft Azure API Management, hosting GeoClient and GeoSearch), NYC.gov itself, LinkNYC, the municipal broadband program, public Wi-Fi, and the 311 pipeline.",
+    "As a publisher it is enormous: 221 datasets under the 'Office of Technology and Innovation (OTI)' label \u2014 including the most-viewed dataset in the entire city (311 Service Requests, erm2-nwe9, 1.26M+ views), plus the catalog OF ITSELF (the LL251 Published Data Asset Inventory 5tqd-u88y and the Open Data Release Tracker qj2z-ibhs), LinkNYC, broadband, Wi-Fi, planimetric base-map, and .nyc domain data.",
+    "The api.nyc.gov gateway is real and running (Azure APIM) but has no owned, machine-readable catalog of its services and no self-service key API \u2014 GeoClient returns HTTP 401 'missing subscription key' with keys provisioned only through a developer portal.",
+    "The reframe is unique: because the data is already open and the gateway already exists, the modernization is not to LIBERATE data but to PRODUCTIZE the operator role \u2014 a single owned gateway + catalog API that lets a developer or agent discover a dataset, discover a gateway service, geocode an address, and register an asset through one contract. OTI is the natural home for the project's nyc-commons + registry ideas.",
+    "Net-new write surfaces: register a dataset to the catalog, and request an api.nyc.gov gateway key \u2014 the two things a platform operator should offer programmatically but today does only through internal or portal workflows. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "api.nyc.gov (GeoClient /geo/geoclient/v1, GeoSearch)",
+     "type": "API gateway",
+     "owner": "NYC OTI (on Microsoft Azure API Management)",
+     "public": "key-gated (401 without subscription key)",
+     "note": "The citywide API gateway OTI operates. Request-Context appId + 'missing subscription key' fingerprint Azure APIM. Hosts GeoClient (address/BBL/BIN geocoding) and other agency APIs. No owned catalog of services, no self-service key API."
+    },
+    {
+     "endpoint": "geosearch.planninglabs.nyc/v2/search",
+     "type": "geocoding API",
+     "owner": "NYC (DCP Planning Labs; wraps OTI GeoSupport)",
+     "public": true,
+     "note": "Open Pelias/Mapzen geocoder over NYC GeoSupport \u2014 returns coordinates + geography spine. The open twin of GeoClient. HTTP 200, no key."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA + Discovery)",
+     "type": "open data API",
+     "owner": "NYC OTI (Socrata / Tyler Technologies)",
+     "public": true,
+     "note": "The open-data platform OTI operates for the WHOLE city. SODA /resource/<id>.json per dataset + the Socrata Discovery/catalog API. OTI itself publishes 221 datasets, incl. the catalog of the entire corpus."
+    },
+    {
+     "endpoint": "www.nyc.gov/content/oti",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform ('Livesite' v22)",
+     "public": "html",
+     "note": "Content only \u2014 About OTI, services, initiatives. Akamai edge, nginx, mPulse + Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "on1.nyc.gov",
+     "type": "citywide account / SSO",
+     "owner": "NYC OTI",
+     "public": "login",
+     "note": "NYC.gov ID / citywide identity \u2014 itself an OTI-run platform."
+    },
+    {
+     "endpoint": "Akamai edge",
+     "type": "CDN",
+     "owner": "Akamai",
+     "public": "vendor",
+     "note": "server-timing ak_p / mPulse on the OTI site."
+    },
+    {
+     "endpoint": "Dynatrace RUM",
+     "type": "monitoring beacon",
+     "owner": "Dynatrace",
+     "public": "vendor",
+     "note": "x-oneagent-js-injection real-user monitoring."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 221,
+    "schemas": 6,
+    "openapiOps": 13,
+    "mcpTools": 11,
+    "entities": 6
+   },
+   "entities": [
+    "OpenDataset",
+    "APIGatewayService",
+    "LinkNYCKiosk",
+    "BroadbandAsset",
+    "WiFiHotspot",
+    "ServiceRequest"
+   ],
+   "files": {
+    "fruit": "oti/fruit.json",
+    "opendata": "oti/opendata-oti.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-oti.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/oti.yaml",
+    "mcp": "mcp/oti-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "OTI \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Office of Technology & Innovation (OTI) object schemas. OTI is the citywide platform oper"
+    },
+    {
+     "file": "schemas/api-gateway-service.json",
+     "title": "APIGatewayService",
+     "shared": false,
+     "desc": "A service published on the OTI-operated api.nyc.gov citywide API gateway (Microsoft Azure API Management). NET-NEW as a first-class resource"
+    },
+    {
+     "file": "schemas/broadband-asset.json",
+     "title": "BroadbandAsset",
+     "shared": false,
+     "desc": "A building/site broadband-infrastructure asset (the BroadbandMetric entity) from OTI's municipal-broadband program. Canonical schema reconci"
+    },
+    {
+     "file": "schemas/linknyc-kiosk.json",
+     "title": "LinkNYCKiosk",
+     "shared": false,
+     "desc": "A LinkNYC public Wi-Fi / communications kiosk operated under the OTI franchise. Canonical schema reconciling 'LinkNYC Kiosk Locations' (s4kf"
+    },
+    {
+     "file": "schemas/open-dataset.json",
+     "title": "OpenDataset",
+     "shared": false,
+     "desc": "A NYC Open Data catalog entry \u2014 the META entity. OTI operates the citywide open-data platform (data.cityofnewyork.us on Socrata/Tyler), and "
+    },
+    {
+     "file": "schemas/service-request.json",
+     "title": "ServiceRequest",
+     "shared": false,
+     "desc": "A NYC 311 service request \u2014 the single most-viewed dataset in all of NYC Open Data (erm2-nwe9, 1.26M+ views), operated by OTI on behalf of 3"
+    },
+    {
+     "file": "schemas/wifi-hotspot.json",
+     "title": "WiFiHotspot",
+     "shared": false,
+     "desc": "A public Wi-Fi hotspot in the citywide inventory OTI maintains. Canonical schema reconciling 'NYC Wi-Fi Hotspot Locations' (yjub-udmw, 38 co"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/datasets",
+     "op": "listDatasets",
+     "summary": "Search the NYC Open Data catalog",
+     "tags": [
+      "Catalog"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/datasets",
+     "op": "registerDataset",
+     "summary": "Register / publish a dataset to the catalog",
+     "tags": [
+      "Catalog"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/datasets/{uid}",
+     "op": "getDataset",
+     "summary": "Get a dataset by UID",
+     "tags": [
+      "Catalog"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/gateway/services",
+     "op": "listGatewayServices",
+     "summary": "List services published on the api.nyc.gov gateway",
+     "tags": [
+      "Gateway"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/gateway/services/{serviceId}",
+     "op": "getGatewayService",
+     "summary": "Get a gateway service by id",
+     "tags": [
+      "Gateway"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/gateway/keys",
+     "op": "requestApiKey",
+     "summary": "Request an api.nyc.gov gateway subscription key",
+     "tags": [
+      "Gateway"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/geo/search",
+     "op": "geocode",
+     "summary": "Geocode an address (GeoClient / GeoSearch)",
+     "tags": [
+      "Geocoding"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/linknyc/kiosks",
+     "op": "listKiosks",
+     "summary": "List / search LinkNYC kiosks",
+     "tags": [
+      "LinkNYC"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/linknyc/kiosks/{siteId}",
+     "op": "getKiosk",
+     "summary": "Get a LinkNYC kiosk by Site ID",
+     "tags": [
+      "LinkNYC"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/broadband/assets",
+     "op": "listBroadbandAssets",
+     "summary": "Search municipal-broadband infrastructure assets",
+     "tags": [
+      "Broadband"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/wifi-hotspots",
+     "op": "listWifiHotspots",
+     "summary": "Search the citywide public Wi-Fi hotspot inventory",
+     "tags": [
+      "WiFi"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/service-requests",
+     "op": "listServiceRequests",
+     "summary": "Search 311 service requests",
+     "tags": [
+      "ServiceRequests"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/service-requests/{uniqueKey}",
+     "op": "getServiceRequest",
+     "summary": "Get a 311 service request by Unique Key",
+     "tags": [
+      "ServiceRequests"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "search_datasets",
+     "title": "Search Datasets",
+     "desc": "Search the NYC Open Data catalog OTI operates by agency, category, type, release status, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_dataset",
+     "title": "Get Dataset",
+     "desc": "Fetch a NYC Open Data catalog record by its Socrata four-by-four UID (e.g. 'erm2-nwe9').",
+     "write": false
+    },
+    {
+     "name": "register_dataset",
+     "title": "Register Dataset",
+     "desc": "Register / publish a new data asset to the OTI-operated catalog (LL251 inventory). NET-NEW write workflow with no public API today. Mutates state and requires a",
+     "write": true
+    },
+    {
+     "name": "list_gateway_services",
+     "title": "List Gateway Services",
+     "desc": "List services published on the api.nyc.gov gateway (Azure API Management) OTI operates \u2014 GeoClient, GeoSearch, and other agency APIs \u2014 by agency, category, or s",
+     "write": false
+    },
+    {
+     "name": "get_gateway_service",
+     "title": "Get Gateway Service",
+     "desc": "Fetch one api.nyc.gov gateway service by id (e.g. 'geoclient', 'geosearch'), including auth type and how to obtain a key.",
+     "write": false
+    },
+    {
+     "name": "request_api_key",
+     "title": "Request API Key",
+     "desc": "Request an api.nyc.gov gateway subscription key for a service. NET-NEW write workflow \u2014 today keys are provisioned through a developer portal, not an API, and a",
+     "write": true
+    },
+    {
+     "name": "geocode",
+     "title": "Geocode Address",
+     "desc": "Resolve a NYC address or intersection to coordinates and the geography spine (BBL, BIN, borough, community district, council district) via the OTI-operated GeoC",
+     "write": false
+    },
+    {
+     "name": "find_linknyc_kiosks",
+     "title": "Find LinkNYC Kiosks",
+     "desc": "Search LinkNYC public Wi-Fi / communications kiosks by borough, installation status, kiosk type, or live Wi-Fi status.",
+     "write": false
+    },
+    {
+     "name": "find_broadband_assets",
+     "title": "Find Broadband Assets",
+     "desc": "Search municipal-broadband infrastructure assets (fiber/wireless readiness of buildings in target neighborhoods) by borough, asset class, fiber connectivity, or",
+     "write": false
+    },
+    {
+     "name": "find_wifi_hotspots",
+     "title": "Find Wi-Fi Hotspots",
+     "desc": "Search the citywide public Wi-Fi hotspot inventory (libraries, parks, LinkNYC, partner networks) by borough, provider, or type.",
+     "write": false
+    },
+    {
+     "name": "find_service_requests",
+     "title": "Find 311 Service Requests",
+     "desc": "Query the citywide 311 service-request pipeline OTI operates (the single most-viewed dataset in NYC Open Data) by borough, agency, problem type, status, channel",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "sbs",
+   "agency": "NYC Department of Small Business Services (SBS)",
+   "short": "NYC Small Business Services (SBS)",
+   "verb": "navigate",
+   "platform": "Informational site on the NYC.gov shared 'Livesite' chassis (Akamai/nginx/Dynatrace); the transactional MyCity Business portal on Spring (Java) + Adobe AEM + jQuery/Handlebars, hosting the Step-by-Step licensing wizard and certification/enrollment flows.",
+   "tagline": "SBS publishes who got certified and where to hire, but hides the navigation \u2014 the wizard, eligibility, and certification that are the agency's real job.",
+   "accent": "#c9702a",
+   "netnew": "MWBECertificationApplication \u2014 apply for M/WBE (also EBE/LBE) certification; no API today, only the MyCity Business portal.",
+   "findings": [
+    "SBS is a split domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a business service portal \u2014 MyCity Business (nyc-business.nyc.gov) \u2014 a stateful Spring/Adobe-AEM application with no API.",
+    "The program data is reasonably OPEN: 28 NYC Open Data datasets covering the SBS Certified Business List (M/WBE, 56 columns), Business Improvement Districts (directory, maps, and a 64-column FY24 trends report), Workforce1 recruitment events and job listings, service-center locations, and business-incentive rolls.",
+    "But SBS is a NAVIGATOR agency, and its navigation is locked: the Step-by-Step licensing wizard (which licenses/permits does my business need?), incentive eligibility, and the M/WBE certification and Workforce1 enrollment flows live only inside the session-bound MyCity Business portal \u2014 none has a machine-readable surface.",
+    "The public 'SBS Certified Business List' is the shadow of a closed flow: you can read who got certified, but there is no API to apply.",
+    "Net-new write surface: apply for M/WBE certification (MWBECertificationApplication) \u2014 the flagship SBS business transaction, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "28 SBS datasets; SODA /resource/<id>.json endpoints. The one real, open SBS API \u2014 program/directory data only."
+    },
+    {
+     "endpoint": "nyc-business.nyc.gov/nycbusiness",
+     "type": "business service portal",
+     "owner": "NYC SBS/OTI (Spring + Adobe AEM)",
+     "public": "session-walled UI, no API",
+     "note": "MyCity Business \u2014 Step-by-Step licensing wizard (/nycbusiness/wizard), incentive/eligibility lookups, M/WBE certification and Workforce1 enrollment. Spring SESSION cookie, jQuery/Handlebars, JavaScript-only, no JSON/OpenAPI."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/sbs",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "universal-editor-service.adobe.io",
+     "type": "CMS authoring API",
+     "owner": "Adobe (AEM Universal Editor)",
+     "public": "vendor",
+     "note": "loaded by MyCity Business (cors.js) for content authoring."
+    }
+   ],
+   "counts": {
+    "fruit": 9,
+    "opendata": 28,
+    "schemas": 7,
+    "openapiOps": 11,
+    "mcpTools": 10,
+    "entities": 7
+   },
+   "entities": [
+    "CertifiedBusiness",
+    "BusinessImprovementDistrict",
+    "WorkforceEvent",
+    "JobListing",
+    "ServiceLocation",
+    "BusinessIncentive",
+    "MWBECertificationApplication"
+   ],
+   "files": {
+    "fruit": "sbs/fruit.json",
+    "opendata": "sbs/opendata-sbs.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-sbs.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/sbs.yaml",
+    "mcp": "mcp/sbs-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "SBS \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Small Business Services (SBS) object schemas. Reconciles fields common to t"
+    },
+    {
+     "file": "schemas/business-improvement-district.json",
+     "title": "BusinessImprovementDistrict",
+     "shared": false,
+     "desc": "A NYC Business Improvement District (BID) \u2014 a defined commercial area whose property owners fund supplemental services (sanitation, public s"
+    },
+    {
+     "file": "schemas/business-incentive.json",
+     "title": "BusinessIncentive",
+     "shared": false,
+     "desc": "A record of a business that received an SBS-administered incentive or benefit \u2014 energy cost savings, tax abatement, or acceleration assistan"
+    },
+    {
+     "file": "schemas/certified-business.json",
+     "title": "CertifiedBusiness",
+     "shared": false,
+     "desc": "A business certified by NYC SBS \u2014 the M/WBE, EBE, LBE, or EO50 certified vendor. Canonical schema reconciling the 'SBS Certified Business Li"
+    },
+    {
+     "file": "schemas/job-listing.json",
+     "title": "JobListing",
+     "shared": false,
+     "desc": "A job opening posted through SBS Workforce1. Canonical schema reconciling the 'Workforce1 Job Listing' dataset (ay9k-vznm, 22 columns). Boro"
+    },
+    {
+     "file": "schemas/mwbe-certification-application.json",
+     "title": "MWBECertificationApplication",
+     "shared": false,
+     "desc": "An application for NYC SBS business certification (M/WBE, EBE, or LBE) \u2014 the flagship SBS business transaction. NET-NEW: there is NO public "
+    },
+    {
+     "file": "schemas/service-location.json",
+     "title": "ServiceLocation",
+     "shared": false,
+     "desc": "An SBS storefront where businesses and jobseekers get in-person help \u2014 an NYC Business Solutions Center or a Workforce1 Career Center. Canon"
+    },
+    {
+     "file": "schemas/workforce-event.json",
+     "title": "WorkforceEvent",
+     "shared": false,
+     "desc": "A Workforce1 recruitment or hiring event run by SBS to connect jobseekers with employers. Canonical schema reconciling the 'Workforce1 Recru"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/certified-businesses",
+     "op": "listCertifiedBusinesses",
+     "summary": "List / search SBS certified businesses",
+     "tags": [
+      "CertifiedBusinesses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/certified-businesses/{accountNumber}",
+     "op": "getCertifiedBusiness",
+     "summary": "Get a certified business by SBS account number",
+     "tags": [
+      "CertifiedBusinesses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/business-improvement-districts",
+     "op": "listBusinessImprovementDistricts",
+     "summary": "List Business Improvement Districts",
+     "tags": [
+      "BIDs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/business-improvement-districts/{orgId}",
+     "op": "getBusinessImprovementDistrict",
+     "summary": "Get a Business Improvement District by id",
+     "tags": [
+      "BIDs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/workforce-events",
+     "op": "listWorkforceEvents",
+     "summary": "List Workforce1 recruitment / hiring events",
+     "tags": [
+      "Workforce"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/job-listings",
+     "op": "listJobListings",
+     "summary": "Search Workforce1 job listings",
+     "tags": [
+      "Workforce"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/service-locations",
+     "op": "listServiceLocations",
+     "summary": "List NYC Business Solutions Centers and Workforce1 Career Centers",
+     "tags": [
+      "Locations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/incentives",
+     "op": "listBusinessIncentives",
+     "summary": "Search SBS-administered business incentive records",
+     "tags": [
+      "Incentives"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/mwbe-applications",
+     "op": "listMwbeApplications",
+     "summary": "List the authenticated owner's certification applications",
+     "tags": [
+      "Certification"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/mwbe-applications",
+     "op": "createMwbeApplication",
+     "summary": "Apply for M/WBE certification (submit an application)",
+     "tags": [
+      "Certification"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/mwbe-applications/{applicationId}",
+     "op": "getMwbeApplication",
+     "summary": "Get a certification application",
+     "tags": [
+      "Certification"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_certified_businesses",
+     "title": "Find Certified Businesses",
+     "desc": "Search SBS-certified M/WBE, EBE, LBE, and EO50 businesses by borough, certification type, NAICS industry, ethnicity, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_certified_business",
+     "title": "Get Certified Business",
+     "desc": "Fetch a single SBS-certified business (certification, industry, capacity, contact, geography) by its SBS account number.",
+     "write": false
+    },
+    {
+     "name": "find_business_improvement_districts",
+     "title": "Find Business Improvement Districts",
+     "desc": "List NYC Business Improvement Districts (BIDs) by borough or neighborhood, with directory and trends detail.",
+     "write": false
+    },
+    {
+     "name": "get_business_improvement_district",
+     "title": "Get Business Improvement District",
+     "desc": "Fetch a single Business Improvement District (profile, finances, geography) by its organization id.",
+     "write": false
+    },
+    {
+     "name": "find_workforce_events",
+     "title": "Find Workforce Events",
+     "desc": "List Workforce1 recruitment and hiring events by borough, job family, or date window.",
+     "write": false
+    },
+    {
+     "name": "find_job_listings",
+     "title": "Find Job Listings",
+     "desc": "Search Workforce1 job listings by borough, sector, position type, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_service_locations",
+     "title": "Find Service Locations",
+     "desc": "List NYC Business Solutions Centers and Workforce1 Career Centers by borough or location type.",
+     "write": false
+    },
+    {
+     "name": "find_incentives",
+     "title": "Find Business Incentives",
+     "desc": "Search SBS-administered business incentive records (Energy Cost Savings Program, ICAP abatement, Business Acceleration) by program, borough, industry, or free t",
+     "write": false
+    },
+    {
+     "name": "list_my_mwbe_applications",
+     "title": "List My Certification Applications",
+     "desc": "List the authenticated business owner's own M/WBE certification applications and their status \u2014 today visible only inside the MyCity Business portal.",
+     "write": false
+    },
+    {
+     "name": "apply_for_mwbe_certification",
+     "title": "Apply for M/WBE Certification",
+     "desc": "Submit an SBS M/WBE / EBE / LBE certification application. NET-NEW workflow with no public API today \u2014 it lives only in the MyCity Business portal. Requires an ",
      "write": true
     }
    ]

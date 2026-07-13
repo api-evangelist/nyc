@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/schemas/emergency-incident.json",
+  "title": "EmergencyIncident",
+  "description": "An emergency response incident coordinated or logged by NYC Emergency Management — structural collapses, utility outages, hazardous conditions, and other multi-agency events. Canonical schema reconciling the high-traffic 'Emergency Response Incidents' dataset (pasr-j7fb). Keyed on incident type, location, and creation date.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/pasr-j7fb"
+  },
+  "properties": {
+    "incidentType": { "type": ["string", "null"], "description": "Nature of the incident ('Incident Type'), e.g. Structural, Utility, Hazmat, Weather." },
+    "location": { "type": ["string", "null"], "description": "Address / place of the incident ('Location')." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "creationDate": { "type": ["string", "null"], "format": "date-time", "description": "When the incident was opened ('Creation Date')." },
+    "closedDate": { "type": ["string", "null"], "format": "date-time", "description": "When the incident was closed ('Closed Date'); null while active." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["incidentType"],
+  "additionalProperties": false
+}

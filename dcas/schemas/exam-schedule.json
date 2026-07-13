@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcas/schemas/exam-schedule.json",
+  "title": "ExamSchedule",
+  "description": "A scheduled DCAS civil-service examination and its application window. Canonical schema reconciling the 'Annual Examination Schedule of Each Fiscal Year' dataset (4ptz-hmtc, 7 columns), which mirrors the DCAS Exams Schedule and the Online Application System (OASys). Keyed on Examination Number.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/4ptz-hmtc",
+    "site": "https://www.nyc.gov/site/dcas/employees/current-exams.page",
+    "application_system": "https://a127-jobs.nyc.gov/"
+  },
+  "properties": {
+    "examNumber": { "type": "string", "description": "'Examination Number' — primary key." },
+    "examTitle": { "type": ["string", "null"], "description": "'Examination Title'." },
+    "titleCode": { "type": ["string", "null"], "description": "'Title Code'." },
+    "examType": {
+      "type": ["string", "null"],
+      "enum": ["Open Competitive", "Promotion", "Qualified Incumbent Exam", "Education & Experience", null],
+      "description": "'Open Competitive/Promotion/Qualified Incumbent Exam (QIE)'."
+    },
+    "applicationPeriodStartDate": { "type": ["string", "null"], "format": "date", "description": "'Application Period Start Date'." },
+    "applicationPeriodEndDate": { "type": ["string", "null"], "format": "date", "description": "'Application Period End Date'." },
+    "dataCurrentAsOf": { "type": ["string", "null"], "format": "date", "description": "'Data Current As Of'." }
+  },
+  "required": ["examNumber"],
+  "additionalProperties": false
+}

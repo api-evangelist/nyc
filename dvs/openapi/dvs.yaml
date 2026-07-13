@@ -1,0 +1,345 @@
+openapi: 3.1.0
+info:
+  title: NYC DVS API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Veterans' Services — publishing its
+    already-open reference and de-identified service data (resource map, veteran-owned businesses,
+    assistance requests, cases, client statistics) as coherent resources, and adding the missing
+    write surface locked inside the third-party VetConnectNYC portal — making a care-coordination
+    referral (ServiceReferral).
+  description: >-
+    Proposed API-first surface for the NYC Department of Veterans' Services (DVS), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/veterans and VetConnectNYC.
+
+
+    DVS is a connective agency. Its **reference data and — unusually — its de-identified service data
+    are well published** on NYC Open Data: 7 datasets covering the DVS Resource Map, NYC Veteran Owned
+    Businesses, DVS Assistance Requests, DVS Cases, aggregate client demographics, and historical
+    request processing. But its **live care-coordination intake is locked inside a third-party vendor
+    platform**: VetConnectNYC runs on Combined Arms' "Military Resource Portal"
+    (`nyc.veteranportal.combinedarms.us`), where a veteran fills out a request form and DVS Care
+    Coordinators work it manually within 3-5 business days. That referral has no API and no OpenAPI —
+    only a de-identified Open Data twin after the fact.
+
+
+    This contract does two things: (1) presents the open reference and service datasets as one clean
+    resource model, and (2) adds the one net-new **write** workflow — creating a VetConnectNYC
+    **ServiceReferral** (connect a veteran to services) — that today exists only behind the Combined
+    Arms portal.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.veterans.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Resources
+    description: The DVS Resource Map — veteran-serving resources and providers.
+  - name: Businesses
+    description: NYC veteran-owned businesses directory.
+  - name: AssistanceRequests
+    description: De-identified assistance-request records (the Open Data twin of referrals).
+  - name: Cases
+    description: De-identified DVS case records and outcomes.
+  - name: Clients
+    description: Aggregate / de-identified client demographics (never identifiable individuals).
+  - name: Referrals
+    description: Make and track a VetConnectNYC care-coordination referral (read + write). The net-new surface, today locked in the Combined Arms portal.
+
+paths:
+  /veteran-resources:
+    get:
+      operationId: listVeteranResources
+      summary: List / search DVS Resource Map entries
+      tags: [Resources]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: service
+          in: query
+          schema: { type: string }
+        - name: walkIn
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of veteran-serving resources.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/veteran-resource.json' } }
+  /veteran-resources/{dvsResId}:
+    get:
+      operationId: getVeteranResource
+      summary: Get a resource by DVS_RES_ID
+      tags: [Resources]
+      parameters:
+        - name: dvsResId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The resource.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/veteran-resource.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /veteran-owned-businesses:
+    get:
+      operationId: listVeteranOwnedBusinesses
+      summary: Search NYC veteran-owned businesses
+      tags: [Businesses]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: service
+          in: query
+          schema: { type: string }
+        - name: certifications
+          in: query
+          schema: { type: string }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of veteran-owned businesses.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/veteran-owned-business.json' } }
+
+  /assistance-requests:
+    get:
+      operationId: listAssistanceRequests
+      summary: Search de-identified assistance-request records
+      description: The published, de-identified twin of VetConnectNYC referrals — issue, engagement, and referral-made-to, never identifying the individual.
+      tags: [AssistanceRequests]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - name: issueReason
+          in: query
+          schema: { type: string }
+        - name: vetConnectNyc
+          in: query
+          schema: { type: boolean }
+        - name: branch
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of assistance requests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/assistance-request.json' } }
+
+  /cases:
+    get:
+      operationId: listCases
+      summary: Search de-identified DVS case records
+      tags: [Cases]
+      parameters:
+        - name: serviceType
+          in: query
+          schema: { type: string }
+        - name: caseStatus
+          in: query
+          schema: { type: string }
+        - name: calendarYear
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of cases.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/case.json' } }
+
+  /client-statistics:
+    get:
+      operationId: listClientStatistics
+      summary: Aggregate / de-identified client demographics
+      description: Never returns identifiable veterans — de-identified counts by branch, service era, discharge type, and demographics only.
+      tags: [Clients]
+      parameters:
+        - name: calendarYear
+          in: query
+          schema: { type: string }
+        - name: branch
+          in: query
+          schema: { type: string }
+        - name: serviceEra
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate client statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/client-statistics.json' } }
+
+  /referrals:
+    get:
+      operationId: listReferrals
+      summary: List the authenticated veteran's VetConnectNYC referrals
+      description: Reads the veteran's own care-coordination referrals — today only visible inside the Combined Arms VetConnectNYC portal.
+      tags: [Referrals]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Received, In Coordination, Referred, Enrolled, Closed, Declined] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the veteran's referrals.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/service-referral.json' } }
+    post:
+      operationId: createReferral
+      summary: Make a VetConnectNYC referral (connect a veteran to services)
+      description: >-
+        The net-new write surface — an API for making a VetConnectNYC care-coordination referral,
+        replacing the Combined Arms-only web form. Standard referrals are worked by DVS Care
+        Coordinators within 3-5 business days; set `urgent` to true for imminent homelessness, no
+        food, or crisis to escalate to a Veteran Resource Center.
+      tags: [Referrals]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/service-referral.json' }
+      responses:
+        '201':
+          description: Referral created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/service-referral.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /referrals/{referralId}:
+    get:
+      operationId: getReferral
+      summary: Get a VetConnectNYC referral
+      tags: [Referrals]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: referralId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The referral.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/service-referral.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    VeteranResource: { $ref: '../schemas/veteran-resource.json' }
+    VeteranOwnedBusiness: { $ref: '../schemas/veteran-owned-business.json' }
+    AssistanceRequest: { $ref: '../schemas/assistance-request.json' }
+    Case: { $ref: '../schemas/case.json' }
+    ClientStatistics: { $ref: '../schemas/client-statistics.json' }
+    ServiceReferral: { $ref: '../schemas/service-referral.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

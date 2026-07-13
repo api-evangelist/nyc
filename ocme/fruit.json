@@ -1,0 +1,116 @@
+{
+  "domain": "ocme",
+  "agency": "NYC Office of Chief Medical Examiner (OCME)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/ocme (Akamai + nginx + AWS ALB + NYC.gov 'Livesite' platform + Dynatrace) and confirmed OCME runs NO agency-specific application — its records-request service layer is paper (notarized) forms plus NYC 311 (portal.311.nyc.gov). Verified the NYC Open Data agency label 'Office of Chief Medical Examiner (OCME)' via the Socrata Discovery API: exactly one asset (Monthly Indicators, 8r6c-ydwk). Missing-persons visibility is federated to the federal NamUs system; death certificates are issued by DOHMH, not OCME.",
+  "related_domains": ["portal.311.nyc.gov", "data.cityofnewyork.us", "namus.nij.ojp.gov", "www.nyc.gov/site/doh", "www.nyc.gov/site/ocme"],
+  "headline_findings": [
+    "OCME is the most data-dark agency assessed: exactly ONE dataset carries its NYC Open Data label — 'Monthly Indicators' (8r6c-ydwk), a Mayor's Management Report passthrough whose real months run only July 2015 - May 2016. It is not casework.",
+    "There is no OCME application at all — no portal, no CRM, no login to fingerprint. The records-request service layer is a notarized paper form and NYC 311, with a three-to-six-month turnaround.",
+    "The core object — a death investigation — is confidential by law and is never published, not per-decedent and not in aggregate. Any responsible surface must stay non-identifying.",
+    "What little is public is federated elsewhere: missing-persons visibility lives in federal NamUs, and death certificates are issued by DOHMH. OCME owns almost none of its own digital footprint.",
+    "Net-new write surface: request a decedent's medical-examiner casefile record (DeathRecordRequest) — the core family transaction, today a notarized PDF plus a 311 case. See tech-stack.md and apis-observed.md."
+  ],
+  "meta": {
+    "short": "NYC Medical Examiner (OCME)",
+    "verb": "instrument",
+    "platform": "NYC.gov 'Livesite' shared chassis (Akamai + nginx + AWS ALB + Dynatrace) — informational only; no OCME application. Transactions run on paper (notarized) forms + NYC 311.",
+    "netnew": "DeathRecordRequest — request and track a decedent's medical-examiner casefile record/report",
+    "accent": "#6a6a6a",
+    "tagline": "The least-instrumented, most privacy-constrained agency: one stale dataset, no application, and a core object that can never be published.",
+    "headline": "OCME publishes almost nothing and runs no application of its own, so the modernization work is first, careful instrumentation — publish the few responsibly-public resources and give families one dignified digital path to request a decedent's record."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 0,
+    "openData": 1,
+    "coreData": 0,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Modern shared NYC.gov Livesite chassis (Akamai/nginx/AWS ALB/Dynatrace) — but only an informational site; no OCME-owned application.",
+    "siteApi": "No content API; the site is HTML only.",
+    "openData": "Exactly one OCME-labeled dataset, and it is a stale 2015-16 MMR performance-indicator passthrough, not casework.",
+    "coreData": "The core object (a death investigation) is never published — not per-decedent, not in aggregate; no responsible casework surface exists today.",
+    "writeApi": "No write API and no application — records requests are notarized paper forms plus NYC 311.",
+    "agent": "No agent-native surface of any kind.",
+    "ownership": "OCME owns almost none of its digital footprint — rides NYC.gov, NYC 311, and federal NamUs; death certificates belong to DOHMH."
+  },
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Exactly one OCME dataset — 'Monthly Indicators' (8r6c-ydwk), a stale MMR passthrough (real months Jul 2015 - May 2016). Not casework. The only OCME-labeled machine-readable asset." },
+    { "endpoint": "portal.311.nyc.gov", "type": "citywide request portal", "owner": "NYC (311 / OTI)", "public": "UI only, no OCME API", "note": "The de facto records-request/service channel for OCME; linked from every OCME service page. Not an OCME system." },
+    { "endpoint": "namus.nij.ojp.gov", "type": "federal missing-persons system", "owner": "US DOJ / NIJ", "public": "UI", "note": "Where OCME's Identification Unit surfaces missing-persons and unidentified-decedent cases. OCME participates; does not own it." },
+    { "endpoint": "www.nyc.gov/site/ocme", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "Content only; Akamai edge, nginx, AWS ALB, Dynatrace RUM. No content API and no application behind it." }
+  ],
+  "fruit": [
+    {
+      "name": "Monthly performance indicators",
+      "type": "data table",
+      "entity": "MonthlyIndicator",
+      "url": "https://data.cityofnewyork.us/d/8r6c-ydwk",
+      "count": "1 dataset",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Monthly Indicators 8r6c-ydwk (16c)"],
+      "notes": "The ONLY dataset filed under the OCME agency label. A Mayor's Management Report performance-indicator pivot with real months only July 2015 - May 2016 — stale, and not death-investigation data."
+    },
+    {
+      "name": "Death-investigation statistics (aggregate)",
+      "type": "aggregate statistics",
+      "entity": "CaseStatistics",
+      "url": "https://www.nyc.gov/site/ocme/services/reporting-a-case.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "OCME's core object is a death investigation. It is confidential by law and never published — not per-decedent, not in aggregate. A non-identifying aggregate (counts by manner of death, borough, period, small cells suppressed) would be net-new. Modeled at a respectful altitude only."
+    },
+    {
+      "name": "Forensic services / disciplines",
+      "type": "service catalog",
+      "entity": "ForensicService",
+      "url": "https://www.nyc.gov/site/ocme/services/services.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Forensic Pathology, Laboratories (Forensic Biology/DNA, Toxicology), Forensic Anthropology, Identification/Missing Persons, Emergency Management. HTML only; no API, no Open Data twin."
+    },
+    {
+      "name": "Family services centers",
+      "type": "directory + map",
+      "entity": "FamilyServicesCenter",
+      "url": "https://www.nyc.gov/site/ocme/locations/family-services-centers.page",
+      "count": "5 centers (one per borough) + specialized facilities",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Family Services / Forensic Pathology Centers in all five boroughs, plus the Charles S. Hirsch Center and WTC Repository. Addresses and Identification Unit phone (212-447-2030) live only as HTML; no API, no Open Data twin."
+    },
+    {
+      "name": "Missing persons / unidentified",
+      "type": "public case listing",
+      "entity": "MissingPerson",
+      "url": "https://www.nyc.gov/site/ocme/for-families/namus.page",
+      "machine_readable": "federated (NamUs)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "OCME missing-persons and unidentified-decedent cases surface through the FEDERAL NamUs system (namus.nij.ojp.gov). Public, non-identifying listings meant to aid identification. OCME owns no equivalent dataset."
+    },
+    {
+      "name": "Request a casefile record",
+      "type": "records request (paper + 311)",
+      "entity": "DeathRecordRequest",
+      "url": "https://www.nyc.gov/site/ocme/records-requests/records-requests.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The core family transaction — requesting a decedent's medical-examiner casefile record (autopsy report, cause of death, toxicology, full casefile). No API and no application: a notarized paper form (for third-party delivery) plus NYC 311, with a three-to-six-month turnaround. The net-new WRITE surface for this domain, to be built respectfully."
+    }
+  ]
+}

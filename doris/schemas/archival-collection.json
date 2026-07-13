@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doris/schemas/archival-collection.json",
+  "title": "ArchivalCollection",
+  "description": "A NYC Municipal Archives collection / finding-aid record — the resource level in the Archives' ArchivesSpace-style hierarchy (collection → series → file → item). Canonical schema reconciling 'NYC Municipal Archives Data Collection: Resources and Instances List' (bk7g-bhsz, 11 columns) and the 'Acquisitions / Accessions List' (vfa7-chs9). The digitized items beneath a collection are DigitalItem records; the physical container/instance metadata comes from the Resources & Instances list.",
+  "type": "object",
+  "x-source": {
+    "opendata_resources": "https://data.cityofnewyork.us/d/bk7g-bhsz",
+    "opendata_accessions": "https://data.cityofnewyork.us/d/vfa7-chs9",
+    "site": "https://www.archives.nyc/",
+    "dams": "https://nycrecords.access.preservica.com/"
+  },
+  "properties": {
+    "identifier": { "type": "string", "description": "Collection / resource identifier ('identifier')." },
+    "recordTitle": { "type": ["string", "null"], "description": "Collection or resource title ('record_title' / 'linked_resources_title')." },
+    "level": { "type": ["string", "null"], "description": "Description level ('level') — e.g. collection, series, file, item." },
+    "date": { "type": ["string", "null"], "description": "Date or date expression of the material ('date')." },
+    "accession": {
+      "type": "object",
+      "description": "Acquisition / accession metadata (from vfa7-chs9).",
+      "properties": {
+        "accessionNumber": { "type": ["string", "null"], "description": "'accession_number'." },
+        "accessionTitle": { "type": ["string", "null"], "description": "'accession_title'." },
+        "accessionDate": { "type": ["string", "null"], "format": "date", "description": "'accession_date'." },
+        "extent": { "type": ["string", "null"], "description": "'extent' — quantity/size of the material." },
+        "containerSummary": { "type": ["string", "null"], "description": "'container_summary'." },
+        "linkedResourceIdentifier": { "type": ["string", "null"], "description": "'linked_resources_identifier'." }
+      },
+      "additionalProperties": false
+    },
+    "instance": {
+      "type": "object",
+      "description": "Physical/digital instance & container metadata (from bk7g-bhsz).",
+      "properties": {
+        "instanceType": { "type": ["string", "null"], "description": "'instances_instances_instance_type'." },
+        "isRepresentative": { "type": ["boolean", "string", "null"], "description": "'instances_instances_is_representative'." },
+        "hasDigitalObject": { "type": ["boolean", "string", "null"], "description": "'instances_instances_digital_object' — whether a digitized object exists." },
+        "containerProfile": { "type": ["string", "null"], "description": "'instances_container_profile'." },
+        "container": { "type": ["string", "null"], "description": "'instances_container'." },
+        "container2": { "type": ["string", "null"], "description": "'instances_instances_container_2'." },
+        "container3": { "type": ["string", "null"], "description": "'instances_instances_container_3'." }
+      },
+      "additionalProperties": false
+    },
+    "provenance": { "$ref": "_common.json#/$defs/Provenance" }
+  },
+  "required": ["identifier"],
+  "additionalProperties": false
+}

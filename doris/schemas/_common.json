@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doris/schemas/_common.json",
+  "title": "DORIS — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Department of Records & Information Services (DORIS) object schemas. Reconciles fields common to the DORIS Open Data datasets (data.cityofnewyork.us), nyc.gov/site/records, the Municipal Archives collections (archives.nyc / Preservica DAMS at nycrecords.access.preservica.com, formerly LUNA Imaging), the Historical Vital Records portal (a860-historicalvitalrecords.nyc.gov), and the OpenRecords FOIL system. Includes the NYC geography spine, the borough↔county mapping used by historical vital records, and the shared coordinate shape.",
+  "$defs": {
+    "Borough": {
+      "type": ["string", "null"],
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", null]
+    },
+    "County": {
+      "type": ["string", "null"],
+      "description": "County of record used on historical vital records (the pre-consolidation civil registers) — the legal county name for each borough.",
+      "enum": ["New York", "Bronx", "Kings", "Queens", "Richmond", null]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Open Data LATITUDE / LONGITUDE, or a 'Coordinates' point column).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine shared across DORIS datasets — the join keys back to the rest of city government.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "councilDistrict": { "type": ["string", "integer", "null"], "description": "NYC Council district(s) ('City Council Districts')." },
+        "communityDistrict": { "type": ["string", "integer", "null"], "description": "Community District / Board ('Community Districts' / 'Associated Community Board District')." },
+        "policePrecinct": { "type": ["string", "integer", "null"], "description": "Police precinct(s) ('Police Precincts')." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code." },
+        "zipCode": { "type": ["string", "null"], "description": "ZIP code ('Zip Code')." }
+      },
+      "additionalProperties": false
+    },
+    "Provenance": {
+      "type": "object",
+      "description": "Where the digitized object or record actually lives — the vendor DAMS and portal surfaces DORIS points to (the object itself is not in Open Data).",
+      "properties": {
+        "system": {
+          "type": ["string", "null"],
+          "enum": ["Preservica", "LUNA", "HistoricalVitalRecords", "CityHallLibrary", "OpenRecords", null],
+          "description": "Which access system holds or serves the object."
+        },
+        "url": { "type": ["string", "null"], "format": "uri", "description": "Public access URL for the object, if any." }
+      },
+      "additionalProperties": false
+    }
+  }
+}

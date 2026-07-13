@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/lpc/schemas/permit-application.json",
+  "title": "PermitApplication",
+  "description": "An issued/processed LPC permit application on a landmark or historic-district property — the READ twin of the permit record. Canonical schema reconciling the 'LPC Permit Application Information' dataset (dpm2-m9mq, 32 columns), which publishes dockets, work types, regulation type (Certificate of Appropriateness / No Effect / Permit for Minor Work, etc.), applicant/owner, and issue/expiration dates. This is the historical read surface; new filings happen in the Portico portal — see landmark-permit-application.json.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/dpm2-m9mq",
+    "portal": "https://portico.lpc.nyc.gov/s/",
+    "site": "https://www.nyc.gov/site/lpc/applications/permit-search.page"
+  },
+  "properties": {
+    "docket": { "type": ["string", "null"], "description": "'docket' — LPC docket / permit application number." },
+    "landmark": { "$ref": "_common.json#/$defs/LandmarkReference" },
+    "landmarkNameType": { "type": ["string", "null"], "description": "'LMNameType' — landmark name / designation type of the property." },
+    "regulationType": {
+      "type": ["string", "null"],
+      "description": "'regulation_type' — kind of LPC approval issued.",
+      "enum": ["Certificate of Appropriateness", "Certificate of No Effect", "Permit for Minor Work", "Modification of Use and Bulk", "Notice to Proceed", "Advisory Report", "Other", null]
+    },
+    "regulationNumber": { "type": ["string", "null"], "description": "'Regulation Number'." },
+    "workTypes": {
+      "type": "array",
+      "description": "'WorkTypes' — scope(s) of work (e.g. Facade, Windows, Storefront, Rooftop/Rear Yard Addition, Signage).",
+      "items": { "type": "string" }
+    },
+    "address": { "type": ["string", "null"], "description": "'address' — property address." },
+    "receivedDate": { "type": ["string", "null"], "format": "date", "description": "'received_date'." },
+    "issueDate": { "type": ["string", "null"], "format": "date", "description": "'issue_date'." },
+    "expirationDate": { "type": ["string", "null"], "format": "date", "description": "'expiration_date'." },
+    "applicant": {
+      "type": "object",
+      "description": "Applicant of record ('applicant_*').",
+      "properties": {
+        "name": { "type": ["string", "null"], "description": "'applicant_name'." },
+        "company": { "type": ["string", "null"], "description": "'applicant_co'." },
+        "address1": { "type": ["string", "null"], "description": "'applicant_address1'." },
+        "address2": { "type": ["string", "null"], "description": "'applicant_address2'." },
+        "city": { "type": ["string", "null"], "description": "'applicant_city'." },
+        "state": { "type": ["string", "null"], "description": "'applicant_state'." },
+        "zip": { "type": ["string", "null"], "description": "'applicant_zip'." }
+      },
+      "additionalProperties": false
+    },
+    "owner": {
+      "type": "object",
+      "description": "Property owner of record ('owner_*').",
+      "properties": {
+        "name": { "type": ["string", "null"], "description": "'owner_name'." },
+        "company": { "type": ["string", "null"], "description": "'owner_co'." },
+        "address1": { "type": ["string", "null"], "description": "'owner_address1'." },
+        "address2": { "type": ["string", "null"], "description": "'owner_address2'." },
+        "city": { "type": ["string", "null"], "description": "'owner_city'." },
+        "state": { "type": ["string", "null"], "description": "'owner_state'." },
+        "zip": { "type": ["string", "null"], "description": "'owner_zip'." }
+      },
+      "additionalProperties": false
+    },
+    "taxLot": { "$ref": "_common.json#/$defs/TaxLot" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

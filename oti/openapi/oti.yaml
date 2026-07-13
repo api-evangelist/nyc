@@ -1,0 +1,477 @@
+openapi: 3.1.0
+info:
+  title: NYC OTI Platform API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the citywide platform the NYC Office of Technology & Innovation
+    (OTI) already operates — the NYC Open Data catalog, the api.nyc.gov gateway (GeoClient/GeoSearch),
+    LinkNYC, municipal broadband, public Wi-Fi, and 311 — presented as a single unified gateway + catalog
+    contract, with write surfaces to register a dataset and request a gateway key.
+  description: >-
+    Proposed API-first surface for the NYC Office of Technology & Innovation (OTI, formerly DoITT), from
+    the NYC Modernization low-hanging-fruit assessment of nyc.gov/site/oti and the citywide platforms OTI
+    runs.
+
+
+    OTI is the META case. It does not merely have a website with data trapped in HTML — it **operates the
+    city's data infrastructure**: NYC Open Data (data.cityofnewyork.us, Socrata/Tyler; 221 OTI-published
+    datasets and the catalog of the whole 2,300+ asset corpus), the **api.nyc.gov gateway** (Microsoft
+    Azure API Management, hosting GeoClient and GeoSearch), NYC.gov itself, LinkNYC, the municipal
+    broadband program, public Wi-Fi, and the 311 pipeline (the single most-viewed dataset in the city).
+
+
+    The reframe is therefore not "liberate the data" — the data is already open. It is that the **platform
+    operator has never productized its own operator role**: there is no unified, owned API that lets a
+    developer or agent discover a dataset, discover a gateway service, geocode an address, and register a
+    new asset through one contract. Access to the gateway is subscription-key-gated with no self-service
+    key API; the catalog is queryable only through Socrata's generic API, not an OTI-owned one.
+
+
+    This contract does three things: (1) presents the OTI-operated reference data (datasets, gateway
+    services, LinkNYC kiosks, broadband assets, Wi-Fi hotspots, 311 requests) as one clean resource model;
+    (2) adds a geocoding operation fronting GeoClient/GeoSearch; and (3) adds two net-new **write**
+    surfaces — register a dataset to the catalog, and request an api.nyc.gov gateway key.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.nyc.gov/platform/v1
+    description: Proposed unified platform host on the existing api.nyc.gov gateway (illustrative)
+tags:
+  - name: Catalog
+    description: The NYC Open Data catalog OTI operates — discover and register datasets.
+  - name: Gateway
+    description: Services published on the api.nyc.gov gateway (Azure API Management) and self-service keys.
+  - name: Geocoding
+    description: Address/geo lookup fronting GeoClient and GeoSearch.
+  - name: LinkNYC
+    description: LinkNYC public Wi-Fi / communications kiosks — locations and live status.
+  - name: Broadband
+    description: Municipal broadband program assets and target neighborhoods.
+  - name: WiFi
+    description: Citywide public Wi-Fi hotspot inventory.
+  - name: ServiceRequests
+    description: 311 service requests — the citywide request pipeline OTI operates.
+
+paths:
+  /datasets:
+    get:
+      operationId: listDatasets
+      summary: Search the NYC Open Data catalog
+      description: Discover datasets in the catalog OTI operates (backed by the LL251 Published Data Asset Inventory and Release Tracker).
+      tags: [Catalog]
+      parameters:
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: type
+          in: query
+          schema: { type: string, enum: [dataset, map, chart, file, href, filter, calendar, story] }
+        - name: releaseStatus
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of catalog datasets.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/open-dataset.json' } }
+    post:
+      operationId: registerDataset
+      summary: Register / publish a dataset to the catalog
+      description: >-
+        Net-new write surface — register a new data asset in the OTI-operated catalog. Today publishing a
+        dataset is an internal Socrata + Open Data Team workflow with no public API; this operation gives
+        agencies (and agents acting for them) a machine-readable way to submit an asset for the LL251
+        inventory.
+      tags: [Catalog]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/open-dataset.json' }
+      responses:
+        '201':
+          description: Dataset registered.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/open-dataset.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /datasets/{uid}:
+    get:
+      operationId: getDataset
+      summary: Get a dataset by UID
+      tags: [Catalog]
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The dataset catalog record.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/open-dataset.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /gateway/services:
+    get:
+      operationId: listGatewayServices
+      summary: List services published on the api.nyc.gov gateway
+      description: The net-new catalog OF the gateway — GeoClient, GeoSearch, and other agency APIs OTI operates on Azure API Management.
+      tags: [Gateway]
+      parameters:
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [active, deprecated, beta, retired] }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of gateway services.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/api-gateway-service.json' } }
+  /gateway/services/{serviceId}:
+    get:
+      operationId: getGatewayService
+      summary: Get a gateway service by id
+      tags: [Gateway]
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The gateway service.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/api-gateway-service.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /gateway/keys:
+    post:
+      operationId: requestApiKey
+      summary: Request an api.nyc.gov gateway subscription key
+      description: >-
+        Net-new write surface — self-service request for a gateway subscription key against one or more
+        services. Today access to api.nyc.gov (e.g. GeoClient) requires a subscription key provisioned
+        through a developer portal, not an API; requests return HTTP 401 'missing subscription key' until
+        one is granted. This operation makes key issuance programmatic.
+      tags: [Gateway]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [serviceId, applicant]
+              properties:
+                serviceId: { type: string, description: Gateway service to subscribe to (e.g. 'geoclient'). }
+                applicant:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    email: { type: string, format: email }
+                    organization: { type: string }
+                  required: [email]
+                useCase: { type: string, description: Short description of intended use. }
+      responses:
+        '201':
+          description: Key request accepted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requestId: { type: string }
+                  status: { type: string, enum: [pending, approved, rejected] }
+                  subscriptionKey: { type: [string, "null"], description: Populated once approved. }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /geo/search:
+    get:
+      operationId: geocode
+      summary: Geocode an address (GeoClient / GeoSearch)
+      description: >-
+        Resolve a NYC address or intersection to coordinates and the geography spine (BBL, BIN, borough,
+        community district, council district), fronting the OTI-operated GeoClient
+        (api.nyc.gov/geo/geoclient) and GeoSearch (geosearch.planninglabs.nyc) services.
+      tags: [Geocoding]
+      parameters:
+        - name: text
+          in: query
+          required: true
+          description: Free-text address or intersection to geocode.
+          schema: { type: string }
+        - name: borough
+          in: query
+          schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+      responses:
+        '200':
+          description: Geocoding matches.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  matches:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        label: { type: string }
+                        coordinates: { $ref: '../schemas/_common.json#/$defs/Coordinates' }
+                        geography: { $ref: '../schemas/_common.json#/$defs/Geography' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /linknyc/kiosks:
+    get:
+      operationId: listKiosks
+      summary: List / search LinkNYC kiosks
+      tags: [LinkNYC]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: installationStatus
+          in: query
+          schema: { type: string }
+        - name: plannedKioskType
+          in: query
+          schema: { type: string }
+        - name: wifiStatus
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of LinkNYC kiosks.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/linknyc-kiosk.json' } }
+  /linknyc/kiosks/{siteId}:
+    get:
+      operationId: getKiosk
+      summary: Get a LinkNYC kiosk by Site ID
+      tags: [LinkNYC]
+      parameters:
+        - name: siteId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The kiosk (with live status).
+          content:
+            application/json:
+              schema: { $ref: '../schemas/linknyc-kiosk.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /broadband/assets:
+    get:
+      operationId: listBroadbandAssets
+      summary: Search municipal-broadband infrastructure assets
+      tags: [Broadband]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: assetClass
+          in: query
+          schema: { type: string }
+        - name: connectedToFiber
+          in: query
+          schema: { type: boolean }
+        - name: targetNeighborhood
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of broadband assets.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/broadband-asset.json' } }
+
+  /wifi-hotspots:
+    get:
+      operationId: listWifiHotspots
+      summary: Search the citywide public Wi-Fi hotspot inventory
+      tags: [WiFi]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: provider
+          in: query
+          schema: { type: string }
+        - name: type
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of Wi-Fi hotspots.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/wifi-hotspot.json' } }
+
+  /service-requests:
+    get:
+      operationId: listServiceRequests
+      summary: Search 311 service requests
+      description: Query the citywide 311 request pipeline OTI operates (erm2-nwe9 and historical siblings).
+      tags: [ServiceRequests]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: problem
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: openDataChannelType
+          in: query
+          schema: { type: string, enum: [PHONE, ONLINE, MOBILE, OTHER, UNKNOWN] }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of 311 service requests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/service-request.json' } }
+  /service-requests/{uniqueKey}:
+    get:
+      operationId: getServiceRequest
+      summary: Get a 311 service request by Unique Key
+      tags: [ServiceRequests]
+      parameters:
+        - name: uniqueKey
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The 311 service request.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/service-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    OpenDataset: { $ref: '../schemas/open-dataset.json' }
+    APIGatewayService: { $ref: '../schemas/api-gateway-service.json' }
+    LinkNYCKiosk: { $ref: '../schemas/linknyc-kiosk.json' }
+    BroadbandAsset: { $ref: '../schemas/broadband-asset.json' }
+    WiFiHotspot: { $ref: '../schemas/wifi-hotspot.json' }
+    ServiceRequest: { $ref: '../schemas/service-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

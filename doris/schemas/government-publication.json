@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doris/schemas/government-publication.json",
+  "title": "GovernmentPublication",
+  "description": "A NYC government publication or City Hall Library catalog record — agency reports, required (mandated) reports, and library holdings collected by DORIS. Canonical schema reconciling the 'Government Publications Listing' (xip9-pe9k, 18c), 'Government Publication - Required Reports' (9azj-tmjp, 8c), and the 'NYC City Hall Library Catalog' (gysc-yn4h — a single delimited blob column). Covers both the digital publications portal and the library catalog.",
+  "type": "object",
+  "x-source": {
+    "opendata_publications": "https://data.cityofnewyork.us/d/xip9-pe9k",
+    "opendata_required_reports": "https://data.cityofnewyork.us/d/9azj-tmjp",
+    "opendata_library_catalog": "https://data.cityofnewyork.us/d/gysc-yn4h",
+    "site": "https://www.nyc.gov/site/records/about/city-hall-library.page"
+  },
+  "properties": {
+    "title": { "type": "string", "description": "Publication title ('Title' / 'Name' / 'Title' from the catalog blob)." },
+    "subTitle": { "type": ["string", "null"], "description": "'Sub-Title' / 'Remainder Of Title'." },
+    "agency": { "type": ["string", "null"], "description": "Issuing agency ('Agency' / 'Corporate Name')." },
+    "reportType": { "type": ["string", "null"], "description": "'Report Type'." },
+    "requiredReportName": { "type": ["string", "null"], "description": "'Required Report Name' / 'Name' — links a publication to its mandating required-report row." },
+    "description": { "type": ["string", "null"], "description": "'Description'." },
+    "subject": { "type": ["string", "null"], "description": "'Subject' / 'General Subdivision'." },
+    "filename": { "type": ["string", "null"], "description": "'Filename' of the digital asset." },
+    "languages": { "type": ["string", "null"], "description": "'Languages'." },
+    "datePublished": { "type": ["string", "null"], "description": "'Date Published' / 'Date Of Publication' / 'Last Published Date'." },
+    "fiscalYear": { "type": ["string", "integer", "null"], "description": "'Associated Year - Fiscal'." },
+    "calendarYear": { "type": ["string", "integer", "null"], "description": "'Associated Year - Calendar'." },
+    "additionalCreators": { "type": ["string", "null"], "description": "'Additional Creators'." },
+    "mandate": {
+      "type": "object",
+      "description": "Legal mandate metadata for required reports (from 9azj-tmjp).",
+      "properties": {
+        "localLaw": { "type": ["string", "null"], "description": "'Local Law'." },
+        "charterCode": { "type": ["string", "null"], "description": "'Charter Code'." },
+        "frequency": { "type": ["string", "null"], "description": "Reporting frequency ('Frequency')." }
+      },
+      "additionalProperties": false
+    },
+    "associatedPlace": { "type": ["string", "null"], "description": "'Associated Place'." },
+    "associatedBorough": { "$ref": "_common.json#/$defs/Borough" }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

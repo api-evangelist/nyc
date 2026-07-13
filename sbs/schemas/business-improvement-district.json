@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/schemas/business-improvement-district.json",
+  "title": "BusinessImprovementDistrict",
+  "description": "A NYC Business Improvement District (BID) — a defined commercial area whose property owners fund supplemental services (sanitation, public safety, marketing) overseen by SBS. Canonical schema reconciling the 'Directory Of Business Improvement Districts' (qpm9-j523, 18 columns), the BID boundary maps (ejxk-d93y, 7jdm-inj8), and the 'BID Trends Report (FY24)' (hzd8-k2vv, 64 columns). Keyed on org_id.",
+  "type": "object",
+  "x-source": {
+    "opendata_directory": "https://data.cityofnewyork.us/d/qpm9-j523",
+    "opendata_map": "https://data.cityofnewyork.us/d/ejxk-d93y",
+    "opendata_boundaries": "https://data.cityofnewyork.us/d/7jdm-inj8",
+    "opendata_trends": "https://data.cityofnewyork.us/d/hzd8-k2vv",
+    "site": "https://www.nyc.gov/site/sbs/neighborhoods/bids.page"
+  },
+  "properties": {
+    "orgId": { "type": ["string", "null"], "description": "BID organization id ('org_id') — primary key." },
+    "name": { "type": "string", "description": "BID name ('org_name' / 'BID Name')." },
+    "neighborhood": { "type": ["string", "null"], "description": "'org_neighborhood'." },
+    "yearFounded": { "type": ["integer", "string", "null"], "description": "'org_year' / 'Year_Found'." },
+    "address": { "$ref": "_common.json#/$defs/PostalAddress" },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "phone": { "type": ["string", "null"], "description": "'org_phone'." },
+        "fax": { "type": ["string", "null"], "description": "'org_fax'." },
+        "email": { "type": ["string", "null"], "description": "'org_email'." },
+        "website": { "type": ["string", "null"], "description": "'org_website'." }
+      },
+      "additionalProperties": false
+    },
+    "profile": {
+      "type": "object",
+      "description": "Scope of the district.",
+      "properties": {
+        "businesses": { "type": ["integer", "string", "null"], "description": "Number of businesses ('org_businesses' / 'Individual Businesses')." },
+        "blocks": { "type": ["integer", "string", "null"], "description": "'org_blocks'." },
+        "boundary": { "type": ["string", "null"], "description": "'org_boundary' — textual boundary description." },
+        "realEstate": { "type": ["string", "null"], "description": "'org_realestate'." },
+        "serviceAreaLinearFeet": { "type": ["number", "string", "null"], "description": "'Service Area (Linear Feet)' (Trends Report)." }
+      },
+      "additionalProperties": false
+    },
+    "finances": {
+      "type": "object",
+      "description": "Annual financials from the BID Trends Report (FY24).",
+      "properties": {
+        "totalRevenue": { "type": ["number", "null"], "description": "'Total Revenue'." },
+        "totalExpenses": { "type": ["number", "null"], "description": "'Total Expenses'." },
+        "assessmentRevenue": { "type": ["number", "null"], "description": "'Assessment Revenue'." }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

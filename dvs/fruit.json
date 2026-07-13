@@ -1,0 +1,135 @@
+{
+  "domain": "dvs",
+  "agency": "NYC Department of Veterans' Services (DVS)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov/robots.txt only disallows /html/misc/). Fingerprinted www.nyc.gov/site/veterans (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace) and resolved the VetConnectNYC intake linked from the services page to a third-party host, nyc.veteranportal.combinedarms.us — the Combined Arms 'Military Resource Portal' (Next.js on CloudFront; x-powered-by: Next.js). Verified the NYC Open Data agency label 'Department of Veterans' Services (DVS)' via the Socrata Discovery API and pulled all 7 assets with column schemas.",
+  "related_domains": ["nyc.veteranportal.combinedarms.us", "combinedarms.us", "data.cityofnewyork.us", "nyc.gov/311", "access.nyc.gov"],
+  "headline_findings": [
+    "DVS is a connective agency with a vendor service layer: it points veterans to a coordinated-care network via VetConnectNYC, which runs on the third-party Combined Arms 'Military Resource Portal' (nyc.veteranportal.combinedarms.us) — no API; DVS Care Coordinators process requests manually within 3-5 business days.",
+    "DVS is unusually open: 7 NYC Open Data datasets cover not only reference directories (DVS Resource Map, NYC Veteran Owned Businesses) but de-identified SERVICE data — assistance requests (with a 'VetConnectNYC (Y/N)' flag), cases, client demographics, and historical request processing.",
+    "But the live referral is locked: the thing a veteran actually does — submit a VetConnectNYC request and get connected to housing, benefits, VA claims, health, employment, food, or legal help — has no machine-readable contract at all; it lives only in the Combined Arms web form.",
+    "Veteran/client data is published only de-identified/aggregate (DVS Clients); DVS never exposes an identifiable veteran record to Open Data.",
+    "Vendor correction: VetConnectNYC is Combined Arms, NOT Unite Us (the assignment's tentative guess). See tech-stack.md.",
+    "Net-new write surface: make a VetConnectNYC referral (ServiceReferral) — connect a veteran to services — the core resident transaction, with no API today. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "7 DVS datasets; SODA /resource/<id>.json endpoints. The one real, open DVS API — and unusually, it reaches into the de-identified service layer (assistance requests, cases, clients), not just reference data." },
+    { "endpoint": "nyc.veteranportal.combinedarms.us (VetConnectNYC)", "type": "care-coordination intake portal", "owner": "Combined Arms (vendor); DVS Care Coordinators work the queue", "public": "registration-gated web form, no API", "note": "The transactional layer — a veteran submits the VetConnectNYC Request Form to be connected to services. 'CA - Military Resource Portal', Next.js on CloudFront. No JSON/OpenAPI; requests processed manually within 3-5 business days." },
+    { "endpoint": "www.nyc.gov/site/veterans", "type": "informational site", "owner": "NYC.gov shared platform (Livesite v22)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API." },
+    { "endpoint": "combinedarms.us", "type": "vendor platform root", "owner": "Combined Arms", "public": "html", "note": "redirects to www.combinedarms.us; the coordinated-care network behind VetConnectNYC." }
+  ],
+  "fruit": [
+    {
+      "name": "DVS Resource Map",
+      "type": "directory",
+      "entity": "VeteranResource",
+      "url": "https://www.nyc.gov/site/veterans/services/services.page",
+      "count": "curated resource directory",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DVS Resource Map af2s-4k4p (15c)"],
+      "notes": "Curated directory of veteran-serving resources and providers. Keyed on DVS_RES_ID; service, service details, walk-in flag, hours, phone/email/website, address, borough."
+    },
+    {
+      "name": "NYC Veteran Owned Businesses",
+      "type": "directory + map",
+      "entity": "VeteranOwnedBusiness",
+      "url": "https://data.cityofnewyork.us/d/ybdk-jmnn",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["NYC Veteran Owned Businesses ybdk-jmnn (27c)"],
+      "notes": "Geocoded directory of veteran-owned businesses with the full NYC geography spine (BBL, BIN, NTA, council/community district, census tract, police precinct) and certifications. Also keyed on DVS_RES_ID."
+    },
+    {
+      "name": "Assistance Requests",
+      "type": "data table",
+      "entity": "AssistanceRequest",
+      "url": "https://data.cityofnewyork.us/d/jup5-7fik",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DVS Assistance Requests jup5-7fik (22c)", "Historical DVS Client Requests Received and Processed 44f4-mjxy (14c)", "Historical Veteran Peer Coordinator (VPC) Program Moves davn-rbxj (15c)"],
+      "notes": "De-identified intake records — the published, downstream twin of a live VetConnectNYC referral. Carries the 'VetConnectNYC (Y/N)' flag, 'Referral Made To?', engagement level/method, issue/reason, branch, discharge status, borough/council district. Never identifies the individual."
+    },
+    {
+      "name": "Cases",
+      "type": "data table",
+      "entity": "Case",
+      "url": "https://data.cityofnewyork.us/d/pw4e-vms3",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Department of Veterans' Services Cases pw4e-vms3 (9c)"],
+      "notes": "De-identified case records — the work Care Coordinators do after a request/referral: service type/subtype, case status, outcome resolution, 'Started as Assistance Request', 'Case is Referred'."
+    },
+    {
+      "name": "Client demographics (aggregate)",
+      "type": "data table",
+      "entity": "ClientStatistics",
+      "url": "https://data.cityofnewyork.us/d/idat-aemv",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Department of Veterans' Services Clients idat-aemv (12c)"],
+      "opendata_gap": false,
+      "notes": "De-identified client demographics — service era, branch, discharge type, race/ethnicity, gender, marital status, gross monthly income band. AGGREGATE ONLY. No identifiable veteran record is ever published (privacy by design)."
+    },
+    {
+      "name": "Connect to services / VA claims",
+      "type": "workflow (vendor portal)",
+      "entity": "ServiceReferral",
+      "url": "https://www.nyc.gov/site/veterans/services/va-claims.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The general 'get connected to services' front door, including VA benefits/claims assistance — routes to the VetConnectNYC Request Form (Combined Arms). No API. An alternative net-new write surface."
+    },
+    {
+      "name": "Housing / homelessness help",
+      "type": "workflow (vendor portal)",
+      "entity": "ServiceReferral",
+      "url": "https://www.nyc.gov/site/veterans/services/housing.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Request housing or homelessness assistance for a veteran — routed through VetConnectNYC to a DVS Care Coordinator. Phone/web-form only; no API. The urgent path of the net-new write surface."
+    },
+    {
+      "name": "Make a VetConnectNYC referral",
+      "type": "sign-up / referral workflow",
+      "entity": "ServiceReferral",
+      "url": "https://nyc.veteranportal.combinedarms.us",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most important veteran interaction — connect a veteran (self, family, or provider) to DVS services and track the referral. No API; lives only in the third-party Combined Arms 'Military Resource Portal' web form and a manual 3-5 business-day DVS Care Coordinator queue. Its only Open Data twin is the de-identified DVS Assistance Requests (jup5-7fik). The net-new WRITE surface for this domain."
+    }
+  ],
+  "meta": {
+    "short": "NYC Veterans' Services (DVS)",
+    "verb": "coordinate",
+    "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace) for the info site; the care-coordination service layer is VetConnectNYC, a third-party vendor portal on Combined Arms' 'Military Resource Portal' (Next.js on CloudFront) — a web form, no API.",
+    "netnew": "ServiceReferral — make a VetConnectNYC care-coordination referral connecting a veteran to services (housing, benefits, VA claims, health, employment, education, food, legal), routed to DVS Care Coordinators with an urgent path to a Veteran Resource Center.",
+    "accent": "#4a6a9a",
+    "tagline": "DVS publishes even its de-identified service data as open data, but the veteran's actual referral runs through a third-party vendor form with no API.",
+    "headline": "NYC DVS is unusually open — it publishes not just its resource directory but de-identified assistance requests, cases, and client demographics — yet the core transaction, a VetConnectNYC care-coordination referral, is a manual vendor web form on Combined Arms with no API."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 2,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov Livesite chassis; no DVS-owned application platform, the service layer is a third-party vendor portal (Combined Arms / VetConnectNYC).",
+    "siteApi": "No site or content API; nothing machine-readable on nyc.gov/site/veterans.",
+    "openData": "7 open Socrata datasets — unusually deep for a small agency, reaching into de-identified service data, but modest in count and partly historical.",
+    "coreData": "Core resource/business/assistance-request/case entities are modeled and open; client data is aggregate/de-identified only.",
+    "writeApi": "No write surface at all — every referral is a Combined Arms web form worked manually within 3-5 business days.",
+    "agent": "No agent-native surface; no MCP, no structured intake an agent could call.",
+    "ownership": "Reference and de-identified service data are DVS-labeled and open, but the live transaction layer runs on an out-of-city third-party vendor DVS does not own."
+  }
+}

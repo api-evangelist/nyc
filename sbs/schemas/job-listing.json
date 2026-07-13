@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/schemas/job-listing.json",
+  "title": "JobListing",
+  "description": "A job opening posted through SBS Workforce1. Canonical schema reconciling the 'Workforce1 Job Listing' dataset (ay9k-vznm, 22 columns). Borough flags in the source are folded into a single boroughs array.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/ay9k-vznm",
+    "site": "https://www.nyc.gov/site/sbs/careers/careers.page"
+  },
+  "properties": {
+    "positionTitle": { "type": "string", "description": "'PositionTitle'." },
+    "positionDescription": { "type": ["string", "null"], "description": "'PositionDescription'." },
+    "positionType": { "type": ["string", "null"], "description": "'PositionType' (e.g. Full-time, Part-time)." },
+    "sectorName": { "type": ["string", "null"], "description": "'SectorName'." },
+    "subSectorName": { "type": ["string", "null"], "description": "'SubSectorName'." },
+    "jobFamilyName": { "type": ["string", "null"], "description": "'JobFamilyName'." },
+    "socOccupationName": { "type": ["string", "null"], "description": "'SOCOccupationName'." },
+    "socOccupationCode": { "type": ["string", "null"], "description": "'SOCOccupationCode'." },
+    "educationRequired": { "type": ["string", "null"], "description": "'EducationRequired'." },
+    "candidateQualifications": { "type": ["string", "null"], "description": "'CandidateExperienceQualificationsSkills'." },
+    "leadFulfillmentCenter": { "type": ["string", "null"], "description": "'LeadFulfillmentCenter' — Workforce1 center handling the posting." },
+    "wage": {
+      "type": "object",
+      "properties": {
+        "min": { "type": ["number", "null"], "description": "'WageMin'." },
+        "max": { "type": ["number", "null"], "description": "'WageMax'." },
+        "basis": { "type": ["string", "null"], "description": "'HourlyAnnual' — hourly or annual." }
+      },
+      "additionalProperties": false
+    },
+    "hours": {
+      "type": "object",
+      "properties": {
+        "min": { "type": ["number", "null"], "description": "'MinHoursPerWeek'." },
+        "max": { "type": ["number", "null"], "description": "'MaxHoursPerWeek'." }
+      },
+      "additionalProperties": false
+    },
+    "boroughs": {
+      "type": "array",
+      "description": "Boroughs where the position is located (folded from BoroughBronx/Brooklyn/Manhattan/Queens/StatenIsland/NonNYC flags).",
+      "items": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", "Non-NYC"] }
+    }
+  },
+  "required": ["positionTitle"],
+  "additionalProperties": false
+}

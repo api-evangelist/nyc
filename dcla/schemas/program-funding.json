@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/schemas/program-funding.json",
+  "title": "ProgramFunding",
+  "description": "A DCLA program grant award to a cultural organization for a fiscal year — the outcome of the Cultural Development Fund (CDF) cycle. Canonical schema reconciling the annual programs-funding datasets: 'DCLA Programs Funding' (y6fv-k6p7, current), 'DCLA Program Funding for FY11' (rskq-5bfv), and 'DCLA: Programs Funding for FY2010' (j8p3-8ufc). Keyed on Application # + Organization + Fiscal Year. NOTE: this publishes the AWARD (who received money); the application itself lives only in the DCLA Grants Management System — see grant-application.json.",
+  "type": "object",
+  "x-source": {
+    "opendata_current": "https://data.cityofnewyork.us/d/y6fv-k6p7",
+    "opendata_fy11": "https://data.cityofnewyork.us/d/rskq-5bfv",
+    "opendata_fy10": "https://data.cityofnewyork.us/d/j8p3-8ufc",
+    "site": "https://www.nyc.gov/site/dcla/cultural-funding/programs-funding.page"
+  },
+  "properties": {
+    "organization": { "type": "string", "description": "Grantee organization name ('Organization' / 'Orgname')." },
+    "applicationNumber": { "type": ["string", "null"], "description": "DCLA application number ('Application #' / 'Application Number') for the funding cycle." },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "totalFinalAward": { "type": ["number", "null"], "description": "Awarded amount in dollars ('Total Final Award' / 'FY10 Programs $')." }
+  },
+  "required": ["organization"],
+  "additionalProperties": false
+}

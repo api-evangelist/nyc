@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/schemas/notify-nyc-subscription.json",
+  "title": "NotifyNYCSubscription",
+  "description": "A resident's subscription to Notify NYC emergency alerts — the everyday NYCEM transaction. NET-NEW: there is NO public write API for enrolling. Today a resident subscribes only through the rented Everbridge Member Portal (a858-nycnotify.nyc.gov), by texting a keyword, or by phone to 311. This schema serves both the read surface (get a resident's own subscription) and the SubscriptionRequest write surface (subscribe to alerts by channel, location, and category).",
+  "type": "object",
+  "x-source": {
+    "portal": "https://a858-nycnotify.nyc.gov/notifynyc/",
+    "cap_rss_feed": "https://feeds.everbridge.net/feeds/453003085617722/rss/rss.xml",
+    "platform": "Everbridge (rented mass-notification SaaS)",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "subscriptionId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned subscription identifier (Everbridge member id). Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Active", "Pending Confirmation", "Unsubscribed", null],
+      "description": "Subscription lifecycle status. Set by NYCEM/Everbridge, not the subscriber.",
+      "readOnly": true
+    },
+    "contact": {
+      "type": "object",
+      "description": "Subscriber contact details.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"], "description": "Mobile number for SMS / voice alerts." }
+      },
+      "additionalProperties": false
+    },
+    "channels": {
+      "type": "array",
+      "description": "How the subscriber wants to receive alerts.",
+      "items": { "type": "string", "enum": ["email", "sms", "voice", "push", "tty"] },
+      "minItems": 1
+    },
+    "languagePreference": { "type": ["string", "null"], "description": "Preferred alert language (Notify NYC delivers in ~14 languages)." },
+    "locations": {
+      "type": "array",
+      "description": "Locations to receive geographically-scoped alerts for (home, work, family).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": { "type": ["string", "null"], "description": "e.g. Home, Work." },
+          "address": { "type": ["string", "null"] },
+          "zipCode": { "type": ["string", "null"] },
+          "borough": { "$ref": "_common.json#/$defs/Borough" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "categories": {
+      "type": ["array", "null"],
+      "description": "Alert categories to subscribe to; omit for all. Mirrors the CAP feed categories.",
+      "items": { "$ref": "_common.json#/$defs/NotificationCategory" }
+    },
+    "evacuationZoneAlerts": {
+      "type": ["boolean", "null"],
+      "default": true,
+      "description": "Whether to receive coastal-storm / hurricane evacuation-zone orders for the subscriber's locations."
+    },
+    "createdDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["channels"],
+  "additionalProperties": false
+}

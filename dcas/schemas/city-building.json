@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcas/schemas/city-building.json",
+  "title": "CityBuilding",
+  "description": "A DCAS-managed public building — the city-owned and leased facilities DCAS operates. Canonical schema reconciling 'DCAS Managed Public Buildings' (xx2p-4jnq, 22 columns), 'DCAS Managed Building Energy Usage' (ubdi-jgw2), and 'NYC Municipal Building Energy Benchmarking Results' (vvj6-d5qx). Keyed on BIN / BBL.",
+  "type": "object",
+  "x-source": {
+    "opendata_buildings": "https://data.cityofnewyork.us/d/xx2p-4jnq",
+    "opendata_energy": "https://data.cityofnewyork.us/d/ubdi-jgw2",
+    "opendata_benchmarking": "https://data.cityofnewyork.us/d/vvj6-d5qx",
+    "site": "https://www.nyc.gov/site/dcas/agencies/facilities-management.page"
+  },
+  "properties": {
+    "buildingName": { "type": ["string", "null"], "description": "'Building Name' / 'Building'." },
+    "address": { "type": ["string", "null"], "description": "'Address' / 'Building Address'." },
+    "location": { "type": ["string", "null"], "description": "'Location'." },
+    "court": { "type": ["string", "null"], "description": "'Court' — court buildings flag/name." },
+    "totalSqFt": { "type": ["number", "null"], "description": "'Total Sq Ft'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "energy": {
+      "type": "object",
+      "description": "Energy / benchmarking attributes (ubdi-jgw2, vvj6-d5qx).",
+      "properties": {
+        "annualEnergyUsageMMBTU": { "type": ["number", "null"], "description": "Utility energy usage in MMBTU (e.g. 'FY15 Energy Usage (MMBTU)')." },
+        "energyStarScore": { "type": ["number", "null"], "description": "ENERGY STAR score, where benchmarked." },
+        "siteEUI": { "type": ["number", "null"], "description": "Site energy use intensity (kBtu/ft²), where benchmarked." },
+        "ghgEmissions": { "type": ["number", "null"], "description": "Total GHG emissions (metric tons CO2e), where benchmarked." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

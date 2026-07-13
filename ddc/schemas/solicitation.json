@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ddc/schemas/solicitation.json",
+  "title": "Solicitation",
+  "description": "A DDC procurement opportunity — a professional-service, construction, or not-for-profit solicitation open for vendor response. DDC has NO Open Data twin and NO owned API for solicitations: every DDC solicitation is released and responded to through the citywide PASSPort platform managed by MOCS, and published as notice in the City Record, where vendors can register for email alerts. This schema models the opportunity so an owned DDC API / agent can present and track it.",
+  "type": "object",
+  "x-source": {
+    "passport": "https://www.nyc.gov/site/mocs/passport/about-passport.page",
+    "city_record": "https://a856-cityrecord.nyc.gov/",
+    "site": "https://www.nyc.gov/site/ddc/contracts/work-with-ddc.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "pin": { "type": ["string", "null"], "description": "Procurement Identification Number ('PIN'), where assigned." },
+    "title": { "type": "string", "description": "Solicitation title / short description." },
+    "category": {
+      "type": ["string", "null"],
+      "enum": ["Professional Service Contracts", "Construction Contracts", "Not-for-Profit Procurements", "Alternative Delivery", "Other", null],
+      "description": "DDC procurement track."
+    },
+    "division": { "$ref": "_common.json#/$defs/Division" },
+    "clientAgency": { "type": ["string", "null"], "description": "Sponsoring agency, where the opportunity ties to a client-agency project." },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Upcoming", "Open", "Closed", "Awarded", "Cancelled", null],
+      "description": "Lifecycle of the solicitation."
+    },
+    "responseDueDate": { "type": ["string", "null"], "format": "date", "description": "Deadline to respond in PASSPort." },
+    "estimatedValue": { "$ref": "_common.json#/$defs/Money" },
+    "passportUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the solicitation in PASSPort." },
+    "cityRecordUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the City Record notice." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

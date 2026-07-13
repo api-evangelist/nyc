@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oti/schemas/linknyc-kiosk.json",
+  "title": "LinkNYCKiosk",
+  "description": "A LinkNYC public Wi-Fi / communications kiosk operated under the OTI franchise. Canonical schema reconciling 'LinkNYC Kiosk Locations' (s4kf-3yrf, 32 columns), 'LinkNYC Kiosk Status' (n6c5-95xh, 39 columns; live Wi-Fi/tablet/phone status), and 'LinkNYC New Site Permit Applications' (xp25-gxux). Keyed on Site ID.",
+  "type": "object",
+  "x-source": {
+    "opendata_locations": "https://data.cityofnewyork.us/d/s4kf-3yrf",
+    "opendata_status": "https://data.cityofnewyork.us/d/n6c5-95xh",
+    "opendata_usage": "https://data.cityofnewyork.us/d/69wu-b929",
+    "opendata_permits": "https://data.cityofnewyork.us/d/xp25-gxux"
+  },
+  "properties": {
+    "siteId": { "type": "string", "description": "'Site ID' / 'SITE ID' — primary key." },
+    "legacyId": { "type": ["string", "null"], "description": "'Legacy ID'." },
+    "pptId": { "type": ["string", "null"], "description": "'PPT ID' — public pay-telephone/franchise reservation id." },
+    "plannedKioskType": { "type": ["string", "null"], "description": "'Planned Kiosk Type' (e.g. Link1.0, Link5G)." },
+    "installationStatus": { "type": ["string", "null"], "description": "'Installation Status' / 'STATUS'." },
+    "installationComplete": { "type": ["boolean", "string", "null"], "description": "'Installation Complete'." },
+    "activationComplete": { "type": ["boolean", "string", "null"], "description": "'Activation Complete'." },
+    "installationDate": { "type": ["string", "null"], "format": "date", "description": "'INSTALLATION DATE'." },
+    "activationDate": { "type": ["string", "null"], "format": "date", "description": "'ACTIVATION DATE'." },
+    "streetAddress": { "type": ["string", "null"], "description": "'Street Address' / 'ADDRESS' / 'LOCATION (address)'." },
+    "crossStreet1": { "type": ["string", "null"], "description": "'Cross Street 1'." },
+    "crossStreet2": { "type": ["string", "null"], "description": "'Cross Street 2'." },
+    "cornerLocation": { "type": ["string", "null"], "description": "'IxN Corner' / 'CORNER LOCATION'." },
+    "zoning": { "type": ["string", "null"], "description": "'Zoning'." },
+    "status": {
+      "type": "object",
+      "description": "Live component status from the Kiosk Status feed (n6c5-95xh).",
+      "properties": {
+        "wifiStatus": { "type": ["string", "null"], "description": "'WIFI STATUS'." },
+        "tabletStatus": { "type": ["string", "null"], "description": "'TABLET STATUS'." },
+        "phoneStatus": { "type": ["string", "null"], "description": "'PHONE STATUS'." },
+        "wifiLastTs": { "type": ["string", "null"], "format": "date-time", "description": "'WIFI LAST TS'." },
+        "tabletLastTs": { "type": ["string", "null"], "format": "date-time", "description": "'TABLET LAST TS'." },
+        "dialerLastTs": { "type": ["string", "null"], "format": "date-time", "description": "'DIALER LAST TS'." },
+        "generatedOn": { "type": ["string", "null"], "format": "date-time", "description": "'GENERATED ON'." }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["siteId"],
+  "additionalProperties": false
+}

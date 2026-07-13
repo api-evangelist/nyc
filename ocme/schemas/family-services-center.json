@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ocme/schemas/family-services-center.json",
+  "title": "FamilyServicesCenter",
+  "description": "An OCME Family Services Center, Forensic Pathology Center, or specialized facility (Charles S. Hirsch Center for Forensic Sciences, World Trade Center Repository). Reconstructed from the OCME locations pages (nyc.gov/site/ocme/locations); there is NO Open Data twin — this directory exists today only as HTML on the site and a phone number for the Identification Unit. Keyed on facility name + borough.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/ocme/locations/family-services-centers.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Facility name, e.g. 'Manhattan Forensic Pathology and Family Services Center'." },
+    "type": {
+      "type": ["string", "null"],
+      "enum": ["Family Services Center", "Forensic Pathology Center", "Charles S. Hirsch Center for Forensic Sciences", "World Trade Center Repository", "Other"],
+      "description": "Facility category."
+    },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "address": { "type": ["string", "null"], "description": "Street address, e.g. '520 First Avenue'." },
+    "city": { "type": ["string", "null"] },
+    "state": { "type": ["string", "null"] },
+    "zipCode": { "type": ["string", "null"] },
+    "phone": { "type": ["string", "null"], "description": "Public contact number (e.g. Identification Unit 212-447-2030)." },
+    "hours": { "type": ["string", "null"], "description": "Hours of operation, where published." },
+    "services": {
+      "type": "array",
+      "description": "Services offered at this center (identification, viewing, family meetings, personal-effects return).",
+      "items": { "type": "string" }
+    },
+    "byAppointment": { "type": ["boolean", "null"], "description": "Whether visits are coordinated by appointment via the Identification Unit." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

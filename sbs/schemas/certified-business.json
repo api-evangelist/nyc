@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/schemas/certified-business.json",
+  "title": "CertifiedBusiness",
+  "description": "A business certified by NYC SBS — the M/WBE, EBE, LBE, or EO50 certified vendor. Canonical schema reconciling the 'SBS Certified Business List' (ci93-uc8s, 56 columns) and the 'SBS EO 50 Certified Businesses' list (5vi6-xdpy). Keyed on Account_Number.",
+  "type": "object",
+  "x-source": {
+    "opendata_certified": "https://data.cityofnewyork.us/d/ci93-uc8s",
+    "opendata_eo50": "https://data.cityofnewyork.us/d/5vi6-xdpy",
+    "site": "https://www.nyc.gov/site/sbs/businesses/mwbe.page"
+  },
+  "properties": {
+    "accountNumber": { "type": ["string", "null"], "description": "SBS certification account number ('Account_Number') — primary key." },
+    "vendorFormalName": { "type": "string", "description": "Legal business name ('Vendor_Formal_Name')." },
+    "vendorDba": { "type": ["string", "null"], "description": "Doing-business-as name ('Vendor_DBA')." },
+    "certification": { "$ref": "_common.json#/$defs/CertificationType" },
+    "certificationRenewalDate": { "type": ["string", "null"], "format": "date", "description": "'Certification_Renewal_Date'." },
+    "ethnicity": { "$ref": "_common.json#/$defs/Ethnicity" },
+    "dateOfEstablishment": { "type": ["string", "null"], "format": "date", "description": "'Date_Of_Establishment'." },
+    "enrolledInPassport": { "type": ["boolean", "string", "null"], "description": "'Enrolled_in_PASSPort' — registered in the city PASSPort procurement system." },
+    "signatoryToUnionContracts": { "type": ["boolean", "string", "null"], "description": "'Signatory_To_Union_Contracts'." },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "firstName": { "type": ["string", "null"], "description": "'First_Name'." },
+        "lastName": { "type": ["string", "null"], "description": "'Last_Name'." },
+        "telephone": { "type": ["string", "null"], "description": "'telephone'." },
+        "website": { "type": ["string", "null"], "description": "'Website'." }
+      },
+      "additionalProperties": false
+    },
+    "address": { "$ref": "_common.json#/$defs/PostalAddress" },
+    "mailingAddress": { "$ref": "_common.json#/$defs/PostalAddress" },
+    "industry": { "$ref": "_common.json#/$defs/Industry" },
+    "businessDescription": { "type": ["string", "null"], "description": "'Business_Description'." },
+    "capacity": {
+      "type": "object",
+      "description": "Bonding and contract-capacity indicators.",
+      "properties": {
+        "aggregateBondingLimit": { "type": ["number", "string", "null"], "description": "'Aggregate_Bonding_Limit'." },
+        "largestValueOfContract": { "type": ["number", "string", "null"], "description": "'Largest_Value_of_Contract'." },
+        "capacityBuildingPrograms": { "type": ["string", "null"], "description": "'Capacity_Building_Programs'." },
+        "typesOfConstructionProjects": { "type": ["string", "null"], "description": "'Types_of_Construction_Projects_Performed'." }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["vendorFormalName"],
+  "additionalProperties": false
+}

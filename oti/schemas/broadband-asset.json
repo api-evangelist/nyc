@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oti/schemas/broadband-asset.json",
+  "title": "BroadbandAsset",
+  "description": "A building/site broadband-infrastructure asset (the BroadbandMetric entity) from OTI's municipal-broadband program. Canonical schema reconciling the 'Universal Solicitation for Broadband Asset Dataset' (2bsr-c6qq, 31 columns), its 'Target Neighborhoods' companion (2qqs-crk2), and the 'Internet Master Plan: Adoption and Infrastructure Data by Neighborhood' (fg5j-q5nk). Describes fiber/wireless readiness of a building in a broadband target neighborhood. Keyed on id + BBL/BIN.",
+  "type": "object",
+  "x-source": {
+    "opendata_assets": "https://data.cityofnewyork.us/d/2bsr-c6qq",
+    "opendata_target_neighborhoods": "https://data.cityofnewyork.us/d/2qqs-crk2",
+    "opendata_master_plan": "https://data.cityofnewyork.us/d/fg5j-q5nk"
+  },
+  "properties": {
+    "id": { "type": "string", "description": "'id' — asset identifier (primary key)." },
+    "name": { "type": ["string", "null"], "description": "'name' — building/asset name." },
+    "assetClass": { "type": ["string", "null"], "description": "'asset_class' (e.g. residential building, NYCHA, community center)." },
+    "owner": { "type": ["string", "null"], "description": "'owner'." },
+    "operatedBy": { "type": ["string", "null"], "description": "'operated_by'." },
+    "responsibleAgency": { "$ref": "_common.json#/$defs/Agency" },
+    "street": { "type": ["string", "null"], "description": "'street' (+ 'number')." },
+    "number": { "type": ["string", "null"], "description": "'number'." },
+    "city": { "type": ["string", "null"], "description": "'city'." },
+    "numFloors": { "type": ["integer", "null"], "description": "'num_floors'." },
+    "connectedToFiber": { "type": ["boolean", "string", "null"], "description": "'connected_to_fiber'." },
+    "fiberPathwaysInBuilding": { "type": ["boolean", "string", "null"], "description": "'fiber_pathways_in_building'." },
+    "wirelessOnRoof": { "type": ["boolean", "string", "null"], "description": "'wireless_on_roof'." },
+    "franchiseAgreement": { "type": ["string", "null"], "description": "'franchise_agreement'." },
+    "landmarked": { "type": ["boolean", "string", "null"], "description": "'landmarked'." },
+    "seniorCenterFlag": { "type": ["boolean", "string", "null"], "description": "'senior_center_flag'." },
+    "communityCornerstoneCenterFlag": { "type": ["boolean", "string", "null"], "description": "'community_cornerstone_center_flag'." },
+    "targetNeighborhood": { "type": ["string", "null"], "description": "'target_neighborhood'." },
+    "targetNeighborhoodId": { "type": ["string", "integer", "null"], "description": "'target_neighborhood_id'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["id"],
+  "additionalProperties": false
+}

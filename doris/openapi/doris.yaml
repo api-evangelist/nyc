@@ -1,0 +1,387 @@
+openapi: 3.1.0
+info:
+  title: NYC DORIS API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Records & Information Services (DORIS) —
+    publishing its already-open archival, vital-record, publication, and honorary-street-name indexes as
+    coherent resources, and adding the missing write surface: requesting (retrieving/ordering) a record
+    that today lives only behind the Historical Vital Records portal, the vendor DAMS, or a FOIL form.
+  description: >-
+    Proposed API-first surface for the NYC Department of Records & Information Services (DORIS), from the
+    NYC Modernization low-hanging-fruit assessment of nyc.gov/site/records, the Municipal Archives
+    Collections (archives.nyc / Preservica DAMS, formerly LUNA Imaging), the Historical Vital Records
+    portal, and the OpenRecords FOIL system.
+
+
+    DORIS inverts the usual problem in a new way. Its **indexes are wide open** — 13 NYC Open Data
+    datasets index the historical vital records (birth/death/marriage), the Municipal Archives digital
+    objects and finding aids, the City Hall Library catalog, government publications, and honorary street
+    names. But the **objects themselves are locked in a vendor DAMS** (Preservica at
+    `nycrecords.access.preservica.com`, whose content API is token-gated; formerly LUNA Imaging), and
+    **retrieving** a record — ordering a certified vital-record copy, an archival reproduction, or filing
+    a FOIL request — has no machine-readable contract at all.
+
+
+    This contract does two things: (1) presents the open index datasets as one clean resource model, and
+    (2) adds the one net-new **write** workflow — creating a **records request** (retrieve/order a record)
+    — that today exists only behind the vital-records portal, an email/form to the Archives, or the
+    OpenRecords FOIL system.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.records.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Archives
+    description: Municipal Archives collections (finding aids) and digitized items.
+  - name: VitalRecords
+    description: Historical vital-record indexes (birth, death, marriage) — pre-1949 civil registers.
+  - name: Publications
+    description: Government publications, required reports, and the City Hall Library catalog.
+  - name: HonoraryStreetNames
+    description: Council-enacted honorary (co-named) streets curated by DORIS.
+  - name: RecordsRequests
+    description: Retrieve/order a record — vital-record copy, archival reproduction, or FOIL (read + write). The net-new surface, today locked behind portals and forms.
+
+paths:
+  /collections:
+    get:
+      operationId: listCollections
+      summary: List / search Municipal Archives collections (finding aids)
+      tags: [Archives]
+      parameters:
+        - name: level
+          in: query
+          schema: { type: string }
+        - name: hasDigitalObject
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of archival collections.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/archival-collection.json' } }
+  /collections/{identifier}:
+    get:
+      operationId: getCollection
+      summary: Get an archival collection by identifier
+      tags: [Archives]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The archival collection.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/archival-collection.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /collections/{identifier}/items:
+    get:
+      operationId: getCollectionItems
+      summary: List the digitized items within a collection
+      tags: [Archives]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: Digital items.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/digital-item.json' } }
+
+  /digital-items:
+    get:
+      operationId: listDigitalItems
+      summary: Search digitized Municipal Archives objects (photos, maps, films, record pages)
+      tags: [Archives]
+      parameters:
+        - name: objectType
+          in: query
+          schema: { type: string }
+        - name: resourceIdentifier
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of digital items.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/digital-item.json' } }
+  /digital-items/{identifier}:
+    get:
+      operationId: getDigitalItem
+      summary: Get a digitized item by identifier
+      tags: [Archives]
+      parameters:
+        - name: identifier
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The digital item.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/digital-item.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /vital-records:
+    get:
+      operationId: listVitalRecords
+      summary: Search the historical vital-record indexes (birth, death, marriage)
+      description: Index search only — the scanned certificate is retrieved via a records request (see POST /records-requests).
+      tags: [VitalRecords]
+      parameters:
+        - name: recordType
+          in: query
+          schema: { type: string, enum: [Birth Certificate, Death Certificate, Marriage Certificate, Marriage License] }
+        - name: lastName
+          in: query
+          schema: { type: string }
+        - name: firstName
+          in: query
+          schema: { type: string }
+        - name: soundex
+          in: query
+          schema: { type: string }
+        - name: county
+          in: query
+          schema: { type: string, enum: [New York, Bronx, Kings, Queens, Richmond] }
+        - name: year
+          in: query
+          schema: { type: integer }
+        - name: certificateNumber
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of vital-record index entries.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/historical-vital-record.json' } }
+
+  /publications:
+    get:
+      operationId: listPublications
+      summary: Search government publications, required reports, and the City Hall Library catalog
+      tags: [Publications]
+      parameters:
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: reportType
+          in: query
+          schema: { type: string }
+        - name: subject
+          in: query
+          schema: { type: string }
+        - name: year
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of publications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/government-publication.json' } }
+
+  /honorary-street-names:
+    get:
+      operationId: listHonoraryStreetNames
+      summary: List / search honorary (co-named) streets
+      tags: [HonoraryStreetNames]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: enactmentYear
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of honorary street names.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/honorary-street-name.json' } }
+
+  /records-requests:
+    get:
+      operationId: listRecordsRequests
+      summary: List the authenticated requester's own records requests
+      description: Reads the requester's own vital-record orders, archival reproductions, and FOIL requests — today scattered across the vital-records portal, email, and OpenRecords.
+      tags: [RecordsRequests]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Received, In Progress, Additional Info Required, Fulfilled, Denied, Closed] }
+        - name: requestType
+          in: query
+          schema: { type: string, enum: [VitalRecordCopy, ArchivalReproduction, LibraryPublication, FOIL] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the requester's records requests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/records-request.json' } }
+    post:
+      operationId: createRecordsRequest
+      summary: Request (retrieve/order) a record
+      description: >-
+        The net-new write surface — an API for retrieving a record: ordering a certified copy of a
+        historical vital record, requesting an archival reproduction or library publication, or filing a
+        FOIL request. Today this exists only behind the Historical Vital Records portal, an email/form to
+        the Municipal Archives, or the OpenRecords FOIL system. Restricted vital records require proof of
+        relationship/eligibility, handled offline.
+      tags: [RecordsRequests]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/records-request.json' }
+      responses:
+        '201':
+          description: Records request created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/records-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /records-requests/{requestId}:
+    get:
+      operationId: getRecordsRequest
+      summary: Get a records request
+      tags: [RecordsRequests]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The records request.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/records-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ArchivalCollection: { $ref: '../schemas/archival-collection.json' }
+    DigitalItem: { $ref: '../schemas/digital-item.json' }
+    HistoricalVitalRecord: { $ref: '../schemas/historical-vital-record.json' }
+    GovernmentPublication: { $ref: '../schemas/government-publication.json' }
+    HonoraryStreetName: { $ref: '../schemas/honorary-street-name.json' }
+    RecordsRequest: { $ref: '../schemas/records-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

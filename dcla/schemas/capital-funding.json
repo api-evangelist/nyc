@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/schemas/capital-funding.json",
+  "title": "CapitalFunding",
+  "description": "A DCLA capital funding record for a cultural organization in a fiscal year — construction/renovation/equipment dollars, broken out by source (DCLA, City Council, Borough President). Canonical schema reconciling 'DCLA Cultural Organizations Capital Funding' (7hgn-sgmk, 6 columns). Keyed on Organization + Fiscal Year.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/7hgn-sgmk",
+    "site": "https://www.nyc.gov/site/dcla/cultural-funding/capital-funding.page"
+  },
+  "properties": {
+    "organization": { "type": "string", "description": "Organization name ('Organization')." },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "totalFunding": { "type": ["number", "null"], "description": "Total capital funding in dollars ('Total Funding')." },
+    "dclaFunding": { "type": ["number", "null"], "description": "Portion from DCLA ('DCLA Funding')." },
+    "cityCouncilFunding": { "type": ["number", "null"], "description": "Portion from the City Council ('City Council Funding')." },
+    "boroughPresidentFunding": { "type": ["number", "null"], "description": "Portion from Borough Presidents ('Borough President Funding')." }
+  },
+  "required": ["organization"],
+  "additionalProperties": false
+}

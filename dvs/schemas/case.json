@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dvs/schemas/case.json",
+  "title": "Case",
+  "description": "A de-identified DVS case — the work DVS Care Coordinators do after an assistance request/referral is opened, including its service type and outcome. Canonical schema reconciling 'Department of Veterans' Services Cases' (pw4e-vms3, 9 columns). Note 'Started as Assistance Request' and 'Case is Referred', which tie a case back to an AssistanceRequest and forward to a referral.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/pw4e-vms3"
+  },
+  "properties": {
+    "calendarYear": { "type": ["string", "integer", "null"], "description": "'Calendar Year'." },
+    "serviceType": { "type": ["string", "null"], "description": "Case service type ('Service Type')." },
+    "serviceSubtype": { "type": ["string", "null"], "description": "'Service Subtype'." },
+    "caseStatus": { "type": ["string", "null"], "description": "'Case Status'." },
+    "startedAsAssistanceRequest": { "type": ["boolean", "string", "null"], "description": "Whether the case began as an assistance request ('Started as Assistance Request')." },
+    "caseIsReferred": { "type": ["boolean", "string", "null"], "description": "Whether the case was referred out ('Case is Referred')." },
+    "originatingProviderName": { "type": ["string", "null"], "description": "'Originating Provider Name'." },
+    "outcomeResolutionType": { "type": ["string", "null"], "description": "'Outcome Resolution Type'." },
+    "outcomeDescription": { "type": ["string", "null"], "description": "'Outcome Description'." }
+  },
+  "additionalProperties": false
+}

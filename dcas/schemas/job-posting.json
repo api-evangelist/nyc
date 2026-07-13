@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcas/schemas/job-posting.json",
+  "title": "JobPosting",
+  "description": "A citywide job posting brokered by DCAS — the openings residents apply to. Canonical schema reconciling the 'Jobs NYC Postings' dataset (kpav-sd4t, 30 columns), which mirrors the City Jobs external careers portal (cityjobs.nyc.gov, formerly a127-jobs). Keyed on Job ID and Civil Service Title Code.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/kpav-sd4t",
+    "portal": "https://cityjobs.nyc.gov/",
+    "site": "https://www.nyc.gov/site/dcas/employees/careers-at-the-city.page"
+  },
+  "properties": {
+    "jobId": { "type": "string", "description": "Posting identifier ('Job ID')." },
+    "businessTitle": { "type": ["string", "null"], "description": "Public-facing business title ('Business Title')." },
+    "title": { "$ref": "_common.json#/$defs/TitleReference" },
+    "titleClassification": { "type": ["string", "null"], "description": "'Title Classification' (Competitive, Non-Competitive, Exempt, Labor)." },
+    "agency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "divisionWorkUnit": { "type": ["string", "null"], "description": "'Division/Work Unit'." },
+    "jobCategory": { "type": ["string", "null"], "description": "'Job Category'." },
+    "careerLevel": { "type": ["string", "null"], "description": "'Career Level'." },
+    "positions": { "type": ["integer", "null"], "description": "Number of positions ('# Of Positions')." },
+    "postingType": {
+      "type": ["string", "null"],
+      "enum": ["Internal", "External", null],
+      "description": "'Posting Type' — internal (current employees) or external (public)."
+    },
+    "fullTimePartTime": { "type": ["string", "null"], "description": "'Full-Time/Part-Time indicator'." },
+    "salaryRangeFrom": { "type": ["number", "null"], "description": "'Salary Range From'." },
+    "salaryRangeTo": { "type": ["number", "null"], "description": "'Salary Range To'." },
+    "salaryFrequency": { "type": ["string", "null"], "description": "'Salary Frequency' (Annual, Hourly, Daily)." },
+    "hoursShift": { "type": ["string", "null"], "description": "'Hours/Shift'." },
+    "workLocation": { "type": ["string", "null"], "description": "'Work Location'." },
+    "workLocation1": { "type": ["string", "null"], "description": "'Work Location 1' (borough/site)." },
+    "jobDescription": { "type": ["string", "null"], "description": "'Job Description'." },
+    "minimumQualRequirements": { "type": ["string", "null"], "description": "'Minimum Qual Requirements'." },
+    "preferredSkills": { "type": ["string", "null"], "description": "'Preferred Skills'." },
+    "additionalInformation": { "type": ["string", "null"], "description": "'Additional Information'." },
+    "toApply": { "type": ["string", "null"], "description": "'To Apply' instructions." },
+    "residencyRequirement": { "type": ["string", "null"], "description": "'Residency Requirement'." },
+    "recruitmentContact": { "type": ["string", "null"], "description": "'Recruitment Contact'." },
+    "postingDate": { "type": ["string", "null"], "format": "date", "description": "'Posting Date'." },
+    "postingUpdated": { "type": ["string", "null"], "format": "date", "description": "'Posting Updated'." },
+    "postUntil": { "type": ["string", "null"], "description": "'Post Until' — application close." }
+  },
+  "required": ["jobId"],
+  "additionalProperties": false
+}

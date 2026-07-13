@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/schemas/materials-for-the-arts.json",
+  "title": "MaterialsForTheArts",
+  "description": "An annual, category-level summary of donations to Materials for the Arts (MFTA) — DCLA's creative-reuse program that redistributes donated goods to arts nonprofits, public schools, and City agencies. Canonical schema reconciling 'DCLA Materials For The Arts - Donor Information' (vhtt-kpwy, 6 columns). Aggregate by Year + Category; no individual donor is exposed.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/vhtt-kpwy",
+    "site": "https://www.nyc.gov/site/dcla/programs/materials-for-the-arts.page"
+  },
+  "properties": {
+    "year": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "category": { "type": "string", "description": "Donation category ('Category', e.g. Office Supplies, Fabric, Furniture)." },
+    "numberOfDonations": { "type": ["integer", "null"], "description": "Count of donations ('Number of Donations')." },
+    "distinctDonors": { "type": ["integer", "null"], "description": "Count of distinct donors ('Distinct Donors')." },
+    "totalDeclaredValue": { "type": ["number", "null"], "description": "Total declared value in dollars ('Total Declared Value ($)')." },
+    "totalWeightShortTons": { "type": ["number", "null"], "description": "Total weight in short tons ('Total Weight (Short Tons)')." }
+  },
+  "required": ["category"],
+  "additionalProperties": false
+}

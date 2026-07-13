@@ -1,0 +1,157 @@
+{
+  "domain": "oti",
+  "agency": "NYC Office of Technology & Innovation (OTI)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov/robots.txt only disallows /html/misc/). Fingerprinted the OTI informational site nyc.gov/content/oti (Akamai + nginx + NYC.gov 'Livesite' platform v22 + mPulse + Dynatrace) and probed the citywide platforms OTI OPERATES: the api.nyc.gov gateway (identified as Microsoft Azure API Management from Request-Context appId + 401 'missing subscription key'; GeoClient/GeoSearch are key-gated), the GeoSearch/Pelias geocoder at geosearch.planninglabs.nyc (200), and the NYC Open Data platform on Socrata/Tyler (X-Socrata-Region/RequestId). Verified the NYC Open Data agency label 'Office of Technology and Innovation (OTI)' via the Socrata Discovery API (221 assets) and pulled all 221 with column schemas.",
+  "related_domains": ["data.cityofnewyork.us", "opendata.cityofnewyork.us", "api.nyc.gov", "geosearch.planninglabs.nyc", "www.nyc.gov", "on1.nyc.gov", "link.nyc"],
+  "headline_findings": [
+    "OTI is the META case: it is not an agency with data trapped in HTML — it OPERATES the city's data infrastructure. It runs NYC Open Data (data.cityofnewyork.us on Socrata/Tyler), the api.nyc.gov gateway (Microsoft Azure API Management, hosting GeoClient and GeoSearch), NYC.gov itself, LinkNYC, the municipal broadband program, public Wi-Fi, and the 311 pipeline.",
+    "As a publisher it is enormous: 221 datasets under the 'Office of Technology and Innovation (OTI)' label — including the most-viewed dataset in the entire city (311 Service Requests, erm2-nwe9, 1.26M+ views), plus the catalog OF ITSELF (the LL251 Published Data Asset Inventory 5tqd-u88y and the Open Data Release Tracker qj2z-ibhs), LinkNYC, broadband, Wi-Fi, planimetric base-map, and .nyc domain data.",
+    "The api.nyc.gov gateway is real and running (Azure APIM) but has no owned, machine-readable catalog of its services and no self-service key API — GeoClient returns HTTP 401 'missing subscription key' with keys provisioned only through a developer portal.",
+    "The reframe is unique: because the data is already open and the gateway already exists, the modernization is not to LIBERATE data but to PRODUCTIZE the operator role — a single owned gateway + catalog API that lets a developer or agent discover a dataset, discover a gateway service, geocode an address, and register an asset through one contract. OTI is the natural home for the project's nyc-commons + registry ideas.",
+    "Net-new write surfaces: register a dataset to the catalog, and request an api.nyc.gov gateway key — the two things a platform operator should offer programmatically but today does only through internal or portal workflows. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "api.nyc.gov (GeoClient /geo/geoclient/v1, GeoSearch)", "type": "API gateway", "owner": "NYC OTI (on Microsoft Azure API Management)", "public": "key-gated (401 without subscription key)", "note": "The citywide API gateway OTI operates. Request-Context appId + 'missing subscription key' fingerprint Azure APIM. Hosts GeoClient (address/BBL/BIN geocoding) and other agency APIs. No owned catalog of services, no self-service key API." },
+    { "endpoint": "geosearch.planninglabs.nyc/v2/search", "type": "geocoding API", "owner": "NYC (DCP Planning Labs; wraps OTI GeoSupport)", "public": true, "note": "Open Pelias/Mapzen geocoder over NYC GeoSupport — returns coordinates + geography spine. The open twin of GeoClient. HTTP 200, no key." },
+    { "endpoint": "data.cityofnewyork.us (SODA + Discovery)", "type": "open data API", "owner": "NYC OTI (Socrata / Tyler Technologies)", "public": true, "note": "The open-data platform OTI operates for the WHOLE city. SODA /resource/<id>.json per dataset + the Socrata Discovery/catalog API. OTI itself publishes 221 datasets, incl. the catalog of the entire corpus." },
+    { "endpoint": "www.nyc.gov/content/oti", "type": "informational site", "owner": "NYC.gov shared platform ('Livesite' v22)", "public": "html", "note": "Content only — About OTI, services, initiatives. Akamai edge, nginx, mPulse + Dynatrace RUM. No content API." },
+    { "endpoint": "on1.nyc.gov", "type": "citywide account / SSO", "owner": "NYC OTI", "public": "login", "note": "NYC.gov ID / citywide identity — itself an OTI-run platform." },
+    { "endpoint": "Akamai edge", "type": "CDN", "owner": "Akamai", "public": "vendor", "note": "server-timing ak_p / mPulse on the OTI site." },
+    { "endpoint": "Dynatrace RUM", "type": "monitoring beacon", "owner": "Dynatrace", "public": "vendor", "note": "x-oneagent-js-injection real-user monitoring." }
+  ],
+  "fruit": [
+    {
+      "name": "NYC Open Data catalog (the catalog itself)",
+      "type": "data table + platform",
+      "entity": "OpenDataset",
+      "url": "https://data.cityofnewyork.us/d/5tqd-u88y",
+      "count": "221 OTI-published datasets; 2,300+ citywide",
+      "machine_readable": "Open Data (SODA) + Socrata Discovery API",
+      "verified": true,
+      "opendata_match": ["Local Law 251 Published Data Asset Inventory 5tqd-u88y (26c)", "NYC Open Data Release Tracker qj2z-ibhs (12c)", "Open Data Help Desk: Public Dataset Requests 63us-eqtq", "Alerts sn5i-xuny"],
+      "notes": "The META entity: OTI operates the platform and publishes the catalog of itself. An owned catalog API would list/get/register any of the 2,300+ assets, keyed on the Socrata four-by-four UID."
+    },
+    {
+      "name": "api.nyc.gov gateway services (GeoClient / GeoSearch)",
+      "type": "API gateway",
+      "entity": "APIGatewayService",
+      "url": "https://api.nyc.gov/",
+      "machine_readable": "key-gated (Azure APIM), no owned catalog",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "OTI RUNS the citywide gateway but exposes no machine-readable catalog of its services and no self-service key API. GeoClient returns 401 'missing subscription key'. The net-new surfaces: a services catalog + a request_api_key write."
+    },
+    {
+      "name": "Geocoding (GeoClient / GeoSearch)",
+      "type": "API",
+      "entity": "APIGatewayService",
+      "url": "https://geosearch.planninglabs.nyc/v2/search",
+      "machine_readable": "GeoSearch open (200); GeoClient key-gated",
+      "verified": true,
+      "opendata_match": [],
+      "notes": "Address/intersection -> coordinates + geography spine (BBL/BIN/borough/council district). GeoSearch (Pelias) is open; GeoClient on api.nyc.gov needs a key. The one universal operation every other NYC domain depends on."
+    },
+    {
+      "name": "LinkNYC kiosks",
+      "type": "data table + live status + map",
+      "entity": "LinkNYCKiosk",
+      "url": "https://data.cityofnewyork.us/d/s4kf-3yrf",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["LinkNYC Kiosk Locations s4kf-3yrf (32c)", "LinkNYC Kiosk Status n6c5-95xh (39c)", "LinkNYC Usage Statistics 69wu-b929", "LinkNYC New Site Permit Applications xp25-gxux"],
+      "notes": "The franchise public Wi-Fi/comms kiosks OTI oversees. Locations + live Wi-Fi/tablet/phone status + usage. Keyed on Site ID."
+    },
+    {
+      "name": "Municipal broadband assets",
+      "type": "data table",
+      "entity": "BroadbandAsset",
+      "url": "https://data.cityofnewyork.us/d/2bsr-c6qq",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Universal Solicitation for Broadband Asset Dataset 2bsr-c6qq (31c)", "Universal Solicitation of Broadband Target Neighborhoods 2qqs-crk2 (7c)", "Internet Master Plan: Adoption & Infrastructure by Neighborhood fg5j-q5nk (77c)"],
+      "notes": "Fiber/wireless readiness of buildings in broadband target neighborhoods, from OTI's municipal-broadband / Internet Master Plan program. Keyed on id + BBL/BIN."
+    },
+    {
+      "name": "Public Wi-Fi hotspots",
+      "type": "data table + map",
+      "entity": "WiFiHotspot",
+      "url": "https://data.cityofnewyork.us/d/yjub-udmw",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["NYC Wi-Fi Hotspot Locations yjub-udmw (38c)"],
+      "notes": "The citywide inventory of free/partner/limited public Wi-Fi — libraries, parks, LinkNYC, transit, provider networks. Keyed on OBJECTID / DOITT_ID + SSID."
+    },
+    {
+      "name": "311 Service Requests",
+      "type": "data table",
+      "entity": "ServiceRequest",
+      "url": "https://data.cityofnewyork.us/d/erm2-nwe9",
+      "count": "1.26M+ views (most-viewed dataset in the city)",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["311 Service Requests from 2020 to Present erm2-nwe9 (48c)", "311 Service Requests 2010-2019 76ig-c548 (48c)", "311 Service Requests 2009 3rfa-3xsf", "311 Call Center Inquiry wewp-mm3p", "311 Service Level Agreements cs9t-e3x8"],
+      "notes": "OTI operates the 311 open-data pipeline that routes each request to the responsible agency. The city's flagship dataset; keyed on Unique Key."
+    },
+    {
+      "name": "Register a dataset to the catalog",
+      "type": "publish workflow (write)",
+      "entity": "OpenDataset",
+      "url": "https://opendata.cityofnewyork.us/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "NET-NEW write: today publishing an asset is an internal Socrata + Open Data Team workflow with no public API. An owned catalog API would let agencies (and agents acting for them) register an asset for the LL251 inventory."
+    },
+    {
+      "name": "Request an api.nyc.gov gateway key",
+      "type": "sign-up workflow (write)",
+      "entity": "APIGatewayService",
+      "url": "https://api.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "NET-NEW write: gateway keys are provisioned through a developer portal, not an API — api.nyc.gov returns 401 until one is granted. A self-service request_api_key operation would productize the operator role."
+    },
+    {
+      "name": "Planimetric base map & building footprints",
+      "type": "GIS layers + rasters",
+      "entity": "OpenDataset",
+      "url": "https://data.cityofnewyork.us/d/5zhs-2jue",
+      "machine_readable": "Open Data (SODA) + map/raster services",
+      "verified": true,
+      "opendata_match": ["BUILDING 5zhs-2jue", "NYC Planimetric Database (Sidewalk/Roadbed/Curbs/Open Space/...) vfx9-tbb6...", "Centerline inkn-q76z (64c)", "1ft DEM dpc8-z3jc", "Land Cover Raster he6d-2qns"],
+      "notes": "OTI's GIS division publishes the citywide base map — buildings, sidewalks, roadbed, elevation, land cover. Dozens of the 221 assets. The geospatial foundation other agencies build on."
+    }
+  ],
+  "meta": {
+    "short": "NYC Technology & Innovation (OTI)",
+    "verb": "productize",
+    "platform": "NYC.gov 'Livesite' informational site (Akamai + nginx + mPulse + Dynatrace); OTI OPERATES NYC Open Data (Socrata/Tyler), the api.nyc.gov gateway (Microsoft Azure API Management; GeoClient/GeoSearch), and the 311 pipeline.",
+    "netnew": "One owned, unified gateway + catalog API — plus two write surfaces: register a dataset, and request an api.nyc.gov gateway key.",
+    "accent": "#2f9e8f",
+    "tagline": "The agency that runs the city's data infrastructure, made into a first-class API product.",
+    "headline": "OTI already operates NYC Open Data, the api.nyc.gov gateway, and 311 — the modernization is to productize that operator role into one owned, agent-native citywide gateway + catalog API."
+  },
+  "scorecard": {
+    "platform": 3,
+    "siteApi": 2,
+    "openData": 3,
+    "coreData": 3,
+    "writeApi": 1,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Operates the city's platforms (Socrata, Azure APIM, Livesite) — it IS the platform layer.",
+    "siteApi": "The OTI site is HTML with no content API, but OTI runs a real API gateway (api.nyc.gov).",
+    "openData": "221 datasets incl. the catalog of itself and the city's most-viewed dataset (311).",
+    "coreData": "Core entities all open — LinkNYC, broadband, Wi-Fi, 311, planimetric base map.",
+    "writeApi": "No public write API; dataset publishing and gateway keys are internal/portal-only.",
+    "agent": "No agent-native surface today; MCP proposed here.",
+    "ownership": "Operates the stack but on vendor platforms (Socrata/Tyler + Microsoft Azure APIM)."
+  }
+}

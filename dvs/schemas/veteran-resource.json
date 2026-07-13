@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dvs/schemas/veteran-resource.json",
+  "title": "VeteranResource",
+  "description": "A veteran-serving resource / service provider in the DVS Resource Map — the curated directory DVS points veterans to (walk-in centers, service organizations, benefits, health, housing, and more). Canonical schema reconciling the 'DVS Resource Map' dataset (af2s-4k4p, 15 columns). Keyed on DVS_RES_ID.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/af2s-4k4p",
+    "site": "https://www.nyc.gov/site/veterans/services/services.page"
+  },
+  "properties": {
+    "dvsResId": { "type": ["string", "null"], "description": "DVS resource identifier ('DVS_RES_ID') — primary key." },
+    "name": { "type": "string", "description": "Resource / organization name ('Name')." },
+    "service": { "type": ["string", "null"], "description": "Service category the resource provides ('Service')." },
+    "serviceDetails": { "type": ["string", "null"], "description": "Free-text description of the service ('Service Details')." },
+    "walkIn": { "type": ["boolean", "string", "null"], "description": "Whether the resource accepts walk-ins ('Walk-in')." },
+    "buildingDetails": { "type": ["string", "null"], "description": "Access / building notes ('Building Details')." },
+    "hours": { "type": ["string", "null"], "description": "Hours of operation ('Hours')." },
+    "phoneNumber": { "type": ["string", "null"], "description": "'Phone Number'." },
+    "email": { "type": ["string", "null"], "format": "email", "description": "'Email Address'." },
+    "website": { "type": ["string", "null"], "description": "'Website'." },
+    "address": { "type": ["string", "null"], "description": "'Address'." },
+    "city": { "type": ["string", "null"], "description": "'City'." },
+    "state": { "type": ["string", "null"], "description": "'State'." },
+    "zip": { "type": ["string", "null"], "description": "'ZIP'." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

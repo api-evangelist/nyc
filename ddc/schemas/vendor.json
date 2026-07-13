@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ddc/schemas/vendor.json",
+  "title": "Vendor",
+  "description": "A firm doing (or seeking to do) business with DDC — designer, engineer, construction manager, contractor, subcontractor, or allied consultant. DDC has NO structured vendor dataset of its own; a vendor identity is derived from the 'SELECTED FIRM' field of awarded contracts (j7gw-gcxi) and, for onboarding, lives in the citywide PASSPort system managed by the Mayor's Office of Contract Services (MOCS). This schema models the vendor/consultant entity plus its DDC-relevant status.",
+  "type": "object",
+  "x-source": {
+    "opendata_derived": "https://data.cityofnewyork.us/d/j7gw-gcxi",
+    "passport": "https://www.nyc.gov/site/mocs/passport/about-passport.page",
+    "mwbe": "https://www.nyc.gov/site/ddc/mwbe/mwbe.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Firm / vendor legal name ('SELECTED FIRM')." },
+    "role": {
+      "type": ["string", "null"],
+      "enum": ["Designer", "Engineer", "Construction Manager", "Contractor", "Subcontractor", "Consultant", "Not-for-Profit", "Other", null],
+      "description": "Primary role the firm plays on DDC engagements."
+    },
+    "mwbe": { "type": ["boolean", "null"], "description": "Minority/Women-Owned Business Enterprise (M/WBE) designation, where known." },
+    "prequalified": { "type": ["boolean", "null"], "description": "Whether the firm holds a current prequalification allowing it to respond to relevant DDC solicitations (tracked in PASSPort/MOCS, not published by DDC)." },
+    "passportVendorId": { "type": ["string", "null"], "description": "Citywide PASSPort vendor identifier, where known." },
+    "awardedContracts": {
+      "type": ["array", "null"],
+      "description": "PINs of DDC contracts awarded to this firm.",
+      "items": { "type": "string" }
+    },
+    "designExcellence": { "type": ["boolean", "null"], "description": "Whether the firm participates in DDC's Design and Construction Excellence roster." }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

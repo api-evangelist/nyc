@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/schemas/mwbe-certification-application.json",
+  "title": "MWBECertificationApplication",
+  "description": "An application for NYC SBS business certification (M/WBE, EBE, or LBE) — the flagship SBS business transaction. NET-NEW: there is NO public API and NO Open Data twin for the application itself; today a business applies only inside the session-bound MyCity Business portal (nyc-business.nyc.gov) / PASSPort. Once approved, the business appears in the 'SBS Certified Business List' (ci93-uc8s). This schema serves both the read surface (list/get an owner's own applications) and the write surface (submit an application).",
+  "type": "object",
+  "x-source": {
+    "portal": "https://nyc-business.nyc.gov/nycbusiness/",
+    "certified_list": "https://data.cityofnewyork.us/d/ci93-uc8s",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application/case number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Draft", "Submitted", "Under Review", "Additional Info Requested", "Approved", "Denied", "Withdrawn", null],
+      "description": "Lifecycle status. Set by SBS, not the applicant.",
+      "readOnly": true
+    },
+    "certificationRequested": {
+      "type": "string",
+      "description": "Which certification the business is applying for.",
+      "enum": ["MBE", "WBE", "MWBE", "EBE", "LBE"]
+    },
+    "vendorFormalName": { "type": "string", "description": "Legal business name." },
+    "vendorDba": { "type": ["string", "null"], "description": "Doing-business-as name." },
+    "einOrTin": { "type": ["string", "null"], "description": "Federal EIN / TIN of the business." },
+    "dateOfEstablishment": { "type": ["string", "null"], "format": "date", "description": "When the business was established." },
+    "ownership": {
+      "type": "object",
+      "description": "Ownership attributes that drive eligibility.",
+      "properties": {
+        "ownerFirstName": { "type": ["string", "null"] },
+        "ownerLastName": { "type": ["string", "null"] },
+        "ethnicity": { "$ref": "_common.json#/$defs/Ethnicity" },
+        "gender": { "type": ["string", "null"] },
+        "ownershipPercent": { "type": ["number", "null"], "minimum": 0, "maximum": 100, "description": "Percent owned by the qualifying owner(s)." }
+      },
+      "additionalProperties": false
+    },
+    "industry": { "$ref": "_common.json#/$defs/Industry" },
+    "businessDescription": { "type": ["string", "null"], "description": "Description of the goods/services the business provides." },
+    "address": { "$ref": "_common.json#/$defs/PostalAddress" },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "decisionDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "required": ["certificationRequested", "vendorFormalName"],
+  "additionalProperties": false
+}

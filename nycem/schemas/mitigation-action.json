@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/schemas/mitigation-action.json",
+  "title": "MitigationAction",
+  "description": "A single action in NYC's Hazard Mitigation Plan — a long-range project or policy that reduces the city's exposure to a named hazard (flooding, extreme heat, coastal storm, etc.). Canonical schema reconciling the 'Hazard Mitigation Plan - Mitigation Actions Database' (veqt-eu3t, 28 columns) and its people/location/lifelines companion tables (t7k8-wj6b, cj2p-e3ej, hqhh-iv7p).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/veqt-eu3t",
+    "opendata_related": ["https://data.cityofnewyork.us/d/t7k8-wj6b", "https://data.cityofnewyork.us/d/cj2p-e3ej", "https://data.cityofnewyork.us/d/hqhh-iv7p"]
+  },
+  "properties": {
+    "hmpIndex": { "type": ["string", "null"], "description": "Hazard Mitigation Plan index / action number ('HMP Index')." },
+    "title": { "type": "string", "description": "Action title ('Title')." },
+    "descriptionOfProblem": { "type": ["string", "null"], "description": "'Description of Problem'." },
+    "descriptionOfAction": { "type": ["string", "null"], "description": "'Description of Action'." },
+    "actionCategory": { "type": ["string", "null"], "description": "'Action Category'." },
+    "hazardsAddressed": { "type": ["string", "null"], "description": "'Hazards Addressed'." },
+    "managingAgency": { "type": ["string", "null"], "description": "'Managing Agency'." },
+    "supportingAgencies": { "type": ["string", "null"], "description": "'Supporting Agencies'." },
+    "actionStatus": { "type": ["string", "null"], "description": "'Action Status' (e.g. In Progress, Completed, Deferred)." },
+    "actionStatusDate": { "type": ["string", "null"], "format": "date", "description": "'Action Status Date'." },
+    "estimatedStart": { "type": ["string", "null"], "description": "'Estimated Start'." },
+    "estimatedFinish": { "type": ["string", "null"], "description": "'Estimated Finish'." },
+    "estimatedCost": { "type": ["string", "null"], "description": "'Estimated Cost'." },
+    "funding": {
+      "type": "object",
+      "description": "Named funding sources for the action.",
+      "properties": {
+        "federal": { "type": ["string", "null"], "description": "'Federal Funding Source'." },
+        "state": { "type": ["string", "null"], "description": "'State Funding Source'." },
+        "city": { "type": ["string", "null"], "description": "'City Funding Source'." },
+        "private": { "type": ["string", "null"], "description": "'Private Funding Source'." },
+        "other": { "type": ["string", "null"], "description": "'Other Funding Source'." }
+      },
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "object",
+      "description": "Local capability assessment carried per action.",
+      "properties": {
+        "planningRegulation": { "type": ["string", "null"], "description": "'Planning & Regulation Capability'." },
+        "administrativeTechnical": { "type": ["string", "null"], "description": "'Administrative & Technical Capability'." },
+        "educationOutreach": { "type": ["string", "null"], "description": "'Education & Outreach Capability'." },
+        "financial": { "type": ["string", "null"], "description": "'Financial Capability'." }
+      },
+      "additionalProperties": false
+    },
+    "contactName": { "type": ["string", "null"], "description": "'Contact Name'." },
+    "contactEmail": { "type": ["string", "null"], "format": "email", "description": "'Contact Email'." },
+    "webLink": { "type": ["string", "null"], "format": "uri", "description": "'Web Link'." },
+    "notes": { "type": ["string", "null"], "description": "'Notes'." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

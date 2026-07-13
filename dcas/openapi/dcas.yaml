@@ -1,0 +1,406 @@
+openapi: 3.1.0
+info:
+  title: DCAS API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Citywide Administrative Services —
+    publishing its already-open civil-service reference data (job postings, titles, eligible lists,
+    exam schedules, public buildings, fleet) as coherent resources, and adding the missing write
+    surface locked inside the aNNN application layer — registering for a civil-service exam.
+  description: >-
+    Proposed API-first surface for the NYC Department of Citywide Administrative Services (DCAS),
+    from the NYC Modernization low-hanging-fruit assessment of nyc.gov/site/dcas and the aNNN
+    application layer.
+
+
+    DCAS is the city's operations agency: it runs civil-service exams and eligible lists, brokers
+    citywide hiring, manages public buildings and energy, and operates the municipal fleet and the
+    CityStore. Its **reference data is broadly open** — 32 NYC Open Data datasets covering job
+    postings, civil-service titles, active/terminated/certified eligible lists, the annual exam
+    schedule, DCAS-managed buildings and their energy, and the fleet. But its **transactional layer
+    is scattered across rented vendor apps**: the City Jobs portal (cityjobs.nyc.gov, formerly
+    a127-jobs; ASP.NET Core on Azure), Employee Self-Service (a127-ess.nyc.gov; PeopleSoft/NYCAPS),
+    the exam Online Application System (OASys), and the CityStore (a856-citystore.nyc.gov; Shopify).
+    None of the core citizen transactions has a machine-readable contract or an Open Data twin.
+
+
+    This contract does two things: (1) presents the open reference datasets as one clean resource
+    model, and (2) adds the one net-new **write** workflow — registering for a civil-service **exam**
+    — that today exists only behind OASys and the City Jobs portal.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.dcas.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Jobs
+    description: Citywide job postings brokered by DCAS.
+  - name: Titles
+    description: Civil-service titles and their salary/union classification.
+  - name: EligibleLists
+    description: Civil-service eligible lists (active, terminated, certified).
+  - name: Exams
+    description: Civil-service exam schedule and registration (read + write). The net-new surface, today locked in OASys.
+  - name: Buildings
+    description: DCAS-managed public buildings and their energy.
+  - name: Fleet
+    description: The municipal fleet — daily service, auctions, fuel efficiency, EV stations.
+
+paths:
+  /job-postings:
+    get:
+      operationId: listJobPostings
+      summary: List / search citywide job postings
+      tags: [Jobs]
+      parameters:
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: jobCategory
+          in: query
+          schema: { type: string }
+        - name: careerLevel
+          in: query
+          schema: { type: string }
+        - name: postingType
+          in: query
+          schema: { type: string, enum: [Internal, External] }
+        - name: titleCode
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of job postings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/job-posting.json' } }
+  /job-postings/{jobId}:
+    get:
+      operationId: getJobPosting
+      summary: Get a job posting by Job ID
+      tags: [Jobs]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The job posting.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/job-posting.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /civil-service-titles:
+    get:
+      operationId: listCivilServiceTitles
+      summary: List / search civil-service titles
+      tags: [Titles]
+      parameters:
+        - name: unionCode
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of civil-service titles.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/civil-service-title.json' } }
+  /civil-service-titles/{titleCode}:
+    get:
+      operationId: getCivilServiceTitle
+      summary: Get a civil-service title by Title Code
+      tags: [Titles]
+      parameters:
+        - name: titleCode
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The civil-service title.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/civil-service-title.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /eligible-lists:
+    get:
+      operationId: listEligibleListEntries
+      summary: Search civil-service eligible-list entries
+      tags: [EligibleLists]
+      parameters:
+        - name: examNumber
+          in: query
+          schema: { type: string }
+        - name: titleCode
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [Active, Terminated, Certified] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of eligible-list entries.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/eligible-list.json' } }
+
+  /exam-schedule:
+    get:
+      operationId: listExamSchedule
+      summary: List the annual civil-service examination schedule
+      tags: [Exams]
+      parameters:
+        - name: examType
+          in: query
+          schema: { type: string, enum: [Open Competitive, Promotion, Qualified Incumbent Exam, Education & Experience] }
+        - name: openNow
+          in: query
+          description: Only exams whose application period is currently open.
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of scheduled exams.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/exam-schedule.json' } }
+  /exam-schedule/{examNumber}:
+    get:
+      operationId: getExam
+      summary: Get a scheduled exam by Examination Number
+      tags: [Exams]
+      parameters:
+        - name: examNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The scheduled exam.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/exam-schedule.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /exam-registrations:
+    get:
+      operationId: listExamRegistrations
+      summary: List the authenticated candidate's exam registrations
+      description: Reads the candidate's own exam applications — today only visible inside OASys / the City Jobs portal.
+      tags: [Exams]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Fee Pending, Accepted, Admitted, Rejected, Withdrawn] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the candidate's exam registrations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/exam-registration.json' } }
+    post:
+      operationId: createExamRegistration
+      summary: Register for a civil-service exam
+      description: >-
+        The net-new write surface — an API for applying to a civil-service examination, replacing the
+        OASys-only workflow. The candidate must be authenticated; the request may claim veteran or
+        residency credit and request a fee waiver or testing accommodation.
+      tags: [Exams]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/exam-registration.json' }
+      responses:
+        '201':
+          description: Exam registration created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/exam-registration.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /exam-registrations/{registrationId}:
+    get:
+      operationId: getExamRegistration
+      summary: Get an exam registration
+      tags: [Exams]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: registrationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The exam registration.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/exam-registration.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /buildings:
+    get:
+      operationId: listBuildings
+      summary: List / search DCAS-managed public buildings
+      tags: [Buildings]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - name: benchmarked
+          in: query
+          description: Only buildings with energy-benchmarking results.
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of buildings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/city-building.json' } }
+
+  /fleet:
+    get:
+      operationId: listFleet
+      summary: Search the municipal fleet (service, auctions, fuel efficiency, EV stations)
+      tags: [Fleet]
+      parameters:
+        - name: recordType
+          in: query
+          schema: { type: string, enum: [DailyService, Auction, FuelEfficiency, EVStation] }
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: make
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of fleet records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/fleet-vehicle.json' } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    JobPosting: { $ref: '../schemas/job-posting.json' }
+    CivilServiceTitle: { $ref: '../schemas/civil-service-title.json' }
+    EligibleListEntry: { $ref: '../schemas/eligible-list.json' }
+    ExamSchedule: { $ref: '../schemas/exam-schedule.json' }
+    ExamRegistration: { $ref: '../schemas/exam-registration.json' }
+    CityBuilding: { $ref: '../schemas/city-building.json' }
+    FleetVehicle: { $ref: '../schemas/fleet-vehicle.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

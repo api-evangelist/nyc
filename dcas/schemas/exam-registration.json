@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcas/schemas/exam-registration.json",
+  "title": "ExamRegistration",
+  "description": "A candidate's registration/application for a DCAS civil-service examination — the everyday citizen transaction. NET-NEW: DCAS publishes the exam SCHEDULE openly (4ptz-hmtc) but there is NO public API to actually apply. Today candidates register only inside the Online Application System (OASys) on the aNNN application layer (a127-jobs.nyc.gov, now the City Jobs portal cityjobs.nyc.gov) and pay a fee. This schema serves both the read surface (list/get a candidate's own registrations) and the ExamRegistrationRequest write surface (register for an exam).",
+  "type": "object",
+  "x-source": {
+    "portal": "https://a127-jobs.nyc.gov/",
+    "exam_schedule": "https://data.cityofnewyork.us/d/4ptz-hmtc",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "registrationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned registration / confirmation number (OASys). Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Fee Pending", "Accepted", "Admitted", "Rejected", "Withdrawn", null],
+      "description": "Lifecycle status. Set by DCAS, not the candidate.",
+      "readOnly": true
+    },
+    "exam": { "$ref": "_common.json#/$defs/ExamReference" },
+    "examNumber": { "type": "string", "description": "The examination number being applied for ('Examination Number')." },
+    "applicant": {
+      "type": "object",
+      "description": "Applicant details.",
+      "properties": {
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "middleInitial": { "type": ["string", "null"] },
+        "dateOfBirth": { "type": ["string", "null"], "format": "date" },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "address": { "type": ["string", "null"] },
+        "borough": { "$ref": "_common.json#/$defs/Borough" }
+      },
+      "required": ["firstName", "lastName"],
+      "additionalProperties": false
+    },
+    "currentCityEmployee": { "type": ["boolean", "null"], "description": "Whether the applicant is a current city employee (affects promotion eligibility)." },
+    "veteranCreditClaimed": { "type": "boolean", "default": false, "description": "Applicant is claiming veteran/disabled-veteran credit." },
+    "residencyCreditClaimed": { "type": "boolean", "default": false, "description": "Applicant is claiming NYC residency credit." },
+    "feeWaiverRequested": { "type": "boolean", "default": false, "description": "Applicant is requesting an application-fee waiver (e.g. public-assistance recipients)." },
+    "accommodationRequest": { "type": ["string", "null"], "description": "Requested testing accommodation (ADA), if any." },
+    "fee": {
+      "type": "object",
+      "description": "Application fee details.",
+      "properties": {
+        "amount": { "type": ["number", "null"], "readOnly": true },
+        "paid": { "type": ["boolean", "null"], "readOnly": true }
+      },
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["examNumber", "applicant"],
+  "additionalProperties": false
+}

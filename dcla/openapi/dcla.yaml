@@ -1,0 +1,356 @@
+openapi: 3.1.0
+info:
+  title: DCLA API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Cultural Affairs — publishing its
+    open funding and cultural-sector reference data (cultural organizations, program and capital
+    grants, Cultural Institutions Group support, Percent for Art public artworks, Materials for the
+    Arts) as coherent resources, and adding the missing write surface locked inside the Salesforce
+    Grants Management System — applying for a grant (grant application).
+  description: >-
+    Proposed API-first surface for the NYC Department of Cultural Affairs (DCLA), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/dcla and the DCLA Grants Management
+    System (dclagms.nyc.gov).
+
+
+    DCLA is the nation's largest municipal cultural funder, and it publishes the **results** of that
+    funding openly — 9 NYC Open Data datasets covering the geocoded cultural-organization directory,
+    program and capital grant awards, Cultural Institutions Group operating support, completed Percent
+    for Art commissions, and Materials for the Arts donations. But those datasets publish only the
+    **outcome**: who received money. The transaction that produces them — a cultural organization
+    **applying** for a Cultural Development Fund grant — lives only inside the **DCLA Grants Management
+    System**, a Salesforce Experience Cloud portal (`culturalaffairsnyc.my.salesforce.com`) reached by
+    login. It has no public API, no OpenAPI, no JSON, and no Open Data twin.
+
+
+    This contract does two things: (1) presents the open funding/organization datasets as one clean
+    resource model, and (2) adds the one net-new **write** workflow — creating a **grant application**
+    (apply for a grant) — that today exists only behind the Salesforce portal.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.dcla.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Organizations
+    description: The geocoded directory of cultural organizations DCLA funds and serves.
+  - name: Funding
+    description: Program grants, capital funding, and Cultural Institutions Group operating support.
+  - name: PublicArt
+    description: Completed Percent for Art public artwork commissions.
+  - name: MaterialsForTheArts
+    description: Aggregate Materials for the Arts creative-reuse donation summaries.
+  - name: GrantApplications
+    description: Apply for and track a Cultural Development Fund grant (read + write). The net-new surface, today locked in the Salesforce Grants Management System.
+
+paths:
+  /cultural-organizations:
+    get:
+      operationId: listCulturalOrganizations
+      summary: List / search cultural organizations
+      tags: [Organizations]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: discipline
+          in: query
+          schema: { type: string }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of cultural organizations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/cultural-organization.json' } }
+  /cultural-organizations/{orgId}:
+    get:
+      operationId: getCulturalOrganization
+      summary: Get a cultural organization by name/id
+      tags: [Organizations]
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: Organization name (URL-encoded) or stable id.
+          schema: { type: string }
+      responses:
+        '200':
+          description: The cultural organization.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/cultural-organization.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /program-funding:
+    get:
+      operationId: listProgramFunding
+      summary: Search DCLA program grant awards
+      tags: [Funding]
+      parameters:
+        - name: organization
+          in: query
+          schema: { type: string }
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - name: applicationNumber
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of program grant awards.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/program-funding.json' } }
+
+  /capital-funding:
+    get:
+      operationId: listCapitalFunding
+      summary: Search DCLA capital funding records
+      tags: [Funding]
+      parameters:
+        - name: organization
+          in: query
+          schema: { type: string }
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of capital funding records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/capital-funding.json' } }
+
+  /cultural-institutions:
+    get:
+      operationId: listCulturalInstitutions
+      summary: List Cultural Institutions Group (CIG) members and their operating support
+      tags: [Funding]
+      parameters:
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of CIG funding records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/cultural-institution.json' } }
+
+  /public-artworks:
+    get:
+      operationId: listPublicArtworks
+      summary: Search completed Percent for Art public artworks
+      tags: [PublicArt]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: artist
+          in: query
+          schema: { type: string }
+        - name: sponsorAgency
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of public artworks.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/public-artwork.json' } }
+
+  /materials-for-the-arts:
+    get:
+      operationId: listMaterialsForTheArts
+      summary: Aggregate Materials for the Arts donation summaries by year and category
+      tags: [MaterialsForTheArts]
+      parameters:
+        - name: year
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of MFTA donation summaries.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/materials-for-the-arts.json' } }
+
+  /grant-applications:
+    get:
+      operationId: listGrantApplications
+      summary: List the authenticated organization's grant applications
+      description: Reads the organization's own Cultural Development Fund applications — today only visible inside the Salesforce Grants Management System.
+      tags: [GrantApplications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Draft, Submitted, In Review, Panel Review, Recommended, Awarded, Declined, Withdrawn] }
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the organization's grant applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/grant-application.json' } }
+    post:
+      operationId: createGrantApplication
+      summary: Apply for a grant (create a grant application)
+      description: >-
+        The net-new write surface — an API for submitting a Cultural Development Fund grant
+        application, replacing the Salesforce-portal-only workflow. Requires an authenticated
+        cultural organization.
+      tags: [GrantApplications]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/grant-application.json' }
+      responses:
+        '201':
+          description: Grant application created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/grant-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /grant-applications/{applicationId}:
+    get:
+      operationId: getGrantApplication
+      summary: Get a grant application
+      tags: [GrantApplications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The grant application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/grant-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    CulturalOrganization: { $ref: '../schemas/cultural-organization.json' }
+    ProgramFunding: { $ref: '../schemas/program-funding.json' }
+    CapitalFunding: { $ref: '../schemas/capital-funding.json' }
+    CulturalInstitution: { $ref: '../schemas/cultural-institution.json' }
+    PublicArtwork: { $ref: '../schemas/public-artwork.json' }
+    MaterialsForTheArts: { $ref: '../schemas/materials-for-the-arts.json' }
+    GrantApplication: { $ref: '../schemas/grant-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

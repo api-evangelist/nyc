@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/lpc/schemas/landmark.json",
+  "title": "Landmark",
+  "description": "A NYC landmark designation — an individual, interior, or scenic landmark site (and its calendared/heard status). Canonical schema reconciling 'Individual Landmark Sites' (buis-pvji, 23 columns), 'Designated and Calendared Buildings and Sites' (ncre-qhxs, 34 columns), 'Scenic Landmarks' (qexa-qpj6), and their map twins (ts56-fkf5, jcj6-zji6, gi7d-8gt5). Keyed on LP_NUMBER; joined to city government via BBL/BIN.",
+  "type": "object",
+  "x-source": {
+    "opendata_individual_sites": "https://data.cityofnewyork.us/d/buis-pvji",
+    "opendata_designated_calendared": "https://data.cityofnewyork.us/d/ncre-qhxs",
+    "opendata_scenic": "https://data.cityofnewyork.us/d/qexa-qpj6",
+    "opendata_map_individual": "https://data.cityofnewyork.us/d/ts56-fkf5",
+    "opendata_map_designated": "https://data.cityofnewyork.us/d/jcj6-zji6",
+    "discover_map": "https://nyclpc.maps.arcgis.com/home/index.html",
+    "site": "https://www.nyc.gov/site/lpc/designations/designations.page"
+  },
+  "properties": {
+    "lpNumber": { "type": "string", "description": "LPC designation number ('LP_NUMBER') — primary key." },
+    "landmarkName": { "type": ["string", "null"], "description": "Designation name ('LM_NAME'); secondary name in 'LM_NAME2'." },
+    "landmarkName2": { "type": ["string", "null"], "description": "Alternate / secondary name ('LM_NAME2')." },
+    "landmarkType": { "$ref": "_common.json#/$defs/LandmarkType" },
+    "siteStatus": { "$ref": "_common.json#/$defs/SiteStatus" },
+    "siteDescription": { "type": ["string", "null"], "description": "'SITE_DESC' — site description." },
+    "designationAddress": { "type": ["string", "null"], "description": "'DESIG_ADDRESS' — address of record for the designation." },
+    "plutoAddress": { "type": ["string", "null"], "description": "'PLUTO_ADDRESS' — matched PLUTO address (ncre-qhxs)." },
+    "historicDistrict": { "type": ["string", "null"], "description": "'HIST_DISTRICT' — historic district containing this site, if any." },
+    "mostCurrent": { "type": ["boolean", "string", "null"], "description": "'MOST_CURRENT' — flags the current record among multiple actions." },
+    "lastAction": { "type": ["string", "null"], "description": "'LAST_ACTION' — most recent Commission action." },
+    "calendaredDate": { "type": ["string", "null"], "format": "date", "description": "'CALEN_DATE' — date calendared for consideration." },
+    "publicHearingDate": { "type": ["string", "null"], "description": "'PUBLIC_HEARING' — public hearing date(s)." },
+    "otherHearings": { "type": ["string", "null"], "description": "'OTHER_HEARINGS' — additional hearing dates." },
+    "designationDate": { "type": ["string", "null"], "format": "date", "description": "'DESIG_DATE' — date designated." },
+    "buildingCount": { "type": ["integer", "null"], "description": "'COUNT_BLDG' — number of buildings in the designation (ncre-qhxs)." },
+    "vacantLot": { "type": ["boolean", "string", "null"], "description": "'VACANT_LOT' flag (ncre-qhxs)." },
+    "reportUrl": { "type": ["string", "null"], "format": "uri", "description": "'REPORT_URL' — link to the designation report (buis-pvji)." },
+    "taxLot": { "$ref": "_common.json#/$defs/TaxLot" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["lpNumber"],
+  "additionalProperties": false
+}

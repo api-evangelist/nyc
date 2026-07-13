@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/schemas/business-incentive.json",
+  "title": "BusinessIncentive",
+  "description": "A record of a business that received an SBS-administered incentive or benefit — energy cost savings, tax abatement, or acceleration assistance. Canonical schema reconciling the 'Value of Energy Cost Savings Program' dataset (bug8-9f3g, 30 columns), 'ICAP EO50 Businesses' (9a87-6m4x), and 'NYC Business Acceleration' (9b9u-8989). Because these programs share a business+benefit shape, they are modeled as one BusinessIncentive entity distinguished by 'program'.",
+  "type": "object",
+  "x-source": {
+    "opendata_ecsp": "https://data.cityofnewyork.us/d/bug8-9f3g",
+    "opendata_ecsp_jobs": "https://data.cityofnewyork.us/d/yqky-aebb",
+    "opendata_icap": "https://data.cityofnewyork.us/d/9a87-6m4x",
+    "opendata_acceleration": "https://data.cityofnewyork.us/d/9b9u-8989",
+    "site": "https://www.nyc.gov/site/sbs/businesses/business-incentives.page"
+  },
+  "properties": {
+    "program": {
+      "type": "string",
+      "description": "Which incentive program this record belongs to.",
+      "enum": ["Energy Cost Savings Program", "Industrial & Commercial Abatement Program", "Business Acceleration", "Other"]
+    },
+    "companyName": { "type": "string", "description": "'Company Name' / 'Business Name'." },
+    "companyType": { "type": ["string", "null"], "description": "'Company Type'." },
+    "industry": { "type": ["string", "null"], "description": "'Industry' / 'Industry descr'." },
+    "effectiveDate": { "type": ["string", "null"], "format": "date", "description": "'Effective Date' / 'EO50 Approval Date'." },
+    "period": { "type": ["string", "null"], "description": "'Period'." },
+    "savings": {
+      "type": "object",
+      "description": "Reported benefit value (Energy Cost Savings Program).",
+      "properties": {
+        "total": { "type": ["number", "null"], "description": "'Total Savings' / 'Savings from beginning receiving benefits'." },
+        "electric": { "type": ["number", "null"], "description": "'Electric Savings'." },
+        "gas": { "type": ["number", "null"], "description": "'Gas Savings'." },
+        "cogen": { "type": ["number", "null"], "description": "'Cogen savings'." }
+      },
+      "additionalProperties": false
+    },
+    "jobs": {
+      "type": "object",
+      "properties": {
+        "created": { "type": ["integer", "null"], "description": "'Job created'." },
+        "retained": { "type": ["integer", "null"], "description": "'Job retain'." },
+        "currentFulltime": { "type": ["integer", "null"], "description": "'Current fulltime'." }
+      },
+      "additionalProperties": false
+    },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "name": { "type": ["string", "null"], "description": "'company contact'." },
+        "phone": { "type": ["string", "null"], "description": "'company phone' / 'Business Phone'." },
+        "email": { "type": ["string", "null"], "description": "'company email'." }
+      },
+      "additionalProperties": false
+    },
+    "address": { "$ref": "_common.json#/$defs/PostalAddress" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["program", "companyName"],
+  "additionalProperties": false
+}

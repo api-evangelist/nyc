@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ocme/schemas/case-statistics.json",
+  "title": "CaseStatistics",
+  "description": "An AGGREGATE, non-identifying summary of OCME death-investigation casework — counts of cases by period, borough, and manner of death (the statutory Natural / Accident / Homicide / Suicide / Undetermined). This is the proposed respectful shape for OCME's core object: a medical-examiner case. There is NO Open Data twin today (opendata_gap = true) — OCME publishes no casework, not even aggregated. A per-decedent DeathInvestigation record is confidential and is deliberately NOT modeled; nothing below can identify an individual.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/ocme/services/reporting-a-case.page",
+    "opendata": null,
+    "opendata_gap": true,
+    "privacy": "Aggregate counts only. No decedent identifiers, cause of death, or investigative detail. Cells below a small-count threshold should be suppressed by the publisher."
+  },
+  "properties": {
+    "period": { "type": "string", "description": "Reporting period, e.g. '2025' or '2025-Q1' or '2025-03'." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "mannerOfDeath": { "$ref": "_common.json#/$defs/MannerOfDeath" },
+    "caseCount": { "type": ["integer", "null"], "minimum": 0, "description": "Number of investigated cases in the cell (period × borough × manner). Suppress small cells." },
+    "ageBand": {
+      "type": ["string", "null"],
+      "enum": ["0-17", "18-24", "25-44", "45-64", "65-84", "85+", "Unknown", null],
+      "description": "Coarse decedent age band, for demographic aggregates only."
+    },
+    "jurisdiction": {
+      "type": ["string", "null"],
+      "description": "Whether the death fell within OCME's statutory jurisdiction and the reporting category.",
+      "enum": ["Reportable - Accepted", "Reportable - Declined", "Non-jurisdictional", "Identification Pending", null]
+    },
+    "dataAsOf": { "type": ["string", "null"], "format": "date", "description": "As-of date of the aggregate." }
+  },
+  "required": ["period", "caseCount"],
+  "additionalProperties": false
+}

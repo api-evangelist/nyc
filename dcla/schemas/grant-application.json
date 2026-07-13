@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/schemas/grant-application.json",
+  "title": "GrantApplication",
+  "description": "A Cultural Development Fund (CDF) grant application submitted by a cultural organization to DCLA — the everyday transaction of DCLA's constituency. NET-NEW: there is NO public API and NO Open Data twin for the application itself; today organizations create and track applications only inside the DCLA Grants Management System (dclagms.nyc.gov), a Salesforce Experience Cloud portal reached by login. Open Data publishes the AWARD outcome (see program-funding.json) but never the application pipeline. This schema serves both the read surface (list/get an organization's own applications) and the write surface (apply for a grant).",
+  "type": "object",
+  "x-source": {
+    "portal": "https://dclagms.nyc.gov/grants/s/",
+    "salesforce_org": "https://culturalaffairsnyc.my.salesforce.com",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application number (DCLA GMS / Salesforce record id). Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Draft", "Submitted", "In Review", "Panel Review", "Recommended", "Awarded", "Declined", "Withdrawn", null],
+      "description": "Lifecycle status. Set by DCLA, not the applicant.",
+      "readOnly": true
+    },
+    "organization": { "$ref": "_common.json#/$defs/OrganizationReference" },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "program": {
+      "type": "string",
+      "description": "DCLA funding program applied to.",
+      "enum": ["Cultural Development Fund", "Capital Funding", "Materials for the Arts", "Other"]
+    },
+    "discipline": { "$ref": "_common.json#/$defs/Discipline" },
+    "projectTitle": { "type": ["string", "null"], "description": "Title of the proposed project / program." },
+    "projectDescription": { "type": "string", "description": "Narrative description of the cultural program for which funding is requested." },
+    "requestedAmount": { "type": ["number", "null"], "description": "Amount of funding requested, in dollars." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "Primary NYC Council district served by the project." },
+    "contact": {
+      "type": "object",
+      "description": "Applicant contact details.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "awardedAmount": { "type": ["number", "null"], "description": "Final awarded amount, once decided.", "readOnly": true }
+  },
+  "required": ["program", "projectDescription"],
+  "additionalProperties": false
+}

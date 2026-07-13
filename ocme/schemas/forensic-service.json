@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ocme/schemas/forensic-service.json",
+  "title": "ForensicService",
+  "description": "A forensic discipline or service line offered by OCME — Forensic Pathology, the Laboratories (Forensic Biology/DNA, Forensic Toxicology), Forensic Anthropology, Identification / Missing Persons, and Emergency Management. Reconstructed from the OCME services pages (nyc.gov/site/ocme/services); a service catalog, not casework. NO Open Data twin.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/ocme/services/services.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Service / discipline name." },
+    "category": {
+      "type": ["string", "null"],
+      "enum": ["Forensic Pathology", "Forensic Biology (DNA)", "Forensic Toxicology", "Forensic Anthropology", "Identification / Missing Persons", "Emergency Management", "Other"],
+      "description": "Discipline grouping."
+    },
+    "description": { "type": ["string", "null"], "description": "What the service does." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical OCME service page." },
+    "publicFacing": { "type": ["boolean", "null"], "description": "Whether the public / families interact with this service directly." },
+    "contact": { "$ref": "_common.json#/$defs/ContactPerson" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

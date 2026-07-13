@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oti/schemas/wifi-hotspot.json",
+  "title": "WiFiHotspot",
+  "description": "A public Wi-Fi hotspot in the citywide inventory OTI maintains. Canonical schema reconciling 'NYC Wi-Fi Hotspot Locations' (yjub-udmw, 38 columns) — free/partner/limited-free public Wi-Fi across libraries, parks, LinkNYC, and provider networks. Keyed on OBJECTID / DOITT_ID + SSID.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/yjub-udmw"
+  },
+  "properties": {
+    "objectId": { "type": ["string", "integer", "null"], "description": "'OBJECTID' — inventory id." },
+    "doittId": { "type": ["string", "integer", "null"], "description": "'DOITT_ID' — legacy OTI/DoITT id." },
+    "sourceId": { "type": ["string", "null"], "description": "'SourceID'." },
+    "name": { "type": ["string", "null"], "description": "'Name' — location/venue name." },
+    "ssid": { "type": ["string", "null"], "description": "'SSID' — network name." },
+    "type": { "type": ["string", "null"], "description": "'Type' (Free, Limited Free, Partner Site)." },
+    "provider": { "type": ["string", "null"], "description": "'Provider' (e.g. LinkNYC, Spect: NYPL/BPL/QPL, Transit Wireless)." },
+    "location": { "type": ["string", "null"], "description": "'Location' / 'Location_T' — descriptive location." },
+    "remarks": { "type": ["string", "null"], "description": "'Remarks'." },
+    "activated": { "type": ["string", "null"], "description": "'Activated' date/flag." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": [],
+  "additionalProperties": false
+}

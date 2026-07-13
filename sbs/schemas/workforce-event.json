@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/schemas/workforce-event.json",
+  "title": "WorkforceEvent",
+  "description": "A Workforce1 recruitment or hiring event run by SBS to connect jobseekers with employers. Canonical schema reconciling the 'Workforce1 Recruitment Events' dataset (kf2b-aeh5, 10 columns).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/kf2b-aeh5",
+    "site": "https://www.nyc.gov/site/sbs/careers/hiring-events.page"
+  },
+  "properties": {
+    "eventTitle": { "type": "string", "description": "'event_title'." },
+    "eventDate": { "type": ["string", "null"], "format": "date", "description": "'event_date'." },
+    "companyNameOrType": { "type": ["string", "null"], "description": "Hiring employer or employer type ('company_name_or_type')." },
+    "jobFamily": { "type": ["string", "null"], "description": "'job_family' — occupation family recruited for." },
+    "qualifications": { "type": ["string", "null"], "description": "'qualifications' sought." },
+    "location": { "type": ["string", "null"], "description": "'location' (borough or center)." },
+    "locationNameAndAddress": { "type": ["string", "null"], "description": "'location_name_and_address'." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "checkInFrom": { "type": ["string", "null"], "description": "'check_in_from' — check-in window start." },
+    "checkInTo": { "type": ["string", "null"], "description": "'check_in_to' — check-in window end." }
+  },
+  "required": ["eventTitle"],
+  "additionalProperties": false
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doris/schemas/honorary-street-name.json",
+  "title": "HonoraryStreetName",
+  "description": "A NYC honorary (co-named) street — the ceremonial secondary name a block or intersection is given by City Council local law, curated by DORIS. Canonical schema reconciling the two 'NYC Honorary Street Names Map' datasets: Street Line (xesp-yqsx, 14c) and Intersection (ig76-wwag, 18c). Keyed on the enactment (local law) number.",
+  "type": "object",
+  "x-source": {
+    "opendata_street_line": "https://data.cityofnewyork.us/d/xesp-yqsx",
+    "opendata_intersection": "https://data.cityofnewyork.us/d/ig76-wwag"
+  },
+  "properties": {
+    "enactmentNumber": { "type": ["string", "null"], "description": "Local law / enactment number ('Enactment Number')." },
+    "introNumber": { "type": ["string", "null"], "description": "Council introduction number ('Intro Number')." },
+    "newName": { "type": "string", "description": "The honorary co-name ('New Name')." },
+    "presentName": { "type": ["string", "null"], "description": "The existing street name being co-named ('Present Name')." },
+    "limits": { "type": ["string", "null"], "description": "Block or intersection limits of the co-naming ('Limits')." },
+    "category": { "type": ["string", "null"], "description": "Honoree category ('Category')." },
+    "biographicalInformation": { "type": ["string", "null"], "description": "Who/what is honored ('Biographical Information')." },
+    "introducedBy": { "type": ["string", "null"], "description": "Sponsoring council member(s) ('Introduced by Council Member(s)')." },
+    "enactmentYear": { "type": ["string", "integer", "null"], "description": "'Enactment Year'." },
+    "enactmentDate": { "type": ["string", "null"], "format": "date", "description": "'Enactment Date'." },
+    "notes": { "type": ["string", "null"], "description": "'Notes'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["newName"],
+  "additionalProperties": false
+}

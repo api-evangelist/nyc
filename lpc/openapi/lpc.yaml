@@ -1,0 +1,396 @@
+openapi: 3.1.0
+info:
+  title: NYC Landmarks (LPC) API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Landmarks Preservation Commission — binding its
+    already-open landmark data (individual/scenic landmarks, designated buildings, historic districts,
+    designation reports, permit history, and violations) into a single LP_NUMBER-keyed contract, and
+    adding the missing write surface locked inside the Salesforce Portico portal — filing a permit
+    application (Certificate of Appropriateness / No Effect).
+  description: >-
+    Proposed API-first surface for the NYC Landmarks Preservation Commission (LPC), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/lpc, the Discover NYC Landmarks map,
+    and the Portico permit portal.
+
+
+    LPC's landmark record is scattered across **three vendor silos**, none of them an owned LPC API:
+    **NYC Open Data** (Socrata) publishes 15 datasets — landmarks, historic districts, the building
+    database, permit history, complaints, and violations; the **Discover NYC Landmarks map** is an
+    **Esri ArcGIS Online** application (`nyclpc.maps.arcgis.com`); and permit *filing* happens only
+    inside **Portico** (`portico.lpc.nyc.gov`), a **Salesforce Experience Cloud** community. The read
+    side is generously open, but there is no single contract and — critically — no write surface: an
+    owner or architect cannot file a Certificate of Appropriateness through code.
+
+
+    This contract does two things: (1) binds the open datasets into one clean, LP_NUMBER-keyed resource
+    model, and (2) adds the one net-new **write** workflow — filing a **landmark permit application**
+    (Certificate of Appropriateness / No Effect / Permit for Minor Work) — that today exists only behind
+    the Salesforce Portico portal.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.lpc.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Landmarks
+    description: Individual, interior, and scenic landmark designations and the buildings within them.
+  - name: HistoricDistricts
+    description: Historic district area designations.
+  - name: Reports
+    description: Designation and archaeology reports.
+  - name: Permits
+    description: LPC permit history (read) and filing a new permit application (write). The net-new surface, today locked in the Salesforce Portico portal.
+  - name: Violations
+    description: Landmark complaints and violations (enforcement records).
+
+paths:
+  /landmarks:
+    get:
+      operationId: listLandmarks
+      summary: List / search landmark designations
+      tags: [Landmarks]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: landmarkType
+          in: query
+          schema: { type: string, enum: [Individual Landmark, Interior Landmark, Scenic Landmark, Historic District, Historic District Extension] }
+        - name: siteStatus
+          in: query
+          schema: { type: string }
+        - name: historicDistrict
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of landmarks.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/landmark.json' } }
+  /landmarks/{lpNumber}:
+    get:
+      operationId: getLandmark
+      summary: Get a landmark by LP number
+      tags: [Landmarks]
+      parameters:
+        - name: lpNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The landmark.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/landmark.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /landmarks/{lpNumber}/buildings:
+    get:
+      operationId: getLandmarkBuildings
+      summary: List the designated buildings within a landmark or district
+      tags: [Landmarks]
+      parameters:
+        - name: lpNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Designated buildings.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/designated-building.json' } }
+
+  /buildings:
+    get:
+      operationId: listBuildings
+      summary: Search the landmark & historic-district building database
+      tags: [Landmarks]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: historicDistrict
+          in: query
+          schema: { type: string }
+        - name: architect
+          in: query
+          schema: { type: string }
+        - name: style
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of designated buildings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/designated-building.json' } }
+
+  /historic-districts:
+    get:
+      operationId: listHistoricDistricts
+      summary: List / search historic districts
+      tags: [HistoricDistricts]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: siteStatus
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of historic districts.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/historic-district.json' } }
+
+  /designation-reports:
+    get:
+      operationId: listDesignationReports
+      summary: List designation and archaeology reports
+      tags: [Reports]
+      parameters:
+        - name: reportType
+          in: query
+          schema: { type: string, enum: [Designation Report, Archaeology Report] }
+        - $ref: '#/components/parameters/borough'
+        - name: lpNumber
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of reports.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/designation-report.json' } }
+
+  /permits:
+    get:
+      operationId: listPermitApplications
+      summary: Search issued/processed LPC permit history
+      description: Reads the open 'LPC Permit Application Information' record — issued Certificates of Appropriateness / No Effect and related permits.
+      tags: [Permits]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: regulationType
+          in: query
+          schema: { type: string }
+        - name: workType
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of permit history.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/permit-application.json' } }
+
+  /violations:
+    get:
+      operationId: listViolations
+      summary: Search landmark complaints and violations
+      tags: [Violations]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: recordType
+          in: query
+          schema: { type: string, enum: [Complaint, Violation] }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of enforcement records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/violation-order.json' } }
+
+  /permit-applications:
+    get:
+      operationId: listMyPermitApplications
+      summary: List the authenticated applicant's permit applications
+      description: Reads the applicant's own filings — today only visible inside the Salesforce Portico portal.
+      tags: [Permits]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the applicant's permit applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/landmark-permit-application.json' } }
+    post:
+      operationId: createPermitApplication
+      summary: File a landmark permit application
+      description: >-
+        The net-new write surface — an API for filing an LPC permit application (Certificate of
+        Appropriateness, Certificate of No Effect, or Permit for Minor Work), replacing the
+        Portico-only workflow. Requires an authenticated applicant and mutates state.
+      tags: [Permits]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/landmark-permit-application.json' }
+      responses:
+        '201':
+          description: Permit application filed.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/landmark-permit-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /permit-applications/{applicationId}:
+    get:
+      operationId: getPermitApplication
+      summary: Get a filed permit application
+      tags: [Permits]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The permit application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/landmark-permit-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Landmark: { $ref: '../schemas/landmark.json' }
+    DesignatedBuilding: { $ref: '../schemas/designated-building.json' }
+    HistoricDistrict: { $ref: '../schemas/historic-district.json' }
+    PermitApplication: { $ref: '../schemas/permit-application.json' }
+    DesignationReport: { $ref: '../schemas/designation-report.json' }
+    ViolationOrder: { $ref: '../schemas/violation-order.json' }
+    LandmarkPermitApplication: { $ref: '../schemas/landmark-permit-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

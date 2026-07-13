@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/schemas/_common.json",
+  "title": "NYCEM — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Emergency Management (NYCEM) object schemas. Reconciles fields common to the NYCEM Open Data datasets (data.cityofnewyork.us), nyc.gov/site/em, the Notify NYC alerting platform (rented Everbridge; CAP RSS feed at feeds.everbridge.net), and the Ready NY / CERT preparedness programs. Includes the NYC geography spine (BOROCODE, BBL/BIN, council/community districts) and the hurricane evacuation-zone key.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "BoroCode": {
+      "type": ["integer", "string", "null"],
+      "description": "NYC borough code ('BOROCODE'): 1 Manhattan, 2 Bronx, 3 Brooklyn, 4 Queens, 5 Staten Island.",
+      "enum": [1, 2, 3, 4, 5, "1", "2", "3", "4", "5", null]
+    },
+    "EvacuationZone": {
+      "type": ["integer", "string", "null"],
+      "description": "NYC hurricane evacuation zone ('Evac_Zone'), 1 (highest risk) through 6, ordering the coastal-storm evacuation.",
+      "enum": [1, 2, 3, 4, 5, 6, "1", "2", "3", "4", "5", "6", null]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Open Data Latitude / Longitude).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine shared across NYCEM datasets — the join keys back to the rest of city government.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "boroCode": { "$ref": "#/$defs/BoroCode" },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board ('Community Districts' / 'Community Board')." },
+        "councilDistrict": { "type": ["integer", "string", "null"], "description": "NYC Council district ('Council District' / 'City Council Districts')." },
+        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract ('Census Tract (2020)')." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code ('Neighborhood Tabulation Area (NTA) (2020)')." },
+        "policePrecinct": { "type": ["string", "integer", "null"], "description": "NYPD precinct ('Police Precincts')." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL')." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." },
+        "postcode": { "type": ["string", "null"], "description": "ZIP code ('Postcode' / 'ZIP_CODE' / 'Zip Codes')." }
+      },
+      "additionalProperties": false
+    },
+    "Geometry": {
+      "type": ["object", "null"],
+      "description": "GeoJSON-style geometry carried by NYCEM's geospatial datasets ('the_geom') — points for centers, polygons for evacuation zones.",
+      "properties": {
+        "type": { "type": "string" },
+        "coordinates": {}
+      },
+      "additionalProperties": true
+    },
+    "NotificationCategory": {
+      "type": ["string", "null"],
+      "description": "Notify NYC / CAP alert category ('category' in the CAP RSS feed).",
+      "enum": ["Safety", "Infra", "Transit", "Weather", "Health", "Environment", "Fire", "Police", "Utility", "Public Event", "Other", null]
+    }
+  }
+}

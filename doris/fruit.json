@@ -1,0 +1,158 @@
+{
+  "domain": "doris",
+  "agency": "NYC Department of Records & Information Services (DORIS)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/records (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace), the Municipal Archives collections site archives.nyc (Squarespace), and the archive DAMS nycrecords.access.preservica.com (identified as Preservica Universal Access via the Cloudflare __cf_bm cookie on Domain=preservica.com and a real but token-gated /api/content/search JSON endpoint). Noted the legacy LUNA Imaging DAMS (nycma.lunaimaging.com, unreachable at crawl — being superseded by Preservica), the Akamai-fronted Historical Vital Records portal (a860-historicalvitalrecords.nyc.gov, 403 to a bare crawler), and the OpenRecords FOIL system. Verified the NYC Open Data agency label 'Department of Records and Information Services (DORIS)' via the Socrata Discovery API and pulled all 13 assets with column schemas.",
+  "related_domains": ["archives.nyc", "nycrecords.access.preservica.com", "nycma.lunaimaging.com", "a860-historicalvitalrecords.nyc.gov", "a860-openrecords.nyc.gov", "data.cityofnewyork.us"],
+  "headline_findings": [
+    "DORIS is a many-doored domain: an informational NYC.gov 'Livesite' site (Akamai/nginx/Dynatrace), a separate Squarespace collections site (archives.nyc), a vendor DAMS for the archive (Preservica, formerly LUNA Imaging), an Akamai-fronted Historical Vital Records ordering portal, and the citywide OpenRecords FOIL system.",
+    "The INDEXES are wide open: 13 NYC Open Data datasets index the historical vital records (birth/death/marriage), the Municipal Archives' digital objects and finding aids, the City Hall Library catalog (the most-viewed DORIS dataset), government publications and required reports, and honorary street names.",
+    "But the OBJECTS are locked in a vendor DAMS. Preservica ships a real REST content API (/api/content/search returns JSON) yet it is token-gated for the public catalog — no OpenAPI, no open/bulk access, no agent contract; the scans/images never reach Open Data.",
+    "RETRIEVAL has no machine-readable surface at all. Ordering a certified vital-record copy, requesting an archival reproduction, or filing a FOIL request each lives in a separate portal, form, or email — none has an API.",
+    "Net-new write surface: request a record (RecordsRequest) — order/retrieve a copy of a vital record, an archival item, or a FOIL request — the thing researchers actually want, with no API today. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "13 DORIS datasets; SODA /resource/<id>.json endpoints. The one fully open DORIS API — indexes/finding aids/catalogs only, never the object itself." },
+    { "endpoint": "nycrecords.access.preservica.com/api/content/", "type": "DAMS content API (Preservica Universal Access)", "owner": "DORIS (Preservica)", "public": "token-gated", "note": "Real REST/JSON API holding the digitized objects; GET /api/content/search returns application/json but 401 not.authenticated no.token.header. No published OpenAPI, no open/bulk access, no agent contract." },
+    { "endpoint": "nycma.lunaimaging.com", "type": "legacy DAMS (LUNA Imaging)", "owner": "DORIS (vendor)", "public": "unreachable at crawl", "note": "Prior Municipal Archives online image platform with a documented servlet/JSON API; connection refused at crawl — being superseded by Preservica." },
+    { "endpoint": "a860-historicalvitalrecords.nyc.gov", "type": "vital-records search & order portal", "owner": "DORIS (Akamai-fronted app)", "public": "UI, no API", "note": "Search the pre-1949 indexes and order certified/uncertified copies; returns 403 to a bare crawler; no JSON/OpenAPI. The retrieval step for vital records." },
+    { "endpoint": "a860-openrecords.nyc.gov", "type": "FOIL request system (OpenRecords)", "owner": "NYC (citywide)", "public": "UI, no public write API", "note": "File/track FOIL requests; a read-only status rollup is on Open Data (kegn-anvq), but the submit workflow has no public API." },
+    { "endpoint": "www.archives.nyc", "type": "collections marketing site", "owner": "DORIS (Squarespace)", "public": "html", "note": "Front door to the online archive; content only, no content API." },
+    { "endpoint": "www.nyc.gov/site/records/", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "Content only; Akamai edge, nginx, Dynatrace RUM. No content API." }
+  ],
+  "meta": {
+    "short": "NYC Records (DORIS)",
+    "verb": "retrieve",
+    "platform": "NYC.gov Livesite site + Squarespace (archives.nyc) + Preservica DAMS (formerly LUNA Imaging) + Akamai vital-records portal + OpenRecords; Socrata for the indexes",
+    "netnew": "RecordsRequest — request/retrieve a record: order a copy of a historical vital record, an archival item/photo, a library publication, or file a FOIL request",
+    "accent": "#5a8a7a",
+    "tagline": "DORIS publishes rich open indexes to its archives, vital records, and publications, but the records themselves sit in a vendor DAMS and must be ordered by hand.",
+    "headline": "Discovery is solved and retrieval isn't: bind the open indexes to the DAMS objects and turn ordering a record into an API."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 1,
+    "openData": 2,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Fragmented across NYC.gov Livesite, a Squarespace site, a Preservica DAMS, a deprecated LUNA, and two Akamai portals — no coherent platform.",
+    "siteApi": "Informational/collections sites are HTML only; the DAMS has a REST content API but it is token-gated with no OpenAPI.",
+    "openData": "13 rich index/finding-aid datasets (vital records, archives, publications, honorary streets), but they index rather than deliver, and the top dataset is a delimited blob.",
+    "coreData": "The core objects — the scans, photographs, films, certificates — live only in the vendor DAMS; Open Data carries indexes, never the asset.",
+    "writeApi": "None — ordering a record, requesting a reproduction, and filing a FOIL are portal/form/email only.",
+    "agent": "No agent-native surface; no MCP, no clean OpenAPI, no resolvable object references.",
+    "ownership": "DORIS owns the indexes (open data) but leases the archive of record to Preservica and routes retrieval through Akamai apps it does not expose."
+  },
+  "fruit": [
+    {
+      "name": "City Hall Library Catalog",
+      "type": "catalog",
+      "entity": "GovernmentPublication",
+      "url": "https://www.nyc.gov/site/records/about/city-hall-library.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["NYC City Hall Library Catalog gysc-yn4h (1c blob)"],
+      "notes": "The most-viewed DORIS dataset (41,855 views) — but a single '#'-delimited MARC-like blob column. Rich content, poor structure; normalizing it is a clean modernization win."
+    },
+    {
+      "name": "Historical Vital Records (birth / death / marriage)",
+      "type": "index + order portal",
+      "entity": "HistoricalVitalRecord",
+      "url": "https://a860-historicalvitalrecords.nyc.gov/",
+      "count": "4 index datasets",
+      "machine_readable": "Open Data (SODA) index; portal for the scan",
+      "verified": true,
+      "opendata_match": ["Death Certificates 797j-9xvg (9c)", "Marriage Certificates j62e-7maa (8c)", "Birth Certificates 5gq7-rgmv (8c)", "Marriage Licenses d8dr-nyhw (3c)"],
+      "opendata_gap": false,
+      "notes": "Pre-1949 civil registers. Indexes are open (name/Soundex + county + certificate day/month/year + number); the scan is retrieved only through the Akamai-fronted portal — no API."
+    },
+    {
+      "name": "Municipal Archives Digital Objects",
+      "type": "data table (index into DAMS)",
+      "entity": "DigitalItem",
+      "url": "https://www.archives.nyc/",
+      "machine_readable": "Open Data (SODA) metadata; Preservica for the asset",
+      "verified": true,
+      "opendata_match": ["NYC Municipal Archives Digital Objects 28et-rv7b (5c)"],
+      "notes": "Digitized photographs, maps, films, and record pages. Metadata is open; the asset lives in the Preservica DAMS (formerly LUNA Imaging) behind a token-gated content API."
+    },
+    {
+      "name": "Municipal Archives Collections & Accessions",
+      "type": "finding aid",
+      "entity": "ArchivalCollection",
+      "url": "https://data.cityofnewyork.us/d/bk7g-bhsz",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Resources and Instances List bk7g-bhsz (11c)", "Acquisitions / Accessions List vfa7-chs9 (7c)"],
+      "notes": "The collection/finding-aid level in the Archives' ArchivesSpace-style hierarchy — identifier, level, date, instance/container, accession metadata. Parent of the DigitalItem records."
+    },
+    {
+      "name": "Government Publications & Required Reports",
+      "type": "data table",
+      "entity": "GovernmentPublication",
+      "url": "https://data.cityofnewyork.us/d/xip9-pe9k",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Government Publications Listing xip9-pe9k (18c)", "Government Publication - Required Reports 9azj-tmjp (8c)"],
+      "notes": "Agency reports plus the Charter/Local Law mandate table (required reports). The publication rows link to their mandating report row."
+    },
+    {
+      "name": "Honorary Street Names",
+      "type": "data table + map",
+      "entity": "HonoraryStreetName",
+      "url": "https://data.cityofnewyork.us/d/xesp-yqsx",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Honorary Street Names Map (Street Line) xesp-yqsx (14c)", "Honorary Street Names Map (Intersection) ig76-wwag (18c)"],
+      "notes": "Council-enacted co-named streets curated by DORIS — enactment number, present/new name, limits, honoree, geography spine, coordinates."
+    },
+    {
+      "name": "Order a certified vital-record copy",
+      "type": "transaction (portal)",
+      "entity": "RecordsRequest",
+      "url": "https://a860-historicalvitalrecords.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Ordering a certified/uncertified copy runs through the vital-records portal; restricted records need proof of relationship. No API."
+    },
+    {
+      "name": "Request an archival reproduction",
+      "type": "workflow (email/form)",
+      "entity": "RecordsRequest",
+      "url": "https://www.archives.nyc/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Requesting a high-resolution image or print of a DigitalItem is an email/form to the Municipal Archives — no API."
+    },
+    {
+      "name": "File a FOIL request",
+      "type": "workflow (portal)",
+      "entity": "RecordsRequest",
+      "url": "https://a860-openrecords.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["OpenRecords FOIL Requests kegn-anvq (read-only rollup)"],
+      "opendata_gap": true,
+      "notes": "Filing a Freedom of Information Law request runs through OpenRecords; a read-only status rollup is on Open Data, but the submit workflow has no public API."
+    },
+    {
+      "name": "Request a record (retrieve/order)",
+      "type": "sign-up / request workflow",
+      "entity": "RecordsRequest",
+      "url": "https://a860-historicalvitalrecords.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single thing researchers actually want and the net-new WRITE surface — one request to retrieve/order a record (vital-record copy, archival reproduction, library publication, or FOIL). No API and no Open Data twin; lives only across the vital-records portal, an Archives form/email, or OpenRecords."
+    }
+  ]
+}

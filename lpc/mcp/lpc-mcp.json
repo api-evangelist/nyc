@@ -1,0 +1,185 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces LPC's open landmark data (landmarks, designated buildings, historic districts, designation reports, permit history, violations) bound under one LP_NUMBER-keyed model, and adds file_permit_application — the net-new write workflow locked today inside the Salesforce Portico portal.",
+    "openapi": "../openapi/lpc.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.lpc",
+    "title": "NYC Landmarks Preservation Commission (LPC)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Landmarks Preservation Commission — individual/interior/scenic landmarks, the designated-building database (architect, style, materials, dates), historic districts, designation and archaeology reports, issued permit history, and landmark violations from NYC Open Data, plus the net-new ability to file a landmark permit application (Certificate of Appropriateness / No Effect) that today lives only in the Salesforce Portico portal.",
+    "instructions": "Use find_landmarks / get_landmark (and get_landmark_buildings) to locate designations by borough, type, historic district, or LP number and drill into their buildings. find_buildings searches the architectural building database by architect, style, or lot. find_historic_districts covers area designations. find_designation_reports returns designation and archaeology reports. find_permits searches the OPEN, issued permit history (Certificates of Appropriateness / No Effect). find_violations covers landmark complaints and violations. file_permit_application (net-new) files a new LPC permit application; it requires an authenticated applicant and mutates state — confirm the property (address/BBL/LP number), permit type, and scope of work with the user before submitting, and note that Certificate of Appropriateness filings go to a public hearing."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_landmarks",
+      "title": "Find Landmarks",
+      "description": "Search NYC landmark designations (individual, interior, scenic) by borough, type, site status, historic district, BBL, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "landmarkType": { "type": "string", "enum": ["Individual Landmark", "Interior Landmark", "Scenic Landmark", "Historic District", "Historic District Extension"] },
+          "siteStatus": { "type": "string" },
+          "historicDistrict": { "type": "string" },
+          "bbl": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/landmark.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLandmarks"
+    },
+    {
+      "name": "get_landmark",
+      "title": "Get Landmark",
+      "description": "Fetch a landmark designation (status, dates, address, geography) by LP number.",
+      "inputSchema": { "type": "object", "properties": { "lpNumber": { "type": "string" } }, "required": ["lpNumber"] },
+      "outputSchema": { "$ref": "../schemas/landmark.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getLandmark"
+    },
+    {
+      "name": "get_landmark_buildings",
+      "title": "Get Landmark Buildings",
+      "description": "List the designated buildings (with architect, style, materials, dates) within a landmark or historic district.",
+      "inputSchema": { "type": "object", "properties": { "lpNumber": { "type": "string" } }, "required": ["lpNumber"] },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/designated-building.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getLandmarkBuildings"
+    },
+    {
+      "name": "find_buildings",
+      "title": "Find Buildings",
+      "description": "Search the LPC landmark & historic-district building database by borough, historic district, architect, style, or BBL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "historicDistrict": { "type": "string" },
+          "architect": { "type": "string" },
+          "style": { "type": "string" },
+          "bbl": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/designated-building.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listBuildings"
+    },
+    {
+      "name": "find_historic_districts",
+      "title": "Find Historic Districts",
+      "description": "List NYC historic districts by borough, site status, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "siteStatus": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/historic-district.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listHistoricDistricts"
+    },
+    {
+      "name": "find_designation_reports",
+      "title": "Find Designation Reports",
+      "description": "List LPC designation reports and archaeology reports by type, borough, LP number, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reportType": { "type": "string", "enum": ["Designation Report", "Archaeology Report"] },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "lpNumber": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/designation-report.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listDesignationReports"
+    },
+    {
+      "name": "find_permits",
+      "title": "Find Permit History",
+      "description": "Search LPC's OPEN, issued permit history (Certificates of Appropriateness / No Effect and related permits) by borough, regulation type, work type, BBL, or period.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "regulationType": { "type": "string" },
+          "workType": { "type": "string" },
+          "bbl": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/permit-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPermitApplications"
+    },
+    {
+      "name": "find_violations",
+      "title": "Find Violations",
+      "description": "Search LPC landmark complaints and violations by borough, record type, status, or BBL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "recordType": { "type": "string", "enum": ["Complaint", "Violation"] },
+          "status": { "type": "string" },
+          "bbl": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/violation-order.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listViolations"
+    },
+    {
+      "name": "list_my_permit_applications",
+      "title": "List My Permit Applications",
+      "description": "List the authenticated applicant's own LPC permit applications and their status — today visible only inside the Salesforce Portico portal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/landmark-permit-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listMyPermitApplications",
+      "x-auth": "user"
+    },
+    {
+      "name": "file_permit_application",
+      "title": "File a Permit Application",
+      "description": "File an LPC landmark permit application (Certificate of Appropriateness, Certificate of No Effect, or Permit for Minor Work). NET-NEW workflow with no public API today — it lives only in the Salesforce Portico portal (portico.lpc.nyc.gov). Requires an authenticated applicant. Mutates state — confirm the property (address/BBL/LP number), permit type, and scope of work first; Certificate of Appropriateness filings go to a public hearing.",
+      "inputSchema": { "$ref": "../schemas/landmark-permit-application.json" },
+      "outputSchema": { "$ref": "../schemas/landmark-permit-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createPermitApplication",
+      "x-auth": "user"
+    }
+  ]
+}

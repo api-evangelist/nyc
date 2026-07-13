@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcas/schemas/eligible-list.json",
+  "title": "EligibleListEntry",
+  "description": "A single candidate's ranked entry on a DCAS civil-service eligible list — the exam-score-ordered list DCAS certifies to agencies for hiring. Canonical schema reconciling 'Civil Service List (Active)' (vx8i-nprf, 20 columns), 'Civil Service List (Terminated)' (qu8g-sxqf), 'Civil Service List Certification' (a9md-ynri), and 'Civil List' (ye3c-m4ga). Keyed on List Number + List Number seq.",
+  "type": "object",
+  "x-source": {
+    "opendata_active": "https://data.cityofnewyork.us/d/vx8i-nprf",
+    "opendata_terminated": "https://data.cityofnewyork.us/d/qu8g-sxqf",
+    "opendata_certification": "https://data.cityofnewyork.us/d/a9md-ynri",
+    "opendata_civil_list": "https://data.cityofnewyork.us/d/ye3c-m4ga"
+  },
+  "properties": {
+    "listNumber": { "type": ["string", "null"], "description": "Rank/serial on the list ('List No')." },
+    "exam": { "$ref": "_common.json#/$defs/ExamReference" },
+    "title": { "$ref": "_common.json#/$defs/TitleReference" },
+    "agency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Active", "Terminated", "Certified", null],
+      "description": "Which list the entry comes from."
+    },
+    "firstName": { "type": ["string", "null"], "description": "'First Name'." },
+    "lastName": { "type": ["string", "null"], "description": "'Last Name'." },
+    "middleInitial": { "type": ["string", "null"], "description": "'MI'." },
+    "adjustedFinalAverage": { "type": ["number", "null"], "description": "Adjusted final average score ('Adj. FA')." },
+    "groupNumber": { "type": ["string", "null"], "description": "'Group No'." },
+    "veteranCredit": { "type": ["string", "null"], "description": "'Veteran Credit'." },
+    "residencyCredit": { "type": ["string", "null"], "description": "'Residency Credit'." },
+    "parentLegacyCredit": { "type": ["string", "null"], "description": "'Parent Lgy Credit'." },
+    "siblingLegacyCredit": { "type": ["string", "null"], "description": "'Sibling Lgy Credit'." },
+    "establishedDate": { "type": ["string", "null"], "format": "date", "description": "'Established Date'." },
+    "publishedDate": { "type": ["string", "null"], "format": "date", "description": "'Published Date'." },
+    "anniversaryDate": { "type": ["string", "null"], "format": "date", "description": "'Anniversary Date'." },
+    "extensionDate": { "type": ["string", "null"], "format": "date", "description": "'Extension Date'." },
+    "terminationDate": { "type": ["string", "null"], "format": "date", "description": "'Termination Date' (terminated lists only)." },
+    "certification": {
+      "type": "object",
+      "description": "Certification details when the entry appears on a Civil Service List Certification (a9md-ynri).",
+      "properties": {
+        "certSeqNo": { "type": ["string", "null"], "description": "'Cert Seq No'." },
+        "certIssueNo": { "type": ["string", "null"], "description": "'Cert Issue No'." },
+        "certDate": { "type": ["string", "null"], "format": "date", "description": "'Cert Date'." },
+        "certExpirationDate": { "type": ["string", "null"], "format": "date", "description": "'Cert Expiration Date'." },
+        "numberCertified": { "type": ["integer", "null"], "description": "'No Certified'." },
+        "numberVacancies": { "type": ["integer", "null"], "description": "'No Vacancies'." },
+        "provisionalReplacement": { "type": ["boolean", "string", "null"], "description": "'Provisional Replacement'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

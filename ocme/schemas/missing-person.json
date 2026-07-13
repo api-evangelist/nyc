@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ocme/schemas/missing-person.json",
+  "title": "MissingPerson",
+  "description": "A public missing-persons or unidentified-decedent case surfaced through OCME's Identification Unit and the federal NamUs system (namus.nij.ojp.gov). These listings are deliberately public and non-identifying-by-name for unidentified decedents — they carry only the descriptive detail meant to AID identification (estimated age range, sex, where found), never confidential investigative findings. OCME participates in NamUs; there is no OCME-owned Open Data twin.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/ocme/for-families/namus.page",
+    "namus": "https://namus.nij.ojp.gov/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "caseType": {
+      "type": "string",
+      "enum": ["Missing Person", "Unidentified Person", "Unclaimed Person"],
+      "description": "The NamUs case category."
+    },
+    "namusId": { "type": ["string", "null"], "description": "NamUs case identifier (e.g. UP#, MP#)." },
+    "ocmeCaseNumber": { "type": ["string", "null"], "description": "OCME case / accession number, where the case is an unidentified decedent." },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Open", "Identified", "Resolved", "Closed", null],
+      "description": "Case status."
+    },
+    "sex": { "type": ["string", "null"], "enum": ["Male", "Female", "Unknown", null] },
+    "estimatedAgeRange": { "type": ["string", "null"], "description": "Estimated age range, e.g. '25-40'." },
+    "dateReportedOrFound": { "type": ["string", "null"], "format": "date", "description": "Date reported missing, or date remains were found." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "locationFound": { "type": ["string", "null"], "description": "General location associated with the case (non-precise)." },
+    "namusUrl": { "type": ["string", "null"], "format": "uri", "description": "Public NamUs case URL." }
+  },
+  "required": ["caseType"],
+  "additionalProperties": false
+}

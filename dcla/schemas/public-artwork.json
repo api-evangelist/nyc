@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/schemas/public-artwork.json",
+  "title": "PublicArtwork",
+  "description": "A completed Percent for Art commission — a permanent public artwork funded under NYC's Percent for Art law (1% of eligible City capital construction budgets goes to public art). Canonical schema reconciling 'Completed Percent for Art projects with artist information' (gzdv-qiga, 7 columns). Keyed on Percent Project.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/gzdv-qiga",
+    "site": "https://www.nyc.gov/site/dcla/publicart/percent-for-art.page"
+  },
+  "properties": {
+    "percentProject": { "type": "string", "description": "Percent for Art project name / title ('Percent Project')." },
+    "artist": { "type": ["string", "null"], "description": "Commissioned artist ('Artist')." },
+    "sponsorAgency": { "type": ["string", "null"], "description": "City agency sponsoring the capital project ('Sponsor Agency')." },
+    "designAgency": { "type": ["string", "null"], "description": "Agency responsible for design ('Design Agency')." },
+    "address": { "type": ["string", "null"], "description": "Installation address ('Address')." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "zipCode": { "type": ["string", "null"], "description": "'Zip Code'." }
+  },
+  "required": ["percentProject"],
+  "additionalProperties": false
+}

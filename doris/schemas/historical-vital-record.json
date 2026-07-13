@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doris/schemas/historical-vital-record.json",
+  "title": "HistoricalVitalRecord",
+  "description": "An index entry for a historical NYC vital record — birth, death, marriage certificate, or marriage license from the pre-1949 civil registers held by the Municipal Archives. Canonical schema reconciling the four DORIS 'Index to Digitized …' datasets: Death Certificates (797j-9xvg, 9c), Marriage Certificates (j62e-7maa, 8c), Birth Certificates (5gq7-rgmv, 8c), and Marriage Licenses (d8dr-nyhw, 3c). These are INDEXES only — the scanned certificate itself is served through the Historical Vital Records portal (a860-historicalvitalrecords.nyc.gov) and certified copies must be ordered.",
+  "type": "object",
+  "x-source": {
+    "opendata_death": "https://data.cityofnewyork.us/d/797j-9xvg",
+    "opendata_marriage_certificate": "https://data.cityofnewyork.us/d/j62e-7maa",
+    "opendata_birth": "https://data.cityofnewyork.us/d/5gq7-rgmv",
+    "opendata_marriage_license": "https://data.cityofnewyork.us/d/d8dr-nyhw",
+    "portal": "https://a860-historicalvitalrecords.nyc.gov/"
+  },
+  "properties": {
+    "recordType": {
+      "type": "string",
+      "enum": ["Birth Certificate", "Death Certificate", "Marriage Certificate", "Marriage License"],
+      "description": "Which vital-record index this entry comes from."
+    },
+    "certificateNumber": { "type": ["string", "null"], "description": "Certificate or license number ('Certificate Number' / 'License Number')." },
+    "firstName": { "type": ["string", "null"], "description": "'First Name' (not present on marriage-license index)." },
+    "lastName": { "type": ["string", "null"], "description": "'Last Name' (not present on marriage-license index)." },
+    "soundex": { "type": ["string", "null"], "description": "Soundex code of the surname ('Soundex')." },
+    "county": { "$ref": "_common.json#/$defs/County" },
+    "ageOfDeath": { "type": ["string", "integer", "null"], "description": "Age at death ('Age of Death') — death certificates only." },
+    "eventDate": {
+      "type": "object",
+      "description": "The record date, split into the day/month/year columns as published.",
+      "properties": {
+        "year": { "type": ["integer", "string", "null"], "description": "'Certificate Year' / 'License Year'." },
+        "month": { "type": ["integer", "string", "null"], "description": "'Certificate Month'." },
+        "day": { "type": ["integer", "string", "null"], "description": "'Certificate Day'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["recordType"],
+  "additionalProperties": false
+}

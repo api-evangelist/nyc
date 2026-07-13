@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ddc/schemas/division.json",
+  "title": "Division",
+  "description": "A DDC line of business that delivers capital projects — the organizational lens over the project portfolio. DDC has no dedicated division dataset; this reference entity is derived from the 'Division' column carried on every Active Projects row (3ss8-m844, rukc-mmqu, g9ub-hrve) and DDC's own org structure (Infrastructure, Public Buildings, and program-management/support units). Useful for rolling project counts and dollar totals up by portfolio.",
+  "type": "object",
+  "x-source": {
+    "opendata_derived": "https://data.cityofnewyork.us/d/3ss8-m844",
+    "site": "https://www.nyc.gov/site/ddc/about/about-ddc.page"
+  },
+  "properties": {
+    "division": { "$ref": "_common.json#/$defs/Division" },
+    "name": { "type": "string", "description": "Human-readable division name." },
+    "description": { "type": ["string", "null"], "description": "What the division builds / manages." },
+    "activeProjectCount": { "type": ["integer", "null"], "description": "Derived count of active projects in this division." },
+    "activeDollarAmount": { "$ref": "_common.json#/$defs/Money" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

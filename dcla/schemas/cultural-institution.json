@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/schemas/cultural-institution.json",
+  "title": "CulturalInstitution",
+  "description": "A member of the Cultural Institutions Group (CIG) and its annual operating support from DCLA — the ~34 major institutions (museums, zoos, gardens, performing-arts centers) sited on City-owned property that DCLA funds directly. Canonical schema reconciling 'DCLA Cultural Institutions Group Funding' (ka27-qx5k, 4 columns). Keyed on CIG name + Fiscal Year.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/ka27-qx5k",
+    "site": "https://www.nyc.gov/site/dcla/cultural-funding/city-owned-institutions.page"
+  },
+  "properties": {
+    "cig": { "type": "string", "description": "Cultural Institutions Group member name ('Cultural Institutions Group (CIG)')." },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "operatingSupport": { "type": ["number", "null"], "description": "Annual operating support in dollars ('Operating Support')." },
+    "energySupport": { "type": ["number", "null"], "description": "Energy support in dollars ('Energy Support')." }
+  },
+  "required": ["cig"],
+  "additionalProperties": false
+}

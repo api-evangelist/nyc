@@ -1,0 +1,369 @@
+openapi: 3.1.0
+info:
+  title: DDC API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Design and Construction — surfacing its
+    capital construction portfolio (projects, awarded contracts, vendors, divisions) as coherent,
+    live resources instead of stale Open Data snapshots, and fronting the citywide vendor-onboarding
+    flow (PASSPort/MOCS) with the one net-new write surface DDC could own: vendor prequalification.
+  description: >-
+    Proposed API-first surface for the NYC Department of Design and Construction (DDC), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/ddc and DDC's vendor/procurement pages.
+
+
+    DDC is a **vendor-facing, business-to-government agency** — the City's primary capital construction
+    project manager (550+ active projects, $34B+ portfolio) that builds for other agencies. Two things
+    define the domain. First, its **own published data is thin and stale**: just four Open Data datasets,
+    three of them '(Historical)' snapshots of active projects plus a directory of awarded contracts.
+    Second, **DDC owns almost none of its transaction layer** — every solicitation is released through the
+    citywide **PASSPort** platform run by the Mayor's Office of Contract Services (MOCS), award notices go
+    to the **City Record**, contract records live on **Checkbook NYC** (Comptroller), and even DDC's own
+    vendor portal (**DDC Anywhere**) exposes no API. There is **no citizen write anywhere** in this domain.
+
+
+    This contract does two things: (1) presents the capital-project / awarded-contract / vendor / division
+    data as one clean, live resource model, and (2) adds the one net-new **write** workflow DDC could own —
+    submitting a **vendor prequalification** / expression of interest — that today exists only inside the
+    citywide PASSPort system. Emergencies/citizen services do not apply here; the honest write surface is
+    B2G onboarding.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.ddc.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Projects
+    description: DDC-managed capital construction projects (infrastructure and public buildings).
+  - name: Contracts
+    description: Awarded construction contracts and the firms that hold them.
+  - name: Vendors
+    description: Firms doing business with DDC — designers, engineers, CMs, contractors, consultants.
+  - name: Divisions
+    description: DDC lines of business and portfolio rollups.
+  - name: Solicitations
+    description: Open procurement opportunities (released through citywide PASSPort / City Record).
+  - name: Prequalification
+    description: Vendor prequalification / expression of interest (read + write). The net-new surface, today locked in citywide PASSPort/MOCS.
+
+paths:
+  /projects:
+    get:
+      operationId: listProjects
+      summary: List / search DDC capital projects
+      tags: [Projects]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: division
+          in: query
+          schema: { type: string, enum: [Infrastructure, Public Buildings, Program Management, Other] }
+        - name: portfolio
+          in: query
+          schema: { type: string, enum: [Infrastructure, Public Buildings] }
+        - name: clientAgency
+          in: query
+          schema: { type: string }
+        - name: phase
+          in: query
+          schema: { type: string }
+        - name: historical
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of capital projects.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/capital-project.json' } }
+  /projects/{projectId}:
+    get:
+      operationId: getProject
+      summary: Get a capital project by Project ID
+      tags: [Projects]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The capital project.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/capital-project.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /projects/{projectId}/contracts:
+    get:
+      operationId: getProjectContracts
+      summary: List the awarded contracts tied to a project
+      tags: [Projects]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Awarded contracts for the project.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/awarded-contract.json' } }
+
+  /contracts:
+    get:
+      operationId: listContracts
+      summary: Search awarded construction contracts
+      tags: [Contracts]
+      parameters:
+        - name: firm
+          in: query
+          schema: { type: string }
+        - name: clientAgency
+          in: query
+          schema: { type: string }
+        - name: minValue
+          in: query
+          schema: { type: number }
+        - name: maxValue
+          in: query
+          schema: { type: number }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of awarded contracts.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/awarded-contract.json' } }
+  /contracts/{pin}:
+    get:
+      operationId: getContract
+      summary: Get an awarded contract by PIN
+      tags: [Contracts]
+      parameters:
+        - name: pin
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The awarded contract.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/awarded-contract.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /vendors:
+    get:
+      operationId: listVendors
+      summary: List / search firms doing business with DDC
+      tags: [Vendors]
+      parameters:
+        - name: role
+          in: query
+          schema: { type: string }
+        - name: mwbe
+          in: query
+          schema: { type: boolean }
+        - name: prequalified
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of vendors.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/vendor.json' } }
+
+  /divisions:
+    get:
+      operationId: listDivisions
+      summary: List DDC divisions with portfolio rollups
+      tags: [Divisions]
+      responses:
+        '200':
+          description: DDC divisions.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/division.json' } }
+
+  /solicitations:
+    get:
+      operationId: listSolicitations
+      summary: List open DDC procurement opportunities
+      description: >-
+        Surfaces solicitations that today are released and responded to only through citywide PASSPort
+        and noticed in the City Record. DDC has no owned solicitation API or Open Data twin.
+      tags: [Solicitations]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string, enum: [Professional Service Contracts, Construction Contracts, Not-for-Profit Procurements, Alternative Delivery, Other] }
+        - name: division
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [Upcoming, Open, Closed, Awarded, Cancelled] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of solicitations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/solicitation.json' } }
+
+  /prequalifications:
+    get:
+      operationId: listPrequalifications
+      summary: List the authenticated firm's prequalification submissions
+      description: Reads the firm's own prequalification / expression-of-interest submissions — today only visible inside citywide PASSPort.
+      tags: [Prequalification]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Under Review, Prequalified, More Info Needed, Declined] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the firm's prequalification submissions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/vendor-prequalification.json' } }
+    post:
+      operationId: createPrequalification
+      summary: Submit a vendor prequalification / expression of interest
+      description: >-
+        The net-new write surface — a DDC-owned API for a firm to prequalify and express interest in a
+        solicitation, replacing the citywide PASSPort-only workflow. This is a B2G (vendor) transaction:
+        there is no citizen write in this domain. Optionally subscribes the firm to City Record notices.
+      tags: [Prequalification]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/vendor-prequalification.json' }
+      responses:
+        '201':
+          description: Prequalification submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/vendor-prequalification.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /prequalifications/{prequalificationId}:
+    get:
+      operationId: getPrequalification
+      summary: Get a prequalification submission
+      tags: [Prequalification]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: prequalificationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The prequalification submission.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/vendor-prequalification.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    CapitalProject: { $ref: '../schemas/capital-project.json' }
+    AwardedContract: { $ref: '../schemas/awarded-contract.json' }
+    Vendor: { $ref: '../schemas/vendor.json' }
+    Division: { $ref: '../schemas/division.json' }
+    Solicitation: { $ref: '../schemas/solicitation.json' }
+    VendorPrequalification: { $ref: '../schemas/vendor-prequalification.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island, Citywide] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

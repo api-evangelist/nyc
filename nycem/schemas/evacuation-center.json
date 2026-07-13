@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/schemas/evacuation-center.json",
+  "title": "EvacuationCenter",
+  "description": "A NYC hurricane evacuation center — where residents in an evacuated zone can go for shelter and services (many double as cooling centers and emergency supply shelters when activated). Canonical schema reconciling 'Hurricane Evacuation Centers' (p5md-weyf) and its map (ayer-cga7). NOTE: live activation status and cooling-center openings are published only through NYCEM's seasonal Finder tools, not a machine-readable status feed.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/p5md-weyf",
+    "opendata_map": "https://data.cityofnewyork.us/d/ayer-cga7",
+    "finder": "https://finder.nyc.gov/coolingcenters"
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Evacuation center name ('EC_Name')." },
+    "address": { "type": ["string", "null"], "description": "Street address ('ADDRESS')." },
+    "city": { "type": ["string", "null"], "description": "'CITY'." },
+    "state": { "type": ["string", "null"], "description": "'STATE'." },
+    "zipCode": { "type": ["string", "null"], "description": "'ZIP_CODE'." },
+    "accessible": { "type": ["boolean", "string", "null"], "description": "ADA / accessibility flag ('ACCESSIBLE')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "geometry": { "$ref": "_common.json#/$defs/Geometry" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

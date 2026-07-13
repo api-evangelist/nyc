@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oti/schemas/service-request.json",
+  "title": "ServiceRequest",
+  "description": "A NYC 311 service request — the single most-viewed dataset in all of NYC Open Data (erm2-nwe9, 1.26M+ views), operated by OTI on behalf of 311. Canonical schema reconciling '311 Service Requests from 2020 to Present' (erm2-nwe9, 48 columns) and its historical siblings (76ig-c548, 3rfa-3xsf). Keyed on Unique Key. OTI runs the pipeline that routes each request to the responsible agency.",
+  "type": "object",
+  "x-source": {
+    "opendata_current": "https://data.cityofnewyork.us/d/erm2-nwe9",
+    "opendata_2010_2019": "https://data.cityofnewyork.us/d/76ig-c548",
+    "opendata_sla": "https://data.cityofnewyork.us/d/cs9t-e3x8"
+  },
+  "properties": {
+    "uniqueKey": { "type": "string", "description": "'Unique Key' — 311 SR number (primary key)." },
+    "createdDate": { "type": ["string", "null"], "format": "date-time", "description": "'Created Date'." },
+    "closedDate": { "type": ["string", "null"], "format": "date-time", "description": "'Closed Date'." },
+    "dueDate": { "type": ["string", "null"], "format": "date-time", "description": "'Due Date'." },
+    "resolutionActionUpdatedDate": { "type": ["string", "null"], "format": "date-time", "description": "'Resolution Action Updated Date'." },
+    "agency": { "type": ["string", "null"], "description": "'Agency' — acronym of the agency the request is routed to." },
+    "agencyName": { "type": ["string", "null"], "description": "'Agency Name'." },
+    "problem": { "type": ["string", "null"], "description": "'Problem (formerly Complaint Type)'." },
+    "problemDetail": { "type": ["string", "null"], "description": "'Problem Detail (formerly Descriptor)'." },
+    "status": { "type": ["string", "null"], "description": "'Status' (e.g. Open, In Progress, Closed, Pending)." },
+    "resolutionDescription": { "type": ["string", "null"], "description": "'Resolution Description'." },
+    "openDataChannelType": { "type": ["string", "null"], "enum": ["PHONE", "ONLINE", "MOBILE", "OTHER", "UNKNOWN", null], "description": "'Open Data Channel Type' — how the request was submitted." },
+    "locationType": { "type": ["string", "null"], "description": "'Location Type'." },
+    "incidentAddress": { "type": ["string", "null"], "description": "'Incident Address'." },
+    "streetName": { "type": ["string", "null"], "description": "'Street Name'." },
+    "crossStreet1": { "type": ["string", "null"], "description": "'Cross Street 1'." },
+    "crossStreet2": { "type": ["string", "null"], "description": "'Cross Street 2'." },
+    "landmark": { "type": ["string", "null"], "description": "'Landmark'." },
+    "facilityType": { "type": ["string", "null"], "description": "'Facility Type'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["uniqueKey"],
+  "additionalProperties": false
+}

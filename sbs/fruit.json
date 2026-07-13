@@ -1,0 +1,144 @@
+{
+  "domain": "sbs",
+  "agency": "NYC Department of Small Business Services (SBS)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/sbs (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace) and the MyCity Business portal at nyc-business.nyc.gov/nycbusiness (identified as a Spring-session Java app with Adobe AEM Universal Editor + jQuery/Handlebars, Akamai mPulse; the Step-by-Step licensing wizard confirmed at /nycbusiness/wizard, title 'Step by Step'). Verified the NYC Open Data agency label 'Department of Small Business Services (SBS)' via the Socrata Discovery API and pulled all 28 assets with column schemas.",
+  "related_domains": ["nyc-business.nyc.gov", "data.cityofnewyork.us", "www.nyc.gov/site/mocs", "www.nyc.gov/site/sbs"],
+  "headline_findings": [
+    "SBS is a split domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a business service portal — MyCity Business (nyc-business.nyc.gov) — a stateful Spring/Adobe-AEM application with no API.",
+    "The program data is reasonably OPEN: 28 NYC Open Data datasets covering the SBS Certified Business List (M/WBE, 56 columns), Business Improvement Districts (directory, maps, and a 64-column FY24 trends report), Workforce1 recruitment events and job listings, service-center locations, and business-incentive rolls.",
+    "But SBS is a NAVIGATOR agency, and its navigation is locked: the Step-by-Step licensing wizard (which licenses/permits does my business need?), incentive eligibility, and the M/WBE certification and Workforce1 enrollment flows live only inside the session-bound MyCity Business portal — none has a machine-readable surface.",
+    "The public 'SBS Certified Business List' is the shadow of a closed flow: you can read who got certified, but there is no API to apply.",
+    "Net-new write surface: apply for M/WBE certification (MWBECertificationApplication) — the flagship SBS business transaction, with no API today. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "28 SBS datasets; SODA /resource/<id>.json endpoints. The one real, open SBS API — program/directory data only." },
+    { "endpoint": "nyc-business.nyc.gov/nycbusiness", "type": "business service portal", "owner": "NYC SBS/OTI (Spring + Adobe AEM)", "public": "session-walled UI, no API", "note": "MyCity Business — Step-by-Step licensing wizard (/nycbusiness/wizard), incentive/eligibility lookups, M/WBE certification and Workforce1 enrollment. Spring SESSION cookie, jQuery/Handlebars, JavaScript-only, no JSON/OpenAPI." },
+    { "endpoint": "www.nyc.gov/site/sbs", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API." },
+    { "endpoint": "universal-editor-service.adobe.io", "type": "CMS authoring API", "owner": "Adobe (AEM Universal Editor)", "public": "vendor", "note": "loaded by MyCity Business (cors.js) for content authoring." }
+  ],
+  "fruit": [
+    {
+      "name": "SBS Certified Businesses (M/WBE)",
+      "type": "directory + map",
+      "entity": "CertifiedBusiness",
+      "url": "https://www.nyc.gov/site/sbs/businesses/mwbe.page",
+      "count": "~10,000+ certified vendors",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["SBS Certified Business List ci93-uc8s (56c)", "SBS EO 50 Certified Businesses 5vi6-xdpy (16c)", "ICAP EO50 9a87-6m4x (16c)"],
+      "notes": "The flagship SBS directory — M/WBE, EBE, LBE, EO50 certified vendors. Keyed on Account_Number; rich with NAICS industry, bonding/contract capacity, ownership ethnicity, and full geography spine. It is the public OUTPUT of the closed certification flow."
+    },
+    {
+      "name": "Business Improvement Districts (BIDs)",
+      "type": "directory + map",
+      "entity": "BusinessImprovementDistrict",
+      "url": "https://www.nyc.gov/site/sbs/neighborhoods/bids.page",
+      "count": "~76 BIDs",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Directory Of BIDs qpm9-j523 (18c)", "BID map ejxk-d93y", "BID boundaries 7jdm-inj8 (16c)", "BID Trends Report FY24 hzd8-k2vv (64c)"],
+      "notes": "Defined commercial districts funding supplemental services, overseen by SBS. Directory + boundary maps + a 64-column FY24 trends report (finances, sanitation, public safety, storefronts)."
+    },
+    {
+      "name": "Workforce1 Recruitment Events",
+      "type": "event calendar",
+      "entity": "WorkforceEvent",
+      "url": "https://www.nyc.gov/site/sbs/careers/hiring-events.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Workforce1 Recruitment Events kf2b-aeh5 (10c)"],
+      "notes": "SBS hiring events connecting jobseekers to employers; title, employer/type, job family, qualifications, date, check-in window, borough."
+    },
+    {
+      "name": "Workforce1 Job Listings",
+      "type": "data table",
+      "entity": "JobListing",
+      "url": "https://www.nyc.gov/site/sbs/careers/careers.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Workforce1 Job Listing ay9k-vznm (22c)"],
+      "notes": "Open positions posted through Workforce1; title, sector/subsector, SOC occupation, wage and hours ranges, education, borough flags."
+    },
+    {
+      "name": "Center & Service Locations",
+      "type": "directory + map",
+      "entity": "ServiceLocation",
+      "url": "https://www.nyc.gov/site/sbs/careers/workforce1-career-centers.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Center & Service Locations 6smc-7mk6 (19c)"],
+      "notes": "NYC Business Solutions Centers and Workforce1 Career Centers — the in-person storefronts; type, hours, details, address, geography, coordinates."
+    },
+    {
+      "name": "Business Incentives",
+      "type": "data table",
+      "entity": "BusinessIncentive",
+      "url": "https://www.nyc.gov/site/sbs/businesses/business-incentives.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Value of Energy Cost Savings Program bug8-9f3g (30c)", "Jobs Created by ECSP yqky-aebb (17c)", "ICAP EO50 9a87-6m4x (16c)", "NYC Business Acceleration 9b9u-8989 (9c)"],
+      "notes": "Records of businesses that received SBS-administered benefits — energy cost savings, ICAP abatement, acceleration. Modeled as one entity keyed by program; carries savings, jobs created/retained, industry, geography."
+    },
+    {
+      "name": "Step-by-Step licensing wizard",
+      "type": "workflow (portal)",
+      "entity": "MWBECertificationApplication",
+      "url": "https://nyc-business.nyc.gov/nycbusiness/wizard",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Step-by-Step wizard tells a business which licenses and permits it needs to open. Pure session state in MyCity Business (title 'Step by Step'); no API. The guidance engine that is SBS's core value has no machine-readable surface."
+    },
+    {
+      "name": "Workforce1 enrollment",
+      "type": "sign-up (portal)",
+      "entity": "MWBECertificationApplication",
+      "url": "https://nyc-business.nyc.gov/nycbusiness/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Enrolling as a jobseeker with Workforce1 — MyCity-portal-only; no API. An alternative net-new write surface."
+    },
+    {
+      "name": "Apply for M/WBE certification",
+      "type": "application workflow (portal)",
+      "entity": "MWBECertificationApplication",
+      "url": "https://nyc-business.nyc.gov/nycbusiness/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The flagship SBS business transaction — apply for M/WBE / EBE / LBE certification. Lives only in the MyCity Business portal / PASSPort; no API and no Open Data twin (only the approved OUTPUT is public in ci93-uc8s). The net-new WRITE surface for this domain."
+    }
+  ],
+  "meta": {
+    "short": "NYC Small Business Services (SBS)",
+    "verb": "navigate",
+    "platform": "Informational site on the NYC.gov shared 'Livesite' chassis (Akamai/nginx/Dynatrace); the transactional MyCity Business portal on Spring (Java) + Adobe AEM + jQuery/Handlebars, hosting the Step-by-Step licensing wizard and certification/enrollment flows.",
+    "netnew": "MWBECertificationApplication — apply for M/WBE (also EBE/LBE) certification; no API today, only the MyCity Business portal.",
+    "accent": "#c9702a",
+    "tagline": "SBS publishes who got certified and where to hire, but hides the navigation — the wizard, eligibility, and certification that are the agency's real job.",
+    "headline": "SBS's program directories are open, but its guidance and certification engine is locked inside a stateful MyCity Business portal with no API."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 1,
+    "openData": 3,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov Livesite site plus a real, stateful MyCity Business portal (Spring + Adobe AEM) — modern-ish but session-bound and vendor-authored.",
+    "siteApi": "A real transactional portal exists, but it exposes no API, OpenAPI, or JSON — only a session-walled UI.",
+    "openData": "28 rich SBS datasets on Socrata SODA (certified list 56c, BID trends 64c) — broad and well-columned.",
+    "coreData": "Reference/directory objects are open, but the core transactions (certification application, enrollment, licensing guidance) have no data twin — only the approved output.",
+    "writeApi": "No write API anywhere; certification, enrollment, and the Step-by-Step wizard are portal-only.",
+    "agent": "No agent-native surface; no MCP, no machine-readable guidance/eligibility.",
+    "ownership": "Data lives on NYC's own Socrata; the portal is a city-run MyCity app (not a pure vendor CRM) but leans on Adobe AEM and session state."
+  }
+}

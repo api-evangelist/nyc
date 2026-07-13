@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ocme/schemas/death-record-request.json",
+  "title": "DeathRecordRequest",
+  "description": "A request for a decedent's OCME medical-examiner casefile record or report (autopsy report, cause-of-death, or related casefile documents). NET-NEW: there is NO public API and NO Open Data twin. Today a family member / next of kin or an authorized government agency requests these records through paper forms, notarization, and the NYC 311 channel, and waits three to six months or more. This schema serves both the WRITE surface (submit a request) and the read surface (look up the status of a request you submitted). It carries request metadata and a NON-IDENTIFYING case reference only — never the clinical contents of the record itself.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/ocme/records-requests/records-requests.page",
+    "channel_311": "https://portal.311.nyc.gov/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "requestId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned request / tracking number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Verifying Eligibility", "Awaiting Notarization", "In Progress", "Case Not Finalized", "Fulfilled", "Denied", "Cancelled", null],
+      "description": "Lifecycle status. Set by OCME, not the requester.",
+      "readOnly": true
+    },
+    "requesterType": {
+      "type": "string",
+      "enum": ["Next of Kin", "Other Interested Party"],
+      "description": "'Records Requests by Family / Next of Kin' vs. 'Records Requests by Other Interested Parties' (law enforcement, legal, government, insurance)."
+    },
+    "relationshipToDecedent": {
+      "type": ["string", "null"],
+      "description": "For next-of-kin requests, the requester's relationship (e.g. Spouse, Parent, Child, Sibling).",
+      "enum": ["Spouse", "Domestic Partner", "Parent", "Child", "Sibling", "Grandparent", "Grandchild", "Other Next of Kin", "Legal Representative", "Government Agency", "Insurer", "Other", null]
+    },
+    "case": { "$ref": "_common.json#/$defs/CaseReference" },
+    "recordsRequested": {
+      "type": "array",
+      "description": "Which casefile documents are being requested.",
+      "items": {
+        "type": "string",
+        "enum": ["Autopsy Report", "Cause of Death", "Toxicology Report", "Investigator's Report", "Body Diagram", "Photographs", "Full Casefile", "Other"]
+      }
+    },
+    "purpose": { "type": ["string", "null"], "description": "Stated purpose (e.g. estate, insurance, legal, personal)." },
+    "deliverToThirdParty": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether records should be sent to someone other than the requester (e.g. an attorney or insurer). If true, the request must be notarized."
+    },
+    "notarized": { "type": ["boolean", "null"], "description": "Whether the request has been notarized (required for third-party delivery)." },
+    "requester": { "$ref": "_common.json#/$defs/ContactPerson" },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "estimatedCompletionDate": { "type": ["string", "null"], "format": "date", "readOnly": true, "description": "Fulfillment often takes three to six months or more, pending case finalization." },
+    "fulfilledDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "required": ["requesterType", "case"],
+  "additionalProperties": false
+}

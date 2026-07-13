@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/schemas/emergency-notification.json",
+  "title": "EmergencyNotification",
+  "description": "A Notify NYC emergency alert / advisory message (NotifyNYCMessage / EmergencyAlert). Canonical schema reconciling two live surfaces: the 'NYCEM Emergency Notifications' Open Data archive (8vv7-7wx3) and the real-time Notify NYC CAP (Common Alerting Protocol) RSS feed published on the rented Everbridge platform (feeds.everbridge.net/feeds/453003085617722/rss/rss.xml), which fans each message out across ~14 languages plus a per-message CAP XML enclosure.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/8vv7-7wx3",
+    "cap_rss_feed": "https://feeds.everbridge.net/feeds/453003085617722/rss/rss.xml",
+    "site": "https://a858-nycnotify.nyc.gov/notifynyc/",
+    "platform": "Everbridge (rented mass-notification SaaS)"
+  },
+  "properties": {
+    "recordId": { "type": ["string", "null"], "description": "Notification record identifier ('Record ID' / CAP 'guid')." },
+    "notificationType": {
+      "type": ["string", "null"],
+      "description": "Notify NYC notification type ('NotificationType') — the severity/kind of alert.",
+      "enum": ["Emergency", "Advisory", "Notification", "Missing Vulnerable Adult/Child", "Other", null]
+    },
+    "title": { "type": "string", "description": "Headline ('Notification Title' / CAP 'title'), e.g. 'Notify NYC - Risk of Rip Currents'." },
+    "body": { "type": ["string", "null"], "description": "Message text ('Email Body' / CAP 'description')." },
+    "category": { "$ref": "_common.json#/$defs/NotificationCategory" },
+    "language": { "type": ["string", "null"], "description": "Message language, from the CAP feed 'author' tag (e.g. 'NYCEM [Spanish]'). English is canonical; the feed republishes each alert in ~14 languages." },
+    "dateAndTime": { "type": ["string", "null"], "format": "date-time", "description": "When the notification was issued ('Date and Time' / CAP 'pubDate')." },
+    "capUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the per-message CAP XML document (CAP 'enclosure'/'link')." },
+    "affectedBoroughs": {
+      "type": ["array", "null"],
+      "description": "Boroughs referenced by the alert, where scoped (e.g. 'BK/QN').",
+      "items": { "$ref": "_common.json#/$defs/Borough" }
+    }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

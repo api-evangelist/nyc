@@ -1,0 +1,151 @@
+{
+  "domain": "lpc",
+  "agency": "NYC Landmarks Preservation Commission (LPC)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/lpc (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace + AWS ALB), the Discover NYC Landmarks map (Esri ArcGIS Online at nyclpc.maps.arcgis.com), and the Portico permit portal at portico.lpc.nyc.gov/s/ (identified as Salesforce Experience Cloud via the /s/ community path, Lightning/Aura/force.com markup, renderCtx and LSKey-c$ cookies). Verified the NYC Open Data agency label 'Landmarks Preservation Commission (LPC)' via the Socrata Discovery API and pulled all 15 assets with column schemas.",
+  "related_domains": ["portico.lpc.nyc.gov", "nyclpc.maps.arcgis.com", "data.cityofnewyork.us", "nyc.gov/site/buildings", "nyc.gov/site/planning"],
+  "meta": {
+    "short": "NYC Landmarks (LPC)",
+    "verb": "bind",
+    "platform": "NYC.gov 'Livesite' informational site (Akamai/nginx/Dynatrace) + Esri ArcGIS Online (Discover NYC Landmarks map) + Salesforce Experience Cloud (Portico permit portal)",
+    "netnew": "LandmarkPermitApplication — file a Certificate of Appropriateness / No Effect / Minor Work application (today Salesforce Portico only, no API)",
+    "accent": "#8a6a4a",
+    "tagline": "LPC's landmark record is wide open but scattered across three vendor silos — Socrata data, an ArcGIS map, and a Salesforce permit portal — with no owned API binding them and no way to file a permit through code.",
+    "headline": "The landmark record is fully public yet unbound — split across Open Data, an Esri map, and a Salesforce portal — and the one transaction that matters, filing a Certificate of Appropriateness, is locked inside Portico."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 1,
+    "openData": 3,
+    "coreData": 3,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Three vendor platforms (Livesite, Esri ArcGIS Online, Salesforce Experience Cloud), none an owned LPC API surface.",
+    "siteApi": "No content API on the info site; the Discover map is backed by ArcGIS Online feature services, queryable but not documented or owned as an LPC API.",
+    "openData": "15 Socrata datasets — landmarks, districts, building database, permit history, complaints, violations, grants, archaeology — richly published.",
+    "coreData": "Core designation entities well modeled and consistently keyed on LP_NUMBER and BBL/BIN; building database carries architect/style/materials/dates.",
+    "writeApi": "Filing a permit (Certificate of Appropriateness / No Effect) has no API — it lives only in the Salesforce Portico portal.",
+    "agent": "No MCP or agent-native surface today; this assessment proposes the first.",
+    "ownership": "LPC publishes open data but owns no API; read is spread across Socrata + Esri and the write transaction is a Salesforce community."
+  },
+  "headline_findings": [
+    "LPC is a three-silo domain: an informational NYC.gov 'Livesite' site, the Discover NYC Landmarks map on Esri ArcGIS Online (nyclpc.maps.arcgis.com), and the Portico permit portal on Salesforce Experience Cloud (portico.lpc.nyc.gov/s/) — none of them an owned LPC API.",
+    "The reference data is unusually OPEN: 15 NYC Open Data datasets covering individual/interior/scenic landmarks, the Individual Landmark and Historic District Building Database (37 columns of architect/style/material/date), historic districts, designation and archaeology reports, complaints, and violations.",
+    "Unlike NYCHA, even the permit record is published — 'LPC Permit Application Information' (dpm2-m9mq, 32 columns) is an open READ twin of issued Certificates of Appropriateness / No Effect. What is missing is the WRITE side.",
+    "Filing a new permit application (Certificate of Appropriateness / No Effect / Minor Work) has no API at all — it happens only inside the Salesforce Portico community or on paper. That is the net-new write surface.",
+    "Everything is keyed on LP_NUMBER and BBL/BIN, so the three silos can be bound into one owned, LP_NUMBER-keyed contract. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "15 LPC datasets; SODA /resource/<id>.json endpoints. The one real, open LPC API — designation, building, permit-history, and enforcement data." },
+    { "endpoint": "nyclpc.maps.arcgis.com", "type": "web map application + feature services", "owner": "LPC (on Esri ArcGIS Online)", "public": "map UI; ArcGIS REST feature services", "note": "Discover NYC Landmarks map. Backed by ArcGIS Online hosted feature services (queryable ArcGIS REST), but not documented or owned by LPC as an API." },
+    { "endpoint": "portico.lpc.nyc.gov/s/", "type": "permit application portal (CRM community)", "owner": "LPC (on Salesforce Experience Cloud)", "public": "login-walled UI, no API", "note": "Portico — file a Certificate of Appropriateness / No Effect / Minor Work application and track its status. Salesforce Lightning/Aura community (/s/ path, force.com, renderCtx/LSKey-c$ cookies); no JSON/OpenAPI surface." },
+    { "endpoint": "www.nyc.gov/site/lpc", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "content only — about, designations, permit guide, hearings; Akamai edge, nginx, Dynatrace RUM, AWS ALB. No content API." }
+  ],
+  "fruit": [
+    {
+      "name": "Individual, Interior & Scenic Landmarks",
+      "type": "data table + map",
+      "entity": "Landmark",
+      "url": "https://www.nyc.gov/site/lpc/designations/designations.page",
+      "count": "~38,000 designated properties",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Individual Landmark Sites buis-pvji (23c)", "Designated and Calendared Buildings and Sites ncre-qhxs (34c)", "Scenic Landmarks qexa-qpj6 (12c)", "maps ts56-fkf5 / jcj6-zji6 / gi7d-8gt5"],
+      "notes": "Core designation unit. Keyed on LP_NUMBER; carries site status, hearing/designation dates, LM_TYPE, and the BBL/BIN spine. Scenic landmarks fold in as an LM_TYPE."
+    },
+    {
+      "name": "Landmark & Historic District Building Database",
+      "type": "data table + map",
+      "entity": "DesignatedBuilding",
+      "url": "https://data.cityofnewyork.us/d/gpmc-yuvp",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Individual Landmark and Historic District Building Database gpmc-yuvp (37c)", "map 7mgd-s57w"],
+      "notes": "The architectural record beneath each designation — architect, up to three styles, up to five materials, original use, construction and alteration dates, per BBL/BIN."
+    },
+    {
+      "name": "Historic Districts",
+      "type": "data table + map",
+      "entity": "HistoricDistrict",
+      "url": "https://data.cityofnewyork.us/d/skyk-mpzq",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Historic Districts skyk-mpzq (15c)", "Historic Districts (Map) xbvj-gfnw"],
+      "notes": "Area designations covering many buildings; extensions flagged; LP_NUMBER key, polygon area/length, designation and hearing dates. The map is LPC's most-viewed Open Data asset."
+    },
+    {
+      "name": "LPC Permit History (issued)",
+      "type": "data table",
+      "entity": "PermitApplication",
+      "url": "https://data.cityofnewyork.us/d/dpm2-m9mq",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["LPC Permit Application Information dpm2-m9mq (32c)"],
+      "notes": "Open READ twin of processed permits — docket, regulation type (Certificate of Appropriateness / No Effect), work types, applicant/owner, received/issue/expiration dates. The read side of what Portico writes."
+    },
+    {
+      "name": "Designation & Archaeology Reports",
+      "type": "document index",
+      "entity": "DesignationReport",
+      "url": "https://www.nyc.gov/site/lpc/designations/designation-reports.page",
+      "machine_readable": "partial (report URLs + archaeology dataset)",
+      "verified": true,
+      "opendata_match": ["Individual Landmark Sites REPORT_URL buis-pvji", "Archaeology Reports Database fuzb-9jre (6c)"],
+      "notes": "The documents that establish significance. Designation report PDFs are linked from buis-pvji REPORT_URL and the site index; archaeology reports are their own dataset."
+    },
+    {
+      "name": "Landmark Complaints & Violations",
+      "type": "data table",
+      "entity": "ViolationOrder",
+      "url": "https://www.nyc.gov/site/lpc/violations/violations.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Landmarks Violations wycc-5aqt (20c)", "Landmarks Complaints ck4n-5h6x (18c)"],
+      "notes": "Enforcement records — complaints of unpermitted work, warning letters, Notices of Violation, and rescissions; keyed on LPC# / Complaint # and BBL/BIN."
+    },
+    {
+      "name": "Grant Applications",
+      "type": "data table",
+      "entity": "PermitApplication",
+      "url": "https://data.cityofnewyork.us/d/97zg-4p9t",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Grant Applications Tracking Table 97zg-4p9t (22c)"],
+      "notes": "Historic-preservation grant applications and their board/staff actions — a secondary open tracking dataset alongside the permit record."
+    },
+    {
+      "name": "Search permit history (Permit Application Finder)",
+      "type": "search UI",
+      "entity": "PermitApplication",
+      "url": "https://www.nyc.gov/site/lpc/applications/permit-search.page",
+      "machine_readable": "via Open Data twin",
+      "verified": true,
+      "opendata_match": ["LPC Permit Application Information dpm2-m9mq"],
+      "notes": "The public Permit Application Finder / map is a UI over the same dpm2-m9mq record; read is covered, the search itself is not an owned API."
+    },
+    {
+      "name": "Explore the Discover NYC Landmarks map",
+      "type": "map application",
+      "entity": "Landmark",
+      "url": "https://nyclpc.maps.arcgis.com/home/index.html",
+      "machine_readable": "ArcGIS REST feature services (undocumented)",
+      "verified": true,
+      "opendata_match": ["Individual Landmark Sites (Map) ts56-fkf5", "Historic Districts (Map) xbvj-gfnw"],
+      "notes": "Esri ArcGIS Online web map. Its hosted feature services are queryable via ArcGIS REST but are not an owned or documented LPC API; a second read silo alongside Socrata."
+    },
+    {
+      "name": "File a permit application (Certificate of Appropriateness / No Effect)",
+      "type": "application workflow (portal)",
+      "entity": "LandmarkPermitApplication",
+      "url": "https://portico.lpc.nyc.gov/s/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The core owner/architect transaction — request an LPC permit. No API and no write twin; lives only inside the Salesforce Portico community (or on paper). The net-new WRITE surface for this domain."
+    }
+  ]
+}

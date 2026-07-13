@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dvs/schemas/client-statistics.json",
+  "title": "ClientStatistics",
+  "description": "De-identified demographics of DVS clients — the veteran/client record, published only in de-identified/aggregate form (never as an identifiable individual). Canonical schema reconciling 'Department of Veterans' Services Clients' (idat-aemv, 12 columns). DVS never publishes an identifiable veteran record to Open Data; that data lives only inside DVS's case system and the VetConnectNYC vendor portal.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/idat-aemv"
+  },
+  "properties": {
+    "calendarYear": { "type": ["string", "integer", "null"], "description": "'Calendar Year'." },
+    "currentStatus": { "type": ["string", "null"], "description": "Client current status ('Current Status')." },
+    "militaryAffiliation": { "type": ["string", "null"], "description": "'Military Affiliation'." },
+    "branch": { "$ref": "_common.json#/$defs/MilitaryBranch" },
+    "serviceEra": { "$ref": "_common.json#/$defs/ServiceEra" },
+    "dischargeType": { "$ref": "_common.json#/$defs/DischargeStatus" },
+    "gender": { "type": ["string", "null"], "description": "'Gender'." },
+    "race": { "type": ["string", "null"], "description": "'Race'." },
+    "ethnicity": { "type": ["string", "null"], "description": "'Ethnicity'." },
+    "maritalStatus": { "type": ["string", "null"], "description": "'Marital Status'." },
+    "grossMonthlyIncome": { "type": ["number", "string", "null"], "description": "Gross monthly income band ('Gross Monthly Income')." },
+    "currentClientAddressPostalCode": { "type": ["string", "null"], "description": "'Current Client Address Postal Code'." }
+  },
+  "additionalProperties": false
+}

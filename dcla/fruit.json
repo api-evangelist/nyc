@@ -1,0 +1,122 @@
+{
+  "domain": "dcla",
+  "agency": "New York City Department of Cultural Affairs (DCLA)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/dcla (Akamai + nginx + NYC.gov 'Livesite' v22 platform + Dynatrace) and the DCLA Grants Management System at dclagms.nyc.gov/grants/s/ (identified as a Salesforce Experience Cloud community via the /grants/s/ redirect chain, LSKey-c$ cookies, and the culturalaffairsnyc.my.salesforce.com SAML issuer in the login markup). Verified the NYC Open Data agency label 'Department of Cultural Affairs (DCLA)' via the Socrata Discovery API and pulled all 9 assets with column schemas.",
+  "related_domains": ["dclagms.nyc.gov", "culturalaffairsnyc.my.salesforce.com", "data.cityofnewyork.us", "nyc.gov/site/dcla"],
+  "meta": {
+    "short": "NYC Cultural Affairs (DCLA)",
+    "verb": "open",
+    "platform": "NYC.gov 'Livesite' v22 info site (Akamai/nginx/Dynatrace) + a separate Salesforce Experience Cloud grants portal (dclagms.nyc.gov, backed by culturalaffairsnyc.my.salesforce.com); 9 Socrata datasets",
+    "netnew": "Apply for a Cultural Development Fund grant (GrantApplication) — the core transaction with no API, locked in the Salesforce Grants Management System",
+    "accent": "#b05fa0",
+    "tagline": "DCLA publishes who it funds and for how much, but the grant application that produces those outcomes is locked in a Salesforce portal with no API.",
+    "headline": "The grantmaker pattern — funding outcomes are open across 9 datasets, but no owned API binds them and the grant application lives only in a login-walled Salesforce Experience Cloud portal."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 1,
+    "openData": 2,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov Livesite CMS + a modern Salesforce Experience Cloud grants portal — maintained managed platforms, but not API-first.",
+    "siteApi": "No content API; the grants portal is a login-gated Salesforce community with no documented public API.",
+    "openData": "Good but thin — 9 datasets publish funding outcomes, the org directory, public art, and MFTA, but only the outcome side of the lifecycle.",
+    "coreData": "Core entities present, but funding datasets key on organization name + application # with no stable org id, so joins are messy.",
+    "writeApi": "No write API anywhere — applying for a grant goes only through the Salesforce Grants Management System.",
+    "agent": "No agent-native surface today; no MCP, no OpenAPI, no schemas published by the agency.",
+    "ownership": "Owns and maintains its open datasets, but the grant-application transaction runs on a vendor Salesforce org it configures rather than controls."
+  },
+  "headline_findings": [
+    "DCLA is a grantmaker that publishes outcomes but not the application: 9 NYC Open Data datasets cover program and capital grant awards, Cultural Institutions Group support, a geocoded cultural-organization directory, completed Percent for Art commissions, and Materials for the Arts donation summaries.",
+    "The core transaction — applying for a Cultural Development Fund grant — lives only in the Grants Management System (dclagms.nyc.gov), a Salesforce Experience Cloud community reached by login, with no public API and no Open Data twin.",
+    "No owned contract binds an organization to its funding; the funding datasets key on organization name and application # with no stable id, so an agent must stitch names across 9 Socrata IDs by hand.",
+    "Materials for the Arts data is published only in aggregate by year and category; no individual donor is ever exposed.",
+    "Net-new write surface: apply for a grant (GrantApplication) — the most important interaction between DCLA and its constituency, with no API today. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "9 DCLA datasets; SODA /resource/<id>.json endpoints. The one real, open DCLA API — funding-outcome and directory data only." },
+    { "endpoint": "dclagms.nyc.gov/grants/s/", "type": "grants management portal (CRM)", "owner": "DCLA (Salesforce Experience Cloud)", "public": "login-walled UI, no public API", "note": "register an org, create and submit a Cultural Development Fund grant application, track status. Salesforce Lightning Community (LSKey-c$ cookies, /grants/s/ path), backed by culturalaffairsnyc.my.salesforce.com via SAML SSO; no documented public JSON/OpenAPI." },
+    { "endpoint": "www.nyc.gov/site/dcla", "type": "informational site", "owner": "NYC.gov shared platform (Livesite v22)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM, mPulse. No content API." },
+    { "endpoint": "maps.googleapis.com", "type": "mapping API", "owner": "Google", "public": "vendor", "note": "Google Maps JS embedded on location pages." }
+  ],
+  "fruit": [
+    {
+      "name": "Cultural Organizations directory",
+      "type": "data table + map",
+      "entity": "CulturalOrganization",
+      "url": "https://data.cityofnewyork.us/d/u35m-9t32",
+      "count": "~1,000+ organizations",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DCLA Cultural Organizations u35m-9t32 (16c)", "DCLA Cultural Organization Resources rb2h-bgai (4c)"],
+      "notes": "The geocoded directory of cultural organizations DCLA funds and serves — discipline, address, phone, and full NYC geography spine (BIN, BBL, council district, NTA, lat/long)."
+    },
+    {
+      "name": "Program Funding (grant awards)",
+      "type": "data table",
+      "entity": "ProgramFunding",
+      "url": "https://data.cityofnewyork.us/d/y6fv-k6p7",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DCLA Programs Funding y6fv-k6p7 (3c)", "DCLA Program Funding for FY11 rskq-5bfv (3c)", "DCLA: Programs Funding for FY2010 j8p3-8ufc (3c)"],
+      "notes": "Cultural Development Fund grant AWARDS — organization, application #, and total final award per fiscal year. The outcome of the application; the application itself is not published."
+    },
+    {
+      "name": "Capital Funding",
+      "type": "data table",
+      "entity": "CapitalFunding",
+      "url": "https://data.cityofnewyork.us/d/7hgn-sgmk",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DCLA Cultural Organizations Capital Funding 7hgn-sgmk (6c)"],
+      "notes": "Capital construction/renovation dollars by organization and fiscal year, broken out by source (DCLA, City Council, Borough President)."
+    },
+    {
+      "name": "Cultural Institutions Group (CIG)",
+      "type": "data table",
+      "entity": "CulturalInstitution",
+      "url": "https://data.cityofnewyork.us/d/ka27-qx5k",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DCLA Cultural Institutions Group Funding ka27-qx5k (4c)"],
+      "notes": "Annual operating and energy support for the ~34 major institutions (museums, zoos, gardens, performing-arts centers) sited on City-owned property that DCLA funds directly."
+    },
+    {
+      "name": "Percent for Art public artworks",
+      "type": "data table + map",
+      "entity": "PublicArtwork",
+      "url": "https://data.cityofnewyork.us/d/gzdv-qiga",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Completed Percent for Art projects with artist information gzdv-qiga (7c)"],
+      "notes": "Permanent public artworks commissioned under NYC's Percent for Art law — artist, sponsor/design agency, address, borough."
+    },
+    {
+      "name": "Materials for the Arts donations",
+      "type": "data table",
+      "entity": "MaterialsForTheArts",
+      "url": "https://data.cityofnewyork.us/d/vhtt-kpwy",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DCLA Materials For The Arts - Donor Information vhtt-kpwy (6c)"],
+      "opendata_gap": false,
+      "notes": "Creative-reuse donation summaries by year and category — donations, distinct donors, declared value, weight. AGGREGATE ONLY; no individual donor is published."
+    },
+    {
+      "name": "Apply for a grant (Cultural Development Fund)",
+      "type": "sign-up / application workflow",
+      "entity": "GrantApplication",
+      "url": "https://dclagms.nyc.gov/grants/s/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most important interaction between DCLA and its constituency — create, submit, and track a Cultural Development Fund grant application. No API and no Open Data twin; lives only in the Salesforce Experience Cloud Grants Management System (dclagms.nyc.gov). The net-new WRITE surface for this domain."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/schemas/service-location.json",
+  "title": "ServiceLocation",
+  "description": "An SBS storefront where businesses and jobseekers get in-person help — an NYC Business Solutions Center or a Workforce1 Career Center. Canonical schema reconciling the 'Center & Service Locations' dataset (6smc-7mk6, 19 columns). Keyed on Name + address.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/6smc-7mk6",
+    "site": "https://www.nyc.gov/site/sbs/careers/workforce1-career-centers.page"
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Location name ('Name')." },
+    "locationType": { "type": ["string", "null"], "description": "'Location_Type' (e.g. Business Solutions Center, Workforce1 Career Center)." },
+    "hours": { "type": ["string", "null"], "description": "'Hours' of operation." },
+    "details": { "type": ["string", "null"], "description": "'Details' — services offered / notes." },
+    "address": {
+      "type": "object",
+      "properties": {
+        "number": { "type": ["string", "null"], "description": "'Number'." },
+        "street": { "type": ["string", "null"], "description": "'Street'." },
+        "street2": { "type": ["string", "null"], "description": "'Street_Address_2'." },
+        "city": { "type": ["string", "null"], "description": "'City'." },
+        "state": { "type": ["string", "null"], "description": "'State'." },
+        "postcode": { "type": ["string", "null"], "description": "'Postcode'." }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

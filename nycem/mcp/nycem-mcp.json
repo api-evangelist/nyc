@@ -1,0 +1,166 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces NYCEM's open reference and situational data (emergency incidents, hurricane evacuation zones and centers, hazard-mitigation actions, preparedness resources) and the Notify NYC alert stream, and adds subscribe_notify_nyc — the net-new write workflow locked today inside the rented Everbridge platform.",
+    "openapi": "../openapi/nycem.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.nycem",
+    "title": "NYC Emergency Management (NYCEM)",
+    "version": "0.1.0",
+    "description": "Agent-native access to NYC Emergency Management — Notify NYC emergency alerts, emergency response incidents, hurricane evacuation zones and centers, the Hazard Mitigation Plan, and community-preparedness resources (CERT, Ready NY, Partners) from NYC Open Data and the Notify NYC CAP feed, plus the net-new ability to subscribe to Notify NYC alerts, which today lives only in the rented Everbridge Member Portal.",
+    "instructions": "Use find_notifications / get_notification to read Notify NYC emergency alerts and advisories (from the Open Data archive and the real-time CAP feed). find_evacuation_zones and find_evacuation_centers answer 'what is my evacuation zone?' and 'where do I go?' during a coastal storm. find_incidents covers emergency response incidents; find_mitigation_actions covers the long-range Hazard Mitigation Plan; find_preparedness_resources covers CERT teams and Ready NY events. subscribe_notify_nyc (net-new) enrolls a resident in Notify NYC; it requires an authenticated user and mutates state — confirm channels (email/SMS/voice), locations, and categories with the user before submitting. get_subscription reads the authenticated subscriber's own enrollment. During an active emergency, prefer live alert content over cached data and direct life-threatening situations to 911."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_notifications",
+      "title": "Find Notifications",
+      "description": "Search Notify NYC emergency notifications by type, category, language, borough, and/or time window — from the Open Data archive and the real-time CAP feed.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "notificationType": { "type": "string" },
+          "category": { "type": "string" },
+          "language": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "from": { "type": "string", "format": "date-time" },
+          "to": { "type": "string", "format": "date-time" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/emergency-notification.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listNotifications"
+    },
+    {
+      "name": "get_notification",
+      "title": "Get Notification",
+      "description": "Fetch a single Notify NYC notification (title, body, category, language, CAP link) by record id.",
+      "inputSchema": { "type": "object", "properties": { "recordId": { "type": "string" } }, "required": ["recordId"] },
+      "outputSchema": { "$ref": "../schemas/emergency-notification.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getNotification"
+    },
+    {
+      "name": "find_evacuation_zones",
+      "title": "Find Evacuation Zones",
+      "description": "List NYC hurricane / coastal-storm evacuation zones (1 highest-risk through 6), optionally by zone or borough — to answer 'what is my evacuation zone?'.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "evacZone": { "type": "integer", "minimum": 1, "maximum": 6 },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/hurricane-evacuation-zone.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listEvacuationZones"
+    },
+    {
+      "name": "find_evacuation_centers",
+      "title": "Find Evacuation Centers",
+      "description": "List NYC hurricane evacuation centers (many also open as cooling centers / emergency supply shelters) by borough, ZIP, accessibility, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "accessible": { "type": "boolean" },
+          "zipCode": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/evacuation-center.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listEvacuationCenters"
+    },
+    {
+      "name": "find_incidents",
+      "title": "Find Incidents",
+      "description": "Search NYCEM emergency response incidents by type, borough, active status, or date window.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "incidentType": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "activeOnly": { "type": "boolean" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/emergency-incident.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listIncidents"
+    },
+    {
+      "name": "find_mitigation_actions",
+      "title": "Find Mitigation Actions",
+      "description": "Search NYC Hazard Mitigation Plan actions by hazard addressed, category, status, or managing agency.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "hazard": { "type": "string" },
+          "actionCategory": { "type": "string" },
+          "actionStatus": { "type": "string" },
+          "managingAgency": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/mitigation-action.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listMitigationActions"
+    },
+    {
+      "name": "find_preparedness_resources",
+      "title": "Find Preparedness Resources",
+      "description": "List NYCEM community-preparedness resources — CERT teams, Ready NY events, and Partners in Preparedness — by type, borough, or date window.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "resourceType": { "type": "string", "enum": ["CERT", "Ready NY Event", "Partner"] },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/preparedness-resource.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPreparednessResources"
+    },
+    {
+      "name": "subscribe_notify_nyc",
+      "title": "Subscribe to Notify NYC",
+      "description": "Create a Notify NYC alert subscription (subscribe to emergency alerts). NET-NEW workflow with no public API today — it lives only in the rented Everbridge Member Portal, an SMS keyword, or a call to 311. Requires an authenticated resident. Mutates state — confirm channels (email/SMS/voice), locations, and categories first; coastal-storm evacuation-zone alerts are on by default.",
+      "inputSchema": { "$ref": "../schemas/notify-nyc-subscription.json" },
+      "outputSchema": { "$ref": "../schemas/notify-nyc-subscription.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createNotifyNycSubscription",
+      "x-auth": "user"
+    },
+    {
+      "name": "get_subscription",
+      "title": "Get My Subscription",
+      "description": "Read the authenticated subscriber's own Notify NYC subscription (channels, locations, categories, status) — today visible only inside the Everbridge Member Portal.",
+      "inputSchema": { "type": "object", "properties": { "subscriptionId": { "type": "string" } }, "required": ["subscriptionId"] },
+      "outputSchema": { "$ref": "../schemas/notify-nyc-subscription.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getNotifyNycSubscription",
+      "x-auth": "user"
+    }
+  ]
+}

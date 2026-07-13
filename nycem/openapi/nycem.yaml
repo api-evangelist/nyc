@@ -1,0 +1,357 @@
+openapi: 3.1.0
+info:
+  title: NYC Emergency Management (NYCEM) API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for NYC Emergency Management — publishing its already-open
+    reference data (emergency incidents, hurricane evacuation zones and centers, hazard-mitigation
+    actions, preparedness resources) and the real-time Notify NYC alert stream as coherent resources,
+    and adding the missing write surface locked inside the rented Everbridge platform — subscribing
+    to Notify NYC alerts.
+  description: >-
+    Proposed API-first surface for NYC Emergency Management (NYCEM / OEM), from the NYC Modernization
+    low-hanging-fruit assessment of nyc.gov/site/em and Notify NYC.
+
+
+    NYCEM's **reference and situational data is well published** on NYC Open Data — 13 datasets covering
+    emergency response incidents, hurricane inundation/evacuation zones, evacuation centers, the Hazard
+    Mitigation Plan, and community-preparedness programs (CERT, Ready NY, Partners in Preparedness).
+    Its flagship real-time product, **Notify NYC**, even emits a genuine machine-readable **CAP (Common
+    Alerting Protocol) RSS feed** — but that feed, and the alert **subscription** itself, both live on a
+    **rented Everbridge mass-notification platform** (`a858-nycnotify.nyc.gov` / `feeds.everbridge.net`),
+    not an owned city API. A resident or agent cannot enroll in Notify NYC through a public write API.
+
+
+    This contract does two things: (1) presents the open datasets and the Notify NYC alert stream as one
+    clean, owned resource model, and (2) adds the one net-new **write** workflow — creating a **Notify NYC
+    subscription** (subscribe to alerts) — that today exists only behind the Everbridge Member Portal, an
+    SMS keyword, or a call to 311.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.nyc.gov/em/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Notifications
+    description: Notify NYC emergency alerts and advisories (Open Data archive + real-time CAP feed).
+  - name: EvacuationZones
+    description: Hurricane / coastal-storm evacuation zones and centers.
+  - name: Incidents
+    description: Emergency response incidents coordinated or logged by NYCEM.
+  - name: Mitigation
+    description: Hazard Mitigation Plan actions.
+  - name: Preparedness
+    description: Community preparedness resources — CERT teams, Ready NY events, Partners in Preparedness.
+  - name: Subscriptions
+    description: Subscribe to and manage Notify NYC alerts (read + write). The net-new surface, today locked in the rented Everbridge platform.
+
+paths:
+  /notifications:
+    get:
+      operationId: listNotifications
+      summary: List / search Notify NYC emergency notifications
+      description: Searches both the Open Data archive and the real-time Notify NYC CAP feed.
+      tags: [Notifications]
+      parameters:
+        - name: notificationType
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: language
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: from
+          in: query
+          schema: { type: string, format: date-time }
+        - name: to
+          in: query
+          schema: { type: string, format: date-time }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of notifications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/emergency-notification.json' } }
+  /notifications/{recordId}:
+    get:
+      operationId: getNotification
+      summary: Get a single Notify NYC notification
+      tags: [Notifications]
+      parameters:
+        - name: recordId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The notification.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/emergency-notification.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /evacuation-zones:
+    get:
+      operationId: listEvacuationZones
+      summary: List hurricane evacuation zones
+      tags: [EvacuationZones]
+      parameters:
+        - name: evacZone
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 6 }
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of evacuation zones.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/hurricane-evacuation-zone.json' } }
+
+  /evacuation-centers:
+    get:
+      operationId: listEvacuationCenters
+      summary: List hurricane evacuation centers
+      tags: [EvacuationZones]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: accessible
+          in: query
+          schema: { type: boolean }
+        - name: zipCode
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of evacuation centers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/evacuation-center.json' } }
+
+  /incidents:
+    get:
+      operationId: listIncidents
+      summary: Search emergency response incidents
+      tags: [Incidents]
+      parameters:
+        - name: incidentType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: activeOnly
+          in: query
+          description: When true, return only incidents with no closed date.
+          schema: { type: boolean }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of incidents.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/emergency-incident.json' } }
+
+  /mitigation-actions:
+    get:
+      operationId: listMitigationActions
+      summary: Search Hazard Mitigation Plan actions
+      tags: [Mitigation]
+      parameters:
+        - name: hazard
+          in: query
+          description: Filter by hazard addressed (e.g. Flooding, Extreme Heat, Coastal Storm).
+          schema: { type: string }
+        - name: actionCategory
+          in: query
+          schema: { type: string }
+        - name: actionStatus
+          in: query
+          schema: { type: string }
+        - name: managingAgency
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of mitigation actions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/mitigation-action.json' } }
+
+  /preparedness-resources:
+    get:
+      operationId: listPreparednessResources
+      summary: List community preparedness resources (CERT, Ready NY, Partners)
+      tags: [Preparedness]
+      parameters:
+        - name: resourceType
+          in: query
+          schema: { type: string, enum: [CERT, Ready NY Event, Partner] }
+        - $ref: '#/components/parameters/borough'
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of preparedness resources.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/preparedness-resource.json' } }
+
+  /subscriptions:
+    post:
+      operationId: createNotifyNycSubscription
+      summary: Subscribe to Notify NYC alerts (create a subscription)
+      description: >-
+        The net-new write surface — an API for enrolling in Notify NYC, replacing the Everbridge-only
+        Member Portal / SMS-keyword / 311 workflow. A subscriber chooses channels (email/SMS/voice/push),
+        locations, and categories; coastal-storm evacuation-zone alerts are on by default.
+      tags: [Subscriptions]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/notify-nyc-subscription.json' }
+      responses:
+        '201':
+          description: Subscription created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/notify-nyc-subscription.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /subscriptions/{subscriptionId}:
+    get:
+      operationId: getNotifyNycSubscription
+      summary: Get the authenticated subscriber's Notify NYC subscription
+      tags: [Subscriptions]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: subscriptionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The subscription.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/notify-nyc-subscription.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    EmergencyNotification: { $ref: '../schemas/emergency-notification.json' }
+    HurricaneEvacuationZone: { $ref: '../schemas/hurricane-evacuation-zone.json' }
+    EvacuationCenter: { $ref: '../schemas/evacuation-center.json' }
+    EmergencyIncident: { $ref: '../schemas/emergency-incident.json' }
+    MitigationAction: { $ref: '../schemas/mitigation-action.json' }
+    PreparednessResource: { $ref: '../schemas/preparedness-resource.json' }
+    NotifyNYCSubscription: { $ref: '../schemas/notify-nyc-subscription.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ddc/schemas/awarded-contract.json",
+  "title": "AwardedContract",
+  "description": "A construction contract that DDC has awarded to a firm — the vendor-award record. Canonical schema reconciling the 'Directory Of Awarded Construction Contracts' dataset (j7gw-gcxi, 4 columns): description, selected firm, PIN, and dollar value. Keyed on PIN. A public read of existing contracts also lives on Checkbook NYC (Comptroller); solicitations and award notices are published in the City Record.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/j7gw-gcxi",
+    "checkbook": "https://www.checkbooknyc.com/",
+    "city_record": "https://a856-cityrecord.nyc.gov/",
+    "site": "https://www.nyc.gov/site/ddc/contracts/work-with-ddc.page"
+  },
+  "properties": {
+    "pin": { "type": "string", "description": "Procurement Identification Number ('PIN') — primary key." },
+    "description": { "type": ["string", "null"], "description": "Contract description / scope ('DESCRIPTION')." },
+    "selectedFirm": { "$ref": "_common.json#/$defs/Firm" },
+    "value": { "$ref": "_common.json#/$defs/Money" },
+    "project": { "$ref": "_common.json#/$defs/ContractReference" },
+    "clientAgency": { "type": ["string", "null"], "description": "Sponsoring agency, where the contract ties back to a client-agency project." }
+  },
+  "required": ["pin"],
+  "additionalProperties": false
+}

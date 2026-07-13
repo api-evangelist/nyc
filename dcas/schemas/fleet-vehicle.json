@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcas/schemas/fleet-vehicle.json",
+  "title": "FleetVehicle",
+  "description": "A city fleet vehicle or fleet metric managed by DCAS Fleet — the largest municipal fleet in the U.S. Canonical schema reconciling 'NYC Fleet Daily Service Report' (5rzx-3686), 'Vehicle Auction List' (ynic-uz5i), 'Real-World Fuel Efficiency' (mn2p-34if), and 'NYC EV Fleet Station Network' (fc53-9hrv). Keyed on VIN where present.",
+  "type": "object",
+  "x-source": {
+    "opendata_daily_service": "https://data.cityofnewyork.us/d/5rzx-3686",
+    "opendata_auction": "https://data.cityofnewyork.us/d/ynic-uz5i",
+    "opendata_fuel_efficiency": "https://data.cityofnewyork.us/d/mn2p-34if",
+    "opendata_ev_stations": "https://data.cityofnewyork.us/d/fc53-9hrv",
+    "site": "https://www.nyc.gov/site/dcas/agencies/fleet.page"
+  },
+  "properties": {
+    "vin": { "type": ["string", "null"], "description": "Vehicle Identification Number ('VIN #')." },
+    "make": { "type": ["string", "null"], "description": "'Make' / 'MAKE'." },
+    "model": { "type": ["string", "null"], "description": "'Model' / 'MODEL'." },
+    "year": { "type": ["integer", "string", "null"], "description": "'Year' / 'YEAR'." },
+    "agency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "fleetName": { "type": ["string", "null"], "description": "Fleet grouping ('Fleet Name'), daily service report." },
+    "recordType": {
+      "type": ["string", "null"],
+      "enum": ["DailyService", "Auction", "FuelEfficiency", "EVStation", null],
+      "description": "Which fleet dataset this row represents."
+    },
+    "auction": {
+      "type": "object",
+      "description": "Surplus auction attributes ('Vehicle Auction List', ynic-uz5i).",
+      "properties": {
+        "auctionCloseDate": { "type": ["string", "null"], "format": "date", "description": "'Auction Close Date'." }
+      },
+      "additionalProperties": false
+    },
+    "fuelEfficiency": {
+      "type": "object",
+      "description": "Real-world fuel-efficiency attributes (mn2p-34if).",
+      "properties": {
+        "standardType": { "type": ["string", "null"], "description": "'STANDARD TYPE'." },
+        "hybrid": { "type": ["string", "null"], "description": "'Hybrid/Non-Hybrid'." },
+        "epaRatingCity": { "type": ["number", "null"], "description": "'EPA RATING (CITY)'." },
+        "actualFuelEconomy": { "type": ["number", "null"], "description": "'ACTUAL FUEL ECONOMY Geotab'." },
+        "fuelCostsPerMile": { "type": ["number", "null"], "description": "'FUEL COSTS PER MILE'." },
+        "vehicleCount": { "type": ["integer", "null"], "description": "'Vehicle Count'." }
+      },
+      "additionalProperties": false
+    },
+    "evStation": {
+      "type": "object",
+      "description": "EV charging station attributes ('NYC EV Fleet Station Network', fc53-9hrv).",
+      "properties": {
+        "stationName": { "type": ["string", "null"], "description": "'STATION NAME'." },
+        "typeOfCharger": { "type": ["string", "null"], "description": "'TYPE OF CHARGER'." },
+        "numberOfPlugs": { "type": ["integer", "null"], "description": "'NO. OF PLUGS'." },
+        "publicCharger": { "type": ["boolean", "string", "null"], "description": "'PUBLIC CHARGER?'." },
+        "feeForCityDrivers": { "type": ["string", "null"], "description": "'FEE FOR CITY DRIVERS'." }
+      },
+      "additionalProperties": false
+    },
+    "dailyService": {
+      "type": "object",
+      "description": "Fleet daily service report metrics (5rzx-3686).",
+      "properties": {
+        "date": { "type": ["string", "null"], "format": "date", "description": "'Date'." },
+        "targetDailyInService": { "type": ["integer", "null"], "description": "'Target Daily in Service'." },
+        "actualCountInService": { "type": ["integer", "null"], "description": "'Actual Count In Service'." },
+        "targetPercentInService": { "type": ["number", "null"], "description": "'Target % In Service'." },
+        "criticalFleetOnly": { "type": ["boolean", "string", "null"], "description": "'Critical Fleet Only?'." }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

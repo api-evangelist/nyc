@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcas/schemas/civil-service-title.json",
+  "title": "CivilServiceTitle",
+  "description": "A NYC civil-service title — the canonical job classification DCAS maintains for the whole city workforce. Canonical schema reconciling the 'NYC Civil Service Titles' dataset (nzjr-3966, 11 columns). Keyed on Title Code.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/nzjr-3966",
+    "site": "https://www.nyc.gov/site/dcas/employees/salary-and-title-verification.page"
+  },
+  "properties": {
+    "titleCode": { "type": "string", "description": "'Title Code' — primary key." },
+    "titleDescription": { "type": ["string", "null"], "description": "'Title Description'." },
+    "assignmentLevel": { "type": ["string", "null"], "description": "'Assignment Level'." },
+    "minimumSalaryRate": { "type": ["number", "null"], "description": "'Minimum Salary Rate'." },
+    "maximumSalaryRate": { "type": ["number", "null"], "description": "'Maximum Salary Rate'." },
+    "standardHours": { "type": ["number", "null"], "description": "'Standard Hours'." },
+    "unionCode": { "type": ["string", "null"], "description": "'Union Code'." },
+    "unionDescription": { "type": ["string", "null"], "description": "'Union Description'." },
+    "bargainingUnitShortName": { "type": ["string", "null"], "description": "'Bargaining Unit Short Name'." },
+    "bargainingUnitDescription": { "type": ["string", "null"], "description": "'Bargaining Unit Description'." },
+    "investigationBeforeAppointment": { "type": ["boolean", "string", "null"], "description": "'Investigation Before Appointment'." }
+  },
+  "required": ["titleCode"],
+  "additionalProperties": false
+}

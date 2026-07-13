@@ -1,0 +1,187 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DCAS's open civil-service reference data (job postings, titles, eligible lists, exam schedule, buildings, fleet) and adds register_for_exam — the net-new write workflow locked today inside the OASys / City Jobs application layer.",
+    "openapi": "../openapi/dcas.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.dcas",
+    "title": "NYC Citywide Administrative Services (DCAS)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Department of Citywide Administrative Services — citywide job postings, civil-service titles, eligible lists, the annual exam schedule, DCAS-managed public buildings and their energy, and the municipal fleet from NYC Open Data, plus the net-new ability to register for a civil-service exam that today lives only in the OASys / City Jobs application layer.",
+    "instructions": "Use find_job_postings / get_job_posting to search citywide openings brokered by DCAS. find_civil_service_titles / get_civil_service_title cover the classification catalog (salary bands, unions). find_eligible_list_entries searches the exam-score-ordered lists DCAS certifies to agencies (active, terminated, certified). find_exam_schedule / get_exam return the annual civil-service examination calendar and application windows; register_for_exam (net-new) files an application for an exam — it requires an authenticated candidate and mutates state, so confirm the exam number and applicant details before submitting and surface any veteran/residency credit, fee waiver, or accommodation requested. find_buildings covers DCAS-managed public buildings and energy; find_fleet covers the municipal fleet (daily service, auctions, fuel efficiency, EV stations)."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_job_postings",
+      "title": "Find Job Postings",
+      "description": "Search citywide job postings brokered by DCAS by agency, category, career level, posting type, title code, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "agency": { "type": "string" },
+          "jobCategory": { "type": "string" },
+          "careerLevel": { "type": "string" },
+          "postingType": { "type": "string", "enum": ["Internal", "External"] },
+          "titleCode": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/job-posting.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listJobPostings"
+    },
+    {
+      "name": "get_job_posting",
+      "title": "Get Job Posting",
+      "description": "Fetch a single citywide job posting by its Job ID.",
+      "inputSchema": { "type": "object", "properties": { "jobId": { "type": "string" } }, "required": ["jobId"] },
+      "outputSchema": { "$ref": "../schemas/job-posting.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getJobPosting"
+    },
+    {
+      "name": "find_civil_service_titles",
+      "title": "Find Civil Service Titles",
+      "description": "Search the DCAS civil-service title catalog (salary bands, standard hours, union/bargaining unit) by free text or union code.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "unionCode": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/civil-service-title.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCivilServiceTitles"
+    },
+    {
+      "name": "get_civil_service_title",
+      "title": "Get Civil Service Title",
+      "description": "Fetch a civil-service title (salary range, union, investigation flag) by its Title Code.",
+      "inputSchema": { "type": "object", "properties": { "titleCode": { "type": "string" } }, "required": ["titleCode"] },
+      "outputSchema": { "$ref": "../schemas/civil-service-title.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCivilServiceTitle"
+    },
+    {
+      "name": "find_eligible_list_entries",
+      "title": "Find Eligible List Entries",
+      "description": "Search civil-service eligible-list entries — the exam-score-ordered lists DCAS certifies to agencies — by exam number, title code, or list status (active, terminated, certified).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "examNumber": { "type": "string" },
+          "titleCode": { "type": "string" },
+          "status": { "type": "string", "enum": ["Active", "Terminated", "Certified"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/eligible-list.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listEligibleListEntries"
+    },
+    {
+      "name": "find_exam_schedule",
+      "title": "Find Exam Schedule",
+      "description": "List the annual civil-service examination schedule and application windows by exam type, currently-open status, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "examType": { "type": "string", "enum": ["Open Competitive", "Promotion", "Qualified Incumbent Exam", "Education & Experience"] },
+          "openNow": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/exam-schedule.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listExamSchedule"
+    },
+    {
+      "name": "get_exam",
+      "title": "Get Exam",
+      "description": "Fetch a scheduled civil-service exam (title, type, application period) by its Examination Number.",
+      "inputSchema": { "type": "object", "properties": { "examNumber": { "type": "string" } }, "required": ["examNumber"] },
+      "outputSchema": { "$ref": "../schemas/exam-schedule.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getExam"
+    },
+    {
+      "name": "list_my_exam_registrations",
+      "title": "List My Exam Registrations",
+      "description": "List the authenticated candidate's own civil-service exam registrations and their status — today visible only inside OASys / the City Jobs portal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Fee Pending", "Accepted", "Admitted", "Rejected", "Withdrawn"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/exam-registration.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listExamRegistrations",
+      "x-auth": "user"
+    },
+    {
+      "name": "register_for_exam",
+      "title": "Register for an Exam",
+      "description": "File a registration/application for a DCAS civil-service exam. NET-NEW workflow with no public API today — it lives only in the OASys Online Application System / City Jobs portal. Requires an authenticated candidate. Mutates state — confirm the exam number and applicant details first; surface any veteran/residency credit, fee waiver, or testing accommodation requested.",
+      "inputSchema": { "$ref": "../schemas/exam-registration.json" },
+      "outputSchema": { "$ref": "../schemas/exam-registration.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createExamRegistration",
+      "x-auth": "user"
+    },
+    {
+      "name": "find_buildings",
+      "title": "Find Buildings",
+      "description": "List DCAS-managed public buildings (and their energy usage / benchmarking) by borough, BIN, BBL, benchmarked flag, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "bin": { "type": "string" },
+          "bbl": { "type": "string" },
+          "benchmarked": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/city-building.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listBuildings"
+    },
+    {
+      "name": "find_fleet",
+      "title": "Find Fleet",
+      "description": "Search the municipal fleet DCAS operates — daily service report, surplus auctions, real-world fuel efficiency, and EV charging stations — by record type, agency, make, or borough.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "recordType": { "type": "string", "enum": ["DailyService", "Auction", "FuelEfficiency", "EVStation"] },
+          "agency": { "type": "string" },
+          "make": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/fleet-vehicle.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listFleet"
+    }
+  ]
+}

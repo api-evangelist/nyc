@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doris/schemas/records-request.json",
+  "title": "RecordsRequest",
+  "description": "A request to DORIS to retrieve a record — order a copy/scan of a historical vital record, an archival photograph or digital item, or a City Hall Library publication, OR file a FOIL (Freedom of Information Law) request for agency records. NET-NEW: there is NO public write API today. Ordering a certified vital record runs through the Historical Vital Records portal (a860-historicalvitalrecords.nyc.gov); archival reproductions are ordered by email/form; FOIL runs through the OpenRecords portal (nyc.gov/openrecords). This schema serves both the read surface (list/get a requester's own requests) and the write surface (submit a request).",
+  "type": "object",
+  "x-source": {
+    "portal_vital_records": "https://a860-historicalvitalrecords.nyc.gov/",
+    "portal_foil": "https://a860-openrecords.nyc.gov/",
+    "opendata_foil": "https://data.cityofnewyork.us/d/kegn-anvq",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "requestId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned request / order number (OpenRecords Request ID or vital-records order number). Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Received", "In Progress", "Additional Info Required", "Fulfilled", "Denied", "Closed", null],
+      "description": "Lifecycle status. Set by DORIS, not the requester ('Request Status').",
+      "readOnly": true
+    },
+    "requestType": {
+      "type": "string",
+      "enum": ["VitalRecordCopy", "ArchivalReproduction", "LibraryPublication", "FOIL"],
+      "description": "What kind of retrieval this is."
+    },
+    "subject": {
+      "type": "object",
+      "description": "What is being requested — one of these depending on requestType.",
+      "properties": {
+        "vitalRecord": {
+          "type": ["object", "null"],
+          "description": "For requestType=VitalRecordCopy — identify the indexed record.",
+          "properties": {
+            "recordType": { "type": ["string", "null"], "enum": ["Birth Certificate", "Death Certificate", "Marriage Certificate", "Marriage License", null] },
+            "certificateNumber": { "type": ["string", "null"] },
+            "county": { "$ref": "_common.json#/$defs/County" },
+            "year": { "type": ["integer", "string", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "itemIdentifier": { "type": ["string", "null"], "description": "For ArchivalReproduction / LibraryPublication — the DigitalItem, ArchivalCollection, or GovernmentPublication identifier." },
+        "description": { "type": ["string", "null"], "description": "For FOIL or free-text requests — a description of the records sought." }
+      },
+      "additionalProperties": false
+    },
+    "agencyName": { "type": ["string", "null"], "description": "For FOIL — the agency that holds the records ('Agency Name')." },
+    "format": {
+      "type": ["string", "null"],
+      "enum": ["Certified paper copy", "Uncertified copy", "Digital scan", "High-resolution image", "Print", null],
+      "description": "Requested delivery format."
+    },
+    "purpose": { "type": ["string", "null"], "description": "Genealogy, legal, research, commercial, press, etc." },
+    "submissionMethod": {
+      "type": ["string", "null"],
+      "enum": ["Online", "Email", "Mail", "In Person", null],
+      "description": "How the request is submitted ('Submission Method'). Emergency/expedited paths are handled offline.",
+      "readOnly": true
+    },
+    "requester": {
+      "type": "object",
+      "description": "Requester contact details.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "relationship": { "type": ["string", "null"], "description": "Relationship to the record subject (for restricted vital records)." }
+      },
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true, "description": "'Request Submitted Date'." },
+    "dueDate": { "type": ["string", "null"], "format": "date", "readOnly": true, "description": "'Request Due Date'." },
+    "closeDate": { "type": ["string", "null"], "format": "date", "readOnly": true, "description": "'Request Close Date'." }
+  },
+  "required": ["requestType", "subject"],
+  "additionalProperties": false
+}
