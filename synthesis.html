@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cross-Domain Synthesis — NYC Modernization</title>
+<meta name="description" content="What four NYC government domains reveal about citywide API modernization — the four verbs, eight cross-cutting findings, and a maturity scorecard.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.heat td.cell{text-align:center;font-weight:700;color:#0e1319;cursor:default;min-width:70px}
+.heat td.dim{font-weight:600;white-space:normal;min-width:210px}
+.heat th{white-space:normal}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 0;font-size:.82rem;color:var(--fg-soft)}
+.legend .sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:5px}
+.finding{border-left:3px solid var(--brand);padding:2px 0 2px 16px;margin:16px 0}
+.finding h3{font-size:1.05rem;margin:0 0 .2em}
+.pill{display:inline-block;background:var(--bg-soft);border:1px solid var(--border);border-radius:20px;padding:4px 12px;margin:3px;font-size:.85rem}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+
+<div class="hero" style="padding:52px 0 30px">
+  <div class="wrap">
+    <div class="eyebrow">Cross-domain synthesis</div>
+    <h1 style="font-size:2.3rem;max-width:20ch">Four domains, one playbook</h1>
+    <p class="lead">What Parks, Public Schools, the City Council, and the Board of Elections reveal when you assess them the same way — and what a citywide API modernization would actually take.</p>
+    <div class="cta"><a class="btn" href="docs.html?f=SYNTHESIS.md">Read the full synthesis</a></div>
+  </div>
+</div>
+
+<section class="plain"><div class="wrap">
+  <div class="section-head"><div class="k">The taxonomy</div><h2>Four domains, four modernization verbs</h2>
+  <p class="muted">Assessing each domain the same way surfaces a one-word verb — the dominant shape of its gap. A diagnostic that classifies any NYC domain in one pass.</p></div>
+  <div class="grid cols-4" id="verb-cards"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The evidence</div><h2>Maturity scorecard</h2>
+  <p class="muted">Each domain scored 0–3 across seven dimensions. Hover a cell for the reasoning. Two rows are effectively all zeros — the citywide gaps.</p></div>
+  <div class="tablewrap"><table class="heat" id="heat"></table></div>
+  <div class="legend" id="legend"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The universal gap</div><h2>Every domain has one un-API'd citizen action</h2>
+  <p class="muted">Open data liberated reporting; it never touched transactions. Four for four, the thing a resident needs to <em>do</em> has no API — the highest-value net-new work.</p></div>
+  <div class="grid cols-4" id="netnew"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The latent model</div><h2>A shared geography spine already recurs everywhere</h2>
+  <p class="muted">Writing one <code>_common.json</code> per domain surfaced the same fields over and over — a citywide data model hiding in plain sight, and the key to cross-domain interoperability.</p></div>
+  <div id="spine"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The findings</div><h2>Eight patterns that hold across all four</h2></div>
+  <div id="findings"></div>
+  <p style="margin-top:1.4em"><a class="btn" href="docs.html?f=SYNTHESIS.md">Full synthesis, with recommendations →</a></p>
+</div></section>
+
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const sc=await getJSON("data/scorecard.json");
+
+  // verb cards
+  document.getElementById("verb-cards").innerHTML=sc.domains.map(d=>`
+    <a class="card" href="domain.html?d=${encodeURIComponent(d.id)}">
+      <span class="verb" style="background:${d.accent}">${esc(d.verb)}</span>
+      <h3 style="font-size:1.1rem">${esc(d.short)}</h3>
+      <div class="dom">${esc(d.id)}</div>
+    </a>`).join("");
+
+  // heatmap
+  const colorFor=s=>["#c0504d","#d6923a","#8bbf6b","#2e9e6b"][s];
+  const doms=sc.domains;
+  let html="<thead><tr><th>Dimension</th>"+doms.map(d=>`<th>${esc(d.short)}<br><span class="muted small" style="font-weight:400">${esc(d.verb)}</span></th>`).join("")+"</tr></thead><tbody>";
+  sc.dimensions.forEach(dim=>{
+    html+=`<tr><td class="dim">${esc(dim.label)}<br><span class="muted small" style="font-weight:400">${esc(dim.desc)}</span></td>`;
+    doms.forEach(d=>{const s=d.scores[dim.key];html+=`<td class="cell" style="background:${colorFor(s)}" title="${esc(d.notes[dim.key])}">${s}</td>`;});
+    html+="</tr>";
+  });
+  html+="</tbody>";
+  document.getElementById("heat").innerHTML=html;
+  document.getElementById("legend").innerHTML=sc.scale.map((lbl,i)=>`<span><span class="sw" style="background:${colorFor(i)}"></span>${i} · ${esc(lbl)}</span>`).join("");
+
+  // net-new
+  document.getElementById("netnew").innerHTML=sc.netNew.map(n=>`
+    <div class="card"><div class="muted small">${esc(n.domain)}</div>
+    <h3 style="font-size:1rem;margin:.2em 0 0"><code>${esc(n.object)}</code></h3>
+    <span class="badge write" style="margin-top:8px;display:inline-block">no API today</span></div>`).join("");
+
+  // spine
+  document.getElementById("spine").innerHTML=sc.sharedSpine.map(f=>`<span class="pill"><code>${esc(f)}</code></span>`).join("")+
+    `<p class="muted small" style="margin-top:12px">Present in Parks facilities, DOE schools, Council funding, and BOE poll sites alike. Proposed as a reusable <code>nyc-commons</code> schema set every agency <code>$ref</code>s.</p>`;
+
+  // findings (condensed)
+  const findings=[
+    ["Four agencies, four platforms, zero shared API layer","Smarty/PHP, Sitefinity/.NET, WordPress, Drupal — no consistent API. Consistency must be imposed above the platforms."],
+    ["The website and the open data are always two worlds","Where Open Data exists, the site renders its own parallel HTML and never consumes the twin. The defect is disconnect, not absence."],
+    ["Open Data coverage is uneven and inversely related to stakes","237 · 638 · 11 · 2 assets. Elections — the highest-stakes data — publishes the least."],
+    ["Every domain has one un-API'd citizen write-workflow","Permit, enrollment, testimony, ballot request — four for four, locked behind forms or siloed apps."],
+    ["Capability outsourcing is pervasive and uncoordinated","HawkSearch, Legistar/Granicus, Viebit, CARTO, Cloudinary — different vendors, no shared strategy; sometimes the vendor IS the API."],
+    ["Agent-readiness is zero, everywhere","Not one domain exposes an MCP or agent-native surface. Every MCP artifact here is net-new."],
+    ["A shared geography spine recurs in every schema","Borough, Community Board, Council District, Census Tract/NTA, BBL/BIN — a latent citywide model."],
+    ["Every domain has its own join key; no cross-domain identity","gisPropNum, DBN, matterId, election-district — a resident is the same person across all four, but nothing links them."],
+  ];
+  document.getElementById("findings").innerHTML=findings.map((f,i)=>`
+    <div class="finding"><h3>${i+1}. ${esc(f[0])}</h3><p class="muted" style="margin:0">${esc(f[1])}</p></div>`).join("");
+})();
+</script>
+</body>
+</html>

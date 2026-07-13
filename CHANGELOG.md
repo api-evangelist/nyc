@@ -6,6 +6,11 @@ The format is loosely [Keep a Changelog](https://keepachangelog.com/). This proj
 
 ## 2026-07-13
 
+### Added — Cross-domain synthesis
+- `SYNTHESIS.md` — the project-level analysis: the four-verb diagnostic taxonomy (Replatform · Reclaim · Consolidate & Own · Digitize), **eight cross-cutting findings** (no shared API layer; website vs. open data as two worlds; uneven Open Data inversely related to stakes; a universal un-API'd citizen write-workflow; pervasive uncoordinated vendor outsourcing; zero agent-readiness; a recurring shared geography spine; per-domain join keys with no cross-domain identity), a **7-dimension maturity scorecard**, and a **NYC API playbook** (shared `nyc-commons` schemas, the three-contract chain, prioritize write workflows, agent-native by default, own vendor-held records, register everything, connect data to the front door).
+- `data/scorecard.json` — per-domain maturity scores (0–3) with reasoning.
+- `synthesis.html` — interactive page: verb cards, an at-a-glance **maturity heatmap** (hover for reasoning), the four net-new write objects, the shared geography spine, and the eight findings. Added to nav and the home page.
+
 ### Added — Explorable GitHub Pages site
 - Built a self-contained, data-driven static site (no build step) to explore every artifact, intended for **nyc.apievangelist.com**.
   - `index.html` — project overview: thesis, cross-domain stats, four-verb pattern table, the seven-step method, domain cards, and the domains-inventory summary.

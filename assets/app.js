@@ -77,8 +77,8 @@ function navBar(active){
   return `<div class="nav"><div class="wrap">
     <a class="brand" href="./"><span class="dot"></span>NYC Modernization</a>
     <a class="link" href="./#domains">Domains</a>
+    <a class="link" href="./synthesis.html">Synthesis</a>
     <a class="link" href="./#method">Method</a>
-    <a class="link" href="./#inventory">Inventory</a>
     <a class="link" href="./docs.html?f=CHANGELOG.md">Changelog</a>
     <span class="spacer"></span>
     <a class="link ghost" href="https://github.com/api-evangelist/nyc">GitHub</a>

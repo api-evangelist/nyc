@@ -34,7 +34,7 @@ The site is dependency-free static HTML/CSS/JS — no build step.
 
 **Enabling Pages:** Settings → Pages → *Deploy from a branch* → `main` / root. The custom domain is set via the `CNAME` file (`nyc.apievangelist.com`); add a DNS `CNAME` record `nyc → api-evangelist.github.io`. `.nojekyll` is present so files serve as-is.
 
-See the **[CHANGELOG](CHANGELOG.md)** for the full project history.
+See the **[CHANGELOG](CHANGELOG.md)** for the full project history, and the **[cross-domain SYNTHESIS](SYNTHESIS.md)** (interactive: `synthesis.html`) for the four-verb taxonomy, eight cross-cutting findings, and the maturity scorecard.
 
 ## Method (per domain)
 

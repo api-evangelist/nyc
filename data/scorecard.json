@@ -1,0 +1,74 @@
+{
+  "note": "Editorial maturity scores (0-3, higher = more mature) grounded in the four assessments. 0 = absent, 1 = present but legacy/hidden/rented, 2 = usable but partial, 3 = modern/owned/complete. See SYNTHESIS.md for the reasoning.",
+  "scale": ["absent", "legacy/hidden/rented", "usable/partial", "modern/owned/complete"],
+  "dimensions": [
+    {"key": "platform", "label": "Platform modernity", "desc": "How current the delivery stack is."},
+    {"key": "siteApi", "label": "Site / content API", "desc": "Does the site expose a usable, public API of its own?"},
+    {"key": "openData", "label": "Open Data breadth", "desc": "How much of the agency's data is on data.cityofnewyork.us."},
+    {"key": "coreData", "label": "Core citizen-data machine-readable", "desc": "Are the things residents most need (permits, schools, bills, results) machine-readable at all?"},
+    {"key": "writeApi", "label": "Transactional (write) API", "desc": "Can a resident DO the key civic action via API?"},
+    {"key": "agent", "label": "Agent-readiness", "desc": "Any MCP / agent-native surface today."},
+    {"key": "ownership", "label": "Vendor independence", "desc": "Is the core capability owned rather than rented/locked to a vendor?"}
+  ],
+  "domains": [
+    {
+      "id": "nycgovparks.org", "short": "Parks", "verb": "Replatform", "accent": "#3098d8",
+      "scores": {"platform": 1, "siteApi": 1, "openData": 3, "coreData": 2, "writeApi": 0, "agent": 0, "ownership": 2},
+      "notes": {
+        "platform": "Smarty 2.6.2 / jQuery (2005-era), but one modern Next.js island (Tree Map).",
+        "siteApi": "Tree Map internal JSON API + self-hosted /search; no public API.",
+        "openData": "237 DPR assets — the twins already exist.",
+        "coreData": "Facilities/parks/monuments/trees have twins; permits do not.",
+        "writeApi": "Permit applications are login-gated HTML, no API.",
+        "agent": "None.",
+        "ownership": "Search is self-hosted (not rented); minor vendors (Cloudinary, Loggly)."
+      }
+    },
+    {
+      "id": "schools.nyc.gov", "short": "DOE", "verb": "Reclaim", "accent": "#e0803a",
+      "scores": {"platform": 2, "siteApi": 1, "openData": 3, "coreData": 2, "writeApi": 0, "agent": 0, "ownership": 1},
+      "notes": {
+        "platform": "Progress Sitefinity (.NET) — modern-ish CMS.",
+        "siteApi": "Internal /CustomApi drives pages but is robots-blocked & undocumented.",
+        "openData": "638 assets incl. 462-column directories — the broadest.",
+        "coreData": "Directories/demographics/results yes; enrollment no.",
+        "writeApi": "MySchools admissions has no API.",
+        "agent": "None.",
+        "ownership": "Discovery rented to HawkSearch; heavy vendor footprint."
+      }
+    },
+    {
+      "id": "council.nyc.gov", "short": "Council", "verb": "Consolidate & Own", "accent": "#7a5cc0",
+      "scores": {"platform": 2, "siteApi": 2, "openData": 2, "coreData": 3, "writeApi": 1, "agent": 0, "ownership": 1},
+      "notes": {
+        "platform": "WordPress on WP Engine — modern.",
+        "siteApi": "Open WordPress REST API exists (content, not resources); Legistar API too.",
+        "openData": "11 NYCC datasets — decent but flattened snapshots.",
+        "coreData": "Legislation, votes, hearings all live in the Legistar API — the most machine-readable core.",
+        "writeApi": "Testimony sign-up has no API; constituent-services data exists.",
+        "agent": "None.",
+        "ownership": "The legislative record depends on the Granicus/Legistar vendor API."
+      }
+    },
+    {
+      "id": "vote.nyc", "short": "Elections", "verb": "Digitize", "accent": "#c0504d",
+      "scores": {"platform": 1, "siteApi": 0, "openData": 0, "coreData": 0, "writeApi": 0, "agent": 0, "ownership": 2},
+      "notes": {
+        "platform": "Drupal 9, but JSON:API disabled.",
+        "siteApi": "None — no content or data API.",
+        "openData": "2 assets (poll sites only).",
+        "coreData": "Results, candidates, contests are PDFs + a legacy viewer.",
+        "writeApi": "Ballot request is a siloed app, no API.",
+        "agent": "None.",
+        "ownership": "Mostly first-party; few vendors — but little to own yet."
+      }
+    }
+  ],
+  "netNew": [
+    {"domain": "Parks", "object": "PermitApplication"},
+    {"domain": "DOE", "object": "EnrollmentApplication"},
+    {"domain": "Council", "object": "TestimonyRegistration"},
+    {"domain": "Elections", "object": "BallotRequest"}
+  ],
+  "sharedSpine": ["Borough", "Community Board", "Council District", "Census Tract / NTA", "BBL / BIN"]
+}
