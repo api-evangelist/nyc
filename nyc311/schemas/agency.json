@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc311/schemas/agency.json",
+  "title": "Agency",
+  "description": "A city agency responsible for resolving 311 requests (NYC extension to Open311). Derived from the agency / agency_name fields in erm2-nwe9; the join to the agencies that own each ServiceType.",
+  "type": "object",
+  "x-source": { "opendata": "https://data.cityofnewyork.us/d/erm2-nwe9 (agency fields)" },
+  "properties": {
+    "code": { "type": "string", "description": "Agency acronym (e.g. DSNY, DOT, NYPD, HPD)." },
+    "name": { "type": "string", "description": "Full agency name." },
+    "serviceCodes": {
+      "type": "array",
+      "description": "ServiceType codes this agency owns.",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["code", "name"],
+  "additionalProperties": false
+}

@@ -212,41 +212,49 @@
     {
      "file": "schemas/_common.json",
      "title": "NYC Parks \u2014 Shared Definitions",
-     "shared": true
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Parks object schemas. Reconciles fields common to the nycgovparks.org website and the DPR"
     },
     {
      "file": "schemas/capital-project.json",
      "title": "CapitalProject",
+     "shared": false,
      "desc": "A NYC Parks capital construction/reconstruction project. Canonical schema reconciling the /planning-and-building/capital-project-tracker pag"
     },
     {
      "file": "schemas/event.json",
      "title": "Event",
+     "shared": false,
      "desc": "A public event or program at a NYC park. Canonical schema reconciling the /events calendar on nycgovparks.org with the normalized 'NYC Parks"
     },
     {
      "file": "schemas/facility.json",
      "title": "Facility",
+     "shared": false,
      "desc": "A recreational facility within a park (court, field, pool, playground, dog run, restroom, etc.). Canonical schema reconciling the ~42 /facil"
     },
     {
      "file": "schemas/monument.json",
      "title": "Monument",
+     "shared": false,
      "desc": "A monument, public artwork, or historical marker in the NYC parks system (the 'Historical Signs' database on the website). Canonical schema "
     },
     {
      "file": "schemas/park.json",
      "title": "Park",
+     "shared": false,
      "desc": "A NYC Parks property. Canonical schema reconciling the /parks directory on nycgovparks.org with the 'Parks Properties' Open Data dataset (en"
     },
     {
      "file": "schemas/permit-application.json",
      "title": "PermitApplication",
+     "shared": false,
      "desc": "An application for a NYC Parks permit. NET-NEW object \u2014 the ~10 permit workflows on nycgovparks.org are login-gated HTML forms with NO machi"
     },
     {
      "file": "schemas/tree.json",
      "title": "Tree",
+     "shared": false,
      "desc": "A street or park tree. Canonical schema reconciling the interactive NYC Tree Map (tree-map.nycgovparks.org) with the '2015 Street Tree Censu"
     }
    ],
@@ -610,31 +618,37 @@
     {
      "file": "schemas/_common.json",
      "title": "NYC Public Schools \u2014 Shared Definitions",
-     "shared": true
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYCPS/DOE object schemas. Reconciles fields common to schools.nyc.gov and the DOE NYC Open Da"
     },
     {
      "file": "schemas/calendar-event.json",
      "title": "CalendarEvent",
+     "shared": false,
      "desc": "A NYC public schools calendar event \u2014 holiday, recess, no-school day, professional development day, or first/last day. Modeled from the /cal"
     },
     {
      "file": "schemas/enrollment-application.json",
      "title": "EnrollmentApplication",
+     "shared": false,
      "desc": "A NYC Public Schools admissions/enrollment application (the MySchools workflow). NET-NEW object \u2014 MySchools is a login-gated transactional a"
     },
     {
      "file": "schemas/school-demographics.json",
      "title": "SchoolDemographics",
+     "shared": false,
      "desc": "Enrollment and demographic breakdown for a school in a given year. Canonical schema reconciling the per-school demographics on schools.nyc.g"
     },
     {
      "file": "schemas/school.json",
      "title": "School",
+     "shared": false,
      "desc": "A NYC public school. Canonical schema reconciling the /schools/<LocationCode> directory pages on schools.nyc.gov with the DOE Open Data 'Sch"
     },
     {
      "file": "schemas/test-result.json",
      "title": "TestResult",
+     "shared": false,
      "desc": "A school-level assessment result. Canonical schema generalizing the DOE Open Data assessment datasets (SAT, AP, Regents, State ELA/Math, Spe"
     }
    ],
@@ -911,41 +925,49 @@
     {
      "file": "schemas/_common.json",
      "title": "NYC Council \u2014 Shared Definitions",
-     "shared": true
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Council object schemas. Reconciles fields common to council.nyc.gov (WordPress), the Legi"
     },
     {
      "file": "schemas/committee.json",
      "title": "Committee",
+     "shared": false,
      "desc": "A NYC Council committee, subcommittee, or caucus. Canonical schema reconciling the WordPress custom types nycc_committee (40) and nycc_caucu"
     },
     {
      "file": "schemas/council-member.json",
      "title": "CouncilMember",
+     "shared": false,
      "desc": "A New York City Council member. Canonical schema reconciling the /district-N/ pages on council.nyc.gov (WordPress), Legistar 'persons', and "
     },
     {
      "file": "schemas/discretionary-funding.json",
      "title": "DiscretionaryFunding",
+     "shared": false,
      "desc": "A NYC Council discretionary funding award \u2014 a member-allocated grant to an organization. Canonical schema reconciling the 'City Council Disc"
     },
     {
      "file": "schemas/district.json",
      "title": "District",
+     "shared": false,
      "desc": "A New York City Council district (1\u201351). Canonical schema reconciling the /district-N/ pages on council.nyc.gov with the 'City Council Distr"
     },
     {
      "file": "schemas/legislation.json",
      "title": "Legislation",
+     "shared": false,
      "desc": "A NYC Council legislative matter \u2014 Introduction (bill), Resolution, or Local Law. Canonical schema reconciling the Legistar 'matters' record"
     },
     {
      "file": "schemas/meeting.json",
      "title": "Meeting",
+     "shared": false,
      "desc": "A NYC Council meeting or committee hearing. Canonical schema reconciling Legistar 'events' with the 'City Council Meetings (1999 to 2024)' O"
     },
     {
      "file": "schemas/testimony-registration.json",
      "title": "TestimonyRegistration",
+     "shared": false,
      "desc": "A registration to testify (speak or submit written testimony) at a NYC Council hearing. NET-NEW object \u2014 public testimony sign-up is a trans"
     }
    ],
@@ -1246,41 +1268,49 @@
     {
      "file": "schemas/_common.json",
      "title": "NYC Elections \u2014 Shared Definitions",
-     "shared": true
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Board of Elections object schemas. Reconciles fields from the Voting/Poll Sites Open Data"
     },
     {
      "file": "schemas/ballot-request.json",
      "title": "BallotRequest",
+     "shared": false,
      "desc": "A request for an absentee / mail-in ballot, with tracking. NET-NEW object \u2014 today this is a separate app (requestballot.vote.nyc + /tracking"
     },
     {
      "file": "schemas/candidate.json",
      "title": "Candidate",
+     "shared": false,
      "desc": "A candidate for a NYC elective office. ASPIRATIONAL \u2014 today candidate lists are PDFs on vote.nyc with no dataset; this schema defines the ma"
     },
     {
      "file": "schemas/contest.json",
      "title": "Contest",
+     "shared": false,
      "desc": "A single race on the ballot for an election (an office + district being contested). ASPIRATIONAL \u2014 today this exists only as PDF contest lis"
     },
     {
      "file": "schemas/election-district.json",
      "title": "ElectionDistrict",
+     "shared": false,
      "desc": "A NYC election district (ED) \u2014 the smallest election geography. Reconciles the DCP 'Election Districts' boundaries with BOENY 'Election Dist"
     },
     {
      "file": "schemas/election-result.json",
      "title": "ElectionResult",
+     "shared": false,
      "desc": "Results for a single contest. ASPIRATIONAL \u2014 the flagship gap. Today results exist ONLY as per-contest PDFs (a 'Recap' + an 'EDLevel' file) "
     },
     {
      "file": "schemas/election.json",
      "title": "Election",
+     "shared": false,
      "desc": "A NYC election event. ASPIRATIONAL \u2014 today this exists only as a PDF calendar of important dates; this schema defines the machine-readable s"
     },
     {
      "file": "schemas/poll-site.json",
      "title": "PollSite",
+     "shared": false,
      "desc": "A NYC polling place. Canonical schema reconciling the /page/find-your-poll-site locator with the 'Voting/Poll Sites' Open Data dataset (mifw"
     }
    ],
@@ -1437,6 +1467,222 @@
      "name": "track_mail_ballot",
      "title": "Track Mail Ballot",
      "desc": "Track the status of a mail-ballot request (mailed, returned, counted).",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "nyc311",
+   "agency": "NYC311 (Office of Technology and Innovation / 311)",
+   "short": "NYC311",
+   "verb": "Standardize",
+   "platform": "Microsoft Dynamics 365",
+   "tagline": "The flagship 311 dataset is the most-used in the city, but the interactive Open311 standard NYC once ran is retired and the service is a vendor CRM. Modernize by reviving the open standard.",
+   "accent": "#1f9e8f",
+   "netnew": "ServiceRequest (Open311)",
+   "findings": [
+    "Fifth distinct platform: Microsoft Dynamics 365 / Power Apps Portals on Azure \u2014 the city's front door is a vendor CRM.",
+    "The 311 data is the most-used in the city: 311 Service Requests (erm2-nwe9) has 1.26M views / 590k downloads and a live SODA endpoint over tens of millions of records.",
+    "But the interactive service API is retired: NYC was an early Open311 (GeoReport v2) adopter and the standard endpoints (311api.cityofnewyork.us) no longer resolve.",
+    "A real API gateway exists (api.nyc.gov, Azure APIM) but is scoped to GeoClient geocoding and key-gated (401) \u2014 not 311.",
+    "5-for-5 on the universal gap: submitting/tracking a 311 request has no public API (Open311 lapsed; Dynamics has no public write API).",
+    "See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us/resource/erm2-nwe9.json (SODA)",
+     "type": "open data API",
+     "owner": "NYC/OTI",
+     "public": true,
+     "note": "flagship 311 dataset; live."
+    },
+    {
+     "endpoint": "api.nyc.gov (Azure APIM)",
+     "type": "API gateway",
+     "owner": "NYC/OTI",
+     "public": "key-gated",
+     "note": "GeoClient geocoding (401); nearest thing to a central NYC gateway."
+    },
+    {
+     "endpoint": "Open311 GeoReport v2 (311api.cityofnewyork.us)",
+     "type": "open-standard 311 API",
+     "owner": "NYC",
+     "public": "retired",
+     "note": "endpoints no longer resolve."
+    },
+    {
+     "endpoint": "Dynamics 365 Web API (portal backend)",
+     "type": "CRM REST",
+     "owner": "NYC/Microsoft",
+     "public": false,
+     "note": "report/check-status; internal."
+    }
+   ],
+   "counts": {
+    "fruit": 6,
+    "opendata": 15,
+    "schemas": 4,
+    "openapiOps": 7,
+    "mcpTools": 6,
+    "entities": 3
+   },
+   "entities": [
+    "ServiceRequest",
+    "ServiceType",
+    "Agency"
+   ],
+   "files": {
+    "fruit": "nyc311/fruit.json",
+    "opendata": "nyc311/opendata-311.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-311.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/nyc-311.yaml",
+    "mcp": "mcp/nyc-311-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC311 \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable definitions for the NYC311 schemas. The AdminBoundaries block is the recurring citywide 'geography spine' (see SYNTHESIS.md) and is"
+    },
+    {
+     "file": "schemas/agency.json",
+     "title": "Agency",
+     "shared": false,
+     "desc": "A city agency responsible for resolving 311 requests (NYC extension to Open311). Derived from the agency / agency_name fields in erm2-nwe9; "
+    },
+    {
+     "file": "schemas/service-definition.json",
+     "title": "ServiceDefinition",
+     "shared": false,
+     "desc": "The attribute set required to submit a request of a given ServiceType. Aligned to the Open311 GeoReport v2 'service definition' object. Deri"
+    },
+    {
+     "file": "schemas/service-request.json",
+     "title": "ServiceRequest",
+     "shared": false,
+     "desc": "A 311 service request. Aligned to the Open311 GeoReport v2 'request' object and reconciled with the '311 Service Requests' Open Data dataset"
+    },
+    {
+     "file": "schemas/service-type.json",
+     "title": "ServiceType",
+     "shared": false,
+     "desc": "A type of 311 service/complaint. Aligned to the Open311 GeoReport v2 'service' object and reconciled with '311 Web Content - Services' (vwpc"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/discovery",
+     "op": "getDiscovery",
+     "summary": "Open311 service discovery",
+     "tags": [
+      "Discovery"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/services",
+     "op": "listServices",
+     "summary": "List service types (Open311 GET Service List)",
+     "tags": [
+      "Services"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/services/{serviceCode}",
+     "op": "getServiceDefinition",
+     "summary": "Get a service definition (Open311 GET Service Definition)",
+     "tags": [
+      "Services"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/requests",
+     "op": "listServiceRequests",
+     "summary": "Search service requests (Open311 GET Service Requests)",
+     "tags": [
+      "Requests"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/requests",
+     "op": "createServiceRequest",
+     "summary": "Submit a service request (Open311 POST Service Request)",
+     "tags": [
+      "Requests"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/requests/{serviceRequestId}",
+     "op": "getServiceRequest",
+     "summary": "Track a service request (Open311 GET Service Request)",
+     "tags": [
+      "Requests"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/agencies",
+     "op": "listAgencies",
+     "summary": "List responding agencies (NYC extension)",
+     "tags": [
+      "Agencies"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_service_types",
+     "title": "Find Service Types",
+     "desc": "List/search the 311 service (complaint) types, with SLAs and owning agency. Open311 GET Service List.",
+     "write": false
+    },
+    {
+     "name": "get_service_definition",
+     "title": "Get Service Definition",
+     "desc": "Get the attributes required to submit a given service type (dynamic form fields). Open311 GET Service Definition.",
+     "write": false
+    },
+    {
+     "name": "submit_service_request",
+     "title": "Submit 311 Service Request",
+     "desc": "Report a 311 problem (Open311 POST Service Request). Revives the retired write path. Requires an api.nyc.gov key and an address + service code. Mutates state \u2014 ",
+     "write": true
+    },
+    {
+     "name": "check_request_status",
+     "title": "Check Request Status",
+     "desc": "Track a 311 service request by id (status, resolution, agency). Open311 GET Service Request.",
+     "write": false
+    },
+    {
+     "name": "find_service_requests",
+     "title": "Find Service Requests",
+     "desc": "Search the 311 record by service type, status, date range, or borough (backed by the erm2-nwe9 open dataset).",
+     "write": false
+    },
+    {
+     "name": "get_agencies",
+     "title": "Get Responding Agencies",
+     "desc": "List the city agencies that resolve 311 requests and the service types they own.",
      "write": false
     }
    ]

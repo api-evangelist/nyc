@@ -1,8 +1,8 @@
 # Cross-Domain Synthesis
 
-*What four New York City government domains — Parks, Public Schools, the City Council, and the Board of Elections — reveal when you assess them the same way, and what a citywide API modernization would actually take.*
+*What five New York City government domains — Parks, Public Schools, the City Council, the Board of Elections, and NYC311 — reveal when you assess them the same way, and what a citywide API modernization would actually take.*
 
-Companion to the four domain assessments. The interactive version, with the maturity scorecard, is at **[nyc.apievangelist.com/synthesis.html](https://nyc.apievangelist.com/synthesis.html)**.
+Companion to the five domain assessments. The interactive version, with the maturity scorecard, is at **[nyc.apievangelist.com/synthesis.html](https://nyc.apievangelist.com/synthesis.html)**.
 
 ---
 
@@ -10,9 +10,9 @@ Companion to the four domain assessments. The interactive version, with the matu
 
 This project started from a claim: the 2010–2018 open-data era **only partially worked**. Cities published data but never made themselves programmable — the data stayed disconnected from the front door, read-only, unproductized, and (now) not agent-ready.
 
-Four domains, chosen to be different, each confirm the claim in a different way. None is close to programmable. But they fail *differently* — and the differences are the finding.
+Five domains, chosen to be different, each confirm the claim in a different way. None is close to programmable. But they fail *differently* — and the differences are the finding.
 
-## Four domains, four verbs
+## Five domains, five verbs
 
 Assessing each domain the same way (crawl → tech/vendor inventory → APIs-observed → Open Data crosswalk → schemas → OpenAPI → MCP) surfaced a one-word **modernization verb** per domain — the dominant shape of its gap:
 
@@ -22,21 +22,22 @@ Assessing each domain the same way (crawl → tech/vendor inventory → APIs-obs
 | **Schools / DOE** (`schools.nyc.gov`) | Sitefinity (.NET) | Search rented to a vendor; the real backend hidden behind an internal API | **Reclaim** |
 | **Council** (`council.nyc.gov`) | WordPress | Three APIs already exist (Legistar, WP REST, Open Data) — none owned or unified | **Consolidate & Own** |
 | **Elections / BOE** (`vote.nyc`) | Drupal 9 | No site API, almost no Open Data; results and candidates are PDFs | **Digitize** |
+| **NYC311** (`portal.311.nyc.gov`) | Dynamics 365 | The flagship dataset is the most-used in the city, but the Open311 standard it once ran is retired | **Standardize** |
 
-These four verbs are a **diagnostic taxonomy**. Point the same assessment at a fifth or fiftieth NYC domain and it will land on one (or a blend) of them. That reusability is the point: modernization isn't one monolithic program, it's a repeatable diagnosis plus a repeatable build.
+These five verbs are a **diagnostic taxonomy**. Point the same assessment at a fifth or fiftieth NYC domain and it will land on one (or a blend) of them. That reusability is the point: modernization isn't one monolithic program, it's a repeatable diagnosis plus a repeatable build.
 
 ## Eight cross-cutting findings
 
-What holds *across* all four domains matters more than any single assessment.
+What holds *across* all five domains matters more than any single assessment.
 
-### 1. Four agencies, four platforms, zero shared API layer
-Smarty/PHP, Sitefinity/.NET, WordPress, Drupal. Every agency picked its own stack, its own CMS, its own vendors — and none exposes a consistent, resource-oriented API. There is no citywide API layer, convention, or contract. Consistency has to be imposed *above* the platforms, not within them.
+### 1. Five agencies, five platforms, zero shared API layer
+Smarty/PHP, Sitefinity/.NET, WordPress, Drupal, Dynamics 365. Every agency picked its own stack, its own CMS, its own vendors — and none exposes a consistent, resource-oriented API. There is no citywide API layer, convention, or contract. Consistency has to be imposed *above* the platforms, not within them.
 
 ### 2. The website and the open data are always two worlds
 Where Open Data exists (Parks, DOE, Council), the public website renders its **own** parallel HTML and never consumes the machine-readable twin. Two systems, separately maintained, free to drift. The most common defect isn't missing data — it's a **disconnect** between the data and the front door.
 
 ### 3. Open Data coverage is wildly uneven — and inversely related to stakes
-**237 · 638 · 11 · 2** assets. The spread is enormous, and it tracks nothing rational. The **Board of Elections** — arguably the highest-stakes civic data in the city — publishes the **least** (2 datasets, poll sites only); election results and candidates are PDFs. Open data adoption was opportunistic, not strategic.
+**237 · 638 · 11 · 2** assets — plus NYC311's flagship dataset (`erm2-nwe9`: 1.26M views), the most-used in the city. The spread is enormous, and it tracks nothing rational. The **Board of Elections** — arguably the highest-stakes civic data in the city — publishes the **least** (2 datasets, poll sites only); election results and candidates are PDFs. Open data adoption was opportunistic, not strategic.
 
 ### 4. Every domain has exactly one un-API'd citizen write-workflow
 The single most consistent finding. Each domain has one transactional thing a resident actually needs to *do*, and in every case it has **no API**:
@@ -47,11 +48,12 @@ The single most consistent finding. Each domain has one transactional thing a re
 | DOE | Apply to a school | `EnrollmentApplication` |
 | Council | Testify at a hearing | `TestimonyRegistration` |
 | Elections | Request a mail ballot | `BallotRequest` |
+| NYC311 | Submit a 311 request | `ServiceRequest` (Open311, retired) |
 
-Open data liberated *reporting*. It never touched *transactions*. **Four for four**, the citizen-facing verb is locked behind a login-gated form or a siloed app. This is the universal gap — and the highest-value one.
+Open data liberated *reporting*. It never touched *transactions*. **Five for five**, the citizen-facing verb is locked behind a login-gated form, a siloed app, or a retired standard. This is the universal gap — and the highest-value one.
 
 ### 5. Capability outsourcing is pervasive and uncoordinated
-HawkSearch (DOE search), Legistar/Granicus (Council legislation), Viebit + StreamText (Council video/captions), CARTO (maps), Cloudinary (Parks images), New Relic, Siteimprove, and Socrata itself. Each agency rents different capabilities from different vendors with no shared strategy. Sometimes the vendor *is* the only API (Legistar) — making a vendor the custodian of the city's legislative record.
+HawkSearch (DOE search), Legistar/Granicus (Council legislation), Viebit + StreamText (Council video/captions), CARTO (maps), Cloudinary (Parks images), Microsoft Dynamics 365 (the entire 311 front door), New Relic, Siteimprove, and Socrata itself. Each agency rents different capabilities from different vendors with no shared strategy. Sometimes the vendor *is* the only API (Legistar) — making a vendor the custodian of the city's legislative record.
 
 ### 6. Agent-readiness is zero, everywhere
 Not one domain exposes an MCP server, a tool manifest, or any agent-native surface. In 2026 this is the gap that compounds: even where an API exists (Council's WP REST, Legistar), no agent can act on the city's behalf. Every MCP artifact in this project is net-new.
@@ -60,21 +62,21 @@ Not one domain exposes an MCP server, a tool manifest, or any agent-native surfa
 Writing one `_common.json` per domain surfaced the same fields over and over: **Borough · Community Board · Council District · Census Tract / NTA · BBL / BIN**. Parks facilities, DOE schools, Council funding, and BOE poll sites all carry them. That recurrence is a **latent citywide data model** — a shared spine that already exists implicitly and should be made explicit as a reusable schema set.
 
 ### 8. Every domain has its own join key; no cross-domain identity
-Parks joins on `gisPropNum`, DOE on `DBN`, Council on `matterId`, Elections on election-district. A resident is the same person across all four, but nothing links them. There is no shared entity for a *place*, an *address*, or a *person* across agencies — so cross-domain questions ("what's near me?", "who represents this school's block?") can't be answered.
+Parks joins on `gisPropNum`, DOE on `DBN`, Council on `matterId`, Elections on election-district, 311 on `service_request_id`. A resident is the same person across all five, but nothing links them. There is no shared entity for a *place*, an *address*, or a *person* across agencies — so cross-domain questions ("what's near me?", "who represents this school's block?") can't be answered.
 
 ## The maturity scorecard
 
 Scoring each domain 0–3 across seven dimensions (see [data/scorecard.json](data/scorecard.json)) makes the pattern legible:
 
-| Dimension | Parks | DOE | Council | Elections |
-|---|---|---|---|---|
-| Platform modernity | 1 | 2 | 2 | 1 |
-| Site / content API | 1 | 1 | 2 | 0 |
-| Open Data breadth | 3 | 3 | 2 | 0 |
-| Core citizen-data machine-readable | 2 | 2 | 3 | 0 |
-| **Transactional (write) API** | **0** | **0** | **1** | **0** |
-| **Agent-readiness** | **0** | **0** | **0** | **0** |
-| Vendor independence | 2 | 1 | 1 | 2 |
+| Dimension | Parks | DOE | Council | Elections | 311 |
+|---|---|---|---|---|---|
+| Platform modernity | 1 | 2 | 2 | 1 | 2 |
+| Site / content API | 1 | 1 | 2 | 0 | 1 |
+| Open Data breadth | 3 | 3 | 2 | 0 | 3 |
+| Core citizen-data machine-readable | 2 | 2 | 3 | 0 | 3 |
+| **Transactional (write) API** | **0** | **0** | **1** | **0** | **0** |
+| **Agent-readiness** | **0** | **0** | **0** | **0** | **0** |
+| Vendor independence | 2 | 1 | 1 | 2 | 1 |
 
 Two columns are effectively all zeros — **transactional API** and **agent-readiness**. Those are the citywide gaps, independent of any agency's platform or open-data maturity. Read the rows and the verbs fall out: Parks is strong on data / weak on delivery (**replatform**); DOE strong on data / weak on ownership (**reclaim**); Council strong on core data / weak on ownership (**consolidate & own**); Elections weak on everything data (**digitize**).
 
@@ -82,11 +84,11 @@ Two columns are effectively all zeros — **transactional API** and **agent-read
 
 Modernizing NYC is **not** one big rebuild. It is:
 
-1. **A repeatable diagnosis** — the four verbs — that classifies any domain's gap in one assessment.
+1. **A repeatable diagnosis** — the five verbs — that classifies any domain's gap in one assessment.
 2. **A repeatable build** — schema-per-object → OpenAPI → MCP — that produces the same three contracts every time.
-3. **A shared spine** — the geography (and eventually identity) fields every domain already uses — that turns four isolated APIs into an interoperable set.
+3. **A shared spine** — the geography (and eventually identity) fields every domain already uses — that turns five isolated APIs into an interoperable set.
 
-The four domains aren't four one-off projects. They're four instances of one playbook.
+The five domains aren't five one-off projects. They're five instances of one playbook.
 
 ## Recommendations — a NYC API playbook
 
@@ -100,7 +102,7 @@ The four domains aren't four one-off projects. They're four instances of one pla
 
 ## Coda
 
-"Data liberation" put the city's information on the shelf. It's still on the shelf — disconnected, read-only, and invisible to agents. The four domains here show the same story four different ways, and they show the way out: a repeatable method, a shared spine, and a bias toward the transactions and agent surfaces everyone skipped.
+"Data liberation" put the city's information on the shelf. It's still on the shelf — disconnected, read-only, and invisible to agents. The five domains here show the same story five different ways, and they show the way out: a repeatable method, a shared spine, and a bias toward the transactions and agent surfaces everyone skipped.
 
 The goal was never more datasets. It's a city you can **program**.
 

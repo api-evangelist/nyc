@@ -1,0 +1,86 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only. Tools map to the Open311-aligned OpenAPI operations and $ref the same object schemas. The submit tool revives the retired Open311 POST /requests.",
+    "openapi": "../openapi/nyc-311.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.311",
+    "title": "NYC311",
+    "version": "0.1.0",
+    "description": "Agent-native access to NYC 311 — the catalog of service types, submitting and tracking service requests (Open311 GeoReport v2), responding agencies, and search over the city's flagship 311 dataset. Revives the open standard NYC let lapse.",
+    "instructions": "find_service_types lists what can be reported (with SLAs). submit_service_request reports a 311 problem — it requires an api.nyc.gov key, mutates state, and should be confirmed with the user first (and needs an address + service code). check_request_status tracks a request. find_service_requests searches the historical/open record. get_agencies lists responding agencies."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_service_types",
+      "title": "Find Service Types",
+      "description": "List/search the 311 service (complaint) types, with SLAs and owning agency. Open311 GET Service List.",
+      "inputSchema": { "type": "object", "properties": { "group": { "type": "string" }, "q": { "type": "string" } } },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-type.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listServices"
+    },
+    {
+      "name": "get_service_definition",
+      "title": "Get Service Definition",
+      "description": "Get the attributes required to submit a given service type (dynamic form fields). Open311 GET Service Definition.",
+      "inputSchema": { "type": "object", "properties": { "serviceCode": { "type": "string" } }, "required": ["serviceCode"] },
+      "outputSchema": { "$ref": "../schemas/service-definition.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getServiceDefinition"
+    },
+    {
+      "name": "submit_service_request",
+      "title": "Submit 311 Service Request",
+      "description": "Report a 311 problem (Open311 POST Service Request). Revives the retired write path. Requires an api.nyc.gov key and an address + service code. Mutates state — confirm details with the user first.",
+      "inputSchema": { "$ref": "../schemas/service-request.json" },
+      "outputSchema": { "$ref": "../schemas/service-request.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createServiceRequest",
+      "x-auth": "apiKey"
+    },
+    {
+      "name": "check_request_status",
+      "title": "Check Request Status",
+      "description": "Track a 311 service request by id (status, resolution, agency). Open311 GET Service Request.",
+      "inputSchema": { "type": "object", "properties": { "serviceRequestId": { "type": "string" } }, "required": ["serviceRequestId"] },
+      "outputSchema": { "$ref": "../schemas/service-request.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getServiceRequest"
+    },
+    {
+      "name": "find_service_requests",
+      "title": "Find Service Requests",
+      "description": "Search the 311 record by service type, status, date range, or borough (backed by the erm2-nwe9 open dataset).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "service_code": { "type": "string" },
+          "status": { "type": "string", "enum": ["open", "closed"] },
+          "start_date": { "type": "string", "format": "date-time" },
+          "end_date": { "type": "string", "format": "date-time" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-request.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listServiceRequests"
+    },
+    {
+      "name": "get_agencies",
+      "title": "Get Responding Agencies",
+      "description": "List the city agencies that resolve 311 requests and the service types they own.",
+      "inputSchema": { "type": "object", "properties": {} },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/agency.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listAgencies"
+    }
+  ]
+}

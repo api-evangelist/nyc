@@ -69,10 +69,14 @@ See the **[CHANGELOG](CHANGELOG.md)** for the full project history, and the **[c
   - [low-hanging-fruit.md](vote.nyc/low-hanging-fruit.md) / [fruit.json](vote.nyc/fruit.json), [crosswalk.md](vote.nyc/crosswalk.md), [opendata-boeny.md](vote.nyc/opendata-boeny.md) (2 assets).
   - [tech-stack.md](vote.nyc/tech-stack.md) (Drupal 9) · [apis-observed.md](vote.nyc/apis-observed.md) (near-absent).
   - [schemas/](vote.nyc/schemas/) (`poll-site` · `election-district` · `election` · `contest` · `candidate` · `election-result` · `ballot-request`) · [openapi/nyc-elections.yaml](vote.nyc/openapi/nyc-elections.yaml) · [mcp/nyc-elections-mcp.json](vote.nyc/mcp/nyc-elections-mcp.json).
+- [nyc311/](nyc311/) — **fifth domain (NYC311), full method + Open311 alignment:**
+  - [low-hanging-fruit.md](nyc311/low-hanging-fruit.md) / [fruit.json](nyc311/fruit.json), [crosswalk.md](nyc311/crosswalk.md) (incl. `erm2-nwe9` → Open311 mapping), [opendata-311.md](nyc311/opendata-311.md).
+  - [tech-stack.md](nyc311/tech-stack.md) (Dynamics 365, api.nyc.gov gateway) · [apis-observed.md](nyc311/apis-observed.md) (retired Open311).
+  - [schemas/](nyc311/schemas/) (Open311-aligned: `service-request` · `service-type` · `service-definition` · `agency`) · [openapi/nyc-311.yaml](nyc311/openapi/nyc-311.yaml) · [mcp/nyc-311-mcp.json](nyc311/mcp/nyc-311-mcp.json).
 
 ## Status
 
-Four domains, four distinct modernization verbs — each a different way "data liberation only partially worked":
+Five domains, five distinct modernization verbs — each a different way "data liberation only partially worked":
 
 | Domain | Platform | Machine-readable coverage | Verb |
 |---|---|---|---|
@@ -80,12 +84,14 @@ Four domains, four distinct modernization verbs — each a different way "data l
 | schools.nyc.gov | Sitefinity/.NET | 638 assets; rented search, hidden backend | **reclaim** |
 | council.nyc.gov | WordPress | 3 APIs, none owned | **consolidate + own** |
 | vote.nyc | Drupal 9 | 2 assets; results/candidates PDF-only | **digitize** |
+| portal.311.nyc.gov | Dynamics 365 | flagship dataset; Open311 standard retired | **standardize** |
 
 - **nycgovparks.org** — assessment ✅ · tech/vendor ✅ · APIs-observed ✅ · crosswalk (237) ✅ · Schemas ✅ · OpenAPI ✅ · MCP ✅.
 - **schools.nyc.gov** — assessment ✅ · tech/vendor ✅ · APIs-observed ✅ · crosswalk (638) ✅ · Schemas ✅ · OpenAPI ✅ · MCP ✅.
 - **council.nyc.gov** — assessment ✅ · tech/vendor ✅ · APIs-observed (3 APIs) ✅ · crosswalk (11) ✅ · Schemas ✅ · OpenAPI ✅ · MCP ✅.
 - **vote.nyc** — assessment ✅ · tech/vendor ✅ · APIs-observed ✅ · crosswalk (2) ✅ · Schemas ✅ · OpenAPI ✅ · MCP ✅.
-- **Next** — a fifth domain from [domains.md](domains.md), or a cross-domain synthesis of the four patterns.
+- **portal.311.nyc.gov** — assessment ✅ · tech/vendor ✅ · APIs-observed ✅ · crosswalk (15 + Open311) ✅ · Schemas ✅ · OpenAPI ✅ · MCP ✅.
+- **Next** — see the [ROADMAP](ROADMAP.md): the `nyc-commons` shared schema set, more domains, and reference implementations.
 
 ---
 *Part of [API Evangelist](https://apievangelist.com). Repo: [api-evangelist/nyc](https://github.com/api-evangelist/nyc).*

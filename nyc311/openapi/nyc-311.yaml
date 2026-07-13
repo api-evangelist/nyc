@@ -1,0 +1,228 @@
+openapi: 3.1.0
+info:
+  title: NYC311 API (proposed — Open311 GeoReport v2, revived)
+  version: 0.1.0
+  summary: A modern, owned revival of the Open311 GeoReport v2 contract for NYC's flagship civic service — backed by the existing 311 record (erm2-nwe9) and hostable on the existing api.nyc.gov gateway.
+  description: >-
+    Proposed API-first surface for NYC311, from the NYC Modernization low-hanging-fruit assessment of
+    portal.311.nyc.gov.
+
+
+    NYC311 is the one domain that does not need an API invented: the **Open311 GeoReport v2** standard
+    already defines it, NYC already ran it, and the **data** is the most-used in the city
+    (`erm2-nwe9`: 1.26M views / 590k downloads). But the interactive Open311 endpoints are retired, the
+    service runs on a Dynamics 365 CRM with no public API, and the only live gateway (`api.nyc.gov`,
+    Azure APIM) is scoped to GeoClient geocoding. The verb is **Standardize**: re-adopt the open contract.
+
+
+    This OpenAPI mirrors Open311 GeoReport v2 (services, service definitions, requests) with NYC
+    extensions (agency, the geography spine). Read paths map to the existing 311 record; the write path
+    (`POST /requests`) is the piece that lapsed. Every resource schema is an individual JSON Schema file
+    referenced by `$ref`. See `../schemas/`, `../crosswalk.md`, `../tech-stack.md`, `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.nyc.gov/311/v2
+    description: Proposed — served on the existing api.nyc.gov gateway (illustrative)
+tags:
+  - name: Services
+    description: The catalog of 311 service/complaint types (Open311 services).
+  - name: Requests
+    description: 311 service requests — submit, search, track (Open311 requests).
+  - name: Agencies
+    description: Responding city agencies (NYC extension).
+  - name: Discovery
+    description: Open311 service discovery.
+
+paths:
+  /discovery:
+    get:
+      operationId: getDiscovery
+      summary: Open311 service discovery
+      tags: [Discovery]
+      responses:
+        '200':
+          description: Discovery document (endpoints, changesets, key policy).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contact: { type: string }
+                  key_service: { type: string }
+                  endpoints: { type: array, items: { type: object } }
+
+  /services:
+    get:
+      operationId: listServices
+      summary: List service types (Open311 GET Service List)
+      tags: [Services]
+      parameters:
+        - name: group
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+      responses:
+        '200':
+          description: The service catalog.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '../schemas/service-type.json' }
+  /services/{serviceCode}:
+    get:
+      operationId: getServiceDefinition
+      summary: Get a service definition (Open311 GET Service Definition)
+      tags: [Services]
+      parameters:
+        - name: serviceCode
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The attributes required to submit this service type.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/service-definition.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /requests:
+    get:
+      operationId: listServiceRequests
+      summary: Search service requests (Open311 GET Service Requests)
+      tags: [Requests]
+      parameters:
+        - name: service_code
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [open, closed] }
+        - name: start_date
+          in: query
+          schema: { type: string, format: date-time }
+        - name: end_date
+          in: query
+          schema: { type: string, format: date-time }
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of service requests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/service-request.json' } }
+    post:
+      operationId: createServiceRequest
+      summary: Submit a service request (Open311 POST Service Request)
+      description: The revived write surface — report a 311 problem. This is the endpoint that lapsed when NYC's Open311 implementation was retired.
+      tags: [Requests]
+      security: [{ apiKey: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/service-request.json' }
+      responses:
+        '201':
+          description: Request created; returns the new service_request_id / token.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/service-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /requests/{serviceRequestId}:
+    get:
+      operationId: getServiceRequest
+      summary: Track a service request (Open311 GET Service Request)
+      tags: [Requests]
+      parameters:
+        - name: serviceRequestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The service request with current status.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/service-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /agencies:
+    get:
+      operationId: listAgencies
+      summary: List responding agencies (NYC extension)
+      tags: [Agencies]
+      responses:
+        '200':
+          description: Agencies.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '../schemas/agency.json' }
+
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: Ocp-Apim-Subscription-Key
+      description: api.nyc.gov (Azure API Management) subscription key.
+  schemas:
+    ServiceRequest: { $ref: '../schemas/service-request.json' }
+    ServiceType: { $ref: '../schemas/service-type.json' }
+    ServiceDefinition: { $ref: '../schemas/service-definition.json' }
+    Agency: { $ref: '../schemas/agency.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

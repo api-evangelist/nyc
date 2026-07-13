@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc311/schemas/service-type.json",
+  "title": "ServiceType",
+  "description": "A type of 311 service/complaint. Aligned to the Open311 GeoReport v2 'service' object and reconciled with '311 Web Content - Services' (vwpc-kje2) and the '311 Service Level Agreements' dataset (cs9t-e3x8).",
+  "type": "object",
+  "x-source": {
+    "opendata": ["https://data.cityofnewyork.us/d/vwpc-kje2", "https://data.cityofnewyork.us/d/cs9t-e3x8"],
+    "standard": "Open311 GeoReport v2 (service)"
+  },
+  "properties": {
+    "serviceCode": { "type": "string", "description": "Open311 service_code." },
+    "serviceName": { "type": "string", "description": "Open311 service_name / complaint_type." },
+    "description": { "type": ["string", "null"] },
+    "group": { "type": ["string", "null"], "description": "Open311 group (category)." },
+    "keywords": { "type": "array", "items": { "type": "string" } },
+    "type": { "type": ["string", "null"], "enum": ["realtime", "batch", "blackbox", null], "description": "Open311 type." },
+    "metadata": { "type": ["boolean", "null"], "description": "Open311 metadata flag — whether a service definition exists." },
+    "agencyResponsible": { "type": ["string", "null"], "description": "Owning agency (references agency.json)." },
+    "sla": {
+      "type": ["object", "null"],
+      "description": "Service-level agreement for this type (from cs9t-e3x8).",
+      "properties": {
+        "targetDays": { "type": ["number", "null"] },
+        "description": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["serviceCode", "serviceName"],
+  "additionalProperties": false
+}

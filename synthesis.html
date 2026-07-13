@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cross-Domain Synthesis — NYC Modernization</title>
-<meta name="description" content="What four NYC government domains reveal about citywide API modernization — the four verbs, eight cross-cutting findings, and a maturity scorecard.">
+<meta name="description" content="What five NYC government domains reveal about citywide API modernization — the five verbs, eight cross-cutting findings, and a maturity scorecard.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
 <style>
@@ -24,14 +24,14 @@
 <div class="hero" style="padding:52px 0 30px">
   <div class="wrap">
     <div class="eyebrow">Cross-domain synthesis</div>
-    <h1 style="font-size:2.3rem;max-width:20ch">Four domains, one playbook</h1>
-    <p class="lead">What Parks, Public Schools, the City Council, and the Board of Elections reveal when you assess them the same way — and what a citywide API modernization would actually take.</p>
+    <h1 style="font-size:2.3rem;max-width:20ch">Five domains, one playbook</h1>
+    <p class="lead">What Parks, Public Schools, the City Council, the Board of Elections, and NYC311 reveal when you assess them the same way — and what a citywide API modernization would actually take.</p>
     <div class="cta"><a class="btn" href="docs.html?f=SYNTHESIS.md">Read the full synthesis</a></div>
   </div>
 </div>
 
 <section class="plain"><div class="wrap">
-  <div class="section-head"><div class="k">The taxonomy</div><h2>Four domains, four modernization verbs</h2>
+  <div class="section-head"><div class="k">The taxonomy</div><h2>Five domains, five modernization verbs</h2>
   <p class="muted">Assessing each domain the same way surfaces a one-word verb — the dominant shape of its gap. A diagnostic that classifies any NYC domain in one pass.</p></div>
   <div class="grid cols-4" id="verb-cards"></div>
 </div></section>
@@ -45,7 +45,7 @@
 
 <section><div class="wrap">
   <div class="section-head"><div class="k">The universal gap</div><h2>Every domain has one un-API'd citizen action</h2>
-  <p class="muted">Open data liberated reporting; it never touched transactions. Four for four, the thing a resident needs to <em>do</em> has no API — the highest-value net-new work.</p></div>
+  <p class="muted">Open data liberated reporting; it never touched transactions. Five for five, the thing a resident needs to <em>do</em> has no API — the highest-value net-new work.</p></div>
   <div class="grid cols-4" id="netnew"></div>
 </div></section>
 
@@ -56,7 +56,7 @@
 </div></section>
 
 <section><div class="wrap">
-  <div class="section-head"><div class="k">The findings</div><h2>Eight patterns that hold across all four</h2></div>
+  <div class="section-head"><div class="k">The findings</div><h2>Eight patterns that hold across all five</h2></div>
   <div id="findings"></div>
   <p style="margin-top:1.4em"><a class="btn" href="docs.html?f=SYNTHESIS.md">Full synthesis, with recommendations →</a></p>
 </div></section>
@@ -102,14 +102,14 @@
 
   // findings (condensed)
   const findings=[
-    ["Four agencies, four platforms, zero shared API layer","Smarty/PHP, Sitefinity/.NET, WordPress, Drupal — no consistent API. Consistency must be imposed above the platforms."],
+    ["Five agencies, five platforms, zero shared API layer","Smarty/PHP, Sitefinity/.NET, WordPress, Drupal, Dynamics 365 — no consistent API. Consistency must be imposed above the platforms."],
     ["The website and the open data are always two worlds","Where Open Data exists, the site renders its own parallel HTML and never consumes the twin. The defect is disconnect, not absence."],
-    ["Open Data coverage is uneven and inversely related to stakes","237 · 638 · 11 · 2 assets. Elections — the highest-stakes data — publishes the least."],
-    ["Every domain has one un-API'd citizen write-workflow","Permit, enrollment, testimony, ballot request — four for four, locked behind forms or siloed apps."],
-    ["Capability outsourcing is pervasive and uncoordinated","HawkSearch, Legistar/Granicus, Viebit, CARTO, Cloudinary — different vendors, no shared strategy; sometimes the vendor IS the API."],
-    ["Agent-readiness is zero, everywhere","Not one domain exposes an MCP or agent-native surface. Every MCP artifact here is net-new."],
+    ["Open Data coverage is uneven and inversely related to stakes","From 2 assets (Elections) to 638 (DOE) to 311's flagship dataset — coverage swings wildly and tracks nothing rational. Elections, the highest-stakes data, publishes the least."],
+    ["Every domain has one un-API'd citizen write-workflow","Permit, enrollment, testimony, ballot request, 311 request — five for five, locked behind forms, siloed apps, or a retired standard."],
+    ["Capability outsourcing is pervasive and uncoordinated","HawkSearch, Legistar/Granicus, Viebit, CARTO, Cloudinary, Dynamics 365 — different vendors, no shared strategy; sometimes the vendor IS the API."],
+    ["Agent-readiness is zero, everywhere","Not one of the five domains exposes an MCP or agent-native surface. Every MCP artifact here is net-new."],
     ["A shared geography spine recurs in every schema","Borough, Community Board, Council District, Census Tract/NTA, BBL/BIN — a latent citywide model."],
-    ["Every domain has its own join key; no cross-domain identity","gisPropNum, DBN, matterId, election-district — a resident is the same person across all four, but nothing links them."],
+    ["Every domain has its own join key; no cross-domain identity","gisPropNum, DBN, matterId, election-district, service_request_id — a resident is the same person across all five, but nothing links them."],
   ];
   document.getElementById("findings").innerHTML=findings.map((f,i)=>`
     <div class="finding"><h3>${i+1}. ${esc(f[0])}</h3><p class="muted" style="margin:0">${esc(f[1])}</p></div>`).join("");

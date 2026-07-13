@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc311/schemas/service-definition.json",
+  "title": "ServiceDefinition",
+  "description": "The attribute set required to submit a request of a given ServiceType. Aligned to the Open311 GeoReport v2 'service definition' object. Derivable from the descriptors of each complaint type; defines the dynamic form fields for report-a-problem.",
+  "type": "object",
+  "x-source": { "standard": "Open311 GeoReport v2 (service definition)" },
+  "properties": {
+    "serviceCode": { "type": "string" },
+    "attributes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string" },
+          "description": { "type": "string" },
+          "datatype": { "type": "string", "enum": ["string", "number", "datetime", "text", "singlevaluelist", "multivaluelist"] },
+          "required": { "type": "boolean" },
+          "variable": { "type": "boolean", "description": "Open311 variable flag." },
+          "order": { "type": ["integer", "null"] },
+          "values": {
+            "type": "array",
+            "description": "For singlevaluelist/multivaluelist attributes.",
+            "items": { "type": "object", "properties": { "key": { "type": "string" }, "name": { "type": "string" } }, "additionalProperties": false }
+          }
+        },
+        "required": ["code", "datatype", "required"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["serviceCode", "attributes"],
+  "additionalProperties": false
+}

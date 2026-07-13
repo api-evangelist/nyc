@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc311/schemas/_common.json",
+  "title": "NYC311 — Shared Definitions",
+  "description": "Reusable definitions for the NYC311 schemas. The AdminBoundaries block is the recurring citywide 'geography spine' (see SYNTHESIS.md) and is a candidate for the planned nyc-commons shared schema set (see ROADMAP.md).",
+  "$defs": {
+    "Borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+    "Coordinates": {
+      "type": "object",
+      "properties": { "latitude": { "type": "number" }, "longitude": { "type": "number" } },
+      "required": ["latitude", "longitude"], "additionalProperties": false
+    },
+    "AdminBoundaries": {
+      "type": "object",
+      "description": "Recurring geography spine present across NYC domains.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["string", "integer", "null"] },
+        "councilDistrict": { "type": ["string", "integer", "null"] },
+        "policePrecinct": { "type": ["string", "integer", "null"] },
+        "bbl": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    }
+  }
+}

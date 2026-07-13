@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc311/schemas/service-request.json",
+  "title": "ServiceRequest",
+  "description": "A 311 service request. Aligned to the Open311 GeoReport v2 'request' object and reconciled with the '311 Service Requests' Open Data dataset (erm2-nwe9, 48 columns). The data is fully open; a live create/track API is not (Open311 retired) — this schema is the contract to revive.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/erm2-nwe9",
+    "standard": "Open311 GeoReport v2 (request)",
+    "website": "https://portal.311.nyc.gov/"
+  },
+  "properties": {
+    "serviceRequestId": { "type": "string", "description": "Open311 service_request_id / erm2-nwe9 unique_key." },
+    "status": { "type": "string", "enum": ["open", "closed", "assigned", "in-progress", "pending"], "description": "Open311 status (mapped from erm2-nwe9 status)." },
+    "statusNotes": { "type": ["string", "null"], "description": "resolution_description." },
+    "serviceCode": { "type": ["string", "null"], "description": "Open311 service_code (references service-type.json)." },
+    "serviceName": { "type": ["string", "null"], "description": "complaint_type." },
+    "descriptor": { "type": ["string", "null"], "description": "erm2-nwe9 descriptor (finer-grained problem)." },
+    "description": { "type": ["string", "null"] },
+    "agencyResponsible": { "type": ["string", "null"], "description": "agency_name (references agency.json)." },
+    "requestedDatetime": { "type": ["string", "null"], "format": "date-time", "description": "created_date." },
+    "updatedDatetime": { "type": ["string", "null"], "format": "date-time", "description": "resolution_action_updated_date." },
+    "closedDatetime": { "type": ["string", "null"], "format": "date-time", "description": "closed_date." },
+    "expectedDatetime": { "type": ["string", "null"], "format": "date-time", "description": "due_date (from the type SLA)." },
+    "address": { "type": ["string", "null"], "description": "incident_address." },
+    "zipCode": { "type": ["string", "null"] },
+    "locationType": { "type": ["string", "null"] },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "admin": { "$ref": "_common.json#/$defs/AdminBoundaries" },
+    "channel": { "type": ["string", "null"], "description": "open_data_channel_type (Phone, Online, Mobile, Other)." },
+    "media": {
+      "type": "array",
+      "description": "Open311 media_url — photos attached to the request.",
+      "items": { "type": "string", "format": "uri" }
+    }
+  },
+  "required": ["serviceRequestId", "status"],
+  "additionalProperties": false
+}

@@ -62,13 +62,27 @@
         "agent": "None.",
         "ownership": "Mostly first-party; few vendors — but little to own yet."
       }
+    },
+    {
+      "id": "nyc311", "short": "NYC311", "verb": "Standardize", "accent": "#1f9e8f",
+      "scores": {"platform": 2, "siteApi": 1, "openData": 3, "coreData": 3, "writeApi": 0, "agent": 0, "ownership": 1},
+      "notes": {
+        "platform": "Microsoft Dynamics 365 — modern, but a proprietary vendor CRM.",
+        "siteApi": "api.nyc.gov gateway exists but GeoClient-only & key-gated; Open311 retired; Dynamics API internal.",
+        "openData": "The flagship — 311 Service Requests (erm2-nwe9): 1.26M views, 590k downloads.",
+        "coreData": "Service requests fully machine-readable; live SODA over tens of millions of records.",
+        "writeApi": "Open311 POST /requests retired; no public submit/track API.",
+        "agent": "None.",
+        "ownership": "The entire citizen service runs on a Microsoft Dynamics 365 CRM."
+      }
     }
   ],
   "netNew": [
     {"domain": "Parks", "object": "PermitApplication"},
     {"domain": "DOE", "object": "EnrollmentApplication"},
     {"domain": "Council", "object": "TestimonyRegistration"},
-    {"domain": "Elections", "object": "BallotRequest"}
+    {"domain": "Elections", "object": "BallotRequest"},
+    {"domain": "NYC311", "object": "ServiceRequest (Open311)"}
   ],
   "sharedSpine": ["Borough", "Community Board", "Council District", "Census Tract / NTA", "BBL / BIN"]
 }

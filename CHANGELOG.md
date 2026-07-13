@@ -6,6 +6,15 @@ The format is loosely [Keep a Changelog](https://keepachangelog.com/). This proj
 
 ## 2026-07-13
 
+### Added — Roadmap
+- `ROADMAP.md` — near/soon/later plan led by **`nyc-commons`** (factor the recurring geography spine — Borough, Community Board, Council District, Census Tract/NTA, BBL/BIN — into one shared schema set every domain `$ref`s), plus cross-domain identity (`Address`/`Place`), more domains, open-standards conformance, an APIs.json registry, and a reference implementation. Added to site nav.
+
+### Added — Domain 5: NYC311 (portal.311.nyc.gov)
+- Full method run. **Fifth distinct platform: Microsoft Dynamics 365** (Power Apps Portals on Azure).
+- Findings: the 311 dataset (`erm2-nwe9`) is the **most-used in the project** (1.26M views, 590k downloads); a real **API gateway exists** (`api.nyc.gov`, Azure APIM — GeoClient, key-gated); but the **Open311 (GeoReport v2) standard NYC once ran is retired**, and the service is a vendor CRM with no public write API. **Five-for-five** on the universal write-API gap.
+- Artifacts: assessment + inventories + crosswalk (incl. `erm2-nwe9`→Open311 field mapping); **Open311-aligned** JSON Schemas (`service-request`, `service-type`, `service-definition`, `agency`); **OpenAPI** reviving Open311 GeoReport v2 (6 paths / 7 ops); **MCP** (6 tools). Net-new: `ServiceRequest` (revive Open311 `POST /requests`).
+- Established the **fifth verb: Standardize**. Manifest regenerated (via new `scripts/build-manifest.py`); scorecard, synthesis, and home page updated to five domains.
+
 ### Added — Cross-domain synthesis
 - `SYNTHESIS.md` — the project-level analysis: the four-verb diagnostic taxonomy (Replatform · Reclaim · Consolidate & Own · Digitize), **eight cross-cutting findings** (no shared API layer; website vs. open data as two worlds; uneven Open Data inversely related to stakes; a universal un-API'd citizen write-workflow; pervasive uncoordinated vendor outsourcing; zero agent-readiness; a recurring shared geography spine; per-domain join keys with no cross-domain identity), a **7-dimension maturity scorecard**, and a **NYC API playbook** (shared `nyc-commons` schemas, the three-contract chain, prioritize write workflows, agent-native by default, own vendor-held records, register everything, connect data to the front door).
 - `data/scorecard.json` — per-domain maturity scores (0–3) with reasoning.
