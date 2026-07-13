@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dof/schemas/property-exemption.json",
+  "title": "PropertyExemption",
+  "description": "A property tax exemption or abatement line on a parcel (STAR, SCHE, J-51, 421-a, ICIP, etc.) — the PropertyExemption entity. Canonical schema reconciling 'Property Exemption Detail' (muvi-b6kx, 70 columns). Keyed on PARID (BBL) + year + exemption code.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/muvi-b6kx",
+    "site": "https://www.nyc.gov/site/finance/benefits/benefits-for-property-owners.page"
+  },
+  "properties": {
+    "property": { "$ref": "_common.json#/$defs/PropertyReference" },
+    "year": { "type": ["string", "integer", "null"], "description": "Roll year ('YEAR')." },
+    "period": { "type": ["string", "null"], "description": "'PERIOD'." },
+    "exemptionCode": { "type": ["string", "null"], "description": "DOF exemption code ('EXMP_CODE')." },
+    "exemptionCodeSuffix": { "type": ["string", "null"], "description": "'EXMP_CODE-SUFFIX'." },
+    "nysExemptionCode": { "type": ["string", "null"], "description": "NYS exemption code ('NYS_EXMP_CODE')." },
+    "exemptionName": { "type": ["string", "null"], "description": "Program name ('EXNAME')." },
+    "buildingClass": { "type": ["string", "null"], "description": "'BLDG-CLASS'." },
+    "finalTaxClass": { "type": ["string", "null"], "description": "'FINTAXCLASS'." },
+    "owner": { "type": ["string", "null"], "description": "'OWNER2'." },
+    "status": { "type": ["string", "null"], "description": "Exemption status ('STATUS' / 'PSTATUS')." },
+    "benefitStart": { "type": ["string", "null"], "format": "date", "description": "Benefit start ('BENFTSTART')." },
+    "effectiveDate": { "type": ["string", "null"], "format": "date", "description": "'EFF_DATE'." },
+    "numberOfYears": { "type": ["integer", "string", "null"], "description": "Benefit term ('NO_YEARS')." },
+    "caseNumber": { "type": ["string", "null"], "description": "'CASENO'." },
+    "amounts": {
+      "type": "object",
+      "description": "Current-year exempt value components (whole-dollar).",
+      "properties": {
+        "currentExemptTotal": { "$ref": "_common.json#/$defs/Money", "description": "'CUREXMPTOT'." },
+        "finalExemptTotal": { "$ref": "_common.json#/$defs/Money", "description": "'FINEXMPTOT'." },
+        "priorYearExemptTotal": { "$ref": "_common.json#/$defs/Money", "description": "'PYEXMPTOT'." },
+        "baseTotal": { "$ref": "_common.json#/$defs/Money", "description": "'BASETOT'." }
+      },
+      "additionalProperties": false
+    },
+    "extractDate": { "type": ["string", "null"], "format": "date", "description": "'EXTRACTDT'." }
+  },
+  "additionalProperties": false
+}

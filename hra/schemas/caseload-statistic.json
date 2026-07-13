@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hra/schemas/caseload-statistic.json",
+  "title": "CaseloadStatistic",
+  "description": "An aggregate benefit caseload / enrollment figure for a program, period, and (optionally) geography — the recipient/enrollee/case counts HRA publishes each month. AGGREGATE ONLY: no individual case or resident is ever exposed. Canonical schema reconciling 'Total SNAP Recipients' (5c4s-jwtq), 'Cash Assistance Recipients in NYC' (qtrj-g3nm), 'Citywide HRA-Administered Medicaid Enrollees' (33db-aeds), 'Cash Assistance, Medicaid, and SNAP - Borough/Community District Report' (5awp-wfkt), 'District Resource Statement' (au2c-rs69), and 'Fair Fares Enrollees' (3tw8-6si8).",
+  "type": "object",
+  "x-source": {
+    "opendata_snap": "https://data.cityofnewyork.us/d/5c4s-jwtq",
+    "opendata_cash_assistance": "https://data.cityofnewyork.us/d/qtrj-g3nm",
+    "opendata_medicaid": "https://data.cityofnewyork.us/d/33db-aeds",
+    "opendata_borough_cd": "https://data.cityofnewyork.us/d/5awp-wfkt",
+    "opendata_drs": "https://data.cityofnewyork.us/d/au2c-rs69",
+    "opendata_fair_fares": "https://data.cityofnewyork.us/d/3tw8-6si8"
+  },
+  "properties": {
+    "program": { "$ref": "_common.json#/$defs/BenefitProgram" },
+    "measure": {
+      "type": "string",
+      "enum": ["Recipients", "Cases", "Households", "Enrollees", "Applications", "Requests"],
+      "description": "What is being counted."
+    },
+    "period": { "type": ["string", "null"], "description": "Reporting period label ('Month' / 'Year' / 'Data as of')." },
+    "periodDate": { "type": ["string", "null"], "format": "date", "description": "Normalized period date." },
+    "value": { "type": ["integer", "number", "null"], "description": "The count/value for this program, measure, and period." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "communityDistrict": { "type": ["string", "integer", "null"], "description": "'Community District (CD)' when the figure is district-level." },
+    "monthlyPercentChange": { "type": ["number", "null"], "description": "'MONTHLY percent change', where published." },
+    "yearlyPercentChange": { "type": ["number", "null"], "description": "'YEARLY percent change', where published." },
+    "breakdown": {
+      "type": ["object", "null"],
+      "description": "Optional sub-measures reported alongside the headline value (e.g. Medicaid: 'Medical Assistance Only', 'Cash Assistance - Medical Assistance', 'Nursing Home').",
+      "additionalProperties": { "type": ["integer", "number", "null"] }
+    }
+  },
+  "required": ["program", "measure"],
+  "additionalProperties": false
+}

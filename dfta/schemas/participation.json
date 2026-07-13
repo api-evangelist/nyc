@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dfta/schemas/participation.json",
+  "title": "Participation",
+  "description": "Aggregate participation in a DFTA-funded program — the unduplicated client count for a program/site in a fiscal year. Canonical schema reconciling 'Number of Participants in NYC Aging funded Programs' (2td3-mfek, 18 columns). AGGREGATE ONLY: DFTA never publishes an individual older adult / client record to Open Data; participant-level intake lives inside DFTA's case-management systems and Aging Connect.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/2td3-mfek"
+  },
+  "properties": {
+    "dftaId": { "type": ["string", "null"], "description": "'DFTA ID' of the program/site." },
+    "programName": { "type": ["string", "null"], "description": "'Program Name'." },
+    "programType": { "type": ["string", "null"], "description": "'Program Type'." },
+    "fiscalYear": { "type": ["string", "integer", "null"], "description": "'Fiscal Year'." },
+    "unduplicatedClients": { "type": ["integer", "null"], "description": "'Unduplicated Clients' — aggregate count, never an individual record." },
+    "address": { "type": ["string", "null"], "description": "'Address'." },
+    "city": { "type": ["string", "null"], "description": "'City'." },
+    "state": { "type": ["string", "null"], "description": "'State'." },
+    "zipCode": { "type": ["string", "null"], "description": "'Zip Code'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

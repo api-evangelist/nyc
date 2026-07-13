@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dep/schemas/water-consumption.json",
+  "title": "WaterConsumption",
+  "description": "Citywide water-consumption for a single year, from 'Water Consumption in the City of New York' (ia2d-e54m, 4 columns) — DEP's single most-viewed dataset. NOTE the asymmetry: DEP publishes consumption only at the CITYWIDE aggregate. Per-ACCOUNT consumption and billing live only inside the login-walled My DEP Account portal (uMAX Customer Information System) and have no Open Data twin — see water-service-request.json and tech-stack.md.",
+  "type": "object",
+  "x-source": {
+    "opendata_consumption": "https://data.cityofnewyork.us/d/ia2d-e54m",
+    "portal_account": "https://a826-umax.dep.nyc.gov/",
+    "opendata_account_gap": true
+  },
+  "properties": {
+    "year": { "type": "string", "description": "Calendar year ('Year')." },
+    "population": { "type": ["integer", "null"], "description": "New York City population ('New York City Population')." },
+    "consumptionMgd": { "type": ["number", "null"], "description": "NYC consumption in million gallons per day ('NYC Consumption(Million gallons per day)')." },
+    "perCapitaGpcd": { "type": ["number", "null"], "description": "Per-capita consumption, gallons per person per day ('Per Capita(Gallons per person per day)')." }
+  },
+  "required": ["year"],
+  "additionalProperties": false
+}

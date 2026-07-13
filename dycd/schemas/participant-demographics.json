@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dycd/schemas/participant-demographics.json",
+  "title": "ParticipantDemographics",
+  "description": "Aggregated demographics of DYCD program participants (enrollment) for a geography or program type — the participant/enrollment record, published only in aggregate (never per individual). Canonical schema reconciling the 'DYCD Participant Demographics' dataset (k9kq-67vm, 52 columns). Individual participant records live only inside DYCD Connect and provider systems; DYCD never publishes them.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/k9kq-67vm",
+    "opendata_youth_count": "https://data.cityofnewyork.us/d/qx6a-vcwx"
+  },
+  "properties": {
+    "geography": { "type": ["string", "null"], "description": "'Geography' — the area or unit this rollup describes." },
+    "geographyType": { "type": ["string", "null"], "description": "'Geography Type' (e.g. Citywide, Borough, Council District, Program Type)." },
+    "programType": { "type": ["string", "null"], "description": "'ProgramType'." },
+    "dataAsOfDate": { "type": ["string", "null"], "format": "date", "description": "'Data as of Date'." },
+    "raceEthnicity": {
+      "type": "object",
+      "description": "Counts and percentages by race/ethnicity (aggregate).",
+      "properties": {
+        "hispanicOrLatinoCount": { "type": ["integer", "null"] },
+        "notHispanicOrLatinoCount": { "type": ["integer", "null"] },
+        "asianCount": { "type": ["integer", "null"] },
+        "blackOrAfricanAmericanCount": { "type": ["integer", "null"] },
+        "whiteOrCaucasianCount": { "type": ["integer", "null"] },
+        "americanIndianOrAlaskanNativeCount": { "type": ["integer", "null"] },
+        "nativeHawaiianOrOtherPacificIslanderCount": { "type": ["integer", "null"] },
+        "middleEasternAndNorthAfricanCount": { "type": ["integer", "null"] },
+        "multiRaceCount": { "type": ["integer", "null"] },
+        "otherCount": { "type": ["integer", "null"] },
+        "declineToAnswerCount": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "genderIdentity": {
+      "type": "object",
+      "description": "Counts and percentages by gender identity (aggregate).",
+      "properties": {
+        "femaleCount": { "type": ["integer", "null"] },
+        "maleCount": { "type": ["integer", "null"] },
+        "nonBinaryCount": { "type": ["integer", "null"] },
+        "genderNonconformingCount": { "type": ["integer", "null"] },
+        "twoSpiritCount": { "type": ["integer", "null"] },
+        "anotherGenderCount": { "type": ["integer", "null"] },
+        "notSureCount": { "type": ["integer", "null"] },
+        "declineToAnswerCount": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

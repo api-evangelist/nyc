@@ -1,0 +1,331 @@
+openapi: 3.1.0
+info:
+  title: DHS API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Homeless Services — publishing its
+    already-open reference data (the daily shelter census, drop-in centers, shelter facilities and
+    repair scorecard, DHS contacts/intake centers, and aggregate street-homeless counts) as coherent
+    resources, and adding the missing write surface that today exists only as a NYC311 phone call —
+    requesting street outreach for a person experiencing homelessness.
+  description: >-
+    Proposed API-first surface for the New York City Department of Homeless Services (DHS), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/dhs.
+
+
+    DHS is an observational-data agency. Its **counts and directories are unusually well published** on
+    NYC Open Data — 23 datasets led by the flagship **DHS Daily Report** (the daily shelter census, the
+    single most-viewed DHS asset), plus drop-in centers, the Shelter Repair Scorecard, DHS
+    contacts/intake centers, and years of unsheltered street-homeless counts. But there is **no service
+    or transaction API at all**: the informational site sits on the shared NYC.gov "Livesite" chassis,
+    and every action a New Yorker actually takes — apply for shelter, or **report someone sleeping on
+    the street so an outreach team responds** — routes through NYC311, a phone call, or an in-person
+    intake center. None of it has a machine-readable contract.
+
+
+    This contract does two things: (1) presents the open reference datasets as one clean resource model,
+    and (2) adds the one net-new **write** workflow — creating an **outreach request** (report a person
+    experiencing unsheltered homelessness) — that today exists only behind NYC311's "Homeless Person
+    Assistance."
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.dhs.nyc/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Census
+    description: The daily shelter census (DHS Daily Report) and intake counts.
+  - name: DropInCenters
+    description: 24/7 homeless drop-in centers.
+  - name: Facilities
+    description: Shelter facilities/buildings, capacity, and the repair scorecard.
+  - name: Contacts
+    description: DHS offices, intake centers, and public contact points.
+  - name: Street
+    description: Aggregate unsheltered / street-homeless counts (never individuals).
+  - name: Outreach
+    description: Request and track street outreach (read + write). The net-new surface, today only a NYC311 call.
+
+paths:
+  /shelter-census:
+    get:
+      operationId: listShelterCensus
+      summary: List / search the daily shelter census
+      tags: [Census]
+      parameters:
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of daily shelter census records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/shelter-census.json' } }
+  /shelter-census/{date}:
+    get:
+      operationId: getShelterCensusForDate
+      summary: Get the shelter census for a specific date
+      tags: [Census]
+      parameters:
+        - name: date
+          in: path
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: The shelter census for that date.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/shelter-census.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /drop-in-centers:
+    get:
+      operationId: listDropInCenters
+      summary: List / search homeless drop-in centers
+      tags: [DropInCenters]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of drop-in centers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/drop-in-center.json' } }
+
+  /facilities:
+    get:
+      operationId: listFacilities
+      summary: List / search shelter facilities and the repair scorecard
+      tags: [Facilities]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: facilityType
+          in: query
+          schema: { type: string }
+        - name: month
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of shelter facilities.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/shelter-facility.json' } }
+  /facilities/{buildingId}:
+    get:
+      operationId: getFacility
+      summary: Get a shelter facility by DHS Building ID
+      tags: [Facilities]
+      parameters:
+        - name: buildingId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The shelter facility.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/shelter-facility.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /contacts:
+    get:
+      operationId: listContacts
+      summary: List DHS offices, intake centers, and contact points
+      tags: [Contacts]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of DHS contacts.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/dhs-contact.json' } }
+
+  /street-homeless-counts:
+    get:
+      operationId: listStreetHomelessCounts
+      summary: Aggregate unsheltered / street-homeless counts
+      tags: [Street]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: period
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate street-homeless counts.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/street-homeless-count.json' } }
+
+  /outreach-requests:
+    get:
+      operationId: listOutreachRequests
+      summary: List the caller's submitted street-outreach requests
+      description: Reads the reporter's own outreach requests and their status — today only trackable as a NYC311 service request.
+      tags: [Outreach]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Assigned, Outreach In Progress, Contact Made, Placed, Unable To Locate, Closed] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the caller's outreach requests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/outreach-request.json' } }
+    post:
+      operationId: createOutreachRequest
+      summary: Request street outreach (report a person experiencing homelessness)
+      description: >-
+        The net-new write surface — an API for reporting a person sleeping on the street so a mobile
+        outreach team responds, replacing the NYC311-only ("Homeless Person Assistance") workflow.
+        Life-safety emergencies (unresponsive, medical, extreme cold/heat) should set the `emergency`
+        flag to true and also be reported to 911.
+      tags: [Outreach]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/outreach-request.json' }
+      responses:
+        '201':
+          description: Outreach request created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/outreach-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /outreach-requests/{requestId}:
+    get:
+      operationId: getOutreachRequest
+      summary: Get a street-outreach request
+      tags: [Outreach]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The outreach request.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/outreach-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ShelterCensus: { $ref: '../schemas/shelter-census.json' }
+    DropInCenter: { $ref: '../schemas/drop-in-center.json' }
+    ShelterFacility: { $ref: '../schemas/shelter-facility.json' }
+    DHSContact: { $ref: '../schemas/dhs-contact.json' }
+    StreetHomelessCount: { $ref: '../schemas/street-homeless-count.json' }
+    OutreachRequest: { $ref: '../schemas/outreach-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

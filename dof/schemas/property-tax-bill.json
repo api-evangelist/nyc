@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dof/schemas/property-tax-bill.json",
+  "title": "PropertyTaxBill",
+  "description": "The outstanding property charges / tax balance for a parcel account — the PropertyTaxBill entity. Canonical schema reconciling 'DOF: Property Charges Balance' (scjx-j6np, 34 columns). Keyed on PARID (BBL) + tax year. The live account and payment surface itself lives only in the legacy Property Tax System (a836-pts-access.nyc.gov) and CityPay; Open Data publishes the balance snapshot.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/scjx-j6np",
+    "pts": "https://a836-pts-access.nyc.gov/",
+    "citypay": "https://a836-citypay.nyc.gov/"
+  },
+  "properties": {
+    "accountId": { "type": ["string", "null"], "description": "DOF account id ('ACCOUNT ID')." },
+    "property": { "$ref": "_common.json#/$defs/PropertyReference" },
+    "taxYear": { "type": ["string", "integer", "null"], "description": "Tax year ('TAXYEAR')." },
+    "priorYear": { "type": ["string", "integer", "null"], "description": "'PRIORYEAR'." },
+    "accountType": { "type": ["string", "null"], "description": "Account type ('TYPE_ACCT')." },
+    "rollType": { "type": ["string", "null"], "description": "'ROLLTYPE'." },
+    "landUseCode": { "type": ["string", "null"], "description": "Land use code ('LUC')." },
+    "valuationClass": { "type": ["string", "null"], "description": "'VALCLASS'." },
+    "cityOwned": { "type": ["boolean", "string", "null"], "description": "City-owned flag ('CITY_OWNED_FLAG')." },
+    "cycle": { "type": ["string", "null"], "description": "Billing cycle ('CYCLE')." },
+    "dueDate": { "type": ["string", "null"], "format": "date", "description": "'DUE_DATE'." },
+    "graceDate": { "type": ["string", "null"], "format": "date", "description": "'DT_GRACE'." },
+    "postThrough": { "type": ["string", "null"], "format": "date", "description": "'POST_THRU'." },
+    "balance": {
+      "type": "object",
+      "description": "Summarized charge amounts on the account.",
+      "properties": {
+        "liability": { "$ref": "_common.json#/$defs/Money", "description": "Total liability ('SUM_LIAB')." },
+        "collected": { "$ref": "_common.json#/$defs/Money", "description": "Amount collected ('SUM_COLL')." },
+        "interest": { "$ref": "_common.json#/$defs/Money", "description": "Interest ('SUM_INT')." },
+        "discount": { "$ref": "_common.json#/$defs/Money", "description": "Discount ('SUM_DSC')." },
+        "balanceDue": { "$ref": "_common.json#/$defs/Money", "description": "Outstanding balance ('SUM_BAL')." }
+      },
+      "additionalProperties": false
+    },
+    "interestAgreement": { "type": ["string", "null"], "description": "Payment/interest agreement indicator ('INT_AGREE')." },
+    "extractDate": { "type": ["string", "null"], "format": "date", "description": "'EXTRACTDT'." }
+  },
+  "additionalProperties": false
+}

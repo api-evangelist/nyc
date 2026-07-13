@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dof/schemas/parking-ticket-payment.json",
+  "title": "ParkingTicketPayment",
+  "description": "A payment made against a parking / camera violation summons — the everyday DOF transaction. NET-NEW: there is NO public payment API; today a resident pays a ticket only through the CityPay web app (a836-citypay.nyc.gov, a PayPal/Braintree-backed form) or by mail. The read twin ('Open Parking and Camera Violations', nc67-uf89) publishes the balance, but the act of paying has no machine-readable contract. This schema serves both the PaymentRequest write surface (pay a ticket) and the receipt returned on success.",
+  "type": "object",
+  "x-source": {
+    "citypay": "https://a836-citypay.nyc.gov/",
+    "opendata_balance": "https://data.cityofnewyork.us/d/nc67-uf89",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "paymentId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned payment / transaction id. Omit on create; returned on the receipt.",
+      "readOnly": true
+    },
+    "confirmationNumber": {
+      "type": ["string", "null"],
+      "description": "CityPay confirmation number. Set by DOF, not the payer.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Authorized", "Paid", "Declined", "Refunded", "Failed", null],
+      "description": "Payment lifecycle status. Set by DOF/the payment gateway.",
+      "readOnly": true
+    },
+    "summonsNumber": { "type": "string", "description": "The violation summons being paid ('Summons Number')." },
+    "plate": { "type": ["string", "null"], "description": "License plate on the summons." },
+    "plateState": { "type": ["string", "null"], "description": "Registration state of the plate." },
+    "amount": { "type": "number", "minimum": 0, "description": "Amount to pay, in US dollars — up to the summons Amount Due." },
+    "payFullBalance": { "type": "boolean", "default": true, "description": "Pay the full outstanding balance rather than a partial amount." },
+    "paymentMethod": {
+      "type": "string",
+      "enum": ["credit_card", "debit_card", "bank_account", "paypal"],
+      "description": "Tender type (CityPay is backed by PayPal / Braintree)."
+    },
+    "paymentToken": {
+      "type": ["string", "null"],
+      "description": "Opaque gateway token (e.g. Braintree nonce) representing the tokenized instrument. Raw card / bank numbers are never accepted by this contract."
+    },
+    "payer": {
+      "type": "object",
+      "description": "Payer contact / billing details.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "postcode": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "amountPaid": { "$ref": "_common.json#/$defs/Money", "description": "Amount actually captured.", "readOnly": true },
+    "balanceRemaining": { "$ref": "_common.json#/$defs/Money", "description": "Summons balance after this payment.", "readOnly": true },
+    "receiptUrl": { "type": ["string", "null"], "description": "URL to the payment receipt.", "readOnly": true },
+    "paidDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["summonsNumber", "amount", "paymentMethod"],
+  "additionalProperties": false
+}

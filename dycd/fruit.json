@@ -1,0 +1,145 @@
+{
+  "domain": "dycd",
+  "agency": "NYC Department of Youth and Community Development (DYCD)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted the informational site nyc.gov/site/dycd (nginx + NYC.gov 'Livesite' platform v22 + Akamai edge + Dynatrace + AWS ALB) and the DYCD Connect ecosystem at dycdconnect.nyc and discoverdycd.dycdconnect.nyc (Microsoft-IIS/10.0 + Angular SPA with an internal /api/ backend, Google Maps + Places). Verified the NYC Open Data agency label 'Department of Youth and Community Development (DYCD)' via the Socrata Discovery API and pulled all 15 assets with column schemas.",
+  "meta": {
+    "short": "NYC Youth & Community Dev (DYCD)",
+    "verb": "surface",
+    "platform": "Informational site on the NYC.gov 'Livesite' chassis (nginx/Akamai/Dynatrace); the DYCD Connect / DiscoverDYCD apps on Microsoft-IIS + Angular with a private internal /api/",
+    "netnew": "ProgramApplication — apply to a program (e.g. an SYEP application)",
+    "accent": "#d9a02a",
+    "tagline": "DYCD already built a public program finder and publishes its whole supply chain as open data — it just never gave either an API, or a way to apply.",
+    "headline": "The program finder exists as an app but not as an API, and there is no machine-readable way to apply to a DYCD program."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 1,
+    "openData": 2,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Informational site on the shared NYC.gov Livesite chassis; DYCD Connect / DiscoverDYCD is a real, custom, DYCD-owned Angular-on-IIS application",
+    "siteApi": "DiscoverDYCD has an internal /api/ backend, but it is undocumented, private, and returns 404 to any public probe — no documented site API",
+    "openData": "15 datasets, strong on the supply side (program sites 34c, contracts, providers, aggregate demographics 52c) but no clean catalog of the program offerings themselves",
+    "coreData": "Program sites, providers, and contracts are modeled with keys and a full geography spine; 'Program' as an offering lives only inside the finder app",
+    "writeApi": "No write API anywhere — applying to a program (SYEP, COMPASS) has no public, machine-readable surface",
+    "agent": "No MCP, no agent-native contract; the finder is a human-only Angular UI",
+    "ownership": "DYCD owns and operates its own finder and portal (unlike rented search); open data is owned via Socrata"
+  },
+  "related_domains": ["dycdconnect.nyc", "discoverdycd.dycdconnect.nyc", "data.cityofnewyork.us", "nyc.gov/site/nycha", "application.nyc.gov"],
+  "headline_findings": [
+    "DYCD is a split domain: an informational NYC.gov site (nginx/Livesite/Akamai/Dynatrace) plus the DYCD Connect ecosystem — dycdconnect.nyc and the DiscoverDYCD program finder (discoverdycd.dycdconnect.nyc) — an Angular SPA on Microsoft-IIS with a private internal /api/ backend.",
+    "DYCD is a funder/intermediary, not a direct service provider: it contracts hundreds of community-based organizations (providers) to run programs (SYEP, COMPASS/SONYC, Beacon, Cornerstone) at physical program sites, and the open data documents that supply chain.",
+    "The supply-side data is well published: 15 NYC Open Data datasets covering program sites (ebkm-iyma, 34 columns with a full geography spine, slots, and participants), contracts, contractors/providers, Neighborhood Development Areas, and aggregate participant demographics (k9kq-67vm, 52 columns).",
+    "But the program finder is an app, not an API: DYCD already built DiscoverDYCD to help the public find programs, yet its backend /api/ is undocumented and private, and there is no clean Open Data catalog of the program offerings themselves.",
+    "Net-new write surface: apply to a program (ProgramApplication) — e.g. an SYEP application — the transaction a young person actually needs, with no public API today; it lives only in DYCD's seasonal online application flow. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "15 DYCD datasets; SODA /resource/<id>.json endpoints. The one real, open DYCD API — supply-side/reference data only (program sites, contracts, providers, NDAs, aggregate demographics)." },
+    { "endpoint": "discoverdycd.dycdconnect.nyc/api", "type": "program-finder backend", "owner": "DYCD (Angular SPA on Microsoft-IIS)", "public": "internal, undocumented", "note": "The DiscoverDYCD program finder is a hashed-bundle Angular app that calls a private /api/ backend (returns 404 to public probes). Uses Google Maps + Places. No public docs, no OpenAPI." },
+    { "endpoint": "www.dycdconnect.nyc", "type": "provider / participant portal", "owner": "DYCD (Microsoft-IIS)", "public": "login-walled UI, no API", "note": "The DYCD Connect ecosystem where providers manage contracts and where program application/enrollment flows live. No public API." },
+    { "endpoint": "www.nyc.gov/site/dycd", "type": "informational site", "owner": "NYC.gov shared platform (Livesite v22)", "public": "html", "note": "content only; nginx origin behind Akamai edge, Dynatrace RUM, AWS ALB. No content API." },
+    { "endpoint": "maps.googleapis.com", "type": "maps/places API", "owner": "Google", "public": "vendor", "note": "DiscoverDYCD embeds Google Maps JS + Places for site location/search." }
+  ],
+  "fruit": [
+    {
+      "name": "Program offerings (SYEP, COMPASS, Beacon, SONYC, Cornerstone…)",
+      "type": "program finder (app)",
+      "entity": "Program",
+      "url": "https://discoverdycd.dycdconnect.nyc/",
+      "count": "~dozens of program types across 7+ program areas",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The thing a young person actually enrolls in. Authoritative surface is the DiscoverDYCD finder app; its taxonomy (Program Area / Program Type / Service Category) is echoed on DYCD Program Sites, but there is no clean Open Data catalog of offerings and no public finder API."
+    },
+    {
+      "name": "Program Sites",
+      "type": "data table + map",
+      "entity": "ProgramSite",
+      "url": "https://data.cityofnewyork.us/d/ebkm-iyma",
+      "count": "thousands of funded sites",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DYCD Program Sites ebkm-iyma (34c)", "Evaluation and Monitoring Reports for Program Sites 9f5n-qdib (22c)"],
+      "notes": "The core supply unit — every funded site with provider, program area/type, service category, slots, participants, and a full NYC geography spine (BBL/BIN, council/community district, NTA, census tract, NDA, lat/long). The richest DYCD asset."
+    },
+    {
+      "name": "Providers (contracted CBOs)",
+      "type": "data table",
+      "entity": "Provider",
+      "url": "https://data.cityofnewyork.us/d/75e9-fg2t",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DYCD Contractors 75e9-fg2t (5c)", "Provider field on DYCD Program Sites ebkm-iyma", "Provider on DYCD Contracts graj-69em"],
+      "notes": "DYCD is an intermediary — the community-based organizations are the actual delivery layer. Provider name + PortfolioID join sites, contracts, and awarded amounts."
+    },
+    {
+      "name": "Contracts",
+      "type": "data table",
+      "entity": "Contract",
+      "url": "https://data.cityofnewyork.us/d/graj-69em",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DYCD Contracts graj-69em (15c)", "DYCD Contractors 75e9-fg2t (award amounts)"],
+      "notes": "The funding instrument behind every program site — provider, major program, solicitation, funded amounts, term dates, registration. Keyed on Contract Number + suffix."
+    },
+    {
+      "name": "Neighborhood Development Areas (Service Areas)",
+      "type": "data table + map",
+      "entity": "ServiceArea",
+      "url": "https://data.cityofnewyork.us/d/vd7c-qjsx",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Neighborhood Development Areas vd7c-qjsx (3c)", "Neighborhood Development Areas Map p57r-4v4f"],
+      "notes": "The community-district-level catchments used to target community-development funding (immigrant services, adult literacy, family support). GeoJSON boundaries by borough."
+    },
+    {
+      "name": "Participant Demographics (aggregate)",
+      "type": "data table",
+      "entity": "ParticipantDemographics",
+      "url": "https://data.cityofnewyork.us/d/k9kq-67vm",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DYCD Participant Demographics k9kq-67vm (52c)", "Youth Count qx6a-vcwx", "RHY Demographics and Services 39et-rijq"],
+      "opendata_gap": false,
+      "notes": "Race/ethnicity and gender-identity counts and percentages per geography/program type — AGGREGATE ONLY. No individual participant record is ever published (privacy by design). Also stands in for Enrollment (slots/participants live on Program Sites)."
+    },
+    {
+      "name": "SYEP for NYCHA residents (Local Law 163)",
+      "type": "data table",
+      "entity": "ParticipantDemographics",
+      "url": "https://data.cityofnewyork.us/d/x4x8-m3ds",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["SYEP for NYCHA Residents by Borough x4x8-m3ds", "by NYCHA development acek-a5z6", "by Council District 73rz-5b7x"],
+      "notes": "Enrollment rollups for the Summer Youth Employment Program among NYCHA residents — the shared surface with the NYCHA domain."
+    },
+    {
+      "name": "Runaway & Homeless Youth (RHY) reporting",
+      "type": "data table",
+      "entity": "ParticipantDemographics",
+      "url": "https://data.cityofnewyork.us/d/5rw7-99k7",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["RHY Daily Census 5rw7-99k7", "RHY Demographics & Services LL86 39et-rijq", "RHY Shelter Access LL79 tg2n-zp58", "RHY Streamlined Referrals LL81 denm-3mvn"],
+      "notes": "Local-Law-mandated census and demographics for the Runaway & Homeless Youth program area — aggregate reporting only."
+    },
+    {
+      "name": "Apply to a program (SYEP application)",
+      "type": "sign-up / application workflow",
+      "entity": "ProgramApplication",
+      "url": "https://application.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most important transaction — a young person applying to a program (SYEP, COMPASS, Beacon). No public API and no Open Data twin; it lives only in DYCD's seasonal online application flow and the DYCD Connect / DiscoverDYCD apps. The net-new WRITE surface for this domain."
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doc/schemas/complaint.json",
+  "title": "Complaint",
+  "description": "A complaint, grievance, or records request submitted to DOC — a second NET-NEW write surface. There is NO public API today: complaints and records/FOIL requests are filed by phone, mail, in person, or through the citywide OpenRecords portal, with no machine-readable status contract and no Open Data twin. This schema serves both the write surface (file a complaint / records request) and the read surface (check its status).",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/doc/about/foil-requests.page",
+    "openrecords": "https://a860-openrecords.nyc.gov/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "complaintId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned tracking number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Received", "In Review", "Information Requested", "Fulfilled", "Denied", "Closed", null],
+      "description": "Lifecycle status. Set by DOC, not the requester.",
+      "readOnly": true
+    },
+    "type": {
+      "type": "string",
+      "enum": ["Complaint", "Grievance", "Records Request (FOIL)", "Accommodation Request", "Other"],
+      "description": "Type of submission."
+    },
+    "subject": { "type": "string", "description": "Short subject line." },
+    "description": { "type": "string", "description": "Free-text description of the complaint or the records requested." },
+    "facility": { "$ref": "_common.json#/$defs/FacilityReference" },
+    "personInCustody": {
+      "type": "object",
+      "description": "Optional reference to a person in custody the submission concerns.",
+      "properties": {
+        "inmateId": { "type": ["string", "null"] },
+        "nysid": { "type": ["string", "null"] },
+        "bookAndCaseNumber": { "type": ["string", "null"] },
+        "name": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "contact": {
+      "type": "object",
+      "description": "Submitter contact details.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["type", "subject", "description"],
+  "additionalProperties": false
+}

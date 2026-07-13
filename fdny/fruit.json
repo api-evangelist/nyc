@@ -1,0 +1,146 @@
+{
+  "domain": "fdny",
+  "agency": "Fire Department of the City of New York (FDNY)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/fdny (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace) and the FDNY Business permitting portal at fires.fdnycloud.org, identified as an Accela Civic Platform (Citizen Access) application (`/CitizenAccess/Default.aspx`, Accela CSP allow-list, Datadog RUM) fronted by Cloudflare + an Azure Application Gateway. Verified the NYC Open Data agency label 'Fire Department of New York City (FDNY)' via the Socrata Discovery API and pulled all 17 assets with column schemas.",
+  "meta": {
+    "short": "NYC Fire (FDNY)",
+    "verb": "front",
+    "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) informational site + FDNY Business on a rented Accela Civic Platform (fires.fdnycloud.org, Cloudflare + Azure App Gateway, Datadog RUM)",
+    "netnew": "FirePermitApplication — apply for and track a fire permit / Certificate of Operation / inspection request via FDNY Business",
+    "accent": "#c23b2b",
+    "tagline": "FDNY publishes its firehouses, incidents, inspections, and violations generously on Open Data, but every business transaction is trapped in a rented Accela permitting cloud with no API.",
+    "headline": "Put an owned, agent-native API in front of the rented FDNY Business (Accela) portal so applying for a fire permit is a machine-readable call, not a vendor-SaaS screen."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 3,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "informational site on shared NYC.gov Livesite; the transaction platform is a rented Accela Civic Platform SaaS",
+    "siteApi": "nyc.gov/site/fdny is content-only — no content API",
+    "openData": "17 datasets, generous — firehouses, minute-level fire & EMS dispatch, inspections, violations, certificates",
+    "coreData": "reference & incident data strong, but live permit / C of F / inspection status is only historical snapshots; current status is behind Accela",
+    "writeApi": "no write API; permits, C of F, and inspection requests are Accela UI / paper only",
+    "agent": "no MCP or agent-native surface exists today",
+    "ownership": "incident-data pipeline is owned; the business transaction system of record is a rented commercial SaaS (Accela)"
+  },
+  "related_domains": ["fires.fdnycloud.org", "data.cityofnewyork.us", "nyc.gov/site/buildings", "nyc.gov/site/nypd"],
+  "headline_findings": [
+    "FDNY is a split domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus FDNY Business (fires.fdnycloud.org), a rented Accela Civic Platform (Citizen Access) permitting application fronted by Cloudflare and an Azure Application Gateway — with no public API.",
+    "The reference and operational data is unusually OPEN: 17 NYC Open Data datasets covering firehouses, minute-level Fire and EMS incident dispatch, Bureau of Fire Prevention inspections, active violation orders, certificates of fitness, building vacate lists, and fire-cause investigations.",
+    "But the business SERVICE layer has no machine-readable surface: applying for a fire permit, holding a Certificate of Fitness/Operation, scheduling an inspection, or answering a violation happens only inside the rented Accela portal or on paper.",
+    "The Open Data cut is historical/snapshot: inspections, violations, certificates, and building summaries are all published as '(Historical)' extracts — the live regulatory state lives inside Accela.",
+    "Net-new write surface: submit a fire permit application (FirePermitApplication) — the core FDNY Business transaction, with no API today. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "17 FDNY datasets; SODA /resource/<id>.json endpoints. The one real, open FDNY API — reference/operational data only." },
+    { "endpoint": "fires.fdnycloud.org/CitizenAccess", "type": "business permitting portal (SaaS)", "owner": "FDNY (on Accela Civic Platform)", "public": "login-walled UI, no API", "note": "FDNY Business — fire permits, Certificates of Fitness/Operation, inspection scheduling, violation response. Accela Citizen Access (.aspx), Datadog RUM; no JSON/OpenAPI. Fronted by Cloudflare + Azure Application Gateway." },
+    { "endpoint": "www.nyc.gov/site/fdny", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API." },
+    { "endpoint": "Akamai edge", "type": "CDN API", "owner": "Akamai", "public": "vendor", "note": "x-akamai-transformed / server-timing on the informational site." },
+    { "endpoint": "Datadog RUM", "type": "monitoring beacon", "owner": "Datadog", "public": "vendor", "note": "Accela portal ships a Datadog browser-agent CSP report-uri." }
+  ],
+  "fruit": [
+    {
+      "name": "Firehouse Listing",
+      "type": "directory + map",
+      "entity": "Firehouse",
+      "url": "https://www.nyc.gov/site/fdny/about/resources/fire-companies/find-a-firehouse.page",
+      "count": "~200+ firehouses",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["FDNY Firehouse Listing hc8x-tcnd (12c)"],
+      "notes": "Core physical unit. Facility name/address, BIN/BBL, and full geography spine (community board, council, census tract, NTA, lat/long)."
+    },
+    {
+      "name": "Fire & EMS Incident Dispatch",
+      "type": "data table",
+      "entity": "IncidentDispatch",
+      "url": "https://data.cityofnewyork.us/d/8m42-w767",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Fire Incident Dispatch Data 8m42-w767 (29c)", "EMS Incident Dispatch Data 76xm-jjuj (31c)", "Incidents Responded to by Fire Companies tm6d-hbzd (24c)", "FDNY Monthly Response Times j34j-vqvt", "Bureau of Fire Investigations - Fire Causes ii3r-svjz"],
+      "notes": "Two parallel minute-level dispatch feeds (Fire + EMS) with response-timing measures, alarm-box/alarm-level (fire) and call-type/severity/hospital-transport (EMS). The most-viewed operational data."
+    },
+    {
+      "name": "Bureau of Fire Prevention Inspections",
+      "type": "data table",
+      "entity": "Inspection",
+      "url": "https://data.cityofnewyork.us/d/ssq6-fkht",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["BFP Inspections (Historical) ssq6-fkht (20c)", "Risk Based Inspections (RBIS) itd7-gx3g (21c)", "Mandatory Inspections by Fire Companies kfgh-h6re (11c)"],
+      "opendata_gap": false,
+      "notes": "Three inspection programs (BFP, risk-based, mandatory fire-company) keyed on premises account (ACCT_NUM) + BIN/BBL. Published only as historical snapshots; scheduling a NEW inspection has no API."
+    },
+    {
+      "name": "Active Violation Orders",
+      "type": "data table",
+      "entity": "Violation",
+      "url": "https://data.cityofnewyork.us/d/bi53-yph3",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["BFP Active Violation Orders (Historical) bi53-yph3 (21c)", "NYC Fire Department Building Vacate List n5xc-7jfa (11c)", "BFP Building Summary (Historical) nvgj-hbht (16c)"],
+      "notes": "Violation id/number, cited law, action, premises account + BIN/BBL. Answering or curing a violation is an Accela portal transaction with no API."
+    },
+    {
+      "name": "Certificates of Fitness",
+      "type": "data table",
+      "entity": "CertificateOfFitness",
+      "url": "https://data.cityofnewyork.us/d/pdiy-9ae5",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["BFP Certificates of Fitness (Historical) pdiy-9ae5 (18c)"],
+      "notes": "C of F number/type, holder, expiry, premises. Read-only snapshot; applying for or renewing a C of F happens in FDNY Business."
+    },
+    {
+      "name": "Apply for a fire permit",
+      "type": "sign-up / application workflow",
+      "entity": "FirePermitApplication",
+      "url": "https://fires.fdnycloud.org/CitizenAccess",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The core FDNY Business transaction — apply for a general fire permit, Place of Assembly Certificate of Operation, torch/hot-work, fireworks, or storage permit. Lives only in the rented Accela Citizen Access portal or on paper. The net-new WRITE surface for this domain."
+    },
+    {
+      "name": "Hold / renew a Certificate of Fitness",
+      "type": "workflow (portal)",
+      "entity": "FirePermitApplication",
+      "url": "https://fires.fdnycloud.org/CitizenAccess",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Apply for / renew a C of F (exam, credential) — Accela-only; no API. Folded into the FirePermitApplication write surface (permitType = Certificate of Fitness)."
+    },
+    {
+      "name": "Schedule an inspection",
+      "type": "workflow (portal)",
+      "entity": "FirePermitApplication",
+      "url": "https://fires.fdnycloud.org/CitizenAccess",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Request/schedule an FDNY inspection — Accela-only; no API. Represented as FirePermitApplication permitType = Inspection Request."
+    },
+    {
+      "name": "Answer a violation",
+      "type": "workflow (portal)",
+      "entity": "FirePermitApplication",
+      "url": "https://fires.fdnycloud.org/CitizenAccess",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Respond to / cure a violation and pay penalties — Accela-only; no API. An alternative net-new write workflow adjacent to permit application."
+    }
+  ]
+}

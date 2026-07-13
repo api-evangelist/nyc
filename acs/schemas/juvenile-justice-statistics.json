@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/acs/schemas/juvenile-justice-statistics.json",
+  "title": "JuvenileJusticeStatistics",
+  "description": "An AGGREGATE youth & family justice measure for a reporting period — detention admissions by community district, detention and placement demographics, incident reports, pre-placement figures, and annual child-abuse-allegation detention/placement counts. Published only in aggregate; no individual youth in detention or placement is ever exposed. Canonical schema reconciling 'Detention Admissions by Community District' (2hrw-qfsu, 4 columns), 'Detention and Placement Demographic reports' (bhs9-p657), 'Detention and Placement Incident Reports' (2jnq-tef6), 'Annual Child Abuse Allegation Detention and Placement' (kkjw-ny95), and 'Report to City Council on Preplacement' (iwat-y983, 9 columns).",
+  "type": "object",
+  "x-source": {
+    "opendata_detention_admissions_cd": "https://data.cityofnewyork.us/d/2hrw-qfsu",
+    "opendata_demographic": "https://data.cityofnewyork.us/d/bhs9-p657",
+    "opendata_incident_reports": "https://data.cityofnewyork.us/d/2jnq-tef6",
+    "opendata_allegation_detention": "https://data.cityofnewyork.us/d/kkjw-ny95",
+    "opendata_preplacement": "https://data.cityofnewyork.us/d/iwat-y983",
+    "confidential": true
+  },
+  "properties": {
+    "reportPeriod": { "$ref": "_common.json#/$defs/ReportPeriod" },
+    "metric": {
+      "type": ["string", "null"],
+      "description": "Which youth-justice measure this row reports.",
+      "enum": ["Detention Admissions", "Detention & Placement Demographics", "Incident Reports", "Preplacement", "Abuse Allegation Detention & Placement", null]
+    },
+    "facility": { "type": ["string", "null"], "description": "Detention/placement facility ('Facility'), where reported." },
+    "numberAdmitted": { "type": ["number", "null"], "description": "'Number Admitted' (detention admissions)." },
+    "value": { "type": ["number", "null"], "description": "The aggregate count for the metric where not a named field." },
+    "ageBands": {
+      "type": "object",
+      "description": "Age-band breakdown carried by the pre-placement report (iwat-y983).",
+      "properties": {
+        "ageUnder7": { "type": ["number", "null"], "description": "'Age: <7'." },
+        "age7to12": { "type": ["number", "null"], "description": "'Age: 7-12'." },
+        "age13to17": { "type": ["number", "null"], "description": "'Age: 13-17'." },
+        "age18to20": { "type": ["number", "null"], "description": "'Age: 18-20'." },
+        "unknown": { "type": ["number", "null"], "description": "'Unknown'." },
+        "total": { "type": ["number", "null"], "description": "'Total'." }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "additionalProperties": false
+}

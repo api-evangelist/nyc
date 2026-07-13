@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doc/schemas/incident-report.json",
+  "title": "IncidentReport",
+  "description": "A DOC safety/security incident — the accountability record DOC publishes across several parallel datasets. Canonical schema unifying 'Inmate Deaths' (f64t-5yiv), 'Inmate Incidents - Slashing and Stabbing' (gakf-suji), 'Inmate Incidents - Inmate Fights' (k548-32d3), 'Inmate Assault on Staff' (erra-pzy8), 'Staff Injuries - Class A Injuries' (7hi3-kaps), and 'Emergency Lock-In Data' (9dab-x6kn). Keyed on INCIDENT_ID.",
+  "type": "object",
+  "x-source": {
+    "opendata_deaths": "https://data.cityofnewyork.us/d/f64t-5yiv",
+    "opendata_slashing_stabbing": "https://data.cityofnewyork.us/d/gakf-suji",
+    "opendata_fights": "https://data.cityofnewyork.us/d/k548-32d3",
+    "opendata_assault_on_staff": "https://data.cityofnewyork.us/d/erra-pzy8",
+    "opendata_staff_injuries": "https://data.cityofnewyork.us/d/7hi3-kaps",
+    "opendata_lock_in": "https://data.cityofnewyork.us/d/9dab-x6kn"
+  },
+  "properties": {
+    "incidentId": { "type": "string", "description": "Incident identifier ('INCIDENT_ID' / 'LOCKINID' / 'SRCINCIDENTID')." },
+    "incidentType": { "$ref": "_common.json#/$defs/IncidentType" },
+    "rawIncidentType": { "type": ["string", "null"], "description": "Source dataset's raw incident type string ('INCIDENT_TYPE')." },
+    "facility": { "$ref": "_common.json#/$defs/FacilityReference" },
+    "reportedDate": { "type": ["string", "null"], "format": "date-time", "description": "Date reported ('REPORTED_DT')." },
+    "incidentDate": { "type": ["string", "null"], "format": "date-time", "description": "Date the incident occurred ('INCIDENT_DT')." },
+    "reason": { "type": ["string", "null"], "description": "Contributing reason/category ('REASON')." },
+    "lockIn": {
+      "type": "object",
+      "description": "Emergency lock-in specifics (Emergency Lock-In Data, 9dab-x6kn).",
+      "properties": {
+        "category": { "type": ["string", "null"], "description": "'LOCKINCATEGORY'." },
+        "reasonText": { "type": ["string", "null"], "description": "'LOCKINREASON'." },
+        "type": { "type": ["string", "null"], "description": "'LOCKINTYPE'." },
+        "housingArea": { "type": ["string", "null"], "description": "'LOCKINHA'." },
+        "housingAreaType": { "type": ["string", "null"], "description": "'LOCKIN_HATYPE'." },
+        "inmateCount": { "type": ["integer", "null"], "description": "'INMATECOUNT'." },
+        "durationHours": { "type": ["number", "null"], "description": "'LOCK_IN_DURATION'." },
+        "startDateTime": { "type": ["string", "null"], "format": "date-time", "description": "'LOCKIN_START_DTTM'." },
+        "endDateTime": { "type": ["string", "null"], "format": "date-time", "description": "'LOCKIN_END_DTTM'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["incidentId"],
+  "additionalProperties": false
+}

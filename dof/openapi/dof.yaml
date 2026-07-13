@@ -1,0 +1,401 @@
+openapi: 3.1.0
+info:
+  title: NYC Department of Finance API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Finance — publishing its already-open
+    reference data (property valuation & assessment, exemptions, tax-charge balances, ACRIS recorded
+    documents, parking violations) as coherent resources, and adding the missing write surface locked
+    inside the legacy CityPay app — paying a parking ticket.
+  description: >-
+    Proposed API-first surface for the NYC Department of Finance (DOF), from the NYC Modernization
+    low-hanging-fruit assessment of nyc.gov/site/finance and the legacy a836-*.nyc.gov application layer.
+
+
+    DOF has the widest open-data footprint of any NYC agency assessed so far — 145 NYC Open Data
+    datasets covering property valuation & assessment, exemptions and abatements, tax-charge balances,
+    the full ACRIS document register (deeds, mortgages, parties, legals), and every parking/camera
+    violation. But its citizen *transactions* live across a fleet of aging, siloed **a836-*.nyc.gov**
+    applications: **ACRIS** (a 2013-era ASP.NET/IIS document-search app), **CityPay** (a PayPal/Braintree
+    web form), and the **Property Tax System** (a session-gated legacy tax app). None exposes an API, an
+    OpenAPI, or a JSON contract; each is a standalone screen.
+
+
+    This contract does two things: (1) presents the open reference datasets as one clean resource model
+    keyed on the Borough-Block-Lot (BBL), and (2) adds the one net-new **write** workflow — submitting a
+    **payment** against a parking/camera violation — that today exists only behind the CityPay app.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.finance.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Property
+    description: Property valuation & assessment and exemptions/abatements, keyed on BBL.
+  - name: TaxBills
+    description: Property tax-charge balances per parcel account.
+  - name: ACRIS
+    description: Recorded real-property documents (deeds, mortgages, parties, legals).
+  - name: Parking
+    description: Parking and camera violations — search, status, and balance.
+  - name: Payments
+    description: Pay a parking/camera violation (read + write). The net-new surface, today locked in the CityPay app.
+
+paths:
+  /property/valuations:
+    get:
+      operationId: listPropertyValuations
+      summary: List / search property valuation & assessment records
+      tags: [Property]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: taxClass
+          in: query
+          schema: { type: string }
+        - name: buildingClass
+          in: query
+          schema: { type: string }
+        - name: year
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of property valuation records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/property-valuation.json' } }
+  /property/valuations/{bbl}:
+    get:
+      operationId: getPropertyValuation
+      summary: Get a parcel's valuation by Borough-Block-Lot
+      tags: [Property]
+      parameters:
+        - name: bbl
+          in: path
+          required: true
+          schema: { type: string }
+        - name: year
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: The property valuation record.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/property-valuation.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /property/valuations/{bbl}/exemptions:
+    get:
+      operationId: getPropertyExemptions
+      summary: List the exemptions/abatements on a parcel
+      tags: [Property]
+      parameters:
+        - name: bbl
+          in: path
+          required: true
+          schema: { type: string }
+        - name: year
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Exemption/abatement lines for the parcel.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/property-exemption.json' } }
+
+  /property/exemptions:
+    get:
+      operationId: listPropertyExemptions
+      summary: Search property exemptions & abatements
+      tags: [Property]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: exemptionCode
+          in: query
+          schema: { type: string }
+        - name: exemptionName
+          in: query
+          schema: { type: string }
+        - name: year
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of exemption records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/property-exemption.json' } }
+
+  /property/tax-bills:
+    get:
+      operationId: listPropertyTaxBills
+      summary: Search property tax-charge balances
+      tags: [TaxBills]
+      parameters:
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - name: taxYear
+          in: query
+          schema: { type: string }
+        - name: accountType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of property tax-charge balances.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/property-tax-bill.json' } }
+  /property/tax-bills/{bbl}:
+    get:
+      operationId: getPropertyTaxBill
+      summary: Get the tax-charge balance for a parcel
+      tags: [TaxBills]
+      parameters:
+        - name: bbl
+          in: path
+          required: true
+          schema: { type: string }
+        - name: taxYear
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: The parcel's tax-charge balance.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/property-tax-bill.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /acris/documents:
+    get:
+      operationId: listAcrisDocuments
+      summary: Search recorded ACRIS documents (deeds, mortgages, etc.)
+      tags: [ACRIS]
+      parameters:
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: docType
+          in: query
+          schema: { type: string }
+        - name: crfn
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of recorded documents.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/acris-document.json' } }
+  /acris/documents/{documentId}:
+    get:
+      operationId: getAcrisDocument
+      summary: Get a recorded ACRIS document with its parties and legals
+      tags: [ACRIS]
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The recorded document.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/acris-document.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /parking/violations:
+    get:
+      operationId: listParkingViolations
+      summary: Search parking & camera violations
+      tags: [Parking]
+      parameters:
+        - name: plate
+          in: query
+          schema: { type: string }
+        - name: plateState
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: issuingAgency
+          in: query
+          schema: { type: string }
+        - name: violationCode
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of violations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/parking-violation.json' } }
+  /parking/violations/{summonsNumber}:
+    get:
+      operationId: getParkingViolation
+      summary: Get a violation and its balance by summons number
+      tags: [Parking]
+      parameters:
+        - name: summonsNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The violation.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/parking-violation.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /parking/payments:
+    post:
+      operationId: createParkingTicketPayment
+      summary: Pay a parking / camera violation
+      description: >-
+        The net-new write surface — an API for paying a violation, replacing the CityPay-only
+        workflow. Amounts are captured through the DOF payment gateway (PayPal / Braintree); the
+        contract accepts only a tokenized instrument, never raw card or bank numbers.
+      tags: [Payments]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/parking-ticket-payment.json' }
+      responses:
+        '201':
+          description: Payment accepted; receipt returned.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/parking-ticket-payment.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /parking/payments/{paymentId}:
+    get:
+      operationId: getParkingTicketPayment
+      summary: Get a payment receipt
+      tags: [Payments]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The payment receipt.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/parking-ticket-payment.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    PropertyValuation: { $ref: '../schemas/property-valuation.json' }
+    PropertyExemption: { $ref: '../schemas/property-exemption.json' }
+    PropertyTaxBill: { $ref: '../schemas/property-tax-bill.json' }
+    ACRISDocument: { $ref: '../schemas/acris-document.json' }
+    ParkingViolation: { $ref: '../schemas/parking-violation.json' }
+    ParkingTicketPayment: { $ref: '../schemas/parking-ticket-payment.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

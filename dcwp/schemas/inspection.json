@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcwp/schemas/inspection.json",
+  "title": "Inspection",
+  "description": "A DCWP inspection of a licensed or regulated business. Canonical schema reconciling the 'DCWP Inspections' dataset (jzhd-m6uv, 28 columns), 'Archived DCWP Inspections' (kwss-yksz), and 'Weights, Measures, and Other Tests' (8fei-z6rz). Keyed on Inspection Number.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/jzhd-m6uv",
+    "opendata_archived": "https://data.cityofnewyork.us/d/kwss-yksz",
+    "opendata_weights_measures": "https://data.cityofnewyork.us/d/8fei-z6rz"
+  },
+  "properties": {
+    "inspectionNumber": { "type": "string", "description": "'Inspection Number' — primary key." },
+    "inspectionType": { "type": ["string", "null"], "description": "'Inspection Type'." },
+    "inspectionStatus": { "type": ["string", "null"], "description": "'Inspection Status' (e.g. Pass, Fail)." },
+    "dateOfOccurrence": { "type": ["string", "null"], "format": "date", "description": "'Date of Occurrence'." },
+    "business": { "$ref": "_common.json#/$defs/BusinessReference" },
+    "dcwpLicenseNumber": { "type": ["string", "null"], "description": "'DCWP License Number'." },
+    "certificateOfInspection": { "type": ["string", "null"], "description": "'Certificate of Inspection'." },
+    "nohNumber": { "type": ["string", "null"], "description": "'NOH Number' — Notice of Hearing, links to charges." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["inspectionNumber"],
+  "additionalProperties": false
+}

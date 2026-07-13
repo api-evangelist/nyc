@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hra/schemas/benefits-eligibility.json",
+  "title": "BenefitsEligibility",
+  "description": "The result of screening a household against NYC benefit programs — the machine-readable form of what the ACCESS NYC eligibility screener (access.nyc.gov/eligibility) returns. Design-first: ACCESS NYC's eligibility LOGIC is uniquely open source (the Drools business rules in github.com/NYCOpportunity/ACCESS-NYC-Rules), but there is no public API that returns a screening result. This schema models a household profile in and a list of program eligibility determinations out, so an agent can screen a resident before helping them apply.",
+  "type": "object",
+  "x-source": {
+    "screener": "https://access.nyc.gov/eligibility/",
+    "rules_engine": "https://github.com/NYCOpportunity/ACCESS-NYC-Rules",
+    "screening_api": "https://github.com/NYCOpportunity/benefits-screening-api",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "household": {
+      "type": "object",
+      "description": "The household profile screened (the inputs the ACCESS NYC screener collects).",
+      "properties": {
+        "householdSize": { "type": "integer", "minimum": 1, "description": "Number of people in the household." },
+        "zipCode": { "type": ["string", "null"], "description": "Home ZIP code." },
+        "monthlyIncome": { "$ref": "_common.json#/$defs/Money" },
+        "incomePeriod": { "type": ["string", "null"], "enum": ["weekly", "biweekly", "monthly", "yearly", null] },
+        "members": {
+          "type": ["array", "null"],
+          "description": "Per-person attributes that affect eligibility (age, pregnancy, disability, student, veteran, work status).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "age": { "type": ["integer", "null"] },
+              "pregnant": { "type": ["boolean", "null"] },
+              "disabled": { "type": ["boolean", "null"] },
+              "student": { "type": ["boolean", "null"] },
+              "veteran": { "type": ["boolean", "null"] },
+              "employed": { "type": ["boolean", "null"] }
+            },
+            "additionalProperties": true
+          }
+        },
+        "livingRenting": { "type": ["boolean", "null"], "description": "Whether the household rents its home." },
+        "receivesBenefits": {
+          "type": ["array", "null"],
+          "description": "Programs the household already receives.",
+          "items": { "$ref": "_common.json#/$defs/BenefitProgram" }
+        }
+      },
+      "required": ["householdSize"],
+      "additionalProperties": true
+    },
+    "results": {
+      "type": "array",
+      "description": "One eligibility determination per screened program.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "program": { "$ref": "_common.json#/$defs/ProgramReference" },
+          "eligibility": {
+            "type": "string",
+            "enum": ["eligible", "likely_eligible", "maybe", "likely_ineligible", "ineligible", "unknown"],
+            "description": "Determination from the rules engine."
+          },
+          "estimatedValue": { "$ref": "_common.json#/$defs/Money" },
+          "estimatedValuePeriod": { "type": ["string", "null"], "enum": ["monthly", "yearly", "one-time", null] },
+          "explanation": { "type": ["string", "null"], "description": "Plain-language reason for the determination." },
+          "applyUrl": { "type": ["string", "null"], "format": "uri", "description": "Where to apply (often ACCESS HRA)." }
+        },
+        "required": ["program", "eligibility"],
+        "additionalProperties": false
+      }
+    },
+    "screenedAt": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["household", "results"],
+  "additionalProperties": false
+}

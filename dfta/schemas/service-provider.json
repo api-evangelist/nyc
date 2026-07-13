@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dfta/schemas/service-provider.json",
+  "title": "ServiceProvider",
+  "description": "A DFTA-funded service provider / site — the core unit of NYC Aging's contracted network (older adult centers, case management, home-delivered meals, caregiver, NORC, legal, transportation, and more). Canonical schema reconciling 'Department for the Aging (NYC Aging) - All Contracted Providers' (cqc8-am9x, 38 columns), 'List of NYC Aging Providers with Sites Open to the Public' (u7wp-np5k, 21 columns), and 'Social Adult Day Care Services' (32cj-z7va, 33 columns). Keyed on DFTA ID.",
+  "type": "object",
+  "x-source": {
+    "opendata_contracted_providers": "https://data.cityofnewyork.us/d/cqc8-am9x",
+    "opendata_public_sites": "https://data.cityofnewyork.us/d/u7wp-np5k",
+    "opendata_social_adult_day_care": "https://data.cityofnewyork.us/d/32cj-z7va",
+    "site": "https://www.nyc.gov/site/dfta/services/find-help.page"
+  },
+  "properties": {
+    "dftaId": { "type": ["string", "null"], "description": "DFTA contract/program identifier ('DFTA ID') — primary key." },
+    "programName": { "type": "string", "description": "Program / site name ('ProgramName' / 'Site Name')." },
+    "sponsorName": { "type": ["string", "null"], "description": "Contracted sponsor / vendor ('SponsorName' / 'Sponsor/Vendor')." },
+    "providerType": { "$ref": "_common.json#/$defs/ProviderType" },
+    "siteType": { "type": ["string", "null"], "description": "Site classification ('Site Type')." },
+    "dftaFunded": { "type": ["boolean", "string", "null"], "description": "Whether the site is DFTA funded ('DFTA Funded')." },
+    "geriatricMentalHealthSite": { "type": ["boolean", "string", "null"], "description": "'Geriatric Mental Health (GMH) Service Site'." },
+    "fiscalYear": { "type": ["string", "integer", "null"], "description": "'Fiscal Year'." },
+    "programState": { "type": ["string", "null"], "description": "Program operating status/state ('ProgramState')." },
+    "phone": { "type": ["string", "null"], "description": "'ProgramPhone'." },
+    "address": {
+      "type": "object",
+      "properties": {
+        "line1": { "type": ["string", "null"], "description": "'ProgramAddress' / 'Site Address'." },
+        "line2": { "type": ["string", "null"], "description": "'Address Line 2'." },
+        "city": { "type": ["string", "null"], "description": "'ProgramCity'." },
+        "state": { "type": ["string", "null"], "description": "'ProgramState' (postal state where applicable)." },
+        "zipCode": { "type": ["string", "null"], "description": "'Postcode' / 'ProgramZipCode' / 'Zip Code'." }
+      },
+      "additionalProperties": false
+    },
+    "hours": { "$ref": "_common.json#/$defs/WeeklyHours" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["programName"],
+  "additionalProperties": false
+}

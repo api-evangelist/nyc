@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dfta/schemas/program-activity.json",
+  "title": "ProgramActivity",
+  "description": "A scheduled activity or event hosted by a DFTA Older Adult Center — classes, meals, recreation, health promotion, and virtual programming. Canonical schema reconciling the 'Older Adult Center (OAC) Activities' dataset (fzy4-e84j, 26 columns). Keyed on DFTA_ID + event; the read/browse surface an older adult would use to find something to do near them.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/fzy4-e84j"
+  },
+  "properties": {
+    "dftaId": { "type": ["string", "null"], "description": "'DFTA_ID' of the hosting center." },
+    "providerName": { "type": ["string", "null"], "description": "'Provider Name'." },
+    "eventName": { "type": "string", "description": "'Event Name'." },
+    "eventType": { "type": ["string", "null"], "description": "'Event Type'." },
+    "description": { "type": ["string", "null"], "description": "'Description'." },
+    "topics": { "type": ["string", "null"], "description": "'Topics'." },
+    "eventLocation": { "type": ["string", "null"], "description": "'Event Location'." },
+    "eventAccessibility": { "type": ["string", "null"], "description": "'Event Accessibility'." },
+    "maxAttendees": { "type": ["integer", "null"], "description": "'Max Attendees'." },
+    "startTime": { "type": ["string", "null"], "description": "'Start Time'." },
+    "endTime": { "type": ["string", "null"], "description": "'EndTime'." },
+    "isRecurring": { "type": ["boolean", "string", "null"], "description": "'Is Recurring'." },
+    "isVirtual": { "type": ["boolean", "string", "null"], "description": "'Is Virtual'." },
+    "isLive": { "type": ["boolean", "string", "null"], "description": "'Is Live'." },
+    "address": {
+      "type": "object",
+      "properties": {
+        "city": { "type": ["string", "null"], "description": "'City'." },
+        "state": { "type": ["string", "null"], "description": "'State'." },
+        "zipCode": { "type": ["string", "null"], "description": "'ZipCode'." }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["eventName"],
+  "additionalProperties": false
+}

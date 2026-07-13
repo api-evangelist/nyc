@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dycd/schemas/program.json",
+  "title": "Program",
+  "description": "A DYCD program offering — the thing a young person or family actually enrolls in (e.g. Summer Youth Employment Program (SYEP), COMPASS/SONYC after-school, Beacon, Cornerstone, adult literacy, immigrant services). NYC Open Data has no clean catalog of program offerings; the authoritative surface is the DiscoverDYCD program finder (discoverdycd.dycdconnect.nyc), whose taxonomy (Program Area / Program Type / Service Category) is echoed on the 'DYCD Program Sites' dataset. This schema reconstructs the program as a resource.",
+  "type": "object",
+  "x-source": {
+    "discoverdycd": "https://discoverdycd.dycdconnect.nyc/",
+    "opendata_program_sites": "https://data.cityofnewyork.us/d/ebkm-iyma",
+    "site": "https://www.nyc.gov/site/dycd/services/services.page",
+    "opendata_gap": true
+  },
+  "properties": {
+    "programName": { "type": "string", "description": "Program offering name (e.g. 'Summer Youth Employment Program')." },
+    "programArea": { "$ref": "_common.json#/$defs/ProgramArea" },
+    "programType": { "type": ["string", "null"], "description": "Program type ('Program Type', e.g. SYEP, COMPASS Elementary, SONYC, Beacon)." },
+    "serviceCategory": { "type": ["string", "null"], "description": "Service category ('Service Category')." },
+    "description": { "type": ["string", "null"], "description": "Public-facing description of the program." },
+    "ageRange": { "type": ["string", "null"], "description": "Eligible age range ('Age Range', e.g. '14-24')." },
+    "minAge": { "type": ["integer", "null"] },
+    "maxAge": { "type": ["integer", "null"] },
+    "eligibility": { "type": ["string", "null"], "description": "Eligibility summary (residency, income, age, school status)." },
+    "seasonal": { "type": ["boolean", "null"], "description": "Whether the program runs on a seasonal cycle (e.g. SYEP is summer-only)." },
+    "applicationOpen": { "type": ["boolean", "null"], "description": "Whether applications are currently being accepted." },
+    "applicationUrl": { "type": ["string", "null"], "format": "uri", "description": "Where to apply, if published." },
+    "siteCount": { "type": ["integer", "null"], "description": "Number of active program sites delivering this program." }
+  },
+  "required": ["programName"],
+  "additionalProperties": false
+}

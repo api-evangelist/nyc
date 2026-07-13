@@ -1,0 +1,152 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces NYC Aging's open provider network (providers, older adult centers, activities, service units, participation) and adds make_referral — the net-new write workflow locked today inside the phone-based Aging Connect intake.",
+    "openapi": "../openapi/dfta.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.dfta",
+    "title": "NYC Aging (DFTA)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Department for the Aging (DFTA / 'NYC Aging') — DFTA-funded service providers, older adult centers (senior centers) and their activities, contract service units, and aggregate participation from NYC Open Data, plus the net-new ability to make and track a service referral that today lives only in the phone-based Aging Connect intake.",
+    "instructions": "Use find_providers / get_provider to locate DFTA-funded providers by borough, provider type (older adult center, case management, home-delivered meals, caregiver, NORC, legal, transportation), or council district. find_older_adult_centers returns senior centers with Local Law 140 operating profiles (utilization, meals, staffing). find_activities lists what is happening at older adult centers. find_service_units answers contract budget/performance questions; find_participation returns AGGREGATE unduplicated client counts only — DFTA never exposes an individual older adult. make_referral (net-new) connects an older adult to services; it requires an authenticated user and mutates state — confirm the service, the older adult's borough/ZIP, and the details with the user before submitting, and set urgent=true for suspected elder abuse, no food, or an unsafe-at-home situation so it routes immediately to Aging Connect / Adult Protective Services."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_providers",
+      "title": "Find Providers",
+      "description": "Search DFTA-funded service providers by borough, provider type, funding, council district, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "providerType": { "type": "string" },
+          "dftaFunded": { "type": "boolean" },
+          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-provider.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listProviders"
+    },
+    {
+      "name": "get_provider",
+      "title": "Get Provider",
+      "description": "Fetch a DFTA-funded service provider (sponsor, type, hours, address, geography) by DFTA ID.",
+      "inputSchema": { "type": "object", "properties": { "dftaId": { "type": "string" } }, "required": ["dftaId"] },
+      "outputSchema": { "$ref": "../schemas/service-provider.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getProvider"
+    },
+    {
+      "name": "find_older_adult_centers",
+      "title": "Find Older Adult Centers",
+      "description": "List older adult centers (senior centers) with their Local Law 140 operating profiles — utilization, meals, staffing — by borough or site type.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "siteType": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/older-adult-center.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listOlderAdultCenters"
+    },
+    {
+      "name": "find_activities",
+      "title": "Find Activities",
+      "description": "Search older adult center activities and events by borough, event type, host center (DFTA ID), virtual/in-person, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "eventType": { "type": "string" },
+          "dftaId": { "type": "string" },
+          "isVirtual": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/program-activity.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listActivities"
+    },
+    {
+      "name": "find_service_units",
+      "title": "Find Service Units",
+      "description": "Search budgeted-and-reported contract service units (budgeted vs. reported units and amounts) by provider (DFTA ID), provider type, service name, or contract year.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "dftaId": { "type": "string" },
+          "providerType": { "type": "string" },
+          "serviceName": { "type": "string" },
+          "contractYear": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-unit.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listServiceUnits"
+    },
+    {
+      "name": "find_participation",
+      "title": "Find Participation",
+      "description": "Return AGGREGATE participation — unduplicated client counts — by program/site, program type, fiscal year, or borough. Never returns individual older adults.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "dftaId": { "type": "string" },
+          "programType": { "type": "string" },
+          "fiscalYear": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/participation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listParticipation"
+    },
+    {
+      "name": "list_my_referrals",
+      "title": "List My Referrals",
+      "description": "List the authenticated user's own service referrals and their status — today trackable only by phone to Aging Connect.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Screening", "Referred", "Enrolled", "Waitlisted", "Closed", "Declined"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-referral.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listReferrals",
+      "x-auth": "user"
+    },
+    {
+      "name": "make_referral",
+      "title": "Make a Referral",
+      "description": "Create a NYC Aging service referral (connect an older adult to services). NET-NEW workflow with no public API today — it lives only in the phone-based Aging Connect intake (212-AGING-NYC) or a 311 call. Requires an authenticated user. Mutates state — confirm the service, the older adult's borough/ZIP, and the details first; set urgent=true for suspected elder abuse, no food, or an unsafe-at-home situation.",
+      "inputSchema": { "$ref": "../schemas/service-referral.json" },
+      "outputSchema": { "$ref": "../schemas/service-referral.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createReferral",
+      "x-auth": "user"
+    }
+  ]
+}

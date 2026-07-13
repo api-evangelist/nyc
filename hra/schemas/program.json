@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hra/schemas/program.json",
+  "title": "Program",
+  "description": "A public-benefit program or service offered/screened by HRA/DSS and the ACCESS NYC platform — SNAP, Cash Assistance, Medicaid, HEAP, Fair Fares, HASA, and others. Canonical schema reconciling 'HRA Facts, Programs and Services' (np6w-pies) with the machine-readable program metadata the ACCESS NYC screener consumes: the 'NYC Benefits Platform: Benefits and Programs Dataset' (kvhd-5fmu, Mayor's Office for Economic Opportunity), which is the same content that drives access.nyc.gov and its open-source Drools rules engine.",
+  "type": "object",
+  "x-source": {
+    "opendata_hra_facts": "https://data.cityofnewyork.us/d/np6w-pies",
+    "opendata_benefits_platform": "https://data.cityofnewyork.us/d/kvhd-5fmu",
+    "site": "https://www.nyc.gov/site/hra/help/snap-benefits-food-program.page",
+    "access_nyc": "https://access.nyc.gov/programs/",
+    "rules_engine": "https://github.com/NYCOpportunity/ACCESS-NYC-Rules"
+  },
+  "properties": {
+    "programName": { "type": "string", "description": "Official program name ('program_name')." },
+    "plainLanguageName": { "type": ["string", "null"], "description": "'plain_language_program_name'." },
+    "program": { "$ref": "_common.json#/$defs/BenefitProgram" },
+    "programCode": { "type": ["string", "null"], "description": "'program_code'." },
+    "programAcronym": { "type": ["string", "null"], "description": "'program_acronym'." },
+    "category": { "type": ["string", "null"], "description": "'program_category' (e.g. Food, Cash & Expenses, Health)." },
+    "governmentAgency": { "type": ["string", "null"], "description": "Administering agency ('government_agency')." },
+    "description": { "type": ["string", "null"], "description": "'program_description'." },
+    "briefExcerpt": { "type": ["string", "null"], "description": "'brief_excerpt' — one-line summary." },
+    "populationServed": { "type": ["string", "null"], "description": "'population_served'." },
+    "ageGroup": { "type": ["string", "null"], "description": "'age_group'." },
+    "plainLanguageEligibility": { "type": ["string", "null"], "description": "'plain_language_eligibility' — human-readable eligibility summary." },
+    "howToApplySummary": { "type": ["string", "null"], "description": "'how_to_apply_summary'." },
+    "requiredDocumentsSummary": { "type": ["string", "null"], "description": "'required_documents_summary'." },
+    "applyOnlineUrl": { "type": ["string", "null"], "format": "uri", "description": "'url_of_online_application'." },
+    "applyByMail": { "type": ["string", "null"], "description": "'how_to_apply_or_enroll_by_mail'." },
+    "applyInPerson": { "type": ["string", "null"], "description": "'how_to_apply_or_enroll_in_person'." },
+    "applyByPhone": { "type": ["string", "null"], "description": "'how_to_apply_or_enroll_by_phone'." },
+    "officeLocationsUrl": { "type": ["string", "null"], "format": "uri", "description": "'office_locations_url'." },
+    "getHelpOnline": { "type": ["string", "null"], "description": "'get_help_online'." },
+    "language": { "type": ["string", "null"], "description": "Content language ('language')." },
+    "updatedAt": { "type": ["string", "null"], "format": "date-time", "description": "'updated_at'." }
+  },
+  "required": ["programName"],
+  "additionalProperties": false
+}

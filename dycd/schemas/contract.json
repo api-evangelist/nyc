@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dycd/schemas/contract.json",
+  "title": "Contract",
+  "description": "A DYCD contract with a provider to deliver a program — the funding instrument behind every program site. Canonical schema reconciling the 'Department of Youth and Community Development (DYCD) Contracts' dataset (graj-69em, 15 columns). Keyed on Contract Number (+ suffix).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/graj-69em"
+  },
+  "properties": {
+    "contractNumber": { "type": "string", "description": "'Contract Number'." },
+    "contractSuffix": { "type": ["string", "null"], "description": "'Contract Suffix'." },
+    "provider": { "$ref": "_common.json#/$defs/ProviderReference" },
+    "majorProgram": { "type": ["string", "null"], "description": "'Major Program' — the program the contract funds." },
+    "solicitationName": { "type": ["string", "null"], "description": "'Solicitation Name'." },
+    "solicitationDetail": { "type": ["string", "null"], "description": "'Solicitation Detail'." },
+    "contractStatus": { "type": ["string", "null"], "description": "'Contract Status'." },
+    "contractStatusDate": { "type": ["string", "null"], "format": "date", "description": "'Contract Status Date'." },
+    "termStartDate": { "type": ["string", "null"], "format": "date", "description": "'Term Start Date'." },
+    "termEndDate": { "type": ["string", "null"], "format": "date", "description": "'Term End Date'." },
+    "fiscalYear": { "type": ["string", "integer", "null"], "description": "'Fiscal Year'." },
+    "totalAmountFunded": { "type": ["number", "null"], "description": "'Total Amount Funded'." },
+    "fyAmountFunded": { "type": ["number", "null"], "description": "'FY Amount Funded'." },
+    "registrationNumber": { "type": ["string", "null"], "description": "'Registration Number'." },
+    "registrationDate": { "type": ["string", "null"], "format": "date", "description": "'Registration Date'." }
+  },
+  "required": ["contractNumber"],
+  "additionalProperties": false
+}

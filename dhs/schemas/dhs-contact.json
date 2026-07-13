@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dhs/schemas/dhs-contact.json",
+  "title": "DHSContact",
+  "description": "A DHS office, intake center, or public contact point — including the PATH family-intake center and adult-intake sites where New Yorkers apply for shelter. Canonical schema reconciling the 'Directory Of DHS Contacts' dataset (cete-9g3v, 14 columns). Located by address, phone, and full NYC geography spine.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/cete-9g3v",
+    "site": "https://www.nyc.gov/site/dhs/shelter/shelter.page"
+  },
+  "properties": {
+    "departmentName": { "type": "string", "description": "Office / intake center / department name ('Department Name')." },
+    "phoneNumber": { "type": ["string", "null"], "description": "'Phone Number'." },
+    "address": { "type": ["string", "null"], "description": "'Address'." },
+    "comments": { "type": ["string", "null"], "description": "'Comments' — role, hours, or intake-population notes." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["departmentName"],
+  "additionalProperties": false
+}

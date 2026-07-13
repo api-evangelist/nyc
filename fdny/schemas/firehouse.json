@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/fdny/schemas/firehouse.json",
+  "title": "Firehouse",
+  "description": "An FDNY firehouse / fire station facility — the physical unit of the Department. Canonical schema reconciling the 'FDNY Firehouse Listing' dataset (hc8x-tcnd, 12 columns). Keyed on facility name + BIN.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/hc8x-tcnd",
+    "site": "https://www.nyc.gov/site/fdny/about/resources/fire-companies/find-a-firehouse.page"
+  },
+  "properties": {
+    "facilityName": { "type": "string", "description": "Firehouse / company designation ('FacilityName')." },
+    "facilityAddress": { "type": ["string", "null"], "description": "Street address ('FacilityAddress')." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "postcode": { "type": ["string", "null"], "description": "'Postcode'." },
+    "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." },
+    "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["facilityName"],
+  "additionalProperties": false
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/acs/schemas/child-care-complaint.json",
+  "title": "ChildCareComplaint",
+  "description": "A complaint or concern about a CHILD CARE PROVIDER / program (health, safety, staffing, licensing, or quality) — NOT a report of child abuse or neglect and NOT case data. NET-NEW: there is NO ACS-owned API today; provider complaints are routed to NYC 311 (portal.311.nyc.gov) and licensing complaints ultimately to the regulator, while suspected abuse/neglect of a child goes to the NY State OCFS Statewide Central Register (1-800-342-3720), never through this surface. This schema serves both the read surface (a submitter's own complaints) and the write surface (submit a provider complaint). It deliberately models the provider concern, not the child.",
+  "type": "object",
+  "x-source": {
+    "intake_311": "https://portal.311.nyc.gov/",
+    "abuse_hotline_scr": "https://ocfs.ny.gov/main/cps/",
+    "site": "https://www.nyc.gov/site/acs/early-care/childcare.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "complaintId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned complaint / 311 service-request number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Routed to 311", "Under Review", "Referred to Regulator", "Resolved", "Closed", null],
+      "description": "Lifecycle status. Set by ACS/311, not the submitter.",
+      "readOnly": true
+    },
+    "providerName": { "type": "string", "description": "Name of the child care program / provider the complaint is about." },
+    "providerAddress": { "type": ["string", "null"], "description": "Address of the provider, if known." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "category": {
+      "type": "string",
+      "description": "Nature of the provider concern.",
+      "enum": ["Health & Sanitation", "Safety Hazard", "Supervision / Staffing", "Licensing / Permit", "Facility Condition", "Nutrition / Food", "Discrimination / Access", "Quality of Care", "Other"]
+    },
+    "description": { "type": "string", "description": "Free-text description of the concern with the provider." },
+    "childInvolved": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether a specific child is at immediate risk. IMPORTANT: if a child is being abused or neglected this is NOT the right channel — the submitter must be redirected to the NY State Central Register (1-800-342-3720). This flag exists to trigger that redirect, not to collect case data."
+    },
+    "contact": {
+      "type": "object",
+      "description": "Submitter contact details (may be anonymous).",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "anonymous": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "routedTo": {
+      "type": ["string", "null"],
+      "enum": ["NYC 311", "ACS", "NY State OCFS", "DOHMH", null],
+      "description": "Where the complaint was routed for handling.",
+      "readOnly": true
+    }
+  },
+  "required": ["providerName", "category", "description"],
+  "additionalProperties": false
+}

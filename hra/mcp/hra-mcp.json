@@ -1,0 +1,157 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces HRA's open reference and caseload data (programs, centers, caseload statistics, case actions), exposes the open-source ACCESS NYC eligibility rules as a screening tool, and adds apply_for_benefits — the net-new write workflow locked today inside the ACCESS HRA portal.",
+    "openapi": "../openapi/hra.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.hra",
+    "title": "NYC Human Resources Administration (HRA/DSS)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Human Resources Administration / Department of Social Services — public-benefit programs (SNAP, Cash Assistance, Medicaid, HEAP, Fair Fares, HASA), the centers and offices where residents apply, aggregate caseload statistics, and case actions from NYC Open Data; plus the open-source ACCESS NYC eligibility screener and the net-new ability to apply for and track a benefits application that today lives only in the ACCESS HRA portal.",
+    "instructions": "Use find_programs / get_program to explain benefit programs and how to apply. find_centers locates Benefits Access Centers, SNAP Centers, Medicaid Offices, and Homebase locations (with wait times where published). find_caseload_statistics and find_case_actions return AGGREGATE figures only — HRA never exposes an individual case or resident. screen_eligibility runs a household profile against the open-source ACCESS NYC rules and is read-only (nothing is filed). apply_for_benefits (net-new) submits a public-benefit application; it requires an authenticated resident and mutates state — confirm the program(s), applicant, and household with the user before submitting, and set emergency=true for immediate needs (no food, eviction, no heat) so it routes to expedited handling."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_programs",
+      "title": "Find Programs",
+      "description": "Search HRA/DSS benefit programs and services (SNAP, Cash Assistance, Medicaid, HEAP, Fair Fares, HASA) by category, population served, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string" },
+          "program": { "type": "string" },
+          "populationServed": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/program.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPrograms"
+    },
+    {
+      "name": "get_program",
+      "title": "Get Program",
+      "description": "Fetch a single benefit program (description, eligibility summary, how to apply) by its program code.",
+      "inputSchema": { "type": "object", "properties": { "programCode": { "type": "string" } }, "required": ["programCode"] },
+      "outputSchema": { "$ref": "../schemas/program.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getProgram"
+    },
+    {
+      "name": "find_centers",
+      "title": "Find Centers",
+      "description": "List HRA centers and offices — Benefits Access Centers, SNAP Centers, Medicaid Offices, and Homebase locations — by borough, center type, or ZIP, with the latest wait time where published.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "centerType": { "type": "string", "enum": ["Benefits Access Center", "SNAP Center", "Medicaid Office", "Homebase", "Job Center"] },
+          "zipCode": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/center.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCenters"
+    },
+    {
+      "name": "find_caseload_statistics",
+      "title": "Find Caseload Statistics",
+      "description": "Search AGGREGATE benefit caseload and enrollment figures (SNAP/Cash Assistance/Medicaid recipients, cases, enrollees) by program, measure, borough, or period. Never returns individual cases.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "program": { "type": "string", "enum": ["SNAP", "Cash Assistance", "Medicaid", "HEAP", "Fair Fares", "HASA", "Emergency Assistance", "Child Support", "Adult Protective Services", "IDNYC", "Home Care", "Homebase", "Other"] },
+          "measure": { "type": "string", "enum": ["Recipients", "Cases", "Households", "Enrollees", "Applications", "Requests"] },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/caseload-statistic.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCaseloadStatistics"
+    },
+    {
+      "name": "find_case_actions",
+      "title": "Find Case Actions",
+      "description": "Search AGGREGATE Cash Assistance / SNAP case actions — rejections, closings, and reopenings — by action, reason code, or year, broken out by district, race, age, and sex. Counts only, never individual cases.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": { "type": "string", "enum": ["Rejection", "Closing", "Reopening", "Reopening (Missed Benefit)"] },
+          "assistanceType": { "type": "string" },
+          "reasonCode": { "type": "string" },
+          "calendarYear": { "type": "integer" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/case-action.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCaseActions"
+    },
+    {
+      "name": "screen_eligibility",
+      "title": "Screen Eligibility",
+      "description": "Screen a household against NYC benefit programs using the open-source ACCESS NYC rules and return one determination per program. Read-only — nothing is filed or stored. Use it to tell a resident what they likely qualify for before helping them apply.",
+      "inputSchema": {
+        "type": "object",
+        "properties": { "household": { "$ref": "../schemas/benefits-eligibility.json#/properties/household" } },
+        "required": ["household"]
+      },
+      "outputSchema": { "$ref": "../schemas/benefits-eligibility.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "screenEligibility"
+    },
+    {
+      "name": "list_my_applications",
+      "title": "List My Applications",
+      "description": "List the authenticated resident's own benefits applications and their case status — today visible only inside the ACCESS HRA portal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Received", "In Review", "Interview Scheduled", "Documents Needed", "Approved", "Denied", "Withdrawn"] },
+          "program": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/benefits-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listApplications",
+      "x-auth": "user"
+    },
+    {
+      "name": "get_application",
+      "title": "Get Application",
+      "description": "Fetch one of the authenticated resident's benefits applications / cases by its application ID.",
+      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
+      "outputSchema": { "$ref": "../schemas/benefits-application.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getApplication",
+      "x-auth": "user"
+    },
+    {
+      "name": "apply_for_benefits",
+      "title": "Apply for Benefits",
+      "description": "Submit an HRA public-benefit application (SNAP, Cash Assistance, Medicaid, and others). NET-NEW workflow with no public API today — it lives only in the ACCESS HRA portal or an in-person visit to a Benefits Access / SNAP Center. Requires an authenticated resident. Mutates state — confirm the program(s), applicant, and household first; set emergency=true for immediate needs (no food, eviction, no heat) to route to expedited handling.",
+      "inputSchema": { "$ref": "../schemas/benefits-application.json" },
+      "outputSchema": { "$ref": "../schemas/benefits-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createApplication",
+      "x-auth": "user"
+    }
+  ]
+}

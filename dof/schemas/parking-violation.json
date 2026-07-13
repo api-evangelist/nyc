@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dof/schemas/parking-violation.json",
+  "title": "ParkingViolation",
+  "description": "A parking or camera violation summons adjudicated by DOF — the ParkingViolation / ticket entity. Canonical schema reconciling 'Parking Violations Issued - Fiscal Year 2026' (pvqr-7yc4, 44 columns, the issuance record) and 'Open Parking and Camera Violations' (nc67-uf89, 19 columns, the live status-and-balance record). Keyed on Summons Number.",
+  "type": "object",
+  "x-source": {
+    "opendata_issued": "https://data.cityofnewyork.us/d/pvqr-7yc4",
+    "opendata_open": "https://data.cityofnewyork.us/d/nc67-uf89",
+    "opendata_codes": "https://data.cityofnewyork.us/d/ncbg-6agr",
+    "citypay": "https://a836-citypay.nyc.gov/"
+  },
+  "properties": {
+    "summonsNumber": { "type": "string", "description": "Summons number ('Summons Number') — primary key." },
+    "plate": { "type": ["string", "null"], "description": "License plate ('Plate ID' / 'Plate')." },
+    "plateState": { "type": ["string", "null"], "description": "Registration state ('Registration State' / 'State')." },
+    "plateType": { "type": ["string", "null"], "description": "Plate type ('Plate Type' / 'License Type')." },
+    "issueDate": { "type": ["string", "null"], "format": "date", "description": "'Issue Date'." },
+    "violationCode": { "type": ["string", "null"], "description": "Violation code ('Violation Code'); definitions in ncbg-6agr." },
+    "violationDescription": { "type": ["string", "null"], "description": "'Violation Description' / 'Violation'." },
+    "violationLegalCode": { "type": ["string", "null"], "description": "'Violation Legal Code'." },
+    "issuingAgency": { "type": ["string", "null"], "description": "'Issuing Agency'." },
+    "county": { "$ref": "_common.json#/$defs/ViolationCounty" },
+    "violationTime": { "type": ["string", "null"], "description": "'Violation Time'." },
+    "violationLocation": {
+      "type": "object",
+      "properties": {
+        "houseNumber": { "type": ["string", "null"], "description": "'House Number'." },
+        "streetName": { "type": ["string", "null"], "description": "'Street Name'." },
+        "precinct": { "type": ["string", "integer", "null"], "description": "'Violation Precinct' / 'Precinct'." },
+        "meterNumber": { "type": ["string", "null"], "description": "'Meter Number' — parking meter tied to the summons." }
+      },
+      "additionalProperties": false
+    },
+    "vehicle": {
+      "type": "object",
+      "properties": {
+        "make": { "type": ["string", "null"], "description": "'Vehicle Make'." },
+        "bodyType": { "type": ["string", "null"], "description": "'Vehicle Body Type'." },
+        "color": { "type": ["string", "null"], "description": "'Vehicle Color'." },
+        "year": { "type": ["string", "integer", "null"], "description": "'Vehicle Year'." }
+      },
+      "additionalProperties": false
+    },
+    "status": { "type": ["string", "null"], "description": "Adjudication/collection status ('Violation Status')." },
+    "judgmentEntryDate": { "type": ["string", "null"], "format": "date", "description": "'Judgment Entry Date'." },
+    "financials": {
+      "type": "object",
+      "description": "Live balance components from the Open Parking and Camera Violations record.",
+      "properties": {
+        "fineAmount": { "$ref": "_common.json#/$defs/Money", "description": "'Fine Amount'." },
+        "penaltyAmount": { "$ref": "_common.json#/$defs/Money", "description": "'Penalty Amount'." },
+        "interestAmount": { "$ref": "_common.json#/$defs/Money", "description": "'Interest Amount'." },
+        "reductionAmount": { "$ref": "_common.json#/$defs/Money", "description": "'Reduction Amount'." },
+        "paymentAmount": { "$ref": "_common.json#/$defs/Money", "description": "'Payment Amount'." },
+        "amountDue": { "$ref": "_common.json#/$defs/Money", "description": "Outstanding balance ('Amount Due')." }
+      },
+      "additionalProperties": false
+    },
+    "fiscalYear": { "type": ["string", "integer", "null"], "description": "'Fiscal Year'." },
+    "summonsImage": { "type": ["string", "null"], "description": "URL to the summons image ('Summons Image')." }
+  },
+  "required": ["summonsNumber"],
+  "additionalProperties": false
+}

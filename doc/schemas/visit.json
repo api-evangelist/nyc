@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doc/schemas/visit.json",
+  "title": "Visit",
+  "description": "A scheduled visit with a person in DOC custody — the NET-NEW write surface. There is NO public API for scheduling a visit today: family/legal visits are arranged by phone, in person, or through the vendor visit-registration and tele-visit systems, and only aggregate counts appear on Open Data ('Local Law 85 – Visitation Quarterly', b3eu-nmy6). This schema serves both the read surface (list/get a visitor's own scheduled visits) and the VisitRequest write surface (schedule a visit).",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/doc/inmate-info/Revised_Family_Visit.page",
+    "opendata_aggregate": "https://data.cityofnewyork.us/d/b3eu-nmy6",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "visitId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned visit confirmation number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Requested", "Confirmed", "Waitlisted", "Denied", "Cancelled", "Completed", null],
+      "description": "Lifecycle status. Set by DOC, not the requester.",
+      "readOnly": true
+    },
+    "visitType": {
+      "type": "string",
+      "enum": ["Family", "Legal", "Clergy", "Social", "Media", "Tele-Visit"],
+      "description": "Type of visit."
+    },
+    "personInCustody": {
+      "type": "object",
+      "description": "The person being visited, identified by any live P.I.C. Lookup key.",
+      "properties": {
+        "inmateId": { "type": ["string", "null"], "description": "DOC person-in-custody id ('INMATEID')." },
+        "nysid": { "type": ["string", "null"], "description": "NYSID number." },
+        "bookAndCaseNumber": { "type": ["string", "null"], "description": "Book & Case number." },
+        "name": { "type": ["string", "null"], "description": "Name of the person in custody." }
+      },
+      "additionalProperties": false
+    },
+    "facility": { "$ref": "_common.json#/$defs/FacilityReference" },
+    "visitor": {
+      "type": "object",
+      "description": "Requesting visitor details.",
+      "properties": {
+        "name": { "type": "string" },
+        "relationship": { "type": ["string", "null"], "description": "Relationship to the person in custody (e.g. parent, spouse, attorney)." },
+        "dateOfBirth": { "type": ["string", "null"], "format": "date" },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    },
+    "requestedDate": { "type": "string", "format": "date", "description": "Requested visit date." },
+    "requestedTimeSlot": { "type": ["string", "null"], "description": "Requested time slot / session." },
+    "additionalVisitors": { "type": ["integer", "null"], "minimum": 0, "description": "Number of additional visitors on the pass." },
+    "minorsIncluded": { "type": ["boolean", "null"], "description": "Whether minors will accompany the visitor (requires guardianship documentation)." },
+    "notes": { "type": ["string", "null"], "description": "Free-text notes / accommodation requests." },
+    "createdDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["visitType", "visitor", "requestedDate"],
+  "additionalProperties": false
+}

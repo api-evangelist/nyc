@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/acs/schemas/prevention-service.json",
+  "title": "PreventionService",
+  "description": "An AGGREGATE preventive-services measure — children/families served by ACS preventive programs, new preventive cases, utilization, and case-closure outcomes, rolled up by borough and community district for a period. Never a per-family record. Canonical schema reconciling 'Children Served in Preventive Services by Borough and CD' (ding-39n6), 'Preventive New Cases' (a2ju-qb9a), 'Preventive Services Utilization Report LL 11' (x48i-xnrz), and 'Outcome of Preventive Cases Closed By Borough And CD' (q663-gvx6).",
+  "type": "object",
+  "x-source": {
+    "opendata_children_served": "https://data.cityofnewyork.us/d/ding-39n6",
+    "opendata_new_cases": "https://data.cityofnewyork.us/d/a2ju-qb9a",
+    "opendata_utilization_ll11": "https://data.cityofnewyork.us/d/x48i-xnrz",
+    "opendata_closed_outcomes": "https://data.cityofnewyork.us/d/q663-gvx6",
+    "confidential": true
+  },
+  "properties": {
+    "reportPeriod": { "$ref": "_common.json#/$defs/ReportPeriod" },
+    "metric": {
+      "type": ["string", "null"],
+      "description": "Which preventive-services measure this row reports.",
+      "enum": ["Children Served", "New Cases", "Utilization", "Cases Closed", "Closure Outcome", null]
+    },
+    "outcome": { "type": ["string", "null"], "description": "For case-closure rows: the closure outcome category." },
+    "value": { "type": ["number", "null"], "description": "The aggregate count for the metric." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "additionalProperties": false
+}

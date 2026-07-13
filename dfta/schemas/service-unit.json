@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dfta/schemas/service-unit.json",
+  "title": "ServiceUnit",
+  "description": "A budgeted-and-reported unit of DFTA service delivery for a contracted provider — the contract-performance line that ties a program to the services it is funded to deliver and what it actually delivered/spent. Canonical schema reconciling 'Reported Service Units' (exaw-9qnu, 10 columns), 'Budgeted Services' (nxrs-2ci5, 8 columns), 'Reported Expenditures' (tt8e-a9vn, 9 columns), and 'Bottom Line Budget' (u845-acue, 7 columns). Keyed on DFTA ID + ServiceID + ContractYear.",
+  "type": "object",
+  "x-source": {
+    "opendata_reported_units": "https://data.cityofnewyork.us/d/exaw-9qnu",
+    "opendata_budgeted_services": "https://data.cityofnewyork.us/d/nxrs-2ci5",
+    "opendata_reported_expenditures": "https://data.cityofnewyork.us/d/tt8e-a9vn",
+    "opendata_bottom_line_budget": "https://data.cityofnewyork.us/d/u845-acue"
+  },
+  "properties": {
+    "dftaId": { "type": ["string", "null"], "description": "'DFTA ID'." },
+    "programName": { "type": ["string", "null"], "description": "'ProgramName'." },
+    "sponsorName": { "type": ["string", "null"], "description": "'SponsorName'." },
+    "providerType": { "$ref": "_common.json#/$defs/ProviderType" },
+    "contractYear": { "type": ["string", "integer", "null"], "description": "'ContractYear'." },
+    "serviceId": { "type": ["string", "null"], "description": "'ServiceID'." },
+    "serviceName": { "type": ["string", "null"], "description": "'ServiceName'." },
+    "entryType": { "type": ["string", "null"], "description": "'EntryType' (budget vs. reported line)." },
+    "budgetedUnits": { "type": ["number", "null"], "description": "'BudgetedUnits'." },
+    "reportedUnits": { "type": ["number", "null"], "description": "'ReportedUnits'." },
+    "budgetLineAmount": { "type": ["number", "null"], "description": "'BudgetLineAmount'." },
+    "reportedAmount": { "type": ["number", "null"], "description": "'ReportedAmount'." },
+    "serviceFromDate": { "type": ["string", "null"], "format": "date", "description": "'ServiceFromDate'." },
+    "serviceToDate": { "type": ["string", "null"], "format": "date", "description": "'ServiceToDate'." }
+  },
+  "additionalProperties": false
+}

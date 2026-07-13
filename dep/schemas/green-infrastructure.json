@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dep/schemas/green-infrastructure.json",
+  "title": "GreenInfrastructure",
+  "description": "A DEP green-infrastructure asset — rain gardens, bioswales, porous pavement, and other stormwater-management practices that manage combined-sewer overflow. Canonical schema reconciling DEP's parallel GI layers whose columns are truncated 10-char shapefile names: Green Infrastructure Point Layer (df32-vzax, 35c), Regulated Projects (fm4z-qud6, 33c), Porous Pavement Right of Way (n7f2-dyvt), and Medians (drep-uzs7). Keyed on GI_ID / Asset_ID.",
+  "type": "object",
+  "x-source": {
+    "opendata_point": "https://data.cityofnewyork.us/d/df32-vzax",
+    "opendata_regulated": "https://data.cityofnewyork.us/d/fm4z-qud6",
+    "opendata_medians": "https://data.cityofnewyork.us/d/drep-uzs7",
+    "opendata_map": "https://data.cityofnewyork.us/d/h3ce-uahi",
+    "site": "https://www.nyc.gov/site/dep/water/green-infrastructure.page"
+  },
+  "properties": {
+    "giId": { "type": "string", "description": "Green-infrastructure identifier ('GI_ID')." },
+    "assetId": { "type": ["string", "integer", "null"], "description": "Asset identifier ('Asset_ID')." },
+    "assetType": { "type": ["string", "null"], "description": "Asset type ('Asset_Type') — e.g. rain garden, bioswale, tree pit." },
+    "giFeature": { "type": ["string", "null"], "description": "GI feature classification ('GI_Feature')." },
+    "status": { "type": ["string", "null"], "description": "Build/operational status ('Status' / 'Status_Gro')." },
+    "programArea": { "type": ["string", "null"], "description": "Program area ('Program_Ar')." },
+    "rowOnsite": { "type": ["string", "null"], "description": "Right-of-way vs. on-site siting ('Row_Onsite')." },
+    "projectName": { "type": ["string", "null"], "description": "Project name ('Project_Na')." },
+    "depContract": { "type": ["string", "null"], "description": "DEP contract reference ('DEP_Contra' / 'DEP_Cont_1')." },
+    "constructedDate": { "type": ["string", "null"], "format": "date", "description": "Construction / in-service date ('Constructed_Date' / 'Constructe')." },
+    "assetArea": { "type": ["number", "null"], "description": "Managed asset area, square feet ('Asset_Area')." },
+    "assetLength": { "type": ["number", "null"], "description": "Asset length, feet ('Asset_Leng')." },
+    "assetWidth": { "type": ["number", "null"], "description": "Asset width, feet ('Asset_Widt')." },
+    "tree": {
+      "type": "object",
+      "description": "Associated planting, where present.",
+      "properties": {
+        "commonName": { "type": ["string", "null"], "description": "'Tree_Commo'." },
+        "latinName": { "type": ["string", "null"], "description": "'Tree_Latin'." }
+      },
+      "additionalProperties": false
+    },
+    "waterBody": { "$ref": "_common.json#/$defs/WaterBodyReference" },
+    "taxLot": { "$ref": "_common.json#/$defs/TaxLot" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["giId"],
+  "additionalProperties": false
+}

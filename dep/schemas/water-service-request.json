@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dep/schemas/water-service-request.json",
+  "title": "WaterServiceRequest",
+  "description": "A resident/customer request to DEP to fix a water or sewer problem — a water-main break, no water or low pressure, a leak, a SEWER BACKUP, a clogged catch basin, a hydrant problem, or discolored water — and, for account holders, water-bill and account service. NET-NEW: there is NO single public API for this. Today the transaction is split and locked: emergencies and street conditions are funneled through generic NYC311 (portal.311.nyc.gov), while billing/account service lives only inside the login-walled My DEP Account portal (a826-umax.dep.nyc.gov, the uMAX Customer Information System on ASP.NET + Azure AD B2C). DEP's own read-side ticket data surfaces separately as the 'Work Order Management Module' dataset (4fvw-nn9c). This schema serves both the read surface (list/get a customer's own requests) and the write surface (report a problem).",
+  "type": "object",
+  "x-source": {
+    "portal_account": "https://a826-umax.dep.nyc.gov/",
+    "nyc311": "https://portal.311.nyc.gov/",
+    "opendata_workorders": "https://data.cityofnewyork.us/d/4fvw-nn9c",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "requestId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned service-request / work-order number (maps to SVC_REQUEST_NUMBER / WORKORDER_NUMBER). Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Assigned", "In Progress", "Scheduled", "On Hold", "Resolved", "Closed", "Cancelled", null],
+      "description": "Lifecycle status. Set by DEP, not the requester.",
+      "readOnly": true
+    },
+    "category": {
+      "type": "string",
+      "description": "What is wrong.",
+      "enum": ["Water Main Break", "No Water", "Low Water Pressure", "Water Leak", "Sewer Backup", "Catch Basin Clogged/Flooding", "Manhole", "Fire Hydrant", "Water Quality/Discoloration", "Noise", "Water Bill/Account", "Other"]
+    },
+    "description": { "type": "string", "description": "Free-text description of the problem." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "address": { "type": ["string", "null"], "description": "Street address nearest the problem." },
+    "taxLot": { "$ref": "_common.json#/$defs/TaxLot" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "accountNumber": {
+      "type": ["string", "null"],
+      "description": "DEP water/sewer account number, for billing/account requests (validated against uMAX). Optional for street-condition reports."
+    },
+    "emergency": {
+      "type": "boolean",
+      "default": false,
+      "description": "Flag life-safety / property emergencies (water-main break, sewer backup into a home, flooding, no water). Emergencies are routed to DEP's 24-hour customer service and NYC311 priority intake."
+    },
+    "contact": {
+      "type": "object",
+      "description": "Requester contact details.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "createdDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "resolvedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["category", "description"],
+  "additionalProperties": false
+}

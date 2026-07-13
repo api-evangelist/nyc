@@ -1,0 +1,387 @@
+openapi: 3.1.0
+info:
+  title: DYCD API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Youth and Community Development —
+    surfacing the program-finder that already exists inside DiscoverDYCD, publishing DYCD's open
+    supply-side data (programs, program sites, providers, contracts, service areas, participant
+    demographics) as coherent resources, and adding the missing write surface: applying to a program.
+  description: >-
+    Proposed API-first surface for the NYC Department of Youth and Community Development (DYCD), from
+    the NYC Modernization low-hanging-fruit assessment of nyc.gov/site/dycd and the DYCD Connect /
+    DiscoverDYCD applications.
+
+
+    DYCD is a **funder/intermediary**: it does not deliver services directly, it contracts hundreds of
+    community-based organizations (providers) to run programs — SYEP, COMPASS/SONYC after-school,
+    Beacon, Cornerstone, adult literacy, immigrant services, Runaway & Homeless Youth — at physical
+    **program sites**. Its **supply-side data is well published** on NYC Open Data (15 datasets:
+    program sites with a full geography spine, contracts, contractors, Neighborhood Development Areas,
+    aggregate participant demographics). DYCD has also **already built** a public program-finder,
+    **DiscoverDYCD** (an Angular app on Microsoft-IIS with an internal `/api/` backend) — but that API
+    is undocumented and private, and there is **no public API to apply** to a program.
+
+
+    This contract does two things: (1) surfaces the existing program finder and the open supply data as
+    one clean, owned resource model, and (2) adds the one net-new **write** workflow — submitting a
+    **program application** (e.g. an SYEP application) — that today exists only in DYCD's seasonal
+    online application flow.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.dycd.nyc/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Programs
+    description: DYCD program offerings (SYEP, COMPASS, Beacon, etc.) — the DiscoverDYCD finder as a resource.
+  - name: ProgramSites
+    description: Physical sites where funded programs are delivered by providers.
+  - name: Providers
+    description: Community-based organizations DYCD contracts to run programs.
+  - name: Contracts
+    description: DYCD contracts funding providers and programs.
+  - name: ServiceAreas
+    description: Neighborhood Development Areas (NDAs) — community-development catchments.
+  - name: Participants
+    description: Aggregate participant demographics / enrollment (never individual participants).
+  - name: Applications
+    description: Apply to and track a DYCD program application (read + write). The net-new surface, today locked in DYCD's seasonal application flow.
+
+paths:
+  /programs:
+    get:
+      operationId: listPrograms
+      summary: List / search DYCD program offerings
+      tags: [Programs]
+      parameters:
+        - name: programArea
+          in: query
+          schema: { type: string }
+        - name: programType
+          in: query
+          schema: { type: string }
+        - name: age
+          in: query
+          description: Filter to programs serving this applicant age.
+          schema: { type: integer }
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of programs.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/program.json' } }
+  /programs/{programType}:
+    get:
+      operationId: getProgram
+      summary: Get a program offering by type key
+      tags: [Programs]
+      parameters:
+        - name: programType
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The program.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/program.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /program-sites:
+    get:
+      operationId: listProgramSites
+      summary: List / search program sites
+      tags: [ProgramSites]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: programArea
+          in: query
+          schema: { type: string }
+        - name: programType
+          in: query
+          schema: { type: string }
+        - name: provider
+          in: query
+          schema: { type: string }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - name: nda
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of program sites.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/program-site.json' } }
+  /program-sites/{portfolioId}:
+    get:
+      operationId: getProgramSite
+      summary: Get a program site by PortfolioID
+      tags: [ProgramSites]
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The program site.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/program-site.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /providers:
+    get:
+      operationId: listProviders
+      summary: List / search DYCD providers (contracted CBOs)
+      tags: [Providers]
+      parameters:
+        - name: programArea
+          in: query
+          schema: { type: string }
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of providers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/provider.json' } }
+
+  /contracts:
+    get:
+      operationId: listContracts
+      summary: List / search DYCD contracts
+      tags: [Contracts]
+      parameters:
+        - name: provider
+          in: query
+          schema: { type: string }
+        - name: majorProgram
+          in: query
+          schema: { type: string }
+        - name: contractStatus
+          in: query
+          schema: { type: string }
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of contracts.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/contract.json' } }
+
+  /service-areas:
+    get:
+      operationId: listServiceAreas
+      summary: List Neighborhood Development Areas (NDAs)
+      tags: [ServiceAreas]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of service areas.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/service-area.json' } }
+
+  /participant-demographics:
+    get:
+      operationId: listParticipantDemographics
+      summary: Aggregate participant demographics by geography / program type
+      tags: [Participants]
+      parameters:
+        - name: geographyType
+          in: query
+          schema: { type: string }
+        - name: programType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate participant demographics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/participant-demographics.json' } }
+
+  /applications:
+    get:
+      operationId: listApplications
+      summary: List the authenticated applicant's program applications
+      description: Reads the applicant's own DYCD program applications and their status — today only visible inside DYCD's seasonal application flow.
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Under Review, Waitlisted, Selected, Enrolled, Not Selected, Withdrawn] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the applicant's program applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/program-application.json' } }
+    post:
+      operationId: createApplication
+      summary: Apply to a DYCD program (submit a program application)
+      description: >-
+        The net-new write surface — an API for applying to a DYCD program (e.g. an SYEP application),
+        replacing the seasonal, app-only workflow. For minor applicants a guardian block is expected;
+        set nychaResident=true where the Local Law 163 SYEP set-aside applies.
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/program-application.json' }
+      responses:
+        '201':
+          description: Application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/program-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /applications/{applicationId}:
+    get:
+      operationId: getApplication
+      summary: Get a program application
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The program application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/program-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Program: { $ref: '../schemas/program.json' }
+    ProgramSite: { $ref: '../schemas/program-site.json' }
+    Provider: { $ref: '../schemas/provider.json' }
+    Contract: { $ref: '../schemas/contract.json' }
+    ServiceArea: { $ref: '../schemas/service-area.json' }
+    ParticipantDemographics: { $ref: '../schemas/participant-demographics.json' }
+    ProgramApplication: { $ref: '../schemas/program-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

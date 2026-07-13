@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/fdny/schemas/certificate-of-fitness.json",
+  "title": "CertificateOfFitness",
+  "description": "An FDNY Certificate of Fitness (C of F) — an individual credential to perform a fire-regulated activity or a premises certificate. Canonical schema reconciling 'Bureau of Fire Prevention - Certificates of Fitness' (pdiy-9ae5, 18 columns). Keyed on COF_ID / COF_NUM. New certificates are applied for and renewed through FDNY Business (fires.fdnycloud.org); this schema is the read/reference view.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/pdiy-9ae5",
+    "portal": "https://fires.fdnycloud.org/CitizenAccess"
+  },
+  "properties": {
+    "cofId": { "type": "string", "description": "'COF_ID' — certificate identifier." },
+    "cofNumber": { "type": ["string", "null"], "description": "'COF_NUM'." },
+    "cofType": { "type": ["string", "null"], "description": "'COF_TYPE' — certificate category/type." },
+    "holderName": { "type": ["string", "null"], "description": "'HOLDER_NAME'." },
+    "expiresOn": { "type": ["string", "null"], "format": "date", "description": "'EXPIRES_ON'." },
+    "premises": { "$ref": "_common.json#/$defs/PremisesReference" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["cofId"],
+  "additionalProperties": false
+}

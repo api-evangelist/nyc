@@ -1,0 +1,369 @@
+openapi: 3.1.0
+info:
+  title: FDNY API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the Fire Department of the City of New York — publishing its
+    already-open reference and operational data (firehouses, fire and EMS incident dispatch,
+    inspections, violations, certificates of fitness) as coherent resources, and adding the missing
+    write surface locked inside the rented FDNY Business permitting cloud — applying for a fire permit.
+  description: >-
+    Proposed API-first surface for the Fire Department of the City of New York (FDNY), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/fdny and the FDNY Business portal.
+
+
+    FDNY is a split domain. Its **reference and operational data is unusually well published** on NYC
+    Open Data — 17 datasets covering firehouses, minute-level fire and EMS incident dispatch, Bureau of
+    Fire Prevention inspections, active violation orders, certificates of fitness, and building vacate
+    lists. But its **business transaction layer is locked inside a rented commercial SaaS**: FDNY
+    Business (`fires.fdnycloud.org`) is an Accela Civic Platform (Citizen Access) application where
+    businesses apply for fire permits, hold Certificates of Fitness and Operation, schedule inspections,
+    and answer violations. None of that transactional surface has a machine-readable contract or an Open
+    Data twin — only historical snapshots of the outputs are published.
+
+
+    This contract does two things: (1) presents the open reference/operational datasets as one clean
+    resource model, and (2) adds the one net-new **write** workflow — submitting a **fire permit
+    application** (or inspection request) — that today exists only behind the rented Accela portal.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.fdny.nyc/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Firehouses
+    description: FDNY firehouses / fire stations.
+  - name: Incidents
+    description: Fire and EMS incident dispatch records (read-only).
+  - name: Inspections
+    description: Bureau of Fire Prevention, risk-based, and mandatory fire-company inspections.
+  - name: Violations
+    description: Active Bureau of Fire Prevention violation orders.
+  - name: Certificates
+    description: Certificates of Fitness held against premises and individuals.
+  - name: Permits
+    description: Apply for and track FDNY fire permits (read + write). The net-new surface, today locked in the rented FDNY Business / Accela portal.
+
+paths:
+  /firehouses:
+    get:
+      operationId: listFirehouses
+      summary: List / search FDNY firehouses
+      tags: [Firehouses]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of firehouses.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/firehouse.json' } }
+  /firehouses/{bin}:
+    get:
+      operationId: getFirehouse
+      summary: Get a firehouse by BIN
+      tags: [Firehouses]
+      parameters:
+        - name: bin
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The firehouse.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/firehouse.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /incidents:
+    get:
+      operationId: listIncidents
+      summary: Search fire and EMS incident dispatch records
+      tags: [Incidents]
+      parameters:
+        - name: service
+          in: query
+          schema: { type: string, enum: [Fire, EMS] }
+        - $ref: '#/components/parameters/borough'
+        - name: incidentClassification
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date-time }
+        - name: to
+          in: query
+          schema: { type: string, format: date-time }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of incident dispatch records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/incident-dispatch.json' } }
+  /incidents/{incidentId}:
+    get:
+      operationId: getIncident
+      summary: Get an incident dispatch record
+      tags: [Incidents]
+      parameters:
+        - name: incidentId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: service
+          in: query
+          schema: { type: string, enum: [Fire, EMS] }
+      responses:
+        '200':
+          description: The incident.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/incident-dispatch.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /inspections:
+    get:
+      operationId: listInspections
+      summary: Search FDNY fire-safety inspections
+      tags: [Inspections]
+      parameters:
+        - name: source
+          in: query
+          schema: { type: string, enum: ["Bureau of Fire Prevention", "Risk Based (RBIS)", "Mandatory (Fire Company)"] }
+        - $ref: '#/components/parameters/borough'
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of inspections.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/inspection.json' } }
+
+  /violations:
+    get:
+      operationId: listViolations
+      summary: Search active Bureau of Fire Prevention violation orders
+      tags: [Violations]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of violation orders.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/violation.json' } }
+
+  /certificates-of-fitness:
+    get:
+      operationId: listCertificatesOfFitness
+      summary: Search certificates of fitness
+      tags: [Certificates]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: cofType
+          in: query
+          schema: { type: string }
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: holderName
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of certificates of fitness.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/certificate-of-fitness.json' } }
+
+  /permit-applications:
+    get:
+      operationId: listPermitApplications
+      summary: List the authenticated applicant's fire permit applications
+      description: Reads the applicant's own permit applications — today only visible inside the FDNY Business / Accela portal.
+      tags: [Permits]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, "Under Review", "Inspection Scheduled", "Additional Info Required", Approved, Issued, Denied, Withdrawn] }
+        - name: permitType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the applicant's permit applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/fire-permit-application.json' } }
+    post:
+      operationId: createPermitApplication
+      summary: Apply for a fire permit (submit an application)
+      description: >-
+        The net-new write surface — an API for submitting an FDNY fire permit, Certificate of Operation,
+        or inspection request, replacing the Accela-only workflow. Requires an authenticated applicant.
+      tags: [Permits]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/fire-permit-application.json' }
+      responses:
+        '201':
+          description: Permit application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/fire-permit-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /permit-applications/{applicationId}:
+    get:
+      operationId: getPermitApplication
+      summary: Get a fire permit application
+      tags: [Permits]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The permit application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/fire-permit-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Firehouse: { $ref: '../schemas/firehouse.json' }
+    IncidentDispatch: { $ref: '../schemas/incident-dispatch.json' }
+    Inspection: { $ref: '../schemas/inspection.json' }
+    Violation: { $ref: '../schemas/violation.json' }
+    CertificateOfFitness: { $ref: '../schemas/certificate-of-fitness.json' }
+    FirePermitApplication: { $ref: '../schemas/fire-permit-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

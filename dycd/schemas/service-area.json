@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dycd/schemas/service-area.json",
+  "title": "ServiceArea",
+  "description": "A DYCD Neighborhood Development Area (NDA) — the community-district-level catchment used to target community-development funding (immigrant services, adult literacy, family support). Canonical schema reconciling the 'Neighborhood Development Areas' dataset (vd7c-qjsx) and its map (p57r-4v4f).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/vd7c-qjsx",
+    "opendata_map": "https://data.cityofnewyork.us/d/p57r-4v4f"
+  },
+  "properties": {
+    "nda": { "type": "string", "description": "Neighborhood Development Area name/code ('NDA')." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geometry": {
+      "type": ["object", "null"],
+      "description": "GeoJSON MultiPolygon boundary ('the_geom').",
+      "properties": {
+        "type": { "type": "string" },
+        "coordinates": { "type": "array", "items": true }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["nda"],
+  "additionalProperties": false
+}

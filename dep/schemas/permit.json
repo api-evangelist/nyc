@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dep/schemas/permit.json",
+  "title": "Permit",
+  "description": "A DEP-issued regulatory permit or registration. Canonical schema reconciling DEP's parallel permit datasets: Water and Sewer Permits (hphy-6g7m, 8c) and their historic series (4k4u-823g), Clean Air Tracking System (CATS) boiler/emissions permits (f4rp-2kvy, 21c), and the Asbestos Control Program (vq35-j9qm). Applying for and tracking these is a transactional workflow that today has no public API — it lives in agency portals or on paper.",
+  "type": "object",
+  "x-source": {
+    "opendata_water_sewer": "https://data.cityofnewyork.us/d/hphy-6g7m",
+    "opendata_water_sewer_historic": "https://data.cityofnewyork.us/d/4k4u-823g",
+    "opendata_cats_air": "https://data.cityofnewyork.us/d/f4rp-2kvy",
+    "opendata_asbestos": "https://data.cityofnewyork.us/d/vq35-j9qm"
+  },
+  "properties": {
+    "permitNumber": { "type": ["string", "null"], "description": "Permit number ('PermitNumber' / 'PERMIT_NO')." },
+    "permitType": {
+      "type": "string",
+      "description": "Which DEP permitting program the record belongs to.",
+      "enum": ["Water and Sewer", "Clean Air (CATS)", "Asbestos (ACP7)", "Other"]
+    },
+    "applicationType": { "type": ["string", "null"], "description": "Application type ('ApplicationType' / 'RequestType' / 'Permit Description')." },
+    "status": { "type": ["string", "null"], "description": "Request / permit status ('RequestStatus' / 'status')." },
+    "applicationId": { "type": ["string", "null"], "description": "Application id where distinct from the permit number ('ApplicationID' / 'RequestID')." },
+    "premiseName": { "type": ["string", "null"], "description": "Premise / establishment name ('PremiseName')." },
+    "ownerName": { "type": ["string", "null"], "description": "Owner name ('OwnerName')." },
+    "taxLot": { "$ref": "_common.json#/$defs/TaxLot" },
+    "issuanceDate": { "type": ["string", "null"], "format": "date", "description": "Issuance date ('IssuanceDate' / 'IssueDate' / 'DATEISSUED')." },
+    "expirationDate": { "type": ["string", "null"], "format": "date", "description": "Expiration date ('ExpirationDate')." },
+    "equipment": {
+      "type": "object",
+      "description": "Equipment detail carried by CATS (boiler/burner) permits.",
+      "properties": {
+        "make": { "type": ["string", "null"], "description": "'Make' / 'BurnerMake'." },
+        "model": { "type": ["string", "null"], "description": "'Model' / 'BurnerModel'." },
+        "quantity": { "type": ["integer", "null"], "description": "'Quantity'." },
+        "primaryFuel": { "type": ["string", "null"], "description": "'PrimaryFuel'." },
+        "secondaryFuel": { "type": ["string", "null"], "description": "'SecondaryFuel'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["permitType"],
+  "additionalProperties": false
+}

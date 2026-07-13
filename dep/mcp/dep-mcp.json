@@ -1,0 +1,188 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DEP's open environmental reference data (reservoir levels, water consumption, water quality, green infrastructure, hydrants, permits) and adds report_water_problem — the net-new write workflow today split between NYC311 and the login-walled uMAX My DEP Account portal.",
+    "openapi": "../openapi/dep.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.dep",
+    "title": "NYC Environmental Protection (DEP)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the New York City Department of Environmental Protection — reservoir levels and citywide water consumption, harbor/drinking-water/watershed/lead-copper water quality, green-infrastructure assets, hydrants, and water/air/asbestos permits from NYC Open Data, plus the net-new ability to report and track a water or sewer problem (water service request) that today is split between NYC311 and the uMAX billing portal.",
+    "instructions": "Use find_reservoir_levels for water-supply state and find_water_consumption for citywide usage. find_water_quality searches samples across DEP's programs (Harbor, Drinking Water Distribution, Watershed, Lead and Copper) — analyte values live in the sample's 'measurements' map and may be comparator strings like '<1' because DEP publishes many analytes as free text. find_green_infrastructure / get_green_infrastructure cover stormwater assets; find_hydrants / get_hydrant cover distribution assets; find_permits covers water/sewer, clean-air (CATS), and asbestos permits. report_water_problem (net-new) creates a water/sewer service request; it mutates state — confirm the location, category, and description with the user before submitting, and set emergency=true for water-main breaks, sewer backups into a home, flooding, or no water so it routes to DEP's 24-hour customer service. list_my_service_requests and get_service_request read a customer's own tickets."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_reservoir_levels",
+      "title": "Find Reservoir Levels",
+      "description": "List reservoir-level observations across the NYC water-supply system by reservoir, system (Catskill/Delaware/Croton), or time window.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reservoir": { "type": "string" },
+          "system": { "type": "string", "enum": ["Catskill", "Delaware", "Croton"] },
+          "from": { "type": "string", "format": "date-time" },
+          "to": { "type": "string", "format": "date-time" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/reservoir-level.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listReservoirLevels"
+    },
+    {
+      "name": "find_water_consumption",
+      "title": "Find Water Consumption",
+      "description": "Return citywide water-consumption figures (population, million gallons per day, per-capita) by year. Consumption is published only at the citywide aggregate; per-account usage lives in the uMAX portal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "year": { "type": "string" },
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/water-consumption.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listWaterConsumption"
+    },
+    {
+      "name": "find_water_quality",
+      "title": "Find Water Quality",
+      "description": "Search water-quality samples across DEP monitoring programs (Harbor, Drinking Water Distribution, Watershed, Lead and Copper) by program, site, borough, or date. Analyte readings are returned in each sample's 'measurements' map.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "program": { "type": "string", "enum": ["Harbor", "Drinking Water Distribution", "Watershed", "Lead and Copper", "Reservoir"] },
+          "sampleSite": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/water-quality.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listWaterQuality"
+    },
+    {
+      "name": "find_green_infrastructure",
+      "title": "Find Green Infrastructure",
+      "description": "Search DEP green-infrastructure stormwater assets (rain gardens, bioswales, porous pavement) by borough, asset type, status, or council district.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "assetType": { "type": "string" },
+          "status": { "type": "string" },
+          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/green-infrastructure.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listGreenInfrastructure"
+    },
+    {
+      "name": "get_green_infrastructure",
+      "title": "Get Green Infrastructure Asset",
+      "description": "Fetch a single DEP green-infrastructure asset by its GI_ID.",
+      "inputSchema": { "type": "object", "properties": { "giId": { "type": "string" } }, "required": ["giId"] },
+      "outputSchema": { "$ref": "../schemas/green-infrastructure.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getGreenInfrastructure"
+    },
+    {
+      "name": "find_hydrants",
+      "title": "Find Hydrants",
+      "description": "Search public fire hydrants in DEP's water-distribution network by borough or community board.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "communityBoard": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/hydrant.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listHydrants"
+    },
+    {
+      "name": "get_hydrant",
+      "title": "Get Hydrant",
+      "description": "Fetch a single hydrant by its UNITID.",
+      "inputSchema": { "type": "object", "properties": { "unitId": { "type": "string" } }, "required": ["unitId"] },
+      "outputSchema": { "$ref": "../schemas/hydrant.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getHydrant"
+    },
+    {
+      "name": "find_permits",
+      "title": "Find Permits",
+      "description": "Search DEP water/sewer, clean-air (CATS), and asbestos (ACP7) permits by permit type, status, borough, or tax block/lot.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "permitType": { "type": "string", "enum": ["Water and Sewer", "Clean Air (CATS)", "Asbestos (ACP7)"] },
+          "status": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "block": { "type": "string" },
+          "lot": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/permit.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPermits"
+    },
+    {
+      "name": "list_my_service_requests",
+      "title": "List My Service Requests",
+      "description": "List the authenticated customer's own DEP water/sewer service requests and their status — today split between NYC311 and the uMAX My DEP Account portal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Assigned", "In Progress", "Scheduled", "On Hold", "Resolved", "Closed", "Cancelled"] },
+          "category": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/water-service-request.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listWaterServiceRequests",
+      "x-auth": "user"
+    },
+    {
+      "name": "get_service_request",
+      "title": "Get Service Request",
+      "description": "Fetch a single water/sewer service request by its id.",
+      "inputSchema": { "type": "object", "properties": { "requestId": { "type": "string" } }, "required": ["requestId"] },
+      "outputSchema": { "$ref": "../schemas/water-service-request.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getWaterServiceRequest"
+    },
+    {
+      "name": "report_water_problem",
+      "title": "Report a Water Problem",
+      "description": "Create a DEP water/sewer service request — report a water-main break, no water, a leak, a sewer backup, a clogged catch basin, a hydrant problem, discolored water, or a billing/account issue. NET-NEW workflow with no single public API today — it is split between NYC311 and the login-walled uMAX My DEP Account portal. Mutates state — confirm location, category, and description first; set emergency=true for water-main breaks, sewer backups into a home, flooding, or no water so it routes to DEP's 24-hour customer service.",
+      "inputSchema": { "$ref": "../schemas/water-service-request.json" },
+      "outputSchema": { "$ref": "../schemas/water-service-request.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createWaterServiceRequest"
+    }
+  ]
+}

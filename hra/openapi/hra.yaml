@@ -1,0 +1,362 @@
+openapi: 3.1.0
+info:
+  title: HRA / DSS API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Human Resources Administration / Department of Social
+    Services — publishing its already-open reference and caseload data (benefit programs, application
+    centers, caseload statistics, case actions) as coherent resources, exposing the open-source ACCESS
+    NYC eligibility rules as a screening endpoint, and adding the missing write surface locked inside the
+    ACCESS HRA portal: submitting a benefits application.
+  description: >-
+    Proposed API-first surface for the NYC Human Resources Administration / Department of Social Services
+    (HRA/DSS), from the NYC Modernization low-hanging-fruit assessment of nyc.gov/site/hra, the ACCESS NYC
+    eligibility screener, and the ACCESS HRA application portal.
+
+
+    HRA is a benefits agency with an unusual asset split. Its **caseload and directory data is generously
+    published** on NYC Open Data — 49 datasets covering SNAP/Cash Assistance/Medicaid recipient and case
+    counts, application centers, and case actions. Its **eligibility LOGIC is open source** — the ACCESS
+    NYC screener (`access.nyc.gov/eligibility`) runs on a public Drools business rules engine
+    (`github.com/NYCOpportunity/ACCESS-NYC-Rules`). But there is **no API that binds the journey together**:
+    the screener returns HTML, and the actual application/case surface — where a resident applies for and
+    tracks SNAP, Cash Assistance, or Medicaid — lives only inside the **ACCESS HRA** portal
+    (`a069-access.nyc.gov/accesshra`), a React SPA with no public API and no Open Data twin.
+
+
+    This contract does three things: (1) presents the open reference and caseload datasets as one clean
+    resource model; (2) exposes the open-source eligibility rules as a `POST /eligibility` screening
+    endpoint; and (3) adds the one net-new **write** workflow — submitting a **benefits application** —
+    that today exists only behind the ACCESS HRA portal or an in-person visit.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.hra.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Programs
+    description: Public-benefit programs and services (SNAP, Cash Assistance, Medicaid, HEAP, Fair Fares, HASA).
+  - name: Centers
+    description: Benefits Access Centers, SNAP Centers, Medicaid Offices, and Homebase locations where residents apply.
+  - name: Caseloads
+    description: Aggregate benefit caseload and enrollment statistics (never individual cases).
+  - name: CaseActions
+    description: Aggregate Cash Assistance / SNAP case actions — rejections, closings, reopenings.
+  - name: Eligibility
+    description: Screen a household against NYC benefit programs (the open-source ACCESS NYC rules).
+  - name: Applications
+    description: Apply for and track benefits (read + write). The net-new surface, today locked in the ACCESS HRA portal.
+
+paths:
+  /programs:
+    get:
+      operationId: listPrograms
+      summary: List / search benefit programs and services
+      tags: [Programs]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: program
+          in: query
+          schema: { type: string }
+        - name: populationServed
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of programs.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/program.json' } }
+  /programs/{programCode}:
+    get:
+      operationId: getProgram
+      summary: Get a benefit program by code
+      tags: [Programs]
+      parameters:
+        - name: programCode
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The program.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/program.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /centers:
+    get:
+      operationId: listCenters
+      summary: List / search HRA centers and offices
+      tags: [Centers]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: centerType
+          in: query
+          schema: { type: string, enum: [Benefits Access Center, SNAP Center, Medicaid Office, Homebase, Job Center] }
+        - name: zipCode
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of centers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/center.json' } }
+  /centers/{centerNumber}:
+    get:
+      operationId: getCenter
+      summary: Get a center (with latest wait time) by center number
+      tags: [Centers]
+      parameters:
+        - name: centerNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The center.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/center.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /caseload-statistics:
+    get:
+      operationId: listCaseloadStatistics
+      summary: Search aggregate benefit caseload / enrollment statistics
+      tags: [Caseloads]
+      parameters:
+        - name: program
+          in: query
+          schema: { type: string, enum: [SNAP, Cash Assistance, Medicaid, HEAP, Fair Fares, HASA, Emergency Assistance, Child Support, Adult Protective Services, IDNYC, Home Care, Homebase, Other] }
+        - name: measure
+          in: query
+          schema: { type: string, enum: [Recipients, Cases, Households, Enrollees, Applications, Requests] }
+        - $ref: '#/components/parameters/borough'
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of caseload statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/caseload-statistic.json' } }
+
+  /case-actions:
+    get:
+      operationId: listCaseActions
+      summary: Search aggregate Cash Assistance / SNAP case actions (rejections, closings, reopenings)
+      tags: [CaseActions]
+      parameters:
+        - name: action
+          in: query
+          schema: { type: string, enum: [Rejection, Closing, Reopening, Reopening (Missed Benefit)] }
+        - name: assistanceType
+          in: query
+          schema: { type: string }
+        - name: reasonCode
+          in: query
+          schema: { type: string }
+        - name: calendarYear
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of case-action reports.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/case-action.json' } }
+
+  /eligibility:
+    post:
+      operationId: screenEligibility
+      summary: Screen a household against NYC benefit programs
+      description: >-
+        Runs a household profile against the open-source ACCESS NYC eligibility rules
+        (github.com/NYCOpportunity/ACCESS-NYC-Rules) and returns one determination per program.
+        Read-only — no application is filed and nothing is stored.
+      tags: [Eligibility]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                household: { $ref: '../schemas/benefits-eligibility.json#/properties/household' }
+              required: [household]
+      responses:
+        '200':
+          description: Eligibility determinations for the screened household.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/benefits-eligibility.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /applications:
+    get:
+      operationId: listApplications
+      summary: List the authenticated resident's benefits applications
+      description: Reads the resident's own applications and case status — today only visible inside the ACCESS HRA portal.
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Received, In Review, Interview Scheduled, Documents Needed, Approved, Denied, Withdrawn] }
+        - name: program
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the resident's applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/benefits-application.json' } }
+    post:
+      operationId: createApplication
+      summary: Apply for benefits (submit a benefits application)
+      description: >-
+        The net-new write surface — an API for submitting a public-benefit application (SNAP, Cash
+        Assistance, Medicaid, and others), replacing the ACCESS-HRA-only workflow. Immediate needs
+        (no food, eviction, no heat) should set the `emergency` flag to true for expedited handling.
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/benefits-application.json' }
+      responses:
+        '201':
+          description: Application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/benefits-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /applications/{applicationId}:
+    get:
+      operationId: getApplication
+      summary: Get a benefits application / case
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/benefits-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Program: { $ref: '../schemas/program.json' }
+    Center: { $ref: '../schemas/center.json' }
+    CaseloadStatistic: { $ref: '../schemas/caseload-statistic.json' }
+    CaseAction: { $ref: '../schemas/case-action.json' }
+    BenefitsEligibility: { $ref: '../schemas/benefits-eligibility.json' }
+    BenefitsApplication: { $ref: '../schemas/benefits-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

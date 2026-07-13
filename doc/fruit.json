@@ -1,0 +1,144 @@
+{
+  "domain": "doc",
+  "agency": "New York City Department of Correction (DOC)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/doc (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace) and the Inmate Lookup Service linked from the site, identified as the 'P.I.C. Lookup' at a073-ils-web.nyc.gov/inmatelookup — a legacy Apache MyFaces (JavaServer Faces) web application (javax.faces.ViewState, myfaces markers, WebSphere-style JSESSIONID, SameSite=Strict) with no API. Verified the NYC Open Data agency label 'Department of Correction (DOC)' via the Socrata Discovery API (q=inmate/jail/correction) and pulled all 15 assets with column schemas.",
+  "related_domains": ["a073-ils-web.nyc.gov", "a860-openrecords.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/boc", "nyc.gov/site/mocj"],
+  "meta": {
+    "short": "NYC Correction (DOC)",
+    "verb": "expose",
+    "platform": "NYC.gov 'Livesite' (Akamai edge, nginx, Dynatrace RUM) informational site + a legacy Apache MyFaces (JSF/Java) Inmate Lookup Service ('P.I.C. Lookup', a073-ils-web.nyc.gov) with no API; Socrata SODA open data",
+    "netnew": "VisitScheduling — schedule a visit with a person in custody (no API today; arranged by phone, in person, or vendor portal). Complaint / records request is a second net-new write.",
+    "accent": "#5a7a9a",
+    "tagline": "DOC over-publishes accountability data and even runs a live custody lookup, yet the lookup is a JSF screen with no API and the human transactions — visiting someone, filing a complaint — have no digital contract at all.",
+    "headline": "A transparency-heavy, transaction-poor domain: 15 open datasets and a live P.I.C. lookup, but the lookup is a legacy Java screen with no API and scheduling a visit has no surface."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 3,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Standard NYC.gov Livesite chassis plus a legacy Apache MyFaces (JSF) lookup on a WebSphere-era stack",
+    "siteApi": "No content or site API; the informational site is HTML only",
+    "openData": "15 Socrata datasets — unusually rich accountability data (custody, admissions, deaths, incidents, security indicators)",
+    "coreData": "Core person-in-custody data is published daily and searchable live, but only via a JSF screen and daily snapshots — no per-person API",
+    "writeApi": "No write surface at all — visits, complaints, and records requests are phone/mail/in-person or vendor portals",
+    "agent": "No agent-native surface; the live lookup is a JavaScript/JSF app hostile to automation",
+    "ownership": "First-party datasets and a city-hosted lookup (a073.nyc.gov), not a rented SaaS — reasonably owned, but the lookup is undocumented legacy"
+  },
+  "headline_findings": [
+    "DOC is transparency-heavy but transaction-poor: 15 NYC Open Data datasets publish the daily in-custody population, admissions/discharges, deaths, slashings/stabbings, fights, assaults on staff, staff injuries, emergency lock-ins, and Local Law 33/85 security and visitation indicators.",
+    "It also runs a LIVE real-time lookup — the Inmate Lookup Service / 'P.I.C. Lookup' at a073-ils-web.nyc.gov/inmatelookup — but that lookup is a legacy Apache MyFaces (JavaServer Faces) web application with no API, no OpenAPI, and no JSON; it is reachable only by a human in a browser.",
+    "The two things the public actually needs to DO — schedule a visit with a person in custody, and file a complaint or records/FOIL request — have no machine-readable surface at all; they are handled by phone, in person, mail, or vendor/OpenRecords portals.",
+    "Individual-level custody data exists in two disconnected forms: a daily anonymized snapshot on Open Data (INMATEID only) and a live named lookup keyed on NYSID / Book & Case number — neither is an API.",
+    "Net-new write surface: schedule a visit (VisitScheduling); a second net-new write is file a complaint / records request. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "15 DOC datasets; SODA /resource/<id>.json endpoints. The one real, open DOC API — accountability/statistics data only, no live lookup." },
+    { "endpoint": "a073-ils-web.nyc.gov/inmatelookup/pages/home/home.jsf", "type": "live inmate lookup ('P.I.C. Lookup')", "owner": "DOC (legacy Apache MyFaces / JSF)", "public": "public UI, no API", "note": "Real-time person-in-custody search by NYSID / Book & Case / name; server-rendered JavaServer Faces (javax.faces.ViewState, myfaces), WebSphere-style JSESSIONID, JavaScript-only, no JSON/OpenAPI." },
+    { "endpoint": "www.nyc.gov/site/doc", "type": "informational site", "owner": "NYC.gov shared platform (Livesite v22)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API." },
+    { "endpoint": "a860-openrecords.nyc.gov", "type": "citywide records-request portal", "owner": "NYC (OpenRecords)", "public": "web form", "note": "FOIL / records requests routed here; no DOC-specific API." }
+  ],
+  "fruit": [
+    {
+      "name": "Daily Inmates In Custody",
+      "type": "data table",
+      "entity": "PersonInCustody",
+      "url": "https://data.cityofnewyork.us/d/7479-ugqb",
+      "count": "daily snapshot",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Daily Inmates In Custody 7479-ugqb (13c)", "Inmate Admissions 6teu-xtgp (7c)", "Inmate Discharges 94ri-3ium (8c)"],
+      "notes": "The most-viewed DOC dataset. Anonymized per-person snapshot keyed on INMATEID with age/race/gender, custody level, top charge, SRG/BRADH flags, admit/discharge dates."
+    },
+    {
+      "name": "Inmate Lookup Service ('P.I.C. Lookup')",
+      "type": "live search application",
+      "entity": "PersonInCustody",
+      "url": "https://a073-ils-web.nyc.gov/inmatelookup/pages/home/home.jsf",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The live, named person-in-custody lookup keyed on NYSID / Book & Case / name. A legacy Apache MyFaces (JSF) web app — no API, no JSON, JavaScript-only. The obvious thing to front with an owned API."
+    },
+    {
+      "name": "DOC Facilities (jails)",
+      "type": "directory (derived)",
+      "entity": "Facility",
+      "url": "https://www.nyc.gov/site/doc/about/facilities.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "No facility-roster dataset exists; the FACILITY dimension (AMKC, GRVC, RNDC, RMSC, OBCC, VCBC, EMTC, WF…) recurs across incident/lock-in datasets. A derived reference entity, mostly Rikers Island."
+    },
+    {
+      "name": "Safety & Security Incidents",
+      "type": "data tables",
+      "entity": "IncidentReport",
+      "url": "https://data.cityofnewyork.us/d/gakf-suji",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Inmate Deaths f64t-5yiv", "Slashing and Stabbing gakf-suji", "Inmate Fights k548-32d3", "Assault on Staff erra-pzy8", "Staff Injuries - Class A 7hi3-kaps", "Emergency Lock-In Data 9dab-x6kn (12c)"],
+      "notes": "Six parallel incident datasets keyed on INCIDENT_ID, per facility, with reported/incident dates and reasons. Strong accountability corpus; unified into one IncidentReport model."
+    },
+    {
+      "name": "Daily Population & Security Indicators",
+      "type": "data tables",
+      "entity": "DailyPopulation",
+      "url": "https://data.cityofnewyork.us/d/2wuc-x56b",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Local Law 33 - Security Indicators Report 2wuc-x56b", "Article 730 Transfer Waitlist q9w2-yi4x", "Medical Non-production for Clinic Appointments 5n4h-km5r", "Local Law 85 – Visitation Quarterly b3eu-nmy6"],
+      "notes": "Rate-per-100-ADP security indicators, average daily population, the Article 730 transfer waitlist, and medical non-production — the time-series accountability metrics."
+    },
+    {
+      "name": "Schedule a visit",
+      "type": "workflow (offline/vendor)",
+      "entity": "Visit",
+      "url": "https://www.nyc.gov/site/doc/inmate-info/Revised_Family_Visit.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["Local Law 85 – Visitation Quarterly b3eu-nmy6 (aggregate only)"],
+      "opendata_gap": true,
+      "notes": "Family/legal visits are arranged by phone, in person, or vendor registration/tele-visit systems; only aggregate visitation counts (LL85) are published. The net-new WRITE surface for this domain — VisitScheduling."
+    },
+    {
+      "name": "File a complaint / records request",
+      "type": "workflow (offline/portal)",
+      "entity": "Complaint",
+      "url": "https://a860-openrecords.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Complaints, grievances, and FOIL/records requests are filed by phone, mail, in person, or the citywide OpenRecords portal — no DOC API, no status contract. A second net-new WRITE surface."
+    },
+    {
+      "name": "Hart Island Burial Records",
+      "type": "data table",
+      "entity": "PersonInCustody",
+      "url": "https://data.cityofnewyork.us/d/f5mc-f3zp",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DOC Hart Island Burial Records f5mc-f3zp (5c)"],
+      "notes": "DOC-administered public burial records (name, age, death date, place of death). A distinctive DOC dataset; adjacent to the custody domain."
+    },
+    {
+      "name": "Aggregate Employee Statistics",
+      "type": "data table",
+      "entity": "DailyPopulation",
+      "url": "https://data.cityofnewyork.us/d/eddp-3v5g",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Aggregate Employee Statistics eddp-3v5g (4c)"],
+      "notes": "Uniformed/civilian staffing rollups (rank title, gender, leave status). Aggregate workforce accountability; folded under the indicators family."
+    }
+  ]
+}

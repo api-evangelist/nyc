@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/acs/schemas/provider.json",
+  "title": "Provider",
+  "description": "An ACS Community Partner — a community-based program (family support / prevention, family enrichment center, or partner organization) that ACS funds or works with to serve children and families. This is the single address-level, machine-readable ACS entity. Canonical schema reconciling the 'ACS Community Partners' dataset (9hyh-zkx9, 39 columns). NOTE: licensed/permitted child care programs themselves are regulated and published by DOHMH, not ACS.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/9hyh-zkx9",
+    "site": "https://www.nyc.gov/site/acs/early-care/childcare.page"
+  },
+  "properties": {
+    "programCode": { "type": ["string", "null"], "description": "'PROGRAM_CODE' — program identifier." },
+    "programListId": { "type": ["string", "null"], "description": "'PROGRAM_LST_ID'." },
+    "programName": { "type": "string", "description": "'PROGRAM_NAME'." },
+    "agencyName": { "type": ["string", "null"], "description": "'AGENCY_NAME' — the operating provider organization." },
+    "description": { "type": ["string", "null"], "description": "'DESCRIPTION' — what the program does." },
+    "serviceType": { "$ref": "_common.json#/$defs/ServiceType" },
+    "active": { "type": ["boolean", "string", "null"], "description": "'ACTIVE_FLAG'." },
+    "address": {
+      "type": "object",
+      "properties": {
+        "line1": { "type": ["string", "null"], "description": "'PROGRAM_ADDRESS_1'." },
+        "line2": { "type": ["string", "null"], "description": "'PROGRAM_ADDRESS_2'." },
+        "city": { "type": ["string", "null"], "description": "'PROGRAM_CITY'." }
+      },
+      "additionalProperties": false
+    },
+    "contact": {
+      "type": "object",
+      "description": "Program contact ('PROG_CONTACT_*').",
+      "properties": {
+        "firstName": { "type": ["string", "null"], "description": "'PROG_CONTACT_FIRST_NAME'." },
+        "lastName": { "type": ["string", "null"], "description": "'PROG_CONTACT_LAST_NAME'." },
+        "phone": { "type": ["string", "null"], "description": "'PROG_CONTACT_PHONE_NO'." },
+        "extension": { "type": ["string", "null"], "description": "'PROG_CONTACT_EXTENSION'." },
+        "fax": { "type": ["string", "null"], "description": "'PROG_CONTACT_FAX_NO'." },
+        "email": { "type": ["string", "null"], "format": "email", "description": "'PROG_CONTACT_EMAIL'." }
+      },
+      "additionalProperties": false
+    },
+    "officeHours": {
+      "type": ["object", "null"],
+      "description": "Weekly office hours ('OFFICE_<DAY>_FROM_TIME' / 'OFFICE_<DAY>_TO_TIME'). Each day is an optional from/to pair.",
+      "properties": {
+        "monday": { "type": ["object", "null"], "properties": { "from": { "type": ["string", "null"] }, "to": { "type": ["string", "null"] } }, "additionalProperties": false },
+        "tuesday": { "type": ["object", "null"], "properties": { "from": { "type": ["string", "null"] }, "to": { "type": ["string", "null"] } }, "additionalProperties": false },
+        "wednesday": { "type": ["object", "null"], "properties": { "from": { "type": ["string", "null"] }, "to": { "type": ["string", "null"] } }, "additionalProperties": false },
+        "thursday": { "type": ["object", "null"], "properties": { "from": { "type": ["string", "null"] }, "to": { "type": ["string", "null"] } }, "additionalProperties": false },
+        "friday": { "type": ["object", "null"], "properties": { "from": { "type": ["string", "null"] }, "to": { "type": ["string", "null"] } }, "additionalProperties": false },
+        "saturday": { "type": ["object", "null"], "properties": { "from": { "type": ["string", "null"] }, "to": { "type": ["string", "null"] } }, "additionalProperties": false },
+        "sunday": { "type": ["object", "null"], "properties": { "from": { "type": ["string", "null"] }, "to": { "type": ["string", "null"] } }, "additionalProperties": false }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["programName"],
+  "additionalProperties": false
+}

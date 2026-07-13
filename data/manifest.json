@@ -5053,6 +5053,2911 @@
      "write": true
     }
    ]
+  },
+  {
+   "id": "acs",
+   "agency": "NYC Administration for Children's Services (ACS)",
+   "short": "NYC Children's Services (ACS)",
+   "verb": "insource",
+   "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace + Google Maps JS); no ACS-owned application \u2014 public actions delegated to NY State OCFS (Central Register) and NYC 311",
+   "tagline": "A confidentiality-bound agency whose only machine-readable asset is a provider directory and whose two public actions are delegated to the State and to 311.",
+   "accent": "#d98a3a",
+   "netnew": "ChildCareComplaint \u2014 submit a complaint about a child care provider (models the provider concern, never case data; abuse routed to the State Central Register)",
+   "findings": [
+    "ACS is a confidentiality-bound agency: abuse/neglect investigations, foster care, and juvenile detention are confidential by statute and published only in aggregate \u2014 never as individual cases.",
+    "Its Open Data footprint is thin and mostly non-tabular: of 21 ACS assets, 16 are 'file' attachments (uploaded Excel/PDF reports you cannot query) and only 5 are tabular datasets.",
+    "Exactly one ACS dataset is address-level and machine-readable \u2014 ACS Community Partners (9hyh-zkx9, 39 columns), the provider directory. Everything else is aggregate accountability reporting.",
+    "Its two public actions are delegated, not owned: reporting child abuse goes to the NY State OCFS Statewide Central Register (1-800-342-3720), and complaining about a child care provider goes to NYC 311 (portal.311.nyc.gov).",
+    "Net-new write surface: submit a child-care-provider complaint (ChildCareComplaint) as an owned ACS contract instead of deferring to 311 \u2014 modeling the provider concern, never case data, and redirecting any suspected abuse to the State Central Register. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "21 ACS assets, but only 5 tabular and 1 address-level (Community Partners 9hyh-zkx9); the rest are non-queryable file attachments. The one useful open ACS API."
+    },
+    {
+     "endpoint": "ocfs.ny.gov \u2014 Statewide Central Register (SCR)",
+     "type": "statutory hotline / State case system (CONNECTIONS)",
+     "owner": "NY State OCFS",
+     "public": "phone (1-800-342-3720), no API",
+     "note": "Where reporting child abuse/neglect actually goes; not an ACS system and deliberately human-mediated, not machine-readable."
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "type": "citywide service-request intake",
+     "owner": "NYC 311",
+     "public": "UI, no ACS-owned API",
+     "note": "Where child care / provider complaints and other ACS-adjacent requests are filed; ACS defers to 311 rather than owning an intake."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/acs",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM, embedded Google Maps JS. No content API."
+    },
+    {
+     "endpoint": "maps.googleapis.com",
+     "type": "maps JS API",
+     "owner": "Google",
+     "public": "vendor",
+     "note": "Client-side program/locator maps on child-care and child-welfare pages."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 21,
+    "schemas": 6,
+    "openapiOps": 9,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "Provider",
+    "ChildWelfareIndicator",
+    "PreventionService",
+    "FosterCareStatistics",
+    "JuvenileJusticeStatistics",
+    "ChildCareComplaint"
+   ],
+   "files": {
+    "fruit": "acs/fruit.json",
+    "opendata": "acs/opendata-acs.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-acs.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/acs.yaml",
+    "mcp": "mcp/acs-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "ACS \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Administration for Children's Services (ACS) object schemas. Reconciles fields common to "
+    },
+    {
+     "file": "schemas/child-care-complaint.json",
+     "title": "ChildCareComplaint",
+     "shared": false,
+     "desc": "A complaint or concern about a CHILD CARE PROVIDER / program (health, safety, staffing, licensing, or quality) \u2014 NOT a report of child abuse"
+    },
+    {
+     "file": "schemas/child-welfare-indicator.json",
+     "title": "ChildWelfareIndicator",
+     "shared": false,
+     "desc": "An AGGREGATE child-welfare accountability indicator for a reporting period \u2014 ACS's counts of SCR intakes, investigations, indicated/unsubsta"
+    },
+    {
+     "file": "schemas/foster-care-statistics.json",
+     "title": "FosterCareStatistics",
+     "shared": false,
+     "desc": "An AGGREGATE foster-care measure for a reporting period \u2014 children in 24-hour foster care, foster-care placements by community district, ado"
+    },
+    {
+     "file": "schemas/juvenile-justice-statistics.json",
+     "title": "JuvenileJusticeStatistics",
+     "shared": false,
+     "desc": "An AGGREGATE youth & family justice measure for a reporting period \u2014 detention admissions by community district, detention and placement dem"
+    },
+    {
+     "file": "schemas/prevention-service.json",
+     "title": "PreventionService",
+     "shared": false,
+     "desc": "An AGGREGATE preventive-services measure \u2014 children/families served by ACS preventive programs, new preventive cases, utilization, and case-"
+    },
+    {
+     "file": "schemas/provider.json",
+     "title": "Provider",
+     "shared": false,
+     "desc": "An ACS Community Partner \u2014 a community-based program (family support / prevention, family enrichment center, or partner organization) that A"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/providers",
+     "op": "listProviders",
+     "summary": "List / search ACS Community Partner providers",
+     "tags": [
+      "Providers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/providers/{programCode}",
+     "op": "getProvider",
+     "summary": "Get a provider by program code",
+     "tags": [
+      "Providers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/child-welfare-indicators",
+     "op": "listChildWelfareIndicators",
+     "summary": "Search aggregate child-welfare indicators",
+     "tags": [
+      "ChildWelfare"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/prevention-services",
+     "op": "listPreventionServices",
+     "summary": "Search aggregate preventive-services measures",
+     "tags": [
+      "Prevention"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/foster-care-statistics",
+     "op": "listFosterCareStatistics",
+     "summary": "Search aggregate foster-care statistics",
+     "tags": [
+      "FosterCare"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/juvenile-justice-statistics",
+     "op": "listJuvenileJusticeStatistics",
+     "summary": "Search aggregate youth & family justice statistics",
+     "tags": [
+      "YouthJustice"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/child-care-complaints",
+     "op": "listChildCareComplaints",
+     "summary": "List the authenticated submitter's child care provider complaints",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/child-care-complaints",
+     "op": "createChildCareComplaint",
+     "summary": "Submit a complaint about a child care provider",
+     "tags": [
+      "Complaints"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/child-care-complaints/{complaintId}",
+     "op": "getChildCareComplaint",
+     "summary": "Get a child care provider complaint",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_providers",
+     "title": "Find Providers",
+     "desc": "Search ACS Community Partner providers/programs by borough, service type, active status, council district, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_provider",
+     "title": "Get Provider",
+     "desc": "Fetch a single ACS Community Partner provider (program, agency, address, hours, contact, geography) by program code.",
+     "write": false
+    },
+    {
+     "name": "find_child_welfare_indicators",
+     "title": "Find Child Welfare Indicators",
+     "desc": "Search AGGREGATE child-welfare indicators (SCR intakes, investigations, indicated/unsubstantiated findings, emergency removals, referrals to prevention) by cate",
+     "write": false
+    },
+    {
+     "name": "find_prevention_services",
+     "title": "Find Prevention Services",
+     "desc": "Search AGGREGATE preventive-services measures (children served, new cases, utilization, case-closure outcomes) by metric, borough, or year. Never a per-family r",
+     "write": false
+    },
+    {
+     "name": "find_foster_care_statistics",
+     "title": "Find Foster Care Statistics",
+     "desc": "Search AGGREGATE foster-care statistics (children in 24-hour care, placements by CD, permanency outcomes, graduation rates, educational continuity, government I",
+     "write": false
+    },
+    {
+     "name": "find_juvenile_justice_statistics",
+     "title": "Find Youth Justice Statistics",
+     "desc": "Search AGGREGATE youth & family justice statistics (detention admissions by CD, detention/placement demographics, incident reports, pre-placement, abuse-allegat",
+     "write": false
+    },
+    {
+     "name": "list_my_complaints",
+     "title": "List My Complaints",
+     "desc": "List the authenticated submitter's own child care provider complaints and their status \u2014 today handled outside ACS by NYC 311.",
+     "write": false
+    },
+    {
+     "name": "get_complaint",
+     "title": "Get Complaint",
+     "desc": "Fetch a single child care provider complaint by id.",
+     "write": false
+    },
+    {
+     "name": "report_child_care_concern",
+     "title": "Report a Child Care Concern",
+     "desc": "Submit a complaint about a CHILD CARE PROVIDER (health, safety, staffing, licensing, quality). NET-NEW workflow with no ACS-owned API today \u2014 it is delegated to",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "dcwp",
+   "agency": "Department of Consumer and Worker Protection (DCWP)",
+   "short": "NYC Consumer & Worker Protection (DCWP)",
+   "verb": "bind",
+   "platform": "NYC.gov 'Livesite' info site (Akamai/nginx/Dynatrace) + a separate Java/Spring NYC Business licensing portal (nyc-business.nyc.gov) + CityPay (CityBase) payments; 37 Socrata datasets",
+   "tagline": "DCWP already publishes its entire regulated-business lifecycle openly; the work is binding it into one owned contract and adding the two citizen writes.",
+   "accent": "#b06fb0",
+   "netnew": "File a consumer complaint (ConsumerComplaint) and apply for a business license (LicenseApplication) \u2014 the two citizen writes with no API",
+   "findings": [
+    "DCWP is the most-open domain in this project: 37 NYC Open Data datasets publish the entire regulated-business lifecycle \u2014 license applications, issued licenses (147k views), inspections, charges, consumer complaints, revocations, and Office of Labor Policy & Standards worker-protection matters.",
+    "The whole lifecycle is joinable on `Business Unique ID` and `License Number`, but no single owned API binds those 37 datasets into one coherent resource model \u2014 a consumer or agent must learn 37 Socrata IDs.",
+    "The two things a person actually DOES have no API: applying for a business license lives only in the Java NYC Business portal (nyc-business.nyc.gov), and filing a consumer complaint lives only in 311 or a DCWP web form.",
+    "Worker-protection data (OLPS inquiries and enforcement matters) is published only in aggregate by topic/industry/geography \u2014 never an individual worker.",
+    "Net-new write surface: file a consumer complaint (ConsumerComplaint) and apply for a license (LicenseApplication) \u2014 both have an Open Data READ twin but no write API. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "37 DCWP datasets; SODA /resource/<id>.json endpoints. The one real, open DCWP API \u2014 the full licensing/enforcement lifecycle as reference data."
+    },
+    {
+     "endpoint": "nyc-business.nyc.gov/nycbusiness",
+     "type": "business licensing portal",
+     "owner": "NYC (Java/Spring web app)",
+     "public": "session-gated UI, no API",
+     "note": "Apply for and manage DCWP licenses. `SESSION` cookie, Akamai edge, Dynatrace RUM; no JSON/OpenAPI surface."
+    },
+    {
+     "endpoint": "citypay.nyc.gov",
+     "type": "payment portal",
+     "owner": "NYC (CityBase)",
+     "public": "UI, no public API",
+     "note": "Pay DCWP fines/fees; CityBase-hosted checkout, returns 403 to non-browser clients."
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "type": "complaint intake",
+     "owner": "NYC (OTI/311)",
+     "public": "UI/form, no filing API",
+     "note": "The intake path for consumer complaints against businesses; no public write API to DCWP."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/dca",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite v22)",
+     "public": "html",
+     "note": "Content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "Akamai edge",
+     "type": "CDN",
+     "owner": "Akamai",
+     "public": "vendor",
+     "note": "`server-timing: ak_p` across the info site and NYC Business portal."
+    },
+    {
+     "endpoint": "Dynatrace RUM",
+     "type": "monitoring beacon",
+     "owner": "Dynatrace",
+     "public": "vendor",
+     "note": "`x-oneagent-js-injection` real-user monitoring."
+    }
+   ],
+   "counts": {
+    "fruit": 11,
+    "opendata": 37,
+    "schemas": 6,
+    "openapiOps": 11,
+    "mcpTools": 10,
+    "entities": 6
+   },
+   "entities": [
+    "BusinessLicense",
+    "LicenseApplication",
+    "Inspection",
+    "Charge",
+    "ConsumerComplaint",
+    "WorkerProtectionCase"
+   ],
+   "files": {
+    "fruit": "dcwp/fruit.json",
+    "opendata": "dcwp/opendata-dcwp.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dcwp.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dcwp.yaml",
+    "mcp": "mcp/dcwp-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "DCWP \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Consumer and Worker Protection (DCWP, formerly DCA) object schemas. Reconci"
+    },
+    {
+     "file": "schemas/business-license.json",
+     "title": "BusinessLicense",
+     "shared": false,
+     "desc": "A DCWP-issued business license (the Licensee record) \u2014 the core regulated unit of the Department of Consumer and Worker Protection. Canonica"
+    },
+    {
+     "file": "schemas/charge.json",
+     "title": "Charge",
+     "shared": false,
+     "desc": "A DCWP charge / violation issued against a business \u2014 the enforcement record that follows an inspection or complaint. Canonical schema recon"
+    },
+    {
+     "file": "schemas/consumer-complaint.json",
+     "title": "ConsumerComplaint",
+     "shared": false,
+     "desc": "A consumer complaint filed with DCWP against a business \u2014 the citizen-facing transaction of the Department. Canonical schema reconciling the"
+    },
+    {
+     "file": "schemas/inspection.json",
+     "title": "Inspection",
+     "shared": false,
+     "desc": "A DCWP inspection of a licensed or regulated business. Canonical schema reconciling the 'DCWP Inspections' dataset (jzhd-m6uv, 28 columns), "
+    },
+    {
+     "file": "schemas/license-application.json",
+     "title": "LicenseApplication",
+     "shared": false,
+     "desc": "A DCWP business license application (BusinessLicenseApplication) \u2014 the intake record that precedes an issued license. Canonical schema recon"
+    },
+    {
+     "file": "schemas/worker-protection-case.json",
+     "title": "WorkerProtectionCase",
+     "shared": false,
+     "desc": "An Office of Labor Policy & Standards (OLPS) matter \u2014 the 'Worker' side of the Department of Consumer and Worker Protection: workplace inqui"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/licenses",
+     "op": "listLicenses",
+     "summary": "List / search issued business licenses",
+     "tags": [
+      "Licenses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/licenses/{licenseNumber}",
+     "op": "getLicense",
+     "summary": "Get an issued license by license number",
+     "tags": [
+      "Licenses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/license-applications",
+     "op": "listApplications",
+     "summary": "List / search license applications",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/license-applications",
+     "op": "createApplication",
+     "summary": "Apply for a business license (create an application)",
+     "tags": [
+      "Applications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/license-applications/{applicationId}",
+     "op": "getApplication",
+     "summary": "Get a license application by id",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/inspections",
+     "op": "listInspections",
+     "summary": "List / search DCWP inspections",
+     "tags": [
+      "Inspections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/charges",
+     "op": "listCharges",
+     "summary": "List / search charges (violations)",
+     "tags": [
+      "Enforcement"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/consumer-complaints",
+     "op": "listConsumerComplaints",
+     "summary": "List / search published consumer complaints",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/consumer-complaints",
+     "op": "fileConsumerComplaint",
+     "summary": "File a consumer complaint (create)",
+     "tags": [
+      "Complaints"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/consumer-complaints/{recordId}",
+     "op": "getConsumerComplaint",
+     "summary": "Get a consumer complaint by record id",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/worker-protection-cases",
+     "op": "listWorkerProtectionCases",
+     "summary": "List Office of Labor Policy & Standards inquiries and enforcement matters (aggregate)",
+     "tags": [
+      "WorkerProtection"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_licenses",
+     "title": "Find Licenses",
+     "desc": "Search DCWP-issued business licenses by borough, license type, status, Business Unique ID, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_license",
+     "title": "Get License",
+     "desc": "Fetch a DCWP-issued business license by license number.",
+     "write": false
+    },
+    {
+     "name": "find_applications",
+     "title": "Find License Applications",
+     "desc": "Search DCWP license applications by borough, application type, status, or Business Unique ID.",
+     "write": false
+    },
+    {
+     "name": "get_application",
+     "title": "Get License Application",
+     "desc": "Fetch a DCWP license application by Application ID.",
+     "write": false
+    },
+    {
+     "name": "find_inspections",
+     "title": "Find Inspections",
+     "desc": "Search DCWP inspections by borough, inspection type, status, Business Unique ID, or DCWP license number.",
+     "write": false
+    },
+    {
+     "name": "find_charges",
+     "title": "Find Charges",
+     "desc": "Search DCWP charges / violations by Business Unique ID, inspection number, or hearing outcome.",
+     "write": false
+    },
+    {
+     "name": "find_consumer_complaints",
+     "title": "Find Consumer Complaints",
+     "desc": "Search published DCWP consumer complaints by borough, complaint code, Business Unique ID, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_worker_protection_cases",
+     "title": "Find Worker Protection Cases",
+     "desc": "Return AGGREGATE Office of Labor Policy & Standards inquiries and enforcement matters by topic, industry, or type (paid safe/sick leave, fair workweek, etc.). N",
+     "write": false
+    },
+    {
+     "name": "apply_for_license",
+     "title": "Apply for a License",
+     "desc": "Submit a DCWP business license application. NET-NEW workflow with no public API today \u2014 it lives only in the Java NYC Business portal (nyc-business.nyc.gov). Re",
+     "write": true
+    },
+    {
+     "name": "file_complaint",
+     "title": "File a Consumer Complaint",
+     "desc": "File a consumer complaint against a business with DCWP. NET-NEW workflow with no public API today \u2014 it lives only in 311 or a DCWP web form. Requires an authent",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "dep",
+   "agency": "New York City Department of Environmental Protection (DEP)",
+   "short": "NYC Environmental Protection (DEP)",
+   "verb": "Transact",
+   "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) + uMAX CIS on ASP.NET + Azure AD B2C",
+   "tagline": "The water data is wide open; the water transactions are locked in a billing portal and dumped into 311.",
+   "accent": "#2f8fb0",
+   "netnew": "WaterServiceRequest",
+   "findings": [
+    "DEP is a split, data-rich but transaction-poor domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a customer 'My DEP Account' portal that is a uMAX utility CIS on ASP.NET + Azure AD B2C (a826-umax.dep.nyc.gov) with no API.",
+    "The reference/telemetry data is unusually OPEN: 57 NYC Open Data datasets covering water consumption (ia2d-e54m, DEP's most-viewed), reservoir levels (zkky-n5j3), harbor/drinking/watershed/lead-copper water quality, green infrastructure, hydrants & catch basins, and water/air/asbestos permits.",
+    "But that corpus is sprawling and inconsistently typed \u2014 Harbor Water Quality is 100 free-text columns, reservoir levels are cryptic SCADA tags, and there are ~a dozen near-duplicate Watershed Water Quality tables. Open does not mean usable.",
+    "The customer SERVICE layer is split and locked: water-bill payment and account management live only inside the login-walled uMAX portal, while street conditions (water-main break, no water, sewer backup, clogged catch basin, hydrant) are funneled into generic NYC311 \u2014 neither is a DEP-owned API.",
+    "Net-new write surface: report a water/sewer problem (WaterServiceRequest) \u2014 the most urgent resident transaction, with no single machine-readable contract today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "57 DEP datasets; SODA /resource/<id>.json endpoints. The real, open DEP API \u2014 reference/telemetry data only, and sprawling/inconsistently typed."
+    },
+    {
+     "endpoint": "a826-umax.dep.nyc.gov",
+     "type": "customer billing/account portal (CIS)",
+     "owner": "NYC DEP (uMAX / Advanced Utility Systems)",
+     "public": "login-walled UI, no API",
+     "note": "water/sewer bill payment + account management; ASP.NET / ASP.NET Core SPA behind Azure AD B2C (umaxazprodb2c.b2clogin.com), on Azure App Service. Public /quickpay page but no JSON/OpenAPI."
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "type": "citywide service-request intake",
+     "owner": "NYC (311 / OTI)",
+     "public": "public UI",
+     "note": "where DEP street conditions (main break, no water, sewer backup, catch basin, hydrant, water quality) are actually reported \u2014 generic 311, not a DEP-owned intake."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us/d/4fvw-nn9c",
+     "type": "open data (Work Order Management Module)",
+     "owner": "NYC DEP via Socrata",
+     "public": true,
+     "note": "DEP's completed work orders / service requests \u2014 closest open twin to the locked service layer, but read-only and after the fact."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/dep/",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 57,
+    "schemas": 7,
+    "openapiOps": 11,
+    "mcpTools": 11,
+    "entities": 7
+   },
+   "entities": [
+    "WaterConsumption",
+    "ReservoirLevel",
+    "WaterQualitySample",
+    "GreenInfrastructure",
+    "Hydrant",
+    "Permit",
+    "WaterServiceRequest"
+   ],
+   "files": {
+    "fruit": "dep/fruit.json",
+    "opendata": "dep/opendata-dep.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dep.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dep.yaml",
+    "mcp": "mcp/dep-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "DEP \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Environmental Protection (DEP) object schemas. Reconciles fields common to "
+    },
+    {
+     "file": "schemas/green-infrastructure.json",
+     "title": "GreenInfrastructure",
+     "shared": false,
+     "desc": "A DEP green-infrastructure asset \u2014 rain gardens, bioswales, porous pavement, and other stormwater-management practices that manage combined-"
+    },
+    {
+     "file": "schemas/hydrant.json",
+     "title": "Hydrant",
+     "shared": false,
+     "desc": "A public fire hydrant in DEP's water-distribution network, from the 'Hydrants' dataset (5bgh-vtsn, 8c) and the 'NYCDEP Citywide Hydrants' ma"
+    },
+    {
+     "file": "schemas/permit.json",
+     "title": "Permit",
+     "shared": false,
+     "desc": "A DEP-issued regulatory permit or registration. Canonical schema reconciling DEP's parallel permit datasets: Water and Sewer Permits (hphy-6"
+    },
+    {
+     "file": "schemas/reservoir-level.json",
+     "title": "ReservoirLevel",
+     "shared": false,
+     "desc": "A point-in-time observation of a reservoir in the NYC water-supply system, normalized from the wide 'Current Reservoir Levels' dataset (zkky"
+    },
+    {
+     "file": "schemas/water-consumption.json",
+     "title": "WaterConsumption",
+     "shared": false,
+     "desc": "Citywide water-consumption for a single year, from 'Water Consumption in the City of New York' (ia2d-e54m, 4 columns) \u2014 DEP's single most-vi"
+    },
+    {
+     "file": "schemas/water-quality.json",
+     "title": "WaterQualitySample",
+     "shared": false,
+     "desc": "A single water-quality sample from one of DEP's parallel monitoring programs. One canonical schema reconciling the many DEP quality datasets"
+    },
+    {
+     "file": "schemas/water-service-request.json",
+     "title": "WaterServiceRequest",
+     "shared": false,
+     "desc": "A resident/customer request to DEP to fix a water or sewer problem \u2014 a water-main break, no water or low pressure, a leak, a SEWER BACKUP, a"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/reservoir-levels",
+     "op": "listReservoirLevels",
+     "summary": "List reservoir levels across the NYC water-supply system",
+     "tags": [
+      "Water Supply"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/water-consumption",
+     "op": "listWaterConsumption",
+     "summary": "Citywide water consumption by year",
+     "tags": [
+      "Water Supply"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/water-quality",
+     "op": "listWaterQuality",
+     "summary": "Search water-quality samples across DEP monitoring programs",
+     "tags": [
+      "Water Quality"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/green-infrastructure",
+     "op": "listGreenInfrastructure",
+     "summary": "Search DEP green-infrastructure assets",
+     "tags": [
+      "Green Infrastructure"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/green-infrastructure/{giId}",
+     "op": "getGreenInfrastructure",
+     "summary": "Get a green-infrastructure asset by GI_ID",
+     "tags": [
+      "Green Infrastructure"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/hydrants",
+     "op": "listHydrants",
+     "summary": "Search public fire hydrants",
+     "tags": [
+      "Assets"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/hydrants/{unitId}",
+     "op": "getHydrant",
+     "summary": "Get a hydrant by UNITID",
+     "tags": [
+      "Assets"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/permits",
+     "op": "listPermits",
+     "summary": "Search DEP water/sewer, clean-air (CATS), and asbestos permits",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/water-service-requests",
+     "op": "listWaterServiceRequests",
+     "summary": "List the authenticated customer's water/sewer service requests",
+     "tags": [
+      "Service Requests"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/water-service-requests",
+     "op": "createWaterServiceRequest",
+     "summary": "Report a water or sewer problem (create a service request)",
+     "tags": [
+      "Service Requests"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/water-service-requests/{requestId}",
+     "op": "getWaterServiceRequest",
+     "summary": "Get a water/sewer service request",
+     "tags": [
+      "Service Requests"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_reservoir_levels",
+     "title": "Find Reservoir Levels",
+     "desc": "List reservoir-level observations across the NYC water-supply system by reservoir, system (Catskill/Delaware/Croton), or time window.",
+     "write": false
+    },
+    {
+     "name": "find_water_consumption",
+     "title": "Find Water Consumption",
+     "desc": "Return citywide water-consumption figures (population, million gallons per day, per-capita) by year. Consumption is published only at the citywide aggregate; pe",
+     "write": false
+    },
+    {
+     "name": "find_water_quality",
+     "title": "Find Water Quality",
+     "desc": "Search water-quality samples across DEP monitoring programs (Harbor, Drinking Water Distribution, Watershed, Lead and Copper) by program, site, borough, or date",
+     "write": false
+    },
+    {
+     "name": "find_green_infrastructure",
+     "title": "Find Green Infrastructure",
+     "desc": "Search DEP green-infrastructure stormwater assets (rain gardens, bioswales, porous pavement) by borough, asset type, status, or council district.",
+     "write": false
+    },
+    {
+     "name": "get_green_infrastructure",
+     "title": "Get Green Infrastructure Asset",
+     "desc": "Fetch a single DEP green-infrastructure asset by its GI_ID.",
+     "write": false
+    },
+    {
+     "name": "find_hydrants",
+     "title": "Find Hydrants",
+     "desc": "Search public fire hydrants in DEP's water-distribution network by borough or community board.",
+     "write": false
+    },
+    {
+     "name": "get_hydrant",
+     "title": "Get Hydrant",
+     "desc": "Fetch a single hydrant by its UNITID.",
+     "write": false
+    },
+    {
+     "name": "find_permits",
+     "title": "Find Permits",
+     "desc": "Search DEP water/sewer, clean-air (CATS), and asbestos (ACP7) permits by permit type, status, borough, or tax block/lot.",
+     "write": false
+    },
+    {
+     "name": "list_my_service_requests",
+     "title": "List My Service Requests",
+     "desc": "List the authenticated customer's own DEP water/sewer service requests and their status \u2014 today split between NYC311 and the uMAX My DEP Account portal.",
+     "write": false
+    },
+    {
+     "name": "get_service_request",
+     "title": "Get Service Request",
+     "desc": "Fetch a single water/sewer service request by its id.",
+     "write": false
+    },
+    {
+     "name": "report_water_problem",
+     "title": "Report a Water Problem",
+     "desc": "Create a DEP water/sewer service request \u2014 report a water-main break, no water, a leak, a sewer backup, a clogged catch basin, a hydrant problem, discolored wat",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "dfta",
+   "agency": "NYC Department for the Aging (DFTA / NYC Aging)",
+   "short": "NYC Aging (DFTA)",
+   "verb": "connect",
+   "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace) \u2014 no separate vendor system; the service layer is a phone-based Aging Connect information-and-referral contact center.",
+   "tagline": "The provider network is open data; the act of connecting an older adult to a service is a phone call.",
+   "accent": "#3a9a8a",
+   "netnew": "ServiceReferral \u2014 connect an older adult to DFTA services (case management, meals, benefits, caregiver, elder abuse, center enrollment) with an urgent path to Aging Connect / Adult Protective Services.",
+   "findings": [
+    "DFTA (NYC Aging) is a connective, network-funding agency: it rarely delivers services itself, it funds ~1,000 community providers \u2014 so its reference data is a directory of providers, sites, senior-center operations, activities, and contract service units.",
+    "The provider/program reference data is well OPEN: 11 NYC Open Data datasets covering all contracted providers (38 columns), publicly open sites, older adult center (senior center) Local Law 140 operations, activities, budgeted/reported service units, expenditures, and aggregate participation.",
+    "But the resident SERVICE layer \u2014 connecting an older adult to case management, home-delivered meals, benefits, caregiver support, elder-abuse help, or senior center enrollment \u2014 has no machine-readable surface at all: intake happens only by calling Aging Connect (212-AGING-NYC), calling 311, or walking into a center.",
+    "Client/participant data is published only in aggregate (Number of Participants, unduplicated clients); DFTA never exposes an individual older adult record to Open Data.",
+    "Net-new write surface: make a service referral (ServiceReferral) \u2014 connect an older adult to services \u2014 the core resident transaction, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "11 DFTA datasets; SODA /resource/<id>.json endpoints. The one real, open DFTA API \u2014 provider/program reference data only."
+    },
+    {
+     "endpoint": "Aging Connect (212-AGING-NYC / 212-244-6469)",
+     "type": "information & referral intake",
+     "owner": "NYC Aging (DFTA)",
+     "public": "phone / walk-in / web form, no API",
+     "note": "The intake and referral layer \u2014 case management, home-delivered meals, benefits, caregiver, elder abuse, center enrollment. No JSON/OpenAPI; a contact center, not a system with a machine-readable surface."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/dfta",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite v22)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "nyc.gov/311 / access.nyc.gov",
+     "type": "citywide intake / benefits",
+     "owner": "NYC (OTI / HRA)",
+     "public": "html/app",
+     "note": "alternate front doors New Yorkers use to reach aging services and screen for benefits."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 11,
+    "schemas": 6,
+    "openapiOps": 9,
+    "mcpTools": 8,
+    "entities": 6
+   },
+   "entities": [
+    "ServiceProvider",
+    "OlderAdultCenter",
+    "ProgramActivity",
+    "ServiceUnit",
+    "Participation",
+    "ServiceReferral"
+   ],
+   "files": {
+    "fruit": "dfta/fruit.json",
+    "opendata": "dfta/opendata-dfta.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dfta.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dfta.yaml",
+    "mcp": "mcp/dfta-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Aging (DFTA) \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department for the Aging (DFTA / 'NYC Aging') object schemas. Reconciles fields common to"
+    },
+    {
+     "file": "schemas/older-adult-center.json",
+     "title": "OlderAdultCenter",
+     "shared": false,
+     "desc": "A DFTA Older Adult Center (senior center) with its Local Law 140 operating profile \u2014 utilization, meals served, staffing, and budget/expendi"
+    },
+    {
+     "file": "schemas/participation.json",
+     "title": "Participation",
+     "shared": false,
+     "desc": "Aggregate participation in a DFTA-funded program \u2014 the unduplicated client count for a program/site in a fiscal year. Canonical schema recon"
+    },
+    {
+     "file": "schemas/program-activity.json",
+     "title": "ProgramActivity",
+     "shared": false,
+     "desc": "A scheduled activity or event hosted by a DFTA Older Adult Center \u2014 classes, meals, recreation, health promotion, and virtual programming. C"
+    },
+    {
+     "file": "schemas/service-provider.json",
+     "title": "ServiceProvider",
+     "shared": false,
+     "desc": "A DFTA-funded service provider / site \u2014 the core unit of NYC Aging's contracted network (older adult centers, case management, home-delivere"
+    },
+    {
+     "file": "schemas/service-referral.json",
+     "title": "ServiceReferral",
+     "shared": false,
+     "desc": "A request to connect an older adult to DFTA services \u2014 case management, home-delivered meals, benefits screening, caregiver support, elder-a"
+    },
+    {
+     "file": "schemas/service-unit.json",
+     "title": "ServiceUnit",
+     "shared": false,
+     "desc": "A budgeted-and-reported unit of DFTA service delivery for a contracted provider \u2014 the contract-performance line that ties a program to the s"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/providers",
+     "op": "listProviders",
+     "summary": "List / search DFTA-funded service providers",
+     "tags": [
+      "Providers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/providers/{dftaId}",
+     "op": "getProvider",
+     "summary": "Get a service provider by DFTA ID",
+     "tags": [
+      "Providers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/older-adult-centers",
+     "op": "listOlderAdultCenters",
+     "summary": "List older adult centers (senior centers) with Local Law 140 profiles",
+     "tags": [
+      "Centers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/activities",
+     "op": "listActivities",
+     "summary": "Search older adult center activities and events",
+     "tags": [
+      "Activities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/service-units",
+     "op": "listServiceUnits",
+     "summary": "Search budgeted-and-reported contract service units",
+     "tags": [
+      "Services"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/participation",
+     "op": "listParticipation",
+     "summary": "Aggregate participation (unduplicated clients) by program / site",
+     "tags": [
+      "Services"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/referrals",
+     "op": "listReferrals",
+     "summary": "List the authenticated user's service referrals",
+     "tags": [
+      "Referrals"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/referrals",
+     "op": "createReferral",
+     "summary": "Make a service referral (connect an older adult to services)",
+     "tags": [
+      "Referrals"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/referrals/{referralId}",
+     "op": "getReferral",
+     "summary": "Get a service referral",
+     "tags": [
+      "Referrals"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_providers",
+     "title": "Find Providers",
+     "desc": "Search DFTA-funded service providers by borough, provider type, funding, council district, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_provider",
+     "title": "Get Provider",
+     "desc": "Fetch a DFTA-funded service provider (sponsor, type, hours, address, geography) by DFTA ID.",
+     "write": false
+    },
+    {
+     "name": "find_older_adult_centers",
+     "title": "Find Older Adult Centers",
+     "desc": "List older adult centers (senior centers) with their Local Law 140 operating profiles \u2014 utilization, meals, staffing \u2014 by borough or site type.",
+     "write": false
+    },
+    {
+     "name": "find_activities",
+     "title": "Find Activities",
+     "desc": "Search older adult center activities and events by borough, event type, host center (DFTA ID), virtual/in-person, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_service_units",
+     "title": "Find Service Units",
+     "desc": "Search budgeted-and-reported contract service units (budgeted vs. reported units and amounts) by provider (DFTA ID), provider type, service name, or contract ye",
+     "write": false
+    },
+    {
+     "name": "find_participation",
+     "title": "Find Participation",
+     "desc": "Return AGGREGATE participation \u2014 unduplicated client counts \u2014 by program/site, program type, fiscal year, or borough. Never returns individual older adults.",
+     "write": false
+    },
+    {
+     "name": "list_my_referrals",
+     "title": "List My Referrals",
+     "desc": "List the authenticated user's own service referrals and their status \u2014 today trackable only by phone to Aging Connect.",
+     "write": false
+    },
+    {
+     "name": "make_referral",
+     "title": "Make a Referral",
+     "desc": "Create a NYC Aging service referral (connect an older adult to services). NET-NEW workflow with no public API today \u2014 it lives only in the phone-based Aging Con",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "dhs",
+   "agency": "NYC Department of Homeless Services (DHS)",
+   "short": "NYC Homeless Services (DHS)",
+   "verb": "connect",
+   "platform": "NYC.gov 'Livesite' shared chassis (Akamai/nginx/Dynatrace); no service portal \u2014 transactions route through NYC311",
+   "tagline": "DHS publishes a rich, open picture of homelessness but gives New Yorkers no API to act on it.",
+   "accent": "#7a6fb0",
+   "netnew": "OutreachRequest \u2014 request street outreach for a person experiencing homelessness (today only via NYC311)",
+   "findings": [
+    "DHS is an observational-data agency: its informational site is the shared NYC.gov 'Livesite' chassis (Akamai/nginx/Dynatrace) and it ships no application of its own \u2014 every transaction happens on NYC311, 911, or at an in-person intake center.",
+    "The reference data is unusually OPEN: 23 NYC Open Data datasets led by the flagship DHS Daily Report (the daily shelter census, DHS's single most-viewed asset at 87k views), plus drop-in centers, DHS contacts/intake centers, buildings and individual census, the Shelter Repair Scorecard (55 columns), and years of unsheltered street-count history.",
+    "But there is NO service layer to expose \u2014 applying for shelter is in-person and reporting a person on the street for outreach is a NYC311 'Homeless Person Assistance' call; neither has a machine-readable contract, and DHS does not even own the 311 channel that stands in for one.",
+    "People are published only in aggregate (shelter census and street counts); DHS never exposes an individual record to Open Data.",
+    "Net-new write surface: request street outreach (OutreachRequest) \u2014 reporting a person experiencing unsheltered homelessness so an outreach team responds, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "23 DHS datasets; SODA /resource/<id>.json endpoints. The one real, open DHS API \u2014 observational/reference data only."
+    },
+    {
+     "endpoint": "portal.311.nyc.gov / NYC311",
+     "type": "service-request channel",
+     "owner": "NYC (OTI / 311)",
+     "public": "web + phone, no DHS-owned API",
+     "note": "'Homeless Person Assistance' street-outreach reports and shelter lookups \u2014 where the DHS transaction actually happens. Owned by 311, not DHS; no documented DHS API."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/dhs",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM, livesite-version: 22. No content API."
+    },
+    {
+     "endpoint": "Akamai edge",
+     "type": "CDN",
+     "owner": "Akamai",
+     "public": "vendor",
+     "note": "x-akamai-transformed on the informational site."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 23,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "ShelterCensus",
+    "DropInCenter",
+    "ShelterFacility",
+    "DHSContact",
+    "StreetHomelessCount",
+    "OutreachRequest"
+   ],
+   "files": {
+    "fruit": "dhs/fruit.json",
+    "opendata": "dhs/opendata-dhs.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dhs.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dhs.yaml",
+    "mcp": "mcp/dhs-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "DHS \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Homeless Services (DHS) object schemas. Reconciles fields common to the DHS"
+    },
+    {
+     "file": "schemas/dhs-contact.json",
+     "title": "DHSContact",
+     "shared": false,
+     "desc": "A DHS office, intake center, or public contact point \u2014 including the PATH family-intake center and adult-intake sites where New Yorkers appl"
+    },
+    {
+     "file": "schemas/drop-in-center.json",
+     "title": "DropInCenter",
+     "shared": false,
+     "desc": "A DHS homeless drop-in center \u2014 a 24/7 site where people experiencing street homelessness can get meals, showers, case management, and a pat"
+    },
+    {
+     "file": "schemas/outreach-request.json",
+     "title": "OutreachRequest",
+     "shared": false,
+     "desc": "A request for DHS street outreach \u2014 reporting a person experiencing unsheltered homelessness so a mobile outreach team (StreetSmart / the bo"
+    },
+    {
+     "file": "schemas/shelter-census.json",
+     "title": "ShelterCensus",
+     "shared": false,
+     "desc": "A single day's DHS shelter census \u2014 the daily count of people in the New York City shelter system, broken out by client population. Canonica"
+    },
+    {
+     "file": "schemas/shelter-facility.json",
+     "title": "ShelterFacility",
+     "shared": false,
+     "desc": "A DHS shelter facility / building and its aggregate condition and census. Canonical schema reconciling the 'Shelter Repair Scorecard' (dvaj-"
+    },
+    {
+     "file": "schemas/street-homeless-count.json",
+     "title": "StreetHomelessCount",
+     "shared": false,
+     "desc": "An AGGREGATE count of unsheltered / street-homeless individuals \u2014 the observational measure of homelessness outside the shelter system. Cano"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/shelter-census",
+     "op": "listShelterCensus",
+     "summary": "List / search the daily shelter census",
+     "tags": [
+      "Census"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/shelter-census/{date}",
+     "op": "getShelterCensusForDate",
+     "summary": "Get the shelter census for a specific date",
+     "tags": [
+      "Census"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/drop-in-centers",
+     "op": "listDropInCenters",
+     "summary": "List / search homeless drop-in centers",
+     "tags": [
+      "DropInCenters"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/facilities",
+     "op": "listFacilities",
+     "summary": "List / search shelter facilities and the repair scorecard",
+     "tags": [
+      "Facilities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/facilities/{buildingId}",
+     "op": "getFacility",
+     "summary": "Get a shelter facility by DHS Building ID",
+     "tags": [
+      "Facilities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/contacts",
+     "op": "listContacts",
+     "summary": "List DHS offices, intake centers, and contact points",
+     "tags": [
+      "Contacts"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/street-homeless-counts",
+     "op": "listStreetHomelessCounts",
+     "summary": "Aggregate unsheltered / street-homeless counts",
+     "tags": [
+      "Street"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/outreach-requests",
+     "op": "listOutreachRequests",
+     "summary": "List the caller's submitted street-outreach requests",
+     "tags": [
+      "Outreach"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/outreach-requests",
+     "op": "createOutreachRequest",
+     "summary": "Request street outreach (report a person experiencing homelessness)",
+     "tags": [
+      "Outreach"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/outreach-requests/{requestId}",
+     "op": "getOutreachRequest",
+     "summary": "Get a street-outreach request",
+     "tags": [
+      "Outreach"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_shelter_census",
+     "title": "Find Shelter Census",
+     "desc": "List / search the daily DHS shelter census (total individuals, single adults, families with children, adult families) by date range.",
+     "write": false
+    },
+    {
+     "name": "get_shelter_census",
+     "title": "Get Shelter Census",
+     "desc": "Fetch the DHS shelter census for a specific date.",
+     "write": false
+    },
+    {
+     "name": "find_drop_in_centers",
+     "title": "Find Drop-In Centers",
+     "desc": "List NYC homeless drop-in centers by borough or free text.",
+     "write": false
+    },
+    {
+     "name": "find_facilities",
+     "title": "Find Facilities",
+     "desc": "List DHS shelter facilities, capacity, and repair-scorecard condition by borough, facility type, or reporting month.",
+     "write": false
+    },
+    {
+     "name": "get_facility",
+     "title": "Get Facility",
+     "desc": "Fetch a DHS shelter facility (capacity, landlord, violations, census) by DHS Building ID.",
+     "write": false
+    },
+    {
+     "name": "find_contacts",
+     "title": "Find Contacts",
+     "desc": "List DHS offices, intake centers, and public contact points (including where to apply for shelter) by borough or free text.",
+     "write": false
+    },
+    {
+     "name": "find_street_homeless_counts",
+     "title": "Find Street Homeless Counts",
+     "desc": "Return AGGREGATE unsheltered / street-homeless counts by borough and period. Never returns individual people.",
+     "write": false
+    },
+    {
+     "name": "list_my_outreach_requests",
+     "title": "List My Outreach Requests",
+     "desc": "List the caller's own submitted street-outreach requests and their status \u2014 today trackable only as a NYC311 service request.",
+     "write": false
+    },
+    {
+     "name": "request_outreach",
+     "title": "Request Street Outreach",
+     "desc": "Report a person experiencing unsheltered homelessness so a DHS mobile outreach team responds. NET-NEW workflow with no public API today \u2014 it lives only in a NYC",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "doc",
+   "agency": "New York City Department of Correction (DOC)",
+   "short": "NYC Correction (DOC)",
+   "verb": "expose",
+   "platform": "NYC.gov 'Livesite' (Akamai edge, nginx, Dynatrace RUM) informational site + a legacy Apache MyFaces (JSF/Java) Inmate Lookup Service ('P.I.C. Lookup', a073-ils-web.nyc.gov) with no API; Socrata SODA open data",
+   "tagline": "DOC over-publishes accountability data and even runs a live custody lookup, yet the lookup is a JSF screen with no API and the human transactions \u2014 visiting someone, filing a complaint \u2014 have no digital contract at all.",
+   "accent": "#5a7a9a",
+   "netnew": "VisitScheduling \u2014 schedule a visit with a person in custody (no API today; arranged by phone, in person, or vendor portal). Complaint / records request is a second net-new write.",
+   "findings": [
+    "DOC is transparency-heavy but transaction-poor: 15 NYC Open Data datasets publish the daily in-custody population, admissions/discharges, deaths, slashings/stabbings, fights, assaults on staff, staff injuries, emergency lock-ins, and Local Law 33/85 security and visitation indicators.",
+    "It also runs a LIVE real-time lookup \u2014 the Inmate Lookup Service / 'P.I.C. Lookup' at a073-ils-web.nyc.gov/inmatelookup \u2014 but that lookup is a legacy Apache MyFaces (JavaServer Faces) web application with no API, no OpenAPI, and no JSON; it is reachable only by a human in a browser.",
+    "The two things the public actually needs to DO \u2014 schedule a visit with a person in custody, and file a complaint or records/FOIL request \u2014 have no machine-readable surface at all; they are handled by phone, in person, mail, or vendor/OpenRecords portals.",
+    "Individual-level custody data exists in two disconnected forms: a daily anonymized snapshot on Open Data (INMATEID only) and a live named lookup keyed on NYSID / Book & Case number \u2014 neither is an API.",
+    "Net-new write surface: schedule a visit (VisitScheduling); a second net-new write is file a complaint / records request. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "15 DOC datasets; SODA /resource/<id>.json endpoints. The one real, open DOC API \u2014 accountability/statistics data only, no live lookup."
+    },
+    {
+     "endpoint": "a073-ils-web.nyc.gov/inmatelookup/pages/home/home.jsf",
+     "type": "live inmate lookup ('P.I.C. Lookup')",
+     "owner": "DOC (legacy Apache MyFaces / JSF)",
+     "public": "public UI, no API",
+     "note": "Real-time person-in-custody search by NYSID / Book & Case / name; server-rendered JavaServer Faces (javax.faces.ViewState, myfaces), WebSphere-style JSESSIONID, JavaScript-only, no JSON/OpenAPI."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/doc",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite v22)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "a860-openrecords.nyc.gov",
+     "type": "citywide records-request portal",
+     "owner": "NYC (OpenRecords)",
+     "public": "web form",
+     "note": "FOIL / records requests routed here; no DOC-specific API."
+    }
+   ],
+   "counts": {
+    "fruit": 9,
+    "opendata": 15,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 8,
+    "entities": 6
+   },
+   "entities": [
+    "PersonInCustody",
+    "Facility",
+    "IncidentReport",
+    "DailyPopulation",
+    "Visit",
+    "Complaint"
+   ],
+   "files": {
+    "fruit": "doc/fruit.json",
+    "opendata": "doc/opendata-doc.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-doc.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/doc.yaml",
+    "mcp": "mcp/doc-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "DOC \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Correction (DOC) object schemas. Reconciles fields common to the DOC Open D"
+    },
+    {
+     "file": "schemas/complaint.json",
+     "title": "Complaint",
+     "shared": false,
+     "desc": "A complaint, grievance, or records request submitted to DOC \u2014 a second NET-NEW write surface. There is NO public API today: complaints and r"
+    },
+    {
+     "file": "schemas/daily-population.json",
+     "title": "DailyPopulation",
+     "shared": false,
+     "desc": "A population / security-indicator measure for DOC \u2014 the census and accountability metrics DOC reports over time. Canonical schema reconcilin"
+    },
+    {
+     "file": "schemas/facility.json",
+     "title": "Facility",
+     "shared": false,
+     "desc": "A DOC facility (jail) \u2014 e.g. the Rikers Island jails and the borough detention centers. DERIVED entity: DOC publishes no facility-roster dat"
+    },
+    {
+     "file": "schemas/incident-report.json",
+     "title": "IncidentReport",
+     "shared": false,
+     "desc": "A DOC safety/security incident \u2014 the accountability record DOC publishes across several parallel datasets. Canonical schema unifying 'Inmate"
+    },
+    {
+     "file": "schemas/person-in-custody.json",
+     "title": "PersonInCustody",
+     "shared": false,
+     "desc": "A person in DOC custody \u2014 the core operational unit, referred to internally as a P.I.C. (Person In Custody). Canonical schema reconciling th"
+    },
+    {
+     "file": "schemas/visit.json",
+     "title": "Visit",
+     "shared": false,
+     "desc": "A scheduled visit with a person in DOC custody \u2014 the NET-NEW write surface. There is NO public API for scheduling a visit today: family/lega"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/people-in-custody",
+     "op": "listPeopleInCustody",
+     "summary": "List / search people currently in DOC custody",
+     "tags": [
+      "People In Custody"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/people-in-custody/{inmateId}",
+     "op": "getPersonInCustody",
+     "summary": "Get a person in custody by DOC inmate id",
+     "tags": [
+      "People In Custody"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/facilities",
+     "op": "listFacilities",
+     "summary": "List DOC facilities (jails)",
+     "tags": [
+      "Facilities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/daily-population",
+     "op": "listDailyPopulation",
+     "summary": "Search daily population and security-indicator metrics",
+     "tags": [
+      "Population"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/incidents",
+     "op": "listIncidents",
+     "summary": "Search DOC safety/security incidents",
+     "tags": [
+      "Incidents"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/visits",
+     "op": "listVisits",
+     "summary": "List the authenticated visitor's scheduled visits",
+     "tags": [
+      "Visits"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/visits",
+     "op": "createVisit",
+     "summary": "Schedule a visit (net-new write)",
+     "tags": [
+      "Visits"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/visits/{visitId}",
+     "op": "getVisit",
+     "summary": "Get a scheduled visit",
+     "tags": [
+      "Visits"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/complaints",
+     "op": "createComplaint",
+     "summary": "File a complaint or records request (net-new write)",
+     "tags": [
+      "Complaints"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/complaints/{complaintId}",
+     "op": "getComplaint",
+     "summary": "Get a complaint / records request by tracking number",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_people_in_custody",
+     "title": "Find People In Custody",
+     "desc": "Search the daily in-custody population, or the live P.I.C. lookup by NYSID / Book & Case number, filtered by custody level or facility.",
+     "write": false
+    },
+    {
+     "name": "get_person_in_custody",
+     "title": "Get Person In Custody",
+     "desc": "Fetch a person in DOC custody (demographics, custody level, top charge, facility, admission/discharge) by DOC inmate id.",
+     "write": false
+    },
+    {
+     "name": "find_facilities",
+     "title": "Find Facilities",
+     "desc": "List DOC facilities (jails), including the Rikers Island and borough detention centers, by borough, type, or Rikers Island status.",
+     "write": false
+    },
+    {
+     "name": "find_daily_population",
+     "title": "Find Daily Population",
+     "desc": "Search DOC daily population and security-indicator metrics (Local Law 33 rates per 100 ADP, average daily population, Article 730 waitlist, medical non-producti",
+     "write": false
+    },
+    {
+     "name": "find_incidents",
+     "title": "Find Incidents",
+     "desc": "Search DOC safety/security incidents \u2014 deaths, slashings/stabbings, fights, assaults on staff, staff injuries, and emergency lock-ins \u2014 by type, facility, or da",
+     "write": false
+    },
+    {
+     "name": "list_my_visits",
+     "title": "List My Visits",
+     "desc": "List the authenticated visitor's own scheduled visits and their status \u2014 today arranged only offline or through vendor portals.",
+     "write": false
+    },
+    {
+     "name": "schedule_visit",
+     "title": "Schedule a Visit",
+     "desc": "Request a visit with a person in DOC custody (report the person by NYSID, Book & Case number, or inmate id). NET-NEW workflow with no public API today \u2014 visits ",
+     "write": true
+    },
+    {
+     "name": "file_complaint",
+     "title": "File a Complaint or Records Request",
+     "desc": "File a complaint, grievance, or records/FOIL request with DOC and receive a tracking number. NET-NEW workflow with no public API today \u2014 filed only by phone, ma",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "dof",
+   "agency": "New York City Department of Finance (DOF)",
+   "short": "NYC Finance (DOF)",
+   "verb": "modernize",
+   "platform": "NYC.gov 'Livesite' informational chassis (Akamai/nginx/Dynatrace) plus a fleet of aging, siloed a836-*.nyc.gov apps \u2014 ACRIS (ASP.NET/IIS, 2013-era), CityPay (PayPal/Braintree form), and the Property Tax System.",
+   "tagline": "DOF publishes more open data than any NYC agency assessed, yet every citizen transaction lives behind a fleet of aging, API-less a836 legacy apps.",
+   "accent": "#3a7d6a",
+   "netnew": "ParkingTicketPayment \u2014 pay a parking/camera violation via API instead of the CityPay-only web form.",
+   "findings": [
+    "DOF has the widest open-data footprint of any NYC agency assessed so far \u2014 145 NYC Open Data datasets covering property valuation & assessment, exemptions/abatements, tax-charge balances, the full ACRIS document register, and every parking/camera violation.",
+    "But its citizen transactions live across a fleet of aging, siloed a836-*.nyc.gov apps \u2014 ACRIS (a 2013-era ASP.NET/IIS document-search app), CityPay (a PayPal/Braintree web form), and the Property Tax System \u2014 none of which exposes an API, OpenAPI, or JSON contract.",
+    "This is the fifth distinct pattern: not data-as-HTML (Parks), not rented search (DOE), not fragmented-but-real APIs (Council), not one locked vendor CRM (NYCHA) \u2014 but a spread of in-house legacy application silos sitting on top of an unusually open data layer.",
+    "The reference model is coherent and joinable on the Borough-Block-Lot (BBL): valuation, exemptions, tax charges, and ACRIS legals all key on it. Publishing that as one owned resource model spares consumers 145 Socrata IDs and three legacy screens.",
+    "Net-new write surface: pay a parking/camera violation (ParkingTicketPayment) \u2014 the balance is already published (Open Parking and Camera Violations, nc67-uf89), but the act of paying has no API; it lives only in CityPay. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "145 DOF datasets; SODA /resource/<id>.json endpoints. The one real, open DOF API \u2014 valuation, exemptions, tax charges, ACRIS register, parking violations. Reference/snapshot data only."
+    },
+    {
+     "endpoint": "a836-acris.nyc.gov",
+     "type": "recorded-document search app",
+     "owner": "DOF (legacy ASP.NET/IIS)",
+     "public": "html app, no API",
+     "note": "ACRIS \u2014 deeds, mortgages, parties, legals. iso-8859-1 meta-refresh framesets to /CP/, X-Powered-By: ASP.NET, Last-Modified 2013. Server-rendered; no JSON/OpenAPI. Open Data twin exists (bnx9-e6tj et al.) but the live app is API-less."
+    },
+    {
+     "endpoint": "a836-citypay.nyc.gov",
+     "type": "payment web app",
+     "owner": "DOF (CityPay)",
+     "public": "html app, no API",
+     "note": "Pay parking tickets, property taxes, and other charges. CSP allowlists js.braintreegateway.com and *.paypal.com \u2014 a PayPal/Braintree-backed form. No public payment API. The net-new write surface."
+    },
+    {
+     "endpoint": "a836-pts-access.nyc.gov",
+     "type": "property tax system portal",
+     "owner": "DOF (PTS)",
+     "public": "session-gated app, no API",
+     "note": "Property Tax System account access; Akamai-fronted, session-cookie gated (mspwvw-* cookie). Server-rendered; no API."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/finance",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "Content only \u2014 About, property, benefits, how-to. Akamai edge, nginx, Dynatrace RUM, livesite-version: 22. No content API."
+    }
+   ],
+   "counts": {
+    "fruit": 9,
+    "opendata": 145,
+    "schemas": 6,
+    "openapiOps": 12,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "PropertyValuation",
+    "PropertyExemption",
+    "PropertyTaxBill",
+    "ACRISDocument",
+    "ParkingViolation",
+    "ParkingTicketPayment"
+   ],
+   "files": {
+    "fruit": "dof/fruit.json",
+    "opendata": "dof/opendata-dof.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dof.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dof.yaml",
+    "mcp": "mcp/dof-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "DOF \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Finance (DOF) object schemas. Reconciles fields common to the DOF Open Data"
+    },
+    {
+     "file": "schemas/acris-document.json",
+     "title": "ACRISDocument",
+     "shared": false,
+     "desc": "A recorded real-property document (deed, mortgage, satisfaction, UCC, etc.) in DOF's Automated City Register Information System (ACRIS) \u2014 th"
+    },
+    {
+     "file": "schemas/parking-ticket-payment.json",
+     "title": "ParkingTicketPayment",
+     "shared": false,
+     "desc": "A payment made against a parking / camera violation summons \u2014 the everyday DOF transaction. NET-NEW: there is NO public payment API; today a"
+    },
+    {
+     "file": "schemas/parking-violation.json",
+     "title": "ParkingViolation",
+     "shared": false,
+     "desc": "A parking or camera violation summons adjudicated by DOF \u2014 the ParkingViolation / ticket entity. Canonical schema reconciling 'Parking Viola"
+    },
+    {
+     "file": "schemas/property-exemption.json",
+     "title": "PropertyExemption",
+     "shared": false,
+     "desc": "A property tax exemption or abatement line on a parcel (STAR, SCHE, J-51, 421-a, ICIP, etc.) \u2014 the PropertyExemption entity. Canonical schem"
+    },
+    {
+     "file": "schemas/property-tax-bill.json",
+     "title": "PropertyTaxBill",
+     "shared": false,
+     "desc": "The outstanding property charges / tax balance for a parcel account \u2014 the PropertyTaxBill entity. Canonical schema reconciling 'DOF: Propert"
+    },
+    {
+     "file": "schemas/property-valuation.json",
+     "title": "PropertyValuation",
+     "shared": false,
+     "desc": "The DOF tentative/final assessment record for a tax lot \u2014 the TaxLot valuation entity. Canonical schema reconciling 'Property Valuation and "
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/property/valuations",
+     "op": "listPropertyValuations",
+     "summary": "List / search property valuation & assessment records",
+     "tags": [
+      "Property"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/property/valuations/{bbl}",
+     "op": "getPropertyValuation",
+     "summary": "Get a parcel's valuation by Borough-Block-Lot",
+     "tags": [
+      "Property"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/property/valuations/{bbl}/exemptions",
+     "op": "getPropertyExemptions",
+     "summary": "List the exemptions/abatements on a parcel",
+     "tags": [
+      "Property"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/property/exemptions",
+     "op": "listPropertyExemptions",
+     "summary": "Search property exemptions & abatements",
+     "tags": [
+      "Property"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/property/tax-bills",
+     "op": "listPropertyTaxBills",
+     "summary": "Search property tax-charge balances",
+     "tags": [
+      "TaxBills"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/property/tax-bills/{bbl}",
+     "op": "getPropertyTaxBill",
+     "summary": "Get the tax-charge balance for a parcel",
+     "tags": [
+      "TaxBills"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/acris/documents",
+     "op": "listAcrisDocuments",
+     "summary": "Search recorded ACRIS documents (deeds, mortgages, etc.)",
+     "tags": [
+      "ACRIS"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/acris/documents/{documentId}",
+     "op": "getAcrisDocument",
+     "summary": "Get a recorded ACRIS document with its parties and legals",
+     "tags": [
+      "ACRIS"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/parking/violations",
+     "op": "listParkingViolations",
+     "summary": "Search parking & camera violations",
+     "tags": [
+      "Parking"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/parking/violations/{summonsNumber}",
+     "op": "getParkingViolation",
+     "summary": "Get a violation and its balance by summons number",
+     "tags": [
+      "Parking"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/parking/payments",
+     "op": "createParkingTicketPayment",
+     "summary": "Pay a parking / camera violation",
+     "tags": [
+      "Payments"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/parking/payments/{paymentId}",
+     "op": "getParkingTicketPayment",
+     "summary": "Get a payment receipt",
+     "tags": [
+      "Payments"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_property_valuations",
+     "title": "Find Property Valuations",
+     "desc": "Search DOF property valuation & assessment records by borough, tax class, building class, year, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_property_valuation",
+     "title": "Get Property Valuation",
+     "desc": "Fetch a parcel's valuation & assessment (market/assessed values, lot dimensions, tax class) by Borough-Block-Lot (BBL).",
+     "write": false
+    },
+    {
+     "name": "find_property_exemptions",
+     "title": "Find Property Exemptions",
+     "desc": "Search property tax exemptions & abatements (STAR, SCHE, J-51, 421-a, ICIP) by borough, exemption code/name, or year.",
+     "write": false
+    },
+    {
+     "name": "get_property_tax_bill",
+     "title": "Get Property Tax Bill",
+     "desc": "Return the outstanding tax-charge balance (liability, interest, balance due) for a parcel by Borough-Block-Lot (BBL) and tax year.",
+     "write": false
+    },
+    {
+     "name": "find_acris_documents",
+     "title": "Find ACRIS Documents",
+     "desc": "Search recorded real-property documents (deeds, mortgages, satisfactions) by BBL, borough, document type, CRFN, or recording date range.",
+     "write": false
+    },
+    {
+     "name": "get_acris_document",
+     "title": "Get ACRIS Document",
+     "desc": "Fetch a recorded ACRIS document with its parties (grantor/grantee) and affected legal lots by document id.",
+     "write": false
+    },
+    {
+     "name": "find_parking_violations",
+     "title": "Find Parking Violations",
+     "desc": "Search parking & camera violations by plate, plate state, status, issuing agency, or violation code \u2014 returns the live balance for each summons.",
+     "write": false
+    },
+    {
+     "name": "get_parking_violation",
+     "title": "Get Parking Violation",
+     "desc": "Fetch a parking/camera violation and its outstanding balance by summons number.",
+     "write": false
+    },
+    {
+     "name": "pay_parking_ticket",
+     "title": "Pay a Parking Ticket",
+     "desc": "Submit a payment against a parking/camera violation summons (report and settle a ticket). NET-NEW workflow with no public API today \u2014 it lives only in the CityP",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "dycd",
+   "agency": "NYC Department of Youth and Community Development (DYCD)",
+   "short": "NYC Youth & Community Dev (DYCD)",
+   "verb": "surface",
+   "platform": "Informational site on the NYC.gov 'Livesite' chassis (nginx/Akamai/Dynatrace); the DYCD Connect / DiscoverDYCD apps on Microsoft-IIS + Angular with a private internal /api/",
+   "tagline": "DYCD already built a public program finder and publishes its whole supply chain as open data \u2014 it just never gave either an API, or a way to apply.",
+   "accent": "#d9a02a",
+   "netnew": "ProgramApplication \u2014 apply to a program (e.g. an SYEP application)",
+   "findings": [
+    "DYCD is a split domain: an informational NYC.gov site (nginx/Livesite/Akamai/Dynatrace) plus the DYCD Connect ecosystem \u2014 dycdconnect.nyc and the DiscoverDYCD program finder (discoverdycd.dycdconnect.nyc) \u2014 an Angular SPA on Microsoft-IIS with a private internal /api/ backend.",
+    "DYCD is a funder/intermediary, not a direct service provider: it contracts hundreds of community-based organizations (providers) to run programs (SYEP, COMPASS/SONYC, Beacon, Cornerstone) at physical program sites, and the open data documents that supply chain.",
+    "The supply-side data is well published: 15 NYC Open Data datasets covering program sites (ebkm-iyma, 34 columns with a full geography spine, slots, and participants), contracts, contractors/providers, Neighborhood Development Areas, and aggregate participant demographics (k9kq-67vm, 52 columns).",
+    "But the program finder is an app, not an API: DYCD already built DiscoverDYCD to help the public find programs, yet its backend /api/ is undocumented and private, and there is no clean Open Data catalog of the program offerings themselves.",
+    "Net-new write surface: apply to a program (ProgramApplication) \u2014 e.g. an SYEP application \u2014 the transaction a young person actually needs, with no public API today; it lives only in DYCD's seasonal online application flow. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "15 DYCD datasets; SODA /resource/<id>.json endpoints. The one real, open DYCD API \u2014 supply-side/reference data only (program sites, contracts, providers, NDAs, aggregate demographics)."
+    },
+    {
+     "endpoint": "discoverdycd.dycdconnect.nyc/api",
+     "type": "program-finder backend",
+     "owner": "DYCD (Angular SPA on Microsoft-IIS)",
+     "public": "internal, undocumented",
+     "note": "The DiscoverDYCD program finder is a hashed-bundle Angular app that calls a private /api/ backend (returns 404 to public probes). Uses Google Maps + Places. No public docs, no OpenAPI."
+    },
+    {
+     "endpoint": "www.dycdconnect.nyc",
+     "type": "provider / participant portal",
+     "owner": "DYCD (Microsoft-IIS)",
+     "public": "login-walled UI, no API",
+     "note": "The DYCD Connect ecosystem where providers manage contracts and where program application/enrollment flows live. No public API."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/dycd",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite v22)",
+     "public": "html",
+     "note": "content only; nginx origin behind Akamai edge, Dynatrace RUM, AWS ALB. No content API."
+    },
+    {
+     "endpoint": "maps.googleapis.com",
+     "type": "maps/places API",
+     "owner": "Google",
+     "public": "vendor",
+     "note": "DiscoverDYCD embeds Google Maps JS + Places for site location/search."
+    }
+   ],
+   "counts": {
+    "fruit": 9,
+    "opendata": 15,
+    "schemas": 7,
+    "openapiOps": 11,
+    "mcpTools": 10,
+    "entities": 7
+   },
+   "entities": [
+    "Program",
+    "ProgramSite",
+    "Provider",
+    "Contract",
+    "ServiceArea",
+    "ParticipantDemographics",
+    "ProgramApplication"
+   ],
+   "files": {
+    "fruit": "dycd/fruit.json",
+    "opendata": "dycd/opendata-dycd.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dycd.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dycd.yaml",
+    "mcp": "mcp/dycd-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "DYCD \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Youth and Community Development (DYCD) object schemas. Reconciles fields co"
+    },
+    {
+     "file": "schemas/contract.json",
+     "title": "Contract",
+     "shared": false,
+     "desc": "A DYCD contract with a provider to deliver a program \u2014 the funding instrument behind every program site. Canonical schema reconciling the 'D"
+    },
+    {
+     "file": "schemas/participant-demographics.json",
+     "title": "ParticipantDemographics",
+     "shared": false,
+     "desc": "Aggregated demographics of DYCD program participants (enrollment) for a geography or program type \u2014 the participant/enrollment record, publi"
+    },
+    {
+     "file": "schemas/program-application.json",
+     "title": "ProgramApplication",
+     "shared": false,
+     "desc": "An application to enroll in a DYCD program (e.g. a Summer Youth Employment Program (SYEP) application, or a COMPASS/Beacon after-school regi"
+    },
+    {
+     "file": "schemas/program-site.json",
+     "title": "ProgramSite",
+     "shared": false,
+     "desc": "A physical site where a DYCD-funded program is delivered by a contracted provider \u2014 the core supply unit of the domain. Canonical schema rec"
+    },
+    {
+     "file": "schemas/program.json",
+     "title": "Program",
+     "shared": false,
+     "desc": "A DYCD program offering \u2014 the thing a young person or family actually enrolls in (e.g. Summer Youth Employment Program (SYEP), COMPASS/SONYC"
+    },
+    {
+     "file": "schemas/provider.json",
+     "title": "Provider",
+     "shared": false,
+     "desc": "A community-based organization (CBO) that DYCD contracts to deliver programs at one or more program sites. Canonical schema reconciling 'DYC"
+    },
+    {
+     "file": "schemas/service-area.json",
+     "title": "ServiceArea",
+     "shared": false,
+     "desc": "A DYCD Neighborhood Development Area (NDA) \u2014 the community-district-level catchment used to target community-development funding (immigrant "
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/programs",
+     "op": "listPrograms",
+     "summary": "List / search DYCD program offerings",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs/{programType}",
+     "op": "getProgram",
+     "summary": "Get a program offering by type key",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/program-sites",
+     "op": "listProgramSites",
+     "summary": "List / search program sites",
+     "tags": [
+      "ProgramSites"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/program-sites/{portfolioId}",
+     "op": "getProgramSite",
+     "summary": "Get a program site by PortfolioID",
+     "tags": [
+      "ProgramSites"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/providers",
+     "op": "listProviders",
+     "summary": "List / search DYCD providers (contracted CBOs)",
+     "tags": [
+      "Providers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/contracts",
+     "op": "listContracts",
+     "summary": "List / search DYCD contracts",
+     "tags": [
+      "Contracts"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/service-areas",
+     "op": "listServiceAreas",
+     "summary": "List Neighborhood Development Areas (NDAs)",
+     "tags": [
+      "ServiceAreas"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/participant-demographics",
+     "op": "listParticipantDemographics",
+     "summary": "Aggregate participant demographics by geography / program type",
+     "tags": [
+      "Participants"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/applications",
+     "op": "listApplications",
+     "summary": "List the authenticated applicant's program applications",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/applications",
+     "op": "createApplication",
+     "summary": "Apply to a DYCD program (submit a program application)",
+     "tags": [
+      "Applications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/applications/{applicationId}",
+     "op": "getApplication",
+     "summary": "Get a program application",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_programs",
+     "title": "Find Programs",
+     "desc": "Search DYCD program offerings (SYEP, COMPASS/SONYC, Beacon, Cornerstone, adult literacy, immigrant services) by program area, type, applicant age, borough, or f",
+     "write": false
+    },
+    {
+     "name": "get_program",
+     "title": "Get Program",
+     "desc": "Fetch a single DYCD program offering (eligibility, age range, how to apply) by its program-type key.",
+     "write": false
+    },
+    {
+     "name": "find_program_sites",
+     "title": "Find Program Sites",
+     "desc": "Search DYCD program sites by borough, program area/type, provider, council district, or NDA \u2014 with slots, participants, and geography.",
+     "write": false
+    },
+    {
+     "name": "get_program_site",
+     "title": "Get Program Site",
+     "desc": "Fetch a DYCD program site (provider, program, slots, participants, address, geography) by PortfolioID.",
+     "write": false
+    },
+    {
+     "name": "find_providers",
+     "title": "Find Providers",
+     "desc": "Search the community-based organizations DYCD contracts to run programs, by program area, fiscal year, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_contracts",
+     "title": "Find Contracts",
+     "desc": "Search DYCD contracts by provider, major program, status, or fiscal year \u2014 the funding behind program sites.",
+     "write": false
+    },
+    {
+     "name": "find_service_areas",
+     "title": "Find Service Areas",
+     "desc": "List DYCD Neighborhood Development Areas (NDAs) \u2014 the community-development catchments \u2014 by borough.",
+     "write": false
+    },
+    {
+     "name": "find_participant_demographics",
+     "title": "Find Participant Demographics",
+     "desc": "Return AGGREGATE participant demographics (race/ethnicity, gender identity) by geography or program type. Never returns individual participants.",
+     "write": false
+    },
+    {
+     "name": "list_my_applications",
+     "title": "List My Applications",
+     "desc": "List the authenticated applicant's own DYCD program applications and their status \u2014 today visible only inside DYCD's seasonal application flow.",
+     "write": false
+    },
+    {
+     "name": "apply_to_program",
+     "title": "Apply to a Program",
+     "desc": "Submit a DYCD program application (e.g. an SYEP application). NET-NEW workflow with no public API today \u2014 it lives only in DYCD's seasonal online application fl",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "fdny",
+   "agency": "Fire Department of the City of New York (FDNY)",
+   "short": "NYC Fire (FDNY)",
+   "verb": "front",
+   "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) informational site + FDNY Business on a rented Accela Civic Platform (fires.fdnycloud.org, Cloudflare + Azure App Gateway, Datadog RUM)",
+   "tagline": "FDNY publishes its firehouses, incidents, inspections, and violations generously on Open Data, but every business transaction is trapped in a rented Accela permitting cloud with no API.",
+   "accent": "#c23b2b",
+   "netnew": "FirePermitApplication \u2014 apply for and track a fire permit / Certificate of Operation / inspection request via FDNY Business",
+   "findings": [
+    "FDNY is a split domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus FDNY Business (fires.fdnycloud.org), a rented Accela Civic Platform (Citizen Access) permitting application fronted by Cloudflare and an Azure Application Gateway \u2014 with no public API.",
+    "The reference and operational data is unusually OPEN: 17 NYC Open Data datasets covering firehouses, minute-level Fire and EMS incident dispatch, Bureau of Fire Prevention inspections, active violation orders, certificates of fitness, building vacate lists, and fire-cause investigations.",
+    "But the business SERVICE layer has no machine-readable surface: applying for a fire permit, holding a Certificate of Fitness/Operation, scheduling an inspection, or answering a violation happens only inside the rented Accela portal or on paper.",
+    "The Open Data cut is historical/snapshot: inspections, violations, certificates, and building summaries are all published as '(Historical)' extracts \u2014 the live regulatory state lives inside Accela.",
+    "Net-new write surface: submit a fire permit application (FirePermitApplication) \u2014 the core FDNY Business transaction, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "17 FDNY datasets; SODA /resource/<id>.json endpoints. The one real, open FDNY API \u2014 reference/operational data only."
+    },
+    {
+     "endpoint": "fires.fdnycloud.org/CitizenAccess",
+     "type": "business permitting portal (SaaS)",
+     "owner": "FDNY (on Accela Civic Platform)",
+     "public": "login-walled UI, no API",
+     "note": "FDNY Business \u2014 fire permits, Certificates of Fitness/Operation, inspection scheduling, violation response. Accela Citizen Access (.aspx), Datadog RUM; no JSON/OpenAPI. Fronted by Cloudflare + Azure Application Gateway."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/fdny",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "Akamai edge",
+     "type": "CDN API",
+     "owner": "Akamai",
+     "public": "vendor",
+     "note": "x-akamai-transformed / server-timing on the informational site."
+    },
+    {
+     "endpoint": "Datadog RUM",
+     "type": "monitoring beacon",
+     "owner": "Datadog",
+     "public": "vendor",
+     "note": "Accela portal ships a Datadog browser-agent CSP report-uri."
+    }
+   ],
+   "counts": {
+    "fruit": 9,
+    "opendata": 17,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 10,
+    "entities": 6
+   },
+   "entities": [
+    "Firehouse",
+    "IncidentDispatch",
+    "Inspection",
+    "Violation",
+    "CertificateOfFitness",
+    "FirePermitApplication"
+   ],
+   "files": {
+    "fruit": "fdny/fruit.json",
+    "opendata": "fdny/opendata-fdny.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-fdny.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/fdny.yaml",
+    "mcp": "mcp/fdny-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "FDNY \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across Fire Department of the City of New York (FDNY) object schemas. Reconciles fields common to th"
+    },
+    {
+     "file": "schemas/certificate-of-fitness.json",
+     "title": "CertificateOfFitness",
+     "shared": false,
+     "desc": "An FDNY Certificate of Fitness (C of F) \u2014 an individual credential to perform a fire-regulated activity or a premises certificate. Canonical"
+    },
+    {
+     "file": "schemas/fire-permit-application.json",
+     "title": "FirePermitApplication",
+     "shared": false,
+     "desc": "An application for an FDNY fire permit, Certificate of Operation, or inspection request. NET-NEW: there is NO public API for the FDNY permit"
+    },
+    {
+     "file": "schemas/firehouse.json",
+     "title": "Firehouse",
+     "shared": false,
+     "desc": "An FDNY firehouse / fire station facility \u2014 the physical unit of the Department. Canonical schema reconciling the 'FDNY Firehouse Listing' d"
+    },
+    {
+     "file": "schemas/incident-dispatch.json",
+     "title": "IncidentDispatch",
+     "shared": false,
+     "desc": "An FDNY dispatched incident \u2014 one canonical schema reconciling the two parallel dispatch datasets: 'Fire Incident Dispatch Data' (8m42-w767,"
+    },
+    {
+     "file": "schemas/inspection.json",
+     "title": "Inspection",
+     "shared": false,
+     "desc": "An FDNY fire-safety inspection of a premises. One canonical schema reconciling three inspection datasets: 'Bureau of Fire Prevention - Inspe"
+    },
+    {
+     "file": "schemas/violation.json",
+     "title": "Violation",
+     "shared": false,
+     "desc": "An active FDNY Bureau of Fire Prevention violation order issued against a premises. Canonical schema reconciling 'Bureau of Fire Prevention "
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/firehouses",
+     "op": "listFirehouses",
+     "summary": "List / search FDNY firehouses",
+     "tags": [
+      "Firehouses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/firehouses/{bin}",
+     "op": "getFirehouse",
+     "summary": "Get a firehouse by BIN",
+     "tags": [
+      "Firehouses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/incidents",
+     "op": "listIncidents",
+     "summary": "Search fire and EMS incident dispatch records",
+     "tags": [
+      "Incidents"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/incidents/{incidentId}",
+     "op": "getIncident",
+     "summary": "Get an incident dispatch record",
+     "tags": [
+      "Incidents"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/inspections",
+     "op": "listInspections",
+     "summary": "Search FDNY fire-safety inspections",
+     "tags": [
+      "Inspections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/violations",
+     "op": "listViolations",
+     "summary": "Search active Bureau of Fire Prevention violation orders",
+     "tags": [
+      "Violations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/certificates-of-fitness",
+     "op": "listCertificatesOfFitness",
+     "summary": "Search certificates of fitness",
+     "tags": [
+      "Certificates"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/permit-applications",
+     "op": "listPermitApplications",
+     "summary": "List the authenticated applicant's fire permit applications",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/permit-applications",
+     "op": "createPermitApplication",
+     "summary": "Apply for a fire permit (submit an application)",
+     "tags": [
+      "Permits"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/permit-applications/{applicationId}",
+     "op": "getPermitApplication",
+     "summary": "Get a fire permit application",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_firehouses",
+     "title": "Find Firehouses",
+     "desc": "Search FDNY firehouses / fire stations by borough, council district, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_firehouse",
+     "title": "Get Firehouse",
+     "desc": "Fetch a single FDNY firehouse (name, address, geography) by BIN.",
+     "write": false
+    },
+    {
+     "name": "find_incidents",
+     "title": "Find Incidents",
+     "desc": "Search FDNY fire and EMS incident dispatch records by service (Fire/EMS), borough, classification, and time window. Returns dispatch and response-timing detail.",
+     "write": false
+    },
+    {
+     "name": "get_incident",
+     "title": "Get Incident",
+     "desc": "Fetch a single fire or EMS incident dispatch record by incident id (pass service to disambiguate).",
+     "write": false
+    },
+    {
+     "name": "find_inspections",
+     "title": "Find Inspections",
+     "desc": "Search FDNY fire-safety inspections (Bureau of Fire Prevention, Risk-Based RBIS, or Mandatory fire-company) by source, borough, premises (BIN/BBL), or date.",
+     "write": false
+    },
+    {
+     "name": "find_violations",
+     "title": "Find Violations",
+     "desc": "Search active FDNY Bureau of Fire Prevention violation orders by borough, premises (BIN/BBL), or date.",
+     "write": false
+    },
+    {
+     "name": "find_certificates_of_fitness",
+     "title": "Find Certificates of Fitness",
+     "desc": "Search FDNY certificates of fitness by type, premises (BIN), or holder name.",
+     "write": false
+    },
+    {
+     "name": "list_my_permit_applications",
+     "title": "List My Permit Applications",
+     "desc": "List the authenticated applicant's own FDNY fire permit applications and their status \u2014 today visible only inside the FDNY Business / Accela portal.",
+     "write": false
+    },
+    {
+     "name": "apply_for_permit",
+     "title": "Apply for a Fire Permit",
+     "desc": "Submit an FDNY fire permit, Certificate of Operation, or inspection request. NET-NEW workflow with no public API today \u2014 it lives only in the rented FDNY Busine",
+     "write": true
+    },
+    {
+     "name": "get_permit_application",
+     "title": "Get Permit Application",
+     "desc": "Fetch one of the authenticated applicant's FDNY fire permit applications by application id.",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "hra",
+   "agency": "NYC Human Resources Administration / Department of Social Services (HRA/DSS)",
+   "short": "NYC Social Services (HRA)",
+   "verb": "connect",
+   "platform": "NYC.gov Livesite (informational) + ACCESS NYC (WordPress/WP Engine, open-source Drools eligibility rules) + ACCESS HRA (React SPA behind Akamai) application portal",
+   "tagline": "HRA has open caseload data and an open-source eligibility engine, but nothing binds screening, eligibility, and application into one API a resident or agent can call.",
+   "accent": "#4a8f5a",
+   "netnew": "BenefitsApplication \u2014 apply for and track SNAP / Cash Assistance / Medicaid, today locked in the ACCESS HRA portal",
+   "findings": [
+    "HRA is a three-surface benefits domain: an informational NYC.gov/Livesite site, the ACCESS NYC eligibility screener (access.nyc.gov, WordPress/WP Engine), and the ACCESS HRA application portal (a069-access.nyc.gov, a React SPA behind Akamai).",
+    "The standout finding: ACCESS NYC's eligibility LOGIC is OPEN SOURCE \u2014 github.com/NYCOpportunity/ACCESS-NYC-Rules is a public Drools business rules engine driving the screener, alongside a benefits-screening-api. The rules are public; there is still no API that returns a screening result to a caller.",
+    "The reference and caseload data is unusually open: 49 NYC Open Data datasets covering SNAP/Cash Assistance/Medicaid recipient and case counts, application-center directories (Benefits Access Centers, SNAP Centers, Medicaid Offices, Homebase), wait times, and 75-column case-action reports.",
+    "But the resident TRANSACTION layer has no machine-readable surface: applying for and tracking a benefits case lives only inside the ACCESS HRA React portal or an in-person visit. No dataset and no API exposes an individual application/case (aggregate case-action counts are the closest twin \u2014 and never per-resident).",
+    "Net-new write surface: apply for benefits (BenefitsApplication) \u2014 the core resident transaction, with no API today. The modernization move is to CONNECT the open screener, the open rules, and the closed application step into one owned benefits API + MCP. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "49 HRA datasets; SODA /resource/<id>.json endpoints. The one real, open HRA API \u2014 caseload, directory, and case-action reference data only."
+    },
+    {
+     "endpoint": "github.com/NYCOpportunity/ACCESS-NYC-Rules",
+     "type": "open-source eligibility rules engine",
+     "owner": "NYC Opportunity (Mayor's Office for Economic Opportunity)",
+     "public": "open source (Drools)",
+     "note": "The Drools business rules governing the ACCESS NYC eligibility screener at access.nyc.gov/eligibility. Logic is public; no hosted eligibility API returns results to callers. A companion benefits-screening-api repo (2025 replatform) exists."
+    },
+    {
+     "endpoint": "access.nyc.gov",
+     "type": "benefits screening + catalog site",
+     "owner": "NYC Opportunity (WordPress / WP Engine)",
+     "public": "html",
+     "note": "The open-source ACCESS NYC screener and program catalog (theme 'access'; Cloudflare edge). Program metadata is published as the 'NYC Benefits Platform: Benefits and Programs Dataset' (kvhd-5fmu). Screener returns HTML, not JSON."
+    },
+    {
+     "endpoint": "a069-access.nyc.gov/accesshra",
+     "type": "benefits application portal (SPA)",
+     "owner": "HRA (React app behind Akamai)",
+     "public": "login-walled UI, no API",
+     "note": "ACCESS HRA \u2014 apply for SNAP/Cash Assistance/Medicaid, upload documents, view case status. React SPA; Akamai bot protection (_abck/bm_sz); no JSON/OpenAPI surface."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/hra",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "Content only; Akamai edge, nginx, Dynatrace RUM (livesite-version 22). No content API."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 49,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "Program",
+    "Center",
+    "CaseloadStatistic",
+    "CaseAction",
+    "BenefitsEligibility",
+    "BenefitsApplication"
+   ],
+   "files": {
+    "fruit": "hra/fruit.json",
+    "opendata": "hra/opendata-hra.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-hra.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/hra.yaml",
+    "mcp": "mcp/hra-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "HRA \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Human Resources Administration / Department of Social Services (HRA/DSS) object schemas. "
+    },
+    {
+     "file": "schemas/benefits-application.json",
+     "title": "BenefitsApplication",
+     "shared": false,
+     "desc": "A resident's application for a public-benefit program (SNAP, Cash Assistance, Medicaid, and others) \u2014 the everyday HRA transaction. NET-NEW:"
+    },
+    {
+     "file": "schemas/benefits-eligibility.json",
+     "title": "BenefitsEligibility",
+     "shared": false,
+     "desc": "The result of screening a household against NYC benefit programs \u2014 the machine-readable form of what the ACCESS NYC eligibility screener (ac"
+    },
+    {
+     "file": "schemas/case-action.json",
+     "title": "CaseAction",
+     "shared": false,
+     "desc": "An aggregate report of actions taken on Cash Assistance and SNAP cases in a period \u2014 rejections, closings, and reopenings \u2014 broken out by re"
+    },
+    {
+     "file": "schemas/caseload-statistic.json",
+     "title": "CaseloadStatistic",
+     "shared": false,
+     "desc": "An aggregate benefit caseload / enrollment figure for a program, period, and (optionally) geography \u2014 the recipient/enrollee/case counts HRA"
+    },
+    {
+     "file": "schemas/center.json",
+     "title": "Center",
+     "shared": false,
+     "desc": "An HRA/DSS office or center where residents apply for and manage benefits \u2014 a Benefits Access Center, SNAP Center, Medicaid Office, or Homeb"
+    },
+    {
+     "file": "schemas/program.json",
+     "title": "Program",
+     "shared": false,
+     "desc": "A public-benefit program or service offered/screened by HRA/DSS and the ACCESS NYC platform \u2014 SNAP, Cash Assistance, Medicaid, HEAP, Fair Fa"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/programs",
+     "op": "listPrograms",
+     "summary": "List / search benefit programs and services",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs/{programCode}",
+     "op": "getProgram",
+     "summary": "Get a benefit program by code",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/centers",
+     "op": "listCenters",
+     "summary": "List / search HRA centers and offices",
+     "tags": [
+      "Centers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/centers/{centerNumber}",
+     "op": "getCenter",
+     "summary": "Get a center (with latest wait time) by center number",
+     "tags": [
+      "Centers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/caseload-statistics",
+     "op": "listCaseloadStatistics",
+     "summary": "Search aggregate benefit caseload / enrollment statistics",
+     "tags": [
+      "Caseloads"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/case-actions",
+     "op": "listCaseActions",
+     "summary": "Search aggregate Cash Assistance / SNAP case actions (rejections, closings, reopenings)",
+     "tags": [
+      "CaseActions"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/eligibility",
+     "op": "screenEligibility",
+     "summary": "Screen a household against NYC benefit programs",
+     "tags": [
+      "Eligibility"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/applications",
+     "op": "listApplications",
+     "summary": "List the authenticated resident's benefits applications",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/applications",
+     "op": "createApplication",
+     "summary": "Apply for benefits (submit a benefits application)",
+     "tags": [
+      "Applications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/applications/{applicationId}",
+     "op": "getApplication",
+     "summary": "Get a benefits application / case",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_programs",
+     "title": "Find Programs",
+     "desc": "Search HRA/DSS benefit programs and services (SNAP, Cash Assistance, Medicaid, HEAP, Fair Fares, HASA) by category, population served, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_program",
+     "title": "Get Program",
+     "desc": "Fetch a single benefit program (description, eligibility summary, how to apply) by its program code.",
+     "write": false
+    },
+    {
+     "name": "find_centers",
+     "title": "Find Centers",
+     "desc": "List HRA centers and offices \u2014 Benefits Access Centers, SNAP Centers, Medicaid Offices, and Homebase locations \u2014 by borough, center type, or ZIP, with the lates",
+     "write": false
+    },
+    {
+     "name": "find_caseload_statistics",
+     "title": "Find Caseload Statistics",
+     "desc": "Search AGGREGATE benefit caseload and enrollment figures (SNAP/Cash Assistance/Medicaid recipients, cases, enrollees) by program, measure, borough, or period. N",
+     "write": false
+    },
+    {
+     "name": "find_case_actions",
+     "title": "Find Case Actions",
+     "desc": "Search AGGREGATE Cash Assistance / SNAP case actions \u2014 rejections, closings, and reopenings \u2014 by action, reason code, or year, broken out by district, race, age",
+     "write": false
+    },
+    {
+     "name": "screen_eligibility",
+     "title": "Screen Eligibility",
+     "desc": "Screen a household against NYC benefit programs using the open-source ACCESS NYC rules and return one determination per program. Read-only \u2014 nothing is filed or",
+     "write": false
+    },
+    {
+     "name": "list_my_applications",
+     "title": "List My Applications",
+     "desc": "List the authenticated resident's own benefits applications and their case status \u2014 today visible only inside the ACCESS HRA portal.",
+     "write": false
+    },
+    {
+     "name": "get_application",
+     "title": "Get Application",
+     "desc": "Fetch one of the authenticated resident's benefits applications / cases by its application ID.",
+     "write": false
+    },
+    {
+     "name": "apply_for_benefits",
+     "title": "Apply for Benefits",
+     "desc": "Submit an HRA public-benefit application (SNAP, Cash Assistance, Medicaid, and others). NET-NEW workflow with no public API today \u2014 it lives only in the ACCESS ",
+     "write": true
+    }
+   ]
   }
  ]
 }

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doc/schemas/facility.json",
+  "title": "Facility",
+  "description": "A DOC facility (jail) — e.g. the Rikers Island jails and the borough detention centers. DERIVED entity: DOC publishes no facility-roster dataset, so this schema formalizes the 'FACILITY' dimension that appears across the incident, lock-in, medical, and waitlist datasets, joined to the DOC facilities directory on nyc.gov/site/doc. Keyed on facility code.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/doc/about/facilities.page",
+    "opendata": null,
+    "opendata_gap": true,
+    "derived_from": "FACILITY dimension across 7479-ugqb, 9dab-x6kn, erra-pzy8, gakf-suji, k548-32d3, 7hi3-kaps, f64t-5yiv, 5n4h-km5r, q9w2-yi4x"
+  },
+  "properties": {
+    "facility": { "type": "string", "description": "Facility code ('FACILITY') — e.g. 'AMKC', 'GRVC', 'RNDC', 'RMSC', 'OBCC', 'VCBC', 'EMTC', 'WF', 'NIC', 'MDC'." },
+    "facilityName": { "type": ["string", "null"], "description": "Full facility name (e.g. 'Anna M. Kross Center')." },
+    "type": { "type": ["string", "null"], "description": "Facility type (e.g. detention jail, hospital prison ward, borough facility, floating facility)." },
+    "location": { "type": ["string", "null"], "description": "Location description (e.g. 'Rikers Island', 'Bronx', 'Manhattan Detention Complex')." },
+    "onRikersIsland": { "type": ["boolean", "null"], "description": "Whether the facility is located on Rikers Island." },
+    "active": { "type": ["boolean", "null"], "description": "Whether the facility is currently operational." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["facility"],
+  "additionalProperties": false
+}

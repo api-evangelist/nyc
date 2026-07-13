@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dfta/schemas/older-adult-center.json",
+  "title": "OlderAdultCenter",
+  "description": "A DFTA Older Adult Center (senior center) with its Local Law 140 operating profile — utilization, meals served, staffing, and budget/expenditure detail. Canonical schema reconciling 'Senior Center Local Law 140 Provider Data - FY 2020' (ygfr-ij6t, 49 columns) and its client-side companion 'Senior Center Local Law 140 Client Data - FY 2020' (hm83-bdp7). Keyed on DFTA ID. An OlderAdultCenter is a ServiceProvider whose providerType is 'OLDER ADULT CENTER CONTRACTS', enriched with senior-center-specific operations data.",
+  "type": "object",
+  "x-source": {
+    "opendata_provider_data": "https://data.cityofnewyork.us/d/ygfr-ij6t",
+    "opendata_client_data": "https://data.cityofnewyork.us/d/hm83-bdp7"
+  },
+  "properties": {
+    "dftaId": { "type": ["string", "null"], "description": "'DFTA ID' — primary key." },
+    "providerName": { "type": ["string", "null"], "description": "'Provider Name'." },
+    "sponsorName": { "type": ["string", "null"], "description": "'Sponsor Name'." },
+    "siteType": { "type": ["string", "null"], "description": "'Site Type'." },
+    "address": { "type": ["string", "null"], "description": "'Program Address'." },
+    "utilization": {
+      "type": "object",
+      "properties": {
+        "averageDailyParticipants": { "type": ["number", "null"], "description": "'Average Daily Participants'." },
+        "utilizationRate": { "type": ["number", "string", "null"], "description": "'Ultilization' (sic) — center utilization." },
+        "fyActualMeals": { "type": ["number", "null"], "description": "'FY 20 Actual Meals'." },
+        "mealsPreppedForOthers": { "type": ["number", "null"], "description": "'Meals Prep for Others' / 'Meal Prep'." }
+      },
+      "additionalProperties": false
+    },
+    "staffing": {
+      "type": "object",
+      "properties": {
+        "fullTimeStaff": { "type": ["integer", "null"], "description": "'# of Full-time Staff'." },
+        "partTimeStaff": { "type": ["integer", "null"], "description": "'# of Part-time Staff'." }
+      },
+      "additionalProperties": false
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "fyBudget": { "type": ["number", "null"], "description": "'FY 20 Budget' / 'Total FY20 Budget'." },
+        "personnelBudget": { "type": ["number", "null"], "description": "'Personnel Budget' / 'Total FY20 Personnel Budget'." },
+        "fyReimbursement": { "type": ["number", "null"], "description": "'FY 20 Reimbursement' / 'Total FY20 Reimbursement'." },
+        "expendituresPerMeal": { "type": ["number", "null"], "description": "'Expenditures per Meal for Food and Disposable'." },
+        "totalRawFoodDisposable": { "type": ["number", "null"], "description": "'Total Raw Food/ Disposable'." },
+        "monthsInHHS": { "type": ["number", "null"], "description": "'Months in HHS'." }
+      },
+      "additionalProperties": false
+    },
+    "openDays": {
+      "type": "object",
+      "description": "Days the center operates (Local Law 140 fields).",
+      "properties": {
+        "sunday": { "type": ["boolean", "string", "null"] },
+        "monday": { "type": ["boolean", "string", "null"] },
+        "tuesday": { "type": ["boolean", "string", "null"] },
+        "wednesday": { "type": ["boolean", "string", "null"] },
+        "thursday": { "type": ["boolean", "string", "null"] },
+        "friday": { "type": ["boolean", "string", "null"] },
+        "saturday": { "type": ["boolean", "string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "contractFromDate": { "type": ["string", "null"], "format": "date", "description": "'Contract From Date'." },
+    "contractToDate": { "type": ["string", "null"], "format": "date", "description": "'Contract To Date'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

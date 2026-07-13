@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/fdny/schemas/incident-dispatch.json",
+  "title": "IncidentDispatch",
+  "description": "An FDNY dispatched incident — one canonical schema reconciling the two parallel dispatch datasets: 'Fire Incident Dispatch Data' (8m42-w767, 29 columns) and 'EMS Incident Dispatch Data' (76xm-jjuj, 31 columns). The 'service' discriminator says which line the row came from. Fire-only fields (alarm box, alarm level, engines/ladders assigned) and EMS-only fields (call type, severity level, hospital transport) are grouped under 'fire' and 'ems'.",
+  "type": "object",
+  "x-source": {
+    "opendata_fire": "https://data.cityofnewyork.us/d/8m42-w767",
+    "opendata_ems": "https://data.cityofnewyork.us/d/76xm-jjuj"
+  },
+  "properties": {
+    "incidentId": { "type": "string", "description": "Incident identifier ('STARFIRE_INCIDENT_ID' for fire, 'INCIDENT_ID' for EMS)." },
+    "service": { "$ref": "_common.json#/$defs/Service" },
+    "incidentDatetime": { "type": ["string", "null"], "format": "date-time", "description": "'INCIDENT_DATETIME'." },
+    "incidentCloseDatetime": { "type": ["string", "null"], "format": "date-time", "description": "'INCIDENT_CLOSE_DATETIME'." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "timing": {
+      "type": "object",
+      "description": "Response timing measures (seconds).",
+      "properties": {
+        "dispatchResponseSeconds": { "type": ["number", "null"], "description": "'DISPATCH_RESPONSE_SECONDS_QY'." },
+        "incidentResponseSeconds": { "type": ["number", "null"], "description": "'INCIDENT_RESPONSE_SECONDS_QY'." },
+        "incidentTravelTimeSeconds": { "type": ["number", "null"], "description": "'INCIDENT_TRAVEL_TM_SECONDS_QY'." },
+        "firstAssignmentDatetime": { "type": ["string", "null"], "format": "date-time", "description": "'FIRST_ASSIGNMENT_DATETIME'." },
+        "firstActivationDatetime": { "type": ["string", "null"], "format": "date-time", "description": "'FIRST_ACTIVATION_DATETIME'." },
+        "firstOnSceneDatetime": { "type": ["string", "null"], "format": "date-time", "description": "'FIRST_ON_SCENE_DATETIME'." },
+        "validDispatchResponseTime": { "type": ["boolean", "string", "null"], "description": "'VALID_DISPATCH_RSPNS_TIME_INDC'." },
+        "validIncidentResponseTime": { "type": ["boolean", "string", "null"], "description": "'VALID_INCIDENT_RSPNS_TIME_INDC'." }
+      },
+      "additionalProperties": false
+    },
+    "fire": {
+      "type": "object",
+      "description": "Fields present only on Fire Incident Dispatch rows (service = Fire).",
+      "properties": {
+        "incidentClassification": { "type": ["string", "null"], "description": "'INCIDENT_CLASSIFICATION'." },
+        "incidentClassificationGroup": { "type": ["string", "null"], "description": "'INCIDENT_CLASSIFICATION_GROUP'." },
+        "alarmBoxNumber": { "type": ["string", "null"], "description": "'ALARM_BOX_NUMBER'." },
+        "alarmBoxBorough": { "type": ["string", "null"], "description": "'ALARM_BOX_BOROUGH'." },
+        "alarmBoxLocation": { "type": ["string", "null"], "description": "'ALARM_BOX_LOCATION'." },
+        "alarmSourceDescription": { "type": ["string", "null"], "description": "'ALARM_SOURCE_DESCRIPTION_TX'." },
+        "alarmLevelIndexDescription": { "type": ["string", "null"], "description": "'ALARM_LEVEL_INDEX_DESCRIPTION'." },
+        "highestAlarmLevel": { "type": ["string", "null"], "description": "'HIGHEST_ALARM_LEVEL'." },
+        "enginesAssigned": { "type": ["integer", "null"], "description": "'ENGINES_ASSIGNED_QUANTITY'." },
+        "laddersAssigned": { "type": ["integer", "null"], "description": "'LADDERS_ASSIGNED_QUANTITY'." },
+        "otherUnitsAssigned": { "type": ["integer", "null"], "description": "'OTHER_UNITS_ASSIGNED_QUANTITY'." }
+      },
+      "additionalProperties": false
+    },
+    "ems": {
+      "type": "object",
+      "description": "Fields present only on EMS Incident Dispatch rows (service = EMS).",
+      "properties": {
+        "initialCallType": { "type": ["string", "null"], "description": "'INITIAL_CALL_TYPE'." },
+        "finalCallType": { "type": ["string", "null"], "description": "'FINAL_CALL_TYPE'." },
+        "initialSeverityLevelCode": { "type": ["string", "integer", "null"], "description": "'INITIAL_SEVERITY_LEVEL_CODE'." },
+        "finalSeverityLevelCode": { "type": ["string", "integer", "null"], "description": "'FINAL_SEVERITY_LEVEL_CODE'." },
+        "incidentDispositionCode": { "type": ["string", "null"], "description": "'INCIDENT_DISPOSITION_CODE'." },
+        "incidentDispatchArea": { "type": ["string", "null"], "description": "'INCIDENT_DISPATCH_AREA'." },
+        "transferIndicator": { "type": ["boolean", "string", "null"], "description": "'TRANSFER_INDICATOR'." },
+        "firstOnSceneDatetime": { "type": ["string", "null"], "format": "date-time", "description": "'FIRST_ON_SCENE_DATETIME'." },
+        "firstToHospDatetime": { "type": ["string", "null"], "format": "date-time", "description": "'FIRST_TO_HOSP_DATETIME'." },
+        "firstHospArrivalDatetime": { "type": ["string", "null"], "format": "date-time", "description": "'FIRST_HOSP_ARRIVAL_DATETIME'." },
+        "heldIndicator": { "type": ["boolean", "string", "null"], "description": "'HELD_INDICATOR'." },
+        "reopenIndicator": { "type": ["boolean", "string", "null"], "description": "'REOPEN_INDICATOR'." },
+        "standbyIndicator": { "type": ["boolean", "string", "null"], "description": "'STANDBY_INDICATOR'." },
+        "specialEventIndicator": { "type": ["boolean", "string", "null"], "description": "'SPECIAL_EVENT_INDICATOR'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["incidentId", "service"],
+  "additionalProperties": false
+}

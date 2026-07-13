@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hra/schemas/center.json",
+  "title": "Center",
+  "description": "An HRA/DSS office or center where residents apply for and manage benefits — a Benefits Access Center, SNAP Center, Medicaid Office, or Homebase (homelessness prevention) location. Canonical schema reconciling 'Directory of Benefits Access Centers' (9d9t-bmk7, 16 columns), 'Directory of SNAP Centers' (tc6u-8rnp, 15c), 'Medicaid Offices' (ibs4-k445, 16c), and 'Directory Of Homebase Locations' (ntcm-2w4k, 14c); optionally carries the live wait time from 'Benefits Access Center Wait Times' (fq4m-vjs9) / 'SNAP Center Wait Time' (gqk4-hny9).",
+  "type": "object",
+  "x-source": {
+    "opendata_benefits_access_centers": "https://data.cityofnewyork.us/d/9d9t-bmk7",
+    "opendata_snap_centers": "https://data.cityofnewyork.us/d/tc6u-8rnp",
+    "opendata_medicaid_offices": "https://data.cityofnewyork.us/d/ibs4-k445",
+    "opendata_homebase": "https://data.cityofnewyork.us/d/ntcm-2w4k",
+    "opendata_wait_times": "https://data.cityofnewyork.us/d/fq4m-vjs9"
+  },
+  "properties": {
+    "facilityName": { "type": "string", "description": "Center name ('Facility Name' / 'Provider' for Homebase)." },
+    "centerType": {
+      "type": ["string", "null"],
+      "enum": ["Benefits Access Center", "SNAP Center", "Medicaid Office", "Homebase", "Job Center", "Other", null],
+      "description": "Which HRA directory this record comes from."
+    },
+    "centerNumber": { "type": ["string", "null"], "description": "'Center Number' (used to join wait-time data)." },
+    "streetAddress": { "type": ["string", "null"], "description": "'Street Address' / 'Address'." },
+    "city": { "type": ["string", "null"], "description": "'City'." },
+    "state": { "type": ["string", "null"], "description": "'State'." },
+    "postcode": { "type": ["string", "null"], "description": "'Post Code' / 'Postcode'." },
+    "phoneNumber": { "type": ["string", "null"], "description": "'Phone Number(s)' / 'Phone Number'." },
+    "serviceAreaZip": { "type": ["string", "null"], "description": "'Service Area Zip Code' (Homebase catchment)." },
+    "comments": { "type": ["string", "null"], "description": "'Comments' — hours, notes." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "waitTimeMinutes": { "type": ["integer", "null"], "description": "Latest reported wait time in minutes ('Benefits Access Center Wait Time'), when available." },
+    "waitTimeAsOf": { "type": ["string", "null"], "format": "date", "description": "'Report Date' of the wait-time reading." }
+  },
+  "required": ["facilityName"],
+  "additionalProperties": false
+}

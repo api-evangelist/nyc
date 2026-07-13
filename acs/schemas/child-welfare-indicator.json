@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/acs/schemas/child-welfare-indicator.json",
+  "title": "ChildWelfareIndicator",
+  "description": "An AGGREGATE child-welfare accountability indicator for a reporting period — ACS's counts of SCR intakes, investigations, indicated/unsubstantiated findings, emergency removals, and referrals to prevention. NO individual CPS report, investigation, or case is ever published (confidential by statute). Canonical schema reconciling 'Child Welfare Indicators' (3m2q-9maw), 'Monthly Flash Report indicators' (2ubh-v9er), 'Report to City Council on Demographics of Children and Parents at Steps in the Child Welfare System' (uhvm-6sct, 13 columns), and 'Abuse/Neglect by Community District' (rnjn-x48k).",
+  "type": "object",
+  "x-source": {
+    "opendata_indicators": "https://data.cityofnewyork.us/d/3m2q-9maw",
+    "opendata_flash": "https://data.cityofnewyork.us/d/2ubh-v9er",
+    "opendata_council_demographics": "https://data.cityofnewyork.us/d/uhvm-6sct",
+    "opendata_abuse_neglect_cd": "https://data.cityofnewyork.us/d/rnjn-x48k",
+    "confidential": true
+  },
+  "properties": {
+    "reportPeriod": { "$ref": "_common.json#/$defs/ReportPeriod" },
+    "category": { "type": ["string", "null"], "description": "Indicator category ('Category')." },
+    "subCategory": { "type": ["string", "null"], "description": "'Sub-category'." },
+    "indicator": { "type": ["string", "null"], "description": "Named indicator (e.g. 'SCR intakes', 'Indicated Investigations', 'Emergency Removals')." },
+    "value": { "type": ["number", "null"], "description": "The aggregate count/measure for the indicator." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "measures": {
+      "type": "object",
+      "description": "The named process-step measures carried by the Report to City Council on Demographics (uhvm-6sct).",
+      "properties": {
+        "scrIntakes": { "type": ["number", "null"], "description": "'SCR intakes'." },
+        "indicatedInvestigations": { "type": ["number", "null"], "description": "'Indicated Investigations'." },
+        "unsubstantiatedInvestigations": { "type": ["number", "null"], "description": "'Unsubstantiated Investigations'." },
+        "emergencyRemovals": { "type": ["number", "null"], "description": "'Emergency Removals'." },
+        "remandsAtInitialHearings": { "type": ["number", "null"], "description": "'Remands at Initial Hearings'." },
+        "articleXFilings": { "type": ["number", "null"], "description": "'Article X Filings'." },
+        "articleXFosterCareEntries": { "type": ["number", "null"], "description": "'Article X Foster Care Entries'." },
+        "acsReferralToPrevention": { "type": ["number", "null"], "description": "'ACS Referral to Prevention'." },
+        "caresCases": { "type": ["number", "null"], "description": "'CARES Cases'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

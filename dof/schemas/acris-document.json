@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dof/schemas/acris-document.json",
+  "title": "ACRISDocument",
+  "description": "A recorded real-property document (deed, mortgage, satisfaction, UCC, etc.) in DOF's Automated City Register Information System (ACRIS) — the ACRISDocument entity. Canonical schema reconciling 'ACRIS - Real Property Master' (bnx9-e6tj, 14 columns), '- Real Property Legals' (8h5j-fqxa, the affected parcels), and '- Real Property Parties' (636b-3b5g, grantor/grantee). Keyed on Document ID (CRFN). The system of record is the legacy a836-acris.nyc.gov application.",
+  "type": "object",
+  "x-source": {
+    "opendata_master": "https://data.cityofnewyork.us/d/bnx9-e6tj",
+    "opendata_legals": "https://data.cityofnewyork.us/d/8h5j-fqxa",
+    "opendata_parties": "https://data.cityofnewyork.us/d/636b-3b5g",
+    "opendata_doctypes": "https://data.cityofnewyork.us/d/7isb-wh4c",
+    "app": "https://a836-acris.nyc.gov/"
+  },
+  "properties": {
+    "documentId": { "type": "string", "description": "ACRIS document id ('DOCUMENT ID') — primary key." },
+    "crfn": { "type": ["string", "null"], "description": "City Register File Number ('CRFN')." },
+    "recordType": { "type": ["string", "null"], "description": "'RECORD TYPE'." },
+    "docType": { "type": ["string", "null"], "description": "Document type code ('DOC. TYPE'); descriptions in 7isb-wh4c (e.g. DEED, MTGE, SAT)." },
+    "docDate": { "type": ["string", "null"], "format": "date", "description": "'DOC. DATE'." },
+    "recordedFiled": { "type": ["string", "null"], "format": "date", "description": "Recorded / filed date ('RECORDED / FILED')." },
+    "modifiedDate": { "type": ["string", "null"], "format": "date", "description": "'MODIFIED DATE'." },
+    "goodThroughDate": { "type": ["string", "null"], "format": "date", "description": "'GOOD THROUGH DATE'." },
+    "docAmount": { "$ref": "_common.json#/$defs/Money", "description": "Consideration / document amount ('DOC. AMOUNT')." },
+    "percentTransferred": { "type": ["number", "string", "null"], "description": "'% TRANSFERRED'." },
+    "reel": {
+      "type": "object",
+      "description": "Pre-CRFN reel/page microfilm reference.",
+      "properties": {
+        "year": { "type": ["string", "integer", "null"], "description": "'REEL YEAR'." },
+        "number": { "type": ["string", "null"], "description": "'REEL NBR'." },
+        "page": { "type": ["string", "null"], "description": "'REEL PAGE'." }
+      },
+      "additionalProperties": false
+    },
+    "borough": { "$ref": "_common.json#/$defs/BoroughCode" },
+    "legals": {
+      "type": "array",
+      "description": "Parcels affected by the document (from Real Property Legals).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "property": { "$ref": "_common.json#/$defs/PropertyReference" },
+          "propertyType": { "type": ["string", "null"], "description": "'PROPERTY TYPE'; codes in 94g4-w6xz." },
+          "streetNumber": { "type": ["string", "null"], "description": "'STREET NUMBER'." },
+          "streetName": { "type": ["string", "null"], "description": "'STREET NAME'." },
+          "unit": { "type": ["string", "null"], "description": "'UNIT'." },
+          "partialLot": { "type": ["string", "null"], "description": "'PARTIAL LOT'." },
+          "airRights": { "type": ["boolean", "string", "null"], "description": "'AIR RIGHTS'." },
+          "subterraneanRights": { "type": ["boolean", "string", "null"], "description": "'SUBTERRANEAN RIGHTS'." }
+        },
+        "additionalProperties": false
+      }
+    },
+    "parties": {
+      "type": "array",
+      "description": "Parties to the document (grantor/grantee) from Real Property Parties.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "partyType": { "type": ["string", "null"], "description": "'PARTY TYPE' (1=party one/grantor, 2=party two/grantee, ...)." },
+          "name": { "type": ["string", "null"], "description": "'NAME'." },
+          "address1": { "type": ["string", "null"], "description": "'ADDRESS 1'." },
+          "address2": { "type": ["string", "null"], "description": "'ADDRESS 2'." },
+          "city": { "type": ["string", "null"], "description": "'CITY'." },
+          "state": { "type": ["string", "null"], "description": "'STATE'." },
+          "zip": { "type": ["string", "null"], "description": "'ZIP'." },
+          "country": { "type": ["string", "null"], "description": "'COUNTRY'." }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["documentId"],
+  "additionalProperties": false
+}

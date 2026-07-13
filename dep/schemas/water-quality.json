@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dep/schemas/water-quality.json",
+  "title": "WaterQualitySample",
+  "description": "A single water-quality sample from one of DEP's parallel monitoring programs. One canonical schema reconciling the many DEP quality datasets, whose native columns are almost all typed as free 'Text' with inconsistent naming: Harbor Water Quality (5uug-f49n, 100 columns), Drinking Water Quality Distribution Monitoring (bkwf-xfky), Watershed Water Quality (y43c-5n92), and Free/Compliance at-the-tap Lead and Copper (k5us-nav4, 2w2g... , 3wxk-qa8q). Individual analyte readings are carried in the open-ended 'measurements' map rather than as hundreds of fixed columns.",
+  "type": "object",
+  "x-source": {
+    "opendata_harbor": "https://data.cityofnewyork.us/d/5uug-f49n",
+    "opendata_drinking_distribution": "https://data.cityofnewyork.us/d/bkwf-xfky",
+    "opendata_watershed": "https://data.cityofnewyork.us/d/y43c-5n92",
+    "opendata_lead_copper": "https://data.cityofnewyork.us/d/k5us-nav4",
+    "site": "https://www.nyc.gov/site/dep/water/drinking-water.page"
+  },
+  "properties": {
+    "program": {
+      "type": "string",
+      "description": "Monitoring program the sample belongs to.",
+      "enum": ["Harbor", "Drinking Water Distribution", "Watershed", "Lead and Copper", "Reservoir", "Other"]
+    },
+    "sampleSite": { "type": ["string", "null"], "description": "Sampling site / station id ('Sample Site', 'Site', 'Sampling Location')." },
+    "sampleDate": { "type": ["string", "null"], "format": "date", "description": "'Sample Date' / 'Date' / 'Date Collected'." },
+    "sampleTime": { "type": ["string", "null"], "description": "'Sample Time' (source is free text; not always ISO)." },
+    "sampleClass": { "type": ["string", "null"], "description": "Sample class / type ('Sample class', 'Type')." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "zipCode": { "type": ["string", "null"], "description": "ZIP code (lead/copper 'Zipcode')." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "weatherCondition": { "type": ["string", "null"], "description": "'Weather Condition (Dry or Wet)' for harbor samples." },
+    "measurements": {
+      "type": "object",
+      "description": "Analyte readings as a name -> value map, e.g. {'residual_free_chlorine_mg_l': 0.62, 'turbidity_ntu': 0.9, 'e_coli_mpn_100ml': '<1', 'lead_first_draw_mg_l': 0.003}. Values may be numbers or comparator strings ('<1', 'ND') because DEP publishes many analytes as text.",
+      "additionalProperties": { "type": ["number", "string", "null"] }
+    },
+    "comment": { "type": ["string", "null"], "description": "Free-text sampling comment ('Sampling Comment')." }
+  },
+  "required": ["program"],
+  "additionalProperties": false
+}

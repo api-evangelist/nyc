@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcwp/schemas/license-application.json",
+  "title": "LicenseApplication",
+  "description": "A DCWP business license application (BusinessLicenseApplication) — the intake record that precedes an issued license. Canonical schema reconciling the 'License Applications' dataset (ptev-4hud, 35 columns) and 'Historical License Applications' (vnz6-h2k4). Keyed on Application ID. NOTE: the READ record is on Open Data, but SUBMITTING an application has no public API — it lives only in the NYC Business licensing portal (nyc-business.nyc.gov).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/ptev-4hud",
+    "opendata_historical": "https://data.cityofnewyork.us/d/vnz6-h2k4",
+    "portal": "https://nyc-business.nyc.gov/nycbusiness/",
+    "write_api": null,
+    "opendata_gap": false
+  },
+  "properties": {
+    "applicationId": { "type": "string", "description": "'Application ID' — primary key." },
+    "applicationType": { "type": ["string", "null"], "description": "'Application Type' (e.g. New, Renewal)." },
+    "applicationStatus": { "type": ["string", "null"], "description": "'Application Status'." },
+    "intakeChannel": { "type": ["string", "null"], "description": "'Intake Channel' (e.g. Online, In Person)." },
+    "applicant": { "type": ["string", "null"], "description": "'Applicant'." },
+    "business": { "$ref": "_common.json#/$defs/BusinessReference" },
+    "licenseNumber": { "type": ["string", "null"], "description": "'License Number' — populated once issued." },
+    "contactPhone": { "type": ["string", "null"], "description": "'Contact Phone'." },
+    "submissionDate": { "type": ["string", "null"], "format": "date", "description": "'Submission Date'." },
+    "dateClosed": { "type": ["string", "null"], "format": "date", "description": "'Date Closed'." },
+    "tempOpLetterIssued": { "type": ["string", "null"], "format": "date", "description": "'Temp Op Letter Issued'." },
+    "tempOpLetterExpiration": { "type": ["string", "null"], "format": "date", "description": "'Temp Op Letter Expiration'." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["applicationId"],
+  "additionalProperties": false
+}

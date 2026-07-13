@@ -1,0 +1,145 @@
+{
+  "domain": "dof",
+  "agency": "New York City Department of Finance (DOF)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov/robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/finance (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace) and the legacy a836-*.nyc.gov application layer: ACRIS (a836-acris.nyc.gov, ASP.NET/IIS, iso-8859-1 meta-refresh framesets, Last-Modified 2013), CityPay (a836-citypay.nyc.gov, a PayPal/Braintree-backed payment form per its CSP), and the Property Tax System access portal (a836-pts-access.nyc.gov, session-cookie/Akamai gated). Verified the NYC Open Data agency label 'Department of Finance (DOF)' via the Socrata Discovery API and pulled all 145 assets with column schemas.",
+  "related_domains": ["a836-acris.nyc.gov", "a836-citypay.nyc.gov", "a836-pts-access.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/finance"],
+  "meta": {
+    "short": "NYC Finance (DOF)",
+    "verb": "modernize",
+    "platform": "NYC.gov 'Livesite' informational chassis (Akamai/nginx/Dynatrace) plus a fleet of aging, siloed a836-*.nyc.gov apps — ACRIS (ASP.NET/IIS, 2013-era), CityPay (PayPal/Braintree form), and the Property Tax System.",
+    "netnew": "ParkingTicketPayment — pay a parking/camera violation via API instead of the CityPay-only web form.",
+    "accent": "#3a7d6a",
+    "tagline": "DOF publishes more open data than any NYC agency assessed, yet every citizen transaction lives behind a fleet of aging, API-less a836 legacy apps.",
+    "headline": "The fifth pattern: the reference data is wide open (145 datasets) but the transaction layer is trapped in legacy application silos with no API — modernize the a836 app fleet behind one owned contract."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 3,
+    "coreData": 3,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "NYC.gov Livesite chassis + a fleet of legacy a836 apps (ACRIS ASP.NET/IIS 2013, CityPay, PTS) — dated but in-house.",
+    "siteApi": "No content or site API; ACRIS/CityPay/PTS are server-rendered apps, not APIs — no OpenAPI, no JSON.",
+    "openData": "Widest footprint assessed — 145 DOF datasets across valuation, ACRIS, exemptions, tax charges, and parking.",
+    "coreData": "Every core entity (valuation, exemptions, tax-charge balance, ACRIS documents, parking violations) has a rich, machine-readable Open Data twin.",
+    "writeApi": "No payment/transaction API — paying a ticket or tax bill exists only inside the CityPay/PTS web apps.",
+    "agent": "No MCP, no agent-native surface; the legacy apps are browser-only.",
+    "ownership": "DOF owns its systems and data in-house (ACRIS, CityPay, PTS built for the city; data on Socrata) — not rented to a SaaS vendor."
+  },
+  "headline_findings": [
+    "DOF has the widest open-data footprint of any NYC agency assessed so far — 145 NYC Open Data datasets covering property valuation & assessment, exemptions/abatements, tax-charge balances, the full ACRIS document register, and every parking/camera violation.",
+    "But its citizen transactions live across a fleet of aging, siloed a836-*.nyc.gov apps — ACRIS (a 2013-era ASP.NET/IIS document-search app), CityPay (a PayPal/Braintree web form), and the Property Tax System — none of which exposes an API, OpenAPI, or JSON contract.",
+    "This is the fifth distinct pattern: not data-as-HTML (Parks), not rented search (DOE), not fragmented-but-real APIs (Council), not one locked vendor CRM (NYCHA) — but a spread of in-house legacy application silos sitting on top of an unusually open data layer.",
+    "The reference model is coherent and joinable on the Borough-Block-Lot (BBL): valuation, exemptions, tax charges, and ACRIS legals all key on it. Publishing that as one owned resource model spares consumers 145 Socrata IDs and three legacy screens.",
+    "Net-new write surface: pay a parking/camera violation (ParkingTicketPayment) — the balance is already published (Open Parking and Camera Violations, nc67-uf89), but the act of paying has no API; it lives only in CityPay. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "145 DOF datasets; SODA /resource/<id>.json endpoints. The one real, open DOF API — valuation, exemptions, tax charges, ACRIS register, parking violations. Reference/snapshot data only." },
+    { "endpoint": "a836-acris.nyc.gov", "type": "recorded-document search app", "owner": "DOF (legacy ASP.NET/IIS)", "public": "html app, no API", "note": "ACRIS — deeds, mortgages, parties, legals. iso-8859-1 meta-refresh framesets to /CP/, X-Powered-By: ASP.NET, Last-Modified 2013. Server-rendered; no JSON/OpenAPI. Open Data twin exists (bnx9-e6tj et al.) but the live app is API-less." },
+    { "endpoint": "a836-citypay.nyc.gov", "type": "payment web app", "owner": "DOF (CityPay)", "public": "html app, no API", "note": "Pay parking tickets, property taxes, and other charges. CSP allowlists js.braintreegateway.com and *.paypal.com — a PayPal/Braintree-backed form. No public payment API. The net-new write surface." },
+    { "endpoint": "a836-pts-access.nyc.gov", "type": "property tax system portal", "owner": "DOF (PTS)", "public": "session-gated app, no API", "note": "Property Tax System account access; Akamai-fronted, session-cookie gated (mspwvw-* cookie). Server-rendered; no API." },
+    { "endpoint": "www.nyc.gov/site/finance", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "Content only — About, property, benefits, how-to. Akamai edge, nginx, Dynatrace RUM, livesite-version: 22. No content API." }
+  ],
+  "fruit": [
+    {
+      "name": "Property Valuation & Assessment",
+      "type": "data table",
+      "entity": "PropertyValuation",
+      "url": "https://www.nyc.gov/site/finance/property/property-assessments.page",
+      "count": "~1M tax lots",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Property Valuation and Assessment Data yjxr-fw8i (45c)", "Property Valuation and Assessment Data Tax Classes 1,2,3,4 8y4t-faws (139c)"],
+      "notes": "The TaxLot valuation record — assessed/market values, lot dimensions, tax class. Keyed on BBLE (Borough-Block-Lot-Easement); full geography spine."
+    },
+    {
+      "name": "Property Exemptions & Abatements",
+      "type": "data table",
+      "entity": "PropertyExemption",
+      "url": "https://www.nyc.gov/site/finance/benefits/benefits-for-property-owners.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Property Exemption Detail muvi-b6kx (70c)", "J-51 Exemption and Abatement (Historical) y7az-s7wc (15c)"],
+      "notes": "STAR/SCHE/J-51/421-a/ICIP benefit lines per parcel; keyed on PARID (BBL) + year + exemption code."
+    },
+    {
+      "name": "Property Tax Charges / Balance",
+      "type": "data table",
+      "entity": "PropertyTaxBill",
+      "url": "https://a836-pts-access.nyc.gov/",
+      "machine_readable": "Open Data (SODA) — snapshot; live account in PTS/CityPay",
+      "verified": true,
+      "opendata_match": ["DOF: Property Charges Balance scjx-j6np (34c)", "Property Tax Rates by Tax Class 7zb8-7bpk (5c)", "Tax Lien Sale Lists 9rz4-mjek (13c)"],
+      "notes": "Outstanding liability/interest/balance-due per parcel account; keyed on PARID (BBL) + tax year. The live account and payment surface lives in the PTS and CityPay apps."
+    },
+    {
+      "name": "ACRIS Recorded Documents",
+      "type": "search app + data tables",
+      "entity": "ACRISDocument",
+      "url": "https://a836-acris.nyc.gov/",
+      "machine_readable": "Open Data (SODA); live app API-less",
+      "verified": true,
+      "opendata_match": ["ACRIS - Real Property Master bnx9-e6tj (14c)", "ACRIS - Real Property Legals 8h5j-fqxa (14c)", "ACRIS - Real Property Parties 636b-3b5g (11c)", "ACRIS - Document Control Codes 7isb-wh4c", "ACRIS - Property Types Codes 94g4-w6xz"],
+      "notes": "Deeds, mortgages, satisfactions, UCCs — master + legals (affected lots) + parties (grantor/grantee). Keyed on Document ID / CRFN. System of record is the legacy a836-acris.nyc.gov app."
+    },
+    {
+      "name": "Parking & Camera Violations",
+      "type": "data table",
+      "entity": "ParkingViolation",
+      "url": "https://data.cityofnewyork.us/d/nc67-uf89",
+      "count": "millions of summonses",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Open Parking and Camera Violations nc67-uf89 (19c)", "Parking Violations Issued - Fiscal Year 2026 pvqr-7yc4 (44c)", "DOF Parking Violation Codes ncbg-6agr (4c)"],
+      "notes": "Issuance record (pvqr-7yc4) plus the live status-and-balance record (nc67-uf89) with Amount Due. Keyed on Summons Number. The balance is open; paying is not."
+    },
+    {
+      "name": "Pay a parking / camera ticket",
+      "type": "transaction (app)",
+      "entity": "ParkingTicketPayment",
+      "url": "https://a836-citypay.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["Open Parking and Camera Violations nc67-uf89 (balance twin, read-only)"],
+      "opendata_gap": true,
+      "notes": "The net-new WRITE surface. Paying a ticket lives only in the CityPay web app (PayPal/Braintree) or by mail; no payment API. The balance is already published, but the act of paying has no machine-readable contract."
+    },
+    {
+      "name": "Pay a property tax bill",
+      "type": "transaction (app)",
+      "entity": "PropertyTaxBill",
+      "url": "https://a836-citypay.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Property tax payment lives only in CityPay / the PTS portal; no API. An alternative net-new write surface (PropertyTaxPayment)."
+    },
+    {
+      "name": "Record / search a real-property document",
+      "type": "workflow (app)",
+      "entity": "ACRISDocument",
+      "url": "https://a836-acris.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["ACRIS Open Data mirror (bnx9-e6tj, 8h5j-fqxa, 636b-3b5g)"],
+      "opendata_gap": true,
+      "notes": "ACRIS document search and e-recording run inside a 2013-era ASP.NET/IIS app; the Open Data mirror is read-only and lagged. No API for the live register."
+    },
+    {
+      "name": "Digital Tax Map",
+      "type": "map",
+      "entity": "PropertyValuation",
+      "url": "https://data.cityofnewyork.us/d/smk3-tmxj",
+      "machine_readable": "Open Data (file/map)",
+      "verified": true,
+      "opendata_match": ["Department of Finance Digital Tax Map smk3-tmxj"],
+      "notes": "DTM — authoritative parcel geometry keyed on BBL. Underpins every valuation and ACRIS legal record."
+    }
+  ]
+}

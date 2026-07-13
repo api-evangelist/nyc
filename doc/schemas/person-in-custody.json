@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doc/schemas/person-in-custody.json",
+  "title": "PersonInCustody",
+  "description": "A person in DOC custody — the core operational unit, referred to internally as a P.I.C. (Person In Custody). Canonical schema reconciling the 'Daily Inmates In Custody' snapshot (7479-ugqb, 13 columns), 'Inmate Admissions' (6teu-xtgp), and 'Inmate Discharges' (94ri-3ium), plus the search keys used by the live Inmate Lookup Service / 'P.I.C. Lookup' (a073-ils-web.nyc.gov) — NYSID and Book & Case number. Keyed on INMATEID.",
+  "type": "object",
+  "x-source": {
+    "opendata_daily": "https://data.cityofnewyork.us/d/7479-ugqb",
+    "opendata_admissions": "https://data.cityofnewyork.us/d/6teu-xtgp",
+    "opendata_discharges": "https://data.cityofnewyork.us/d/94ri-3ium",
+    "lookup_service": "https://a073-ils-web.nyc.gov/inmatelookup/pages/home/home.jsf",
+    "site": "https://www.nyc.gov/site/doc/inmate-info/inmate-lookup.page"
+  },
+  "properties": {
+    "inmateId": { "type": "string", "description": "DOC person-in-custody identifier ('INMATEID') — primary key." },
+    "nysid": { "type": ["string", "null"], "description": "NY State Identification number — a live P.I.C. Lookup search key. Not published to Open Data." },
+    "bookAndCaseNumber": { "type": ["string", "null"], "description": "Book & Case number — a live P.I.C. Lookup search key. Not published to Open Data." },
+    "demographics": { "$ref": "_common.json#/$defs/Demographics" },
+    "custodyLevel": { "type": ["string", "null"], "description": "Housing/custody classification level ('CUSTODY_LEVEL')." },
+    "inmateStatusCode": { "type": ["string", "null"], "description": "Status code ('INMATE_STATUS_CODE') — e.g. detainee, sentenced." },
+    "topCharge": { "type": ["string", "null"], "description": "Top charge / most serious charge ('TOP_CHARGE'), by penal-law code." },
+    "facility": { "$ref": "_common.json#/$defs/FacilityReference" },
+    "srgFlag": { "type": ["boolean", "string", "null"], "description": "Security Risk Group flag ('SRG_FLG')." },
+    "bradh": { "type": ["boolean", "string", "null"], "description": "Brad H. mental-health class-member flag ('BRADH')." },
+    "infraction": { "type": ["boolean", "string", "null"], "description": "Open infraction flag ('INFRACTION')." },
+    "sealed": { "type": ["string", "boolean", "null"], "description": "Sealed-case indicator ('SEALED')." },
+    "admittedDate": { "type": ["string", "null"], "format": "date-time", "description": "Admission date ('ADMITTED_DT')." },
+    "dischargedDate": { "type": ["string", "null"], "format": "date-time", "description": "Discharge date ('DISCHARGED_DT'); null while in custody." }
+  },
+  "required": ["inmateId"],
+  "additionalProperties": false
+}

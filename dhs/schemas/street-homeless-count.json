@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dhs/schemas/street-homeless-count.json",
+  "title": "StreetHomelessCount",
+  "description": "An AGGREGATE count of unsheltered / street-homeless individuals — the observational measure of homelessness outside the shelter system. Canonical schema reconciling the 'Directory Of Unsheltered Street Homeless To General Population Ratio' datasets (483x-fy9e 2012, ivbu-e2q7 2011, 8kiv-2ukd 2010, x56h-7iwp 2009), the quarterly 'Local Law 19 of 1999 Report - Quarterly Unsheltered Street Homeless Individuals' (7tu6-bcih), and 'Directory Of Homeless Population By Year' (5t4n-d72c). Counts only — never individual people. This is the read-side twin of the net-new OutreachRequest write surface.",
+  "type": "object",
+  "x-source": {
+    "opendata_ratio_2012": "https://data.cityofnewyork.us/d/483x-fy9e",
+    "opendata_ratio_2011": "https://data.cityofnewyork.us/d/ivbu-e2q7",
+    "opendata_ratio_2010": "https://data.cityofnewyork.us/d/8kiv-2ukd",
+    "opendata_ratio_2009": "https://data.cityofnewyork.us/d/x56h-7iwp",
+    "opendata_quarterly": "https://data.cityofnewyork.us/d/7tu6-bcih",
+    "opendata_population_by_year": "https://data.cityofnewyork.us/d/5t4n-d72c"
+  },
+  "properties": {
+    "period": { "type": ["string", "null"], "description": "Year or quarter the count covers." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "unshelteredCount": { "type": ["integer", "null"], "description": "Estimated unsheltered / street-homeless individuals for the area and period." },
+    "generalPopulation": { "type": ["integer", "null"], "description": "General population used as the ratio denominator." },
+    "ratio": { "type": ["number", "null"], "description": "Unsheltered-to-general-population ratio." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "additionalProperties": false
+}

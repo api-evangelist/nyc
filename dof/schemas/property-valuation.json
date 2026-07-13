@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dof/schemas/property-valuation.json",
+  "title": "PropertyValuation",
+  "description": "The DOF tentative/final assessment record for a tax lot — the TaxLot valuation entity. Canonical schema reconciling 'Property Valuation and Assessment Data' (yjxr-fw8i, 45 columns) and the wide 'Property Valuation and Assessment Data Tax Classes 1,2,3,4' (8y4t-faws, 139 columns). Keyed on BBLE (Borough-Block-Lot-Easement).",
+  "type": "object",
+  "x-source": {
+    "opendata_valuation": "https://data.cityofnewyork.us/d/yjxr-fw8i",
+    "opendata_valuation_tc": "https://data.cityofnewyork.us/d/8y4t-faws",
+    "site": "https://www.nyc.gov/site/finance/property/property-assessments.page"
+  },
+  "properties": {
+    "property": { "$ref": "_common.json#/$defs/PropertyReference" },
+    "year": { "type": ["string", "integer", "null"], "description": "Assessment roll year ('YEAR')." },
+    "period": { "type": ["string", "null"], "description": "Roll period ('PERIOD') — e.g. tentative / final." },
+    "valType": { "type": ["string", "null"], "description": "Valuation type ('VALTYPE')." },
+    "taxClass": { "type": ["string", "null"], "description": "Tax class 1/2/3/4 ('TAXCLASS' / 'CURTAXCLASS')." },
+    "buildingClass": { "type": ["string", "null"], "description": "Building class code ('BLDGCL' / 'BLDG_CLASS')." },
+    "owner": { "type": ["string", "null"], "description": "Owner of record ('OWNER')." },
+    "address": {
+      "type": "object",
+      "properties": {
+        "streetAddress": { "type": ["string", "null"], "description": "'STADDR' / house number + street." },
+        "postcode": { "type": ["string", "null"], "description": "'POSTCODE' / 'ZIP_CODE'." }
+      },
+      "additionalProperties": false
+    },
+    "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." },
+    "lotDimensions": {
+      "type": "object",
+      "description": "Lot and building footprint dimensions.",
+      "properties": {
+        "lotFront": { "type": ["number", "null"], "description": "'LTFRONT' / 'LOT_FRT'." },
+        "lotDepth": { "type": ["number", "null"], "description": "'LTDEPTH' / 'LOT_DEP'." },
+        "buildingFront": { "type": ["number", "null"], "description": "'BLDFRONT' / 'BLD_FRT'." },
+        "buildingDepth": { "type": ["number", "null"], "description": "'BLDDEPTH' / 'BLD_DEP'." },
+        "stories": { "type": ["number", "null"], "description": "'STORIES' / 'BLD_STORY'." },
+        "grossSqFt": { "type": ["number", "null"], "description": "'GROSS_SQFT'." },
+        "extension": { "type": ["string", "null"], "description": "Building extension indicator ('EXT' / 'BLD_EXT')." },
+        "yearBuilt": { "type": ["string", "integer", "null"], "description": "'YRBUILT'." }
+      },
+      "additionalProperties": false
+    },
+    "assessment": {
+      "type": "object",
+      "description": "Assessed and market values (whole-dollar).",
+      "properties": {
+        "fullMarketValue": { "$ref": "_common.json#/$defs/Money", "description": "Estimated market value ('FULLVAL' / 'CURMKTTOT')." },
+        "assessedLand": { "$ref": "_common.json#/$defs/Money", "description": "Assessed land value ('AVLAND' / 'CURACTLAND')." },
+        "assessedTotal": { "$ref": "_common.json#/$defs/Money", "description": "Assessed total value ('AVTOT' / 'CURACTTOT')." },
+        "transitionalLand": { "$ref": "_common.json#/$defs/Money", "description": "Transitional assessed land ('AVLAND2' / 'CURTRNLAND')." },
+        "transitionalTotal": { "$ref": "_common.json#/$defs/Money", "description": "Transitional assessed total ('AVTOT2' / 'CURTRNTOT')." },
+        "taxableTotal": { "$ref": "_common.json#/$defs/Money", "description": "Taxable billable total ('CURTXBTOT')." }
+      },
+      "additionalProperties": false
+    },
+    "exemptions": {
+      "type": "object",
+      "description": "Exempt value carried on the valuation record (detail lives in property-exemption).",
+      "properties": {
+        "exemptLand": { "$ref": "_common.json#/$defs/Money", "description": "'EXLAND'." },
+        "exemptTotal": { "$ref": "_common.json#/$defs/Money", "description": "'EXTOT'." },
+        "exemptionClass": { "type": ["string", "null"], "description": "'EXMPTCL'." },
+        "exemptCode1": { "type": ["string", "null"], "description": "'EXCD1'." },
+        "exemptCode2": { "type": ["string", "null"], "description": "'EXCD2'." }
+      },
+      "additionalProperties": false
+    },
+    "units": { "type": ["integer", "null"], "description": "Number of units ('UNITS')." },
+    "zoning": { "type": ["string", "null"], "description": "Zoning designation ('ZONING')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

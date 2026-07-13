@@ -1,0 +1,355 @@
+openapi: 3.1.0
+info:
+  title: NYC DOC API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Correction — publishing its
+    already-open accountability data (people in custody, incidents, security indicators) and the
+    live Inmate Lookup as coherent resources, and adding the missing write surfaces that today have
+    no digital contract at all — scheduling a visit and filing a complaint / records request.
+  description: >-
+    Proposed API-first surface for the New York City Department of Correction (DOC), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/doc and the Inmate Lookup Service.
+
+
+    DOC is a transparency-heavy but transaction-poor domain. Its **accountability data is unusually
+    well published** on NYC Open Data — 15 datasets covering the daily in-custody population,
+    admissions and discharges, deaths, slashings/stabbings, fights, assaults on staff, staff
+    injuries, emergency lock-ins, and Local Law 33/85 security and visitation indicators. And it runs
+    a **live real-time lookup** — the Inmate Lookup Service / "P.I.C. Lookup"
+    (`a073-ils-web.nyc.gov`) — but that lookup is a legacy Apache MyFaces (JSF) web application with
+    **no API**. Meanwhile the two things a member of the public actually needs to *do* — **schedule
+    a visit** and **file a complaint or records request** — have no machine-readable surface at all.
+
+
+    This contract does two things: (1) presents the open accountability datasets and the live P.I.C.
+    lookup as one clean resource model, and (2) adds the net-new **write** workflows — scheduling a
+    visit and filing a complaint / records request — that today exist only offline or behind vendor
+    portals.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.doc.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: People In Custody
+    description: The daily in-custody population, admissions, discharges, and the live P.I.C. lookup.
+  - name: Facilities
+    description: DOC facilities (jails) — the Rikers Island and borough detention centers.
+  - name: Population
+    description: Daily population and Local Law 33/85 security and accountability indicators.
+  - name: Incidents
+    description: Deaths, slashings/stabbings, fights, assaults on staff, staff injuries, and lock-ins.
+  - name: Visits
+    description: Schedule and track visits with a person in custody (read + write). A net-new surface.
+  - name: Complaints
+    description: File and track complaints and records/FOIL requests (read + write). A net-new surface.
+
+paths:
+  /people-in-custody:
+    get:
+      operationId: listPeopleInCustody
+      summary: List / search people currently in DOC custody
+      description: The daily in-custody snapshot (Daily Inmates In Custody). Search the live P.I.C. lookup by NYSID or Book & Case number where available.
+      tags: [People In Custody]
+      parameters:
+        - name: nysid
+          in: query
+          schema: { type: string }
+        - name: bookAndCaseNumber
+          in: query
+          schema: { type: string }
+        - name: custodyLevel
+          in: query
+          schema: { type: string }
+        - name: facility
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of people in custody.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/person-in-custody.json' } }
+  /people-in-custody/{inmateId}:
+    get:
+      operationId: getPersonInCustody
+      summary: Get a person in custody by DOC inmate id
+      tags: [People In Custody]
+      parameters:
+        - name: inmateId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The person in custody.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/person-in-custody.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /facilities:
+    get:
+      operationId: listFacilities
+      summary: List DOC facilities (jails)
+      tags: [Facilities]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: type
+          in: query
+          schema: { type: string }
+        - name: onRikersIsland
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of facilities.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/facility.json' } }
+
+  /daily-population:
+    get:
+      operationId: listDailyPopulation
+      summary: Search daily population and security-indicator metrics
+      description: Local Law 33 security indicators, average daily population, Article 730 waitlist, and medical non-production metrics over time.
+      tags: [Population]
+      parameters:
+        - name: metric
+          in: query
+          schema: { type: string }
+        - name: facility
+          in: query
+          schema: { type: string }
+        - name: year
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of population / indicator measures.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/daily-population.json' } }
+
+  /incidents:
+    get:
+      operationId: listIncidents
+      summary: Search DOC safety/security incidents
+      description: Unified across deaths, slashings/stabbings, fights, assaults on staff, staff injuries, and emergency lock-ins.
+      tags: [Incidents]
+      parameters:
+        - name: incidentType
+          in: query
+          schema: { type: string, enum: [Death, Slashing, Stabbing, Inmate Fight, Assault on Staff, Staff Injury (Class A), Use of Force, Emergency Lock-In, Other] }
+        - name: facility
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of incident reports.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/incident-report.json' } }
+
+  /visits:
+    get:
+      operationId: listVisits
+      summary: List the authenticated visitor's scheduled visits
+      description: Reads the visitor's own scheduled visits — today arranged only offline or through vendor portals.
+      tags: [Visits]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Requested, Confirmed, Waitlisted, Denied, Cancelled, Completed] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the visitor's visits.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/visit.json' } }
+    post:
+      operationId: createVisit
+      summary: Schedule a visit (net-new write)
+      description: >-
+        The net-new write surface — an API for scheduling a visit with a person in custody, replacing
+        the phone/in-person/vendor-portal workflow. Identify the person by NYSID, Book & Case number,
+        or DOC inmate id.
+      tags: [Visits]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/visit.json' }
+      responses:
+        '201':
+          description: Visit request created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/visit.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /visits/{visitId}:
+    get:
+      operationId: getVisit
+      summary: Get a scheduled visit
+      tags: [Visits]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: visitId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The visit.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/visit.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /complaints:
+    post:
+      operationId: createComplaint
+      summary: File a complaint or records request (net-new write)
+      description: >-
+        A second net-new write surface — file a complaint, grievance, or records/FOIL request and get
+        a tracking number, instead of phone, mail, or the citywide OpenRecords portal.
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/complaint.json' }
+      responses:
+        '201':
+          description: Complaint / records request created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/complaint.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /complaints/{complaintId}:
+    get:
+      operationId: getComplaint
+      summary: Get a complaint / records request by tracking number
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: complaintId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The complaint / records request.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/complaint.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    PersonInCustody: { $ref: '../schemas/person-in-custody.json' }
+    Facility: { $ref: '../schemas/facility.json' }
+    DailyPopulation: { $ref: '../schemas/daily-population.json' }
+    IncidentReport: { $ref: '../schemas/incident-report.json' }
+    Visit: { $ref: '../schemas/visit.json' }
+    Complaint: { $ref: '../schemas/complaint.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

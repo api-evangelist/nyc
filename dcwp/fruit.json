@@ -1,0 +1,169 @@
+{
+  "domain": "dcwp",
+  "agency": "Department of Consumer and Worker Protection (DCWP)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/dca (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace) and the NYC Business licensing portal at nyc-business.nyc.gov (Java/Spring web app: `SESSION` cookie, Akamai, Dynatrace). Verified the NYC Open Data agency label 'Department of Consumer and Worker Protection (DCWP)' via the Socrata Discovery API (business-license query) and pulled all 37 assets with column schemas.",
+  "meta": {
+    "short": "NYC Consumer & Worker Protection (DCWP)",
+    "verb": "bind",
+    "platform": "NYC.gov 'Livesite' info site (Akamai/nginx/Dynatrace) + a separate Java/Spring NYC Business licensing portal (nyc-business.nyc.gov) + CityPay (CityBase) payments; 37 Socrata datasets",
+    "netnew": "File a consumer complaint (ConsumerComplaint) and apply for a business license (LicenseApplication) — the two citizen writes with no API",
+    "accent": "#b06fb0",
+    "tagline": "DCWP already publishes its entire regulated-business lifecycle openly; the work is binding it into one owned contract and adding the two citizen writes.",
+    "headline": "The most-open domain yet — 37 datasets cover apply-to-revoke — but no owned API binds them and no API lets a person file a complaint or apply for a license."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 1,
+    "openData": 3,
+    "coreData": 3,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov Livesite CMS + a modern Java NYC Business portal + CityPay — maintained but not API-first.",
+    "siteApi": "No content API; the licensing portal is a session-gated Java app with no documented public API.",
+    "openData": "Exceptional — 37 datasets publish the full licensing/enforcement lifecycle, incl. Issued Licenses (147k views).",
+    "coreData": "Core entities richly modeled and joinable on Business Unique ID / License Number across the lifecycle.",
+    "writeApi": "No write API anywhere — apply for a license and file a complaint both go through a portal or 311.",
+    "agent": "No agent-native surface today; no MCP, no OpenAPI, no schemas published by the agency.",
+    "ownership": "Owns and actively maintains its open datasets, but the transaction layer runs on a shared NYC Business portal it does not solely control."
+  },
+  "related_domains": ["nyc-business.nyc.gov", "citypay.nyc.gov", "portal.311.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/sbs"],
+  "headline_findings": [
+    "DCWP is the most-open domain in this project: 37 NYC Open Data datasets publish the entire regulated-business lifecycle — license applications, issued licenses (147k views), inspections, charges, consumer complaints, revocations, and Office of Labor Policy & Standards worker-protection matters.",
+    "The whole lifecycle is joinable on `Business Unique ID` and `License Number`, but no single owned API binds those 37 datasets into one coherent resource model — a consumer or agent must learn 37 Socrata IDs.",
+    "The two things a person actually DOES have no API: applying for a business license lives only in the Java NYC Business portal (nyc-business.nyc.gov), and filing a consumer complaint lives only in 311 or a DCWP web form.",
+    "Worker-protection data (OLPS inquiries and enforcement matters) is published only in aggregate by topic/industry/geography — never an individual worker.",
+    "Net-new write surface: file a consumer complaint (ConsumerComplaint) and apply for a license (LicenseApplication) — both have an Open Data READ twin but no write API. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "37 DCWP datasets; SODA /resource/<id>.json endpoints. The one real, open DCWP API — the full licensing/enforcement lifecycle as reference data." },
+    { "endpoint": "nyc-business.nyc.gov/nycbusiness", "type": "business licensing portal", "owner": "NYC (Java/Spring web app)", "public": "session-gated UI, no API", "note": "Apply for and manage DCWP licenses. `SESSION` cookie, Akamai edge, Dynatrace RUM; no JSON/OpenAPI surface." },
+    { "endpoint": "citypay.nyc.gov", "type": "payment portal", "owner": "NYC (CityBase)", "public": "UI, no public API", "note": "Pay DCWP fines/fees; CityBase-hosted checkout, returns 403 to non-browser clients." },
+    { "endpoint": "portal.311.nyc.gov", "type": "complaint intake", "owner": "NYC (OTI/311)", "public": "UI/form, no filing API", "note": "The intake path for consumer complaints against businesses; no public write API to DCWP." },
+    { "endpoint": "www.nyc.gov/site/dca", "type": "informational site", "owner": "NYC.gov shared platform (Livesite v22)", "public": "html", "note": "Content only; Akamai edge, nginx, Dynatrace RUM. No content API." },
+    { "endpoint": "Akamai edge", "type": "CDN", "owner": "Akamai", "public": "vendor", "note": "`server-timing: ak_p` across the info site and NYC Business portal." },
+    { "endpoint": "Dynatrace RUM", "type": "monitoring beacon", "owner": "Dynatrace", "public": "vendor", "note": "`x-oneagent-js-injection` real-user monitoring." }
+  ],
+  "fruit": [
+    {
+      "name": "Issued Licenses",
+      "type": "data table + map",
+      "entity": "BusinessLicense",
+      "url": "https://www.nyc.gov/site/dca/businesses/licenses.page",
+      "count": "~147k lifetime views (most-viewed dataset)",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Issued Licenses w7w3-xahh (31c)", "Historical Licenses m4ph-grrm (27c)"],
+      "notes": "Core Licensee record. Keyed on License Number + Business Unique ID; full address + geography spine, license type/status, issuance & expiration."
+    },
+    {
+      "name": "License Applications",
+      "type": "data table",
+      "entity": "LicenseApplication",
+      "url": "https://nyc-business.nyc.gov/nycbusiness/",
+      "machine_readable": "Open Data (SODA) for READ; portal-only for WRITE",
+      "verified": true,
+      "opendata_match": ["License Applications ptev-4hud (35c)", "Historical License Applications vnz6-h2k4 (28c)"],
+      "opendata_gap": false,
+      "notes": "Intake record before an issued license. READ is open; SUBMITTING an application lives only in the Java NYC Business portal — a net-new write."
+    },
+    {
+      "name": "DCWP Inspections",
+      "type": "data table",
+      "entity": "Inspection",
+      "url": "https://data.cityofnewyork.us/d/jzhd-m6uv",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DCWP Inspections jzhd-m6uv (28c)", "Archived DCWP Inspections kwss-yksz (26c)", "Weights, Measures, and Other Tests 8fei-z6rz (31c)"],
+      "notes": "Inspections of licensed/regulated businesses; keyed on Inspection Number, joins to charges via NOH Number."
+    },
+    {
+      "name": "DCWP Charges (violations)",
+      "type": "data table",
+      "entity": "Charge",
+      "url": "https://data.cityofnewyork.us/d/5fn4-dr26",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DCWP Charges 5fn4-dr26 (18c)", "Archived DCWP Charges wyj6-frpa (31c)", "DCWP Fines and Fees (Historical) 2k3g-r445 (11c)"],
+      "notes": "Enforcement record — cited violations, hearing outcomes (guilty/dismissed/cured). Joins to inspections and complaints."
+    },
+    {
+      "name": "Consumer Complaints",
+      "type": "data table",
+      "entity": "ConsumerComplaint",
+      "url": "https://www.nyc.gov/site/dca/consumers/file-complaint.page",
+      "machine_readable": "Open Data (SODA) for READ; 311/web-form only for WRITE",
+      "verified": true,
+      "opendata_match": ["DCWP Consumer Complaints nre2-6m2s (33c)"],
+      "opendata_gap": false,
+      "notes": "The citizen-facing transaction. Published records are open; FILING a complaint has no API — 311 or a web form only. The primary net-new WRITE surface."
+    },
+    {
+      "name": "License Revocations, Suspensions & Reinstatements",
+      "type": "data table",
+      "entity": "BusinessLicense",
+      "url": "https://data.cityofnewyork.us/d/rpeq-j89e",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["License Revocations, Suspensions, Surrenders, and Reinstatements rpeq-j89e (7c)"],
+      "notes": "License lifecycle events; keyed on DCA License Number + Event Type/Date."
+    },
+    {
+      "name": "Worker Protection (OLPS)",
+      "type": "data table",
+      "entity": "WorkerProtectionCase",
+      "url": "https://www.nyc.gov/site/dca/workers/workersrights.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["OLPS Enforcement Matters (Historical) c292-vzrn (15c)", "OLPS Workplace Inquiries (Historical) 2z24-2htf (13c)"],
+      "opendata_gap": false,
+      "notes": "The 'Worker' half of DCWP — paid safe/sick leave, fair workweek. Published as AGGREGATE rollups by topic/industry/geography; never an individual worker."
+    },
+    {
+      "name": "DCWP Licensed Vehicles",
+      "type": "data table",
+      "entity": "BusinessLicense",
+      "url": "https://data.cityofnewyork.us/d/9vpn-rpgs",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DCWP Licensed Vehicles 9vpn-rpgs (15c)"],
+      "notes": "Vehicles/assets tied to a license (e.g. tow trucks, pedicabs); keyed on Business Asset ID + License Number."
+    },
+    {
+      "name": "Apply for a business license",
+      "type": "workflow (portal)",
+      "entity": "LicenseApplication",
+      "url": "https://nyc-business.nyc.gov/nycbusiness/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Submitting a license application lives only in the Java NYC Business portal; no write API. A net-new write surface."
+    },
+    {
+      "name": "File a consumer complaint",
+      "type": "sign-up / ticket workflow",
+      "entity": "ConsumerComplaint",
+      "url": "https://portal.311.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common citizen transaction — file a complaint against a business. Today only via 311 or a DCWP web form; no API. The primary net-new WRITE surface for this domain."
+    },
+    {
+      "name": "Pay a fine / fee",
+      "type": "transaction (portal)",
+      "entity": "Charge",
+      "url": "https://citypay.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["DCWP Payments Received 2xab-argn (14c)"],
+      "opendata_gap": true,
+      "notes": "Fine/fee payment lives only in CityPay (CityBase); no public API. Payments Received are published after the fact."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcwp/schemas/charge.json",
+  "title": "Charge",
+  "description": "A DCWP charge / violation issued against a business — the enforcement record that follows an inspection or complaint. Canonical schema reconciling the 'DCWP Charges' dataset (5fn4-dr26, 18 columns) and 'Archived DCWP Charges' (wyj6-frpa). Keyed on Record ID; joins to inspections via NOH Number / Inspection Number.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/5fn4-dr26",
+    "opendata_archived": "https://data.cityofnewyork.us/d/wyj6-frpa"
+  },
+  "properties": {
+    "recordId": { "type": "string", "description": "'Record ID' — primary key." },
+    "charge": { "type": ["string", "null"], "description": "'Charge' — the cited violation." },
+    "chargeCount": { "type": ["integer", "null"], "description": "'Charge Count'." },
+    "relatedRecordType": { "type": ["string", "null"], "description": "'Related Record Type' (e.g. Inspection, Complaint)." },
+    "inspectionNumber": { "type": ["string", "null"], "description": "'Inspection Number'." },
+    "nohNumber": { "type": ["string", "null"], "description": "'NOH Number' — Notice of Hearing." },
+    "certificateOfInspection": { "type": ["string", "null"], "description": "'Certificate of Inspection'." },
+    "violationDate": { "type": ["string", "null"], "format": "date", "description": "'Violation Date'." },
+    "outcome": { "type": ["string", "null"], "description": "'Outcome' — hearing outcome." },
+    "guilty": { "type": ["string", "null"], "description": "'Guilty'." },
+    "notGuilty": { "type": ["string", "null"], "description": "'Not Guilty'." },
+    "dismissed": { "type": ["string", "null"], "description": "'Dismissed'." },
+    "cured": { "type": ["string", "null"], "description": "'Cured'." },
+    "cureEligible": { "type": ["string", "null"], "description": "'Cure Eligible'." },
+    "business": { "$ref": "_common.json#/$defs/BusinessReference" }
+  },
+  "required": ["recordId"],
+  "additionalProperties": false
+}

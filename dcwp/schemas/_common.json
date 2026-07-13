@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcwp/schemas/_common.json",
+  "title": "DCWP — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Department of Consumer and Worker Protection (DCWP, formerly DCA) object schemas. Reconciles fields common to the DCWP Open Data datasets (data.cityofnewyork.us), nyc.gov/site/dca, and the NYC Business licensing portal (nyc-business.nyc.gov). Includes the NYC geography spine, the shared address block, and DCWP's own business/license join keys (Business Unique ID, License Number).",
+  "$defs": {
+    "Borough": {
+      "type": ["string", "null"],
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", null]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Open Data Latitude / Longitude).",
+      "properties": {
+        "latitude": { "type": ["number", "null"], "minimum": -90, "maximum": 90 },
+        "longitude": { "type": ["number", "null"], "minimum": -180, "maximum": 180 }
+      },
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine shared across DCWP datasets — the join keys back to the rest of city government.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board ('Community Board' / 'Community District')." },
+        "councilDistrict": { "type": ["integer", "string", "null"], "description": "NYC Council district ('Council District')." },
+        "censusTract": { "type": ["string", "null"], "description": "2010 Census tract ('Census Tract (2010)')." },
+        "censusBlock": { "type": ["string", "null"], "description": "'Census Block (2010)'." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area ('NTA')." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL')." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." }
+      },
+      "additionalProperties": false
+    },
+    "Address": {
+      "type": "object",
+      "description": "The shared DCWP business/premises address block ('Street1'..'Street3', 'Building Number', 'Apt/Suite', 'Unit Type', 'City', 'State', 'ZIP Code', 'Address Type').",
+      "properties": {
+        "buildingNumber": { "type": ["string", "null"], "description": "'Building Number' / 'Building Nbr' / 'Building_No'." },
+        "street1": { "type": ["string", "null"], "description": "'Street1' / 'Street Name'." },
+        "street2": { "type": ["string", "null"], "description": "'Street2' / 'Street Name 2'." },
+        "street3": { "type": ["string", "null"], "description": "'Street3'." },
+        "unitType": { "type": ["string", "null"], "description": "'Unit Type'." },
+        "aptSuite": { "type": ["string", "null"], "description": "'Apt/Suite' / 'Unit'." },
+        "city": { "type": ["string", "null"], "description": "'City'." },
+        "state": { "type": ["string", "null"], "description": "'State'." },
+        "zipCode": { "type": ["string", "null"], "description": "'ZIP Code' / 'Postcode'." },
+        "addressType": { "type": ["string", "null"], "description": "'Address Type' (e.g. Business, Mailing)." }
+      },
+      "additionalProperties": false
+    },
+    "BusinessReference": {
+      "type": "object",
+      "description": "A reference to a DCWP-regulated business by its shared join keys.",
+      "properties": {
+        "businessUniqueId": { "type": ["string", "null"], "description": "'Business Unique ID' — DCWP's primary business key across licenses, applications, inspections, complaints, and charges." },
+        "businessName": { "type": ["string", "null"], "description": "Legal business name ('Business Name')." },
+        "dbaTradeName": { "type": ["string", "null"], "description": "'DBA/Trade Name'." },
+        "businessCategory": { "type": ["string", "null"], "description": "'Business Category' (e.g. Individual, Business)." },
+        "licenseNumber": { "type": ["string", "null"], "description": "'License Number' / 'DCWP License Number' / 'DCA License Number'." },
+        "licenseType": { "type": ["string", "null"], "description": "'License Type' / 'Industry' (e.g. Home Improvement Contractor, Sidewalk Cafe, General Vendor)." }
+      },
+      "additionalProperties": false
+    }
+  }
+}

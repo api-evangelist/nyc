@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dep/schemas/reservoir-level.json",
+  "title": "ReservoirLevel",
+  "description": "A point-in-time observation of a reservoir in the NYC water-supply system, normalized from the wide 'Current Reservoir Levels' dataset (zkky-n5j3, 25 columns of cryptic per-reservoir SCADA tags such as NICRESVOLUME / RECRESELEVANALOG). One row of the source table describes the whole system at one timestamp; this schema breaks it out to one reservoir per record so agents can ask 'how full is Cannonsville?' without decoding sensor tags.",
+  "type": "object",
+  "x-source": {
+    "opendata_reservoir_levels": "https://data.cityofnewyork.us/d/zkky-n5j3",
+    "site": "https://www.nyc.gov/site/dep/water/reservoir-levels.page"
+  },
+  "properties": {
+    "reservoir": {
+      "type": "string",
+      "description": "Reservoir / controlled lake in the Catskill, Delaware, or Croton system.",
+      "enum": ["Cannonsville", "Pepacton", "Neversink", "Rondout", "Schoharie", "Ashokan East", "Ashokan West", "Kensico", "West Branch", "Croton", "Other"]
+    },
+    "observationTime": { "type": ["string", "null"], "format": "date-time", "description": "Timestamp of the reading ('Point_time')." },
+    "storageVolume": { "type": ["number", "null"], "description": "Storage volume, million gallons (e.g. 'WDIRESVOLUME', 'EDIRESVOLUME')." },
+    "elevation": { "type": ["number", "null"], "description": "Water-surface elevation, feet above datum (e.g. 'WDIRESELEVANALOG')." },
+    "capacityPercent": { "type": ["number", "null"], "minimum": 0, "maximum": 100, "description": "Percent of usable capacity in storage (derived)." },
+    "conservationRelease": { "type": ["number", "null"], "description": "Conservation-flow release, cubic feet per second (e.g. 'WDICONFLW')." },
+    "directRelease": { "type": ["number", "null"], "description": "Direct / spillway release, cubic feet per second (e.g. 'RECREL', 'WDRFLW')." },
+    "system": {
+      "type": ["string", "null"],
+      "enum": ["Catskill", "Delaware", "Croton", null],
+      "description": "Which of the three NYC water-supply systems the reservoir belongs to."
+    }
+  },
+  "required": ["reservoir"],
+  "additionalProperties": false
+}

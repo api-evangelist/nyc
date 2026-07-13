@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dycd/schemas/program-site.json",
+  "title": "ProgramSite",
+  "description": "A physical site where a DYCD-funded program is delivered by a contracted provider — the core supply unit of the domain. Canonical schema reconciling the 'DYCD Program Sites' dataset (ebkm-iyma, 34 columns), the richest DYCD asset. Keyed on PortfolioID + Contract, joined to a Provider and a Program taxonomy, with a full NYC geography spine.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/ebkm-iyma",
+    "discoverdycd": "https://discoverdycd.dycdconnect.nyc/"
+  },
+  "properties": {
+    "programSiteName": { "type": "string", "description": "'Program Site Name'." },
+    "portfolioId": { "type": ["string", "null"], "description": "'PortfolioID' — DYCD site/portfolio key." },
+    "provider": { "$ref": "_common.json#/$defs/ProviderReference" },
+    "program": { "$ref": "_common.json#/$defs/ProgramReference" },
+    "contract": { "type": ["string", "null"], "description": "'Contract' — associated contract number." },
+    "fiscalYear": { "type": ["string", "integer", "null"], "description": "'FiscalYear'." },
+    "ageRange": { "type": ["string", "null"], "description": "'Age Range' served at this site." },
+    "totalSlots": { "type": ["integer", "null"], "description": "'TotalSlots' — funded capacity." },
+    "totalParticipants": { "type": ["integer", "null"], "description": "'TotalParticipants' — enrolled participants." },
+    "address": {
+      "type": "object",
+      "properties": {
+        "streetAddress": { "type": ["string", "null"], "description": "'Street Address'." },
+        "location": { "type": ["string", "null"], "description": "'Location' (site/building name)." },
+        "city": { "type": ["string", "null"], "description": "'City'." },
+        "state": { "type": ["string", "null"], "description": "'State'." },
+        "postcode": { "type": ["string", "null"], "description": "'Postcode' / 'Zip Codes'." }
+      },
+      "additionalProperties": false
+    },
+    "communityName": { "type": ["string", "null"], "description": "'Community Name'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["programSiteName"],
+  "additionalProperties": false
+}

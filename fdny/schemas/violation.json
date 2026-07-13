@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/fdny/schemas/violation.json",
+  "title": "Violation",
+  "description": "An active FDNY Bureau of Fire Prevention violation order issued against a premises. Canonical schema reconciling 'Bureau of Fire Prevention - Active Violation Orders' (bi53-yph3, 21 columns). Keyed on VIO_ID / VIOLATION_NUM.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/bi53-yph3"
+  },
+  "properties": {
+    "violationId": { "type": "string", "description": "'VIO_ID' — violation identifier." },
+    "violationNumber": { "type": ["string", "null"], "description": "'VIOLATION_NUM'." },
+    "violationDate": { "type": ["string", "null"], "format": "date", "description": "'VIO_DATE'." },
+    "action": { "type": ["string", "null"], "description": "'ACTION' — action / status on the violation." },
+    "lawNumber": { "type": ["string", "null"], "description": "'VIO_LAW_NUM' — cited law/code number." },
+    "lawDescription": { "type": ["string", "null"], "description": "'VIO_LAW_DESC' — cited law/code description." },
+    "premises": { "$ref": "_common.json#/$defs/PremisesReference" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["violationId"],
+  "additionalProperties": false
+}

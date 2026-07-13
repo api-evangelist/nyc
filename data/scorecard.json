@@ -1,5 +1,5 @@
 {
-  "note": "Editorial maturity scores (0-3, higher = more mature) grounded in the fifteen assessments. 0 = absent, 1 = present but legacy/hidden/rented, 2 = usable but partial, 3 = modern/owned/complete. See SYNTHESIS.md.",
+  "note": "Editorial maturity scores (0-3, higher = more mature) across 25 assessments. 0 = absent, 1 = legacy/hidden/rented, 2 = usable/partial, 3 = modern/owned/complete. First 15 hand-authored; the rest self-scored per domain. See SYNTHESIS.md.",
   "scale": [
     "absent",
     "legacy/hidden/rented",
@@ -403,6 +403,246 @@
         "agent": "None.",
         "ownership": "Resident transactions locked in a vendor Siebel CRM."
       }
+    },
+    {
+      "id": "acs",
+      "short": "NYC Children's Services (ACS)",
+      "verb": "insource",
+      "accent": "#d98a3a",
+      "scores": {
+        "platform": 1,
+        "siteApi": 0,
+        "openData": 1,
+        "coreData": 1,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 1
+      },
+      "notes": {
+        "platform": "Shared NYC.gov Livesite chassis (Akamai/nginx/Dynatrace); no ACS-specific application at all.",
+        "siteApi": "No ACS content or site API; informational HTML only.",
+        "openData": "21 assets but 16 are non-tabular file attachments; only 5 tabular and just 1 address-level.",
+        "coreData": "Operational data confidential by statute \u2014 published only as aggregate reports, mostly as files, never per case.",
+        "writeApi": "No ACS-owned write surface; abuse reports go to the NY State Central Register, provider complaints to NYC 311.",
+        "agent": "No agent-native surface; no MCP, no structured intake, only downloadable spreadsheets and delegated web forms.",
+        "ownership": "ACS owns the Community Partners directory but delegates both public intakes; ownership of the transaction layer is absent."
+      }
+    },
+    {
+      "id": "dcwp",
+      "short": "NYC Consumer & Worker Protection (DCWP)",
+      "verb": "bind",
+      "accent": "#b06fb0",
+      "scores": {
+        "platform": 2,
+        "siteApi": 1,
+        "openData": 3,
+        "coreData": 3,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 2
+      },
+      "notes": {
+        "platform": "Shared NYC.gov Livesite CMS + a modern Java NYC Business portal + CityPay \u2014 maintained but not API-first.",
+        "siteApi": "No content API; the licensing portal is a session-gated Java app with no documented public API.",
+        "openData": "Exceptional \u2014 37 datasets publish the full licensing/enforcement lifecycle, incl. Issued Licenses (147k views).",
+        "coreData": "Core entities richly modeled and joinable on Business Unique ID / License Number across the lifecycle.",
+        "writeApi": "No write API anywhere \u2014 apply for a license and file a complaint both go through a portal or 311.",
+        "agent": "No agent-native surface today; no MCP, no OpenAPI, no schemas published by the agency.",
+        "ownership": "Owns and actively maintains its open datasets, but the transaction layer runs on a shared NYC Business portal it does not solely control."
+      }
+    },
+    {
+      "id": "dep",
+      "short": "NYC Environmental Protection (DEP)",
+      "verb": "Transact",
+      "accent": "#2f8fb0",
+      "scores": {
+        "platform": 2,
+        "siteApi": 0,
+        "openData": 3,
+        "coreData": 2,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 1
+      },
+      "notes": {
+        "platform": "Shared NYC.gov Livesite site + modern-but-packaged uMAX CIS (Azure B2C)",
+        "siteApi": "No content or site API; informational HTML only",
+        "openData": "57 Socrata datasets, broad coverage, well-trafficked",
+        "coreData": "Open but sprawling/inconsistent \u2014 100-col text tables, cryptic SCADA tags, no clean model",
+        "writeApi": "None \u2014 bill pay/account in uMAX portal; service requests go to generic 311",
+        "agent": "No agent-native surface at all",
+        "ownership": "Data via rented Socrata; transactions in rented uMAX + citywide 311"
+      }
+    },
+    {
+      "id": "dfta",
+      "short": "NYC Aging (DFTA)",
+      "verb": "connect",
+      "accent": "#3a9a8a",
+      "scores": {
+        "platform": 1,
+        "siteApi": 0,
+        "openData": 2,
+        "coreData": 2,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 1
+      },
+      "notes": {
+        "platform": "Shared NYC.gov Livesite chassis; no DFTA-owned application platform, service layer is a phone contact center.",
+        "siteApi": "No site or content API; nothing machine-readable on nyc.gov/site/dfta.",
+        "openData": "11 open Socrata datasets covering the provider network well, but no service-layer data.",
+        "coreData": "Core provider/center/activity/service-unit entities are modeled and open; participation is aggregate-only.",
+        "writeApi": "No write surface at all \u2014 every referral/intake is a phone call to Aging Connect.",
+        "agent": "No agent-native surface; no MCP, no structured intake an agent could call.",
+        "ownership": "Reference data is DFTA-labeled on Open Data, but the transaction layer is an unowned contact-center process."
+      }
+    },
+    {
+      "id": "dhs",
+      "short": "NYC Homeless Services (DHS)",
+      "verb": "connect",
+      "accent": "#7a6fb0",
+      "scores": {
+        "platform": 1,
+        "siteApi": 0,
+        "openData": 3,
+        "coreData": 2,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 1
+      },
+      "notes": {
+        "platform": "Shared NYC.gov 'Livesite' CMS (Akamai/nginx/Dynatrace); no DHS-specific or modern platform",
+        "siteApi": "Informational site only; no content API",
+        "openData": "23 datasets led by the flagship DHS Daily Report (87k views); strong census/directory/facility coverage",
+        "coreData": "Core entities well modeled but aggregate-only snapshots; no live per-shelter roster or individual records",
+        "writeApi": "No write API anywhere; every action is a 311 call, 911, or in-person intake",
+        "agent": "No agent-native surface of any kind",
+        "ownership": "Reference data lives on NYC's Socrata tenant; the stand-in service channel (NYC311) belongs to another agency, not DHS"
+      }
+    },
+    {
+      "id": "doc",
+      "short": "NYC Correction (DOC)",
+      "verb": "expose",
+      "accent": "#5a7a9a",
+      "scores": {
+        "platform": 1,
+        "siteApi": 0,
+        "openData": 3,
+        "coreData": 2,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 2
+      },
+      "notes": {
+        "platform": "Standard NYC.gov Livesite chassis plus a legacy Apache MyFaces (JSF) lookup on a WebSphere-era stack",
+        "siteApi": "No content or site API; the informational site is HTML only",
+        "openData": "15 Socrata datasets \u2014 unusually rich accountability data (custody, admissions, deaths, incidents, security indicators)",
+        "coreData": "Core person-in-custody data is published daily and searchable live, but only via a JSF screen and daily snapshots \u2014 no per-person API",
+        "writeApi": "No write surface at all \u2014 visits, complaints, and records requests are phone/mail/in-person or vendor portals",
+        "agent": "No agent-native surface; the live lookup is a JavaScript/JSF app hostile to automation",
+        "ownership": "First-party datasets and a city-hosted lookup (a073.nyc.gov), not a rented SaaS \u2014 reasonably owned, but the lookup is undocumented legacy"
+      }
+    },
+    {
+      "id": "dof",
+      "short": "NYC Finance (DOF)",
+      "verb": "modernize",
+      "accent": "#3a7d6a",
+      "scores": {
+        "platform": 1,
+        "siteApi": 0,
+        "openData": 3,
+        "coreData": 3,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 2
+      },
+      "notes": {
+        "platform": "NYC.gov Livesite chassis + a fleet of legacy a836 apps (ACRIS ASP.NET/IIS 2013, CityPay, PTS) \u2014 dated but in-house.",
+        "siteApi": "No content or site API; ACRIS/CityPay/PTS are server-rendered apps, not APIs \u2014 no OpenAPI, no JSON.",
+        "openData": "Widest footprint assessed \u2014 145 DOF datasets across valuation, ACRIS, exemptions, tax charges, and parking.",
+        "coreData": "Every core entity (valuation, exemptions, tax-charge balance, ACRIS documents, parking violations) has a rich, machine-readable Open Data twin.",
+        "writeApi": "No payment/transaction API \u2014 paying a ticket or tax bill exists only inside the CityPay/PTS web apps.",
+        "agent": "No MCP, no agent-native surface; the legacy apps are browser-only.",
+        "ownership": "DOF owns its systems and data in-house (ACRIS, CityPay, PTS built for the city; data on Socrata) \u2014 not rented to a SaaS vendor."
+      }
+    },
+    {
+      "id": "dycd",
+      "short": "NYC Youth & Community Dev (DYCD)",
+      "verb": "surface",
+      "accent": "#d9a02a",
+      "scores": {
+        "platform": 2,
+        "siteApi": 1,
+        "openData": 2,
+        "coreData": 2,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 2
+      },
+      "notes": {
+        "platform": "Informational site on the shared NYC.gov Livesite chassis; DYCD Connect / DiscoverDYCD is a real, custom, DYCD-owned Angular-on-IIS application",
+        "siteApi": "DiscoverDYCD has an internal /api/ backend, but it is undocumented, private, and returns 404 to any public probe \u2014 no documented site API",
+        "openData": "15 datasets, strong on the supply side (program sites 34c, contracts, providers, aggregate demographics 52c) but no clean catalog of the program offerings themselves",
+        "coreData": "Program sites, providers, and contracts are modeled with keys and a full geography spine; 'Program' as an offering lives only inside the finder app",
+        "writeApi": "No write API anywhere \u2014 applying to a program (SYEP, COMPASS) has no public, machine-readable surface",
+        "agent": "No MCP, no agent-native contract; the finder is a human-only Angular UI",
+        "ownership": "DYCD owns and operates its own finder and portal (unlike rented search); open data is owned via Socrata"
+      }
+    },
+    {
+      "id": "fdny",
+      "short": "NYC Fire (FDNY)",
+      "verb": "front",
+      "accent": "#c23b2b",
+      "scores": {
+        "platform": 1,
+        "siteApi": 0,
+        "openData": 3,
+        "coreData": 2,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 1
+      },
+      "notes": {
+        "platform": "informational site on shared NYC.gov Livesite; the transaction platform is a rented Accela Civic Platform SaaS",
+        "siteApi": "nyc.gov/site/fdny is content-only \u2014 no content API",
+        "openData": "17 datasets, generous \u2014 firehouses, minute-level fire & EMS dispatch, inspections, violations, certificates",
+        "coreData": "reference & incident data strong, but live permit / C of F / inspection status is only historical snapshots; current status is behind Accela",
+        "writeApi": "no write API; permits, C of F, and inspection requests are Accela UI / paper only",
+        "agent": "no MCP or agent-native surface exists today",
+        "ownership": "incident-data pipeline is owned; the business transaction system of record is a rented commercial SaaS (Accela)"
+      }
+    },
+    {
+      "id": "hra",
+      "short": "NYC Social Services (HRA)",
+      "verb": "connect",
+      "accent": "#4a8f5a",
+      "scores": {
+        "platform": 2,
+        "siteApi": 1,
+        "openData": 3,
+        "coreData": 2,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 2
+      },
+      "notes": {
+        "platform": "Informational site on shared NYC.gov Livesite; ACCESS NYC is a modern open-source WordPress app and ACCESS HRA a React SPA \u2014 modern but split across three stacks.",
+        "siteApi": "No content/site API; the ACCESS NYC screener returns HTML and the benefits catalog is reachable only as an Open Data export.",
+        "openData": "49 datasets \u2014 SNAP/Cash Assistance/Medicaid caseloads, application-center directories, and 75-column case-action reports.",
+        "coreData": "Rich aggregates and directories, but no individual application/case entity is ever published (aggregate case actions are the closest twin).",
+        "writeApi": "No public API for the core transaction \u2014 applying for benefits lives only in the ACCESS HRA React portal or an in-person visit.",
+        "agent": "No agent-native surface; neither the screener nor the application portal exposes tools or a machine-readable contract.",
+        "ownership": "Eligibility rules are open-sourced and city-owned (rare) and the application portal is a city-built React app, but there is no owned API binding them."
+      }
     }
   ],
   "netNew": [
@@ -461,6 +701,46 @@
     {
       "domain": "NYCHA",
       "object": "WorkOrder"
+    },
+    {
+      "domain": "NYC Children's Services (ACS)",
+      "object": "ChildCareComplaint \u2014 submit a complaint about a child care provider (models the provider concern, never case data; abuse routed to the State Central Register)"
+    },
+    {
+      "domain": "NYC Consumer & Worker Protection (DCWP)",
+      "object": "File a consumer complaint (ConsumerComplaint) and apply for a business license (LicenseApplication) \u2014 the two citizen writes with no API"
+    },
+    {
+      "domain": "NYC Environmental Protection (DEP)",
+      "object": "WaterServiceRequest"
+    },
+    {
+      "domain": "NYC Aging (DFTA)",
+      "object": "ServiceReferral \u2014 connect an older adult to DFTA services (case management, meals, benefits, caregiver, elder abuse, center enrollment) with an urgent path to Aging Connect / Adult Protective Services."
+    },
+    {
+      "domain": "NYC Homeless Services (DHS)",
+      "object": "OutreachRequest \u2014 request street outreach for a person experiencing homelessness (today only via NYC311)"
+    },
+    {
+      "domain": "NYC Correction (DOC)",
+      "object": "VisitScheduling \u2014 schedule a visit with a person in custody (no API today; arranged by phone, in person, or vendor portal). Complaint / records request is a second net-new write."
+    },
+    {
+      "domain": "NYC Finance (DOF)",
+      "object": "ParkingTicketPayment \u2014 pay a parking/camera violation via API instead of the CityPay-only web form."
+    },
+    {
+      "domain": "NYC Youth & Community Dev (DYCD)",
+      "object": "ProgramApplication \u2014 apply to a program (e.g. an SYEP application)"
+    },
+    {
+      "domain": "NYC Fire (FDNY)",
+      "object": "FirePermitApplication \u2014 apply for and track a fire permit / Certificate of Operation / inspection request via FDNY Business"
+    },
+    {
+      "domain": "NYC Social Services (HRA)",
+      "object": "BenefitsApplication \u2014 apply for and track SNAP / Cash Assistance / Medicaid, today locked in the ACCESS HRA portal"
     }
   ],
   "sharedSpine": [

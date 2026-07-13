@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcwp/schemas/consumer-complaint.json",
+  "title": "ConsumerComplaint",
+  "description": "A consumer complaint filed with DCWP against a business — the citizen-facing transaction of the Department. Canonical schema reconciling the 'DCWP Consumer Complaints' dataset (nre2-6m2s, 33 columns). This schema serves BOTH the read surface (published complaint records) AND the net-new write surface: FILING a complaint has no public API today — it goes through 311 or a DCWP web form. This is the domain's net-new WRITE object.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/nre2-6m2s",
+    "intake_311": "https://portal.311.nyc.gov/",
+    "site": "https://www.nyc.gov/site/dca/consumers/file-complaint.page",
+    "write_api": null,
+    "opendata_gap": false
+  },
+  "properties": {
+    "recordId": {
+      "type": ["string", "null"],
+      "description": "'Record ID' — server-assigned complaint id. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "srNumber311": {
+      "type": ["string", "null"],
+      "description": "'311 SR Number' — linked 311 service request. Assigned on intake.",
+      "readOnly": true
+    },
+    "complaintCode": { "type": "string", "description": "'Complaint Code' — nature of the complaint (e.g. overcharge, false advertising, licensing)." },
+    "intakeChannel": { "type": ["string", "null"], "description": "'Intake Channel' (e.g. Online, Phone, 311)." },
+    "intakeDate": { "type": ["string", "null"], "format": "date", "description": "'Intake Date'.", "readOnly": true },
+    "business": { "$ref": "_common.json#/$defs/BusinessReference" },
+    "description": { "type": ["string", "null"], "description": "Free-text description of the consumer's complaint." },
+    "refundAmount": { "type": ["number", "null"], "description": "'Refund Amount' sought/awarded.", "readOnly": true },
+    "contractCancelledAmount": { "type": ["number", "null"], "description": "'Contract Cancelled Amount'.", "readOnly": true },
+    "referredTo": { "type": ["string", "null"], "description": "'Referred To' — agency the complaint was routed to.", "readOnly": true },
+    "result": { "type": ["string", "null"], "description": "'Result' — resolution.", "readOnly": true },
+    "resultDate": { "type": ["string", "null"], "format": "date", "description": "'Result Date'.", "readOnly": true },
+    "contact": {
+      "type": "object",
+      "description": "Complainant contact details (not published to Open Data).",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["complaintCode"],
+  "additionalProperties": false
+}

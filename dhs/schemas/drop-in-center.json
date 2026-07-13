@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dhs/schemas/drop-in-center.json",
+  "title": "DropInCenter",
+  "description": "A DHS homeless drop-in center — a 24/7 site where people experiencing street homelessness can get meals, showers, case management, and a path to shelter. Canonical schema reconciling the 'Directory Of Homeless Drop-In Centers' dataset (bmxf-3rd4, 13 columns). Located by address and full NYC geography spine.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/bmxf-3rd4",
+    "site": "https://www.nyc.gov/site/dhs/outreach/drop-in-centers.page"
+  },
+  "properties": {
+    "centerName": { "type": "string", "description": "Drop-in center name ('Center Name')." },
+    "address": { "type": ["string", "null"], "description": "Street address ('Address')." },
+    "comments": { "type": ["string", "null"], "description": "'Comments' — hours, operator, or service notes." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["centerName"],
+  "additionalProperties": false
+}

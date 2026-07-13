@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doc/schemas/daily-population.json",
+  "title": "DailyPopulation",
+  "description": "A population / security-indicator measure for DOC — the census and accountability metrics DOC reports over time. Canonical schema reconciling the 'Local Law 33 - Security Indicators Report' (2wuc-x56b, rate per 100 ADP), aggregate counts derived from 'Daily Inmates In Custody' (7479-ugqb), 'Article 730 Transfer Waitlist' (q9w2-yi4x), and 'Medical Non-production for Clinic Appointments' (5n4h-km5r). Represents a single metric value for a period and (optionally) a facility.",
+  "type": "object",
+  "x-source": {
+    "opendata_security_indicators": "https://data.cityofnewyork.us/d/2wuc-x56b",
+    "opendata_daily_custody": "https://data.cityofnewyork.us/d/7479-ugqb",
+    "opendata_article730_waitlist": "https://data.cityofnewyork.us/d/q9w2-yi4x",
+    "opendata_medical_nonproduction": "https://data.cityofnewyork.us/d/5n4h-km5r"
+  },
+  "properties": {
+    "metric": { "type": "string", "description": "Metric name ('Metric') — e.g. 'Average Daily Population', 'Assault on Staff', 'Use of Force'." },
+    "value": { "type": ["number", "null"], "description": "Metric value ('value' / 'count')." },
+    "ratePer100ADP": { "type": ["number", "null"], "description": "Rate per 100 Average Daily Population ('rate per 100 ADP'), where reported." },
+    "count": { "type": ["integer", "null"], "description": "Raw count ('count'), where reported." },
+    "year": { "type": ["integer", "null"], "description": "Year ('Year')." },
+    "month": { "type": ["string", "integer", "null"], "description": "Month ('Month'), where reported." },
+    "yearType": { "type": ["string", "null"], "description": "Calendar or fiscal year type ('Year Type' / 'calendar type')." },
+    "interval": { "type": ["string", "null"], "description": "Reporting interval ('interval') — e.g. quarter." },
+    "facility": { "$ref": "_common.json#/$defs/FacilityReference" }
+  },
+  "required": ["metric"],
+  "additionalProperties": false
+}

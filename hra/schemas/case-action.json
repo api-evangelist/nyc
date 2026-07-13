@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hra/schemas/case-action.json",
+  "title": "CaseAction",
+  "description": "An aggregate report of actions taken on Cash Assistance and SNAP cases in a period — rejections, closings, and reopenings — broken out by reason code, council district, race, age band, and sex. AGGREGATE ONLY: these are the closest published twin to an individual application/case, but they are counts, not records. Canonical schema reconciling 'Cash Assistance and SNAP Cases Rejections' (g6pg-qint, 75 columns), 'Closed' (5fs5-yi3e), 'Reopenings' (5uf6-jjmy), and 'Reopenings with a Missed Benefit' (28gm-7ump). There is NO Open Data or public API for the individual case itself — that lives only in the ACCESS HRA portal (see benefits-application.json).",
+  "type": "object",
+  "x-source": {
+    "opendata_rejections": "https://data.cityofnewyork.us/d/g6pg-qint",
+    "opendata_closed": "https://data.cityofnewyork.us/d/5fs5-yi3e",
+    "opendata_reopenings": "https://data.cityofnewyork.us/d/5uf6-jjmy",
+    "opendata_reopenings_missed_benefit": "https://data.cityofnewyork.us/d/28gm-7ump"
+  },
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": ["Rejection", "Closing", "Reopening", "Reopening (Missed Benefit)"],
+      "description": "Which case-action dataset this row comes from."
+    },
+    "assistanceType": { "type": ["string", "null"], "description": "'Type of Government Assistance' (Cash Assistance or SNAP)." },
+    "reasonCode": { "type": ["string", "null"], "description": "'NYS WMS Rejection Code' or equivalent reason code." },
+    "date": { "type": ["string", "null"], "format": "date", "description": "'Date' of the reporting period." },
+    "calendarYear": { "type": ["integer", "null"], "description": "'Calendar Year'." },
+    "total": { "type": ["integer", "null"], "description": "'Total' actions of this type/reason in the period." },
+    "byCouncilDistrict": {
+      "type": ["object", "null"],
+      "description": "Counts keyed by NYC council district ('CD 01' … 'CD 51', 'Unknown CD').",
+      "additionalProperties": { "type": ["integer", "null"] }
+    },
+    "byRace": {
+      "type": ["object", "null"],
+      "description": "Counts by race/ethnicity (African American, Asian, Caucasian, Hispanic, Native American, Pacific Islander, Multi-ethnic, Unknown Race).",
+      "additionalProperties": { "type": ["integer", "null"] }
+    },
+    "byAgeBand": {
+      "type": ["object", "null"],
+      "description": "Counts by age band (18-24, 25-44, 45-64, 65+).",
+      "additionalProperties": { "type": ["integer", "null"] }
+    },
+    "bySex": {
+      "type": ["object", "null"],
+      "description": "Counts by sex (Male, Female).",
+      "additionalProperties": { "type": ["integer", "null"] }
+    },
+    "limitedEnglishProficiency": {
+      "type": ["object", "null"],
+      "description": "Counts by LEP flag ('Has Limited English Proficiency (Yes)'/'(No)').",
+      "additionalProperties": { "type": ["integer", "null"] }
+    },
+    "reasonableAccommodation": {
+      "type": ["object", "null"],
+      "description": "Counts by reasonable-accommodation flag ('Has Reasonable Accommodation (Yes)'/'(No)').",
+      "additionalProperties": { "type": ["integer", "null"] }
+    }
+  },
+  "required": ["action"],
+  "additionalProperties": false
+}

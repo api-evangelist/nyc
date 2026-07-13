@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hra/schemas/benefits-application.json",
+  "title": "BenefitsApplication",
+  "description": "A resident's application for a public-benefit program (SNAP, Cash Assistance, Medicaid, and others) — the everyday HRA transaction. NET-NEW: there is NO public API and NO Open Data twin for an individual application or case; today residents apply and check case status only inside the ACCESS HRA portal (a069-access.nyc.gov/accesshra, a React SPA behind Akamai) or in person at a Benefits Access / SNAP Center. This schema serves both the read surface (list/get a resident's own applications and their status) and the write surface (submit a benefits application).",
+  "type": "object",
+  "x-source": {
+    "portal": "https://a069-access.nyc.gov/accesshra/",
+    "site": "https://www.nyc.gov/site/hra/help/how-to-apply.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application / case number (ACCESS HRA). Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Received", "In Review", "Interview Scheduled", "Documents Needed", "Approved", "Denied", "Withdrawn", null],
+      "description": "Case lifecycle status. Set by HRA, not the applicant.",
+      "readOnly": true
+    },
+    "program": { "$ref": "_common.json#/$defs/BenefitProgram" },
+    "additionalPrograms": {
+      "type": ["array", "null"],
+      "description": "Other programs applied for in the same submission (ACCESS HRA lets a resident apply for several at once).",
+      "items": { "$ref": "_common.json#/$defs/BenefitProgram" }
+    },
+    "applicant": {
+      "type": "object",
+      "description": "The head-of-household applicant.",
+      "properties": {
+        "firstName": { "type": ["string", "null"] },
+        "lastName": { "type": ["string", "null"] },
+        "dateOfBirth": { "type": ["string", "null"], "format": "date" },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "preferredLanguage": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "streetAddress": { "type": ["string", "null"] },
+        "apartment": { "type": ["string", "null"] },
+        "city": { "type": ["string", "null"] },
+        "state": { "type": ["string", "null"] },
+        "zipCode": { "type": ["string", "null"] },
+        "borough": { "$ref": "_common.json#/$defs/Borough" }
+      },
+      "additionalProperties": false
+    },
+    "householdSize": { "type": ["integer", "null"], "minimum": 1, "description": "People in the household." },
+    "monthlyIncome": { "$ref": "_common.json#/$defs/Money" },
+    "emergency": { "type": "boolean", "default": false, "description": "Flag an immediate need (no food, eviction, no heat) — routes to expedited SNAP / emergency assistance handling." },
+    "eligibilityScreeningRef": { "type": ["string", "null"], "description": "Optional reference to a prior BenefitsEligibility screening result." },
+    "documents": {
+      "type": ["array", "null"],
+      "description": "Supporting documents uploaded with the application (ACCESS HRA document upload).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": ["string", "null"], "description": "Document type (ID, proof of income, lease, etc.)." },
+          "url": { "type": ["string", "null"], "format": "uri" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "preferredCenter": { "type": ["string", "null"], "description": "Preferred Benefits Access / SNAP Center for any in-person step." },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "interviewDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "determinationDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "required": ["program", "applicant"],
+  "additionalProperties": false
+}

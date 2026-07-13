@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dhs/schemas/shelter-census.json",
+  "title": "ShelterCensus",
+  "description": "A single day's DHS shelter census — the daily count of people in the New York City shelter system, broken out by client population. Canonical schema reconciling the flagship 'DHS Daily Report' (k46n-sa2m, 13 columns) and its historical twin (dwrg-kzni), plus the 'Daily Report Of Single Adult And Family Intake' (sci4-yqgk). Keyed on the date of census. This is DHS's most-viewed Open Data asset.",
+  "type": "object",
+  "x-source": {
+    "opendata_daily_report": "https://data.cityofnewyork.us/d/k46n-sa2m",
+    "opendata_daily_report_historical": "https://data.cityofnewyork.us/d/dwrg-kzni",
+    "opendata_intake": "https://data.cityofnewyork.us/d/sci4-yqgk",
+    "site": "https://www.nyc.gov/site/dhs/about/stats-and-reports.page"
+  },
+  "properties": {
+    "dateOfCensus": { "type": "string", "format": "date", "description": "Census date ('Date of Census')." },
+    "totalIndividualsInShelter": { "type": ["integer", "null"], "description": "'Total Individuals in Shelter' — the headline system-wide count." },
+    "totalAdultsInShelter": { "type": ["integer", "null"], "description": "'Total Adults in Shelter'." },
+    "totalChildrenInShelter": { "type": ["integer", "null"], "description": "'Total Children in Shelter'." },
+    "totalSingleAdultsInShelter": { "type": ["integer", "null"], "description": "'Total Single Adults in Shelter'." },
+    "singleAdultMenInShelter": { "type": ["integer", "null"], "description": "'Single Adult Men in Shelter'." },
+    "singleAdultWomenInShelter": { "type": ["integer", "null"], "description": "'Single Adult Women in Shelter'." },
+    "adultFamiliesInShelter": { "type": ["integer", "null"], "description": "'Adult Families in Shelter' (count of families)." },
+    "individualsInAdultFamiliesInShelter": { "type": ["integer", "null"], "description": "'Individuals in Adult Families in Shelter'." },
+    "familiesWithChildrenInShelter": { "type": ["integer", "null"], "description": "'Families with Children in Shelter' (count of families)." },
+    "adultsInFamiliesWithChildrenInShelter": { "type": ["integer", "null"], "description": "'Adults in Families with Children in Shelter'." },
+    "childrenInFamiliesWithChildrenInShelter": { "type": ["integer", "null"], "description": "'Children in Families with Children in Shelter'." },
+    "totalIndividualsInFamiliesWithChildrenInShelter": { "type": ["integer", "null"], "description": "'Total Individuals in Families with Children in Shelter'." }
+  },
+  "required": ["dateOfCensus"],
+  "additionalProperties": false
+}

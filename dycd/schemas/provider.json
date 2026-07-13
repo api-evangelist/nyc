@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dycd/schemas/provider.json",
+  "title": "Provider",
+  "description": "A community-based organization (CBO) that DYCD contracts to deliver programs at one or more program sites. Canonical schema reconciling 'DYCD Contractors' (75e9-fg2t) and the Provider field carried on 'DYCD Program Sites' (ebkm-iyma) and 'DYCD Contracts' (graj-69em). DYCD is a funder/intermediary — providers are the actual service delivery layer.",
+  "type": "object",
+  "x-source": {
+    "opendata_contractors": "https://data.cityofnewyork.us/d/75e9-fg2t",
+    "opendata_program_sites": "https://data.cityofnewyork.us/d/ebkm-iyma",
+    "opendata_contracts": "https://data.cityofnewyork.us/d/graj-69em"
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Provider / CBO name ('Name' / 'CBO Name' / 'Provider')." },
+    "portfolioId": { "type": ["string", "null"], "description": "DYCD 'PortfolioID'." },
+    "programId": { "type": ["string", "null"], "description": "'Program ID' (from DYCD Contractors)." },
+    "fiscalYear": { "type": ["string", "integer", "null"], "description": "'Fiscal Year'." },
+    "awardedAmount": { "type": ["number", "null"], "description": "'Amount' — funding awarded to this contractor for the program." },
+    "programAreas": {
+      "type": ["array", "null"],
+      "description": "Distinct DYCD program areas this provider operates in.",
+      "items": { "$ref": "_common.json#/$defs/ProgramArea" }
+    },
+    "siteCount": { "type": ["integer", "null"], "description": "Number of program sites operated by this provider." }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

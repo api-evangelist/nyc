@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dhs/schemas/shelter-facility.json",
+  "title": "ShelterFacility",
+  "description": "A DHS shelter facility / building and its aggregate condition and census. Canonical schema reconciling the 'Shelter Repair Scorecard' (dvaj-b7yx, 55 columns — building, landlord, capacity, and open/new/closed housing-maintenance violations by priority and inspecting agency), 'Buildings by Borough and Community District' (3qem-6v3v), and 'Individual Census by Borough, Community District, and Facility Type' (veav-vj3r). Keyed on DHS Building ID.",
+  "type": "object",
+  "x-source": {
+    "opendata_repair_scorecard": "https://data.cityofnewyork.us/d/dvaj-b7yx",
+    "opendata_buildings": "https://data.cityofnewyork.us/d/3qem-6v3v",
+    "opendata_individual_census": "https://data.cityofnewyork.us/d/veav-vj3r"
+  },
+  "properties": {
+    "dhsBuildingId": { "type": ["string", "null"], "description": "DHS building identifier ('DHS_Bld_ID')." },
+    "shelterName": { "type": ["string", "null"], "description": "Shelter name ('Shelter_Name_All')." },
+    "facilityType": { "$ref": "_common.json#/$defs/FacilityType" },
+    "landlord": { "type": ["string", "null"], "description": "'Landlord'." },
+    "capacity": { "type": ["integer", "null"], "description": "'Capacity' — units/beds at the facility." },
+    "month": { "type": ["string", "null"], "description": "Reporting month for the scorecard snapshot ('Month')." },
+    "reportDate": { "type": ["string", "null"], "format": "date", "description": "Census report date ('Report Date')." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "violations": {
+      "type": "object",
+      "description": "Open / new / closed housing-maintenance violations by priority tier and inspecting agency (HPD, DOB, FDNY, DOHMH), from the Shelter Repair Scorecard.",
+      "properties": {
+        "commissionerOrderOpen": { "type": ["integer", "null"], "description": "Commissioner's-order violations currently open (all agencies)." },
+        "highPriorityOpen": { "type": ["integer", "null"], "description": "High-priority violations currently open." },
+        "mediumPriorityOpen": { "type": ["integer", "null"], "description": "Medium-priority violations currently open." },
+        "lowestPriorityOpen": { "type": ["integer", "null"], "description": "Lowest-priority violations currently open." }
+      },
+      "additionalProperties": true
+    },
+    "census": {
+      "type": "object",
+      "description": "Facility-type client census at this location/community district (Individual Census dataset).",
+      "properties": {
+        "adultShelter": { "type": ["integer", "null"] },
+        "adultFamilyShelter": { "type": ["integer", "null"] },
+        "familyWithChildrenShelter": { "type": ["integer", "null"] },
+        "familyCluster": { "type": ["integer", "null"] },
+        "commercialHotel": { "type": ["integer", "null"], "description": "Individuals housed in commercial hotels across facility types." }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

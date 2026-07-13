@@ -1,0 +1,338 @@
+openapi: 3.1.0
+info:
+  title: ACS API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Administration for Children's Services — publishing
+    its thin machine-readable surface (the Community Partner / provider directory and its aggregate
+    accountability reports on child welfare, prevention, foster care, and youth justice) as coherent
+    resources, and adding the one missing write surface it delegates today to NYC 311 — submitting a
+    complaint about a child care provider. Case data stays confidential by design.
+  description: >-
+    Proposed API-first surface for the NYC Administration for Children's Services (ACS), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/acs and its Open Data footprint.
+
+
+    ACS is a **confidentiality-bound, delegated-intake** domain. Almost everything it does — abuse and
+    neglect investigations, foster care, juvenile detention — is legally confidential and published
+    **only in aggregate**, and most of that aggregate is uploaded as **static report files** rather than
+    queryable datasets: of 21 ACS Open Data assets, 16 are non-tabular `file` attachments and only 5 are
+    real tabular datasets. The single address-level, machine-readable asset is the **ACS Community
+    Partners** provider directory. Meanwhile the two things a member of the public actually *does* are
+    **delegated**: reporting suspected child abuse goes to the **NY State OCFS Statewide Central Register**
+    (1-800-342-3720), and complaining about a **child care provider** goes to **NYC 311**
+    (`portal.311.nyc.gov`). ACS owns neither intake.
+
+
+    This contract does two things: (1) presents the provider directory and the aggregate accountability
+    reports as one clean, queryable resource model, and (2) adds the one net-new **write** workflow ACS
+    could own — submitting a **child care provider complaint** — while deliberately modeling the provider
+    concern, never a child's case data. Suspected abuse/neglect is always redirected to the State Central
+    Register, never collected here.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.acs.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Providers
+    description: ACS Community Partners — the address-level provider / program directory.
+  - name: ChildWelfare
+    description: Aggregate child-welfare indicators (SCR intakes, investigations, removals) — never per case.
+  - name: Prevention
+    description: Aggregate preventive-services measures by borough and community district.
+  - name: FosterCare
+    description: Aggregate foster-care statistics (placements, permanency, education, medication).
+  - name: YouthJustice
+    description: Aggregate youth & family justice statistics (detention, placement, pre-placement).
+  - name: Complaints
+    description: Submit and track a complaint about a child care provider (read + write). The net-new surface, today delegated to NYC 311.
+
+paths:
+  /providers:
+    get:
+      operationId: listProviders
+      summary: List / search ACS Community Partner providers
+      tags: [Providers]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: serviceType
+          in: query
+          schema: { type: string }
+        - name: active
+          in: query
+          schema: { type: boolean }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of providers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/provider.json' } }
+  /providers/{programCode}:
+    get:
+      operationId: getProvider
+      summary: Get a provider by program code
+      tags: [Providers]
+      parameters:
+        - name: programCode
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The provider.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/provider.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /child-welfare-indicators:
+    get:
+      operationId: listChildWelfareIndicators
+      summary: Search aggregate child-welfare indicators
+      description: Aggregate counts only (SCR intakes, investigations, removals, referrals). No individual case is ever returned.
+      tags: [ChildWelfare]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: indicator
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: year
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate child-welfare indicators.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/child-welfare-indicator.json' } }
+
+  /prevention-services:
+    get:
+      operationId: listPreventionServices
+      summary: Search aggregate preventive-services measures
+      tags: [Prevention]
+      parameters:
+        - name: metric
+          in: query
+          schema: { type: string, enum: [Children Served, New Cases, Utilization, Cases Closed, Closure Outcome] }
+        - $ref: '#/components/parameters/borough'
+        - name: year
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate preventive-services measures.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/prevention-service.json' } }
+
+  /foster-care-statistics:
+    get:
+      operationId: listFosterCareStatistics
+      summary: Search aggregate foster-care statistics
+      tags: [FosterCare]
+      parameters:
+        - name: metric
+          in: query
+          schema: { type: string, enum: [Children in 24-hour Foster Care, Foster Care Placements, Permanency Outcome, High School Graduation Rate, Educational Continuity, Government-Issued ID, Psychiatric Medication] }
+        - $ref: '#/components/parameters/borough'
+        - name: year
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate foster-care statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/foster-care-statistics.json' } }
+
+  /juvenile-justice-statistics:
+    get:
+      operationId: listJuvenileJusticeStatistics
+      summary: Search aggregate youth & family justice statistics
+      tags: [YouthJustice]
+      parameters:
+        - name: metric
+          in: query
+          schema: { type: string, enum: [Detention Admissions, Detention & Placement Demographics, Incident Reports, Preplacement, Abuse Allegation Detention & Placement] }
+        - $ref: '#/components/parameters/borough'
+        - name: year
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate youth-justice statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/juvenile-justice-statistics.json' } }
+
+  /child-care-complaints:
+    get:
+      operationId: listChildCareComplaints
+      summary: List the authenticated submitter's child care provider complaints
+      description: Reads the submitter's own provider complaints — today there is no owned ACS surface; complaints are delegated to NYC 311.
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Routed to 311, Under Review, Referred to Regulator, Resolved, Closed] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the submitter's complaints.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/child-care-complaint.json' } }
+    post:
+      operationId: createChildCareComplaint
+      summary: Submit a complaint about a child care provider
+      description: >-
+        The net-new write surface — an owned API for complaints about a child care provider,
+        replacing today's delegation to NYC 311. This models a PROVIDER concern, not case data.
+        If a specific child is being abused or neglected, this is the wrong channel: set
+        `childInvolved` true to trigger a redirect to the NY State OCFS Statewide Central Register
+        (1-800-342-3720); the API never collects a child's case details.
+      tags: [Complaints]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/child-care-complaint.json' }
+      responses:
+        '201':
+          description: Complaint submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/child-care-complaint.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /child-care-complaints/{complaintId}:
+    get:
+      operationId: getChildCareComplaint
+      summary: Get a child care provider complaint
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: complaintId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The complaint.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/child-care-complaint.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Provider: { $ref: '../schemas/provider.json' }
+    ChildWelfareIndicator: { $ref: '../schemas/child-welfare-indicator.json' }
+    PreventionService: { $ref: '../schemas/prevention-service.json' }
+    FosterCareStatistics: { $ref: '../schemas/foster-care-statistics.json' }
+    JuvenileJusticeStatistics: { $ref: '../schemas/juvenile-justice-statistics.json' }
+    ChildCareComplaint: { $ref: '../schemas/child-care-complaint.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

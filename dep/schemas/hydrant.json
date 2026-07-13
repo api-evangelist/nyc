@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dep/schemas/hydrant.json",
+  "title": "Hydrant",
+  "description": "A public fire hydrant in DEP's water-distribution network, from the 'Hydrants' dataset (5bgh-vtsn, 8c) and the 'NYCDEP Citywide Hydrants' map (6pui-xhxz, DEP's second most-viewed asset). Keyed on UNITID. The same lightweight point-asset shape is shared by DEP's 'Citywide Catch Basins' (2w2g-fk3i); this schema models the hydrant.",
+  "type": "object",
+  "x-source": {
+    "opendata_hydrants": "https://data.cityofnewyork.us/d/5bgh-vtsn",
+    "opendata_hydrants_map": "https://data.cityofnewyork.us/d/6pui-xhxz",
+    "opendata_catch_basins": "https://data.cityofnewyork.us/d/2w2g-fk3i"
+  },
+  "properties": {
+    "unitId": { "type": "string", "description": "Asset unit identifier ('UNITID')." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "communityBoard": { "type": ["string", "integer", "null"], "description": "Community board ('CB')." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "pointX": { "type": ["number", "null"], "description": "State-plane easting ('POINT_X')." },
+    "pointY": { "type": ["number", "null"], "description": "State-plane northing ('POINT_Y')." }
+  },
+  "required": ["unitId"],
+  "additionalProperties": false
+}

@@ -49,9 +49,15 @@ ORDER = ["nycgovparks.org","schools.nyc.gov","council.nyc.gov","vote.nyc","nyc31
 
 def load(p): return json.load(open(p))
 
+# Auto-discover every domain folder (any dir with a fruit.json). Keep ORDER first
+# (the curated 15), then append newly-added domains alphabetically. New domains
+# self-describe via a "meta" block in their fruit.json (written by the assessment).
+_discovered = sorted(os.path.dirname(f) for f in glob.glob("*/fruit.json"))
+DOMAINS = list(ORDER) + [d for d in _discovered if d not in ORDER]
+
 domains=[]
-for d in ORDER:
-    if not os.path.isdir(d): continue
+for d in DOMAINS:
+    if not os.path.isdir(d) or not os.path.exists(f"{d}/fruit.json"): continue
     fruit=load(f"{d}/fruit.json")
     od_files=glob.glob(f"{d}/opendata-*.json")
     od=load(od_files[0]) if od_files else []
@@ -81,7 +87,7 @@ for d in ORDER:
     for it in fruit.get("fruit",[]):
         e=it.get("entity")
         if e and e not in ents: ents.append(e)
-    m=META.get(d,{})
+    m=META.get(d) or fruit.get("meta",{})  # curated 15, else self-described in fruit.json
     domains.append({"id":d,"agency":fruit.get("agency",d),"short":m.get("short",d),
         "verb":m.get("verb",""),"platform":m.get("platform",""),"tagline":m.get("tagline",""),
         "accent":m.get("accent","#3098d8"),"netnew":m.get("netnew",""),

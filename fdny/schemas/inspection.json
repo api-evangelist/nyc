@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/fdny/schemas/inspection.json",
+  "title": "Inspection",
+  "description": "An FDNY fire-safety inspection of a premises. One canonical schema reconciling three inspection datasets: 'Bureau of Fire Prevention - Inspections' (ssq6-fkht, 20 columns), 'Risk Based Inspections (RBIS)' (itd7-gx3g, 21 columns), and 'Mandatory Inspections by Fire Companies' (kfgh-h6re, 11 columns). The 'source' discriminator says which program the row came from.",
+  "type": "object",
+  "x-source": {
+    "opendata_bfp_inspections": "https://data.cityofnewyork.us/d/ssq6-fkht",
+    "opendata_rbis": "https://data.cityofnewyork.us/d/itd7-gx3g",
+    "opendata_mandatory": "https://data.cityofnewyork.us/d/kfgh-h6re"
+  },
+  "properties": {
+    "source": {
+      "type": "string",
+      "enum": ["Bureau of Fire Prevention", "Risk Based (RBIS)", "Mandatory (Fire Company)"],
+      "description": "Which inspection program produced the record."
+    },
+    "premises": { "$ref": "_common.json#/$defs/PremisesReference" },
+    "inspectionTypeCode": { "type": ["string", "null"], "description": "'INSPTN_TYP_CD' — inspection type code (RBIS / mandatory)." },
+    "inspectionOpsDetail": { "type": ["string", "null"], "description": "'INSPTN_OPS_DETAIL' — operational detail." },
+    "inspectingUnitCode": { "type": ["string", "null"], "description": "'INSPECTING_UNIT_CODE' — the fire company / unit that inspected." },
+    "inspectionDate": { "type": ["string", "null"], "format": "date", "description": "'INSP_INSPECT_DT' — inspection date." },
+    "lastFullInspectionDate": { "type": ["string", "null"], "format": "date", "description": "'LAST_FULL_INSP_DT' (BFP)." },
+    "lastVisitDate": { "type": ["string", "null"], "format": "date", "description": "'LAST_VISIT_DT' (BFP)." },
+    "lastInspectionStatus": { "type": ["string", "null"], "description": "'LAST_INSP_STAT' — status of the last inspection (BFP)." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

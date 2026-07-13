@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dhs/schemas/outreach-request.json",
+  "title": "OutreachRequest",
+  "description": "A request for DHS street outreach — reporting a person experiencing unsheltered homelessness so a mobile outreach team (StreetSmart / the borough outreach providers) can respond. NET-NEW: there is NO public DHS API and NO Open Data twin for this transaction; today a New Yorker can only report someone on the street by calling NYC311 ('Homeless Person Assistance') or 911 for an emergency. This schema serves both the read surface (list/get a reporter's own submitted requests) and the write surface (submit a new outreach request).",
+  "type": "object",
+  "x-source": {
+    "channel_311": "https://portal.311.nyc.gov/article/?kanumber=KA-01057",
+    "site": "https://www.nyc.gov/site/dhs/outreach/street-homelessness.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "requestId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned outreach request / NYC311 service-request number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Assigned", "Outreach In Progress", "Contact Made", "Placed", "Unable To Locate", "Closed", null],
+      "description": "Lifecycle status, set by DHS / the outreach provider, not the reporter.",
+      "readOnly": true
+    },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "locationDescription": { "type": "string", "description": "Where the person is — nearest address, cross streets, subway station, park, or landmark." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "peopleCount": { "type": ["integer", "null"], "minimum": 1, "default": 1, "description": "Approximate number of people at the location." },
+    "condition": {
+      "type": ["string", "null"],
+      "enum": ["Appears Safe", "Needs Shelter", "Medical Concern", "Mental Health Concern", "Cold/Heat Emergency", "Unresponsive", null],
+      "description": "Observed condition of the person — helps triage the response."
+    },
+    "emergency": { "type": "boolean", "default": false, "description": "Set true for life-safety emergencies (unresponsive, medical, extreme cold/heat). Emergencies should also be reported to 911; DHS routes non-emergency reports to the borough outreach team." },
+    "details": { "type": ["string", "null"], "description": "Free-text description of the situation and any relevant details." },
+    "reporter": {
+      "type": "object",
+      "description": "Optional reporter contact details (a report can be submitted anonymously).",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "anonymous": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    },
+    "createdDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "closedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["locationDescription", "borough"],
+  "additionalProperties": false
+}

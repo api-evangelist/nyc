@@ -1,0 +1,181 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces FDNY's open reference/operational data (firehouses, fire & EMS incident dispatch, inspections, violations, certificates of fitness) and adds apply_for_permit — the net-new write workflow locked today inside the rented FDNY Business (Accela Civic Platform) portal.",
+    "openapi": "../openapi/fdny.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.fdny",
+    "title": "NYC Fire Department (FDNY)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the Fire Department of the City of New York — firehouses, fire and EMS incident dispatch, Bureau of Fire Prevention inspections, active violation orders, and certificates of fitness from NYC Open Data, plus the net-new ability to apply for and track a fire permit that today lives only in the rented FDNY Business (Accela) portal.",
+    "instructions": "Use find_firehouses / get_firehouse to locate fire stations by borough or council district. find_incidents searches fire and EMS incident dispatch records (set service=Fire or service=EMS); get_incident fetches one. find_inspections covers Bureau of Fire Prevention, risk-based (RBIS), and mandatory fire-company inspections by premises (BIN/BBL); find_violations returns active violation orders; find_certificates_of_fitness returns certificates by type, premises, or holder. apply_for_permit (net-new) submits an FDNY fire permit / Certificate of Operation / inspection request; it requires an authenticated applicant and mutates state — confirm the premises, permit type, and description with the user before submitting. list_my_permit_applications and get_permit_application read the applicant's own filings."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_firehouses",
+      "title": "Find Firehouses",
+      "description": "Search FDNY firehouses / fire stations by borough, council district, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/firehouse.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listFirehouses"
+    },
+    {
+      "name": "get_firehouse",
+      "title": "Get Firehouse",
+      "description": "Fetch a single FDNY firehouse (name, address, geography) by BIN.",
+      "inputSchema": { "type": "object", "properties": { "bin": { "type": "string" } }, "required": ["bin"] },
+      "outputSchema": { "$ref": "../schemas/firehouse.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getFirehouse"
+    },
+    {
+      "name": "find_incidents",
+      "title": "Find Incidents",
+      "description": "Search FDNY fire and EMS incident dispatch records by service (Fire/EMS), borough, classification, and time window. Returns dispatch and response-timing detail.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "service": { "type": "string", "enum": ["Fire", "EMS"] },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "incidentClassification": { "type": "string" },
+          "from": { "type": "string", "format": "date-time" },
+          "to": { "type": "string", "format": "date-time" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/incident-dispatch.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listIncidents"
+    },
+    {
+      "name": "get_incident",
+      "title": "Get Incident",
+      "description": "Fetch a single fire or EMS incident dispatch record by incident id (pass service to disambiguate).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "incidentId": { "type": "string" },
+          "service": { "type": "string", "enum": ["Fire", "EMS"] }
+        },
+        "required": ["incidentId"]
+      },
+      "outputSchema": { "$ref": "../schemas/incident-dispatch.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getIncident"
+    },
+    {
+      "name": "find_inspections",
+      "title": "Find Inspections",
+      "description": "Search FDNY fire-safety inspections (Bureau of Fire Prevention, Risk-Based RBIS, or Mandatory fire-company) by source, borough, premises (BIN/BBL), or date.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source": { "type": "string", "enum": ["Bureau of Fire Prevention", "Risk Based (RBIS)", "Mandatory (Fire Company)"] },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "bin": { "type": "string" },
+          "bbl": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/inspection.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listInspections"
+    },
+    {
+      "name": "find_violations",
+      "title": "Find Violations",
+      "description": "Search active FDNY Bureau of Fire Prevention violation orders by borough, premises (BIN/BBL), or date.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "bin": { "type": "string" },
+          "bbl": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/violation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listViolations"
+    },
+    {
+      "name": "find_certificates_of_fitness",
+      "title": "Find Certificates of Fitness",
+      "description": "Search FDNY certificates of fitness by type, premises (BIN), or holder name.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "cofType": { "type": "string" },
+          "bin": { "type": "string" },
+          "holderName": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/certificate-of-fitness.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCertificatesOfFitness"
+    },
+    {
+      "name": "list_my_permit_applications",
+      "title": "List My Permit Applications",
+      "description": "List the authenticated applicant's own FDNY fire permit applications and their status — today visible only inside the FDNY Business / Accela portal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Under Review", "Inspection Scheduled", "Additional Info Required", "Approved", "Issued", "Denied", "Withdrawn"] },
+          "permitType": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/fire-permit-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPermitApplications",
+      "x-auth": "user"
+    },
+    {
+      "name": "apply_for_permit",
+      "title": "Apply for a Fire Permit",
+      "description": "Submit an FDNY fire permit, Certificate of Operation, or inspection request. NET-NEW workflow with no public API today — it lives only in the rented FDNY Business (Accela Civic Platform) portal. Requires an authenticated applicant. Mutates state — confirm the premises, permit type, and description first.",
+      "inputSchema": { "$ref": "../schemas/fire-permit-application.json" },
+      "outputSchema": { "$ref": "../schemas/fire-permit-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createPermitApplication",
+      "x-auth": "user"
+    },
+    {
+      "name": "get_permit_application",
+      "title": "Get Permit Application",
+      "description": "Fetch one of the authenticated applicant's FDNY fire permit applications by application id.",
+      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
+      "outputSchema": { "$ref": "../schemas/fire-permit-application.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getPermitApplication",
+      "x-auth": "user"
+    }
+  ]
+}

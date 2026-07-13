@@ -1,0 +1,382 @@
+openapi: 3.1.0
+info:
+  title: DCWP API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Consumer and Worker Protection —
+    binding its already-open regulatory lifecycle (licenses, applications, inspections, charges,
+    consumer complaints, worker-protection matters) into a single model keyed on Business Unique ID,
+    and adding the two citizen write surfaces locked in the NYC Business portal and 311: applying for a
+    license and filing a consumer complaint.
+  description: >-
+    Proposed API-first surface for the NYC Department of Consumer and Worker Protection (DCWP, formerly
+    the Department of Consumer Affairs / DCA), from the NYC Modernization low-hanging-fruit assessment of
+    nyc.gov/site/dca and the NYC Business licensing portal.
+
+
+    DCWP is the most-open domain in this project. Its **entire regulated-business lifecycle is already on
+    NYC Open Data** — 37 datasets covering license applications, issued licenses, inspections, charges,
+    consumer complaints, revocations, and the Office of Labor Policy & Standards' worker-protection
+    matters. What is missing is (1) a single owned contract binding those 37 datasets into one resource
+    model keyed on `Business Unique ID` / `License Number`, and (2) an API for the two things a person
+    actually *does*: **apply for a business license** (today only in the Java NYC Business portal at
+    `nyc-business.nyc.gov`) and **file a consumer complaint** (today only through 311 or a web form).
+
+
+    This contract does both: it presents the open lifecycle as coherent resources, and adds the two
+    net-new **write** workflows — `createApplication` and `fileConsumerComplaint`.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.dcwp.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Licenses
+    description: DCWP-issued business licenses (the Licensee record).
+  - name: Applications
+    description: Business license applications (read + write). One of the two net-new write surfaces.
+  - name: Inspections
+    description: DCWP inspections of licensed and regulated businesses.
+  - name: Enforcement
+    description: Charges / violations that follow inspections and complaints.
+  - name: Complaints
+    description: Consumer complaints (read + write). The primary net-new citizen write surface, today in 311.
+  - name: WorkerProtection
+    description: Office of Labor Policy & Standards inquiries and enforcement matters (aggregate).
+
+paths:
+  /licenses:
+    get:
+      operationId: listLicenses
+      summary: List / search issued business licenses
+      tags: [Licenses]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: licenseType
+          in: query
+          schema: { type: string }
+        - name: licenseStatus
+          in: query
+          schema: { type: string }
+        - name: businessUniqueId
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of issued licenses.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/business-license.json' } }
+  /licenses/{licenseNumber}:
+    get:
+      operationId: getLicense
+      summary: Get an issued license by license number
+      tags: [Licenses]
+      parameters:
+        - name: licenseNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The license.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/business-license.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /license-applications:
+    get:
+      operationId: listApplications
+      summary: List / search license applications
+      tags: [Applications]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: applicationType
+          in: query
+          schema: { type: string }
+        - name: applicationStatus
+          in: query
+          schema: { type: string }
+        - name: businessUniqueId
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of license applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/license-application.json' } }
+    post:
+      operationId: createApplication
+      summary: Apply for a business license (create an application)
+      description: >-
+        Net-new write surface — an API for submitting a DCWP license application, replacing the
+        Java-only NYC Business portal (nyc-business.nyc.gov) workflow. Requires an authenticated applicant.
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/license-application.json' }
+      responses:
+        '201':
+          description: Application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/license-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /license-applications/{applicationId}:
+    get:
+      operationId: getApplication
+      summary: Get a license application by id
+      tags: [Applications]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/license-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /inspections:
+    get:
+      operationId: listInspections
+      summary: List / search DCWP inspections
+      tags: [Inspections]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: inspectionType
+          in: query
+          schema: { type: string }
+        - name: inspectionStatus
+          in: query
+          schema: { type: string }
+        - name: businessUniqueId
+          in: query
+          schema: { type: string }
+        - name: dcwpLicenseNumber
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of inspections.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/inspection.json' } }
+
+  /charges:
+    get:
+      operationId: listCharges
+      summary: List / search charges (violations)
+      tags: [Enforcement]
+      parameters:
+        - name: businessUniqueId
+          in: query
+          schema: { type: string }
+        - name: inspectionNumber
+          in: query
+          schema: { type: string }
+        - name: outcome
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of charges.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/charge.json' } }
+
+  /consumer-complaints:
+    get:
+      operationId: listConsumerComplaints
+      summary: List / search published consumer complaints
+      tags: [Complaints]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: complaintCode
+          in: query
+          schema: { type: string }
+        - name: businessUniqueId
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of consumer complaints.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/consumer-complaint.json' } }
+    post:
+      operationId: fileConsumerComplaint
+      summary: File a consumer complaint (create)
+      description: >-
+        The primary net-new write surface — an API for filing a consumer complaint against a business,
+        replacing the 311 / web-form-only workflow. Requires an authenticated complainant. Mutates state —
+        confirm the business, complaint code, and description with the user before submitting.
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/consumer-complaint.json' }
+      responses:
+        '201':
+          description: Complaint filed.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/consumer-complaint.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /consumer-complaints/{recordId}:
+    get:
+      operationId: getConsumerComplaint
+      summary: Get a consumer complaint by record id
+      tags: [Complaints]
+      parameters:
+        - name: recordId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The consumer complaint.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/consumer-complaint.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /worker-protection-cases:
+    get:
+      operationId: listWorkerProtectionCases
+      summary: List Office of Labor Policy & Standards inquiries and enforcement matters (aggregate)
+      tags: [WorkerProtection]
+      parameters:
+        - name: caseType
+          in: query
+          schema: { type: string, enum: [Enforcement Matter, Workplace Inquiry] }
+        - name: topic
+          in: query
+          schema: { type: string }
+        - name: industry
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of worker-protection cases.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/worker-protection-case.json' } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    BusinessLicense: { $ref: '../schemas/business-license.json' }
+    LicenseApplication: { $ref: '../schemas/license-application.json' }
+    Inspection: { $ref: '../schemas/inspection.json' }
+    Charge: { $ref: '../schemas/charge.json' }
+    ConsumerComplaint: { $ref: '../schemas/consumer-complaint.json' }
+    WorkerProtectionCase: { $ref: '../schemas/worker-protection-case.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

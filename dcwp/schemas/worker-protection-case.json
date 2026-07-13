@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcwp/schemas/worker-protection-case.json",
+  "title": "WorkerProtectionCase",
+  "description": "An Office of Labor Policy & Standards (OLPS) matter — the 'Worker' side of the Department of Consumer and Worker Protection: workplace inquiries and enforcement matters (paid safe/sick leave, fair workweek, minimum wage, freelance isn't free). Canonical schema reconciling 'OLPS Enforcement Matters (Historical)' (c292-vzrn, 15 columns) and 'OLPS Workplace Inquiries (Historical)' (2z24-2htf). Published as aggregate/case rollups keyed by topic, industry, and geography — never an individual worker.",
+  "type": "object",
+  "x-source": {
+    "opendata_enforcement": "https://data.cityofnewyork.us/d/c292-vzrn",
+    "opendata_inquiries": "https://data.cityofnewyork.us/d/2z24-2htf",
+    "site": "https://www.nyc.gov/site/dca/workers/workersrights.page"
+  },
+  "properties": {
+    "caseType": { "type": ["string", "null"], "enum": ["Enforcement Matter", "Workplace Inquiry", null], "description": "Which OLPS record this is." },
+    "topic": { "type": ["string", "null"], "description": "'Topic' (e.g. Paid Safe and Sick Leave, Fair Workweek)." },
+    "industry": { "type": ["string", "null"], "description": "'Industry'." },
+    "status": { "type": ["string", "null"], "description": "'Status'." },
+    "requestType": { "type": ["string", "null"], "description": "'Request Type' (inquiries)." },
+    "source": { "type": ["string", "null"], "description": "'Source' (inquiries)." },
+    "language": { "type": ["string", "null"], "description": "'Language' (inquiries)." },
+    "outcome": { "type": ["string", "null"], "description": "'Outcome' / 'Outcome Activity'." },
+    "openedOn": { "type": ["string", "null"], "format": "date", "description": "'Opened On' / 'Intake Date'." },
+    "completedOn": { "type": ["string", "null"], "format": "date", "description": "'Completed On'." },
+    "employeesAwardedRestitution": { "type": ["integer", "null"], "description": "'Total Number of Employees Awarded Restitution'." },
+    "totalRestitutionAwarded": { "type": ["number", "null"], "description": "'Total Amount of Restitution Awarded'." },
+    "civilPenaltiesAssessed": { "type": ["number", "null"], "description": "'Civil Penalties Assessed'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "additionalProperties": false
+}

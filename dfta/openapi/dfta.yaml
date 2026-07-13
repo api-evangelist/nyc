@@ -1,0 +1,338 @@
+openapi: 3.1.0
+info:
+  title: NYC Aging (DFTA) API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department for the Aging (DFTA / "NYC Aging") —
+    publishing its already-open provider network (older adult centers, contracted providers, activities,
+    service units, participation) as coherent resources, and adding the missing write surface locked
+    inside the phone-based Aging Connect intake — making a service referral.
+  description: >-
+    Proposed API-first surface for the NYC Department for the Aging (DFTA / "NYC Aging"), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/dfta and the Aging Connect intake.
+
+
+    DFTA is a **connective** agency: it rarely delivers services itself, it funds and steers a network of
+    ~1,000 community providers. Its **provider and program reference data is well published** on NYC Open
+    Data — 11 datasets covering all contracted providers, publicly open sites, older adult center (senior
+    center) operations, activities, budgeted/reported service units, expenditures, and aggregate
+    participation. But the **thing an older adult actually needs — to be connected to a service** — has no
+    machine-readable surface at all. Intake and referral (case management, home-delivered meals, benefits,
+    caregiver support, elder-abuse help, center enrollment) happen only by calling **Aging Connect**
+    (212-AGING-NYC / 212-244-6469), calling 311, or walking into a center.
+
+
+    This contract does two things: (1) presents the open provider/program datasets as one clean resource
+    model, and (2) adds the one net-new **write** workflow — creating a **service referral** (connect an
+    older adult to services) — that today exists only behind a phone queue.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.aging.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Providers
+    description: DFTA-funded service providers and their sites (older adult centers, meals, case management, and more).
+  - name: Centers
+    description: Older adult centers (senior centers) with Local Law 140 operating profiles.
+  - name: Activities
+    description: Scheduled activities and events at older adult centers.
+  - name: Services
+    description: Budgeted-and-reported contract service units and aggregate participation.
+  - name: Referrals
+    description: Make and track a service referral (read + write). The net-new surface, today locked in the phone-based Aging Connect intake.
+
+paths:
+  /providers:
+    get:
+      operationId: listProviders
+      summary: List / search DFTA-funded service providers
+      tags: [Providers]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: providerType
+          in: query
+          schema: { type: string }
+        - name: dftaFunded
+          in: query
+          schema: { type: boolean }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of service providers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/service-provider.json' } }
+  /providers/{dftaId}:
+    get:
+      operationId: getProvider
+      summary: Get a service provider by DFTA ID
+      tags: [Providers]
+      parameters:
+        - name: dftaId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The service provider.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/service-provider.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /older-adult-centers:
+    get:
+      operationId: listOlderAdultCenters
+      summary: List older adult centers (senior centers) with Local Law 140 profiles
+      tags: [Centers]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: siteType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of older adult centers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/older-adult-center.json' } }
+
+  /activities:
+    get:
+      operationId: listActivities
+      summary: Search older adult center activities and events
+      tags: [Activities]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: eventType
+          in: query
+          schema: { type: string }
+        - name: dftaId
+          in: query
+          schema: { type: string }
+        - name: isVirtual
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of activities.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/program-activity.json' } }
+
+  /service-units:
+    get:
+      operationId: listServiceUnits
+      summary: Search budgeted-and-reported contract service units
+      tags: [Services]
+      parameters:
+        - name: dftaId
+          in: query
+          schema: { type: string }
+        - name: providerType
+          in: query
+          schema: { type: string }
+        - name: serviceName
+          in: query
+          schema: { type: string }
+        - name: contractYear
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of service units.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/service-unit.json' } }
+
+  /participation:
+    get:
+      operationId: listParticipation
+      summary: Aggregate participation (unduplicated clients) by program / site
+      tags: [Services]
+      parameters:
+        - name: dftaId
+          in: query
+          schema: { type: string }
+        - name: programType
+          in: query
+          schema: { type: string }
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate participation records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/participation.json' } }
+
+  /referrals:
+    get:
+      operationId: listReferrals
+      summary: List the authenticated user's service referrals
+      description: Reads the requester's own referrals and their status — today only trackable by phone to Aging Connect.
+      tags: [Referrals]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Screening, Referred, Enrolled, Waitlisted, Closed, Declined] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the requester's referrals.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/service-referral.json' } }
+    post:
+      operationId: createReferral
+      summary: Make a service referral (connect an older adult to services)
+      description: >-
+        The net-new write surface — an API for connecting an older adult to DFTA services, replacing the
+        phone-only Aging Connect intake. Urgent situations (suspected elder abuse, no food, unsafe at
+        home) should set the `urgent` flag to true and are routed immediately to Aging Connect / Adult
+        Protective Services.
+      tags: [Referrals]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/service-referral.json' }
+      responses:
+        '201':
+          description: Referral created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/service-referral.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /referrals/{referralId}:
+    get:
+      operationId: getReferral
+      summary: Get a service referral
+      tags: [Referrals]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: referralId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The referral.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/service-referral.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ServiceProvider: { $ref: '../schemas/service-provider.json' }
+    OlderAdultCenter: { $ref: '../schemas/older-adult-center.json' }
+    ProgramActivity: { $ref: '../schemas/program-activity.json' }
+    ServiceUnit: { $ref: '../schemas/service-unit.json' }
+    Participation: { $ref: '../schemas/participation.json' }
+    ServiceReferral: { $ref: '../schemas/service-referral.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

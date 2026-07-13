@@ -1,0 +1,177 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DYCD's program finder and open supply data (programs, program sites, providers, contracts, service areas, aggregate participant demographics) and adds apply_to_program — the net-new write workflow that today lives only in DYCD's seasonal online application flow and the DYCD Connect / DiscoverDYCD apps.",
+    "openapi": "../openapi/dycd.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.dycd",
+    "title": "NYC Youth & Community Development (DYCD)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Department of Youth and Community Development — find programs (SYEP, COMPASS, Beacon, and more), their delivery sites and the community-based providers that run them, the contracts that fund them, Neighborhood Development Areas, and aggregate participant demographics from NYC Open Data and the DiscoverDYCD finder, plus the net-new ability to apply to a program (e.g. an SYEP application) that today lives only in DYCD's seasonal application flow.",
+    "instructions": "Use find_programs to discover DYCD program offerings by area, type, applicant age, or borough, and get_program for one offering. find_program_sites / get_program_site locate the physical sites where a program is delivered (with slots, participants, provider, and geography). find_providers covers the contracted CBOs; find_contracts the funding behind them; find_service_areas the Neighborhood Development Areas. find_participant_demographics returns AGGREGATE demographics only — DYCD never exposes individual participants. list_my_applications reads an authenticated applicant's own applications. apply_to_program (net-new) submits a program application; it requires an authenticated applicant and mutates state — confirm the program, applicant details (and a guardian for minors) with the user before submitting."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_programs",
+      "title": "Find Programs",
+      "description": "Search DYCD program offerings (SYEP, COMPASS/SONYC, Beacon, Cornerstone, adult literacy, immigrant services) by program area, type, applicant age, borough, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "programArea": { "type": "string" },
+          "programType": { "type": "string" },
+          "age": { "type": "integer" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/program.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPrograms"
+    },
+    {
+      "name": "get_program",
+      "title": "Get Program",
+      "description": "Fetch a single DYCD program offering (eligibility, age range, how to apply) by its program-type key.",
+      "inputSchema": { "type": "object", "properties": { "programType": { "type": "string" } }, "required": ["programType"] },
+      "outputSchema": { "$ref": "../schemas/program.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getProgram"
+    },
+    {
+      "name": "find_program_sites",
+      "title": "Find Program Sites",
+      "description": "Search DYCD program sites by borough, program area/type, provider, council district, or NDA — with slots, participants, and geography.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "programArea": { "type": "string" },
+          "programType": { "type": "string" },
+          "provider": { "type": "string" },
+          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
+          "nda": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/program-site.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listProgramSites"
+    },
+    {
+      "name": "get_program_site",
+      "title": "Get Program Site",
+      "description": "Fetch a DYCD program site (provider, program, slots, participants, address, geography) by PortfolioID.",
+      "inputSchema": { "type": "object", "properties": { "portfolioId": { "type": "string" } }, "required": ["portfolioId"] },
+      "outputSchema": { "$ref": "../schemas/program-site.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getProgramSite"
+    },
+    {
+      "name": "find_providers",
+      "title": "Find Providers",
+      "description": "Search the community-based organizations DYCD contracts to run programs, by program area, fiscal year, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "programArea": { "type": "string" },
+          "fiscalYear": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/provider.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listProviders"
+    },
+    {
+      "name": "find_contracts",
+      "title": "Find Contracts",
+      "description": "Search DYCD contracts by provider, major program, status, or fiscal year — the funding behind program sites.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "provider": { "type": "string" },
+          "majorProgram": { "type": "string" },
+          "contractStatus": { "type": "string" },
+          "fiscalYear": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/contract.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listContracts"
+    },
+    {
+      "name": "find_service_areas",
+      "title": "Find Service Areas",
+      "description": "List DYCD Neighborhood Development Areas (NDAs) — the community-development catchments — by borough.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-area.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listServiceAreas"
+    },
+    {
+      "name": "find_participant_demographics",
+      "title": "Find Participant Demographics",
+      "description": "Return AGGREGATE participant demographics (race/ethnicity, gender identity) by geography or program type. Never returns individual participants.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "geographyType": { "type": "string" },
+          "programType": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/participant-demographics.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listParticipantDemographics"
+    },
+    {
+      "name": "list_my_applications",
+      "title": "List My Applications",
+      "description": "List the authenticated applicant's own DYCD program applications and their status — today visible only inside DYCD's seasonal application flow.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Under Review", "Waitlisted", "Selected", "Enrolled", "Not Selected", "Withdrawn"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/program-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listApplications",
+      "x-auth": "user"
+    },
+    {
+      "name": "apply_to_program",
+      "title": "Apply to a Program",
+      "description": "Submit a DYCD program application (e.g. an SYEP application). NET-NEW workflow with no public API today — it lives only in DYCD's seasonal online application flow and the DYCD Connect / DiscoverDYCD apps. Requires an authenticated applicant. Mutates state — confirm the program and applicant details (and a guardian for minors) first.",
+      "inputSchema": { "$ref": "../schemas/program-application.json" },
+      "outputSchema": { "$ref": "../schemas/program-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createApplication",
+      "x-auth": "user"
+    }
+  ]
+}

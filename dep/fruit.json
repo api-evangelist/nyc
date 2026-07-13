@@ -1,0 +1,156 @@
+{
+  "domain": "dep",
+  "agency": "New York City Department of Environmental Protection (DEP)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/dep (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace) and the customer 'My DEP Account' portal at a826-umax.dep.nyc.gov (identified as the uMAX utility Customer Information System on ASP.NET / ASP.NET Core, behind Azure AD B2C at umaxazprodb2c.b2clogin.com, hosted on Azure App Service via ARRAffinity cookies). Verified the NYC Open Data agency label 'Department of Environmental Protection (DEP)' via the Socrata Discovery API and pulled all 57 assets with column schemas.",
+  "related_domains": ["a826-umax.dep.nyc.gov", "portal.311.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/dep"],
+  "headline_findings": [
+    "DEP is a split, data-rich but transaction-poor domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a customer 'My DEP Account' portal that is a uMAX utility CIS on ASP.NET + Azure AD B2C (a826-umax.dep.nyc.gov) with no API.",
+    "The reference/telemetry data is unusually OPEN: 57 NYC Open Data datasets covering water consumption (ia2d-e54m, DEP's most-viewed), reservoir levels (zkky-n5j3), harbor/drinking/watershed/lead-copper water quality, green infrastructure, hydrants & catch basins, and water/air/asbestos permits.",
+    "But that corpus is sprawling and inconsistently typed — Harbor Water Quality is 100 free-text columns, reservoir levels are cryptic SCADA tags, and there are ~a dozen near-duplicate Watershed Water Quality tables. Open does not mean usable.",
+    "The customer SERVICE layer is split and locked: water-bill payment and account management live only inside the login-walled uMAX portal, while street conditions (water-main break, no water, sewer backup, clogged catch basin, hydrant) are funneled into generic NYC311 — neither is a DEP-owned API.",
+    "Net-new write surface: report a water/sewer problem (WaterServiceRequest) — the most urgent resident transaction, with no single machine-readable contract today. See tech-stack.md and apis-observed.md."
+  ],
+  "meta": {
+    "short": "NYC Environmental Protection (DEP)",
+    "verb": "Transact",
+    "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) + uMAX CIS on ASP.NET + Azure AD B2C",
+    "netnew": "WaterServiceRequest",
+    "accent": "#2f8fb0",
+    "tagline": "The water data is wide open; the water transactions are locked in a billing portal and dumped into 311.",
+    "headline": "DEP publishes 57 open environmental datasets but gives customers no owned API to pay a bill, manage an account, or report a water-main break or sewer backup."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 0,
+    "openData": 3,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov Livesite site + modern-but-packaged uMAX CIS (Azure B2C)",
+    "siteApi": "No content or site API; informational HTML only",
+    "openData": "57 Socrata datasets, broad coverage, well-trafficked",
+    "coreData": "Open but sprawling/inconsistent — 100-col text tables, cryptic SCADA tags, no clean model",
+    "writeApi": "None — bill pay/account in uMAX portal; service requests go to generic 311",
+    "agent": "No agent-native surface at all",
+    "ownership": "Data via rented Socrata; transactions in rented uMAX + citywide 311"
+  },
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "57 DEP datasets; SODA /resource/<id>.json endpoints. The real, open DEP API — reference/telemetry data only, and sprawling/inconsistently typed." },
+    { "endpoint": "a826-umax.dep.nyc.gov", "type": "customer billing/account portal (CIS)", "owner": "NYC DEP (uMAX / Advanced Utility Systems)", "public": "login-walled UI, no API", "note": "water/sewer bill payment + account management; ASP.NET / ASP.NET Core SPA behind Azure AD B2C (umaxazprodb2c.b2clogin.com), on Azure App Service. Public /quickpay page but no JSON/OpenAPI." },
+    { "endpoint": "portal.311.nyc.gov", "type": "citywide service-request intake", "owner": "NYC (311 / OTI)", "public": "public UI", "note": "where DEP street conditions (main break, no water, sewer backup, catch basin, hydrant, water quality) are actually reported — generic 311, not a DEP-owned intake." },
+    { "endpoint": "data.cityofnewyork.us/d/4fvw-nn9c", "type": "open data (Work Order Management Module)", "owner": "NYC DEP via Socrata", "public": true, "note": "DEP's completed work orders / service requests — closest open twin to the locked service layer, but read-only and after the fact." },
+    { "endpoint": "www.nyc.gov/site/dep/", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API." }
+  ],
+  "fruit": [
+    {
+      "name": "Water Consumption (citywide)",
+      "type": "data table",
+      "entity": "WaterConsumption",
+      "url": "https://data.cityofnewyork.us/d/ia2d-e54m",
+      "count": "~40 years",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Water Consumption in the City of New York ia2d-e54m (4c)"],
+      "notes": "DEP's single most-viewed dataset (111k views). Population, million-gallons-per-day, per-capita gallons per person per day — CITYWIDE ONLY. Per-account consumption lives only in the uMAX portal."
+    },
+    {
+      "name": "Reservoir Levels",
+      "type": "telemetry table",
+      "entity": "ReservoirLevel",
+      "url": "https://www.nyc.gov/site/dep/water/reservoir-levels.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Current Reservoir Levels zkky-n5j3 (25c)"],
+      "notes": "Catskill/Delaware/Croton system storage, elevation, and release flows — but as 25 cryptic SCADA column tags (NICRESVOLUME, RECRESELEVANALOG). Normalized to one reservoir per record in the schema."
+    },
+    {
+      "name": "Water Quality (harbor, drinking, watershed, lead/copper)",
+      "type": "monitoring data",
+      "entity": "WaterQualitySample",
+      "url": "https://www.nyc.gov/site/dep/water/drinking-water.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Harbor Water Quality 5uug-f49n (100c)", "Drinking Water Quality Distribution Monitoring bkwf-xfky (10c)", "Watershed Water Quality Data y43c-5n92 + subtables", "Free Residential at-the-tap Lead and Copper k5us-nav4 (11c)"],
+      "notes": "Broad but inconsistently typed — Harbor Water Quality alone is 100 free-text columns. Analytes normalized into a measurements map so agents don't decode hundreds of columns."
+    },
+    {
+      "name": "Green Infrastructure",
+      "type": "GIS asset inventory",
+      "entity": "GreenInfrastructure",
+      "url": "https://www.nyc.gov/site/dep/water/green-infrastructure.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["DEP Green Infrastructure (Point Layer) df32-vzax (35c)", "Regulated Projects fm4z-qud6 (33c)", "Porous Pavement ROW n7f2-dyvt (31c)", "Medians drep-uzs7 (33c)"],
+      "notes": "Rain gardens, bioswales, porous pavement managing combined-sewer overflow. Parallel layers with truncated 10-char shapefile column names; keyed on GI_ID."
+    },
+    {
+      "name": "Hydrants & Catch Basins",
+      "type": "GIS asset inventory",
+      "entity": "Hydrant",
+      "url": "https://data.cityofnewyork.us/d/6pui-xhxz",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["NYCDEP Citywide Hydrants map 6pui-xhxz", "Hydrants 5bgh-vtsn (8c)", "NYCDEP Citywide Catch Basins 2w2g-fk3i (10c)"],
+      "notes": "Distribution point assets. Citywide Hydrants map is DEP's 2nd most-viewed asset. Lightweight UNITID + coordinates shape shared with catch basins."
+    },
+    {
+      "name": "Permits (water/sewer, clean-air CATS, asbestos)",
+      "type": "regulatory records",
+      "entity": "Permit",
+      "url": "https://data.cityofnewyork.us/d/hphy-6g7m",
+      "machine_readable": "Open Data (SODA) — read only",
+      "verified": true,
+      "opendata_match": ["Water and Sewer Permits hphy-6g7m (8c)", "Water and Sewer Permits (Historic) 4k4u-823g (9c)", "Clean Air Tracking System (CATS) Permits f4rp-2kvy (21c)", "Asbestos Control Program (ACP7) vq35-j9qm (35c)"],
+      "opendata_gap": false,
+      "notes": "Issued permits are readable on Open Data by block/lot/borough/status, but APPLYING for or renewing a permit has no public API."
+    },
+    {
+      "name": "Pay water/sewer bill",
+      "type": "transaction (portal)",
+      "entity": "WaterServiceRequest",
+      "url": "https://a826-umax.dep.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Bill payment lives only in the uMAX My DEP Account portal (ASP.NET + Azure AD B2C); no API. A public /quickpay page exists but exposes no machine contract."
+    },
+    {
+      "name": "Manage water/sewer account",
+      "type": "workflow (portal)",
+      "entity": "WaterServiceRequest",
+      "url": "https://a826-umax.dep.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Account management (start/stop service, view balance, autopay) — uMAX-only; no API."
+    },
+    {
+      "name": "Report a sewer backup / catch-basin flooding",
+      "type": "service request (311)",
+      "entity": "WaterServiceRequest",
+      "url": "https://portal.311.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["Work Order Management Module 4fvw-nn9c (read-only twin)"],
+      "opendata_gap": true,
+      "notes": "Sewer backup / clogged catch basin is reported through generic NYC311, not a DEP-owned intake. An alternative net-new write surface; folded into WaterServiceRequest."
+    },
+    {
+      "name": "Report a water problem (main break / no water / leak)",
+      "type": "sign-up / ticket workflow",
+      "entity": "WaterServiceRequest",
+      "url": "https://portal.311.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["Work Order Management Module 4fvw-nn9c (read-only twin)"],
+      "opendata_gap": true,
+      "notes": "The most urgent resident transaction — report and track a water-main break, no water, low pressure, leak, hydrant, or discolored water. No DEP-owned API; split between NYC311 and phone. The net-new WRITE surface for this domain."
+    }
+  ]
+}
