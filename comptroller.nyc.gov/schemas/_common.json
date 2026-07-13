@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/comptroller.nyc.gov/schemas/_common.json",
+  "title": "NYC Comptroller — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Office of the Comptroller object schemas. Reconciles fields common to the Checkbook NYC API (checkbooknyc.com/api — Spending, Contracts, Budget, Revenue, Payroll domains), the Office of the Comptroller NYC Open Data assets, and comptroller.nyc.gov (WordPress).",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "description": "NYC borough (or a citywide/various marker used across Comptroller data).",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", "Citywide", "Various", "Outside NYC"]
+    },
+    "Money": {
+      "type": "object",
+      "description": "A monetary amount. Checkbook and Comptroller financial data are USD; the amount mirrors Checkbook fields such as check_amount, current_amount, disposition_amount.",
+      "properties": {
+        "amount": { "type": ["number", "null"], "description": "Numeric amount." },
+        "currency": { "type": "string", "default": "USD", "enum": ["USD"] }
+      },
+      "required": ["amount"],
+      "additionalProperties": false
+    },
+    "FiscalYear": {
+      "type": "integer",
+      "description": "NYC fiscal year (July 1 – June 30), labeled by the ending calendar year. Checkbook `fiscal_year`.",
+      "minimum": 1990,
+      "maximum": 2100
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point geography.",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Location": {
+      "type": "object",
+      "description": "A physical location spine — free-form address plus borough and optional coordinates.",
+      "properties": {
+        "address": { "type": ["string", "null"] },
+        "borough": { "$ref": "_common.json#/$defs/Borough" },
+        "postcode": { "type": ["string", "null"] },
+        "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+      },
+      "additionalProperties": false
+    },
+    "AgencyReference": {
+      "type": "object",
+      "description": "A reference to a City agency as it appears in Checkbook / Comptroller data (e.g. 'Police Department', 'Department of Education').",
+      "properties": {
+        "name": { "type": "string", "description": "Agency name (Checkbook `agency`)." },
+        "code": { "type": ["string", "null"], "description": "Agency code (Checkbook `agency_code`) where present." }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    },
+    "VendorReference": {
+      "type": "object",
+      "description": "A reference to a vendor/payee.",
+      "properties": {
+        "name": { "type": "string", "description": "Vendor name (Checkbook `vendor` / `prime_vendor`)." },
+        "mwbeCategory": { "type": ["string", "null"], "description": "M/WBE category (Checkbook `mwbe_category`)." }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    }
+  }
+}

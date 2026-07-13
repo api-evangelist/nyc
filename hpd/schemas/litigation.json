@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hpd/schemas/litigation.json",
+  "title": "LitigationCase",
+  "description": "A housing litigation case brought by HPD (or a tenant) over conditions or harassment. Reconciles the HPD Online litigation record with the 'Housing Litigations' Open Data dataset (59kj-x8nc, 24 columns). Keyed on litigationId; hangs off buildingId.",
+  "type": "object",
+  "x-source": {
+    "hpdOnlineApi": "https://mspwvw-hpdleov3.nyc.gov/hpdonline.api/1.0/api (litigation)",
+    "opendata": "https://data.cityofnewyork.us/d/59kj-x8nc"
+  },
+  "properties": {
+    "litigationId": { "type": "string", "description": "HPD Litigation ID (litigationid)." },
+    "building": { "$ref": "_common.json#/$defs/BuildingReference" },
+    "caseType": { "type": ["string", "null"], "description": "Case type (casetype), e.g. 'Access Warrant - Non-Lead', 'Comprehensive', 'Heat'." },
+    "caseStatus": { "type": ["string", "null"], "description": "Case status (casestatus), e.g. 'PENDING', 'CLOSED'." },
+    "caseJudgement": { "type": ["string", "null"], "description": "Judgement (casejudgement)." },
+    "respondent": { "type": ["string", "null"], "description": "Respondent (respondent)." },
+    "findingOfHarassment": { "type": ["string", "null"], "description": "Finding of harassment (findingofharassment), e.g. 'Yes', 'No', 'Pending'." },
+    "penalty": { "type": ["number", "null"], "description": "Penalty amount (penalty)." },
+    "dates": {
+      "type": "object",
+      "properties": {
+        "caseOpenDate": { "type": ["string", "null"], "format": "date", "description": "caseopendate" },
+        "findingDate": { "type": ["string", "null"], "format": "date", "description": "findingdate" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["litigationId"],
+  "additionalProperties": false
+}

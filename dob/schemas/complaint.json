@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dob/schemas/complaint.json",
+  "title": "Complaint",
+  "description": "A construction/building complaint received by DOB about a building (often routed from 311). Reconciles the 'DOB Complaints Received' Open Data extract (eabe-havv, 15 columns). Keyed on Complaint Number and tied to a building by BIN; complaints can lead to inspections and Violations.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/eabe-havv",
+    "intake": "311 / https://a810-bisweb.nyc.gov (BIS complaint record)"
+  },
+  "properties": {
+    "complaintNumber": { "type": "string", "description": "Open Data 'Complaint Number'." },
+    "status": { "type": ["string", "null"], "description": "Open Data 'Status' (e.g. ACTIVE, CLOSED)." },
+    "complaintCategory": { "type": ["string", "null"], "description": "Category code describing the complaint (Open Data 'Complaint Category')." },
+    "dispositionCode": { "type": ["string", "null"], "description": "Open Data 'Disposition Code' — the inspection outcome." },
+    "bin": { "type": ["string", "null"], "description": "Open Data 'BIN'." },
+    "unit": { "type": ["string", "null"], "description": "Open Data 'Unit' — DOB unit assigned." },
+    "specialDistrict": { "type": ["string", "null"], "description": "Open Data 'Special District'." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "houseStreet": { "type": ["string", "null"], "description": "Combined address (Open Data 'House Street')." },
+    "geography": { "$ref": "_common.json#/$defs/GeographySpine" },
+    "dates": {
+      "type": "object",
+      "properties": {
+        "entered": { "type": ["string", "null"], "format": "date", "description": "Open Data 'Date Entered'." },
+        "inspection": { "type": ["string", "null"], "format": "date", "description": "Open Data 'Inspection Date'." },
+        "disposition": { "type": ["string", "null"], "format": "date", "description": "Open Data 'Disposition Date'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["complaintNumber"],
+  "additionalProperties": false
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/schemas/tax-lot.json",
+  "title": "TaxLot",
+  "description": "A NYC tax lot as described by DCP's Primary Land Use Tax Lot Output (PLUTO / MapPLUTO) — the authoritative, 108-column citywide record keyed on BBL. PLUTO is THE source of the BBL and the citywide geography spine that every other agency's data references; this schema is authoritative for nyc-commons, not derived from it. Reconciles PLUTO (64uk-42ks) with MapPLUTO (f888-ni5f) and the NYC Zoning Tax Lot Database (fdkv-4t4z).",
+  "type": "object",
+  "x-source": {
+    "opendata_pluto": "https://data.cityofnewyork.us/d/64uk-42ks",
+    "opendata_mappluto": "https://data.cityofnewyork.us/d/f888-ni5f",
+    "opendata_zoning_taxlot": "https://data.cityofnewyork.us/d/fdkv-4t4z",
+    "zola": "https://zola.planning.nyc.gov/"
+  },
+  "properties": {
+    "bbl": { "$ref": "_common.json#/$defs/BBL" },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "borocode": { "$ref": "_common.json#/$defs/BoroCode" },
+    "block": { "type": ["integer", "null"], "description": "Tax block." },
+    "lot": { "type": ["integer", "null"], "description": "Tax lot." },
+    "address": { "type": ["string", "null"], "description": "Primary address (address)." },
+    "zipCode": { "type": ["string", "null"], "description": "postcode." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "geography": {
+      "$ref": "_common.json#/$defs/GeographySpine",
+      "description": "PLUTO is where these administrative geographies are attached to every lot — community board, council district, census tract, school district, police precinct, etc."
+    },
+    "landUse": { "type": ["string", "null"], "description": "Land use category code (landuse) 01–11." },
+    "ownerName": { "type": ["string", "null"], "description": "ownername." },
+    "ownerType": { "type": ["string", "null"], "description": "ownertype." },
+    "lotArea": { "type": ["number", "null"], "description": "Lot area in sq ft (lotarea)." },
+    "buildingArea": { "type": ["number", "null"], "description": "Total building floor area (bldgarea)." },
+    "buildingClass": { "type": ["string", "null"], "description": "bldgclass." },
+    "numBuildings": { "type": ["integer", "null"], "description": "numbldgs." },
+    "numFloors": { "type": ["number", "null"], "description": "numfloors." },
+    "yearBuilt": { "type": ["integer", "null"], "description": "yearbuilt." },
+    "unitsResidential": { "type": ["integer", "null"], "description": "unitsres." },
+    "unitsTotal": { "type": ["integer", "null"], "description": "unitstotal." },
+    "zoning": {
+      "type": "object",
+      "description": "Zoning applied to this lot (see zoning-district.json).",
+      "properties": {
+        "zoneDist1": { "type": ["string", "null"], "description": "zonedist1." },
+        "zoneDist2": { "type": ["string", "null"] },
+        "zoneDist3": { "type": ["string", "null"] },
+        "zoneDist4": { "type": ["string", "null"] },
+        "commercialOverlay1": { "type": ["string", "null"], "description": "overlay1." },
+        "commercialOverlay2": { "type": ["string", "null"], "description": "overlay2." },
+        "specialDistrict1": { "type": ["string", "null"], "description": "spdist1." },
+        "splitZone": { "type": ["boolean", "null"], "description": "splitzone." },
+        "zoningMapNumber": { "type": ["string", "null"], "description": "zonemap." }
+      },
+      "additionalProperties": false
+    },
+    "far": {
+      "type": "object",
+      "description": "Floor Area Ratios.",
+      "properties": {
+        "builtFar": { "type": ["number", "null"], "description": "builtfar." },
+        "residentialFar": { "type": ["number", "null"], "description": "residfar." },
+        "commercialFar": { "type": ["number", "null"], "description": "commfar." },
+        "facilityFar": { "type": ["number", "null"], "description": "facilfar." }
+      },
+      "additionalProperties": false
+    },
+    "landmark": { "type": ["string", "null"], "description": "Landmark name if designated (landmark)." },
+    "historicDistrict": { "type": ["string", "null"], "description": "histdist." },
+    "version": { "type": ["string", "null"], "description": "PLUTO release version (version), e.g. '24v1'." }
+  },
+  "required": ["bbl"],
+  "additionalProperties": false
+}

@@ -1,0 +1,395 @@
+openapi: 3.1.0
+info:
+  title: NYC TLC API (proposed)
+  version: 0.1.0
+  summary: One owned, resource-oriented, agent-native API for the NYC Taxi & Limousine Commission — turning the world-famous but batch-only TLC open data (monthly parquet trip files + flat Socrata license snapshots) into a live, queryable, transactional surface.
+  description: >-
+    Proposed API-first surface for the New York City Taxi & Limousine Commission (TLC), from the
+    NYC Modernization low-hanging-fruit assessment of nyc.gov/site/tlc.
+
+
+    TLC is the most DATA-rich domain in the project and the least API-native. Its flagship
+    **Trip Record Data** ships as monthly **parquet files** on CloudFront
+    (d37ci6vzurychx.cloudfront.net/trip-data) — a bulk download, not a query. Driver, vehicle, and
+    base licensing live as **flat daily snapshots** across 80 NYC Open Data (Socrata) datasets. The
+    **Taxi Zones** that every trip's PULocationID/DOLocationID point at are a CSV + shapefile, not a
+    resource. And licensing is **read-only status** — there is no API to apply for a license.
+
+
+    This contract operationalizes all of it: TripRecord, Vehicle, DriverLicense, Base, TaxiZone, and
+    Inspection as queryable resources, plus the one net-new WRITE workflow — **LicenseApplication**
+    (apply for a TLC driver or vehicle license and track its status).
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.tlc.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Trips
+    description: Taxi & for-hire trip records (fronts the TLC Trip Record parquet files + Open Data snapshots).
+  - name: Vehicles
+    description: TLC-licensed vehicles — FHV, medallion, and SHL permits.
+  - name: Drivers
+    description: TLC-licensed drivers — medallion, FHV, and SHL.
+  - name: Bases
+    description: FHV / SHL base stations and their dispatch aggregates.
+  - name: Zones
+    description: TLC Taxi Zones — the geography spine behind trip location IDs.
+  - name: Inspections
+    description: Scheduled vehicle inspections.
+  - name: Licensing
+    description: Apply for a TLC license and track application status (read + write). The net-new surface.
+
+paths:
+  /trip-records:
+    get:
+      operationId: listTripRecords
+      summary: Search taxi & for-hire trip records
+      description: Fronts the monthly TLC Trip Record parquet files and the yearly Open Data snapshots as a queryable resource.
+      tags: [Trips]
+      parameters:
+        - name: serviceType
+          in: query
+          schema: { type: string, enum: [yellow, green, fhv, fhvhv] }
+        - name: pickupZone
+          in: query
+          description: Pickup TLC Taxi Zone LocationID (PULocationID).
+          schema: { type: integer, minimum: 1, maximum: 265 }
+        - name: dropoffZone
+          in: query
+          description: Drop-off TLC Taxi Zone LocationID (DOLocationID).
+          schema: { type: integer, minimum: 1, maximum: 265 }
+        - name: from
+          in: query
+          schema: { type: string, format: date-time }
+        - name: to
+          in: query
+          schema: { type: string, format: date-time }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of trip records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/trip-record.json' } }
+
+  /vehicles:
+    get:
+      operationId: listVehicles
+      summary: List / search TLC-licensed vehicles
+      tags: [Vehicles]
+      parameters:
+        - name: licenseType
+          in: query
+          schema: { type: string, enum: [Medallion Taxi, Street Hail Livery (SHL), For-Hire Vehicle (FHV)] }
+        - name: active
+          in: query
+          schema: { type: boolean }
+        - name: wheelchairAccessible
+          in: query
+          schema: { type: boolean }
+        - name: baseNumber
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of vehicles.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/vehicle.json' } }
+  /vehicles/{licenseNumber}:
+    get:
+      operationId: getVehicle
+      summary: Get a vehicle by license number
+      tags: [Vehicles]
+      parameters:
+        - name: licenseNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The vehicle.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/vehicle.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /drivers:
+    get:
+      operationId: listDrivers
+      summary: List / search TLC-licensed drivers
+      tags: [Drivers]
+      parameters:
+        - name: licenseType
+          in: query
+          schema: { type: string, enum: [Medallion Driver, FHV Driver, Street Hail Livery (SHL)] }
+        - name: active
+          in: query
+          schema: { type: boolean }
+        - name: passengerAssistanceTrained
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of drivers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/driver-license.json' } }
+  /drivers/{licenseNumber}:
+    get:
+      operationId: getDriver
+      summary: Get a driver by license number
+      tags: [Drivers]
+      parameters:
+        - name: licenseNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The driver.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/driver-license.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /bases:
+    get:
+      operationId: listBases
+      summary: List / search FHV & SHL base stations
+      tags: [Bases]
+      parameters:
+        - name: typeOfBase
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of bases.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/base.json' } }
+  /bases/{baseNumber}:
+    get:
+      operationId: getBase
+      summary: Get a base by license number
+      tags: [Bases]
+      parameters:
+        - name: baseNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The base.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/base.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /taxi-zones:
+    get:
+      operationId: listTaxiZones
+      summary: List TLC Taxi Zones
+      description: The ~263 zones behind trip-record PULocationID / DOLocationID.
+      tags: [Zones]
+      parameters:
+        - name: borough
+          in: query
+          schema: { $ref: '#/components/parameters/borough/schema' }
+        - name: serviceZone
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: Taxi zones.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/taxi-zone.json' } }
+  /taxi-zones/{locationId}:
+    get:
+      operationId: getTaxiZone
+      summary: Get a taxi zone by LocationID
+      tags: [Zones]
+      parameters:
+        - name: locationId
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1, maximum: 265 }
+      responses:
+        '200':
+          description: The taxi zone.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/taxi-zone.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /inspections:
+    get:
+      operationId: listInspections
+      summary: List scheduled vehicle inspections
+      tags: [Inspections]
+      parameters:
+        - name: medallionNumber
+          in: query
+          schema: { type: string }
+        - name: agentName
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of inspection schedules.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/inspection.json' } }
+
+  /license-applications:
+    get:
+      operationId: listLicenseApplications
+      summary: List the authenticated user's license applications
+      tags: [Licensing]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Applications.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/license-application.json' } }
+    post:
+      operationId: createLicenseApplication
+      summary: Apply for a TLC driver or vehicle license
+      description: The net-new write surface — an API for submitting a TLC license application (today only read-only status exists).
+      tags: [Licensing]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/license-application.json' }
+      responses:
+        '201':
+          description: Application created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/license-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /license-applications/{applicationId}:
+    get:
+      operationId: getLicenseApplication
+      summary: Get a license application / its status
+      tags: [Licensing]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The application and its requirement checklist.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/license-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    TripRecord: { $ref: '../schemas/trip-record.json' }
+    Vehicle: { $ref: '../schemas/vehicle.json' }
+    DriverLicense: { $ref: '../schemas/driver-license.json' }
+    Base: { $ref: '../schemas/base.json' }
+    TaxiZone: { $ref: '../schemas/taxi-zone.json' }
+    Inspection: { $ref: '../schemas/inspection.json' }
+    LicenseApplication: { $ref: '../schemas/license-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island, EWR, Unknown] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

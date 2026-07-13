@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/schemas/zoning-district.json",
+  "title": "ZoningDistrict",
+  "description": "A NYC zoning district — the regulatory classification (residential R, commercial C, manufacturing M, plus special-purpose and overlay districts) governing use, bulk, and density on a lot. Defined and mapped by DCP; rendered in ZoLa and encoded per-lot in the NYC Zoning Tax Lot Database (fdkv-4t4z) and PLUTO.",
+  "type": "object",
+  "x-source": {
+    "opendata_zoning_taxlot": "https://data.cityofnewyork.us/d/fdkv-4t4z",
+    "opendata_digital_city_map": "https://data.cityofnewyork.us/d/m2vu-mgzw",
+    "zola": "https://zola.planning.nyc.gov/"
+  },
+  "properties": {
+    "code": { "type": "string", "description": "Zoning district code, e.g. 'R6', 'C1-2', 'M1-1', 'R8B'." },
+    "category": {
+      "type": ["string", "null"],
+      "enum": ["Residential", "Commercial", "Manufacturing", "Special Purpose", "Battery Park City", "Park", null],
+      "description": "Primary district family."
+    },
+    "kind": {
+      "type": ["string", "null"],
+      "enum": ["Base District", "Commercial Overlay", "Special District", "Limited Height District", null],
+      "description": "Whether this is a base zoning district, an overlay, or a special district."
+    },
+    "description": { "type": ["string", "null"], "description": "Plain-language description of what the district permits." },
+    "specialDistrictName": { "type": ["string", "null"], "description": "Full name if a special-purpose district (spdist)." },
+    "maxResidentialFar": { "type": ["number", "null"], "description": "Maximum residential FAR permitted." },
+    "maxCommercialFar": { "type": ["number", "null"], "description": "Maximum commercial FAR permitted." },
+    "maxFacilityFar": { "type": ["number", "null"], "description": "Maximum community-facility FAR permitted." },
+    "zoningMapNumber": { "type": ["string", "null"], "description": "DCP zoning map number where the district appears (zonemap)." },
+    "zoningResolutionUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the governing section of the NYC Zoning Resolution." }
+  },
+  "required": ["code"],
+  "additionalProperties": false
+}

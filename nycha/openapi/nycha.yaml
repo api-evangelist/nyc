@@ -1,0 +1,358 @@
+openapi: 3.1.0
+info:
+  title: NYCHA API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the New York City Housing Authority — publishing its
+    already-open reference data (developments, addresses, facilities, utility metering, resident
+    statistics) as coherent resources, and adding the missing write surface locked inside the Oracle
+    Siebel Self Service Portal — reporting a repair (work order).
+  description: >-
+    Proposed API-first surface for the New York City Housing Authority (NYCHA), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/nycha and the Self Service Portal.
+
+
+    NYCHA is a split domain. Its **physical and administrative reference data is unusually well
+    published** on NYC Open Data — 24 datasets covering developments, residential addresses, community
+    facilities, six streams of utility consumption-and-cost metering, and aggregate resident demographics.
+    But its **resident service layer is entirely locked inside a vendor CRM**: the NYCHA Self Service
+    Portal (`selfserve.nycha.info`) is an Oracle Siebel application with no API, where residents pay rent,
+    recertify income, check application/waitlist status, and — most commonly — report and track repairs.
+    None of that transactional surface has a machine-readable contract or an Open Data twin.
+
+
+    This contract does two things: (1) presents the open reference datasets as one clean resource model,
+    and (2) adds the one net-new **write** workflow — creating a maintenance **work order** (report a
+    repair) — that today exists only behind the Siebel portal or a phone call to the Customer Contact
+    Center.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.nycha.info/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Developments
+    description: Public housing developments and their buildings/addresses.
+  - name: Facilities
+    description: Community facilities, service centers, and customer contact centers.
+  - name: Utilities
+    description: Development-level utility consumption and cost metering (PropertyMeter).
+  - name: Residents
+    description: Aggregate resident demographics (never individual households).
+  - name: WorkOrders
+    description: Report and track maintenance repairs (read + write). The net-new surface, today locked in the Siebel Self Service Portal.
+
+paths:
+  /developments:
+    get:
+      operationId: listDevelopments
+      summary: List / search public housing developments
+      tags: [Developments]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: program
+          in: query
+          schema: { type: string }
+        - name: seniorDevelopment
+          in: query
+          schema: { type: boolean }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of developments.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/development.json' } }
+  /developments/{tds}:
+    get:
+      operationId: getDevelopment
+      summary: Get a development by TDS number
+      tags: [Developments]
+      parameters:
+        - name: tds
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The development.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/development.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /developments/{tds}/addresses:
+    get:
+      operationId: getDevelopmentAddresses
+      summary: List the residential addresses in a development
+      tags: [Developments]
+      parameters:
+        - name: tds
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Residential addresses.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/residential-address.json' } }
+
+  /addresses:
+    get:
+      operationId: listAddresses
+      summary: Search NYCHA residential addresses
+      tags: [Developments]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - name: zipCode
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of addresses.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/residential-address.json' } }
+
+  /facilities:
+    get:
+      operationId: listFacilities
+      summary: List community facilities, service centers, and contact centers
+      tags: [Facilities]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: type
+          in: query
+          schema: { type: string }
+        - name: programType
+          in: query
+          schema: { type: string }
+        - name: development
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of facilities.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/community-facility.json' } }
+
+  /utility-consumption:
+    get:
+      operationId: listUtilityConsumption
+      summary: Search development-level utility consumption & cost metering
+      tags: [Utilities]
+      parameters:
+        - name: utility
+          in: query
+          schema: { type: string, enum: [Electric, Water, Heating Gas, Cooking Gas, Steam, Heating Oil] }
+        - name: development
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: revenueMonth
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of metered utility bills.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/utility-consumption.json' } }
+
+  /resident-statistics:
+    get:
+      operationId: listResidentStatistics
+      summary: Aggregate resident demographics by development / program
+      tags: [Residents]
+      parameters:
+        - name: development
+          in: query
+          schema: { type: string }
+        - name: program
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate resident statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/resident-statistics.json' } }
+
+  /work-orders:
+    get:
+      operationId: listWorkOrders
+      summary: List the authenticated resident's repair work orders
+      description: Reads the resident's own maintenance tickets — today only visible inside the Siebel Self Service Portal.
+      tags: [WorkOrders]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Scheduled, In Progress, On Hold, Completed, Cancelled] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the resident's work orders.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/work-order.json' } }
+    post:
+      operationId: createWorkOrder
+      summary: Report a repair (create a work order)
+      description: >-
+        The net-new write surface — an API for reporting a maintenance repair, replacing the
+        Siebel-only workflow. Emergencies (no heat/hot water, gas, flooding) should set the
+        `emergency` flag to true and are routed to the 24-hour Customer Contact Center.
+      tags: [WorkOrders]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/work-order.json' }
+      responses:
+        '201':
+          description: Work order created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/work-order.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /work-orders/{workOrderId}:
+    get:
+      operationId: getWorkOrder
+      summary: Get a repair work order
+      tags: [WorkOrders]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: workOrderId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The work order.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/work-order.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Development: { $ref: '../schemas/development.json' }
+    ResidentialAddress: { $ref: '../schemas/residential-address.json' }
+    CommunityFacility: { $ref: '../schemas/community-facility.json' }
+    UtilityConsumption: { $ref: '../schemas/utility-consumption.json' }
+    ResidentStatistics: { $ref: '../schemas/resident-statistics.json' }
+    WorkOrder: { $ref: '../schemas/work-order.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

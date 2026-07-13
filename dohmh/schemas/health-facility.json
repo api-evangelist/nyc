@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dohmh/schemas/health-facility.json",
+  "title": "HealthFacility",
+  "description": "A DOHMH-operated or -listed public health facility — a Sexual Health (STD) Clinic, immunization/TB clinic, or other service site surfaced by the NYC Health Map. Reverse-engineered from the NYC Health Map facility finder (a816-health.nyc.gov/NYCHealthMap) and the /services/allclinics and /services/sexual-health-clinics pages; there is no open dataset for this, so it is a structured proposal.",
+  "type": "object",
+  "x-source": {
+    "finder": "https://a816-health.nyc.gov/NYCHealthMap/",
+    "clinics": "https://www.nyc.gov/site/doh/services/allclinics.page"
+  },
+  "properties": {
+    "facilityId": { "type": "string", "description": "Facility identifier (proposed; NYC Health Map internal id)." },
+    "name": { "type": "string", "description": "Facility / clinic name." },
+    "serviceCategory": {
+      "type": ["string", "null"],
+      "description": "Service category, e.g. 'Sexual Health Clinic', 'Immunization', 'Tuberculosis', 'Lead Poisoning', 'Mental Health'.",
+      "enum": ["Sexual Health Clinic", "Immunization", "Tuberculosis", "Lead Poisoning Prevention", "Mental Health", "Reproductive Health", "Other", null]
+    },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "phone": { "type": ["string", "null"] },
+    "hours": { "type": ["string", "null"], "description": "Operating hours, free text." },
+    "servicesOffered": {
+      "type": "array",
+      "description": "Specific services offered at the site.",
+      "items": { "type": "string" }
+    },
+    "walkInAccepted": { "type": ["boolean", "null"], "description": "Whether walk-ins are accepted." },
+    "geo": { "$ref": "_common.json#/$defs/GeoLocation" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

@@ -1,0 +1,374 @@
+openapi: 3.1.0
+info:
+  title: NYC Comptroller API (proposed)
+  version: 0.1.0
+  summary: One owned, resource-oriented API consolidating NYC's fiscal record — the existing Checkbook NYC spending API (XML-first, vendor Drupal app), the Office of the Comptroller's NYC Open Data assets, and the site's audits/claims content — into a single agent-native contract, plus the net-new eClaim filing workflow.
+  description: >-
+    Proposed API-first surface for the New York City Office of the Comptroller, from the NYC
+    Modernization low-hanging-fruit assessment of comptroller.nyc.gov + checkbooknyc.com.
+
+
+    The Comptroller ALREADY operates a public API — the **Checkbook NYC API** (POST
+    checkbooknyc.com/api) — covering five financial domains (Spending, Contracts, Budget,
+    Revenue, Payroll; ~3.2M spending, ~10.2M payroll FY2024 records). But it is an XML
+    request/response endpoint bolted onto a vendor Drupal application: no resources, no
+    OpenAPI, no JSON-first contract, no agent surface, and it is disconnected from the
+    Comptroller's Open Data holdings (pension, claims, audits, bonds) and from the transactional
+    eClaim workflow on the WordPress site.
+
+
+    This contract CONSOLIDATES & OWNS them: Checkbook for spending/contracts, Open Data for
+    audits, claims reporting, and pension holdings — plus the one net-new write workflow,
+    **filing a claim against the City** (eClaim).
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.comptroller.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Spending
+    description: City payment transactions (fronts the Checkbook NYC Spending domain).
+  - name: Contracts
+    description: Registered City contracts (fronts the Checkbook NYC Contracts domain).
+  - name: Audits
+    description: Published audits and reports from the Bureau of Audit.
+  - name: Claims
+    description: Claims against the City — reported dispositions (read) and eClaim filing (write, net-new).
+  - name: Investments
+    description: The five NYC pension funds' security holdings.
+
+paths:
+  /spending:
+    get:
+      operationId: listSpending
+      summary: Search City spending transactions
+      description: Resource-oriented, JSON-first front for the Checkbook NYC Spending domain (POST checkbooknyc.com/api, type_of_data=Spending).
+      tags: [Spending]
+      parameters:
+        - $ref: '#/components/parameters/fiscalYear'
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: vendor
+          in: query
+          schema: { type: string }
+        - name: expenseCategory
+          in: query
+          schema: { type: string }
+        - name: contractId
+          in: query
+          schema: { type: string }
+        - name: minAmount
+          in: query
+          schema: { type: number }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of spending transactions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/spending-transaction.json' } }
+  /spending/{documentId}:
+    get:
+      operationId: getSpendingTransaction
+      summary: Get a spending transaction
+      tags: [Spending]
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The spending transaction.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/spending-transaction.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /contracts:
+    get:
+      operationId: listContracts
+      summary: Search registered City contracts
+      description: Fronts the Checkbook NYC Contracts domain (type_of_data=Contracts; status + category required by the vendor API — defaulted here).
+      tags: [Contracts]
+      parameters:
+        - $ref: '#/components/parameters/fiscalYear'
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: vendor
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string, enum: [expense, revenue] }
+        - name: late
+          in: query
+          description: Only contracts registered retroactively (late).
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of contracts.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/contract.json' } }
+  /contracts/{contractId}:
+    get:
+      operationId: getContract
+      summary: Get a contract
+      tags: [Contracts]
+      parameters:
+        - name: contractId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The contract.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/contract.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /audits:
+    get:
+      operationId: listAudits
+      summary: Search published audits & reports
+      tags: [Audits]
+      parameters:
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of audits.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/audit.json' } }
+  /audits/{auditNo}:
+    get:
+      operationId: getAudit
+      summary: Get an audit by number
+      tags: [Audits]
+      parameters:
+        - name: auditNo
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The audit.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/audit.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /claims:
+    get:
+      operationId: listClaims
+      summary: Search reported claims against the City (dispositions)
+      description: Read view over the Comptroller's claims-report data (settlements & claims filed).
+      tags: [Claims]
+      parameters:
+        - $ref: '#/components/parameters/fiscalYear'
+        - $ref: '#/components/parameters/borough'
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: claimType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of reported claims.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/claim.json' } }
+
+  /claim-filings:
+    get:
+      operationId: listClaimFilings
+      summary: List the authenticated user's claim filings
+      tags: [Claims]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: The user's claim filings.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/claim-filing.json' } }
+    post:
+      operationId: createClaimFiling
+      summary: File a claim against the City
+      description: The net-new write surface — an API for the eClaim workflow (file a claim against NYC). Mutates state; confirm details with the user before submitting.
+      tags: [Claims]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/claim-filing.json' }
+      responses:
+        '201':
+          description: Claim filing received; confirmation number assigned.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/claim-filing.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /claim-filings/{confirmationNumber}:
+    get:
+      operationId: getClaimFiling
+      summary: Get a claim filing by confirmation number
+      tags: [Claims]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: confirmationNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The claim filing.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/claim-filing.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /pension-holdings:
+    get:
+      operationId: listPensionHoldings
+      summary: Search pension fund security holdings
+      description: The five NYC pension systems' holdings (NYCERS, TRS, BERS, Police, Fire).
+      tags: [Investments]
+      parameters:
+        - name: system
+          in: query
+          schema: { type: string, enum: [NYCERS, TRS, BERS, Police, Fire] }
+        - name: assetClass
+          in: query
+          schema: { type: string }
+        - name: country
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of pension holdings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/pension-holding.json' } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    SpendingTransaction: { $ref: '../schemas/spending-transaction.json' }
+    Contract: { $ref: '../schemas/contract.json' }
+    Audit: { $ref: '../schemas/audit.json' }
+    ClaimAgainstCity: { $ref: '../schemas/claim.json' }
+    ClaimFiling: { $ref: '../schemas/claim-filing.json' }
+    PensionHolding: { $ref: '../schemas/pension-holding.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    fiscalYear:
+      name: fiscalYear
+      in: query
+      description: NYC fiscal year (ending calendar year).
+      schema: { type: integer, minimum: 1990, maximum: 2100 }
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island, Citywide, Various, Outside NYC] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/comptroller.nyc.gov/schemas/contract.json",
+  "title": "Contract",
+  "description": "A registered City contract or agreement as tracked by the Comptroller (which registers all City contracts). Canonical schema reconciling the Checkbook NYC API `Contracts` domain (POST checkbooknyc.com/api, type_of_data=Contracts; requires status + category) with the Comptroller's contract-registration and late-contracts reporting.",
+  "type": "object",
+  "x-source": {
+    "checkbook_api": "https://www.checkbooknyc.com/api (type_of_data=Contracts; status + category required)",
+    "portal": "https://www.checkbooknyc.com/contracts_landing/status/all/yeartype/B/year/125",
+    "registration": "https://comptroller.nyc.gov/services/for-city-agencies/contract-registration/"
+  },
+  "properties": {
+    "contractId": { "type": "string", "description": "Checkbook `contract_id` — the contract identifier." },
+    "registrationId": { "type": ["string", "null"], "description": "Comptroller registration id (FMS) where present." },
+    "purpose": { "type": ["string", "null"], "description": "Purpose / description of the contract (`purpose`)." },
+    "agency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "vendor": { "$ref": "_common.json#/$defs/VendorReference" },
+    "category": { "type": ["string", "null"], "description": "Contract category — e.g. 'expense', 'revenue' (`category`)." },
+    "contractType": { "type": ["string", "null"], "description": "Contract type (`contract_type`)." },
+    "status": {
+      "type": ["string", "null"],
+      "description": "Registration status (`status`) — e.g. 'active', 'registered', 'pending'."
+    },
+    "currentAmount": { "$ref": "_common.json#/$defs/Money", "description": "Current contract amount (`current_amount`)." },
+    "originalAmount": { "$ref": "_common.json#/$defs/Money", "description": "Original contract amount (`original_amount`)." },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "startDate": { "type": ["string", "null"], "format": "date", "description": "Contract start date (`start_date`)." },
+    "endDate": { "type": ["string", "null"], "format": "date", "description": "Contract end date (`end_date`)." },
+    "registeredDate": { "type": ["string", "null"], "format": "date", "description": "Comptroller registration date (`registered_date`)." },
+    "isLate": { "type": ["boolean", "null"], "description": "Whether the contract was registered retroactively (late), per the Comptroller's late-contracts reporting." }
+  },
+  "required": ["contractId", "agency"],
+  "additionalProperties": false
+}

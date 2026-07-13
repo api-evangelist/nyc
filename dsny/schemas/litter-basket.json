@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dsny/schemas/litter-basket.json",
+  "title": "LitterBasket",
+  "description": "A DSNY corner litter basket in the citywide inventory. Reconciles the DSNY Litter Basket Inventory dataset (8znf-7b2c) and the DSNY Litter Basket map (d6m8-cwh9). Keyed on basketId.",
+  "type": "object",
+  "x-source": {
+    "opendata_inventory": "https://data.cityofnewyork.us/d/8znf-7b2c",
+    "opendata_map": "https://data.cityofnewyork.us/d/d6m8-cwh9"
+  },
+  "properties": {
+    "basketId": { "type": "string", "description": "Basket identifier (basketid)." },
+    "basketType": { "type": ["string", "null"], "description": "Basket type / model (baskettype)." },
+    "ownerType": { "type": ["string", "null"], "description": "Who owns/services the basket (ownertype), e.g. DSNY vs. BID." },
+    "streetName1": { "type": ["string", "null"], "description": "Primary street (streetname1)." },
+    "streetName2": { "type": ["string", "null"], "description": "Cross street (streetname2)." },
+    "direction": { "type": ["string", "null"], "description": "Corner direction (direction)." },
+    "locationDescription": { "type": ["string", "null"], "description": "Location description (location_description)." },
+    "section": { "type": ["string", "null"], "description": "DSNY collection section (section)." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["basketId"],
+  "additionalProperties": false
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycha/schemas/community-facility.json",
+  "title": "CommunityFacility",
+  "description": "A NYCHA community facility, service center, or customer contact center located on or serving a development. Canonical schema reconciling 'Directory of NYCHA Community Facilities' (crns-fw6u, 16 columns), 'NYCHA Facilities and Service Centers' (d4iy-9uh7), and 'NYCHA Customer Contact Centers' (37fm-7uaa).",
+  "type": "object",
+  "x-source": {
+    "opendata_facilities": "https://data.cityofnewyork.us/d/crns-fw6u",
+    "opendata_service_centers": "https://data.cityofnewyork.us/d/d4iy-9uh7",
+    "opendata_contact_centers": "https://data.cityofnewyork.us/d/37fm-7uaa"
+  },
+  "properties": {
+    "development": { "type": ["string", "null"], "description": "Associated development ('DEVELOPMENT' / 'DEVELOPMENT NAME')." },
+    "type": { "type": ["string", "null"], "description": "Facility type ('TYPE')." },
+    "programType": { "type": ["string", "null"], "description": "'PROGRAM TYPE' (e.g. Senior Center, Day Care, Community Center)." },
+    "sponsor": { "type": ["string", "null"], "description": "Operating sponsor ('SPONSOR')." },
+    "fundingAgency": { "type": ["string", "null"], "description": "'FUNDING AGENCY'." },
+    "status": { "type": ["string", "null"], "description": "'STATUS' (e.g. Active, Vacant)." },
+    "address": { "type": ["string", "null"], "description": "'ADDRESS'." },
+    "postcode": { "type": ["string", "null"], "description": "'POSTCODE' / 'ZIP CODE'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hpd/schemas/registration.json",
+  "title": "Registration",
+  "description": "An annual owner/property registration that HPD requires of multiple-dwelling buildings, with its associated contacts (owner, managing agent, head officer, site manager). Reconciles the 'Multiple Dwelling Registrations' dataset (tesw-yqqr, 16 columns) with 'Registration Contacts' (feu5-w2e2, 15 columns). Keyed on registrationId; joins to buildingId.",
+  "type": "object",
+  "x-source": {
+    "hpdOnlineApi": "https://mspwvw-hpdleov3.nyc.gov/hpdonline.api/1.0/api (registration)",
+    "opendata": "https://data.cityofnewyork.us/d/tesw-yqqr",
+    "contacts": "https://data.cityofnewyork.us/d/feu5-w2e2"
+  },
+  "properties": {
+    "registrationId": { "type": "string", "description": "HPD Registration ID (registrationid)." },
+    "buildingId": { "type": ["string", "null"], "description": "HPD Building ID (buildingid)." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geography": { "$ref": "_common.json#/$defs/GeographySpine" },
+    "lastRegistrationDate": { "type": ["string", "null"], "format": "date", "description": "lastregistrationdate" },
+    "registrationEndDate": { "type": ["string", "null"], "format": "date", "description": "registrationenddate" },
+    "contacts": {
+      "type": "array",
+      "description": "Registered contacts for the property (Registration Contacts dataset).",
+      "items": { "$ref": "#/$defs/Contact" }
+    }
+  },
+  "required": ["registrationId"],
+  "additionalProperties": false,
+  "$defs": {
+    "Contact": {
+      "type": "object",
+      "description": "A registered contact (owner, agent, officer) for a property.",
+      "properties": {
+        "registrationContactId": { "type": "string", "description": "registrationcontactid" },
+        "type": { "type": ["string", "null"], "description": "Contact type (type), e.g. 'HeadOfficer', 'Agent', 'Owner'." },
+        "contactDescription": { "type": ["string", "null"], "description": "contactdescription" },
+        "firstName": { "type": ["string", "null"] },
+        "middleInitial": { "type": ["string", "null"] },
+        "lastName": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "corporationName": { "type": ["string", "null"], "description": "corporationname" },
+        "businessAddress": { "$ref": "_common.json#/$defs/Address" }
+      },
+      "required": ["registrationContactId"],
+      "additionalProperties": false
+    }
+  }
+}

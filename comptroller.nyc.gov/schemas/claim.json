@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/comptroller.nyc.gov/schemas/claim.json",
+  "title": "ClaimAgainstCity",
+  "description": "A claim filed against the City of New York and its disposition, as reported by the Comptroller (which adjudicates and settles tort and other claims). Canonical schema reconciling the 'Claims Report - Underlying Settlements and Claims Filed Data' Open Data asset (ex6k-ym48, 10 columns). This is the reporting/record view; the transactional filing view is `claim-filing.json`.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/ex6k-ym48",
+    "dashboard": "https://comptroller.nyc.gov/services/for-the-public/claims-dashboard/"
+  },
+  "properties": {
+    "claim": { "type": "string", "description": "Claim identifier (`claim`)." },
+    "claimType": { "type": ["string", "null"], "description": "Type of claim — e.g. 'Personal Injury', 'Property Damage' (`claim_type`)." },
+    "claimAction": { "type": ["string", "null"], "description": "Claim action / disposition category (`claim_action`)." },
+    "agency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "dispositionAmount": { "$ref": "_common.json#/$defs/Money", "description": "Amount paid on disposition (`disposition_amount`)." },
+    "occurrenceDate": { "type": ["string", "null"], "format": "date", "description": "Date of the underlying occurrence (`occurrence_date`)." },
+    "filedDate": { "type": ["string", "null"], "format": "date", "description": "Date the claim was filed (`filed_date`)." },
+    "dispositionDate": { "type": ["string", "null"], "format": "date", "description": "Date the claim was disposed/settled (`disposition_date`)." }
+  },
+  "required": ["claim"],
+  "additionalProperties": false
+}

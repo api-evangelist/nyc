@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dsny/schemas/tonnage.json",
+  "title": "Tonnage",
+  "description": "A monthly DSNY collection-tonnage record for a community district — refuse, recycling (paper + MGP), and organics streams. Reconciles the DSNY Monthly Tonnage Data dataset (ebb7-mvp5, the highest-traffic DSNY dataset) and can be joined to Recycling Diversion and Capture Rates (gaq9-z3hz). Keyed on month + community district.",
+  "type": "object",
+  "x-source": {
+    "opendata_tonnage": "https://data.cityofnewyork.us/d/ebb7-mvp5",
+    "opendata_rates": "https://data.cityofnewyork.us/d/gaq9-z3hz",
+    "opendata_organics": "https://data.cityofnewyork.us/d/6yag-pnij"
+  },
+  "properties": {
+    "month": { "type": "string", "description": "Reporting month, e.g. '2024 / 01' (month)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "boroughId": { "type": ["integer", "string", "null"], "description": "Borough code (borough_id)." },
+    "communityDistrict": { "type": ["string", "integer", "null"], "description": "Community district (communitydistrict)." },
+    "refuseTons": { "type": ["number", "null"], "description": "Refuse tons collected (refusetonscollected)." },
+    "paperTons": { "type": ["number", "null"], "description": "Paper recycling tons (papertonscollected)." },
+    "mgpTons": { "type": ["number", "null"], "description": "Metal/glass/plastic recycling tons (mgptonscollected)." },
+    "resOrganicsTons": { "type": ["number", "null"], "description": "Residential organics tons (resorganicstons)." },
+    "schoolOrganicsTons": { "type": ["number", "null"], "description": "School organics tons (schoolorganictons)." },
+    "leavesOrganicsTons": { "type": ["number", "null"], "description": "Leaf/yard organics tons (leavesorganictons)." },
+    "otherOrganicsTons": { "type": ["number", "null"], "description": "Other organics tons (otherorganicstons)." },
+    "xmasTreeTons": { "type": ["number", "null"], "description": "Christmas tree tons (xmastreetons)." }
+  },
+  "required": ["month"],
+  "additionalProperties": false
+}

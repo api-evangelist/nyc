@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypd/schemas/arrest.json",
+  "title": "Arrest",
+  "description": "An arrest effected by the NYPD. Canonical schema reconciling 'NYPD Arrest Data (Year to Date)' (uip8-fykc, 24 columns) and 'NYPD Arrests Data (Historic)' (8h9b-rp9u, 24 columns). Keyed on ARREST_KEY.",
+  "type": "object",
+  "x-source": {
+    "opendata_ytd": "https://data.cityofnewyork.us/d/uip8-fykc",
+    "opendata_historic": "https://data.cityofnewyork.us/d/8h9b-rp9u"
+  },
+  "properties": {
+    "arrestKey": { "type": "string", "description": "Unique arrest identifier (ARREST_KEY)." },
+    "arrestDate": { "type": ["string", "null"], "format": "date", "description": "Date of arrest (ARREST_DATE)." },
+    "offense": { "$ref": "_common.json#/$defs/OffenseClassification" },
+    "arrestBorough": {
+      "type": ["string", "null"],
+      "description": "Borough of arrest as single-letter code (ARREST_BORO): B=Bronx, S=Staten Island, K=Brooklyn, M=Manhattan, Q=Queens.",
+      "enum": ["B", "S", "K", "M", "Q", null]
+    },
+    "arrestPrecinct": { "type": ["integer", "null"], "description": "Precinct of arrest (ARREST_PRECINCT)." },
+    "jurisdictionCode": { "type": ["integer", "null"], "description": "JURISDICTION_CODE (0=Patrol, 1=Transit, 2=Housing)." },
+    "arrestee": { "$ref": "_common.json#/$defs/Demographics" },
+    "location": { "$ref": "_common.json#/$defs/GeoLocation" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["arrestKey"],
+  "additionalProperties": false
+}

@@ -23,8 +23,29 @@ META = {
    "tagline":"The least-modernized: no site API, only 2 Open Data assets; results and candidates are PDFs. Modernize by digitizing the data that does not yet exist."},
  "nyc311": {"verb":"Standardize","platform":"Microsoft Dynamics 365","short":"NYC311","netnew":"ServiceRequest (Open311)","accent":"#1f9e8f",
    "tagline":"The flagship 311 dataset is the most-used in the city, but the interactive Open311 standard NYC once ran is retired and the service is a vendor CRM. Modernize by reviving the open standard."},
+ "dob": {"verb":"Transact","platform":"aNNN-*.nyc.gov legacy app layer (BIS/DOB NOW, Java/Tomcat) behind Akamai","short":"NYC Buildings (DOB)","netnew":"PermitApplication","accent":"#b07d3a",
+   "tagline":"A mature transactional core (BIS Web, DOB NOW) with no public API — only a nightly one-way Open Data batch dump. The app layer IS the legacy surface. Modernize by fronting it with one owned live API + a permit-filing write."},
+ "hpd": {"verb":"Expose","platform":"Angular SPA over a private owned REST API (WSO2 gateway) + NYC GeoSearch","short":"NYC Housing (HPD)","netnew":"HousingLotteryApplication","accent":"#3f8f6a",
+   "tagline":"HPD already runs a modern, owned, versioned REST API — kept private behind one Angular app while the public surface is 47 flattened snapshots and a closed lottery. Modernize by exposing what exists."},
+ "dot": {"verb":"Unify","platform":"Legacy .shtml on nyc.gov + Drupal (nycstreetdesign.info); Socrata data","short":"NYC Transportation (DOT)","netnew":"StreetWorkPermit","accent":"#c99a1f",
+   "tagline":"More open data than any NYC domain (267 assets) but as scattered flat snapshots + map-only visualizations keyed to a street SegmentID never exposed as a queryable network API."},
+ "dohmh": {"verb":"Transact","platform":"NYC.gov CMS over Accela COTS + ASP.NET apps on a816-*.nyc.gov","short":"NYC Health (DOHMH)","netnew":"VitalRecordRequest","accent":"#c85a86",
+   "tagline":"The most-liberated data in the city (81 datasets incl. restaurant inspections), yet transactions — ordering a birth/death certificate — are locked in siloed legacy apps with no API."},
+ "dsny": {"verb":"Expose","platform":"Oracle WebCenter Sites + React forms over ASP.NET backends","short":"NYC Sanitation (DSNY)","netnew":"BulkPickupRequest","accent":"#5f9e42",
+   "tagline":"DSNY already runs first-party lookup and pickup-scheduling APIs — undocumented backends behind React forms, waiting to be surfaced as one owned, agent-native contract."},
+ "nypd": {"verb":"Expose","platform":"Oracle WebCenter Sites + Angular SPAs on an undocumented Azure Gov backend","short":"NYPD","netnew":"PoliceReportRequest","accent":"#2f5fb0",
+   "tagline":"The most data-rich domain, yet its record ships as flattened Open Data snapshots and its live surfaces are trapped in Angular apps on an undocumented backend."},
+ "tlc": {"verb":"Operationalize","platform":"NYC.gov CMS; Socrata + a CloudFront/S3 parquet trip-record host","short":"NYC Taxi & Limousine (TLC)","netnew":"LicenseApplication","accent":"#d99a2a",
+   "tagline":"A world-famous open-data producer whose data ships as monthly parquet dumps and flat snapshots, never a queryable, transactional API."},
+ "dcp": {"verb":"Anchor","platform":"nyc.gov + Netlify Planning Labs apps (ZoLa) on CARTO/Mapbox; open-source geocoder; GeoClient on Azure APIM","short":"NYC City Planning (DCP)","netnew":"— reference agency (owned /geocode)","accent":"#6f8aad",
+   "tagline":"The source of the city's shared geography — BBL, community districts, NTAs, census tracts, council/election boundaries — so it should be the explicit, owned base every other domain's schemas reference."},
+ "comptroller.nyc.gov": {"verb":"Consolidate & Own","platform":"WordPress (Comptroller) + Drupal (Checkbook NYC), both behind Imperva","short":"NYC Comptroller","netnew":"ClaimFiling","accent":"#2fa08f",
+   "tagline":"Already runs a real public API (Checkbook NYC, XML) + 15 Open Data assets + an eClaim form, but nothing is a unified, JSON-first, agent-native contract."},
+ "nycha": {"verb":"Unlock","platform":"NYC.gov Livesite + Oracle Siebel CRM Self-Service portal","short":"NYC Housing Authority (NYCHA)","netnew":"WorkOrder","accent":"#8a5fb0",
+   "tagline":"Reference data is wide open on Open Data, but every resident transaction is locked inside a vendor Siebel CRM with no API."},
 }
-ORDER = ["nycgovparks.org","schools.nyc.gov","council.nyc.gov","vote.nyc","nyc311"]
+ORDER = ["nycgovparks.org","schools.nyc.gov","council.nyc.gov","vote.nyc","nyc311",
+         "dob","hpd","dot","dohmh","dsny","nypd","tlc","dcp","comptroller.nyc.gov","nycha"]
 
 def load(p): return json.load(open(p))
 

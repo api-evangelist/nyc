@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hpd/schemas/violation.json",
+  "title": "HousingMaintenanceViolation",
+  "description": "A Housing Maintenance Code violation issued by HPD against a building. Canonical schema reconciling the HPD Online violation record with the 'Housing Maintenance Code Violations' Open Data dataset (wvxf-dwi5, 41 columns) — HPD's most-viewed dataset (215k+ views). Keyed on violationId; hangs off buildingId.",
+  "type": "object",
+  "x-source": {
+    "hpdOnlineApi": "https://mspwvw-hpdleov3.nyc.gov/hpdonline.api/1.0/api (violations)",
+    "opendata": "https://data.cityofnewyork.us/d/wvxf-dwi5",
+    "portal": "https://hpdonline.nyc.gov/hpdonline/"
+  },
+  "properties": {
+    "violationId": { "type": "string", "description": "HPD Violation ID (violationid)." },
+    "novId": { "type": ["string", "null"], "description": "Notice of Violation ID (novid)." },
+    "orderNumber": { "type": ["string", "null"], "description": "Order number (ordernumber)." },
+    "building": { "$ref": "_common.json#/$defs/BuildingReference" },
+    "class": {
+      "type": ["string", "null"],
+      "description": "Violation class / hazard severity (class): A non-hazardous, B hazardous, C immediately hazardous, I informational.",
+      "enum": ["A", "B", "C", "I", null]
+    },
+    "apartment": { "type": ["string", "null"], "description": "Apartment/unit (apartment)." },
+    "story": { "type": ["string", "null"], "description": "Story (story)." },
+    "novType": { "type": ["string", "null"], "description": "NOV type (novtype)." },
+    "novDescription": { "type": ["string", "null"], "description": "Violation description text (novdescription)." },
+    "currentStatus": { "type": ["string", "null"], "description": "Current status text (currentstatus), e.g. 'Violation Open', 'Violation Closed'." },
+    "violationStatus": { "type": ["string", "null"], "description": "Open/Close roll-up (violationstatus)." },
+    "rentImpairing": { "type": ["boolean", "null"], "description": "Whether the violation is rent-impairing (rentimpairing)." },
+    "dates": {
+      "type": "object",
+      "properties": {
+        "inspectionDate": { "type": ["string", "null"], "format": "date", "description": "inspectiondate" },
+        "approvedDate": { "type": ["string", "null"], "format": "date", "description": "approveddate" },
+        "novIssuedDate": { "type": ["string", "null"], "format": "date", "description": "novissueddate" },
+        "originalCorrectByDate": { "type": ["string", "null"], "format": "date", "description": "originalcorrectbydate" },
+        "newCorrectByDate": { "type": ["string", "null"], "format": "date", "description": "newcorrectbydate" },
+        "originalCertifyByDate": { "type": ["string", "null"], "format": "date", "description": "originalcertifybydate" },
+        "certifiedDate": { "type": ["string", "null"], "format": "date", "description": "certifieddate" },
+        "currentStatusDate": { "type": ["string", "null"], "format": "date", "description": "currentstatusdate" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["violationId"],
+  "additionalProperties": false
+}

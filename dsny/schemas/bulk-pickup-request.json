@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dsny/schemas/bulk-pickup-request.json",
+  "title": "BulkPickupRequest",
+  "description": "A resident request to schedule a bulk / large-item or special-waste (CFC appliance, electronics) pickup appointment. This capability already exists as an UNDOCUMENTED first-party backend — the ePickups API (a827-donatenyc.nyc.gov/ePickupsAPI/api/PickupRequest/AddUpdatePickUpRequest, with GetUnavailableDates and IsDistrictActive) and the CFC appointment API (dsnydonate.nyc.gov/cfc/api/appointment) — reachable only through the DSNY React forms. This schema is the owned, documented, agent-native contract for that net-new write surface.",
+  "type": "object",
+  "x-source": {
+    "form": "https://www.nyc.gov/assets/dsny/forms/collection-schedule",
+    "backend_epickups": "https://a827-donatenyc.nyc.gov/ePickupsAPI/api/PickupRequest/AddUpdatePickUpRequest",
+    "backend_appointment": "https://dsnydonate.nyc.gov/cfc/api/appointment"
+  },
+  "properties": {
+    "requestId": { "type": ["string", "null"], "description": "Server-assigned confirmation id (read-only on create)." },
+    "requestType": {
+      "type": "string",
+      "description": "Kind of pickup being scheduled.",
+      "enum": ["Bulk / Large Item", "CFC Appliance", "Electronics", "Special Waste"]
+    },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "sanitationDistrict": { "$ref": "_common.json#/$defs/SanitationDistrictReference" },
+    "items": {
+      "type": "array",
+      "description": "Items to be picked up (maps to ePickups AppointmentItems).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string", "description": "Item description, e.g. 'refrigerator', 'mattress', 'sofa'." },
+          "quantity": { "type": "integer", "minimum": 1, "default": 1 },
+          "containsCFC": { "type": ["boolean", "null"], "description": "Whether the appliance contains chlorofluorocarbons (requires CFC handling)." }
+        },
+        "required": ["description"],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "appointmentDate": { "type": ["string", "null"], "format": "date", "description": "Requested appointment / set-out date (AppointmentDate). Constrained by GetUnavailableDates for the district." },
+    "appointmentTime": { "type": ["string", "null"], "description": "Requested appointment window (AppointmentTime), where applicable." },
+    "contact": {
+      "type": "object",
+      "description": "Requester contact details for confirmation.",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    },
+    "status": {
+      "type": ["string", "null"],
+      "description": "Request lifecycle status (read-only).",
+      "enum": ["Submitted", "Scheduled", "Completed", "Cancelled", null]
+    },
+    "notes": { "type": ["string", "null"] }
+  },
+  "required": ["requestType", "address", "items", "contact"],
+  "additionalProperties": false
+}

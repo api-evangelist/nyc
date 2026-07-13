@@ -1,0 +1,113 @@
+{
+  "domain": "nyc.gov/site/doh (DOHMH)",
+  "agency": "NYC Department of Health and Mental Hygiene (DOHMH)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting; www.nyc.gov robots.txt only disallows /html/misc/). Crawled the DOH section of the shared NYC.gov 'LiveSite' WCM (/site/doh/*.page) — homepage, services (birth-death-records, restaurant-grades, allclinics, sexual-health-clinics), business/permits-licenses. Fingerprinted the transactional back-office apps on a816-*.nyc.gov (ABC Eats, eVital VRRTS, Accela Citizen Access, NYC Health Map) from response headers + page markup. Open Data verified and enumerated via the Socrata Discovery API filtered on Dataset-Information_Agency = 'Department of Health and Mental Hygiene (DOHMH)' (81 assets).",
+  "related_domains": ["a816-health.nyc.gov", "a816-evital.nyc.gov", "a816-hlst.nyc.gov", "data.cityofnewyork.us", "portal.311.nyc.gov", "vitalchek.com"],
+  "headline_findings": [
+    "DOHMH is the most DATA-RICH domain in the project: 81 datasets on NYC Open Data, led by 'DOHMH New York City Restaurant Inspection Results' (43nn-pn8j, ~406k views) — among the single most-viewed datasets in all of NYC Open Data.",
+    "But its TRANSACTIONAL services are siloed in separate legacy apps with no open, agent-native API: ABC Eats (restaurant grade lookup; AngularJS + ASP.NET MVC), eVital VRRTS + VitalChek (birth/death certificate orders), and Accela Citizen Access (health permits & licenses).",
+    "The public restaurant grade lookup (ABC Eats) is a JavaScript SPA over a private Web API — the same famous data that is ALSO fully open on Socrata, so the read need is met twice while the write/transaction need is met zero times.",
+    "The one true net-new WRITE surface is ordering a vital record (birth/death certificate): a paid transaction locked inside eVital/VitalChek with no open API.",
+    "Reframe: Parks=replatform, DOE=reclaim, Council=consolidate+own, DOHMH=TRANSACT — the open data is solved; the gap is agent-native, transactional services. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "a816-health.nyc.gov/ABCEatsRestaurants", "type": "private Web API behind an AngularJS SPA", "owner": "DOHMH (ASP.NET MVC 5.2 / IIS 10)", "public": "undocumented", "note": "Public restaurant grade/inspection lookup; the SPA fetches JSON from an internal, undocumented backend API — not an open contract." },
+    { "endpoint": "a816-evital.nyc.gov/eVitalVRRTS", "type": "transactional web app", "owner": "DOHMH Office of Vital Records (ASP.NET MVC 5.2 / IIS 10)", "public": "app-only, session/CSRF-gated", "note": "eVital VRRTS — birth/death certificate request tracking; no API surface." },
+    { "endpoint": "a816-hlst.nyc.gov/CitizenAccess", "type": "COTS permitting portal", "owner": "Accela (IIS 8.5, .NET)", "public": "app-only", "note": "Accela Citizen Access — health permits & licenses; vendor product, no open API exposed." },
+    { "endpoint": "a816-health.nyc.gov/NYCHealthMap", "type": "facility finder", "owner": "DOHMH", "public": "html/app", "note": "Clinic & service-site locator; likely ArcGIS/service backend, no documented API." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC / Socrata (Tyler)", "public": true, "note": "81 DOHMH datasets incl. the famous restaurant inspections (43nn-pn8j) — fully open, machine-readable SODA endpoints." },
+    { "endpoint": "portal.311.nyc.gov", "type": "service-request intake", "owner": "NYC 311 (Salesforce)", "public": "html/app", "note": "Complaint intake routed to DOHMH (indoor environmental complaints surface on Open Data 9jgj-bmct)." },
+    { "endpoint": "vitalchek.com", "type": "certificate ordering vendor", "owner": "VitalChek (LexisNexis)", "public": "vendor", "note": "Third-party online birth/death certificate ordering + payment." },
+    { "endpoint": "maps.googleapis.com", "type": "maps API", "owner": "Google", "public": "vendor", "note": "Maps on DOH service pages." },
+    { "endpoint": "Dynatrace RUM (dtCookie / x-oneagent)", "type": "monitoring", "owner": "Dynatrace", "public": "vendor", "note": "Real-user monitoring injected across NYC.gov + a816 apps." }
+  ],
+  "fruit": [
+    {
+      "name": "Restaurant / Food Establishment grades",
+      "type": "record lookup (SPA) + open dataset",
+      "entity": "FoodEstablishment",
+      "url": "https://a816-health.nyc.gov/ABCEatsRestaurants/#/Search",
+      "count": "~27,000 establishments",
+      "machine_readable": "Open Data + private SPA API",
+      "verified": true,
+      "opendata_match": ["DOHMH New York City Restaurant Inspection Results 43nn-pn8j (31c)"],
+      "notes": "The city's flagship food-safety data. Public ABC Eats lookup is a JS SPA over a private API; the same data is fully open on Socrata."
+    },
+    {
+      "name": "Restaurant inspections & violations",
+      "type": "inspection records",
+      "entity": "Inspection",
+      "url": "https://data.cityofnewyork.us/d/43nn-pn8j",
+      "count": "millions of violation rows",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["DOHMH New York City Restaurant Inspection Results 43nn-pn8j (31c)"],
+      "notes": "One row per violation; scores/grades/critical flags. Modeled as an Inspection with a rolled-up violations array."
+    },
+    {
+      "name": "Rodent (rat) inspections",
+      "type": "inspection records",
+      "entity": "RodentInspection",
+      "url": "https://data.cityofnewyork.us/d/p937-wjvj",
+      "count": "millions of rows",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["Rodent Inspection p937-wjvj (34c)"],
+      "notes": "Rat Mitigation program inspections keyed to tax lot (BBL); result flags active rat activity."
+    },
+    {
+      "name": "Childcare center inspections",
+      "type": "permit + inspection records",
+      "entity": "ChildcareCenter",
+      "url": "https://data.cityofnewyork.us/d/dsg6-ifza",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["DOHMH Childcare Center Inspections dsg6-ifza (34c)"],
+      "notes": "Permitted daycares with capacity, program type, and violation-rate outcomes."
+    },
+    {
+      "name": "Health clinics & service sites",
+      "type": "facility finder",
+      "entity": "HealthFacility",
+      "url": "https://www.nyc.gov/site/doh/services/allclinics.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Sexual health, immunization, TB, mental-health clinics via NYC Health Map. No open dataset — reverse-engineered as a structured resource."
+    },
+    {
+      "name": "Indoor environmental / health complaints",
+      "type": "complaint records",
+      "entity": "EnvironmentalComplaint",
+      "url": "https://data.cityofnewyork.us/d/9jgj-bmct",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["DOHMH Indoor Environmental Complaints 9jgj-bmct (19c)"],
+      "notes": "Mold, indoor air, pests, lead — routed from 311; intake itself has no open API."
+    },
+    {
+      "name": "Health permits & licenses",
+      "type": "COTS permitting portal",
+      "entity": "FoodEstablishment",
+      "url": "https://a816-hlst.nyc.gov/CitizenAccess/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Food-service and other DOHMH permits via Accela Citizen Access (vendor COTS). No open API; an alternate net-new write candidate."
+    },
+    {
+      "name": "Order a birth / death certificate",
+      "type": "transaction (paid)",
+      "entity": "VitalRecordRequest",
+      "url": "https://www.nyc.gov/site/doh/services/birth-death-records.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The one true net-new WRITE surface: a paid vital-records order locked inside eVital VRRTS and the VitalChek vendor portal, with no open, agent-native API."
+    }
+  ]
+}

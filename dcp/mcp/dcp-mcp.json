@@ -1,0 +1,162 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. DCP is the city's reference-geography source; this surface is read-only (the geography spine), with a canonical geocoder as the net-new value. No citizen write workflow exists.",
+    "openapi": "../openapi/dcp.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.dcp",
+    "title": "NYC City Planning (DCP)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the New York City Department of City Planning — tax lots (PLUTO), zoning, community districts, Neighborhood Tabulation Areas, census tracts, and land-use applications. DCP is the authoritative source of the citywide geography spine (BBL, community districts, NTAs, council/census geographies) every other agency references; this server anchors that spine and adds a canonical address->BBL geocoder.",
+    "instructions": "Use geocode_address to turn an address into a BBL, BIN, coordinates, and the full geography spine (community district, council district, census tract, NTA) — the entry point for almost every question. lookup_lot fetches the authoritative PLUTO record for a BBL; find_lots searches lots by borough/zoning/geography. find_zoning / get_zoning explain zoning district codes. get_community_district, find_ntas / get_nta, and get_census_tract resolve the shared geographies. find_land_use_applications covers ULURP/land-use review (reference data on an agency pipeline, not a citizen action). This server is read-only — DCP is a reference agency with no transactional write workflow."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "geocode_address",
+      "title": "Geocode Address",
+      "description": "Resolve an address to a BBL, BIN, coordinates, and the full geography spine (community district, council district, census tract, NTA, precinct, school district). The net-new canonical geocoder fronting DCP GeoClient.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "address": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] }
+        },
+        "required": ["address"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "bbl": { "$ref": "../schemas/_common.json#/$defs/BBL" },
+          "bin": { "$ref": "../schemas/_common.json#/$defs/BIN" },
+          "address": { "type": "string" },
+          "coordinates": { "$ref": "../schemas/_common.json#/$defs/Coordinates" },
+          "geography": { "$ref": "../schemas/_common.json#/$defs/GeographySpine" }
+        }
+      },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "geocode"
+    },
+    {
+      "name": "lookup_lot",
+      "title": "Look Up Tax Lot",
+      "description": "Fetch the authoritative PLUTO record for a Borough-Block-Lot (BBL) — land use, owner, zoning, FAR, and the geography spine.",
+      "inputSchema": { "type": "object", "properties": { "bbl": { "type": "string", "pattern": "^[1-5][0-9]{9}$" } }, "required": ["bbl"] },
+      "outputSchema": { "$ref": "../schemas/tax-lot.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getLot"
+    },
+    {
+      "name": "find_lots",
+      "title": "Find Tax Lots",
+      "description": "Search PLUTO tax lots by borough, block, community/council district, zoning district, land use, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "block": { "type": "integer" },
+          "communityDistrict": { "type": "integer" },
+          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
+          "zoningDistrict": { "type": "string" },
+          "landUse": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/tax-lot.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLots"
+    },
+    {
+      "name": "find_zoning",
+      "title": "Find Zoning Districts",
+      "description": "List zoning districts, overlays, and special districts, optionally filtered by category or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string", "enum": ["Residential", "Commercial", "Manufacturing", "Special Purpose", "Battery Park City", "Park"] },
+          "q": { "type": "string" }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/zoning-district.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listZoningDistricts"
+    },
+    {
+      "name": "get_zoning",
+      "title": "Get Zoning District",
+      "description": "Explain a zoning district code (e.g. 'R6', 'C1-2', 'M1-1') — what it permits and its FAR limits.",
+      "inputSchema": { "type": "object", "properties": { "code": { "type": "string" } }, "required": ["code"] },
+      "outputSchema": { "$ref": "../schemas/zoning-district.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getZoningDistrict"
+    },
+    {
+      "name": "get_community_district",
+      "title": "Get Community District",
+      "description": "Fetch a community district by borough+district code (e.g. 101 = Manhattan CD 1), with population history.",
+      "inputSchema": { "type": "object", "properties": { "borocd": { "type": "integer" } }, "required": ["borocd"] },
+      "outputSchema": { "$ref": "../schemas/community-district.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCommunityDistrict"
+    },
+    {
+      "name": "find_ntas",
+      "title": "Find Neighborhood Tabulation Areas",
+      "description": "List 2020 NTAs, optionally by borough or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "q": { "type": "string" }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/nta.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listNtas"
+    },
+    {
+      "name": "get_nta",
+      "title": "Get NTA",
+      "description": "Fetch a Neighborhood Tabulation Area by code (e.g. 'MN0101').",
+      "inputSchema": { "type": "object", "properties": { "nta2020": { "type": "string" } }, "required": ["nta2020"] },
+      "outputSchema": { "$ref": "../schemas/nta.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getNta"
+    },
+    {
+      "name": "get_census_tract",
+      "title": "Get Census Tract",
+      "description": "Fetch a 2020 census tract by GEOID, with its parent NTA and CDTA.",
+      "inputSchema": { "type": "object", "properties": { "geoid": { "type": "string" } }, "required": ["geoid"] },
+      "outputSchema": { "$ref": "../schemas/census-geography.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCensusTract"
+    },
+    {
+      "name": "find_land_use_applications",
+      "title": "Find Land-Use Applications",
+      "description": "Search ULURP / land-use applications by borough, community district, status, action type, or affected BBL. Reference data on an agency review pipeline — not a citizen write workflow.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "communityDistrict": { "type": "integer" },
+          "status": { "type": "string" },
+          "actionType": { "type": "string" },
+          "bbl": { "type": "string", "pattern": "^[1-5][0-9]{9}$" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/land-use-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLandUseApplications"
+    }
+  ]
+}

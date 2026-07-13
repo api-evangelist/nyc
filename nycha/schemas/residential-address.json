@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycha/schemas/residential-address.json",
+  "title": "ResidentialAddress",
+  "description": "A NYCHA residential building address — the street-level record beneath a Development. Canonical schema reconciling the 'NYCHA Residential Addresses' dataset (3ub5-4ph8, 26 columns). Keyed on BIN + building number within a development (TDS #).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/3ub5-4ph8"
+  },
+  "properties": {
+    "address": { "type": "string", "description": "Full address ('ADDRESS')." },
+    "houseNumber": { "type": ["string", "null"], "description": "'HOUSE #'." },
+    "street": { "type": ["string", "null"], "description": "'STREET'." },
+    "city": { "type": ["string", "null"], "description": "'CITY'." },
+    "state": { "type": ["string", "null"], "description": "'STATE'." },
+    "zipCode": { "type": ["string", "null"], "description": "'ZIP CODE'." },
+    "development": { "$ref": "_common.json#/$defs/DevelopmentReference" },
+    "buildingNumber": { "type": ["string", "null"], "description": "'BUILDING #'." },
+    "stairhall": { "type": ["string", "null"], "description": "'STAIRHALL#'." },
+    "privatelyManaged": { "type": ["boolean", "string", "null"], "description": "'PRIVATELY MANAGED' — RAD/PACT." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "stateDistricts": { "$ref": "_common.json#/$defs/StateLegislativeDistricts" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["address"],
+  "additionalProperties": false
+}

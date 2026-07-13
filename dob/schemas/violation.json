@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dob/schemas/violation.json",
+  "title": "Violation",
+  "description": "A DOB or ECB (Environmental Control Board / OATH) violation issued against a building. Reconciles the 'DOB Violations' Open Data extract (3h2n-5cm9, 18 columns — the BIS-side violation record) with 'DOB ECB Violations' (6bgk-3dad, 46 columns — the OATH/ECB adjudication record with penalties and hearings). The two are linked by DOB_VIOLATION_NUMBER / ECB_NUMBER.",
+  "type": "object",
+  "x-source": {
+    "opendata_dob": "https://data.cityofnewyork.us/d/3h2n-5cm9",
+    "opendata_ecb": "https://data.cityofnewyork.us/d/6bgk-3dad",
+    "app": "https://a810-bisweb.nyc.gov (BIS) / OATH ECB"
+  },
+  "properties": {
+    "violationNumber": { "type": "string", "description": "DOB violation number (Open Data 'VIOLATION_NUMBER')." },
+    "ecbViolationNumber": { "type": ["string", "null"], "description": "Linked ECB violation number (Open Data 'ECB_NUMBER' / 'ECB_VIOLATION_NUMBER')." },
+    "dobViolationNumber": { "type": ["string", "null"], "description": "On ECB records, the linked DOB violation number ('DOB_VIOLATION_NUMBER')." },
+    "violationClass": {
+      "type": ["string", "null"],
+      "enum": ["DOB", "ECB", null],
+      "description": "Whether this is a DOB (BIS) violation or an ECB (OATH) violation."
+    },
+    "violationType": { "type": ["string", "null"], "description": "Open Data 'VIOLATION_TYPE'." },
+    "violationTypeCode": { "type": ["string", "null"], "description": "Open Data 'VIOLATION_TYPE_CODE'." },
+    "violationCategory": { "type": ["string", "null"], "description": "Open Data 'VIOLATION_CATEGORY'." },
+    "description": { "type": ["string", "null"], "description": "Open Data 'DESCRIPTION' / 'VIOLATION_DESCRIPTION'." },
+    "severity": { "type": ["string", "null"], "description": "ECB 'SEVERITY' / 'AGGRAVATED_LEVEL'." },
+    "status": { "type": ["string", "null"], "description": "Open Data 'ECB_VIOLATION_STATUS' or dispositional state." },
+    "certificationStatus": { "type": ["string", "null"], "description": "ECB 'CERTIFICATION_STATUS'." },
+    "bin": { "type": ["string", "null"], "description": "Open Data 'BIN'." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "block": { "type": ["string", "null"] },
+    "lot": { "type": ["string", "null"] },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "respondent": { "$ref": "_common.json#/$defs/PartyReference" },
+    "penalty": {
+      "type": "object",
+      "description": "ECB monetary outcome.",
+      "properties": {
+        "penaltyImposed": { "type": ["number", "null"], "description": "ECB 'PENALITY_IMPOSED' (sic)." },
+        "amountPaid": { "type": ["number", "null"], "description": "ECB 'AMOUNT_PAID'." },
+        "balanceDue": { "type": ["number", "null"], "description": "ECB 'BALANCE_DUE'." }
+      },
+      "additionalProperties": false
+    },
+    "dates": {
+      "type": "object",
+      "properties": {
+        "issued": { "type": ["string", "null"], "format": "date", "description": "Open Data 'ISSUE_DATE'." },
+        "served": { "type": ["string", "null"], "format": "date", "description": "ECB 'SERVED_DATE'." },
+        "hearing": { "type": ["string", "null"], "format": "date", "description": "ECB 'HEARING_DATE'." },
+        "disposition": { "type": ["string", "null"], "format": "date", "description": "Open Data 'DISPOSITION_DATE'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["violationNumber"],
+  "additionalProperties": false
+}

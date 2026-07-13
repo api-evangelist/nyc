@@ -2,7 +2,7 @@
 
 *What five New York City government domains — Parks, Public Schools, the City Council, the Board of Elections, and NYC311 — reveal when you assess them the same way, and what a citywide API modernization would actually take.*
 
-Companion to the five domain assessments. The interactive version, with the maturity scorecard, is at **[nyc.apievangelist.com/synthesis.html](https://nyc.apievangelist.com/synthesis.html)**.
+Companion to the fifteen domain assessments (five deep-dive, ten in a follow-on batch). The interactive version, with the maturity scorecard, is at **[nyc.apievangelist.com/synthesis.html](https://nyc.apievangelist.com/synthesis.html)**.
 
 ---
 
@@ -26,9 +26,21 @@ Assessing each domain the same way (crawl → tech/vendor inventory → APIs-obs
 
 These five verbs are a **diagnostic taxonomy**. Point the same assessment at a fifth or fiftieth NYC domain and it will land on one (or a blend) of them. That reusability is the point: modernization isn't one monolithic program, it's a repeatable diagnosis plus a repeatable build.
 
-## Eight cross-cutting findings
+## The batch of ten: the service layer is the gap
 
-What holds *across* all five domains matters more than any single assessment.
+A follow-on batch ran the identical method against ten more agencies — **Buildings (DOB), Housing (HPD), Transportation (DOT), Health (DOHMH), Sanitation (DSNY), Police (NYPD), Taxi & Limousine (TLC), City Planning (DCP), the Comptroller, and the Housing Authority (NYCHA)**. Fifteen domains total. Three things sharpened.
+
+**1. The taxonomy expanded — and clustered.** Ten new domains yielded new verbs — **Transact** (DOB, DOHMH), **Expose** (HPD, DSNY, NYPD), **Unify** (DOT), **Operationalize** (TLC), **Consolidate & Own** (Comptroller), **Unlock** (NYCHA), **Anchor** (DCP). But nearly all cluster on one axis: *the data is open; the **service layer** is not.* The gap is rarely the data — it's the transaction.
+
+**2. Many agencies already have an API — it's just private, undocumented, or vendor-locked.** HPD runs a modern versioned REST API behind a WSO2 gateway (private to one Angular app). DSNY runs live pickup/scheduling backends (undocumented). NYPD's live surfaces sit on an Azure Gov backend. The Comptroller's **Checkbook NYC** is a live, keyless public API (XML-envelope, POST-only, no OpenAPI/JSON/MCP). Council depends on Legistar; DCP runs an open-source geocoder behind a gated GeoClient. **The dominant move is Expose, not Build.**
+
+**3. City Planning is the anchor.** DCP defines the BBL and every citywide geography (community districts, NTAs, census tracts, council/election boundaries) — the exact fields that recur in every other domain's `_common.json`. It is the natural authoritative source for the planned [`nyc-commons`](ROADMAP.md) shared spine.
+
+Across all fifteen, the two decisive columns held: **the transactional (write) API is absent in 14 of 15** (only Council scored a 1, and City Planning is a reference agency with no citizen transaction), and **agent-readiness is 0 in all fifteen.** Platform diversity widened to roughly ten distinct stacks with still zero shared API layer. The batch didn't dilute the thesis — it hardened it.
+
+## Cross-cutting findings
+
+What holds *across* all fifteen domains matters more than any single assessment. (The interactive [synthesis](https://nyc.apievangelist.com/synthesis.html) lists the current nine.)
 
 ### 1. Five agencies, five platforms, zero shared API layer
 Smarty/PHP, Sitefinity/.NET, WordPress, Drupal, Dynamics 365. Every agency picked its own stack, its own CMS, its own vendors — and none exposes a consistent, resource-oriented API. There is no citywide API layer, convention, or contract. Consistency has to be imposed *above* the platforms, not within them.
@@ -66,7 +78,7 @@ Parks joins on `gisPropNum`, DOE on `DBN`, Council on `matterId`, Elections on e
 
 ## The maturity scorecard
 
-Scoring each domain 0–3 across seven dimensions (see [data/scorecard.json](data/scorecard.json)) makes the pattern legible:
+Scoring each domain 0–3 across seven dimensions (see [data/scorecard.json](data/scorecard.json); interactive heatmap for all fifteen at [synthesis.html](https://nyc.apievangelist.com/synthesis.html)) makes the pattern legible. The first six:
 
 | Dimension | Parks | DOE | Council | Elections | 311 |
 |---|---|---|---|---|---|

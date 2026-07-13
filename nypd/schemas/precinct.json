@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypd/schemas/precinct.json",
+  "title": "Precinct",
+  "description": "An NYPD patrol precinct — the primary geographic command unit. There is no single Open Data 'precinct directory'; this schema reconciles the 'Find Your Precinct' pages on nyc.gov, the 'NYPD Sectors' dataset (5rqd-h5ci), and the 'NYPD Neighborhood Coordination Officer (NCO) Directory' (rycv-p85i). Precinct number is the join key used across nearly every NYPD crime dataset.",
+  "type": "object",
+  "x-source": {
+    "sectors": "https://data.cityofnewyork.us/d/5rqd-h5ci",
+    "nco_directory": "https://data.cityofnewyork.us/d/rycv-p85i",
+    "find_your_precinct": "https://www.nyc.gov/site/nypd/bureaus/patrol/find-your-precinct.page"
+  },
+  "properties": {
+    "precinct": { "type": "integer", "description": "Precinct number (1-123)." },
+    "name": { "type": ["string", "null"], "description": "Common name, e.g. 'Midtown South Precinct'." },
+    "patrolBorough": { "$ref": "_common.json#/$defs/PatrolBorough" },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "address": { "type": ["string", "null"], "description": "Stationhouse address." },
+    "phone": { "type": ["string", "null"] },
+    "commandingOfficer": { "type": ["string", "null"] },
+    "sectors": {
+      "type": "array",
+      "description": "Patrol sectors within the precinct (NYPD Sectors dataset).",
+      "items": { "type": "string" }
+    },
+    "neighborhoodCoordinationOfficers": {
+      "type": "array",
+      "description": "NCO directory entries for the precinct (rycv-p85i).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "firstName": { "type": ["string", "null"] },
+          "lastName": { "type": ["string", "null"] },
+          "rank": { "type": ["string", "null"], "description": "RANK." },
+          "sector": { "type": ["string", "null"], "description": "SECTOR." },
+          "email": { "type": ["string", "null"], "description": "Email Address." }
+        },
+        "additionalProperties": false
+      }
+    },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["precinct"],
+  "additionalProperties": false
+}

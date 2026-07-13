@@ -73,10 +73,23 @@ See the **[CHANGELOG](CHANGELOG.md)** for the full project history, and the **[c
   - [low-hanging-fruit.md](nyc311/low-hanging-fruit.md) / [fruit.json](nyc311/fruit.json), [crosswalk.md](nyc311/crosswalk.md) (incl. `erm2-nwe9` → Open311 mapping), [opendata-311.md](nyc311/opendata-311.md).
   - [tech-stack.md](nyc311/tech-stack.md) (Dynamics 365, api.nyc.gov gateway) · [apis-observed.md](nyc311/apis-observed.md) (retired Open311).
   - [schemas/](nyc311/schemas/) (Open311-aligned: `service-request` · `service-type` · `service-definition` · `agency`) · [openapi/nyc-311.yaml](nyc311/openapi/nyc-311.yaml) · [mcp/nyc-311-mcp.json](nyc311/mcp/nyc-311-mcp.json).
+- **Batch of ten** (same full method — assessment, tech/vendor + APIs inventories, Open Data crosswalk, JSON Schemas, OpenAPI, MCP — each in its own folder):
+  - [dob/](dob/) Buildings · **Transact** — the `aNNN-*` app layer; nightly one-way batch dump; net-new `PermitApplication`.
+  - [hpd/](hpd/) Housing · **Expose** — a private owned REST API behind WSO2; net-new `HousingLotteryApplication`.
+  - [dot/](dot/) Transportation · **Unify** — 267 assets as flat/map-only snapshots; net-new `StreetWorkPermit`.
+  - [dohmh/](dohmh/) Health · **Transact** — 81 datasets, transactions on Accela; net-new `VitalRecordRequest`.
+  - [dsny/](dsny/) Sanitation · **Expose** — live undocumented pickup APIs; net-new `BulkPickupRequest`.
+  - [nypd/](nypd/) Police · **Expose** — snapshots + Angular apps on Azure Gov; net-new `PoliceReportRequest`.
+  - [tlc/](tlc/) Taxi & Limousine · **Operationalize** — parquet trip dumps; net-new `LicenseApplication`.
+  - [dcp/](dcp/) City Planning · **Anchor** — the geography source for `nyc-commons`; owned `/geocode`.
+  - [comptroller.nyc.gov/](comptroller.nyc.gov/) Comptroller · **Consolidate & Own** — Checkbook is a live XML API; net-new `ClaimFiling`.
+  - [nycha/](nycha/) Housing Authority · **Unlock** — resident service locked in a Siebel CRM; net-new `WorkOrder`.
 
 ## Status
 
-Five domains, five distinct modernization verbs — each a different way "data liberation only partially worked":
+**Fifteen domains assessed** (~1,700 Open Data assets mapped, 95 JSON Schemas, 142 MCP tools). The verb taxonomy expanded from five to a broader set — but everything clusters on one meta-finding: **the reporting data is largely open; the service/transaction layer is missing, hidden, or vendor-locked.** Across all fifteen, the transactional (write) API is absent in 14 of 15, and agent-readiness is zero everywhere. See the [cross-domain SYNTHESIS](SYNTHESIS.md) and the interactive [scorecard](https://nyc.apievangelist.com/synthesis.html).
+
+The first five, five distinct verbs:
 
 | Domain | Platform | Machine-readable coverage | Verb |
 |---|---|---|---|
@@ -85,6 +98,8 @@ Five domains, five distinct modernization verbs — each a different way "data l
 | council.nyc.gov | WordPress | 3 APIs, none owned | **consolidate + own** |
 | vote.nyc | Drupal 9 | 2 assets; results/candidates PDF-only | **digitize** |
 | portal.311.nyc.gov | Dynamics 365 | flagship dataset; Open311 standard retired | **standardize** |
+
+…plus the batch of ten above (Transact · Expose · Unify · Operationalize · Anchor · Consolidate & Own · Unlock).
 
 - **nycgovparks.org** — assessment ✅ · tech/vendor ✅ · APIs-observed ✅ · crosswalk (237) ✅ · Schemas ✅ · OpenAPI ✅ · MCP ✅.
 - **schools.nyc.gov** — assessment ✅ · tech/vendor ✅ · APIs-observed ✅ · crosswalk (638) ✅ · Schemas ✅ · OpenAPI ✅ · MCP ✅.

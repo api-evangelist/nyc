@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hpd/schemas/building.json",
+  "title": "Building",
+  "description": "A residential building subject to HPD jurisdiction — the spine of the HPD data model. Reconciles the HPD Online building record (the SPA's primary lookup) with the 'Buildings Subject to HPD Jurisdiction' Open Data dataset (kj4p-ruqc, 23 columns). Keyed on buildingId; joins to every violation, complaint, registration, and litigation.",
+  "type": "object",
+  "x-source": {
+    "hpdOnlineApi": "https://mspwvw-hpdleov3.nyc.gov/hpdonline.api/1.0/api (building lookup)",
+    "opendata": "https://data.cityofnewyork.us/d/kj4p-ruqc",
+    "portal": "https://hpdonline.nyc.gov/hpdonline/"
+  },
+  "properties": {
+    "buildingId": { "type": "string", "description": "HPD Building ID (buildingid)." },
+    "registrationId": { "type": ["string", "null"], "description": "Current owner Registration ID (registrationid)." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geography": { "$ref": "_common.json#/$defs/GeographySpine" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "boroId": { "$ref": "_common.json#/$defs/BoroId" },
+    "legalStories": { "type": ["integer", "null"], "description": "Legal number of stories (legalstories)." },
+    "legalClassA": { "type": ["integer", "null"], "description": "Legal Class A (permanent residential) unit count (legalclassa)." },
+    "legalClassB": { "type": ["integer", "null"], "description": "Legal Class B (SRO/rooming) unit count (legalclassb)." },
+    "dobBuildingClass": { "type": ["string", "null"], "description": "DOB building class code (dobbuildingclass)." },
+    "lifecycle": { "type": ["string", "null"], "description": "Building lifecycle status (lifecycle), e.g. 'Building', 'Demolished'." },
+    "managementProgram": { "type": ["string", "null"], "description": "HPD management program if any (managementprogram), e.g. AEP, 7A, Alt Enforcement." },
+    "recordStatus": { "type": ["string", "null"], "description": "HPD record status (recordstatus), e.g. 'Active', 'Inactive'." }
+  },
+  "required": ["buildingId"],
+  "additionalProperties": false
+}

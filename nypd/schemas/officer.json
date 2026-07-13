@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypd/schemas/officer.json",
+  "title": "Officer",
+  "description": "An NYPD member of service (uniformed officer) profile, as surfaced by the nypdonline.org Officer Profile transparency application and mirrored to Open Data. Reconciles 'NYPD Officer Profile - Members of Service' (pmsy-ewrc), '- Title Shield History' (sh6y-4tgb), '- Disciplinary History Summary' (wq9a-qu9a) and '- Charges' (uafj-ik29), '- Department Recognition' (i9n8-a8ed), and '- Training' (n3mp-t5uj). Keyed on PROFILE_ID. Data lives behind an Angular SPA (officer.search.azure.us) with no public API contract.",
+  "type": "object",
+  "x-source": {
+    "app": "https://nypdonline.org/",
+    "backend": "https://officer.search.azure.us/",
+    "opendata_members": "https://data.cityofnewyork.us/d/pmsy-ewrc",
+    "opendata_discipline_charges": "https://data.cityofnewyork.us/d/uafj-ik29"
+  },
+  "properties": {
+    "profileId": { "type": "string", "description": "Officer profile identifier (PROFILE_ID) — the join key across all Officer Profile datasets." },
+    "name": { "type": ["string", "null"], "description": "Officer name (NAME)." },
+    "rank": { "type": ["string", "null"], "description": "Current rank / title (RANK)." },
+    "shield": { "type": ["string", "null"], "description": "Shield (badge) number (SHIELD)." },
+    "command": { "type": ["string", "null"], "description": "Current command / precinct (COMMAND)." },
+    "appointmentDate": { "type": ["string", "null"], "format": "date", "description": "Date appointed to the department (APPOINTMENT_DATE)." },
+    "arrestsTotal": { "type": ["integer", "null"], "description": "Total arrests credited (ARRESTS_TOTAL)." },
+    "departmentRecognitions": { "type": ["integer", "null"], "description": "Count of department recognitions/awards (DEPARTMENT_RECOGNITIONS)." },
+    "disciplineSummary": {
+      "type": ["object", "null"],
+      "description": "Summary of disciplinary history (NYPD Officer Profile - Disciplinary History Summary).",
+      "properties": {
+        "totalCharges": { "type": ["integer", "null"] },
+        "openCases": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "disciplineCharges": {
+      "type": "array",
+      "description": "Individual disciplinary charges (uafj-ik29).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "caseNumber": { "type": ["string", "null"], "description": "CASE_NUMBER." },
+          "date": { "type": ["string", "null"], "format": "date", "description": "DATE." },
+          "chargeDescription": { "type": ["string", "null"], "description": "CHARGE_DESCRIPTION." },
+          "disposition": { "type": ["string", "null"], "description": "DISPOSITION." },
+          "penalty": { "type": ["string", "null"], "description": "PENALTY_AND_QUANTITY." }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["profileId"],
+  "additionalProperties": false
+}

@@ -1,0 +1,404 @@
+openapi: 3.1.0
+info:
+  title: NYC DOT Street Network API (proposed)
+  version: 0.1.0
+  summary: One owned, resource-oriented API unifying the NYC Department of Transportation's scattered street assets — bike routes, traffic signals, parking regulations, speed humps, plazas, bridges, and street-work permits — around the LION street-segment spine, into a single agent-native contract.
+  description: >-
+    Proposed API-first surface for the New York City Department of Transportation, from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/dot and nycstreetdesign.info.
+
+
+    DOT is the most geospatially data-rich domain in the project — 267 NYC Open Data assets — and that
+    is exactly the problem. Those assets are 178 flat datasets plus 64 map-only visualizations (zero
+    queryable columns), each an isolated snapshot, and nearly every one is keyed to a LION `SegmentID`
+    that DOT never exposes as a queryable street-network API. The transactional core — applying for a
+    street-work permit — runs through the NYCSTREET portal with no public API at all.
+
+
+    This contract UNIFIES those assets around the street segment: bike routes, traffic signals, parking
+    regulations, speed humps, pedestrian plazas, and bridges become first-class resources you can query
+    by borough, segment, and location — plus the one net-new WRITE workflow, applying for a
+    **street-work permit**.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.dot.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Bike Routes
+    description: The cycling network — lanes, paths, greenways, signed routes.
+  - name: Traffic Signals
+    description: Traffic and pedestrian signals at intersections.
+  - name: Parking
+    description: Curbside parking regulations and their posted signs.
+  - name: Traffic Calming
+    description: Speed humps and other Vision Zero calming installations.
+  - name: Public Space
+    description: Pedestrian plazas and reclaimed street space.
+  - name: Bridges
+    description: DOT-inventoried bridge structures and condition ratings.
+  - name: Permits
+    description: Street-work / street-opening permits (read + write). The net-new surface.
+
+paths:
+  /bike-routes:
+    get:
+      operationId: listBikeRoutes
+      summary: List / search bike routes
+      tags: [Bike Routes]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/segmentId'
+        - name: facilityClass
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [Existing, Proposed] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of bike routes.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/bike-route.json' } }
+  /bike-routes/{bikeId}:
+    get:
+      operationId: getBikeRoute
+      summary: Get a bike route by id
+      tags: [Bike Routes]
+      parameters:
+        - name: bikeId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The bike route.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/bike-route.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /traffic-signals:
+    get:
+      operationId: listTrafficSignals
+      summary: List / search traffic & pedestrian signals
+      tags: [Traffic Signals]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: signalType
+          in: query
+          schema:
+            type: string
+            enum: [Standard Traffic Signal, Accessible Pedestrian Signal (APS), Exclusive Pedestrian (Barnes Dance), Leading Pedestrian Interval (LPI), All-Way Stop]
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of signals.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/traffic-signal.json' } }
+  /traffic-signals/{signalId}:
+    get:
+      operationId: getTrafficSignal
+      summary: Get a signal by id
+      tags: [Traffic Signals]
+      parameters:
+        - name: signalId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The signal.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/traffic-signal.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /parking-regulations:
+    get:
+      operationId: listParkingRegulations
+      summary: Search curbside parking regulations & signs
+      tags: [Parking]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: onStreet
+          in: query
+          schema: { type: string }
+        - name: signCode
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of parking regulations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/parking-regulation.json' } }
+
+  /speed-humps:
+    get:
+      operationId: listSpeedHumps
+      summary: List / search speed humps
+      tags: [Traffic Calming]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: onStreet
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of speed humps.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/speed-hump.json' } }
+
+  /plazas:
+    get:
+      operationId: listPlazas
+      summary: List pedestrian plazas
+      tags: [Public Space]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: partner
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of plazas.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/pedestrian-plaza.json' } }
+  /plazas/{objectId}:
+    get:
+      operationId: getPlaza
+      summary: Get a pedestrian plaza
+      tags: [Public Space]
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The plaza.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/pedestrian-plaza.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /bridges:
+    get:
+      operationId: listBridges
+      summary: List / search bridges
+      tags: [Bridges]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: verbalRating
+          in: query
+          schema: { type: string, enum: [Good, Fair, Poor] }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of bridges.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/bridge.json' } }
+  /bridges/{bin}:
+    get:
+      operationId: getBridge
+      summary: Get a bridge by BIN
+      tags: [Bridges]
+      parameters:
+        - name: bin
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The bridge.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/bridge.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /street-work-permits:
+    get:
+      operationId: listStreetWorkPermits
+      summary: Search issued street-work permits
+      tags: [Permits]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/segmentId'
+        - name: permitStatus
+          in: query
+          schema: { type: string, enum: [Applied, In Review, Issued, Hold, Revoked, Expired, Cancelled] }
+        - name: permittee
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of permits.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/street-work-permit.json' } }
+    post:
+      operationId: createStreetWorkPermit
+      summary: Apply for a street-work permit
+      description: The net-new write surface — an API for street-opening / construction permit applications, which today run only through the NYCSTREET portal.
+      tags: [Permits]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/street-work-permit.json' }
+      responses:
+        '201':
+          description: Application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/street-work-permit.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /street-work-permits/{permitNumber}:
+    get:
+      operationId: getStreetWorkPermit
+      summary: Get a street-work permit by number
+      tags: [Permits]
+      parameters:
+        - name: permitNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The permit.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/street-work-permit.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    BikeRoute: { $ref: '../schemas/bike-route.json' }
+    TrafficSignal: { $ref: '../schemas/traffic-signal.json' }
+    ParkingRegulation: { $ref: '../schemas/parking-regulation.json' }
+    SpeedHump: { $ref: '../schemas/speed-hump.json' }
+    PedestrianPlaza: { $ref: '../schemas/pedestrian-plaza.json' }
+    Bridge: { $ref: '../schemas/bridge.json' }
+    StreetWorkPermit: { $ref: '../schemas/street-work-permit.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    segmentId:
+      name: segmentId
+      in: query
+      description: LION street SegmentID — the DOT street-network join key.
+      schema: { type: string }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

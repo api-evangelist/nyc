@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dohmh/schemas/inspection.json",
+  "title": "Inspection",
+  "description": "A single food-establishment inspection event with its cited violations and resulting score/grade. Reconciles the 'DOHMH New York City Restaurant Inspection Results' Open Data dataset (43nn-pn8j) — which is published one row per violation — into one inspection object per (camis, inspection_date, inspection_type), rolling the violation rows up into a violations array.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/43nn-pn8j"
+  },
+  "properties": {
+    "camis": { "type": "string", "description": "CAMIS of the inspected establishment (join key to FoodEstablishment)." },
+    "dba": { "type": ["string", "null"], "description": "Establishment name at time of inspection." },
+    "inspectionDate": { "type": "string", "format": "date", "description": "Inspection date (Open Data 'inspection_date')." },
+    "inspectionType": { "type": ["string", "null"], "description": "Inspection type/program, e.g. 'Cycle Inspection / Initial Inspection' (Open Data 'inspection_type')." },
+    "action": { "type": ["string", "null"], "description": "Action taken as a result of the inspection (Open Data 'action')." },
+    "score": { "type": ["number", "null"], "description": "Total violation score — lower is better (Open Data 'score')." },
+    "grade": {
+      "type": ["string", "null"],
+      "enum": ["A", "B", "C", "Z", "N", "P", "G", null],
+      "description": "Letter grade assigned by this inspection, if any (Open Data 'grade')."
+    },
+    "gradeDate": { "type": ["string", "null"], "format": "date" },
+    "criticalFlag": { "type": ["string", "null"], "enum": ["Critical", "Not Critical", "Not Applicable", null], "description": "Whether critical violations were present (Open Data 'critical_flag')." },
+    "violations": {
+      "type": "array",
+      "description": "The violations cited on this inspection (rolled up from the one-row-per-violation Open Data grain).",
+      "items": { "$ref": "_common.json#/$defs/Violation" }
+    },
+    "geo": { "$ref": "_common.json#/$defs/GeoLocation" }
+  },
+  "required": ["camis", "inspectionDate"],
+  "additionalProperties": false
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dob/schemas/permit-application.json",
+  "title": "PermitApplication",
+  "description": "NET-NEW transactional write object: an API-first DOB NOW filing. Today a permit application (a DOB NOW: Build job filing) can only be submitted through the browser-only DOB NOW web application (a810-dobnow.nyc.gov); there is no public API to file, pay for, or check the status of one — the only machine-readable output is a nightly Socrata dump of already-processed filings. This schema models the applicant-submitted filing as an owned, agent-native resource so that an architect, expediter, or homeowner (or their agent) can create, submit, and track a filing programmatically. It is the write mirror of the read-only JobFiling/Permit records.",
+  "type": "object",
+  "x-source": {
+    "app": "https://a810-dobnow.nyc.gov (DOB NOW: Build) — browser-only filing, no API",
+    "note": "There is no existing write API. This is the proposed net-new transactional surface for the DOB domain."
+  },
+  "properties": {
+    "applicationId": { "type": ["string", "null"], "description": "Server-assigned id for the in-progress application (read-only)." },
+    "jobFilingNumber": { "type": ["string", "null"], "description": "DOB NOW Job Filing Number, assigned once the filing is created (read-only)." },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Draft", "Submitted", "InReview", "ObjectionsRaised", "Approved", "PermitIssued", "Withdrawn", null],
+      "description": "Lifecycle state of the application (read-only; advanced by DOB review)."
+    },
+    "jobType": { "type": "string", "description": "Filing type, e.g. A1, A2, A3, NB, DM." },
+    "workTypes": {
+      "type": "array",
+      "description": "Trades/work permits requested (e.g. GC, PL, MH, EW, BL, SP, FS, FA).",
+      "items": { "type": "string" }
+    },
+    "jobDescription": { "type": "string", "description": "Scope of proposed work." },
+    "estimatedJobCost": { "type": ["number", "null"], "description": "Applicant's estimated cost of work." },
+    "professionalCert": { "type": ["boolean", "null"], "description": "Whether the filing is professionally self-certified." },
+    "bin": { "type": "string", "description": "Building Identification Number the work is on." },
+    "bbl": { "type": ["string", "null"] },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "applicant": { "$ref": "_common.json#/$defs/PartyReference" },
+    "owner": { "$ref": "_common.json#/$defs/PartyReference" },
+    "filingRepresentative": { "$ref": "_common.json#/$defs/PartyReference" },
+    "attachments": {
+      "type": "array",
+      "description": "Supporting documents (plans, PW1, technical reports) as references.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "documentType": { "type": "string" },
+          "url": { "type": "string", "format": "uri" }
+        },
+        "required": ["documentType"],
+        "additionalProperties": false
+      }
+    },
+    "submittedAt": { "type": ["string", "null"], "format": "date-time", "description": "When the application was submitted (read-only)." }
+  },
+  "required": ["jobType", "jobDescription", "bin", "applicant"],
+  "additionalProperties": false
+}

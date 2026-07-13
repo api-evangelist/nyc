@@ -6,6 +6,13 @@ The format is loosely [Keep a Changelog](https://keepachangelog.com/). This proj
 
 ## 2026-07-13
 
+### Added — Batch of ten domains (parallel)
+- Ran the full 7-step method against ten more agencies in parallel, each in its own folder: **DOB, HPD, DOT, DOHMH, DSNY, NYPD, TLC, DCP, Comptroller, NYCHA**. Total assessed: **15 domains** (~1,700 Open Data assets mapped, 95 JSON Schemas, 142 MCP tools).
+- **Taxonomy expanded** with new verbs — Transact (DOB, DOHMH), Expose (HPD, DSNY, NYPD), Unify (DOT), Operationalize (TLC), Anchor (DCP), Consolidate & Own (Comptroller), Unlock (NYCHA) — all clustering on one **meta-finding: the reporting data is open; the service/transaction layer is missing, hidden, or vendor-locked.**
+- Notables: HPD already runs a private owned REST API (WSO2); DSNY/NYPD run live undocumented backends; Comptroller's **Checkbook NYC** is a live keyless XML API; DCP is the **geography anchor** for the planned `nyc-commons`. DOB confirms "the real legacy surface is the `aNNN-*` app layer." Across all 15, the write API is absent in 14/15 and agent-readiness is 0/15.
+- Net-new write objects: `PermitApplication`, `HousingLotteryApplication`, `StreetWorkPermit`, `VitalRecordRequest`, `BulkPickupRequest`, `PoliceReportRequest`, `LicenseApplication`, `ClaimFiling`, `WorkOrder`.
+- Manifest generator (`scripts/build-manifest.py`) extended to 15; manifest regenerated; scorecard, SYNTHESIS (new "batch of ten" section), home page, and synthesis page updated to fifteen domains.
+
 ### Added — Roadmap
 - `ROADMAP.md` — near/soon/later plan led by **`nyc-commons`** (factor the recurring geography spine — Borough, Community Board, Council District, Census Tract/NTA, BBL/BIN — into one shared schema set every domain `$ref`s), plus cross-domain identity (`Address`/`Place`), more domains, open-standards conformance, an APIs.json registry, and a reference implementation. Added to site nav.
 

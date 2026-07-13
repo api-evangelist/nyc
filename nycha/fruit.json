@@ -1,0 +1,128 @@
+{
+  "domain": "nycha",
+  "agency": "New York City Housing Authority (NYCHA)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/nycha (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace) and the Self Service Portal at selfserve.nycha.info/nycha/app/eservice/enu (identified as Oracle Siebel CRM via SWECmd + OracleSiebel_logo.gif + page title). Verified the NYC Open Data agency label 'New York City Housing Authority (NYCHA)' via the Socrata Discovery API and pulled all 24 assets with column schemas.",
+  "related_domains": ["selfserve.nycha.info", "on1.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/hpd"],
+  "headline_findings": [
+    "NYCHA is a split domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a resident Self Service Portal that is an Oracle Siebel CRM (selfserve.nycha.info/nycha/app/eservice/enu) with no API.",
+    "The reference data is unusually OPEN: 24 NYC Open Data datasets covering developments (Development Data Book, 55 columns), residential addresses, community facilities, six streams of utility consumption-and-cost metering, and aggregate resident demographics.",
+    "But the resident SERVICE layer has no machine-readable surface at all — rent, recertification, waitlist applications, and repair work orders live only inside the login-walled, JavaScript-only Siebel portal or a phone call to the Customer Contact Center.",
+    "Resident/household data is published only in aggregate (Resident Data Book Summary); NYCHA never exposes an individual HouseholdRecord to Open Data.",
+    "Net-new write surface: report a repair (WorkOrder) — the single most common resident transaction, with no API today. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "24 NYCHA datasets; SODA /resource/<id>.json endpoints. The one real, open NYCHA API — reference/asset data only." },
+    { "endpoint": "selfserve.nycha.info/nycha/app/eservice/enu", "type": "resident service portal (CRM)", "owner": "NYCHA (Oracle Siebel)", "public": "login-walled UI, no API", "note": "rent, recertification, application/waitlist status, work orders; server-rendered Siebel Open UI (SWECmd), JavaScript-only, no JSON/OpenAPI." },
+    { "endpoint": "www.nyc.gov/site/nycha", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API." },
+    { "endpoint": "on1.nyc.gov", "type": "citywide account / SSO", "owner": "NYC (OTI)", "public": "login", "note": "NYC.gov ID / self-service sign-in umbrella." }
+  ],
+  "fruit": [
+    {
+      "name": "Public Housing Developments",
+      "type": "data table + map",
+      "entity": "Development",
+      "url": "https://www.nyc.gov/site/nycha/about/developments.page",
+      "count": "~335 developments",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["NYCHA Development Data Book evjd-dqpz (55c)", "NYCHA Public Housing Developments phvi-damg (4c)", "NYCHA Public Housing Developments Map npwq-dpkb"],
+      "notes": "Core physical/administrative unit. Keyed on TDS #, EDP #, HUD AMP #; rich Development Data Book with population, units, buildings, site, and full geography spine."
+    },
+    {
+      "name": "Residential Addresses",
+      "type": "data table",
+      "entity": "ResidentialAddress",
+      "url": "https://data.cityofnewyork.us/d/3ub5-4ph8",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["NYCHA Residential Addresses 3ub5-4ph8 (26c)"],
+      "notes": "Street-level buildings under each development; BIN, BBL, census tract, NTA, lat/long, all legislative districts."
+    },
+    {
+      "name": "Community Facilities & Service Centers",
+      "type": "directory + map",
+      "entity": "CommunityFacility",
+      "url": "https://data.cityofnewyork.us/d/crns-fw6u",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Directory of NYCHA Community Facilities crns-fw6u (16c)", "NYCHA Facilities and Service Centers d4iy-9uh7 (15c)", "NYCHA Customer Contact Centers 37fm-7uaa", "Map of NYCHA Community Facilities pv8j-5ywy"],
+      "notes": "Senior centers, day care, community centers, service and contact centers; sponsor, program type, status, geography."
+    },
+    {
+      "name": "Utility Consumption & Cost (PropertyMeter)",
+      "type": "metered bill data",
+      "entity": "UtilityConsumption",
+      "url": "https://data.cityofnewyork.us/d/jr24-e7cr",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Electric jr24-e7cr (28c)", "Water 66be-66yr", "Heating Gas it56-eyq4", "Cooking Gas avhb-5jhc", "Steam smdw-73pj", "Heating Oil bhwu-wuzu"],
+      "notes": "Six parallel consumption-and-cost datasets, per development per revenue month; UMIS Bill ID, meter number, rate class, vendor, charges. NYCHA's most-viewed dataset."
+    },
+    {
+      "name": "Resident Demographics (aggregate)",
+      "type": "data table",
+      "entity": "ResidentStatistics",
+      "url": "https://data.cityofnewyork.us/d/5r5y-pvs3",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["NYCHA Resident Data Book Summary 5r5y-pvs3 (43c)"],
+      "opendata_gap": false,
+      "notes": "Population, families, income, age bands per development/program — AGGREGATE ONLY. No individual HouseholdRecord is ever published (privacy by design)."
+    },
+    {
+      "name": "Resident Economic Empowerment (REES) / Jobs",
+      "type": "data table",
+      "entity": "ResidentStatistics",
+      "url": "https://data.cityofnewyork.us/d/dggd-3jfu",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["REES by Development dggd-3jfu", "REES by Borough snck-inhz", "REES by Council District h65x-gk9r", "Recurring REES Programs 7su9-xgtn", "Resident Jobs Programs and Training an6v-iuem"],
+      "notes": "Local Law 163 workforce/economic-empowerment rollups; several related SBS/DYCD/DCAS datasets sit under other agencies' labels."
+    },
+    {
+      "name": "Pay rent",
+      "type": "transaction (portal)",
+      "entity": "WorkOrder",
+      "url": "https://selfserve.nycha.info/nycha/app/eservice/enu",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Rent payment lives only in the Siebel Self Service Portal; no API. Listed as a locked service-layer transaction."
+    },
+    {
+      "name": "Annual recertification",
+      "type": "workflow (portal)",
+      "entity": "WorkOrder",
+      "url": "https://selfserve.nycha.info/nycha/app/eservice/enu",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Income/household recertification — Siebel-only; no API."
+    },
+    {
+      "name": "Public housing / Section 8 waitlist application",
+      "type": "workflow (portal)",
+      "entity": "WorkOrder",
+      "url": "https://selfserve.nycha.info/nycha/app/eservice/enu",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Apply / check waitlist status (WaitlistApplication) — Siebel-only; no API. An alternative net-new write surface."
+    },
+    {
+      "name": "Report a repair (work order)",
+      "type": "sign-up / ticket workflow",
+      "entity": "WorkOrder",
+      "url": "https://selfserve.nycha.info/nycha/app/eservice/enu",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common resident transaction — create and track a maintenance work order. No API and no Open Data twin; lives only in the Siebel portal or a phone call to the Customer Contact Center. The net-new WRITE surface for this domain."
+    }
+  ]
+}

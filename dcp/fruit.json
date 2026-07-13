@@ -1,0 +1,118 @@
+{
+  "domain": "nyc.gov/site/planning",
+  "agency": "New York City Department of City Planning (DCP)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, respecting robots.txt — nyc.gov disallows only /html/misc/). Fingerprinted the shared nyc.gov/Akamai agency site, the Netlify-hosted Planning Labs apps (ZoLa zola.planning.nyc.gov, Population FactFinder), the CARTO + Mapbox map stack, the subscription-gated GeoClient/GeoService at api.nyc.gov/geo (401), and the NYCPlanning GitHub org (308 repos). Open Data agency label 'Department of City Planning (DCP)' verified via the Socrata Discovery API; all 188 DCP assets pulled and column-inspected for PLUTO, NTAs, community districts, census tracts, and the zoning tax-lot DB.",
+  "related_domains": ["zola.planning.nyc.gov", "popfactfinder.planning.nyc.gov", "zap.planning.nyc.gov", "api.nyc.gov", "github.com/NYCPlanning", "data.cityofnewyork.us"],
+  "headline_findings": [
+    "DCP is the SOURCE of the city's shared geography — PLUTO/MapPLUTO defines the BBL, and DCP defines community districts, NTAs, census tracts, and council/election-district boundaries that Parks, DOE, Council, and BOE datasets all join on. This makes DCP the natural authoritative base for the project's planned nyc-commons shared schemas.",
+    "It has the most real engineering of any domain so far — a subscription-gated GeoClient/GeoService (Geosupport) on Azure API Management, modern Netlify/CARTO/Mapbox map apps (ZoLa, FactFinder), and 308 open-source repos — yet still no single owned, resource-oriented, agent-native DCP API.",
+    "188 DCP Open Data datasets (PLUTO 108 cols, MapPLUTO, zoning tax lots, community districts, NTAs, census tracts, borough/election geographies, facilities, POPS) — the richest geography catalog in the city, but flat assets plus GitHub release files, not a resource model.",
+    "The canonical address->BBL geocoder is reachable only through a subscription-gated, Azure-hosted GeoClient (api.nyc.gov/geo, 401 to our client) — the single highest-value capability, un-owned as a public contract.",
+    "DCP is a REFERENCE agency, not a transactional one: there is no obvious citizen write-workflow. Its ULURP land-use process is an agency/applicant pipeline, not a resident transaction. The net-new value is a canonical geocode contract, not a write endpoint.",
+    "See tech-stack.md and apis-observed.md for the platform + API inventory."
+  ],
+  "apis_observed": [
+    { "endpoint": "api.nyc.gov/geo/geoclient", "type": "geocoding REST API (Geosupport/GeoService)", "owner": "NYC (DCP + OTI), Azure API Management", "public": "subscription-gated (401 to our client)", "note": "Canonical address->BBL/BIN + administrative-geography resolver; the city's most-referenced geo capability, behind a vendor gateway + API key." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC/Socrata", "public": true, "note": "188 DCP datasets — PLUTO/MapPLUTO, zoning tax lots, community districts, NTAs, census tracts, geographies; flat assets, not a resource model." },
+    { "endpoint": "planninglabs.carto.com", "type": "geo / vector-tile API", "owner": "CARTO (vendor)", "public": "vendor", "note": "Backs ZoLa lot/zoning/district layers." },
+    { "endpoint": "zola.planning.nyc.gov", "type": "map SPA (Netlify)", "owner": "DCP Planning Labs", "public": "html", "note": "Public lot/zoning/geography map front-end; canonical zola.planninglabs.nyc." },
+    { "endpoint": "popfactfinder.planning.nyc.gov", "type": "demographic-profile SPA (Netlify)", "owner": "DCP Planning Labs", "public": "html", "note": "Census/ACS profiles by geography." },
+    { "endpoint": "github.com/NYCPlanning", "type": "open-source data pipelines & apps", "owner": "DCP", "public": true, "note": "308 repos: db-pluto, labs-zola, labs-factfinder, geosupport-docker; build side released as files, not served as an API." },
+    { "endpoint": "api.mapbox.com", "type": "basemap/tiles API", "owner": "Mapbox (vendor)", "public": "vendor", "note": "ZoLa/FactFinder basemaps." }
+  ],
+  "fruit": [
+    {
+      "name": "Tax Lots (PLUTO / MapPLUTO)",
+      "type": "authoritative data table + map",
+      "entity": "TaxLot",
+      "url": "https://zola.planning.nyc.gov/",
+      "machine_readable": "Open Data (108-col) + GeoClient lookup + CARTO",
+      "verified": true,
+      "opendata_match": ["Primary Land Use Tax Lot Output (PLUTO) 64uk-42ks (108c)", "Primary Land Use Tax Lot Output - Map (MapPLUTO) f888-ni5f", "NYC Zoning Tax Lot Database fdkv-4t4z (16c)"],
+      "notes": "THE source of the BBL and the citywide geography spine. 108 columns per lot including land use, zoning, FAR, owner, and every administrative district. Belongs as GET /lots/{bbl}."
+    },
+    {
+      "name": "Zoning Districts",
+      "type": "regulatory geography + map",
+      "entity": "ZoningDistrict",
+      "url": "https://zola.planning.nyc.gov/",
+      "machine_readable": "Open Data + CARTO layer",
+      "verified": true,
+      "opendata_match": ["NYC Zoning Tax Lot Database fdkv-4t4z (16c)", "Digital City Map - Shapefile m2vu-mgzw"],
+      "notes": "Residential/commercial/manufacturing base districts + overlays + special districts. Encoded per-lot in PLUTO; mapped in ZoLa."
+    },
+    {
+      "name": "Community Districts",
+      "type": "administrative geography + demographics",
+      "entity": "CommunityDistrict",
+      "url": "https://www.nyc.gov/site/planning/community/community-portal.page",
+      "count": 59,
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["New York City Population By Community Districts xi7c-iiu2 (8c)", "Demographic/Social/Economic/Housing Profiles by Community District kvuc-fg9b"],
+      "notes": "59 DCP-defined Community Board areas — a primary administrative geography the whole city references."
+    },
+    {
+      "name": "Neighborhood Tabulation Areas (NTAs)",
+      "type": "neighborhood geography + demographics",
+      "entity": "NTA",
+      "url": "https://popfactfinder.planning.nyc.gov/",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["2020 Neighborhood Tabulation Areas (NTAs) 9nt8-h7nd (12c)", "Census Demographics at the NTA rnsn-acs2", "NYC Population By NTAs swpk-hqdp"],
+      "notes": "DCP-defined aggregations of whole census tracts for reliable neighborhood demographics; the neighborhood geography analysts reference."
+    },
+    {
+      "name": "Census Geographies (2020 tracts)",
+      "type": "statistical geography",
+      "entity": "CensusGeography",
+      "url": "https://www.nyc.gov/site/planning/data-maps/open-data/census-download-metadata.page",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["2020 Census Tracts 63ge-mke6 (14c)"],
+      "notes": "DCP-maintained, shoreline-clipped census tracts; the finest grain of the spine, with parent NTA + CDTA."
+    },
+    {
+      "name": "Council & Election District boundaries",
+      "type": "political geography",
+      "entity": "CensusGeography",
+      "url": "https://www.nyc.gov/site/planning/data-maps/open-data/districts-download-metadata.page",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["Election Districts h2n3-98hq", "Borough Boundaries gthc-hcne"],
+      "notes": "DCP publishes the City Council + election-district geographies every Council/BOE dataset joins on. DCP is the source, not the consumer."
+    },
+    {
+      "name": "Geocode (address -> BBL + geography spine)",
+      "type": "capability / lookup service",
+      "entity": "TaxLot",
+      "url": "https://api.nyc.gov/geo/geoclient",
+      "machine_readable": "GeoClient (subscription-gated)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The canonical address->BBL/BIN + administrative-geography resolver, behind Azure API Management + a subscription key (401 to our client). No open twin. The single highest-value NET-NEW owned contract (read) — DCP has no citizen WRITE workflow."
+    },
+    {
+      "name": "Land-Use Applications (ULURP)",
+      "type": "review pipeline (reference)",
+      "entity": "LandUseApplication",
+      "url": "https://zap.planning.nyc.gov/projects",
+      "machine_readable": "ZAP project pages + Housing DB pipeline",
+      "verified": true,
+      "opendata_match": ["Housing Database 6umk-irkx"],
+      "notes": "The closest DCP has to a transaction, but it is an agency/applicant process (developers, Community Boards, CPC, Council) — NOT a citizen write-workflow. Cross-references the Council domain's matterId when actions reach the City Council."
+    },
+    {
+      "name": "Facilities Database",
+      "type": "data table + map",
+      "entity": "TaxLot",
+      "url": "https://www.nyc.gov/site/planning/data-maps/open-data/dwn-selfac.page",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["Facilities Database ji82-xba5", "Facilities Database - Shapefile 2fpa-bnsx"],
+      "notes": "Citywide inventory of public/institutional facilities keyed to BBL — another DCP spine product other agencies reuse."
+    }
+  ]
+}

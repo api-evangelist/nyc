@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/tlc/schemas/taxi-zone.json",
+  "title": "TaxiZone",
+  "description": "A TLC Taxi Zone — the ~263 pickup/drop-off zones that PULocationID and DOLocationID in the trip records refer to. Published by TLC as a lookup table (taxi_zone_lookup.csv) plus a shapefile on the Trip Record Data page, NOT as a queryable API. This schema makes each zone a first-class, joinable resource — the geography spine for TripRecord.",
+  "type": "object",
+  "x-source": {
+    "lookup": "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv",
+    "shapefile": "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zones.zip",
+    "page": "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page"
+  },
+  "properties": {
+    "locationId": { "type": "integer", "minimum": 1, "maximum": 265, "description": "LocationID — the join key used by trip records." },
+    "zone": { "type": ["string", "null"], "description": "Zone name, e.g. 'Central Park', 'JFK Airport'." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "serviceZone": { "type": ["string", "null"], "description": "Service zone, e.g. 'Yellow Zone', 'Boro Zone', 'Airports', 'EWR'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "centroid": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["locationId"],
+  "additionalProperties": false
+}

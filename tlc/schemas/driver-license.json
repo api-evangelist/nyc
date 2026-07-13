@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/tlc/schemas/driver-license.json",
+  "title": "DriverLicense",
+  "description": "A TLC-licensed driver — Medallion (yellow taxi), FHV, or SHL driver. Reconciles 'Medallion Drivers - Active' (jb3k-j3gp, 6c), 'For Hire Vehicles (FHV) - Active Drivers' (xjfq-wh2d, 7c), 'Street Hail Livery (SHL) Drivers - Active' (5tub-eh45), and 'Medallion Drivers – Passenger Assistance Trained' (td5q-ry6d). Keyed on the TLC driver license number.",
+  "type": "object",
+  "x-source": {
+    "opendataMedallion": "https://data.cityofnewyork.us/d/jb3k-j3gp",
+    "opendataFHV": "https://data.cityofnewyork.us/d/xjfq-wh2d",
+    "opendataSHL": "https://data.cityofnewyork.us/d/5tub-eh45"
+  },
+  "properties": {
+    "licenseNumber": { "type": "string", "description": "TLC driver License Number." },
+    "name": { "type": ["string", "null"], "description": "Licensee name." },
+    "licenseType": { "$ref": "_common.json#/$defs/LicenseType" },
+    "type": { "type": ["string", "null"], "description": "Raw Type value from the source dataset." },
+    "active": { "type": ["boolean", "null"] },
+    "passengerAssistanceTrained": { "type": ["boolean", "null"], "description": "Completed Passenger Assistance / WAV training (td5q-ry6d)." },
+    "expirationDate": { "type": ["string", "null"], "format": "date", "description": "License expiration." },
+    "lastUpdated": { "type": ["string", "null"], "format": "date-time", "description": "Last Date/Time Updated." }
+  },
+  "required": ["licenseNumber"],
+  "additionalProperties": false
+}

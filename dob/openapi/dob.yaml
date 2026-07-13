@@ -1,0 +1,512 @@
+openapi: 3.1.0
+info:
+  title: NYC Department of Buildings API (proposed)
+  version: 0.1.0
+  summary: One owned, resource-oriented, agent-native API for the NYC Department of Buildings — exposing the transactional application layer (BIS Web, DOB NOW, eFiling) that today has no public API and emits only a nightly Open Data batch dump.
+  description: >-
+    Proposed API-first surface for the New York City Department of Buildings (DOB), from the
+    NYC Modernization low-hanging-fruit assessment of www.nyc.gov/site/buildings.
+
+
+    DOB is the project's clearest case that **the real legacy surface is the application layer, not the
+    website.** www.nyc.gov/site/buildings is brochureware on the citywide NYC.gov CMS (nginx + Akamai,
+    Dynatrace/mPulse RUM). Everything that matters — filing a job, pulling a permit, checking violations,
+    looking up a Certificate of Occupancy — lives in the `aNNN-*.nyc.gov` apps: **BIS Web**
+    (`a810-bisweb.nyc.gov`, the legacy Building Information System), **DOB NOW** (`a810-dobnow.nyc.gov`,
+    the newer filing/permitting portal), and **eFiling** (`a810-efiling.nyc.gov`, Apache Tomcat/Java).
+    All three are browser-only, Akamai-gated, and expose **no public API**. The only machine-readable
+    output is a **nightly Socrata batch dump** — every DOB dataset carries a `DOBRunDate` column proving
+    it is a one-way extract, not a live interface.
+
+
+    This contract fronts that app layer with one owned resource model — buildings, job filings, permits,
+    violations (DOB + ECB), complaints, certificates of occupancy — and adds the one net-new **write**
+    workflow the domain lacks: filing a **permit application** (a DOB NOW filing) through an API.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.buildings.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Buildings
+    description: Buildings keyed by BIN/BBL — the join spine for every DOB record.
+  - name: Filings
+    description: DOB job application filings (fronts BIS + DOB NOW).
+  - name: Permits
+    description: Issued work permits (fronts DOB Permit Issuance + DOB NOW approved permits).
+  - name: Violations
+    description: DOB and ECB/OATH violations.
+  - name: Complaints
+    description: Construction/building complaints received by DOB.
+  - name: CertificatesOfOccupancy
+    description: Certificates of Occupancy (C of O).
+  - name: PermitApplications
+    description: File and track a DOB NOW permit application (read + write). The net-new surface.
+
+paths:
+  /buildings:
+    get:
+      operationId: listBuildings
+      summary: List / search buildings
+      tags: [Buildings]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - name: block
+          in: query
+          schema: { type: string }
+        - name: lot
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of buildings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/building.json' } }
+  /buildings/{bin}:
+    get:
+      operationId: getBuilding
+      summary: Get a building by BIN
+      tags: [Buildings]
+      parameters:
+        - name: bin
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The building.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/building.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /buildings/{bin}/filings:
+    get:
+      operationId: getBuildingFilings
+      summary: List job filings for a building
+      tags: [Buildings, Filings]
+      parameters:
+        - name: bin
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Job filings on the building.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/job-filing.json' } }
+
+  /filings:
+    get:
+      operationId: listJobFilings
+      summary: Search DOB job application filings
+      tags: [Filings]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: jobType
+          in: query
+          schema: { type: string }
+        - name: jobStatus
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of job filings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/job-filing.json' } }
+  /filings/{jobNumber}:
+    get:
+      operationId: getJobFiling
+      summary: Get a job filing by job number
+      tags: [Filings]
+      parameters:
+        - name: jobNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The job filing.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/job-filing.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /permits:
+    get:
+      operationId: listPermits
+      summary: Search issued permits
+      tags: [Permits]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: jobNumber
+          in: query
+          schema: { type: string }
+        - name: permitType
+          in: query
+          schema: { type: string }
+        - name: permitStatus
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of permits.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/permit.json' } }
+  /permits/{permitId}:
+    get:
+      operationId: getPermit
+      summary: Get an issued permit
+      tags: [Permits]
+      parameters:
+        - name: permitId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The permit.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/permit.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /violations:
+    get:
+      operationId: listViolations
+      summary: Search DOB & ECB violations
+      tags: [Violations]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: violationClass
+          in: query
+          schema: { type: string, enum: [DOB, ECB] }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of violations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/violation.json' } }
+  /violations/{violationNumber}:
+    get:
+      operationId: getViolation
+      summary: Get a violation by number
+      tags: [Violations]
+      parameters:
+        - name: violationNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The violation.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/violation.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /complaints:
+    get:
+      operationId: listComplaints
+      summary: Search building complaints received by DOB
+      tags: [Complaints]
+      parameters:
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: complaintCategory
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of complaints.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/complaint.json' } }
+  /complaints/{complaintNumber}:
+    get:
+      operationId: getComplaint
+      summary: Get a complaint by number
+      tags: [Complaints]
+      parameters:
+        - name: complaintNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The complaint.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/complaint.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /certificates-of-occupancy:
+    get:
+      operationId: listCertificatesOfOccupancy
+      summary: Search Certificates of Occupancy
+      tags: [CertificatesOfOccupancy]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: jobNumber
+          in: query
+          schema: { type: string }
+        - name: issueType
+          in: query
+          schema: { type: string, enum: [Final, Temporary] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of certificates of occupancy.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/certificate-of-occupancy.json' } }
+  /buildings/{bin}/certificate-of-occupancy:
+    get:
+      operationId: getCertificateOfOccupancy
+      summary: Get the latest Certificate of Occupancy for a building
+      tags: [CertificatesOfOccupancy]
+      parameters:
+        - name: bin
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The certificate of occupancy.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/certificate-of-occupancy.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /permit-applications:
+    get:
+      operationId: listPermitApplications
+      summary: List the authenticated user's permit applications
+      tags: [PermitApplications]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: The user's permit applications.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/permit-application.json' } }
+    post:
+      operationId: createPermitApplication
+      summary: File a permit application (create a DOB NOW filing)
+      description: >-
+        The net-new WRITE surface. Creates a DOB NOW: Build permit application as a draft resource.
+        Today this is only possible through the browser-only DOB NOW portal — there is no API.
+      tags: [PermitApplications]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/permit-application.json' }
+      responses:
+        '201':
+          description: Permit application created (Draft).
+          content:
+            application/json:
+              schema: { $ref: '../schemas/permit-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /permit-applications/{applicationId}:
+    get:
+      operationId: getPermitApplication
+      summary: Get a permit application and its status
+      tags: [PermitApplications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The permit application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/permit-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: submitPermitApplication
+      summary: Update or submit a draft permit application
+      description: >-
+        Patch a draft permit application — e.g. attach documents or advance status to 'Submitted'
+        to lodge the DOB NOW filing for review. The write mutation that legacy DOB NOW only allows in-browser.
+      tags: [PermitApplications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/permit-application.json' }
+      responses:
+        '200':
+          description: The updated permit application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/permit-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Building: { $ref: '../schemas/building.json' }
+    JobFiling: { $ref: '../schemas/job-filing.json' }
+    Permit: { $ref: '../schemas/permit.json' }
+    Violation: { $ref: '../schemas/violation.json' }
+    Complaint: { $ref: '../schemas/complaint.json' }
+    CertificateOfOccupancy: { $ref: '../schemas/certificate-of-occupancy.json' }
+    PermitApplication: { $ref: '../schemas/permit-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

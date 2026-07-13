@@ -1,0 +1,177 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Unifies 267 scattered DOT Open Data assets around the LION street segment behind one agent contract, and adds the net-new street-work permit application.",
+    "openapi": "../openapi/dot.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.dot",
+    "title": "NYC Department of Transportation",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC street network — bike routes, traffic & pedestrian signals, curbside parking regulations, speed humps, pedestrian plazas, bridges, and street-work permits. Unifies the DOT's 267 NYC Open Data assets around the LION street segment behind one owned surface; adds street-work permit applications.",
+    "instructions": "Use find_bike_routes, find_traffic_signals, find_parking_regulations, find_speed_humps, find_plazas, and find_bridges to query street assets by borough, LION segmentId, and location. get_bridge / get_street_work_permit fetch a single record. find_street_work_permits searches issued street-opening permits; apply_street_work_permit (net-new) submits a NEW permit application — it requires an authenticated user and mutates state, so confirm all details with the user before submitting. Most assets share a LION segmentId, so you can pivot from one asset to another along the same blockface."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_bike_routes",
+      "title": "Find Bike Routes",
+      "description": "Search the NYC cycling network (lanes, paths, greenways) by borough, LION segmentId, facility class, or status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "segmentId": { "type": "string" },
+          "facilityClass": { "type": "string" },
+          "status": { "type": "string", "enum": ["Existing", "Proposed"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/bike-route.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listBikeRoutes"
+    },
+    {
+      "name": "find_traffic_signals",
+      "title": "Find Traffic Signals",
+      "description": "Search traffic and pedestrian signals (standard, accessible/APS, Barnes Dance, leading pedestrian interval, all-way stop) by borough, type, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "signalType": { "type": "string", "enum": ["Standard Traffic Signal", "Accessible Pedestrian Signal (APS)", "Exclusive Pedestrian (Barnes Dance)", "Leading Pedestrian Interval (LPI)", "All-Way Stop"] },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/traffic-signal.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listTrafficSignals"
+    },
+    {
+      "name": "find_parking_regulations",
+      "title": "Find Parking Regulations",
+      "description": "Search curbside parking regulations and their posted signs by borough, on-street, sign code, or free text ('what are the rules on my block?').",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "onStreet": { "type": "string" },
+          "signCode": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/parking-regulation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listParkingRegulations"
+    },
+    {
+      "name": "find_speed_humps",
+      "title": "Find Speed Humps",
+      "description": "Search Vision Zero speed-hump installations by borough or on-street.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "onStreet": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/speed-hump.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listSpeedHumps"
+    },
+    {
+      "name": "find_plazas",
+      "title": "Find Pedestrian Plazas",
+      "description": "List NYC DOT pedestrian plazas by borough or maintenance partner.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "partner": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/pedestrian-plaza.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPlazas"
+    },
+    {
+      "name": "find_bridges",
+      "title": "Find Bridges",
+      "description": "Search DOT-inventoried bridges and their condition ratings by borough, verbal rating (Good/Fair/Poor), or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "verbalRating": { "type": "string", "enum": ["Good", "Fair", "Poor"] },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/bridge.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listBridges"
+    },
+    {
+      "name": "get_bridge",
+      "title": "Get Bridge",
+      "description": "Fetch a bridge structure and its latest condition rating by BIN (Bridge Identification Number).",
+      "inputSchema": { "type": "object", "properties": { "bin": { "type": "string" } }, "required": ["bin"] },
+      "outputSchema": { "$ref": "../schemas/bridge.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getBridge"
+    },
+    {
+      "name": "find_street_work_permits",
+      "title": "Find Street-Work Permits",
+      "description": "Search issued street-opening / construction permits by borough, LION segmentId, status, permittee, or date range ('who is digging up my street?').",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "segmentId": { "type": "string" },
+          "permitStatus": { "type": "string", "enum": ["Applied", "In Review", "Issued", "Hold", "Revoked", "Expired", "Cancelled"] },
+          "permittee": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/street-work-permit.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listStreetWorkPermits"
+    },
+    {
+      "name": "get_street_work_permit",
+      "title": "Get Street-Work Permit",
+      "description": "Fetch a single street-work permit by permit number.",
+      "inputSchema": { "type": "object", "properties": { "permitNumber": { "type": "string" } }, "required": ["permitNumber"] },
+      "outputSchema": { "$ref": "../schemas/street-work-permit.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getStreetWorkPermit"
+    },
+    {
+      "name": "apply_street_work_permit",
+      "title": "Apply for a Street-Work Permit",
+      "description": "Submit a NEW street-opening / construction permit application. NET-NEW workflow with no public API today (only the NYCSTREET portal). Requires an authenticated user. Mutates state — confirm all details with the user first.",
+      "inputSchema": { "$ref": "../schemas/street-work-permit.json" },
+      "outputSchema": { "$ref": "../schemas/street-work-permit.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createStreetWorkPermit",
+      "x-auth": "user"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dob/schemas/certificate-of-occupancy.json",
+  "title": "CertificateOfOccupancy",
+  "description": "A Certificate of Occupancy (C of O) — DOB's authoritative statement of a building's legal use and occupancy, issued at the completion of qualifying work. Reconciles the 'DOB Certificate Of Occupancy' Open Data extract (bs8b-p36w, 34 columns) with 'DOB NOW: Certificate of Occupancy' (pkdm-hqz6). Tied to a building by BIN and to the JobFiling that produced it.",
+  "type": "object",
+  "x-source": {
+    "opendata_bis": "https://data.cityofnewyork.us/d/bs8b-p36w",
+    "opendata_dobnow": "https://data.cityofnewyork.us/d/pkdm-hqz6",
+    "app": "https://a810-dobnow.nyc.gov"
+  },
+  "properties": {
+    "binNumber": { "type": "string", "description": "Open Data 'BIN_NUMBER'." },
+    "jobNumber": { "type": ["string", "null"], "description": "The job that produced the C of O (Open Data 'JOB_NUMBER')." },
+    "itemNumber": { "type": ["string", "null"], "description": "Open Data 'ITEM_NUMBER'." },
+    "applicationStatus": { "type": ["string", "null"], "description": "Open Data 'APPLICATION_STATUS_RAW'." },
+    "issueType": { "type": ["string", "null"], "enum": ["Final", "Temporary", null], "description": "Final vs Temporary C of O." },
+    "existingDwellingUnits": { "type": ["integer", "null"], "description": "Open Data 'EX_DWELLING_UNIT'." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "streetName": { "type": ["string", "null"], "description": "Open Data 'STREET'." },
+    "censusTract": { "type": ["string", "null"], "description": "Open Data 'CENSUS_TRACT'." },
+    "nta": { "type": ["string", "null"], "description": "Open Data 'NTA'." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "issueDate": { "type": ["string", "null"], "format": "date", "description": "Open Data 'C_O_ISSUE_DATE'." }
+  },
+  "required": ["binNumber"],
+  "additionalProperties": false
+}

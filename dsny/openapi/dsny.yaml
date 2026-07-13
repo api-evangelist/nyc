@@ -1,0 +1,339 @@
+openapi: 3.1.0
+info:
+  title: NYC DSNY API (proposed)
+  version: 0.1.0
+  summary: One owned, documented, agent-native contract over the NYC Department of Sanitation's already-existing but hidden first-party APIs — the collection-schedule geocoder, the ePickups pickup-request API, the CFC appointment API — plus the 51 DSNY Open Data datasets.
+  description: >-
+    Proposed API-first surface for the New York City Department of Sanitation (DSNY), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/dsny.
+
+
+    DSNY is the fourth distinct pattern in this project. Unlike Council (three APIs, none owned) the
+    Sanitation Department already runs REAL FIRST-PARTY backend APIs — `dsnypublic.nyc.gov/dsny/api`
+    (the `geocoder/DSNYCollection` collection-schedule lookup and `geocoder/BCW` commercial-waste
+    geocoder), the **ePickups API** (`ePickupsAPI/api/PickupRequest/AddUpdatePickUpRequest`,
+    `GetUnavailableDates`, `IsDistrictActive`) that already schedules bulk/large-item pickups, and the
+    **CFC appointment API** (`dsnydonate.nyc.gov/cfc/api/appointment`). But every one of them is
+    UNDOCUMENTED, unversioned, and reachable only by reverse-engineering the DSNY React forms — no
+    OpenAPI, no schemas, no agent surface.
+
+
+    This contract exposes and documents them as one resource model: collection schedules, sanitation
+    districts and frequencies, drop-off sites (e-waste / food-scrap / special-waste / recycling bins),
+    litter baskets, and monthly tonnage from Open Data — plus the net-new WRITE surface,
+    **BulkPickupRequest**, an owned public contract over the existing ePickups backend.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.dsny.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Collection
+    description: Address-level collection schedules and DSNY districts/frequencies.
+  - name: DropOff
+    description: Drop-off sites for e-waste, food scraps, special waste, and recycling.
+  - name: LitterBaskets
+    description: The citywide corner litter-basket inventory.
+  - name: Tonnage
+    description: Monthly collection tonnage and recycling rates (Open Data).
+  - name: Pickups
+    description: Schedule a bulk / large-item / special-waste pickup (read + write). The net-new surface.
+
+paths:
+  /collection-schedule:
+    get:
+      operationId: getCollectionSchedule
+      summary: Look up the collection schedule for an address
+      description: Fronts the undocumented dsnypublic.nyc.gov/dsny/api/geocoder/DSNYCollection backend.
+      tags: [Collection]
+      parameters:
+        - name: address
+          in: query
+          required: true
+          description: Free-form NYC address to geocode to a DSNY district.
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+      responses:
+        '200':
+          description: The collection schedule for the resolved address.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/collection-schedule.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /districts:
+    get:
+      operationId: listSanitationDistricts
+      summary: List DSNY districts and their collection frequencies
+      tags: [Collection]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of sanitation districts.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/sanitation-district.json' } }
+  /districts/{district}:
+    get:
+      operationId: getSanitationDistrict
+      summary: Get a DSNY district by code
+      tags: [Collection]
+      parameters:
+        - name: district
+          in: path
+          required: true
+          description: DSNY district code, e.g. 'MN01'.
+          schema: { type: string }
+      responses:
+        '200':
+          description: The sanitation district.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/sanitation-district.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /drop-off-sites:
+    get:
+      operationId: listDropOffSites
+      summary: Search drop-off sites (e-waste, food scrap, special waste, recycling bins)
+      tags: [DropOff]
+      parameters:
+        - name: materialType
+          in: query
+          schema: { type: string, enum: [Electronics, Food Scrap / Compost, Special Waste, Public Recycling Bin, Textiles, Reuse / Donation, Other] }
+        - $ref: '#/components/parameters/borough'
+        - name: district
+          in: query
+          description: DSNY district code.
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of drop-off sites.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/drop-off-site.json' } }
+  /drop-off-sites/{siteId}:
+    get:
+      operationId: getDropOffSite
+      summary: Get a drop-off site
+      tags: [DropOff]
+      parameters:
+        - name: siteId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The drop-off site.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/drop-off-site.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /litter-baskets:
+    get:
+      operationId: listLitterBaskets
+      summary: Search the citywide litter-basket inventory
+      tags: [LitterBaskets]
+      parameters:
+        - name: section
+          in: query
+          description: DSNY collection section.
+          schema: { type: string }
+        - name: basketType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of litter baskets.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/litter-basket.json' } }
+  /litter-baskets/{basketId}:
+    get:
+      operationId: getLitterBasket
+      summary: Get a litter basket
+      tags: [LitterBaskets]
+      parameters:
+        - name: basketId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The litter basket.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/litter-basket.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /tonnage:
+    get:
+      operationId: listTonnage
+      summary: Query monthly collection tonnage by community district
+      tags: [Tonnage]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: communityDistrict
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          description: Start month (inclusive).
+          schema: { type: string }
+        - name: to
+          in: query
+          description: End month (inclusive).
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of tonnage records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/tonnage.json' } }
+
+  /pickup-requests:
+    get:
+      operationId: listBulkPickupRequests
+      summary: List the authenticated user's bulk / special-waste pickup requests
+      tags: [Pickups]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Pickup requests.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/bulk-pickup-request.json' } }
+    post:
+      operationId: createBulkPickupRequest
+      summary: Schedule a bulk / large-item / special-waste pickup
+      description: >-
+        The net-new WRITE surface. An owned, documented contract over the existing ePickups backend
+        (a827-donatenyc.nyc.gov/ePickupsAPI/api/PickupRequest/AddUpdatePickUpRequest) and CFC
+        appointment API — today reachable only through the DSNY React forms.
+      tags: [Pickups]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/bulk-pickup-request.json' }
+      responses:
+        '201':
+          description: Pickup request created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/bulk-pickup-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /pickup-requests/{requestId}:
+    get:
+      operationId: getBulkPickupRequest
+      summary: Get a bulk pickup request
+      tags: [Pickups]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The pickup request.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/bulk-pickup-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    SanitationDistrict: { $ref: '../schemas/sanitation-district.json' }
+    CollectionSchedule: { $ref: '../schemas/collection-schedule.json' }
+    DropOffSite: { $ref: '../schemas/drop-off-site.json' }
+    LitterBasket: { $ref: '../schemas/litter-basket.json' }
+    Tonnage: { $ref: '../schemas/tonnage.json' }
+    BulkPickupRequest: { $ref: '../schemas/bulk-pickup-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

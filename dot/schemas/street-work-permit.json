@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/schemas/street-work-permit.json",
+  "title": "StreetWorkPermit",
+  "description": "A DOT permit to open, occupy, or work in the street or sidewalk (a street-opening / construction permit). Canonical schema reconciling the 'Street Construction Permits (2022 - Present)' Open Data dataset (tqtj-sjs8, 39 columns) with the NYCSTREET online permitting system. This is the NET-NEW write surface: today DOT publishes issued permits as a read-only snapshot and accepts applications through a portal with no public API — this object is both the read record AND the create/apply payload.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/tqtj-sjs8",
+    "portal": "https://nycstreets.net/",
+    "related": ["https://data.cityofnewyork.us/d/i6b5-j7bu (Street Closures due to Construction Activities)"]
+  },
+  "properties": {
+    "permitNumber": { "type": ["string", "null"], "description": "Issued permit number (PermitNumber). Null on an application not yet issued." },
+    "applicationTrackingId": { "type": ["string", "null"], "description": "Application tracking id (ApplicationTrackingID)." },
+    "permitTypeId": { "type": ["string", "null"], "description": "Permit type code (PermitTypeID)." },
+    "permitTypeDesc": { "type": "string", "description": "Permit type description (PermitTypeDesc), e.g. 'Street Opening', 'Sidewalk Construction'." },
+    "permitSeriesId": { "type": ["string", "null"], "description": "Permit series id (PermitSeriesID)." },
+    "permitSeriesShortDesc": { "type": ["string", "null"], "description": "Permit series (PermitSeriesShortDesc)." },
+    "applicationType": { "type": ["string", "null"], "description": "Application type (ApplicationTypeShortDesc), e.g. 'New', 'Renewal'." },
+    "permitStatus": {
+      "type": ["string", "null"],
+      "description": "Permit status (PermitStatusShortDesc / PermitStatusID), e.g. 'Issued', 'Hold', 'Revoked', 'Applied'.",
+      "enum": ["Applied", "In Review", "Issued", "Hold", "Revoked", "Expired", "Cancelled", null]
+    },
+    "permitteeName": { "type": "string", "description": "Name of the permittee / applicant (PermitteeName)." },
+    "purpose": { "type": ["string", "null"], "description": "Purpose comments (PermitPurposeComments)." },
+    "location": {
+      "type": "object",
+      "description": "Where the work occurs — a blockface keyed to a LION segment.",
+      "properties": {
+        "segment": { "$ref": "_common.json#/$defs/SegmentReference" },
+        "houseNumber": { "type": ["string", "null"], "description": "PermitHouseNumber." },
+        "onStreetName": { "type": ["string", "null"], "description": "OnStreetName." },
+        "fromStreetName": { "type": ["string", "null"], "description": "FromStreetName." },
+        "toStreetName": { "type": ["string", "null"], "description": "ToStreetName." },
+        "borough": { "$ref": "_common.json#/$defs/Borough" },
+        "locationComments": { "type": ["string", "null"], "description": "PermitLocationComments." },
+        "geometry": { "$ref": "_common.json#/$defs/GeoJSONGeometry" }
+      },
+      "additionalProperties": false
+    },
+    "dimensions": {
+      "type": "object",
+      "description": "Physical extent of the permitted work.",
+      "properties": {
+        "numberOfZones": { "type": ["number", "null"], "description": "PermitNumberOfZones." },
+        "totalSqFeet": { "type": ["number", "null"], "description": "PermitTotalSqFeet." },
+        "linearFeet": { "type": ["number", "null"], "description": "PermitLinearFeet." },
+        "estimatedNumberOfCuts": { "type": ["number", "null"], "description": "PermitEstimatedNumberOfCuts." },
+        "pavement": { "type": ["string", "null"], "description": "PavementShortDesc." },
+        "sidewalk": { "type": ["string", "null"], "description": "SideWalkShortDesc." }
+      },
+      "additionalProperties": false
+    },
+    "specificStipulations": { "type": ["string", "null"], "description": "Specific stipulations attached to the permit (SpecificStipulations)." },
+    "dates": {
+      "type": "object",
+      "properties": {
+        "createdOn": { "type": ["string", "null"], "format": "date-time", "description": "CreatedOn." },
+        "issued": { "type": ["string", "null"], "format": "date", "description": "PermitIssueDate." },
+        "emergencyIssue": { "type": ["string", "null"], "format": "date", "description": "EmergencyIssueDate." },
+        "workStart": { "type": ["string", "null"], "format": "date", "description": "IssuedWorkStartDate — requested/approved start of work." },
+        "workEnd": { "type": ["string", "null"], "format": "date", "description": "IssuedWorkEndDate — requested/approved end of work." },
+        "modifiedOn": { "type": ["string", "null"], "format": "date-time", "description": "ModifiedOn." }
+      },
+      "additionalProperties": false
+    },
+    "previousPermitNumber": { "type": ["string", "null"], "description": "PreviousPermitNumber (renewal chain)." },
+    "nextPermitNumber": { "type": ["string", "null"], "description": "NextPermitNumber (renewal chain)." }
+  },
+  "required": ["permitTypeDesc", "permitteeName"],
+  "additionalProperties": false
+}

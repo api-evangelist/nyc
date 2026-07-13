@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycha/schemas/utility-consumption.json",
+  "title": "UtilityConsumption",
+  "description": "A metered utility bill line for a NYCHA development — the PropertyMeter entity. One canonical schema reconciling NYCHA's parallel Open Data consumption-and-cost datasets: Electric (jr24-e7cr, 28 columns), Water (66be-66yr), Heating Gas (it56-eyq4), Cooking Gas (avhb-5jhc), Steam (smdw-73pj), and Heating Oil (bhwu-wuzu). Keyed on UMIS Bill ID.",
+  "type": "object",
+  "x-source": {
+    "opendata_electric": "https://data.cityofnewyork.us/d/jr24-e7cr",
+    "opendata_water": "https://data.cityofnewyork.us/d/66be-66yr",
+    "opendata_heating_gas": "https://data.cityofnewyork.us/d/it56-eyq4",
+    "opendata_cooking_gas": "https://data.cityofnewyork.us/d/avhb-5jhc",
+    "opendata_steam": "https://data.cityofnewyork.us/d/smdw-73pj",
+    "opendata_heating_oil": "https://data.cityofnewyork.us/d/bhwu-wuzu"
+  },
+  "properties": {
+    "umisBillId": { "type": ["string", "null"], "description": "'UMIS BILL ID' — utility bill identifier." },
+    "utility": {
+      "type": "string",
+      "enum": ["Electric", "Water", "Heating Gas", "Cooking Gas", "Steam", "Heating Oil"],
+      "description": "Which consumption dataset this row comes from."
+    },
+    "development": { "$ref": "_common.json#/$defs/DevelopmentReference" },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "fundingSource": { "type": ["string", "null"], "description": "'Funding Source'." },
+    "accountName": { "type": ["string", "null"], "description": "'Account Name'." },
+    "location": { "type": ["string", "null"], "description": "'Location'." },
+    "meterNumber": { "type": ["string", "null"], "description": "'Meter Number'." },
+    "meterScope": { "type": ["string", "null"], "description": "'Meter Scope'." },
+    "meterAmr": { "type": ["string", "null"], "description": "'Meter AMR' (automated meter reading)." },
+    "rateClass": { "type": ["string", "null"], "description": "'Rate Class'." },
+    "vendorName": { "type": ["string", "null"], "description": "'Vendor Name'." },
+    "rcCode": { "type": ["string", "null"], "description": "'RC Code'." },
+    "revenueMonth": { "type": ["string", "null"], "description": "'Revenue Month'." },
+    "serviceStartDate": { "type": ["string", "null"], "format": "date", "description": "'Service Start Date'." },
+    "serviceEndDate": { "type": ["string", "null"], "format": "date", "description": "'Service End Date'." },
+    "days": { "type": ["integer", "null"], "description": "'# days'." },
+    "estimated": { "type": ["boolean", "string", "null"], "description": "'Estimated' bill flag." },
+    "billAnalyzed": { "type": ["boolean", "string", "null"], "description": "'Bill Analyzed'." },
+    "consumption": { "type": ["number", "null"], "description": "Primary consumption quantity (e.g. 'Consumption (KWH)', gallons, therms, MLBS)." },
+    "consumptionUnit": { "type": ["string", "null"], "description": "Unit of the consumption measure (KWH, HCF, Therms, MLBS, Gallons)." },
+    "currentCharges": { "type": ["number", "null"], "description": "'Current Charges'." },
+    "otherCharges": { "type": ["number", "null"], "description": "'Other charges'." }
+  },
+  "required": ["utility"],
+  "additionalProperties": false
+}

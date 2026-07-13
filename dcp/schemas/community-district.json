@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/schemas/community-district.json",
+  "title": "CommunityDistrict",
+  "description": "A NYC Community District — the 59 DCP-defined areas each served by a Community Board, and a primary administrative geography the whole city references. Reconciles the Community Districts population dataset (xi7c-iiu2) and the Community District boundary geography DCP publishes. Authoritative source for nyc-commons.",
+  "type": "object",
+  "x-source": {
+    "opendata_population": "https://data.cityofnewyork.us/d/xi7c-iiu2",
+    "opendata_profiles": "https://data.cityofnewyork.us/d/kvuc-fg9b",
+    "site": "https://www.nyc.gov/site/planning/community/community-portal.page"
+  },
+  "properties": {
+    "borocd": { "type": "integer", "description": "Borough + district code, e.g. 101 = Manhattan CD 1 (CD Number)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "districtNumber": { "type": "integer", "description": "District number within the borough." },
+    "name": { "type": ["string", "null"], "description": "e.g. 'Financial District, Tribeca' (CD Name)." },
+    "cdtaName": { "type": ["string", "null"], "description": "Associated Community District Tabulation Area name (CDTAName)." },
+    "population": {
+      "type": "object",
+      "description": "Decennial population counts published by DCP.",
+      "properties": {
+        "pop1970": { "type": ["integer", "null"] },
+        "pop1980": { "type": ["integer", "null"] },
+        "pop1990": { "type": ["integer", "null"] },
+        "pop2000": { "type": ["integer", "null"] },
+        "pop2010": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "communityBoardUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the Community Board." }
+  },
+  "required": ["borocd", "borough", "districtNumber"],
+  "additionalProperties": false
+}

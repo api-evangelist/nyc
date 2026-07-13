@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/schemas/_common.json",
+  "title": "NYC City Planning — Shared Geography Spine",
+  "description": "Reusable JSON Schema definitions for the New York City Department of City Planning (DCP). DCP is the SOURCE of the city's shared geography — the BBL (via PLUTO/MapPLUTO), community districts, Neighborhood Tabulation Areas (NTAs), census tracts, council/election district boundaries, and borough boundaries that every other NYC agency references. These definitions are therefore AUTHORITATIVE, not borrowed: they are the base the cross-domain `nyc-commons/geography.json` + `nyc-commons/identifiers.json` schema set (see ../../ROADMAP.md) should be factored FROM, and that Parks (`gisPropNum`), DOE (`DBN`), Council (`matterId`), and BOE poll sites all implicitly carry. Reconciled from the PLUTO (64uk-42ks, 108 cols), NTA (9nt8-h7nd), Community Districts (xi7c-iiu2), and Census Tracts (63ge-mke6) datasets, and the DCP GeoService / GeoClient geocoder.",
+  "x-nyc-commons": {
+    "role": "authoritative-source",
+    "note": "DCP defines these identifiers and boundaries; nyc-commons should $ref DCP as the canonical origin of the geography spine rather than re-declaring it."
+  },
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "description": "One of the five NYC boroughs.",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "BoroCode": {
+      "type": "integer",
+      "description": "DCP borough code: 1=Manhattan, 2=Bronx, 3=Brooklyn, 4=Queens, 5=Staten Island. The first digit of every BBL/BIN.",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "BBL": {
+      "type": "string",
+      "description": "Borough-Block-Lot — the 10-digit citywide tax-lot key (1 borough digit + 5 block + 4 lot). DCP's PLUTO/MapPLUTO is the authoritative source of the BBL. This is the primary geographic join key across NYC datasets.",
+      "pattern": "^[1-5][0-9]{9}$"
+    },
+    "BIN": {
+      "type": "string",
+      "description": "Building Identification Number — 7-digit building key (leading digit = borocode). Assigned by DCP; joins buildings to lots.",
+      "pattern": "^[1-5][0-9]{6}$"
+    },
+    "CommunityDistrict": {
+      "type": "object",
+      "description": "A NYC Community District (Community Board area). DCP-defined; e.g. 'MN01' / borocd 101.",
+      "properties": {
+        "borocd": { "type": ["integer", "null"], "description": "Borough + district (e.g. 101 = Manhattan CD 1)." },
+        "borough": { "$ref": "#/$defs/Borough" },
+        "name": { "type": ["string", "null"], "description": "e.g. 'Manhattan Community District 1'." }
+      },
+      "additionalProperties": false
+    },
+    "CouncilDistrict": {
+      "type": ["integer", "null"],
+      "description": "City Council district (1–51). Boundaries are published by DCP (the geography every Council dataset joins on).",
+      "minimum": 1,
+      "maximum": 51
+    },
+    "CensusTract": {
+      "type": "object",
+      "description": "2020 US Census tract as maintained by DCP (63ge-mke6).",
+      "properties": {
+        "ct2020": { "type": ["string", "null"], "description": "Census tract code (CT2020)." },
+        "boroCT2020": { "type": ["string", "null"], "description": "Borough + tract (BoroCT2020)." },
+        "geoid": { "type": ["string", "null"], "description": "Full census GEOID." }
+      },
+      "additionalProperties": false
+    },
+    "NTA": {
+      "type": "object",
+      "description": "Neighborhood Tabulation Area (2020 vintage) — DCP-defined aggregation of census tracts used for neighborhood-level demographics.",
+      "properties": {
+        "nta2020": { "type": ["string", "null"], "description": "NTA code, e.g. 'MN0101'." },
+        "name": { "type": ["string", "null"], "description": "NTA name (NTAName)." },
+        "abbrev": { "type": ["string", "null"], "description": "NTAAbbrev." }
+      },
+      "additionalProperties": false
+    },
+    "GeographySpine": {
+      "type": "object",
+      "description": "The shared geographic-identity block DCP attaches to a place, and the set of keys other agencies reference. Present (implicitly) on Parks facilities, DOE schools, Council funding, BOE poll sites. Make this the nyc-commons base.",
+      "properties": {
+        "bbl": { "$ref": "#/$defs/BBL" },
+        "bin": { "$ref": "#/$defs/BIN" },
+        "borough": { "$ref": "#/$defs/Borough" },
+        "borocode": { "$ref": "#/$defs/BoroCode" },
+        "communityBoard": { "type": ["integer", "null"], "description": "Community district number (PLUTO `community board`)." },
+        "councilDistrict": { "$ref": "#/$defs/CouncilDistrict" },
+        "censusTract2020": { "type": ["string", "null"] },
+        "nta2020": { "type": ["string", "null"] },
+        "schoolDistrict": { "type": ["integer", "null"] },
+        "policePrecinct": { "type": ["integer", "null"] },
+        "fireCompany": { "type": ["string", "null"] },
+        "healthCenterDistrict": { "type": ["integer", "null"] },
+        "sanitationDistrict": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point.",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypd/schemas/police-report-request.json",
+  "title": "PoliceReportRequest",
+  "description": "NET-NEW write object. A resident's request for a copy of an NYPD record — a police/incident (complaint) report, a collision/accident report (form MV-104AN), or a Freedom of Information Law (FOIL) request for other records. Today this is a set of disconnected web forms and a paper/in-person process with no API. This is the one transactional write surface proposed for the NYPD domain.",
+  "type": "object",
+  "x-source": {
+    "collision_reports": "https://www.nyc.gov/site/nypd/services/law-enforcement/collision-reports.page",
+    "foil": "https://www.nyc.gov/site/nypd/about/about-nypd/foil.page"
+  },
+  "properties": {
+    "requestId": { "type": "string", "description": "Server-assigned request identifier (read-only)." },
+    "requestType": {
+      "type": "string",
+      "description": "Kind of record being requested.",
+      "enum": ["IncidentReport", "CollisionReport", "FOIL"]
+    },
+    "status": {
+      "type": ["string", "null"],
+      "description": "Workflow status (read-only).",
+      "enum": ["Submitted", "UnderReview", "AwaitingPayment", "Fulfilled", "Denied", "Withdrawn", null]
+    },
+    "requester": {
+      "type": "object",
+      "description": "Who is making the request.",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "relationship": {
+          "type": ["string", "null"],
+          "description": "Requester's relationship to the incident.",
+          "enum": ["InvolvedParty", "Attorney", "Insurer", "Media", "Public", "Other", null]
+        }
+      },
+      "required": ["name", "email"],
+      "additionalProperties": false
+    },
+    "incident": {
+      "type": "object",
+      "description": "Details identifying the record sought.",
+      "properties": {
+        "complaintNumber": { "type": ["string", "null"], "description": "Complaint number if requesting an incident report (maps to complaint.json complaintNumber)." },
+        "collisionId": { "type": ["string", "null"], "description": "Collision identifier if requesting an accident report." },
+        "incidentDate": { "type": ["string", "null"], "format": "date" },
+        "precinct": { "type": ["integer", "null"], "description": "Precinct of occurrence." },
+        "location": { "type": ["string", "null"], "description": "Free-text location / address of the incident." }
+      },
+      "additionalProperties": false
+    },
+    "foilDescription": { "type": ["string", "null"], "description": "For requestType=FOIL, a description of the records sought." },
+    "submittedAt": { "type": ["string", "null"], "format": "date-time", "description": "Submission timestamp (read-only)." }
+  },
+  "required": ["requestType", "requester"],
+  "additionalProperties": false
+}

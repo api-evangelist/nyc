@@ -1,0 +1,159 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Consolidates the existing Checkbook NYC API (XML-first, vendor Drupal), the Comptroller's NYC Open Data assets, and the WordPress eClaim workflow behind one agent contract.",
+    "openapi": "../openapi/comptroller.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.comptroller",
+    "title": "NYC Comptroller",
+    "version": "0.1.0",
+    "description": "Agent-native access to the New York City Office of the Comptroller — City spending and contracts (Checkbook NYC), published audits, claims against the City, and the five pension funds' holdings. Consolidates the existing XML-first Checkbook API and the Comptroller's Open Data behind one owned, resource-oriented surface; adds the net-new eClaim filing workflow.",
+    "instructions": "Use find_spending / get_spending_transaction and find_contracts / get_contract to answer 'how much did the City pay vendor X?' or 'which contracts did agency Y register?' — these front the Checkbook NYC API in JSON. find_audits surfaces Bureau of Audit reports. find_claims reads reported claim dispositions; file_claim (net-new) files a NEW claim against the City via eClaim, requires an authenticated user, and mutates state — confirm all details with the user before submitting. find_pension_holdings covers NYCERS/TRS/BERS/Police/Fire investments."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_spending",
+      "title": "Find Spending Transactions",
+      "description": "Search NYC spending (payment) transactions by fiscal year, agency, vendor, expense category, contract, or amount. Fronts the Checkbook NYC Spending domain in JSON.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fiscalYear": { "type": "integer", "minimum": 1990, "maximum": 2100 },
+          "agency": { "type": "string" },
+          "vendor": { "type": "string" },
+          "expenseCategory": { "type": "string" },
+          "contractId": { "type": "string" },
+          "minAmount": { "type": "number" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/spending-transaction.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listSpending"
+    },
+    {
+      "name": "get_spending_transaction",
+      "title": "Get Spending Transaction",
+      "description": "Fetch a single spending transaction by document id.",
+      "inputSchema": { "type": "object", "properties": { "documentId": { "type": "string" } }, "required": ["documentId"] },
+      "outputSchema": { "$ref": "../schemas/spending-transaction.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getSpendingTransaction"
+    },
+    {
+      "name": "find_contracts",
+      "title": "Find Contracts",
+      "description": "Search registered City contracts by fiscal year, agency, vendor, status, category, or late-registration flag. Fronts the Checkbook NYC Contracts domain.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fiscalYear": { "type": "integer", "minimum": 1990, "maximum": 2100 },
+          "agency": { "type": "string" },
+          "vendor": { "type": "string" },
+          "status": { "type": "string" },
+          "category": { "type": "string", "enum": ["expense", "revenue"] },
+          "late": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/contract.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listContracts"
+    },
+    {
+      "name": "get_contract",
+      "title": "Get Contract",
+      "description": "Fetch a registered City contract by contract id.",
+      "inputSchema": { "type": "object", "properties": { "contractId": { "type": "string" } }, "required": ["contractId"] },
+      "outputSchema": { "$ref": "../schemas/contract.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getContract"
+    },
+    {
+      "name": "find_audits",
+      "title": "Find Audits",
+      "description": "Search published audits and reports from the Comptroller's Bureau of Audit by agency, date range, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "agency": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/audit.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listAudits"
+    },
+    {
+      "name": "find_claims",
+      "title": "Find Claims (Reported)",
+      "description": "Search reported claims against the City and their dispositions by fiscal year, borough, agency, or claim type. Read-only reporting view.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fiscalYear": { "type": "integer", "minimum": 1990, "maximum": 2100 },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", "Citywide", "Various", "Outside NYC"] },
+          "agency": { "type": "string" },
+          "claimType": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/claim.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listClaims"
+    },
+    {
+      "name": "find_pension_holdings",
+      "title": "Find Pension Holdings",
+      "description": "Search the five NYC pension systems' security holdings (NYCERS, TRS, BERS, Police, Fire) by system, asset class, or country.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "system": { "type": "string", "enum": ["NYCERS", "TRS", "BERS", "Police", "Fire"] },
+          "assetClass": { "type": "string" },
+          "country": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/pension-holding.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPensionHoldings"
+    },
+    {
+      "name": "get_claim_filing",
+      "title": "Get Claim Filing",
+      "description": "Fetch a claim filing by its confirmation number (authenticated user).",
+      "inputSchema": { "type": "object", "properties": { "confirmationNumber": { "type": "string" } }, "required": ["confirmationNumber"] },
+      "outputSchema": { "$ref": "../schemas/claim-filing.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getClaimFiling",
+      "x-auth": "user"
+    },
+    {
+      "name": "file_claim",
+      "title": "File a Claim Against the City",
+      "description": "File a NEW claim against the City of New York (eClaim). NET-NEW workflow with no public API today. Requires an authenticated user. Mutates state — confirm all details with the user first.",
+      "inputSchema": { "$ref": "../schemas/claim-filing.json" },
+      "outputSchema": { "$ref": "../schemas/claim-filing.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createClaimFiling",
+      "x-auth": "user"
+    }
+  ]
+}

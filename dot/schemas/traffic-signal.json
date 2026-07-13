@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/schemas/traffic-signal.json",
+  "title": "TrafficSignal",
+  "description": "A traffic-control signal or pedestrian signal at an intersection. NYC Open Data has no single 'all traffic signals' dataset; this schema reconciles the signal-location datasets DOT does publish — Accessible Pedestrian Signal Locations (de3m-c5p4, 22c), Exclusive Pedestrian (Barnes Dance) Signals (8kuj-2n3u), and Leading Pedestrian Interval Signals — plus the intake represented by Traffic Signal & All-Way Stop Study Requests (w76s-c5u4). Keyed on an intersection location.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/de3m-c5p4",
+    "related": [
+      "https://data.cityofnewyork.us/d/8kuj-2n3u (Exclusive Pedestrian / Barnes Dance)",
+      "https://data.cityofnewyork.us/d/w76s-c5u4 (Traffic Signal & All-Way Stop Study Requests)"
+    ]
+  },
+  "properties": {
+    "signalId": { "type": ["string", "null"], "description": "Signal / feature identifier (OBJECTID or DOT signal id where published)." },
+    "location": { "type": "string", "description": "Intersection description (Location), e.g. 'Broadway and W 42 St'." },
+    "signalType": {
+      "type": ["string", "null"],
+      "description": "Type of signal feature.",
+      "enum": ["Standard Traffic Signal", "Accessible Pedestrian Signal (APS)", "Exclusive Pedestrian (Barnes Dance)", "Leading Pedestrian Interval (LPI)", "All-Way Stop", null]
+    },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "statePlane": {
+      "type": "object",
+      "description": "NY State Plane (EPSG:2263) coordinates as published (POINT_X / POINT_Y).",
+      "properties": {
+        "pointX": { "type": ["number", "null"] },
+        "pointY": { "type": ["number", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "dateInstalled": { "type": ["string", "null"], "format": "date", "description": "Date installed (Date_Insta)." },
+    "geometry": { "$ref": "_common.json#/$defs/GeoJSONGeometry" }
+  },
+  "required": ["location"],
+  "additionalProperties": false
+}

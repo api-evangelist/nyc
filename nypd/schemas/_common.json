@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypd/schemas/_common.json",
+  "title": "NYPD — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYPD object schemas. Reconciles fields common to the NYPD NYC Open Data datasets (complaints, arrests, shootings, summonses), the nypdonline.org Officer Profile app, and CompStat 2.0. Provides the borough + geography spine and the demographic enums that recur across the crime datasets.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "description": "NYC borough. Open Data crime sets use short codes (BORO_NM: MANHATTAN/BRONX/BROOKLYN/QUEENS/STATEN ISLAND) or single-letter ARREST_BORO (M/B/K/Q/S); normalized here to the full name.",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "PatrolBorough": {
+      "type": "string",
+      "description": "NYPD patrol borough (PATROL_BORO), the operational command grouping of precincts.",
+      "enum": [
+        "PATROL BORO MAN SOUTH",
+        "PATROL BORO MAN NORTH",
+        "PATROL BORO BRONX",
+        "PATROL BORO BKLYN SOUTH",
+        "PATROL BORO BKLYN NORTH",
+        "PATROL BORO QUEENS SOUTH",
+        "PATROL BORO QUEENS NORTH",
+        "PATROL BORO STATEN ISLAND"
+      ]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point. Open Data crime sets carry both Latitude/Longitude and the NY State Plane X_COORD_CD / Y_COORD_CD.",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+        "xCoordinate": { "type": ["number", "null"], "description": "NY State Plane X (X_COORD_CD)." },
+        "yCoordinate": { "type": ["number", "null"], "description": "NY State Plane Y (Y_COORD_CD)." }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "GeoLocation": {
+      "type": "object",
+      "description": "The NYC geography spine — the administrative boundaries most NYPD Open Data rows are joined to. Police precinct is the primary NYPD unit; the rest are the citywide spatial joins Socrata attaches.",
+      "properties": {
+        "policePrecinct": { "type": ["integer", "null"], "description": "NYPD precinct number (ADDR_PCT_CD / ARREST_PRECINCT / PRECINCT), 1-123." },
+        "patrolBorough": { "$ref": "#/$defs/PatrolBorough" },
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["integer", "null"], "description": "Community District / Board (Socrata 'Community Districts')." },
+        "councilDistrict": { "type": ["integer", "null"], "description": "City Council district (Socrata 'City Council Districts'), 1-51." },
+        "censusTract": { "type": ["string", "null"] },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area code." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot parcel identifier." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number." },
+        "zipCode": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "Demographics": {
+      "type": "object",
+      "description": "The suspect / victim / arrestee demographic triad that recurs across complaint (SUSP_*/VIC_*), arrest (PERP_*/AGE_GROUP), and shooting datasets.",
+      "properties": {
+        "ageGroup": {
+          "type": ["string", "null"],
+          "description": "Binned age (AGE_GROUP / SUSP_AGE_GROUP / VIC_AGE_GROUP).",
+          "enum": ["<18", "18-24", "25-44", "45-64", "65+", "UNKNOWN", null]
+        },
+        "sex": {
+          "type": ["string", "null"],
+          "description": "Recorded sex (PERP_SEX / SUSP_SEX / VIC_SEX): M, F, U/E (business/other).",
+          "enum": ["M", "F", "U", "E", null]
+        },
+        "race": { "type": ["string", "null"], "description": "Recorded race (PERP_RACE / SUSP_RACE / VIC_RACE)." }
+      },
+      "additionalProperties": false
+    },
+    "OffenseClassification": {
+      "type": "object",
+      "description": "The NYPD offense coding shared by complaints and arrests.",
+      "properties": {
+        "keyCode": { "type": ["string", "null"], "description": "Three-digit offense classification code (KY_CD)." },
+        "offenseDescription": { "type": ["string", "null"], "description": "Offense description (OFNS_DESC)." },
+        "pdCode": { "type": ["string", "null"], "description": "Internal NYPD classification code (PD_CD)." },
+        "pdDescription": { "type": ["string", "null"], "description": "Internal classification description (PD_DESC)." },
+        "lawCode": { "type": ["string", "null"], "description": "Penal-law / statute code (LAW_CODE)." },
+        "lawCategory": {
+          "type": ["string", "null"],
+          "description": "Level of offense (LAW_CAT_CD).",
+          "enum": ["FELONY", "MISDEMEANOR", "VIOLATION", null]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dob/schemas/permit.json",
+  "title": "Permit",
+  "description": "A DOB-issued work permit authorizing construction/trade work once a job filing is approved. Reconciles the legacy 'DOB Permit Issuance' Open Data extract (ipu4-2q9a, 60 columns) and its historical twin (bty7-2jhb) with 'DOB NOW: Build – Approved Permits' (rbx6-tga4). A permit is downstream of a JobFiling and identified by Job # + permit sequence.",
+  "type": "object",
+  "x-source": {
+    "opendata_bis": "https://data.cityofnewyork.us/d/ipu4-2q9a",
+    "opendata_dobnow": "https://data.cityofnewyork.us/d/rbx6-tga4",
+    "app": "https://a810-dobnow.nyc.gov (DOB NOW: Build)"
+  },
+  "properties": {
+    "permitId": { "type": ["string", "null"], "description": "Internal permit id (Open Data 'PERMIT_SI_NO'). DOB NOW keys on Job Filing Number + Work Permit." },
+    "jobNumber": { "type": ["string", "null"], "description": "The job this permit belongs to (Open Data 'Job #' / 'Job Filing Number')." },
+    "jobDocNumber": { "type": ["string", "null"], "description": "Open Data 'Job doc. #'." },
+    "permitSequence": { "type": ["string", "null"], "description": "Open Data 'Permit Sequence #'." },
+    "permitType": { "type": ["string", "null"], "description": "e.g. EW (equipment work), PL (plumbing), NB, DM (Open Data 'Permit Type')." },
+    "permitSubtype": { "type": ["string", "null"], "description": "Open Data 'Permit Subtype'." },
+    "workType": { "type": ["string", "null"], "description": "Open Data 'Work Type'." },
+    "permitStatus": { "type": ["string", "null"], "description": "Open Data 'Permit Status' / 'PERMIT_STATUS'." },
+    "filingStatus": { "type": ["string", "null"], "description": "Open Data 'Filing Status' (e.g. INITIAL, RENEWAL)." },
+    "selfCert": { "type": ["boolean", "null"], "description": "Open Data 'Self_Cert'." },
+    "bin": { "type": ["string", "null"], "description": "Open Data 'Bin #'." },
+    "bbl": { "type": ["string", "null"] },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geography": { "$ref": "_common.json#/$defs/GeographySpine" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "permittee": { "$ref": "_common.json#/$defs/PartyReference" },
+    "owner": { "$ref": "_common.json#/$defs/PartyReference" },
+    "estimatedJobCost": { "type": ["string", "number", "null"], "description": "DOB NOW 'Estimated Job Costs'." },
+    "dates": {
+      "type": "object",
+      "properties": {
+        "filing": { "type": ["string", "null"], "format": "date", "description": "Open Data 'Filing Date'." },
+        "issuance": { "type": ["string", "null"], "format": "date", "description": "Open Data 'Issuance Date' / 'Issued Date'." },
+        "approved": { "type": ["string", "null"], "format": "date", "description": "DOB NOW 'Approved Date'." },
+        "jobStart": { "type": ["string", "null"], "format": "date", "description": "Open Data 'Job Start Date'." },
+        "expiration": { "type": ["string", "null"], "format": "date", "description": "Open Data 'Expiration Date' / 'Expired Date'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

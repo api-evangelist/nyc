@@ -1,0 +1,379 @@
+openapi: 3.1.0
+info:
+  title: NYC Health (DOHMH) API (proposed)
+  version: 0.1.0
+  summary: One owned, resource-oriented, agent-native API for the NYC Department of Health and Mental Hygiene — turning the city's most-consumed open data (restaurant inspections, rodent inspections, childcare, complaints) plus its siloed legacy service portals (ABC Eats, eVital, Accela) into a single contract that lets you both query health data AND transact — including ordering a birth/death certificate.
+  description: >-
+    Proposed API-first surface for the NYC Department of Health and Mental Hygiene (DOHMH),
+    from the NYC Modernization low-hanging-fruit assessment of nyc.gov/site/doh.
+
+
+    DOHMH is a paradox: it is one of the most **data-rich** publishers in the city — 81 datasets on
+    NYC Open Data, led by **Restaurant Inspection Results** (`43nn-pn8j`), among the single most-viewed
+    datasets in all of NYC Open Data — yet its **transactional services** are locked in separate legacy
+    applications with no open, agent-native API: **ABC Eats** (restaurant grade lookup; AngularJS + ASP.NET),
+    **eVital VRRTS** and **VitalChek** (birth/death certificate ordering), and **Accela Citizen Access**
+    (health permits & licenses). The open data is solved; the services are siloed.
+
+
+    This contract consolidates them: Open Data (SODA) for the read-heavy inspection and complaint records,
+    and a proposed transactional surface for the one net-new write workflow — **ordering a vital record**
+    (birth or death certificate). Every resource schema is an individual JSON Schema file referenced by
+    `$ref`. See `../schemas/`, `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.health.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Food Establishments
+    description: Restaurants, their letter grades, and inspection history (fronts Open Data 43nn-pn8j + ABC Eats).
+  - name: Rodent Inspections
+    description: Rat Mitigation program inspections (fronts Open Data p937-wjvj).
+  - name: Childcare
+    description: Permitted group child care centers and inspection outcomes (fronts Open Data dsg6-ifza).
+  - name: Health Facilities
+    description: DOHMH clinics and service sites (fronts NYC Health Map).
+  - name: Complaints
+    description: Indoor environmental / public-health complaints (fronts Open Data 9jgj-bmct + 311).
+  - name: Vital Records
+    description: Order and track birth/death certificates (read + write). The net-new surface.
+
+paths:
+  /food-establishments:
+    get:
+      operationId: listFoodEstablishments
+      summary: Search food establishments (restaurants)
+      tags: [Food Establishments]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: cuisine
+          in: query
+          schema: { type: string }
+        - name: grade
+          in: query
+          schema: { type: string, enum: [A, B, C, Z, N, P, G] }
+        - name: zipCode
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of food establishments.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/food-establishment.json' } }
+  /food-establishments/{camis}:
+    get:
+      operationId: getFoodEstablishment
+      summary: Get a food establishment by CAMIS
+      tags: [Food Establishments]
+      parameters:
+        - name: camis
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The establishment.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/food-establishment.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /food-establishments/{camis}/inspections:
+    get:
+      operationId: getFoodEstablishmentInspections
+      summary: List a food establishment's inspections
+      tags: [Food Establishments]
+      parameters:
+        - name: camis
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Inspection history for the establishment.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/inspection.json' } }
+
+  /inspections:
+    get:
+      operationId: listInspections
+      summary: Search food-establishment inspections
+      tags: [Food Establishments]
+      parameters:
+        - name: camis
+          in: query
+          schema: { type: string }
+        - name: criticalOnly
+          in: query
+          schema: { type: boolean }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of inspections.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/inspection.json' } }
+
+  /rodent-inspections:
+    get:
+      operationId: listRodentInspections
+      summary: Search rodent (rat) inspections
+      tags: [Rodent Inspections]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: result
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of rodent inspections.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/rodent-inspection.json' } }
+
+  /childcare-centers:
+    get:
+      operationId: listChildcareCenters
+      summary: Search permitted childcare centers
+      tags: [Childcare]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: programType
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of childcare centers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/childcare-center.json' } }
+  /childcare-centers/{dcId}:
+    get:
+      operationId: getChildcareCenter
+      summary: Get a childcare center by Day Care ID
+      tags: [Childcare]
+      parameters:
+        - name: dcId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The childcare center.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/childcare-center.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /health-facilities:
+    get:
+      operationId: listHealthFacilities
+      summary: Find health facilities & clinics
+      tags: [Health Facilities]
+      parameters:
+        - name: serviceCategory
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: near
+          in: query
+          description: 'Center point for proximity search, as "lat,lng".'
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+      responses:
+        '200':
+          description: Matching facilities.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/health-facility.json' } }
+
+  /complaints:
+    get:
+      operationId: listComplaints
+      summary: Search indoor environmental / public-health complaints
+      tags: [Complaints]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: complaintType
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of complaints.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/environmental-complaint.json' } }
+
+  /vital-record-requests:
+    get:
+      operationId: listVitalRecordRequests
+      summary: List the authenticated user's vital record requests
+      tags: [Vital Records]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: The user's requests.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/vital-record-request.json' } }
+    post:
+      operationId: createVitalRecordRequest
+      summary: Order a birth or death certificate
+      description: The net-new write surface — an open API for ordering a certified copy of a NYC birth/death certificate, a transaction today locked inside eVital VRRTS and VitalChek.
+      tags: [Vital Records]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/vital-record-request.json' }
+      responses:
+        '201':
+          description: Request created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/vital-record-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /vital-record-requests/{requestId}:
+    get:
+      operationId: getVitalRecordRequest
+      summary: Get / track a vital record request
+      tags: [Vital Records]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The request and its status.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/vital-record-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    FoodEstablishment: { $ref: '../schemas/food-establishment.json' }
+    Inspection: { $ref: '../schemas/inspection.json' }
+    RodentInspection: { $ref: '../schemas/rodent-inspection.json' }
+    ChildcareCenter: { $ref: '../schemas/childcare-center.json' }
+    HealthFacility: { $ref: '../schemas/health-facility.json' }
+    EnvironmentalComplaint: { $ref: '../schemas/environmental-complaint.json' }
+    VitalRecordRequest: { $ref: '../schemas/vital-record-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

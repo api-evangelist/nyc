@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hpd/schemas/complaint.json",
+  "title": "Complaint",
+  "description": "A tenant complaint to HPD about conditions in a building, with one or more nested problems. Reconciles the HPD Online complaint record and the 'Housing Maintenance Code Complaints and Problems' Open Data dataset (ygpa-z7cr, 33 columns; one row per problem). Keyed on complaintId; problems keyed on problemId. This is also the read side of the net-new maintenance-complaint write workflow.",
+  "type": "object",
+  "x-source": {
+    "hpdOnlineApi": "https://mspwvw-hpdleov3.nyc.gov/hpdonline.api/1.0/api (complaints)",
+    "opendata": "https://data.cityofnewyork.us/d/ygpa-z7cr",
+    "intake": "https://portal.311.nyc.gov/ (311) / https://hpdonline.nyc.gov/hpdonline/"
+  },
+  "properties": {
+    "complaintId": { "type": "string", "description": "HPD Complaint ID (complaint_id / unique_key)." },
+    "building": { "$ref": "_common.json#/$defs/BuildingReference" },
+    "apartment": { "type": ["string", "null"], "description": "Apartment (apartment)." },
+    "unitType": { "type": ["string", "null"], "description": "Unit type (unit_type), e.g. 'APARTMENT', 'BUILDING-WIDE'." },
+    "spaceType": { "type": ["string", "null"], "description": "Space type (space_type)." },
+    "status": { "type": ["string", "null"], "description": "Complaint status (complaint_status), e.g. 'OPEN', 'CLOSE'." },
+    "statusDate": { "type": ["string", "null"], "format": "date", "description": "complaint_status_date" },
+    "receivedDate": { "type": ["string", "null"], "format": "date", "description": "received_date" },
+    "anonymous": { "type": ["boolean", "null"], "description": "Whether the complaint was filed anonymously (complaint_anonymous_flag)." },
+    "problems": {
+      "type": "array",
+      "description": "The individual problems reported under this complaint.",
+      "items": { "$ref": "#/$defs/Problem" }
+    }
+  },
+  "required": ["complaintId"],
+  "additionalProperties": false,
+  "$defs": {
+    "Problem": {
+      "type": "object",
+      "description": "A single problem within a complaint (one row of ygpa-z7cr).",
+      "properties": {
+        "problemId": { "type": "string", "description": "problem_id" },
+        "problemCode": { "type": ["string", "null"], "description": "problem_code" },
+        "type": { "type": ["string", "null"], "description": "Emergency/Non-Emergency/Hazardous type (type)." },
+        "majorCategory": { "type": ["string", "null"], "description": "major_category, e.g. 'HEAT/HOT WATER', 'PLUMBING'." },
+        "minorCategory": { "type": ["string", "null"], "description": "minor_category" },
+        "status": { "type": ["string", "null"], "description": "problem_status" },
+        "statusDate": { "type": ["string", "null"], "format": "date", "description": "problem_status_date" },
+        "statusDescription": { "type": ["string", "null"], "description": "status_description" }
+      },
+      "required": ["problemId"],
+      "additionalProperties": false
+    }
+  }
+}

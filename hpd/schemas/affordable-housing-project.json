@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hpd/schemas/affordable-housing-project.json",
+  "title": "AffordableHousingProject",
+  "description": "An affordable-housing project financed/tracked by HPD, with counted units by affordability band, reported at the building grain. Reconciles 'Affordable Housing Production by Building' (hg8x-zxpr, 41 columns) and 'Affordable Housing Production by Project' (hq68-rnsi, 19 columns) — the 'Housing New York Units by Building' family. Keyed on projectId; building rows keyed on buildingId.",
+  "type": "object",
+  "x-source": {
+    "opendataByBuilding": "https://data.cityofnewyork.us/d/hg8x-zxpr",
+    "opendataByProject": "https://data.cityofnewyork.us/d/hq68-rnsi"
+  },
+  "properties": {
+    "projectId": { "type": "string", "description": "HPD Project ID (project_id)." },
+    "projectName": { "type": ["string", "null"], "description": "project_name" },
+    "buildingId": { "type": ["string", "null"], "description": "Building ID for the building-grain row (building_id)." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geography": { "$ref": "_common.json#/$defs/GeographySpine" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "reportingConstructionType": { "type": ["string", "null"], "description": "New Construction / Preservation (reporting_construction_type)." },
+    "extendedAffordabilityStatus": { "type": ["string", "null"], "description": "extended_affordability_status" },
+    "prevailingWageStatus": { "type": ["string", "null"], "description": "prevailing_wage_status" },
+    "dates": {
+      "type": "object",
+      "properties": {
+        "projectStartDate": { "type": ["string", "null"], "format": "date", "description": "project_start_date" },
+        "projectCompletionDate": { "type": ["string", "null"], "format": "date", "description": "project_completion_date" },
+        "buildingCompletionDate": { "type": ["string", "null"], "format": "date", "description": "building_completion_date" }
+      },
+      "additionalProperties": false
+    },
+    "units": {
+      "type": "object",
+      "description": "Counted units by affordability band and bedroom mix.",
+      "properties": {
+        "totalUnits": { "type": ["integer", "null"], "description": "total_units" },
+        "allCountedUnits": { "type": ["integer", "null"], "description": "all_counted_units" },
+        "countedRentalUnits": { "type": ["integer", "null"], "description": "counted_rental_units" },
+        "countedHomeownershipUnits": { "type": ["integer", "null"], "description": "counted_homeownership_units" },
+        "extremelyLowIncomeUnits": { "type": ["integer", "null"], "description": "extremely_low_income_units" },
+        "veryLowIncomeUnits": { "type": ["integer", "null"], "description": "very_low_income_units" },
+        "lowIncomeUnits": { "type": ["integer", "null"], "description": "low_income_units" },
+        "moderateIncomeUnits": { "type": ["integer", "null"], "description": "moderate_income_units" },
+        "middleIncomeUnits": { "type": ["integer", "null"], "description": "middle_income_units" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["projectId"],
+  "additionalProperties": false
+}

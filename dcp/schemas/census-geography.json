@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/schemas/census-geography.json",
+  "title": "CensusGeography",
+  "description": "A 2020 US Census tract as maintained and clipped-to-shoreline by DCP (63ge-mke6, 14 cols). The finest-grain unit of the geography spine; NTAs aggregate these, and PLUTO stamps each lot with its census tract. DCP is the authoritative NYC custodian.",
+  "type": "object",
+  "x-source": {
+    "opendata_tracts": "https://data.cityofnewyork.us/d/63ge-mke6",
+    "site": "https://www.nyc.gov/site/planning/data-maps/open-data/census-download-metadata.page"
+  },
+  "properties": {
+    "geoid": { "type": "string", "description": "Full 11-digit census GEOID (state+county+tract)." },
+    "ct2020": { "type": "string", "description": "Census tract code (CT2020)." },
+    "boroCT2020": { "type": ["string", "null"], "description": "Borough + tract identifier (BoroCT2020)." },
+    "ctLabel": { "type": ["string", "null"], "description": "Human-readable tract label (CTLabel)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "borocode": { "$ref": "_common.json#/$defs/BoroCode" },
+    "nta2020": { "type": ["string", "null"], "description": "Parent NTA code (NTA2020)." },
+    "ntaName": { "type": ["string", "null"], "description": "Parent NTA name (NTAName)." },
+    "cdta2020": { "type": ["string", "null"], "description": "Parent CDTA code (CDTA2020)." },
+    "shapeArea": { "type": ["number", "null"], "description": "Polygon area (Shape_Area)." }
+  },
+  "required": ["geoid", "ct2020"],
+  "additionalProperties": false
+}

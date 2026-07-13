@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dsny/schemas/collection-schedule.json",
+  "title": "CollectionSchedule",
+  "description": "The DSNY collection schedule for a specific address — refuse, recycling, and organics/composting days, plus the responsible DSNY district and any holiday adjustments. This is what the /assets/dsny/forms/collection-schedule React form returns today by calling the undocumented dsnypublic.nyc.gov/dsny/api/geocoder/DSNYCollection backend; there is no owned, documented, agent-native contract for it. Frequencies reconcile with the DSNY Frequencies dataset (rv63-53db).",
+  "type": "object",
+  "x-source": {
+    "form": "https://www.nyc.gov/assets/dsny/forms/collection-schedule",
+    "backend": "https://dsnypublic.nyc.gov/dsny/api/geocoder/DSNYCollection",
+    "opendata_frequencies": "https://data.cityofnewyork.us/d/rv63-53db"
+  },
+  "properties": {
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "sanitationDistrict": { "$ref": "_common.json#/$defs/SanitationDistrictReference" },
+    "refuseDays": {
+      "type": "array",
+      "description": "Days of the week refuse (trash) is collected.",
+      "items": { "type": "string", "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] }
+    },
+    "recyclingDays": {
+      "type": "array",
+      "description": "Days recycling (paper + MGP) is collected.",
+      "items": { "type": "string", "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] }
+    },
+    "organicsDays": {
+      "type": "array",
+      "description": "Days curbside composting (organics) is collected.",
+      "items": { "type": "string", "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] }
+    },
+    "bulkNote": { "type": ["string", "null"], "description": "Guidance for large/bulk item set-out for this address." },
+    "suspended": { "type": ["boolean", "null"], "description": "Whether collection is currently suspended (e.g. snow operations / holiday)." },
+    "nextHoliday": { "type": ["string", "null"], "format": "date", "description": "Next holiday that adjusts this schedule, if any." }
+  },
+  "required": ["address"],
+  "additionalProperties": false
+}

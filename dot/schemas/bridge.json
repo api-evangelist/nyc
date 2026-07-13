@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/schemas/bridge.json",
+  "title": "Bridge",
+  "description": "A DOT-inventoried bridge structure and its most recent condition rating. Canonical schema reconciling the 'Bridge Ratings' Open Data dataset (4yue-vjfc, 20 columns). Keyed on BIN (Bridge Identification Number).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/4yue-vjfc",
+    "related": ["https://data.cityofnewyork.us/d/jdn9-td9w (NYC Bridge Strike Data)"]
+  },
+  "properties": {
+    "bin": { "type": "string", "description": "Bridge Identification Number (BIN)." },
+    "featureCarried": { "type": ["string", "null"], "description": "What the bridge carries (FEATURE CARRIED)." },
+    "featureCrossed": { "type": ["string", "null"], "description": "What the bridge crosses (FEATURE CROSSED)." },
+    "bridgeType": { "type": ["string", "null"], "description": "Structural type (BRIDGE TYPE)." },
+    "spans": { "type": ["integer", "null"], "description": "Number of spans (SPANS)." },
+    "railRoad": { "type": ["string", "null"], "description": "Railroad carried/crossed, if any (RAIL ROAD)." },
+    "otherOwner": { "type": ["string", "null"], "description": "Other owning agency, if not DOT (OTHER OWNER)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "communityDistricts": {
+      "type": "array",
+      "description": "Community district(s) the structure spans (CD / CD2 / CD3).",
+      "items": { "type": ["string", "integer"] }
+    },
+    "condition": {
+      "type": "object",
+      "description": "Most recent condition assessment.",
+      "properties": {
+        "currentRating": { "type": ["number", "null"], "description": "Current numeric condition rating, 1-7 NYSDOT scale (Current Rating*)." },
+        "verbalRating": { "type": ["string", "null"], "description": "Verbal rating (Verbal Rating), e.g. 'Good', 'Fair', 'Poor'." },
+        "generalRecommendation": { "type": ["number", "null"], "description": "General recommendation code (GENERAL RECOMMENDATION**)." },
+        "ratingSource": { "type": ["string", "null"], "description": "RATING SOURCE." },
+        "inspectionDate": { "type": ["string", "null"], "format": "date", "description": "INSPECTION DATE." }
+      },
+      "additionalProperties": false
+    },
+    "deckAreaSqFt": { "type": ["number", "null"], "description": "Deck area (DECK AREA (SQ FT))." },
+    "replacementCost": { "type": ["number", "null"], "description": "Estimated replacement cost (REPLACEMENT COST)." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["bin"],
+  "additionalProperties": false
+}

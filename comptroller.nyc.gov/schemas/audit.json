@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/comptroller.nyc.gov/schemas/audit.json",
+  "title": "Audit",
+  "description": "A published audit or report issued by the Office of the Comptroller's Bureau of Audit. Canonical schema reconciling the 'Published Audit List' Open Data asset (nekg-b6tw, 6 columns) with the WordPress `report` custom post type on comptroller.nyc.gov.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/nekg-b6tw",
+    "site": "https://comptroller.nyc.gov/reports/"
+  },
+  "properties": {
+    "auditNo": { "type": "string", "description": "Audit number (`audit_no`)." },
+    "libraryNo": { "type": ["integer", "null"], "description": "Library reference number (`library_no`)." },
+    "title": { "type": "string", "description": "Audit title (`audit_title`)." },
+    "agencies": { "type": ["string", "null"], "description": "Agency or agencies audited (`agencies`)." },
+    "issueDate": { "type": ["string", "null"], "format": "date", "description": "Date the audit was issued (`issue_date`)." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Link to the published audit (`website_link`)." }
+  },
+  "required": ["auditNo", "title"],
+  "additionalProperties": false
+}

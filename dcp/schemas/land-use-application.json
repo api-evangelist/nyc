@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/schemas/land-use-application.json",
+  "title": "LandUseApplication",
+  "description": "A land-use application moving through the Uniform Land Use Review Procedure (ULURP) or a related DCP review (CEQR, zoning text/map amendment, special permit). Keyed on the DCP ULURP number. This is the closest DCP has to a transactional record, but it is an agency/applicant workflow (developers, agencies, Community Boards, Borough Presidents, City Planning Commission, City Council), NOT a citizen write-workflow — DCP's public role is reference geography, not resident transactions. Reconciles DCP's ZAP (Zoning Application Portal) project tracking with the Housing Database pipeline (6umk-irkx).",
+  "type": "object",
+  "x-source": {
+    "zap": "https://zap.planning.nyc.gov/projects",
+    "opendata_housing_db": "https://data.cityofnewyork.us/d/6umk-irkx",
+    "site": "https://www.nyc.gov/site/planning/applicants/applicant-portal/step5-ulurp-process.page"
+  },
+  "properties": {
+    "ulurpNumber": { "type": "string", "description": "DCP ULURP application number, e.g. 'C 210381 ZMK'." },
+    "projectName": { "type": ["string", "null"], "description": "Project or application name." },
+    "actionType": {
+      "type": ["string", "null"],
+      "description": "Type of land-use action.",
+      "enum": ["Zoning Map Amendment", "Zoning Text Amendment", "Special Permit", "Disposition of City Property", "City Map Change", "Acquisition", "Franchise", "Site Selection", "Other", null]
+    },
+    "status": {
+      "type": ["string", "null"],
+      "description": "Current review stage.",
+      "enum": ["Pre-Certification", "Certified", "Community Board Review", "Borough President Review", "City Planning Commission", "City Council Review", "Approved", "Disapproved", "Withdrawn", "Filed", null]
+    },
+    "applicant": { "type": ["string", "null"], "description": "Applicant of record." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "communityDistrict": { "$ref": "_common.json#/$defs/CommunityDistrict" },
+    "councilDistrict": { "$ref": "_common.json#/$defs/CouncilDistrict" },
+    "primaryBbl": {
+      "$ref": "_common.json#/$defs/BBL",
+      "description": "Primary affected tax lot (the join back to PLUTO)."
+    },
+    "affectedBbls": {
+      "type": "array",
+      "description": "All tax lots affected by the application.",
+      "items": { "$ref": "_common.json#/$defs/BBL" }
+    },
+    "ceqrNumber": { "type": ["string", "null"], "description": "Associated CEQR environmental review number." },
+    "dates": {
+      "type": "object",
+      "properties": {
+        "certified": { "type": ["string", "null"], "format": "date" },
+        "cpcHearing": { "type": ["string", "null"], "format": "date" },
+        "councilVote": { "type": ["string", "null"], "format": "date" },
+        "modified": { "type": ["string", "null"], "format": "date" }
+      },
+      "additionalProperties": false
+    },
+    "councilMatterId": { "type": ["string", "null"], "description": "Cross-reference to the Legistar matterId when the action reaches the City Council (joins to the Council domain)." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "DCP ZAP project page." }
+  },
+  "required": ["ulurpNumber"],
+  "additionalProperties": false
+}

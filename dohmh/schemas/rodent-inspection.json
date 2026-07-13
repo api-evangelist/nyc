@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dohmh/schemas/rodent-inspection.json",
+  "title": "RodentInspection",
+  "description": "A DOHMH rodent (rat) inspection of a tax lot, part of the Rat Mitigation program. Canonical schema for the 'Rodent Inspection' Open Data dataset (p937-wjvj, 34 columns). Keyed on the inspection job id; results record whether active rat signs were found.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/p937-wjvj"
+  },
+  "properties": {
+    "jobId": { "type": "string", "description": "Inspection job id (Open Data 'job_id')." },
+    "jobTicketOrWorkOrderId": { "type": ["string", "null"], "description": "Job ticket / work order id (Open Data 'job_ticket_or_work_order_id')." },
+    "inspectionType": {
+      "type": ["string", "null"],
+      "enum": ["Initial", "Compliance", "BAIT", "CLEAN_UPS", "STOPPAGE", null],
+      "description": "Inspection type (Open Data 'inspection_type')."
+    },
+    "result": {
+      "type": ["string", "null"],
+      "enum": ["Passed", "Rat Activity", "Failed for Other R", "Bait applied", "Monitoring visit", "Cleanup done", "Stoppage done", null],
+      "description": "Inspection result (Open Data 'result'). 'Rat Activity' = active rat signs found."
+    },
+    "inspectionDate": { "type": ["string", "null"], "format": "date", "description": "Inspection date (Open Data 'inspection_date')." },
+    "approvedDate": { "type": ["string", "null"], "format": "date", "description": "Approved date (Open Data 'approved_date')." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geo": { "$ref": "_common.json#/$defs/GeoLocation" }
+  },
+  "required": ["jobId"],
+  "additionalProperties": false
+}

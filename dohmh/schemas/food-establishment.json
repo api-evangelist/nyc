@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dohmh/schemas/food-establishment.json",
+  "title": "FoodEstablishment",
+  "description": "A permitted food-service establishment (restaurant) regulated by DOHMH. One record per establishment, keyed on CAMIS (the DOHMH establishment id). Reconciles the establishment identity in the 'DOHMH New York City Restaurant Inspection Results' Open Data dataset (43nn-pn8j, 31 columns) with the public-facing ABC Eats grade lookup. Inspection history is modeled separately as Inspection.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/43nn-pn8j",
+    "lookup": "https://a816-health.nyc.gov/ABCEatsRestaurants/#/Search"
+  },
+  "properties": {
+    "camis": { "type": "string", "description": "CAMIS — the unique DOHMH establishment identifier (Open Data 'camis')." },
+    "dba": { "type": "string", "description": "Doing-Business-As name (Open Data 'dba')." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "cuisineDescription": { "type": ["string", "null"], "description": "Cuisine category (Open Data 'cuisine_description')." },
+    "currentGrade": {
+      "type": ["string", "null"],
+      "enum": ["A", "B", "C", "Z", "N", "P", "G", null],
+      "description": "Most recent letter grade (Open Data 'grade'). Z = grade pending, N = not yet graded, P = grade pending re-inspection, G = grandfathered/ungraded."
+    },
+    "gradeDate": { "type": ["string", "null"], "format": "date", "description": "Date the current grade was issued (Open Data 'grade_date')." },
+    "lastInspectionDate": { "type": ["string", "null"], "format": "date", "description": "Date of most recent inspection (Open Data 'inspection_date')." },
+    "geo": { "$ref": "_common.json#/$defs/GeoLocation" }
+  },
+  "required": ["camis", "dba"],
+  "additionalProperties": false
+}

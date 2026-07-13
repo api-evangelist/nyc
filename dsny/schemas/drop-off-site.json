@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dsny/schemas/drop-off-site.json",
+  "title": "DropOffSite",
+  "description": "A place the public can drop off material for diversion — electronics/e-waste, food-scrap/compost, special waste (CFC, batteries, harmful household products), public recycling bins, or DonateNYC reuse partners. Unifies several DSNY point datasets: Electronics Drop Off (wshr-5vic), Food Scrap Drop-Off (if26-z6xq), Special Waste Drop-off Sites (242c-ru4i), Public Recycling Bins (sxx4-xhzg), and the DonateNYC Directory (gkgs-za6m).",
+  "type": "object",
+  "x-source": {
+    "opendata_ewaste": "https://data.cityofnewyork.us/d/wshr-5vic",
+    "opendata_foodscrap": "https://data.cityofnewyork.us/d/if26-z6xq",
+    "opendata_specialwaste": "https://data.cityofnewyork.us/d/242c-ru4i",
+    "opendata_recyclingbins": "https://data.cityofnewyork.us/d/sxx4-xhzg",
+    "opendata_donatenyc": "https://data.cityofnewyork.us/d/gkgs-za6m",
+    "backend": "https://dsnydonate.nyc.gov/cfc/api/appointment/"
+  },
+  "properties": {
+    "siteId": { "type": ["string", "null"], "description": "Site identifier (objectid / object_id / globalid / fid)." },
+    "name": { "type": "string", "description": "Site name (dropoff_sitename / food_scrap_drop_off_site / name / site_location)." },
+    "materialType": {
+      "type": "string",
+      "description": "Primary material accepted.",
+      "enum": ["Electronics", "Food Scrap / Compost", "Special Waste", "Public Recycling Bin", "Textiles", "Reuse / Donation", "Other"]
+    },
+    "hostedBy": { "type": ["string", "null"], "description": "Operating partner / host (hosted_by / partner / type)." },
+    "address": { "type": ["string", "null"], "description": "Street address (address / location)." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "sanitationDistrict": { "$ref": "_common.json#/$defs/SanitationDistrictReference" },
+    "hours": { "type": ["string", "null"], "description": "Operating day/hours (operation_day_hours)." },
+    "openMonths": { "type": ["string", "null"], "description": "Seasonal availability (open_months)." },
+    "requiresAppointment": { "type": ["boolean", "null"], "description": "Whether a booked appointment is required (special-waste CFC sites use the appointment API)." },
+    "website": { "type": ["string", "null"], "format": "uri" },
+    "notes": { "type": ["string", "null"] }
+  },
+  "required": ["name", "materialType"],
+  "additionalProperties": false
+}

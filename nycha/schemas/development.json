@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycha/schemas/development.json",
+  "title": "Development",
+  "description": "A NYCHA public housing development — the core physical/administrative unit of the Authority. Canonical schema reconciling the 'NYCHA Development Data Book' (evjd-dqpz, 55 columns), 'NYCHA Public Housing Developments' (phvi-damg), and the Developments map (npwq-dpkb). Keyed on TDS #.",
+  "type": "object",
+  "x-source": {
+    "opendata_databook": "https://data.cityofnewyork.us/d/evjd-dqpz",
+    "opendata_developments": "https://data.cityofnewyork.us/d/phvi-damg",
+    "opendata_map": "https://data.cityofnewyork.us/d/npwq-dpkb",
+    "site": "https://www.nyc.gov/site/nycha/about/developments.page"
+  },
+  "properties": {
+    "tds": { "type": "string", "description": "Tenant Data System number ('TDS#') — primary key." },
+    "consolidatedTds": { "type": ["string", "null"], "description": "'CONSOLIDATED TDS#'." },
+    "development": { "type": "string", "description": "Development name ('DEVELOPMENT')." },
+    "program": { "$ref": "_common.json#/$defs/Program" },
+    "type": { "type": ["string", "null"], "description": "Construction type ('TYPE')." },
+    "method": { "type": ["string", "null"], "description": "Development method ('METHOD')." },
+    "federalizedDevelopment": { "type": ["boolean", "string", "null"], "description": "'FEDERALIZED DEVELOPMENT'." },
+    "seniorDevelopment": { "type": ["boolean", "string", "null"], "description": "'SENIOR DEVELOPMENT'." },
+    "privateManagement": { "type": ["boolean", "string", "null"], "description": "'PRIVATE MANAGEMENT' — RAD/PACT converted." },
+    "radTransferredDate": { "type": ["string", "null"], "format": "date", "description": "'RAD TRANSFERRED DATE'." },
+    "completionDate": { "type": ["string", "null"], "description": "'COMPLETION DATE'." },
+    "identifiers": {
+      "type": "object",
+      "description": "NYCHA/HUD numbering keys.",
+      "properties": {
+        "edp": { "type": ["string", "null"], "description": "'DEVELOPMENT EDP#'." },
+        "operatingEdp": { "type": ["string", "null"], "description": "'OPERATING EDP#'." },
+        "amp": { "type": ["string", "null"], "description": "'HUD AMP#'." },
+        "hudNumber": { "type": ["string", "null"], "description": "'HUD #'." }
+      },
+      "additionalProperties": false
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "streetA": { "type": ["string", "null"], "description": "'LOCATION STREET A'." },
+        "streetB": { "type": ["string", "null"] },
+        "streetC": { "type": ["string", "null"] },
+        "streetD": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "stateDistricts": { "$ref": "_common.json#/$defs/StateLegislativeDistricts" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "population": {
+      "type": "object",
+      "properties": {
+        "totalPopulation": { "type": ["integer", "null"], "description": "'TOTAL POPULATION'." },
+        "populationPublicHousing": { "type": ["integer", "null"], "description": "'POPULATION PUBLIC HOUSING'." },
+        "populationSection8Transition": { "type": ["integer", "null"], "description": "'POPULATION SECTION 8 TRANSITION'." }
+      },
+      "additionalProperties": false
+    },
+    "units": {
+      "type": "object",
+      "properties": {
+        "totalApartments": { "type": ["integer", "null"], "description": "'TOTAL NUMBER OF APARTMENTS'." },
+        "currentApartments": { "type": ["integer", "null"], "description": "'NUMBER OF CURRENT APARTMENTS'." },
+        "section8TransitionApartments": { "type": ["integer", "null"] },
+        "rentalRooms": { "type": ["integer", "null"], "description": "'NUMBER OF RENTAL ROOMS'." },
+        "avgMonthlyGrossRent": { "type": ["number", "null"], "description": "'AVG MONTHLY GROSS RENT'." }
+      },
+      "additionalProperties": false
+    },
+    "buildings": {
+      "type": "object",
+      "properties": {
+        "residentialBuildings": { "type": ["integer", "null"], "description": "'NUMBER OF RESIDENTIAL BLDGS'." },
+        "nonResidentialBuildings": { "type": ["integer", "null"] },
+        "stairhalls": { "type": ["integer", "null"], "description": "'NUMBER OF STAIRHALLS'." },
+        "numberOfStories": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "site": {
+      "type": "object",
+      "properties": {
+        "acres": { "type": ["number", "null"] },
+        "density": { "type": ["number", "null"] },
+        "buildingCoveragePercent": { "type": ["number", "null"], "description": "'BLDG COVERAGE %'." },
+        "totalAreaSqFt": { "type": ["number", "null"] },
+        "developmentCost": { "type": ["number", "null"], "description": "'DEVELOPMENT COST'." }
+      },
+      "additionalProperties": false
+    },
+    "dataAsOf": { "type": ["string", "null"], "format": "date", "description": "'DATA AS OF'." }
+  },
+  "required": ["development"],
+  "additionalProperties": false
+}

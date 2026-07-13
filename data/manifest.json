@@ -1686,6 +1686,3373 @@
      "write": false
     }
    ]
+  },
+  {
+   "id": "dob",
+   "agency": "NYC Department of Buildings (DOB)",
+   "short": "NYC Buildings (DOB)",
+   "verb": "Transact",
+   "platform": "aNNN-*.nyc.gov legacy app layer (BIS/DOB NOW, Java/Tomcat) behind Akamai",
+   "tagline": "A mature transactional core (BIS Web, DOB NOW) with no public API \u2014 only a nightly one-way Open Data batch dump. The app layer IS the legacy surface. Modernize by fronting it with one owned live API + a permit-filing write.",
+   "accent": "#b07d3a",
+   "netnew": "PermitApplication",
+   "findings": [
+    "The real legacy surface is the APPLICATION LAYER, not the website. www.nyc.gov/site/buildings is brochureware; the transactional systems of record are the aNNN-*.nyc.gov apps \u2014 BIS Web (a810-bisweb, legacy Building Information System), DOB NOW (a810-dobnow, the filing/permitting portal), and eFiling (a810-efiling, Apache Tomcat/Java).",
+    "None of the app-layer systems exposes a public API. BIS Web and DOB NOW are browser-only and Akamai-gated (Access Denied to non-browser clients).",
+    "The ONLY machine-readable output is a nightly Socrata BATCH DUMP. Every DOB dataset carries a 'DOBRunDate' column proving it is a one-way nightly extract, not a live interface.",
+    "44 DOB Open Data datasets, led by hugely popular ones: DOB Job Application Filings (ic3t-wcy2, 2.4M views, 95 cols), DOB Permit Issuance (ipu4-2q9a, 604k), DOB NOW Approved Permits (rbx6-tga4, 273k), DOB Complaints (eabe-havv), DOB Violations (3h2n-5cm9), DOB ECB Violations (6bgk-3dad), DOB Certificate of Occupancy (bs8b-p36w).",
+    "The domain is data-rich but transaction-closed: you can read yesterday's filings/permits/violations, but you cannot file, pay, or check status of a DOB NOW permit application via any API \u2014 that is the net-new write surface.",
+    "See tech-stack.md and apis-observed.md for the platform + app-layer inventory."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC / Socrata (Tyler)",
+     "public": true,
+     "note": "44 DOB datasets; nightly BATCH extract of BIS/DOB NOW (DOBRunDate column). The only machine-readable DOB surface \u2014 read-only, lossy, a day stale."
+    },
+    {
+     "endpoint": "a810-dobnow.nyc.gov",
+     "type": "filing/permitting web app",
+     "owner": "NYC DOB (Oracle-based DOB NOW)",
+     "public": "browser-only, Akamai-gated",
+     "note": "The modern transactional system for filings, permits, C of O, elevator/boiler/facade safety. No public API; 403 'Access Denied' to non-browser clients."
+    },
+    {
+     "endpoint": "a810-bisweb.nyc.gov",
+     "type": "legacy record web app",
+     "owner": "NYC DOB (BIS)",
+     "public": "browser-only, Akamai-gated",
+     "note": "Legacy Building Information System \u2014 the pre-DOB NOW system of record for jobs, permits, violations, complaints. Browser-only."
+    },
+    {
+     "endpoint": "a810-efiling.nyc.gov",
+     "type": "eFiling web app",
+     "owner": "NYC DOB",
+     "public": "browser-only",
+     "note": "Apache Tomcat/9.0.117 (Java) \u2014 DOB eFiling. No API."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/buildings",
+     "type": "content CMS",
+     "owner": "NYC (citywide NYC.gov platform)",
+     "public": true,
+     "note": "Brochureware on the citywide NYC.gov CMS (nginx + Akamai edge; Dynatrace + mPulse RUM). Links out to the app layer; holds no records."
+    },
+    {
+     "endpoint": "translate.google.com",
+     "type": "translation widget",
+     "owner": "Google",
+     "public": "vendor",
+     "note": "Google Website Translator on the CMS."
+    },
+    {
+     "endpoint": "a856-cityrecord.nyc.gov / a858-nycnotify.nyc.gov",
+     "type": "adjacent aNNN apps",
+     "owner": "NYC",
+     "public": "browser",
+     "note": "City Record Online and NYC notification apps referenced from the DOB pages \u2014 same aNNN legacy-app pattern."
+    }
+   ],
+   "counts": {
+    "fruit": 11,
+    "opendata": 44,
+    "schemas": 7,
+    "openapiOps": 17,
+    "mcpTools": 10,
+    "entities": 8
+   },
+   "entities": [
+    "JobFiling",
+    "Permit",
+    "Violation",
+    "Complaint",
+    "CertificateOfOccupancy",
+    "Building",
+    "PermitApplication",
+    "PartyReference"
+   ],
+   "files": {
+    "fruit": "dob/fruit.json",
+    "opendata": "dob/opendata-dob.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dob.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dob.yaml",
+    "mcp": "mcp/dob-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC DOB \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Buildings (DOB) object schemas. Reconciles fields common to the DOB website"
+    },
+    {
+     "file": "schemas/building.json",
+     "title": "Building",
+     "shared": false,
+     "desc": "A NYC building as tracked by the Department of Buildings, keyed on BIN (Building Identification Number) and its tax lot (BBL). This is the j"
+    },
+    {
+     "file": "schemas/certificate-of-occupancy.json",
+     "title": "CertificateOfOccupancy",
+     "shared": false,
+     "desc": "A Certificate of Occupancy (C of O) \u2014 DOB's authoritative statement of a building's legal use and occupancy, issued at the completion of qua"
+    },
+    {
+     "file": "schemas/complaint.json",
+     "title": "Complaint",
+     "shared": false,
+     "desc": "A construction/building complaint received by DOB about a building (often routed from 311). Reconciles the 'DOB Complaints Received' Open Da"
+    },
+    {
+     "file": "schemas/job-filing.json",
+     "title": "JobFiling",
+     "shared": false,
+     "desc": "A DOB job application filing \u2014 an application to perform construction/alteration work on a building, tracked from pre-filing through approva"
+    },
+    {
+     "file": "schemas/permit-application.json",
+     "title": "PermitApplication",
+     "shared": false,
+     "desc": "NET-NEW transactional write object: an API-first DOB NOW filing. Today a permit application (a DOB NOW: Build job filing) can only be submit"
+    },
+    {
+     "file": "schemas/permit.json",
+     "title": "Permit",
+     "shared": false,
+     "desc": "A DOB-issued work permit authorizing construction/trade work once a job filing is approved. Reconciles the legacy 'DOB Permit Issuance' Open"
+    },
+    {
+     "file": "schemas/violation.json",
+     "title": "Violation",
+     "shared": false,
+     "desc": "A DOB or ECB (Environmental Control Board / OATH) violation issued against a building. Reconciles the 'DOB Violations' Open Data extract (3h"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/buildings",
+     "op": "listBuildings",
+     "summary": "List / search buildings",
+     "tags": [
+      "Buildings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/buildings/{bin}",
+     "op": "getBuilding",
+     "summary": "Get a building by BIN",
+     "tags": [
+      "Buildings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/buildings/{bin}/filings",
+     "op": "getBuildingFilings",
+     "summary": "List job filings for a building",
+     "tags": [
+      "Buildings",
+      "Filings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/filings",
+     "op": "listJobFilings",
+     "summary": "Search DOB job application filings",
+     "tags": [
+      "Filings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/filings/{jobNumber}",
+     "op": "getJobFiling",
+     "summary": "Get a job filing by job number",
+     "tags": [
+      "Filings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/permits",
+     "op": "listPermits",
+     "summary": "Search issued permits",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/permits/{permitId}",
+     "op": "getPermit",
+     "summary": "Get an issued permit",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/violations",
+     "op": "listViolations",
+     "summary": "Search DOB & ECB violations",
+     "tags": [
+      "Violations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/violations/{violationNumber}",
+     "op": "getViolation",
+     "summary": "Get a violation by number",
+     "tags": [
+      "Violations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/complaints",
+     "op": "listComplaints",
+     "summary": "Search building complaints received by DOB",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/complaints/{complaintNumber}",
+     "op": "getComplaint",
+     "summary": "Get a complaint by number",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/certificates-of-occupancy",
+     "op": "listCertificatesOfOccupancy",
+     "summary": "Search Certificates of Occupancy",
+     "tags": [
+      "CertificatesOfOccupancy"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/buildings/{bin}/certificate-of-occupancy",
+     "op": "getCertificateOfOccupancy",
+     "summary": "Get the latest Certificate of Occupancy for a building",
+     "tags": [
+      "CertificatesOfOccupancy"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/permit-applications",
+     "op": "listPermitApplications",
+     "summary": "List the authenticated user's permit applications",
+     "tags": [
+      "PermitApplications"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/permit-applications",
+     "op": "createPermitApplication",
+     "summary": "File a permit application (create a DOB NOW filing)",
+     "tags": [
+      "PermitApplications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/permit-applications/{applicationId}",
+     "op": "getPermitApplication",
+     "summary": "Get a permit application and its status",
+     "tags": [
+      "PermitApplications"
+     ],
+     "write": false
+    },
+    {
+     "method": "PATCH",
+     "path": "/permit-applications/{applicationId}",
+     "op": "submitPermitApplication",
+     "summary": "Update or submit a draft permit application",
+     "tags": [
+      "PermitApplications"
+     ],
+     "write": true
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_buildings",
+     "title": "Find Buildings",
+     "desc": "Search NYC buildings by borough, BBL, block/lot, or free text (address). Returns BIN-keyed building records.",
+     "write": false
+    },
+    {
+     "name": "get_building",
+     "title": "Get Building",
+     "desc": "Fetch a building by BIN (Building Identification Number), with its geography spine and tax lot.",
+     "write": false
+    },
+    {
+     "name": "find_job_filings",
+     "title": "Find Job Filings",
+     "desc": "Search DOB job application filings by borough, BIN, job type, status, or date range. Fronts BIS + DOB NOW filings.",
+     "write": false
+    },
+    {
+     "name": "get_job_filing",
+     "title": "Get Job Filing",
+     "desc": "Fetch a single DOB job application filing by job number.",
+     "write": false
+    },
+    {
+     "name": "find_permits",
+     "title": "Find Permits",
+     "desc": "Search issued DOB work permits by borough, BIN, job number, permit type, status, or date range.",
+     "write": false
+    },
+    {
+     "name": "find_violations",
+     "title": "Find Violations",
+     "desc": "Search DOB and ECB/OATH violations by borough, BIN, class (DOB or ECB), status, or date range.",
+     "write": false
+    },
+    {
+     "name": "find_complaints",
+     "title": "Find Complaints",
+     "desc": "Search building/construction complaints received by DOB by BIN, status, category, or date range.",
+     "write": false
+    },
+    {
+     "name": "find_certificates_of_occupancy",
+     "title": "Find Certificates of Occupancy",
+     "desc": "Search Certificates of Occupancy by borough, BIN, job number, or issue type (Final/Temporary).",
+     "write": false
+    },
+    {
+     "name": "file_permit_application",
+     "title": "File Permit Application",
+     "desc": "File a new DOB NOW: Build permit application as a draft. NET-NEW workflow with no equivalent today (DOB NOW is browser-only). Requires an authenticated user. Mu",
+     "write": true
+    },
+    {
+     "name": "submit_permit_application",
+     "title": "Submit Permit Application",
+     "desc": "Update a draft permit application or advance it to 'Submitted' to lodge the DOB NOW filing for review. Requires an authenticated user. Mutates state \u2014 confirm w",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "hpd",
+   "agency": "NYC Department of Housing Preservation and Development (HPD)",
+   "short": "NYC Housing (HPD)",
+   "verb": "Expose",
+   "platform": "Angular SPA over a private owned REST API (WSO2 gateway) + NYC GeoSearch",
+   "tagline": "HPD already runs a modern, owned, versioned REST API \u2014 kept private behind one Angular app while the public surface is 47 flattened snapshots and a closed lottery. Modernize by exposing what exists.",
+   "accent": "#3f8f6a",
+   "netnew": "HousingLotteryApplication",
+   "findings": [
+    "HPD has already BUILT a modern, owned backend REST API \u2014 mspwvw-hpdleov3.nyc.gov/hpdonline.api/1.0/api \u2014 behind a WSO2 API gateway (*.hpdnyc.org:8243), with NYC GeoSearch integration. But it is private, undocumented, and serves only the HPD Online Angular SPA.",
+    "The public machine-readable surface is instead 47 NYC Open Data datasets (Housing Maintenance Code Violations at 215k+ views leads) \u2014 flattened periodic snapshots describing the same objects/keys as the private live API.",
+    "The highest-value citizen transaction \u2014 applying to an affordable-housing lottery on NYC Housing Connect \u2014 is a closed ASP.NET silo with NO public API; only read-only 'advertised lotteries' Open Data twins exist.",
+    "Entities recover cleanly from both the SPA and Open Data, joined by buildingId / registrationId / BBL / BIN: Building, Violation, Complaint (+problems), Registration (+contacts), Litigation, AffordableHousingProject.",
+    "Fourth distinct modernization pattern: not replatform (Parks), reclaim (DOE), or consolidate (Council) \u2014 but EXPOSE an owned API that already exists. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "mspwvw-hpdleov3.nyc.gov/hpdonline.api/1.0/api",
+     "type": "backend REST API",
+     "owner": "NYC HPD",
+     "public": false,
+     "note": "The live HPD record (buildings, violations, complaints, registrations, litigation, charges, bedbug, vacate). Owned .nyc.gov host, versioned /1.0; hard-coded as apiBaseURL in HPD Online main.js. Private/undocumented."
+    },
+    {
+     "endpoint": "mspwvw-hpdleov3.nyc.gov/DocService/v1/api",
+     "type": "document service API",
+     "owner": "NYC HPD",
+     "public": false,
+     "note": "documentApiBaseURL; serves NOV/order PDFs via /documents/content."
+    },
+    {
+     "endpoint": "*.hpdnyc.org:8243",
+     "type": "API gateway",
+     "owner": "NYC HPD (WSO2 API Manager)",
+     "public": "internal",
+     "note": "Port 8243 = WSO2 gateway default; whitelisted in the SPA CSP connect-src. HPD already runs API management internally."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "47 HPD datasets; flattened periodic snapshots of the same data."
+    },
+    {
+     "endpoint": "geosearch.planninglabs.nyc/v2",
+     "type": "geocoding API",
+     "owner": "NYC Planning Labs (Pelias)",
+     "public": true,
+     "note": "Address autocomplete -> BBL/BIN/coords; used by HPD Online property lookup."
+    },
+    {
+     "endpoint": "hpdgis-enterprise.hpdnyc.org/HPDMap4",
+     "type": "map service (ArcGIS/Esri)",
+     "owner": "NYC HPD",
+     "public": "internal",
+     "note": "Enterprise GIS map referenced by the SPA."
+    },
+    {
+     "endpoint": "housingconnect.nyc.gov/PublicWeb",
+     "type": "lottery portal (ASP.NET SPA)",
+     "owner": "NYC HPD/HDC",
+     "public": "html",
+     "note": "Housing Connect 2; affordable-housing applications are UI-only, no public API."
+    },
+    {
+     "endpoint": "www.googletagmanager.com",
+     "type": "analytics API",
+     "owner": "Google",
+     "public": "vendor",
+     "note": "GA4 G-GYRKWPJBCL."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 47,
+    "schemas": 7,
+    "openapiOps": 18,
+    "mcpTools": 11,
+    "entities": 7
+   },
+   "entities": [
+    "Building",
+    "HousingMaintenanceViolation",
+    "Complaint",
+    "Registration",
+    "LitigationCase",
+    "AffordableHousingProject",
+    "HousingLotteryApplication"
+   ],
+   "files": {
+    "fruit": "hpd/fruit.json",
+    "opendata": "hpd/opendata-hpd.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-hpd.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/hpd.yaml",
+    "mcp": "mcp/hpd-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC HPD \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Housing Preservation & Development (HPD) object schemas. Reconciles the pro"
+    },
+    {
+     "file": "schemas/affordable-housing-project.json",
+     "title": "AffordableHousingProject",
+     "shared": false,
+     "desc": "An affordable-housing project financed/tracked by HPD, with counted units by affordability band, reported at the building grain. Reconciles "
+    },
+    {
+     "file": "schemas/building.json",
+     "title": "Building",
+     "shared": false,
+     "desc": "A residential building subject to HPD jurisdiction \u2014 the spine of the HPD data model. Reconciles the HPD Online building record (the SPA's p"
+    },
+    {
+     "file": "schemas/complaint.json",
+     "title": "Complaint",
+     "shared": false,
+     "desc": "A tenant complaint to HPD about conditions in a building, with one or more nested problems. Reconciles the HPD Online complaint record and t"
+    },
+    {
+     "file": "schemas/housing-lottery-application.json",
+     "title": "HousingLotteryApplication",
+     "shared": false,
+     "desc": "A household's application to an affordable-housing lottery on NYC Housing Connect \u2014 the net-new WRITE surface for HPD. Housing Connect 2 is "
+    },
+    {
+     "file": "schemas/litigation.json",
+     "title": "LitigationCase",
+     "shared": false,
+     "desc": "A housing litigation case brought by HPD (or a tenant) over conditions or harassment. Reconciles the HPD Online litigation record with the '"
+    },
+    {
+     "file": "schemas/registration.json",
+     "title": "Registration",
+     "shared": false,
+     "desc": "An annual owner/property registration that HPD requires of multiple-dwelling buildings, with its associated contacts (owner, managing agent,"
+    },
+    {
+     "file": "schemas/violation.json",
+     "title": "HousingMaintenanceViolation",
+     "shared": false,
+     "desc": "A Housing Maintenance Code violation issued by HPD against a building. Canonical schema reconciling the HPD Online violation record with the"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/buildings",
+     "op": "listBuildings",
+     "summary": "Search buildings under HPD jurisdiction",
+     "tags": [
+      "Buildings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/buildings/{buildingId}",
+     "op": "getBuilding",
+     "summary": "Get a building by HPD Building ID",
+     "tags": [
+      "Buildings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/buildings/{buildingId}/violations",
+     "op": "getBuildingViolations",
+     "summary": "List a building's violations",
+     "tags": [
+      "Buildings",
+      "Violations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/buildings/{buildingId}/complaints",
+     "op": "getBuildingComplaints",
+     "summary": "List a building's complaints",
+     "tags": [
+      "Buildings",
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/violations",
+     "op": "listViolations",
+     "summary": "Search Housing Maintenance Code violations",
+     "tags": [
+      "Violations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/violations/{violationId}",
+     "op": "getViolation",
+     "summary": "Get a violation by ID",
+     "tags": [
+      "Violations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/complaints",
+     "op": "listComplaints",
+     "summary": "Search complaints and problems",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/complaints",
+     "op": "createComplaint",
+     "summary": "File a maintenance complaint against a building",
+     "tags": [
+      "Complaints"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/complaints/{complaintId}",
+     "op": "getComplaint",
+     "summary": "Get a complaint (with problems) by ID",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/registrations",
+     "op": "listRegistrations",
+     "summary": "Search property/owner registrations",
+     "tags": [
+      "Registrations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/registrations/{registrationId}",
+     "op": "getRegistration",
+     "summary": "Get a registration (with contacts) by ID",
+     "tags": [
+      "Registrations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/litigation",
+     "op": "listLitigation",
+     "summary": "Search HPD housing litigation cases",
+     "tags": [
+      "Litigation"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/litigation/{litigationId}",
+     "op": "getLitigation",
+     "summary": "Get a litigation case by ID",
+     "tags": [
+      "Litigation"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/affordable-housing-projects",
+     "op": "listAffordableHousingProjects",
+     "summary": "Search affordable-housing production (Housing New York units)",
+     "tags": [
+      "AffordableHousing"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/affordable-housing-projects/{projectId}",
+     "op": "getAffordableHousingProject",
+     "summary": "Get an affordable-housing project by ID",
+     "tags": [
+      "AffordableHousing"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/lottery-applications",
+     "op": "listLotteryApplications",
+     "summary": "List the authenticated household's lottery applications",
+     "tags": [
+      "Lottery"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/lottery-applications",
+     "op": "createLotteryApplication",
+     "summary": "Apply to an affordable-housing lottery (Housing Connect)",
+     "tags": [
+      "Lottery"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/lottery-applications/{applicationId}",
+     "op": "getLotteryApplication",
+     "summary": "Get a lottery application",
+     "tags": [
+      "Lottery"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_buildings",
+     "title": "Find Buildings",
+     "desc": "Search buildings under HPD jurisdiction by borough, BBL, BIN, block/lot, council district, or free-text address.",
+     "write": false
+    },
+    {
+     "name": "get_building",
+     "title": "Get Building",
+     "desc": "Fetch a building by HPD Building ID.",
+     "write": false
+    },
+    {
+     "name": "get_building_violations",
+     "title": "Get Building Violations",
+     "desc": "List a building's Housing Maintenance Code violations, optionally by status or hazard class.",
+     "write": false
+    },
+    {
+     "name": "get_building_complaints",
+     "title": "Get Building Complaints",
+     "desc": "List a building's tenant complaints and their problems.",
+     "write": false
+    },
+    {
+     "name": "find_violations",
+     "title": "Find Violations",
+     "desc": "Search Housing Maintenance Code violations citywide by building, BBL, hazard class, status, or date range.",
+     "write": false
+    },
+    {
+     "name": "find_complaints",
+     "title": "Find Complaints",
+     "desc": "Search tenant complaints citywide by building, status, major category (e.g. HEAT/HOT WATER), or date range.",
+     "write": false
+    },
+    {
+     "name": "find_registrations",
+     "title": "Find Registrations",
+     "desc": "Search property/owner registrations ('who owns or manages this building?') by building, BBL, or borough.",
+     "write": false
+    },
+    {
+     "name": "find_litigation",
+     "title": "Find Litigation",
+     "desc": "Search HPD housing-litigation cases by building, case type, status, or finding of harassment.",
+     "write": false
+    },
+    {
+     "name": "find_affordable_housing",
+     "title": "Find Affordable Housing",
+     "desc": "Search affordable-housing production (Housing New York units by building/project) by borough, council district, construction type, or completion date.",
+     "write": false
+    },
+    {
+     "name": "file_complaint",
+     "title": "File Maintenance Complaint",
+     "desc": "File an HPD maintenance complaint against a building. NET-NEW write with no public API today (only 311 / web UI). Requires an authenticated user and mutates sta",
+     "write": true
+    },
+    {
+     "name": "apply_to_lottery",
+     "title": "Apply to Housing Lottery",
+     "desc": "Submit an NYC Housing Connect affordable-housing lottery application. NET-NEW workflow \u2014 Housing Connect has no public API today. Requires an authenticated hous",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "dot",
+   "agency": "New York City Department of Transportation (DOT)",
+   "short": "NYC Transportation (DOT)",
+   "verb": "Unify",
+   "platform": "Legacy .shtml on nyc.gov + Drupal (nycstreetdesign.info); Socrata data",
+   "tagline": "More open data than any NYC domain (267 assets) but as scattered flat snapshots + map-only visualizations keyed to a street SegmentID never exposed as a queryable network API.",
+   "accent": "#c99a1f",
+   "netnew": "StreetWorkPermit",
+   "findings": [
+    "DOT is the most open-data-rich domain in the project: 267 verified Open Data assets under agency label 'Department of Transportation (DOT)'.",
+    "But it is 178 flat datasets + 64 MAP-ONLY visualizations (zero queryable columns) + 18 external links \u2014 scattered snapshots, no owned or unified DOT API.",
+    "Nearly every street asset carries a LION SegmentID (bike routes, traffic counts, closures), yet DOT exposes no queryable street-network API keyed on it.",
+    "The one transaction \u2014 applying for a street-work permit \u2014 runs through the NYCSTREET portal (nycstreets.net) with NO public API; only the issued-permit snapshot (tqtj-sjs8) reaches Open Data.",
+    "Two disconnected web stacks: legacy .shtml main site (Akamai/AWS/Dynatrace) and a modern Drupal 9 street-design microsite on Pantheon.",
+    "Motor Vehicle Collisions datasets are NYPD, not DOT; DOT's safety layer is Vision Zero View (v7f4-yzyg). See apis-observed.md and tech-stack.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC / Socrata (Tyler)",
+     "public": true,
+     "note": "Per-dataset SODA/GeoJSON for all 267 DOT assets; flat snapshots + map-only visualizations; no cross-dataset resource model or SegmentID-joined network."
+    },
+    {
+     "endpoint": "api.us.socrata.com/api/catalog/v1",
+     "type": "discovery/catalog API",
+     "owner": "Socrata",
+     "public": true,
+     "note": "Used to enumerate DOT inventory by Dataset-Information_Agency."
+    },
+    {
+     "endpoint": "nycstreets.net (NYCSTREET)",
+     "type": "permitting portal",
+     "owner": "NYC DOT",
+     "public": "html",
+     "note": "Street-opening/construction permit applications; NO public API. The net-new write surface."
+    },
+    {
+     "endpoint": "nycstreetdesign.info",
+     "type": "Drupal 9 CMS",
+     "owner": "NYC DOT / Pantheon",
+     "public": "html",
+     "note": "Street Design Guidelines; JSON:API-capable but serves manual content, not street assets."
+    },
+    {
+     "endpoint": "vzv.nyc (Vision Zero View)",
+     "type": "crash/safety map app",
+     "owner": "NYC DOT",
+     "public": "web app",
+     "note": "Linked from Open Data v7f4-yzyg."
+    },
+    {
+     "endpoint": "Akamai edge",
+     "type": "CDN",
+     "owner": "Akamai",
+     "public": "vendor",
+     "note": "server-timing ak_p on nyc.gov."
+    },
+    {
+     "endpoint": "Dynatrace RUM",
+     "type": "analytics/monitoring",
+     "owner": "Dynatrace",
+     "public": "vendor",
+     "note": "x-oneagent-js-injection, dtCookie."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 267,
+    "schemas": 7,
+    "openapiOps": 13,
+    "mcpTools": 10,
+    "entities": 7
+   },
+   "entities": [
+    "BikeRoute",
+    "TrafficSignal",
+    "ParkingRegulation",
+    "SpeedHump",
+    "PedestrianPlaza",
+    "Bridge",
+    "StreetWorkPermit"
+   ],
+   "files": {
+    "fruit": "dot/fruit.json",
+    "opendata": "dot/opendata-dot.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dot.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dot.yaml",
+    "mcp": "mcp/dot-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC DOT \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Transportation object schemas. Reconciles fields common to nyc.gov/dot, nyc"
+    },
+    {
+     "file": "schemas/bike-route.json",
+     "title": "BikeRoute",
+     "shared": false,
+     "desc": "A segment of the NYC cycling network \u2014 a bike lane, path, greenway, or signed route. Canonical schema reconciling the 'New York City Bike Ro"
+    },
+    {
+     "file": "schemas/bridge.json",
+     "title": "Bridge",
+     "shared": false,
+     "desc": "A DOT-inventoried bridge structure and its most recent condition rating. Canonical schema reconciling the 'Bridge Ratings' Open Data dataset"
+    },
+    {
+     "file": "schemas/parking-regulation.json",
+     "title": "ParkingRegulation",
+     "shared": false,
+     "desc": "A curbside parking regulation and the physical sign that posts it (No Parking, Parking Meter, No Standing, etc.). Canonical schema reconcili"
+    },
+    {
+     "file": "schemas/pedestrian-plaza.json",
+     "title": "PedestrianPlaza",
+     "shared": false,
+     "desc": "A NYC DOT pedestrian plaza \u2014 a public space reclaimed from the roadway and maintained with a community partner. Canonical schema reconciling"
+    },
+    {
+     "file": "schemas/speed-hump.json",
+     "title": "SpeedHump",
+     "shared": false,
+     "desc": "A traffic-calming speed hump installation on a blockface, part of the Vision Zero program. Canonical schema reconciling the 'VZV Speed Humps"
+    },
+    {
+     "file": "schemas/street-work-permit.json",
+     "title": "StreetWorkPermit",
+     "shared": false,
+     "desc": "A DOT permit to open, occupy, or work in the street or sidewalk (a street-opening / construction permit). Canonical schema reconciling the '"
+    },
+    {
+     "file": "schemas/traffic-signal.json",
+     "title": "TrafficSignal",
+     "shared": false,
+     "desc": "A traffic-control signal or pedestrian signal at an intersection. NYC Open Data has no single 'all traffic signals' dataset; this schema rec"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/bike-routes",
+     "op": "listBikeRoutes",
+     "summary": "List / search bike routes",
+     "tags": [
+      "Bike Routes"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/bike-routes/{bikeId}",
+     "op": "getBikeRoute",
+     "summary": "Get a bike route by id",
+     "tags": [
+      "Bike Routes"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/traffic-signals",
+     "op": "listTrafficSignals",
+     "summary": "List / search traffic & pedestrian signals",
+     "tags": [
+      "Traffic Signals"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/traffic-signals/{signalId}",
+     "op": "getTrafficSignal",
+     "summary": "Get a signal by id",
+     "tags": [
+      "Traffic Signals"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/parking-regulations",
+     "op": "listParkingRegulations",
+     "summary": "Search curbside parking regulations & signs",
+     "tags": [
+      "Parking"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/speed-humps",
+     "op": "listSpeedHumps",
+     "summary": "List / search speed humps",
+     "tags": [
+      "Traffic Calming"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/plazas",
+     "op": "listPlazas",
+     "summary": "List pedestrian plazas",
+     "tags": [
+      "Public Space"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/plazas/{objectId}",
+     "op": "getPlaza",
+     "summary": "Get a pedestrian plaza",
+     "tags": [
+      "Public Space"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/bridges",
+     "op": "listBridges",
+     "summary": "List / search bridges",
+     "tags": [
+      "Bridges"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/bridges/{bin}",
+     "op": "getBridge",
+     "summary": "Get a bridge by BIN",
+     "tags": [
+      "Bridges"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/street-work-permits",
+     "op": "listStreetWorkPermits",
+     "summary": "Search issued street-work permits",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/street-work-permits",
+     "op": "createStreetWorkPermit",
+     "summary": "Apply for a street-work permit",
+     "tags": [
+      "Permits"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/street-work-permits/{permitNumber}",
+     "op": "getStreetWorkPermit",
+     "summary": "Get a street-work permit by number",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_bike_routes",
+     "title": "Find Bike Routes",
+     "desc": "Search the NYC cycling network (lanes, paths, greenways) by borough, LION segmentId, facility class, or status.",
+     "write": false
+    },
+    {
+     "name": "find_traffic_signals",
+     "title": "Find Traffic Signals",
+     "desc": "Search traffic and pedestrian signals (standard, accessible/APS, Barnes Dance, leading pedestrian interval, all-way stop) by borough, type, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_parking_regulations",
+     "title": "Find Parking Regulations",
+     "desc": "Search curbside parking regulations and their posted signs by borough, on-street, sign code, or free text ('what are the rules on my block?').",
+     "write": false
+    },
+    {
+     "name": "find_speed_humps",
+     "title": "Find Speed Humps",
+     "desc": "Search Vision Zero speed-hump installations by borough or on-street.",
+     "write": false
+    },
+    {
+     "name": "find_plazas",
+     "title": "Find Pedestrian Plazas",
+     "desc": "List NYC DOT pedestrian plazas by borough or maintenance partner.",
+     "write": false
+    },
+    {
+     "name": "find_bridges",
+     "title": "Find Bridges",
+     "desc": "Search DOT-inventoried bridges and their condition ratings by borough, verbal rating (Good/Fair/Poor), or free text.",
+     "write": false
+    },
+    {
+     "name": "get_bridge",
+     "title": "Get Bridge",
+     "desc": "Fetch a bridge structure and its latest condition rating by BIN (Bridge Identification Number).",
+     "write": false
+    },
+    {
+     "name": "find_street_work_permits",
+     "title": "Find Street-Work Permits",
+     "desc": "Search issued street-opening / construction permits by borough, LION segmentId, status, permittee, or date range ('who is digging up my street?').",
+     "write": false
+    },
+    {
+     "name": "get_street_work_permit",
+     "title": "Get Street-Work Permit",
+     "desc": "Fetch a single street-work permit by permit number.",
+     "write": false
+    },
+    {
+     "name": "apply_street_work_permit",
+     "title": "Apply for a Street-Work Permit",
+     "desc": "Submit a NEW street-opening / construction permit application. NET-NEW workflow with no public API today (only the NYCSTREET portal). Requires an authenticated ",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "dohmh",
+   "agency": "NYC Department of Health and Mental Hygiene (DOHMH)",
+   "short": "NYC Health (DOHMH)",
+   "verb": "Transact",
+   "platform": "NYC.gov CMS over Accela COTS + ASP.NET apps on a816-*.nyc.gov",
+   "tagline": "The most-liberated data in the city (81 datasets incl. restaurant inspections), yet transactions \u2014 ordering a birth/death certificate \u2014 are locked in siloed legacy apps with no API.",
+   "accent": "#c85a86",
+   "netnew": "VitalRecordRequest",
+   "findings": [
+    "DOHMH is the most DATA-RICH domain in the project: 81 datasets on NYC Open Data, led by 'DOHMH New York City Restaurant Inspection Results' (43nn-pn8j, ~406k views) \u2014 among the single most-viewed datasets in all of NYC Open Data.",
+    "But its TRANSACTIONAL services are siloed in separate legacy apps with no open, agent-native API: ABC Eats (restaurant grade lookup; AngularJS + ASP.NET MVC), eVital VRRTS + VitalChek (birth/death certificate orders), and Accela Citizen Access (health permits & licenses).",
+    "The public restaurant grade lookup (ABC Eats) is a JavaScript SPA over a private Web API \u2014 the same famous data that is ALSO fully open on Socrata, so the read need is met twice while the write/transaction need is met zero times.",
+    "The one true net-new WRITE surface is ordering a vital record (birth/death certificate): a paid transaction locked inside eVital/VitalChek with no open API.",
+    "Reframe: Parks=replatform, DOE=reclaim, Council=consolidate+own, DOHMH=TRANSACT \u2014 the open data is solved; the gap is agent-native, transactional services. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "a816-health.nyc.gov/ABCEatsRestaurants",
+     "type": "private Web API behind an AngularJS SPA",
+     "owner": "DOHMH (ASP.NET MVC 5.2 / IIS 10)",
+     "public": "undocumented",
+     "note": "Public restaurant grade/inspection lookup; the SPA fetches JSON from an internal, undocumented backend API \u2014 not an open contract."
+    },
+    {
+     "endpoint": "a816-evital.nyc.gov/eVitalVRRTS",
+     "type": "transactional web app",
+     "owner": "DOHMH Office of Vital Records (ASP.NET MVC 5.2 / IIS 10)",
+     "public": "app-only, session/CSRF-gated",
+     "note": "eVital VRRTS \u2014 birth/death certificate request tracking; no API surface."
+    },
+    {
+     "endpoint": "a816-hlst.nyc.gov/CitizenAccess",
+     "type": "COTS permitting portal",
+     "owner": "Accela (IIS 8.5, .NET)",
+     "public": "app-only",
+     "note": "Accela Citizen Access \u2014 health permits & licenses; vendor product, no open API exposed."
+    },
+    {
+     "endpoint": "a816-health.nyc.gov/NYCHealthMap",
+     "type": "facility finder",
+     "owner": "DOHMH",
+     "public": "html/app",
+     "note": "Clinic & service-site locator; likely ArcGIS/service backend, no documented API."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC / Socrata (Tyler)",
+     "public": true,
+     "note": "81 DOHMH datasets incl. the famous restaurant inspections (43nn-pn8j) \u2014 fully open, machine-readable SODA endpoints."
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "type": "service-request intake",
+     "owner": "NYC 311 (Salesforce)",
+     "public": "html/app",
+     "note": "Complaint intake routed to DOHMH (indoor environmental complaints surface on Open Data 9jgj-bmct)."
+    },
+    {
+     "endpoint": "vitalchek.com",
+     "type": "certificate ordering vendor",
+     "owner": "VitalChek (LexisNexis)",
+     "public": "vendor",
+     "note": "Third-party online birth/death certificate ordering + payment."
+    },
+    {
+     "endpoint": "maps.googleapis.com",
+     "type": "maps API",
+     "owner": "Google",
+     "public": "vendor",
+     "note": "Maps on DOH service pages."
+    },
+    {
+     "endpoint": "Dynatrace RUM (dtCookie / x-oneagent)",
+     "type": "monitoring",
+     "owner": "Dynatrace",
+     "public": "vendor",
+     "note": "Real-user monitoring injected across NYC.gov + a816 apps."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 81,
+    "schemas": 7,
+    "openapiOps": 12,
+    "mcpTools": 10,
+    "entities": 7
+   },
+   "entities": [
+    "FoodEstablishment",
+    "Inspection",
+    "RodentInspection",
+    "ChildcareCenter",
+    "HealthFacility",
+    "EnvironmentalComplaint",
+    "VitalRecordRequest"
+   ],
+   "files": {
+    "fruit": "dohmh/fruit.json",
+    "opendata": "dohmh/opendata-dohmh.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dohmh.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dohmh.yaml",
+    "mcp": "mcp/dohmh-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Health (DOHMH) \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Health and Mental Hygiene object schemas. Reconciles the geography spine an"
+    },
+    {
+     "file": "schemas/childcare-center.json",
+     "title": "ChildcareCenter",
+     "shared": false,
+     "desc": "A DOHMH-permitted group child care center and its inspection/violation profile. Reconciles the 'DOHMH Childcare Center Inspections' Open Dat"
+    },
+    {
+     "file": "schemas/environmental-complaint.json",
+     "title": "EnvironmentalComplaint",
+     "shared": false,
+     "desc": "An indoor environmental / public-health complaint received by DOHMH (mold, indoor air quality, rodents/pests, lead, etc.), routed from 311. "
+    },
+    {
+     "file": "schemas/food-establishment.json",
+     "title": "FoodEstablishment",
+     "shared": false,
+     "desc": "A permitted food-service establishment (restaurant) regulated by DOHMH. One record per establishment, keyed on CAMIS (the DOHMH establishmen"
+    },
+    {
+     "file": "schemas/health-facility.json",
+     "title": "HealthFacility",
+     "shared": false,
+     "desc": "A DOHMH-operated or -listed public health facility \u2014 a Sexual Health (STD) Clinic, immunization/TB clinic, or other service site surfaced by"
+    },
+    {
+     "file": "schemas/inspection.json",
+     "title": "Inspection",
+     "shared": false,
+     "desc": "A single food-establishment inspection event with its cited violations and resulting score/grade. Reconciles the 'DOHMH New York City Restau"
+    },
+    {
+     "file": "schemas/rodent-inspection.json",
+     "title": "RodentInspection",
+     "shared": false,
+     "desc": "A DOHMH rodent (rat) inspection of a tax lot, part of the Rat Mitigation program. Canonical schema for the 'Rodent Inspection' Open Data dat"
+    },
+    {
+     "file": "schemas/vital-record-request.json",
+     "title": "VitalRecordRequest",
+     "shared": false,
+     "desc": "An order for a certified copy of a NYC birth or death certificate from the DOHMH Office of Vital Records \u2014 the net-new WRITE object for this"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/food-establishments",
+     "op": "listFoodEstablishments",
+     "summary": "Search food establishments (restaurants)",
+     "tags": [
+      "Food Establishments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/food-establishments/{camis}",
+     "op": "getFoodEstablishment",
+     "summary": "Get a food establishment by CAMIS",
+     "tags": [
+      "Food Establishments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/food-establishments/{camis}/inspections",
+     "op": "getFoodEstablishmentInspections",
+     "summary": "List a food establishment's inspections",
+     "tags": [
+      "Food Establishments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/inspections",
+     "op": "listInspections",
+     "summary": "Search food-establishment inspections",
+     "tags": [
+      "Food Establishments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/rodent-inspections",
+     "op": "listRodentInspections",
+     "summary": "Search rodent (rat) inspections",
+     "tags": [
+      "Rodent Inspections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/childcare-centers",
+     "op": "listChildcareCenters",
+     "summary": "Search permitted childcare centers",
+     "tags": [
+      "Childcare"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/childcare-centers/{dcId}",
+     "op": "getChildcareCenter",
+     "summary": "Get a childcare center by Day Care ID",
+     "tags": [
+      "Childcare"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/health-facilities",
+     "op": "listHealthFacilities",
+     "summary": "Find health facilities & clinics",
+     "tags": [
+      "Health Facilities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/complaints",
+     "op": "listComplaints",
+     "summary": "Search indoor environmental / public-health complaints",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/vital-record-requests",
+     "op": "listVitalRecordRequests",
+     "summary": "List the authenticated user's vital record requests",
+     "tags": [
+      "Vital Records"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/vital-record-requests",
+     "op": "createVitalRecordRequest",
+     "summary": "Order a birth or death certificate",
+     "tags": [
+      "Vital Records"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/vital-record-requests/{requestId}",
+     "op": "getVitalRecordRequest",
+     "summary": "Get / track a vital record request",
+     "tags": [
+      "Vital Records"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_food_establishments",
+     "title": "Find Food Establishments",
+     "desc": "Search NYC restaurants / food establishments by borough, cuisine, current letter grade, ZIP, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_food_establishment",
+     "title": "Get Food Establishment",
+     "desc": "Fetch a food establishment (name, address, current grade) by CAMIS id.",
+     "write": false
+    },
+    {
+     "name": "get_food_establishment_inspections",
+     "title": "Get Establishment Inspections",
+     "desc": "List the full inspection history (scores, grades, violations) for a food establishment by CAMIS.",
+     "write": false
+    },
+    {
+     "name": "find_inspections",
+     "title": "Find Inspections",
+     "desc": "Search food-establishment inspections by CAMIS, critical-only, and/or date range.",
+     "write": false
+    },
+    {
+     "name": "find_rodent_inspections",
+     "title": "Find Rodent Inspections",
+     "desc": "Search DOHMH rat/rodent inspections by borough, result, tax lot (BBL), or date range ('are there rat signs at this address?').",
+     "write": false
+    },
+    {
+     "name": "find_childcare_centers",
+     "title": "Find Childcare Centers",
+     "desc": "Search permitted group childcare centers by borough, program type, status, or free text; includes violation-rate outcomes.",
+     "write": false
+    },
+    {
+     "name": "find_health_facilities",
+     "title": "Find Health Facilities & Clinics",
+     "desc": "Locate DOHMH clinics and service sites (sexual health, immunization, TB, mental health) by service category, borough, proximity, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_complaints",
+     "title": "Find Health Complaints",
+     "desc": "Search indoor environmental / public-health complaints (mold, air quality, pests, lead) by borough, type, status, or date range.",
+     "write": false
+    },
+    {
+     "name": "order_vital_record",
+     "title": "Order Birth/Death Certificate",
+     "desc": "Order a certified copy of a NYC birth or death certificate. NET-NEW workflow with no open API today (locked in eVital VRRTS / VitalChek). Requires an authentica",
+     "write": true
+    },
+    {
+     "name": "track_vital_record_request",
+     "title": "Track Vital Record Request",
+     "desc": "Fetch the status of a previously placed birth/death certificate order by request id. Requires an authenticated user.",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "dsny",
+   "agency": "New York City Department of Sanitation (DSNY)",
+   "short": "NYC Sanitation (DSNY)",
+   "verb": "Expose",
+   "platform": "Oracle WebCenter Sites + React forms over ASP.NET backends",
+   "tagline": "DSNY already runs first-party lookup and pickup-scheduling APIs \u2014 undocumented backends behind React forms, waiting to be surfaced as one owned, agent-native contract.",
+   "accent": "#5f9e42",
+   "netnew": "BulkPickupRequest",
+   "findings": [
+    "DSNY already runs REAL first-party backend APIs \u2014 but every one is undocumented and reachable only by reverse-engineering the DSNY React forms: dsnypublic.nyc.gov/dsny/api (geocoder/DSNYCollection collection-schedule lookup, geocoder/BCW), the ePickups API (ePickupsAPI/api/PickupRequest/AddUpdatePickUpRequest, GetUnavailableDates, IsDistrictActive), and the CFC appointment API (dsnydonate.nyc.gov/cfc/api/appointment).",
+    "So the net-new WRITE object \u2014 BulkPickupRequest (schedule a bulk/appointment pickup) \u2014 is not truly net-new capability; the ePickups backend already does it. What is net-new is an OWNED, documented, agent-native contract over it.",
+    "51 DSNY datasets on NYC Open Data (356K lifetime views), led by DSNY Monthly Tonnage (ebb7-mvp5, 58K), Public Recycling Bins, Recycling Diversion & Capture Rates, and Electronics/Food-Scrap/Special-Waste drop-off locations.",
+    "The website is Oracle WebCenter Sites (.page URLs, livesite-version header) with React SPA forms; backends are ASP.NET Web API on IIS behind ARR, with permissive CORS (access-control-allow-origin: *).",
+    "See tech-stack.md and apis-observed.md for the vendor + API inventory."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "dsnypublic.nyc.gov/dsny/api (geocoder/DSNYCollection, geocoder/BCW, brs, clientapp)",
+     "type": "collection-schedule / geocoder REST API",
+     "owner": "NYC DSNY",
+     "public": "live, undocumented (500 without valid params)",
+     "note": "First-party. Resolves an address to a DSNY district + collection schedule; BCW geocodes commercial-waste zones. No docs, no OpenAPI."
+    },
+    {
+     "endpoint": "a827-donatenyc.nyc.gov/ePickupsAPI/api (PickupRequest/AddUpdatePickUpRequest, GetUnavailableDates, IsDistrictActive)",
+     "type": "bulk-pickup scheduling REST API",
+     "owner": "NYC DSNY",
+     "public": "live, undocumented",
+     "note": "First-party ASP.NET Web API. Already schedules bulk/large-item pickups (AppointmentDate/Time/Items, BulkPickup). CORS *. The backend behind the net-new BulkPickupRequest."
+    },
+    {
+     "endpoint": "dsnydonate.nyc.gov/cfc/api/appointment",
+     "type": "special-waste appointment REST API",
+     "owner": "NYC DSNY",
+     "public": "live, undocumented",
+     "note": "First-party CFC/special-waste drop-off appointment booking behind the React forms."
+    },
+    {
+     "endpoint": "a827-donatenyc.nyc.gov/DSNYApi/api",
+     "type": "DSNY services REST API",
+     "owner": "NYC DSNY",
+     "public": "live, undocumented",
+     "note": "ASP.NET Web API; permissive CORS; serves the DSNY forms/services."
+    },
+    {
+     "endpoint": "apps.nyc.gov/content-api/v1/content/dsny",
+     "type": "content API",
+     "owner": "NYC (DoITT)",
+     "public": true,
+     "note": "Open JSON content API (200) serving DSNY page/form content."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC/Socrata",
+     "public": true,
+     "note": "51 DSNY datasets (tonnage, recycling rates, drop-off sites, litter baskets, districts/zones)."
+    },
+    {
+     "endpoint": "ArcGIS REST (services.arcgis.com/.../DSNY_commercial_waste_zones)",
+     "type": "maps/geo API",
+     "owner": "Esri / DSNY",
+     "public": "vendor",
+     "note": "Commercial-waste-zone map layers."
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "type": "service-request portal",
+     "owner": "NYC 311",
+     "public": "html/api",
+     "note": "Where missed-collection and sanitation complaints are filed today."
+    },
+    {
+     "endpoint": "go-mpulse.net / Dynatrace (x-oneagent) / Google Translate",
+     "type": "RUM / APM / i18n",
+     "owner": "Akamai / Dynatrace / Google",
+     "public": "vendor",
+     "note": "Performance monitoring and page translation."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 51,
+    "schemas": 6,
+    "openapiOps": 11,
+    "mcpTools": 7,
+    "entities": 8
+   },
+   "entities": [
+    "CollectionSchedule",
+    "SanitationDistrict",
+    "DropOffSite",
+    "LitterBasket",
+    "Tonnage",
+    "BulkPickupRequest",
+    "Complaint",
+    "Violation"
+   ],
+   "files": {
+    "fruit": "dsny/fruit.json",
+    "opendata": "dsny/opendata-dsny.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dsny.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dsny.yaml",
+    "mcp": "mcp/dsny-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC DSNY \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Sanitation (DSNY) object schemas. Reconciles fields common to the DSNY webs"
+    },
+    {
+     "file": "schemas/bulk-pickup-request.json",
+     "title": "BulkPickupRequest",
+     "shared": false,
+     "desc": "A resident request to schedule a bulk / large-item or special-waste (CFC appliance, electronics) pickup appointment. This capability already"
+    },
+    {
+     "file": "schemas/collection-schedule.json",
+     "title": "CollectionSchedule",
+     "shared": false,
+     "desc": "The DSNY collection schedule for a specific address \u2014 refuse, recycling, and organics/composting days, plus the responsible DSNY district an"
+    },
+    {
+     "file": "schemas/drop-off-site.json",
+     "title": "DropOffSite",
+     "shared": false,
+     "desc": "A place the public can drop off material for diversion \u2014 electronics/e-waste, food-scrap/compost, special waste (CFC, batteries, harmful hou"
+    },
+    {
+     "file": "schemas/litter-basket.json",
+     "title": "LitterBasket",
+     "shared": false,
+     "desc": "A DSNY corner litter basket in the citywide inventory. Reconciles the DSNY Litter Basket Inventory dataset (8znf-7b2c) and the DSNY Litter B"
+    },
+    {
+     "file": "schemas/sanitation-district.json",
+     "title": "SanitationDistrict",
+     "shared": false,
+     "desc": "A DSNY operational district / section with its collection frequencies. Reconciles the DSNY Districts (i6mn-amj2), DSNY Zones (ak2e-nbe8), an"
+    },
+    {
+     "file": "schemas/tonnage.json",
+     "title": "Tonnage",
+     "shared": false,
+     "desc": "A monthly DSNY collection-tonnage record for a community district \u2014 refuse, recycling (paper + MGP), and organics streams. Reconciles the DS"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/collection-schedule",
+     "op": "getCollectionSchedule",
+     "summary": "Look up the collection schedule for an address",
+     "tags": [
+      "Collection"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/districts",
+     "op": "listSanitationDistricts",
+     "summary": "List DSNY districts and their collection frequencies",
+     "tags": [
+      "Collection"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/districts/{district}",
+     "op": "getSanitationDistrict",
+     "summary": "Get a DSNY district by code",
+     "tags": [
+      "Collection"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/drop-off-sites",
+     "op": "listDropOffSites",
+     "summary": "Search drop-off sites (e-waste, food scrap, special waste, recycling bins)",
+     "tags": [
+      "DropOff"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/drop-off-sites/{siteId}",
+     "op": "getDropOffSite",
+     "summary": "Get a drop-off site",
+     "tags": [
+      "DropOff"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/litter-baskets",
+     "op": "listLitterBaskets",
+     "summary": "Search the citywide litter-basket inventory",
+     "tags": [
+      "LitterBaskets"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/litter-baskets/{basketId}",
+     "op": "getLitterBasket",
+     "summary": "Get a litter basket",
+     "tags": [
+      "LitterBaskets"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/tonnage",
+     "op": "listTonnage",
+     "summary": "Query monthly collection tonnage by community district",
+     "tags": [
+      "Tonnage"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/pickup-requests",
+     "op": "listBulkPickupRequests",
+     "summary": "List the authenticated user's bulk / special-waste pickup requests",
+     "tags": [
+      "Pickups"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/pickup-requests",
+     "op": "createBulkPickupRequest",
+     "summary": "Schedule a bulk / large-item / special-waste pickup",
+     "tags": [
+      "Pickups"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/pickup-requests/{requestId}",
+     "op": "getBulkPickupRequest",
+     "summary": "Get a bulk pickup request",
+     "tags": [
+      "Pickups"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "get_collection_schedule",
+     "title": "Get Collection Schedule",
+     "desc": "Look up refuse, recycling, and organics collection days for a NYC address. Fronts the undocumented dsnypublic.nyc.gov/dsny/api/geocoder/DSNYCollection backend.",
+     "write": false
+    },
+    {
+     "name": "find_districts",
+     "title": "Find Sanitation Districts",
+     "desc": "List DSNY operational districts and their per-stream collection frequencies, optionally by borough.",
+     "write": false
+    },
+    {
+     "name": "get_district",
+     "title": "Get Sanitation District",
+     "desc": "Get a DSNY district (e.g. 'MN01') and its collection frequencies by code.",
+     "write": false
+    },
+    {
+     "name": "find_drop_off_sites",
+     "title": "Find Drop-Off Sites",
+     "desc": "Search drop-off sites for electronics, food scraps/compost, special waste, recycling bins, or reuse/donation, by material type, borough, or district.",
+     "write": false
+    },
+    {
+     "name": "find_litter_baskets",
+     "title": "Find Litter Baskets",
+     "desc": "Search the citywide DSNY corner litter-basket inventory by section and/or basket type.",
+     "write": false
+    },
+    {
+     "name": "find_tonnage",
+     "title": "Find Tonnage",
+     "desc": "Query monthly DSNY collection tonnage (refuse, recycling, organics) by borough, community district, and month range ('how much did my district recycle?'). From ",
+     "write": false
+    },
+    {
+     "name": "schedule_bulk_pickup",
+     "title": "Schedule Bulk Pickup",
+     "desc": "Schedule a bulk / large-item, CFC-appliance, electronics, or special-waste pickup appointment. NET-NEW owned contract over the existing but undocumented ePickup",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "nypd",
+   "agency": "New York City Police Department (NYPD)",
+   "short": "NYPD",
+   "verb": "Expose",
+   "platform": "Oracle WebCenter Sites + Angular SPAs on an undocumented Azure Gov backend",
+   "tagline": "The most data-rich domain, yet its record ships as flattened Open Data snapshots and its live surfaces are trapped in Angular apps on an undocumented backend.",
+   "accent": "#2f5fb0",
+   "netnew": "PoliceReportRequest",
+   "findings": [
+    "NYPD is the most DATA-rich domain in the project: 42 datasets under the Socrata agency label 'Police Department (NYPD)' \u2014 including Motor Vehicle Collisions - Crashes (h9gi-nx95), the single most-viewed dataset in the entire NYC Open Data portal.",
+    "But that data is published as flattened periodic snapshots on a third-party portal, not a live, queryable, owned NYPD API.",
+    "The department's own interactive tools \u2014 CompStat 2.0 (compstat.nypdonline.org) and the Officer Profile discipline search (nypdonline.org) \u2014 are Angular/Kendo single-page apps talking to an UNDOCUMENTED Azure Government backend (officer.search.azure.us). Real, current data, no public contract.",
+    "Three different stacks in one department: Oracle WebCenter Sites for the informational site, a bespoke Angular + Azure Gov application tier for transparency tools.",
+    "See tech-stack.md and apis-observed.md for the platform + API inventory."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC / Socrata (Tyler)",
+     "public": true,
+     "note": "42 NYPD datasets (complaints, arrests, shootings, summonses, use of force, officer profiles, sectors, NCOs). Flattened snapshots, not a live incident API."
+    },
+    {
+     "endpoint": "officer.search.azure.us",
+     "type": "officer-search backend API",
+     "owner": "NYPD (Azure Government)",
+     "public": "undocumented",
+     "note": "Powers nypdonline.org Officer Profile (shields, commands, arrests, discipline history). No public contract or docs."
+    },
+    {
+     "endpoint": "nypdonline.org",
+     "type": "Angular/Kendo SPA",
+     "owner": "NYPD",
+     "public": "html/js",
+     "note": "Officer Profile / transparency app; consumes the Azure Gov backend client-side."
+    },
+    {
+     "endpoint": "compstat.nypdonline.org",
+     "type": "Angular/Kendo SPA (CompStat 2.0)",
+     "owner": "NYPD",
+     "public": "html/js",
+     "note": "Interactive weekly crime stats by precinct; no documented API."
+    },
+    {
+     "endpoint": "nyc.gov/site/nypd (Oracle WebCenter Sites)",
+     "type": "CMS-rendered HTML",
+     "owner": "NYPD / NYC DoITT",
+     "public": "html",
+     "note": "Informational site; no content API."
+    },
+    {
+     "endpoint": "Akamai edge",
+     "type": "CDN",
+     "owner": "Akamai",
+     "public": "vendor",
+     "note": "Edge/caching for nyc.gov."
+    },
+    {
+     "endpoint": "Dynatrace RUM",
+     "type": "monitoring beacon",
+     "owner": "Dynatrace",
+     "public": "vendor",
+     "note": "x-oneagent-js-injection on nyc.gov."
+    }
+   ],
+   "counts": {
+    "fruit": 11,
+    "opendata": 42,
+    "schemas": 6,
+    "openapiOps": 13,
+    "mcpTools": 9,
+    "entities": 7
+   },
+   "entities": [
+    "ComplaintReport",
+    "Arrest",
+    "ShootingIncident",
+    "Precinct",
+    "Officer",
+    "CollisionCrash",
+    "PoliceReportRequest"
+   ],
+   "files": {
+    "fruit": "nypd/fruit.json",
+    "opendata": "nypd/opendata-nypd.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-nypd.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/nypd.yaml",
+    "mcp": "mcp/nypd-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYPD \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYPD object schemas. Reconciles fields common to the NYPD NYC Open Data datasets (complaints,"
+    },
+    {
+     "file": "schemas/arrest.json",
+     "title": "Arrest",
+     "shared": false,
+     "desc": "An arrest effected by the NYPD. Canonical schema reconciling 'NYPD Arrest Data (Year to Date)' (uip8-fykc, 24 columns) and 'NYPD Arrests Dat"
+    },
+    {
+     "file": "schemas/complaint.json",
+     "title": "ComplaintReport",
+     "shared": false,
+     "desc": "A reported criminal complaint (incident) known to the NYPD. Canonical schema reconciling 'NYPD Complaint Data Historic' (qgea-i56i, 44 colum"
+    },
+    {
+     "file": "schemas/officer.json",
+     "title": "Officer",
+     "shared": false,
+     "desc": "An NYPD member of service (uniformed officer) profile, as surfaced by the nypdonline.org Officer Profile transparency application and mirror"
+    },
+    {
+     "file": "schemas/police-report-request.json",
+     "title": "PoliceReportRequest",
+     "shared": false,
+     "desc": "NET-NEW write object. A resident's request for a copy of an NYPD record \u2014 a police/incident (complaint) report, a collision/accident report "
+    },
+    {
+     "file": "schemas/precinct.json",
+     "title": "Precinct",
+     "shared": false,
+     "desc": "An NYPD patrol precinct \u2014 the primary geographic command unit. There is no single Open Data 'precinct directory'; this schema reconciles the"
+    },
+    {
+     "file": "schemas/shooting-incident.json",
+     "title": "ShootingIncident",
+     "shared": false,
+     "desc": "A shooting incident recorded by the NYPD (every incident in which a firearm was discharged with a victim struck). Canonical schema reconcili"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/complaints",
+     "op": "listComplaints",
+     "summary": "Search reported criminal complaints",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/complaints/{complaintNumber}",
+     "op": "getComplaint",
+     "summary": "Get a complaint by number",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/arrests",
+     "op": "listArrests",
+     "summary": "Search arrests",
+     "tags": [
+      "Arrests"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/arrests/{arrestKey}",
+     "op": "getArrest",
+     "summary": "Get an arrest by key",
+     "tags": [
+      "Arrests"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/shooting-incidents",
+     "op": "listShootingIncidents",
+     "summary": "Search shooting incidents",
+     "tags": [
+      "Shootings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/shooting-incidents/{incidentKey}",
+     "op": "getShootingIncident",
+     "summary": "Get a shooting incident by key",
+     "tags": [
+      "Shootings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/precincts",
+     "op": "listPrecincts",
+     "summary": "List patrol precincts",
+     "tags": [
+      "Precincts"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/precincts/{precinct}",
+     "op": "getPrecinct",
+     "summary": "Get a precinct (with sectors and NCOs)",
+     "tags": [
+      "Precincts"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/officers",
+     "op": "listOfficers",
+     "summary": "Search officer profiles",
+     "tags": [
+      "Officers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/officers/{profileId}",
+     "op": "getOfficer",
+     "summary": "Get an officer profile (with discipline history)",
+     "tags": [
+      "Officers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/report-requests",
+     "op": "listPoliceReportRequests",
+     "summary": "List the authenticated user's report / FOIL requests",
+     "tags": [
+      "Records"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/report-requests",
+     "op": "createPoliceReportRequest",
+     "summary": "Request a police/collision report or file a FOIL request",
+     "tags": [
+      "Records"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/report-requests/{requestId}",
+     "op": "getPoliceReportRequest",
+     "summary": "Get a report / FOIL request",
+     "tags": [
+      "Records"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_complaints",
+     "title": "Find Complaints",
+     "desc": "Search reported criminal complaints (incidents) by borough, precinct, offense, offense level, date range, or free text. Fronts NYPD Complaint Data (Historic + C",
+     "write": false
+    },
+    {
+     "name": "get_complaint",
+     "title": "Get Complaint",
+     "desc": "Fetch a single reported complaint by its complaint number (CMPLNT_NUM).",
+     "write": false
+    },
+    {
+     "name": "find_arrests",
+     "title": "Find Arrests",
+     "desc": "Search arrests by precinct, offense, offense level, and date range. Fronts NYPD Arrest Data (Historic + YTD).",
+     "write": false
+    },
+    {
+     "name": "find_shooting_incidents",
+     "title": "Find Shooting Incidents",
+     "desc": "Search NYPD shooting incidents by borough, precinct, murder flag, and date range. Fronts the NYPD Shooting Incident Data.",
+     "write": false
+    },
+    {
+     "name": "find_precincts",
+     "title": "Find Precincts",
+     "desc": "List NYPD patrol precincts, optionally by borough.",
+     "write": false
+    },
+    {
+     "name": "get_precinct",
+     "title": "Get Precinct",
+     "desc": "Get a precinct (1-123) with its sectors and neighborhood coordination officers (NCOs).",
+     "write": false
+    },
+    {
+     "name": "find_officers",
+     "title": "Find Officers",
+     "desc": "Search NYPD officer profiles by name, command, or rank. Fronts the nypdonline.org Officer Profile app (today a SPA with no public API).",
+     "write": false
+    },
+    {
+     "name": "get_officer",
+     "title": "Get Officer",
+     "desc": "Fetch an officer profile by profile id, including rank, command, arrests, and disciplinary history.",
+     "write": false
+    },
+    {
+     "name": "request_police_report",
+     "title": "Request a Police Report / FOIL",
+     "desc": "Request a copy of an NYPD record \u2014 an incident report, a collision/accident report, or a FOIL request. NET-NEW workflow with no equivalent API today. Requires a",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "tlc",
+   "agency": "NYC Taxi & Limousine Commission (TLC)",
+   "short": "NYC Taxi & Limousine (TLC)",
+   "verb": "Operationalize",
+   "platform": "NYC.gov CMS; Socrata + a CloudFront/S3 parquet trip-record host",
+   "tagline": "A world-famous open-data producer whose data ships as monthly parquet dumps and flat snapshots, never a queryable, transactional API.",
+   "accent": "#d99a2a",
+   "netnew": "LicenseApplication",
+   "findings": [
+    "TLC is the most DATA-rich domain in the project and the least API-native: a world-famous open-data producer whose data ships as batch, not as a queryable API.",
+    "The flagship TLC Trip Record Data (yellow/green/FHV/FHVHV) is monthly PARQUET files on CloudFront/S3 (d37ci6vzurychx.cloudfront.net/trip-data) \u2014 a bulk download host, NOT an API. Only a subset of yearly trip snapshots is mirrored on Socrata.",
+    "80 TLC datasets on NYC Open Data (agency 'Taxi and Limousine Commission (TLC)', verified) cover licensed drivers, vehicles, medallion/SHL permits, FHV bases, inspection schedules, and application status \u2014 but as flat daily snapshots, one dataset per license class.",
+    "The Taxi Zones behind every trip's PULocationID/DOLocationID are a static CSV + shapefile (/misc/taxi_zone_lookup.csv, taxi_zones.zip), not a resource.",
+    "Licensing exposes only READ-ONLY status (TLC New Driver Application Status dpec-ucu7); there is no API to APPLY for a TLC license. That is the one net-new write surface.",
+    "Website runs on the shared NYC.gov Livesite CMS (nginx + Akamai + AWS ALB + Dynatrace) \u2014 a brochure; none of TLC's operational data is served from it. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "d37ci6vzurychx.cloudfront.net/trip-data/",
+     "type": "bulk file host (parquet)",
+     "owner": "NYC TLC (CloudFront/S3)",
+     "public": true,
+     "note": "TLC Trip Record Data \u2014 monthly parquet per service class; download host, not an API. Verified 200, ~50MB, AmazonS3."
+    },
+    {
+     "endpoint": "d37ci6vzurychx.cloudfront.net/misc/",
+     "type": "bulk file host (CSV + shapefile)",
+     "owner": "NYC TLC",
+     "public": true,
+     "note": "taxi_zone_lookup.csv + taxi_zones.zip \u2014 the ~263 zones behind trip LocationIDs."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC/Socrata",
+     "public": true,
+     "note": "80 TLC datasets; flat daily snapshots; no unified TLC resource model."
+    },
+    {
+     "endpoint": "api.us.socrata.com/api/catalog/v1",
+     "type": "catalog/discovery API",
+     "owner": "Socrata",
+     "public": true,
+     "note": "used to verify the agency label + enumerate datasets."
+    },
+    {
+     "endpoint": "TLC licensing back-office",
+     "type": "internal system",
+     "owner": "NYC TLC",
+     "public": false,
+     "note": "issues licenses; only read-only status leaks to Open Data."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/tlc",
+     "type": "web CMS (Livesite)",
+     "owner": "NYC.gov/DoITT",
+     "public": "html",
+     "note": "brochure content; no content API; Dynatrace RUM."
+    },
+    {
+     "endpoint": "translate.google.com",
+     "type": "translation API",
+     "owner": "Google",
+     "public": "vendor",
+     "note": "page translation widget."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 80,
+    "schemas": 7,
+    "openapiOps": 13,
+    "mcpTools": 10,
+    "entities": 7
+   },
+   "entities": [
+    "TripRecord",
+    "TaxiZone",
+    "Vehicle",
+    "DriverLicense",
+    "Base",
+    "Inspection",
+    "LicenseApplication"
+   ],
+   "files": {
+    "fruit": "tlc/fruit.json",
+    "opendata": "tlc/opendata-tlc.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-tlc.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/tlc.yaml",
+    "mcp": "mcp/tlc-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC TLC \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Taxi & Limousine Commission (TLC) object schemas. Reconciles fields common to the TLC web"
+    },
+    {
+     "file": "schemas/base.json",
+     "title": "Base",
+     "shared": false,
+     "desc": "An FHV / SHL base station \u2014 the licensed entity that dispatches for-hire vehicles. Reconciles 'CURRENT BASES' (eccv-9dzr, 24c \u2014 with full ge"
+    },
+    {
+     "file": "schemas/driver-license.json",
+     "title": "DriverLicense",
+     "shared": false,
+     "desc": "A TLC-licensed driver \u2014 Medallion (yellow taxi), FHV, or SHL driver. Reconciles 'Medallion Drivers - Active' (jb3k-j3gp, 6c), 'For Hire Vehi"
+    },
+    {
+     "file": "schemas/inspection.json",
+     "title": "Inspection",
+     "shared": false,
+     "desc": "A scheduled TLC vehicle inspection. Reconciles the 'Medallion Taxi Initial Inspection Schedule' (sp7n-275u, 9c) \u2014 up to three scheduled insp"
+    },
+    {
+     "file": "schemas/license-application.json",
+     "title": "LicenseApplication",
+     "shared": false,
+     "desc": "An application for a TLC driver or vehicle license \u2014 the NET-NEW WRITE surface for this domain. Today TLC exposes only READ-ONLY application"
+    },
+    {
+     "file": "schemas/taxi-zone.json",
+     "title": "TaxiZone",
+     "shared": false,
+     "desc": "A TLC Taxi Zone \u2014 the ~263 pickup/drop-off zones that PULocationID and DOLocationID in the trip records refer to. Published by TLC as a look"
+    },
+    {
+     "file": "schemas/trip-record.json",
+     "title": "TripRecord",
+     "shared": false,
+     "desc": "A single taxi / for-hire trip \u2014 the TLC's flagship dataset. The authoritative source is the TLC Trip Record Data: monthly PARQUET files (yel"
+    },
+    {
+     "file": "schemas/vehicle.json",
+     "title": "Vehicle",
+     "shared": false,
+     "desc": "A TLC-licensed vehicle \u2014 a For-Hire Vehicle, authorized Medallion (yellow) taxi, or Street Hail Livery (green boro taxi) permit. Reconciles "
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/trip-records",
+     "op": "listTripRecords",
+     "summary": "Search taxi & for-hire trip records",
+     "tags": [
+      "Trips"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/vehicles",
+     "op": "listVehicles",
+     "summary": "List / search TLC-licensed vehicles",
+     "tags": [
+      "Vehicles"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/vehicles/{licenseNumber}",
+     "op": "getVehicle",
+     "summary": "Get a vehicle by license number",
+     "tags": [
+      "Vehicles"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/drivers",
+     "op": "listDrivers",
+     "summary": "List / search TLC-licensed drivers",
+     "tags": [
+      "Drivers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/drivers/{licenseNumber}",
+     "op": "getDriver",
+     "summary": "Get a driver by license number",
+     "tags": [
+      "Drivers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/bases",
+     "op": "listBases",
+     "summary": "List / search FHV & SHL base stations",
+     "tags": [
+      "Bases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/bases/{baseNumber}",
+     "op": "getBase",
+     "summary": "Get a base by license number",
+     "tags": [
+      "Bases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/taxi-zones",
+     "op": "listTaxiZones",
+     "summary": "List TLC Taxi Zones",
+     "tags": [
+      "Zones"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/taxi-zones/{locationId}",
+     "op": "getTaxiZone",
+     "summary": "Get a taxi zone by LocationID",
+     "tags": [
+      "Zones"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/inspections",
+     "op": "listInspections",
+     "summary": "List scheduled vehicle inspections",
+     "tags": [
+      "Inspections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/license-applications",
+     "op": "listLicenseApplications",
+     "summary": "List the authenticated user's license applications",
+     "tags": [
+      "Licensing"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/license-applications",
+     "op": "createLicenseApplication",
+     "summary": "Apply for a TLC driver or vehicle license",
+     "tags": [
+      "Licensing"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/license-applications/{applicationId}",
+     "op": "getLicenseApplication",
+     "summary": "Get a license application / its status",
+     "tags": [
+      "Licensing"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_trip_records",
+     "title": "Find Trip Records",
+     "desc": "Search taxi & for-hire trip records by service type, pickup/drop-off taxi zone, and date range. Fronts the TLC Trip Record parquet files and Open Data snapshots",
+     "write": false
+    },
+    {
+     "name": "find_vehicles",
+     "title": "Find Vehicles",
+     "desc": "Search TLC-licensed vehicles (FHV, medallion, SHL) by license type, active status, wheelchair accessibility, or base.",
+     "write": false
+    },
+    {
+     "name": "get_vehicle",
+     "title": "Get Vehicle",
+     "desc": "Fetch a TLC-licensed vehicle by its license/permit number.",
+     "write": false
+    },
+    {
+     "name": "find_drivers",
+     "title": "Find Drivers",
+     "desc": "Search TLC-licensed drivers (medallion, FHV, SHL) by license type, active status, or passenger-assistance training.",
+     "write": false
+    },
+    {
+     "name": "get_driver",
+     "title": "Get Driver",
+     "desc": "Fetch a TLC-licensed driver by license number.",
+     "write": false
+    },
+    {
+     "name": "find_bases",
+     "title": "Find Bases",
+     "desc": "Search FHV / SHL dispatch base stations by type, borough, or free text (includes dispatch aggregates).",
+     "write": false
+    },
+    {
+     "name": "find_taxi_zones",
+     "title": "Find Taxi Zones",
+     "desc": "Resolve TLC Taxi Zones \u2014 the ~263 LocationIDs behind trip-record PULocationID/DOLocationID \u2014 by borough or service zone.",
+     "write": false
+    },
+    {
+     "name": "find_inspections",
+     "title": "Find Inspections",
+     "desc": "List scheduled medallion taxi inspections by medallion number or inspection agent.",
+     "write": false
+    },
+    {
+     "name": "apply_for_license",
+     "title": "Apply for a TLC License",
+     "desc": "Submit an application for a TLC driver or vehicle license. NET-NEW workflow with no equivalent today (Open Data exposes only read-only status). Requires an auth",
+     "write": true
+    },
+    {
+     "name": "get_application_status",
+     "title": "Get License Application Status",
+     "desc": "Fetch a TLC license application and its requirement checklist (drug test, defensive driving, exam, WAV, medical) by application id.",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "dcp",
+   "agency": "New York City Department of City Planning (DCP)",
+   "short": "NYC City Planning (DCP)",
+   "verb": "Anchor",
+   "platform": "nyc.gov + Netlify Planning Labs apps (ZoLa) on CARTO/Mapbox; open-source geocoder; GeoClient on Azure APIM",
+   "tagline": "The source of the city's shared geography \u2014 BBL, community districts, NTAs, census tracts, council/election boundaries \u2014 so it should be the explicit, owned base every other domain's schemas reference.",
+   "accent": "#6f8aad",
+   "netnew": "\u2014 reference agency (owned /geocode)",
+   "findings": [
+    "DCP is the SOURCE of the city's shared geography \u2014 PLUTO/MapPLUTO defines the BBL, and DCP defines community districts, NTAs, census tracts, and council/election-district boundaries that Parks, DOE, Council, and BOE datasets all join on. This makes DCP the natural authoritative base for the project's planned nyc-commons shared schemas.",
+    "It has the most real engineering of any domain so far \u2014 a subscription-gated GeoClient/GeoService (Geosupport) on Azure API Management, modern Netlify/CARTO/Mapbox map apps (ZoLa, FactFinder), and 308 open-source repos \u2014 yet still no single owned, resource-oriented, agent-native DCP API.",
+    "188 DCP Open Data datasets (PLUTO 108 cols, MapPLUTO, zoning tax lots, community districts, NTAs, census tracts, borough/election geographies, facilities, POPS) \u2014 the richest geography catalog in the city, but flat assets plus GitHub release files, not a resource model.",
+    "The canonical address->BBL geocoder is reachable only through a subscription-gated, Azure-hosted GeoClient (api.nyc.gov/geo, 401 to our client) \u2014 the single highest-value capability, un-owned as a public contract.",
+    "DCP is a REFERENCE agency, not a transactional one: there is no obvious citizen write-workflow. Its ULURP land-use process is an agency/applicant pipeline, not a resident transaction. The net-new value is a canonical geocode contract, not a write endpoint.",
+    "See tech-stack.md and apis-observed.md for the platform + API inventory."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "api.nyc.gov/geo/geoclient",
+     "type": "geocoding REST API (Geosupport/GeoService)",
+     "owner": "NYC (DCP + OTI), Azure API Management",
+     "public": "subscription-gated (401 to our client)",
+     "note": "Canonical address->BBL/BIN + administrative-geography resolver; the city's most-referenced geo capability, behind a vendor gateway + API key."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC/Socrata",
+     "public": true,
+     "note": "188 DCP datasets \u2014 PLUTO/MapPLUTO, zoning tax lots, community districts, NTAs, census tracts, geographies; flat assets, not a resource model."
+    },
+    {
+     "endpoint": "planninglabs.carto.com",
+     "type": "geo / vector-tile API",
+     "owner": "CARTO (vendor)",
+     "public": "vendor",
+     "note": "Backs ZoLa lot/zoning/district layers."
+    },
+    {
+     "endpoint": "zola.planning.nyc.gov",
+     "type": "map SPA (Netlify)",
+     "owner": "DCP Planning Labs",
+     "public": "html",
+     "note": "Public lot/zoning/geography map front-end; canonical zola.planninglabs.nyc."
+    },
+    {
+     "endpoint": "popfactfinder.planning.nyc.gov",
+     "type": "demographic-profile SPA (Netlify)",
+     "owner": "DCP Planning Labs",
+     "public": "html",
+     "note": "Census/ACS profiles by geography."
+    },
+    {
+     "endpoint": "github.com/NYCPlanning",
+     "type": "open-source data pipelines & apps",
+     "owner": "DCP",
+     "public": true,
+     "note": "308 repos: db-pluto, labs-zola, labs-factfinder, geosupport-docker; build side released as files, not served as an API."
+    },
+    {
+     "endpoint": "api.mapbox.com",
+     "type": "basemap/tiles API",
+     "owner": "Mapbox (vendor)",
+     "public": "vendor",
+     "note": "ZoLa/FactFinder basemaps."
+    }
+   ],
+   "counts": {
+    "fruit": 9,
+    "opendata": 188,
+    "schemas": 6,
+    "openapiOps": 12,
+    "mcpTools": 10,
+    "entities": 6
+   },
+   "entities": [
+    "TaxLot",
+    "ZoningDistrict",
+    "CommunityDistrict",
+    "NTA",
+    "CensusGeography",
+    "LandUseApplication"
+   ],
+   "files": {
+    "fruit": "dcp/fruit.json",
+    "opendata": "dcp/opendata-dcp.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-dcp.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/dcp.yaml",
+    "mcp": "mcp/dcp-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC City Planning \u2014 Shared Geography Spine",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions for the New York City Department of City Planning (DCP). DCP is the SOURCE of the city's shared geography \u2014"
+    },
+    {
+     "file": "schemas/census-geography.json",
+     "title": "CensusGeography",
+     "shared": false,
+     "desc": "A 2020 US Census tract as maintained and clipped-to-shoreline by DCP (63ge-mke6, 14 cols). The finest-grain unit of the geography spine; NTA"
+    },
+    {
+     "file": "schemas/community-district.json",
+     "title": "CommunityDistrict",
+     "shared": false,
+     "desc": "A NYC Community District \u2014 the 59 DCP-defined areas each served by a Community Board, and a primary administrative geography the whole city "
+    },
+    {
+     "file": "schemas/land-use-application.json",
+     "title": "LandUseApplication",
+     "shared": false,
+     "desc": "A land-use application moving through the Uniform Land Use Review Procedure (ULURP) or a related DCP review (CEQR, zoning text/map amendment"
+    },
+    {
+     "file": "schemas/nta.json",
+     "title": "NTA",
+     "shared": false,
+     "desc": "A Neighborhood Tabulation Area (2020 vintage) \u2014 a DCP-defined aggregation of whole census tracts sized for reliable neighborhood-level demog"
+    },
+    {
+     "file": "schemas/tax-lot.json",
+     "title": "TaxLot",
+     "shared": false,
+     "desc": "A NYC tax lot as described by DCP's Primary Land Use Tax Lot Output (PLUTO / MapPLUTO) \u2014 the authoritative, 108-column citywide record keyed"
+    },
+    {
+     "file": "schemas/zoning-district.json",
+     "title": "ZoningDistrict",
+     "shared": false,
+     "desc": "A NYC zoning district \u2014 the regulatory classification (residential R, commercial C, manufacturing M, plus special-purpose and overlay distri"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/lots",
+     "op": "listLots",
+     "summary": "Search tax lots (PLUTO)",
+     "tags": [
+      "Lots"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/lots/{bbl}",
+     "op": "getLot",
+     "summary": "Look up a tax lot by BBL",
+     "tags": [
+      "Lots"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/zoning-districts",
+     "op": "listZoningDistricts",
+     "summary": "List zoning districts",
+     "tags": [
+      "Zoning"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/zoning-districts/{code}",
+     "op": "getZoningDistrict",
+     "summary": "Get a zoning district by code",
+     "tags": [
+      "Zoning"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-districts",
+     "op": "listCommunityDistricts",
+     "summary": "List community districts",
+     "tags": [
+      "Geographies"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-districts/{borocd}",
+     "op": "getCommunityDistrict",
+     "summary": "Get a community district",
+     "tags": [
+      "Geographies"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/ntas",
+     "op": "listNtas",
+     "summary": "List Neighborhood Tabulation Areas",
+     "tags": [
+      "Geographies"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/ntas/{nta2020}",
+     "op": "getNta",
+     "summary": "Get an NTA by code",
+     "tags": [
+      "Geographies"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/census-tracts/{geoid}",
+     "op": "getCensusTract",
+     "summary": "Get a census tract by GEOID",
+     "tags": [
+      "Geographies"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/land-use-applications",
+     "op": "listLandUseApplications",
+     "summary": "Search ULURP / land-use applications",
+     "tags": [
+      "Land Use"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/land-use-applications/{ulurpNumber}",
+     "op": "getLandUseApplication",
+     "summary": "Get a land-use application by ULURP number",
+     "tags": [
+      "Land Use"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/geocode",
+     "op": "geocode",
+     "summary": "Resolve an address to a BBL/BIN and geography spine",
+     "tags": [
+      "Geocode"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "geocode_address",
+     "title": "Geocode Address",
+     "desc": "Resolve an address to a BBL, BIN, coordinates, and the full geography spine (community district, council district, census tract, NTA, precinct, school district)",
+     "write": false
+    },
+    {
+     "name": "lookup_lot",
+     "title": "Look Up Tax Lot",
+     "desc": "Fetch the authoritative PLUTO record for a Borough-Block-Lot (BBL) \u2014 land use, owner, zoning, FAR, and the geography spine.",
+     "write": false
+    },
+    {
+     "name": "find_lots",
+     "title": "Find Tax Lots",
+     "desc": "Search PLUTO tax lots by borough, block, community/council district, zoning district, land use, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_zoning",
+     "title": "Find Zoning Districts",
+     "desc": "List zoning districts, overlays, and special districts, optionally filtered by category or free text.",
+     "write": false
+    },
+    {
+     "name": "get_zoning",
+     "title": "Get Zoning District",
+     "desc": "Explain a zoning district code (e.g. 'R6', 'C1-2', 'M1-1') \u2014 what it permits and its FAR limits.",
+     "write": false
+    },
+    {
+     "name": "get_community_district",
+     "title": "Get Community District",
+     "desc": "Fetch a community district by borough+district code (e.g. 101 = Manhattan CD 1), with population history.",
+     "write": false
+    },
+    {
+     "name": "find_ntas",
+     "title": "Find Neighborhood Tabulation Areas",
+     "desc": "List 2020 NTAs, optionally by borough or free text.",
+     "write": false
+    },
+    {
+     "name": "get_nta",
+     "title": "Get NTA",
+     "desc": "Fetch a Neighborhood Tabulation Area by code (e.g. 'MN0101').",
+     "write": false
+    },
+    {
+     "name": "get_census_tract",
+     "title": "Get Census Tract",
+     "desc": "Fetch a 2020 census tract by GEOID, with its parent NTA and CDTA.",
+     "write": false
+    },
+    {
+     "name": "find_land_use_applications",
+     "title": "Find Land-Use Applications",
+     "desc": "Search ULURP / land-use applications by borough, community district, status, action type, or affected BBL. Reference data on an agency review pipeline \u2014 not a c",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "comptroller.nyc.gov",
+   "agency": "New York City Office of the Comptroller",
+   "short": "NYC Comptroller",
+   "verb": "Consolidate & Own",
+   "platform": "WordPress (Comptroller) + Drupal (Checkbook NYC), both behind Imperva",
+   "tagline": "Already runs a real public API (Checkbook NYC, XML) + 15 Open Data assets + an eClaim form, but nothing is a unified, JSON-first, agent-native contract.",
+   "accent": "#2fa08f",
+   "netnew": "ClaimFiling",
+   "findings": [
+    "The Comptroller ALREADY runs a public API \u2014 Checkbook NYC (POST checkbooknyc.com/api) \u2014 covering Spending, Contracts, Budget, Revenue, and Payroll; probed live at 3.2M spending / 10.2M payroll / 1.2M revenue FY2024 records, no key required.",
+    "But it is XML request/response, POST-only, with a bespoke search_criteria/response_columns envelope \u2014 no OpenAPI, no JSON Schema, no MCP, not resource-oriented, not agent-native.",
+    "The office's data is split across THREE surfaces: Checkbook (spending/contracts), NYC Open Data (15 assets \u2014 pension holdings x5, claims report, published audits, bonds, debt service), and the WordPress site (audits/RFPs/eClaim).",
+    "checkbooknyc.com is a Drupal app; comptroller.nyc.gov is WordPress; both sit behind Imperva. Comptroller Mark Levine per site metadata.",
+    "The one citizen write-workflow with no API is filing a claim against the City (eClaim / file-a-claim) \u2014 the net-new write object ClaimFiling.",
+    "See tech-stack.md and apis-observed.md for the API + vendor inventory."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "POST checkbooknyc.com/api",
+     "type": "financial-data API (XML in/out)",
+     "owner": "NYC Comptroller (Checkbook NYC)",
+     "public": true,
+     "note": "EXISTING public spending API. type_of_data = Spending/Contracts/Budget/Revenue/Payroll. Probed live (Spending 3.2M FY24). XML envelope, POST-only, no OpenAPI/JSON/MCP, vendor Drupal \u2014 not agent-native."
+    },
+    {
+     "endpoint": "comptroller.nyc.gov/wp-json (wp/v2)",
+     "type": "WordPress REST API",
+     "owner": "NYC Comptroller",
+     "public": true,
+     "note": "open; content (reports, RFPs, events, nyc_bonds), not financial resources; FacetWP search."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC/Socrata",
+     "public": true,
+     "note": "15 Comptroller assets \u2014 pension holdings (5 systems), claims report, published audits, bonds, debt service; flattened snapshots; top asset is an href to Checkbook."
+    },
+    {
+     "endpoint": "facetwp/v1 (comptroller.nyc.gov)",
+     "type": "faceted-search REST",
+     "owner": "FacetWP (plugin)",
+     "public": "internal",
+     "note": "site search/filtering; not a data API."
+    },
+    {
+     "endpoint": "*.nr-data.net",
+     "type": "monitoring API",
+     "owner": "New Relic (vendor)",
+     "public": "vendor",
+     "note": "RUM on checkbooknyc.com."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 15,
+    "schemas": 6,
+    "openapiOps": 11,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "SpendingTransaction",
+    "Contract",
+    "Audit",
+    "ClaimAgainstCity",
+    "PensionHolding",
+    "ClaimFiling"
+   ],
+   "files": {
+    "fruit": "comptroller.nyc.gov/fruit.json",
+    "opendata": "comptroller.nyc.gov/opendata-comptroller.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-comptroller.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/comptroller.yaml",
+    "mcp": "mcp/comptroller-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Comptroller \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Office of the Comptroller object schemas. Reconciles fields common to the Checkbook NYC A"
+    },
+    {
+     "file": "schemas/audit.json",
+     "title": "Audit",
+     "shared": false,
+     "desc": "A published audit or report issued by the Office of the Comptroller's Bureau of Audit. Canonical schema reconciling the 'Published Audit Lis"
+    },
+    {
+     "file": "schemas/claim-filing.json",
+     "title": "ClaimFiling",
+     "shared": false,
+     "desc": "NET-NEW WRITE object. A citizen's filing of a claim against the City of New York \u2014 the transactional workflow behind the Comptroller's eClai"
+    },
+    {
+     "file": "schemas/claim.json",
+     "title": "ClaimAgainstCity",
+     "shared": false,
+     "desc": "A claim filed against the City of New York and its disposition, as reported by the Comptroller (which adjudicates and settles tort and other"
+    },
+    {
+     "file": "schemas/contract.json",
+     "title": "Contract",
+     "shared": false,
+     "desc": "A registered City contract or agreement as tracked by the Comptroller (which registers all City contracts). Canonical schema reconciling the"
+    },
+    {
+     "file": "schemas/pension-holding.json",
+     "title": "PensionHolding",
+     "shared": false,
+     "desc": "A single security holding within one of the five NYC public pension funds, for which the Comptroller serves as investment adviser and custod"
+    },
+    {
+     "file": "schemas/spending-transaction.json",
+     "title": "SpendingTransaction",
+     "shared": false,
+     "desc": "A single NYC spending (payment) transaction \u2014 the core of Checkbook NYC. Canonical, resource-oriented schema reconciling the Checkbook NYC A"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/spending",
+     "op": "listSpending",
+     "summary": "Search City spending transactions",
+     "tags": [
+      "Spending"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/spending/{documentId}",
+     "op": "getSpendingTransaction",
+     "summary": "Get a spending transaction",
+     "tags": [
+      "Spending"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/contracts",
+     "op": "listContracts",
+     "summary": "Search registered City contracts",
+     "tags": [
+      "Contracts"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/contracts/{contractId}",
+     "op": "getContract",
+     "summary": "Get a contract",
+     "tags": [
+      "Contracts"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/audits",
+     "op": "listAudits",
+     "summary": "Search published audits & reports",
+     "tags": [
+      "Audits"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/audits/{auditNo}",
+     "op": "getAudit",
+     "summary": "Get an audit by number",
+     "tags": [
+      "Audits"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/claims",
+     "op": "listClaims",
+     "summary": "Search reported claims against the City (dispositions)",
+     "tags": [
+      "Claims"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/claim-filings",
+     "op": "listClaimFilings",
+     "summary": "List the authenticated user's claim filings",
+     "tags": [
+      "Claims"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/claim-filings",
+     "op": "createClaimFiling",
+     "summary": "File a claim against the City",
+     "tags": [
+      "Claims"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/claim-filings/{confirmationNumber}",
+     "op": "getClaimFiling",
+     "summary": "Get a claim filing by confirmation number",
+     "tags": [
+      "Claims"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/pension-holdings",
+     "op": "listPensionHoldings",
+     "summary": "Search pension fund security holdings",
+     "tags": [
+      "Investments"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_spending",
+     "title": "Find Spending Transactions",
+     "desc": "Search NYC spending (payment) transactions by fiscal year, agency, vendor, expense category, contract, or amount. Fronts the Checkbook NYC Spending domain in JS",
+     "write": false
+    },
+    {
+     "name": "get_spending_transaction",
+     "title": "Get Spending Transaction",
+     "desc": "Fetch a single spending transaction by document id.",
+     "write": false
+    },
+    {
+     "name": "find_contracts",
+     "title": "Find Contracts",
+     "desc": "Search registered City contracts by fiscal year, agency, vendor, status, category, or late-registration flag. Fronts the Checkbook NYC Contracts domain.",
+     "write": false
+    },
+    {
+     "name": "get_contract",
+     "title": "Get Contract",
+     "desc": "Fetch a registered City contract by contract id.",
+     "write": false
+    },
+    {
+     "name": "find_audits",
+     "title": "Find Audits",
+     "desc": "Search published audits and reports from the Comptroller's Bureau of Audit by agency, date range, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_claims",
+     "title": "Find Claims (Reported)",
+     "desc": "Search reported claims against the City and their dispositions by fiscal year, borough, agency, or claim type. Read-only reporting view.",
+     "write": false
+    },
+    {
+     "name": "find_pension_holdings",
+     "title": "Find Pension Holdings",
+     "desc": "Search the five NYC pension systems' security holdings (NYCERS, TRS, BERS, Police, Fire) by system, asset class, or country.",
+     "write": false
+    },
+    {
+     "name": "get_claim_filing",
+     "title": "Get Claim Filing",
+     "desc": "Fetch a claim filing by its confirmation number (authenticated user).",
+     "write": false
+    },
+    {
+     "name": "file_claim",
+     "title": "File a Claim Against the City",
+     "desc": "File a NEW claim against the City of New York (eClaim). NET-NEW workflow with no public API today. Requires an authenticated user. Mutates state \u2014 confirm all d",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "nycha",
+   "agency": "New York City Housing Authority (NYCHA)",
+   "short": "NYC Housing Authority (NYCHA)",
+   "verb": "Unlock",
+   "platform": "NYC.gov Livesite + Oracle Siebel CRM Self-Service portal",
+   "tagline": "Reference data is wide open on Open Data, but every resident transaction is locked inside a vendor Siebel CRM with no API.",
+   "accent": "#8a5fb0",
+   "netnew": "WorkOrder",
+   "findings": [
+    "NYCHA is a split domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a resident Self Service Portal that is an Oracle Siebel CRM (selfserve.nycha.info/nycha/app/eservice/enu) with no API.",
+    "The reference data is unusually OPEN: 24 NYC Open Data datasets covering developments (Development Data Book, 55 columns), residential addresses, community facilities, six streams of utility consumption-and-cost metering, and aggregate resident demographics.",
+    "But the resident SERVICE layer has no machine-readable surface at all \u2014 rent, recertification, waitlist applications, and repair work orders live only inside the login-walled, JavaScript-only Siebel portal or a phone call to the Customer Contact Center.",
+    "Resident/household data is published only in aggregate (Resident Data Book Summary); NYCHA never exposes an individual HouseholdRecord to Open Data.",
+    "Net-new write surface: report a repair (WorkOrder) \u2014 the single most common resident transaction, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "24 NYCHA datasets; SODA /resource/<id>.json endpoints. The one real, open NYCHA API \u2014 reference/asset data only."
+    },
+    {
+     "endpoint": "selfserve.nycha.info/nycha/app/eservice/enu",
+     "type": "resident service portal (CRM)",
+     "owner": "NYCHA (Oracle Siebel)",
+     "public": "login-walled UI, no API",
+     "note": "rent, recertification, application/waitlist status, work orders; server-rendered Siebel Open UI (SWECmd), JavaScript-only, no JSON/OpenAPI."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/nycha",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "on1.nyc.gov",
+     "type": "citywide account / SSO",
+     "owner": "NYC (OTI)",
+     "public": "login",
+     "note": "NYC.gov ID / self-service sign-in umbrella."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 24,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "Development",
+    "ResidentialAddress",
+    "CommunityFacility",
+    "UtilityConsumption",
+    "ResidentStatistics",
+    "WorkOrder"
+   ],
+   "files": {
+    "fruit": "nycha/fruit.json",
+    "opendata": "nycha/opendata-nycha.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-nycha.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/nycha.yaml",
+    "mcp": "mcp/nycha-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYCHA \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Housing Authority (NYCHA) object schemas. Reconciles fields common to the NYCHA Open Data"
+    },
+    {
+     "file": "schemas/community-facility.json",
+     "title": "CommunityFacility",
+     "shared": false,
+     "desc": "A NYCHA community facility, service center, or customer contact center located on or serving a development. Canonical schema reconciling 'Di"
+    },
+    {
+     "file": "schemas/development.json",
+     "title": "Development",
+     "shared": false,
+     "desc": "A NYCHA public housing development \u2014 the core physical/administrative unit of the Authority. Canonical schema reconciling the 'NYCHA Develop"
+    },
+    {
+     "file": "schemas/resident-statistics.json",
+     "title": "ResidentStatistics",
+     "shared": false,
+     "desc": "Aggregated resident demographics for a NYCHA development or program \u2014 the household/resident record, published only in aggregate (never per "
+    },
+    {
+     "file": "schemas/residential-address.json",
+     "title": "ResidentialAddress",
+     "shared": false,
+     "desc": "A NYCHA residential building address \u2014 the street-level record beneath a Development. Canonical schema reconciling the 'NYCHA Residential Ad"
+    },
+    {
+     "file": "schemas/utility-consumption.json",
+     "title": "UtilityConsumption",
+     "shared": false,
+     "desc": "A metered utility bill line for a NYCHA development \u2014 the PropertyMeter entity. One canonical schema reconciling NYCHA's parallel Open Data "
+    },
+    {
+     "file": "schemas/work-order.json",
+     "title": "WorkOrder",
+     "shared": false,
+     "desc": "A NYCHA maintenance / repair work order \u2014 the everyday resident transaction. NET-NEW: there is NO public API and NO Open Data twin for work "
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/developments",
+     "op": "listDevelopments",
+     "summary": "List / search public housing developments",
+     "tags": [
+      "Developments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/developments/{tds}",
+     "op": "getDevelopment",
+     "summary": "Get a development by TDS number",
+     "tags": [
+      "Developments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/developments/{tds}/addresses",
+     "op": "getDevelopmentAddresses",
+     "summary": "List the residential addresses in a development",
+     "tags": [
+      "Developments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/addresses",
+     "op": "listAddresses",
+     "summary": "Search NYCHA residential addresses",
+     "tags": [
+      "Developments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/facilities",
+     "op": "listFacilities",
+     "summary": "List community facilities, service centers, and contact centers",
+     "tags": [
+      "Facilities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/utility-consumption",
+     "op": "listUtilityConsumption",
+     "summary": "Search development-level utility consumption & cost metering",
+     "tags": [
+      "Utilities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/resident-statistics",
+     "op": "listResidentStatistics",
+     "summary": "Aggregate resident demographics by development / program",
+     "tags": [
+      "Residents"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/work-orders",
+     "op": "listWorkOrders",
+     "summary": "List the authenticated resident's repair work orders",
+     "tags": [
+      "WorkOrders"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/work-orders",
+     "op": "createWorkOrder",
+     "summary": "Report a repair (create a work order)",
+     "tags": [
+      "WorkOrders"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/work-orders/{workOrderId}",
+     "op": "getWorkOrder",
+     "summary": "Get a repair work order",
+     "tags": [
+      "WorkOrders"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_developments",
+     "title": "Find Developments",
+     "desc": "Search NYCHA public housing developments by borough, program, senior status, council district, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_development",
+     "title": "Get Development",
+     "desc": "Fetch a NYCHA development (units, buildings, population, geography) by TDS number.",
+     "write": false
+    },
+    {
+     "name": "get_development_addresses",
+     "title": "Get Development Addresses",
+     "desc": "List the residential building addresses within a development.",
+     "write": false
+    },
+    {
+     "name": "find_addresses",
+     "title": "Find Addresses",
+     "desc": "Search NYCHA residential addresses by borough, BIN, BBL, ZIP, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_facilities",
+     "title": "Find Facilities",
+     "desc": "List NYCHA community facilities, service centers, and customer contact centers by borough, type, program type, or development.",
+     "write": false
+    },
+    {
+     "name": "find_utility_consumption",
+     "title": "Find Utility Consumption",
+     "desc": "Search development-level utility consumption and cost metering (electric, water, gas, steam, oil) \u2014 the PropertyMeter data \u2014 by utility, development, borough, o",
+     "write": false
+    },
+    {
+     "name": "find_resident_statistics",
+     "title": "Find Resident Statistics",
+     "desc": "Return AGGREGATE resident demographics by development or program (population, families, income, age bands). Never returns individual households.",
+     "write": false
+    },
+    {
+     "name": "list_my_work_orders",
+     "title": "List My Work Orders",
+     "desc": "List the authenticated resident's own repair work orders and their status \u2014 today visible only inside the Siebel Self Service Portal.",
+     "write": false
+    },
+    {
+     "name": "report_repair",
+     "title": "Report a Repair",
+     "desc": "Create a NYCHA maintenance work order (report a repair). NET-NEW workflow with no public API today \u2014 it lives only in the Oracle Siebel Self Service Portal or a",
+     "write": true
+    }
+   ]
   }
  ]
 }

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/schemas/nta.json",
+  "title": "NTA",
+  "description": "A Neighborhood Tabulation Area (2020 vintage) — a DCP-defined aggregation of whole census tracts sized for reliable neighborhood-level demographics. DCP is the authoritative source; NTAs are the neighborhood geography other agencies and analysts reference. Reconciles the 2020 NTA dataset (9nt8-h7nd, 12 cols) and NTA demographic profiles (rnsn-acs2).",
+  "type": "object",
+  "x-source": {
+    "opendata_nta": "https://data.cityofnewyork.us/d/9nt8-h7nd",
+    "opendata_demographics": "https://data.cityofnewyork.us/d/rnsn-acs2",
+    "site": "https://www.nyc.gov/site/planning/data-maps/open-data/dwn-nynta.page"
+  },
+  "properties": {
+    "nta2020": { "type": "string", "description": "NTA code, e.g. 'MN0101' (NTA2020)." },
+    "name": { "type": "string", "description": "NTA name (NTAName)." },
+    "abbrev": { "type": ["string", "null"], "description": "Short abbreviation (NTAAbbrev)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "borocode": { "$ref": "_common.json#/$defs/BoroCode" },
+    "ntaType": {
+      "type": ["integer", "null"],
+      "description": "NTAType: 0 = residential/mixed neighborhood, 9 = park/airport/cemetery/other non-residential.",
+      "enum": [0, 9, null]
+    },
+    "cdta2020": { "type": ["string", "null"], "description": "Parent Community District Tabulation Area code (CDTA2020)." },
+    "cdtaName": { "type": ["string", "null"], "description": "CDTAName." },
+    "countyFips": { "type": ["string", "null"], "description": "County FIPS code (CountyFIPS)." },
+    "shapeArea": { "type": ["number", "null"], "description": "Polygon area (Shape_Area)." }
+  },
+  "required": ["nta2020", "name"],
+  "additionalProperties": false
+}

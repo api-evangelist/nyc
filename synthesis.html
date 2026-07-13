@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cross-Domain Synthesis — NYC Modernization</title>
-<meta name="description" content="What five NYC government domains reveal about citywide API modernization — the five verbs, eight cross-cutting findings, and a maturity scorecard.">
+<meta name="description" content="What 15 NYC government domains reveal about citywide API modernization — an expanding verb taxonomy, cross-cutting findings, and a maturity scorecard.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
 <style>
@@ -24,15 +24,15 @@
 <div class="hero" style="padding:52px 0 30px">
   <div class="wrap">
     <div class="eyebrow">Cross-domain synthesis</div>
-    <h1 style="font-size:2.3rem;max-width:20ch">Five domains, one playbook</h1>
-    <p class="lead">What Parks, Public Schools, the City Council, the Board of Elections, and NYC311 reveal when you assess them the same way — and what a citywide API modernization would actually take.</p>
+    <h1 style="font-size:2.3rem;max-width:22ch">Fifteen domains, one playbook</h1>
+    <p class="lead">What fifteen NYC agencies — from Parks, Schools, and 311 to Buildings, Police, Sanitation, and Housing — reveal when you assess them the same way, and what a citywide API modernization would actually take.</p>
     <div class="cta"><a class="btn" href="docs.html?f=SYNTHESIS.md">Read the full synthesis</a></div>
   </div>
 </div>
 
 <section class="plain"><div class="wrap">
-  <div class="section-head"><div class="k">The taxonomy</div><h2>Five domains, five modernization verbs</h2>
-  <p class="muted">Assessing each domain the same way surfaces a one-word verb — the dominant shape of its gap. A diagnostic that classifies any NYC domain in one pass.</p></div>
+  <div class="section-head"><div class="k">The taxonomy</div><h2>Fifteen domains, an expanding taxonomy of verbs</h2>
+  <p class="muted">Assessing each domain the same way surfaces a one-word verb — the dominant shape of its gap. A diagnostic that classifies any NYC domain in one pass. The first five domains yielded five verbs; the next ten expanded the set — and clustered around one theme.</p></div>
   <div class="grid cols-4" id="verb-cards"></div>
 </div></section>
 
@@ -45,7 +45,7 @@
 
 <section><div class="wrap">
   <div class="section-head"><div class="k">The universal gap</div><h2>Every domain has one un-API'd citizen action</h2>
-  <p class="muted">Open data liberated reporting; it never touched transactions. Five for five, the thing a resident needs to <em>do</em> has no API — the highest-value net-new work.</p></div>
+  <p class="muted">Open data liberated reporting; it never touched transactions. <strong>Fourteen of fifteen</strong> domains have a citizen action with no API — the highest-value net-new work. (The fifteenth, City Planning, is a reference agency with no citizen transaction.)</p></div>
   <div class="grid cols-4" id="netnew"></div>
 </div></section>
 
@@ -56,7 +56,7 @@
 </div></section>
 
 <section><div class="wrap">
-  <div class="section-head"><div class="k">The findings</div><h2>Eight patterns that hold across all five</h2></div>
+  <div class="section-head"><div class="k">The findings</div><h2>Patterns that hold across all fifteen</h2></div>
   <div id="findings"></div>
   <p style="margin-top:1.4em"><a class="btn" href="docs.html?f=SYNTHESIS.md">Full synthesis, with recommendations →</a></p>
 </div></section>
@@ -102,14 +102,15 @@
 
   // findings (condensed)
   const findings=[
-    ["Five agencies, five platforms, zero shared API layer","Smarty/PHP, Sitefinity/.NET, WordPress, Drupal, Dynamics 365 — no consistent API. Consistency must be imposed above the platforms."],
-    ["The website and the open data are always two worlds","Where Open Data exists, the site renders its own parallel HTML and never consumes the twin. The defect is disconnect, not absence."],
-    ["Open Data coverage is uneven and inversely related to stakes","From 2 assets (Elections) to 638 (DOE) to 311's flagship dataset — coverage swings wildly and tracks nothing rational. Elections, the highest-stakes data, publishes the least."],
-    ["Every domain has one un-API'd citizen write-workflow","Permit, enrollment, testimony, ballot request, 311 request — five for five, locked behind forms, siloed apps, or a retired standard."],
-    ["Capability outsourcing is pervasive and uncoordinated","HawkSearch, Legistar/Granicus, Viebit, CARTO, Cloudinary, Dynamics 365 — different vendors, no shared strategy; sometimes the vendor IS the API."],
-    ["Agent-readiness is zero, everywhere","Not one of the five domains exposes an MCP or agent-native surface. Every MCP artifact here is net-new."],
-    ["A shared geography spine recurs in every schema","Borough, Community Board, Council District, Census Tract/NTA, BBL/BIN — a latent citywide model."],
-    ["Every domain has its own join key; no cross-domain identity","gisPropNum, DBN, matterId, election-district, service_request_id — a resident is the same person across all five, but nothing links them."],
+    ["Fifteen agencies, ~ten platforms, zero shared API layer","Smarty/PHP, Sitefinity, WordPress, Drupal, Dynamics 365, Oracle WebCenter Sites, Angular SPAs, Siebel CRM, Accela — every agency its own stack, none exposing a consistent API. Consistency must be imposed above the platforms."],
+    ["The website and the open data are two worlds","Where Open Data exists it is flattened snapshots the site never consumes; the front door renders parallel HTML. The defect is disconnect, not absence."],
+    ["Open Data coverage is uneven and unrelated to stakes","From 2 assets (Elections) to 638 (DOE) — ~1,700 mapped in all. DOT publishes 267, Elections 2. Adoption was opportunistic, not strategic."],
+    ["The service layer is the universal gap, not the data","Reporting data is largely open; the transactional service layer is missing, hidden, or vendor-locked almost everywhere. This is the meta-finding of the 15-domain sweep."],
+    ["A citizen write-workflow with no API — 14 of 15","Permit, enrollment, testimony, ballot, 311 request, vital record, bulk pickup, work order, claim, license… only City Planning (a reference agency) lacks one."],
+    ["Many agencies ALREADY have a private/undocumented API","HPD (WSO2 REST), DSNY (pickup/scheduling backends), NYPD (Azure Gov), Comptroller (Checkbook), Council (Legistar), DCP (geocoder). The move is often Expose, not Build."],
+    ["Agent-readiness is zero — all fifteen","Not one domain exposes an MCP or agent-native surface. Every MCP artifact in this project is net-new."],
+    ["Capability outsourcing is pervasive and uncoordinated","HawkSearch, Legistar/Granicus, Accela, Siebel, Dynamics 365, CARTO, Imperva — different vendors per agency, no shared strategy; sometimes the vendor IS the API."],
+    ["A shared geography spine recurs in every schema","Borough, Community Board, Council District, Census Tract/NTA, BBL/BIN — present in every domain. City Planning is its authoritative source, and the basis for a shared nyc-commons."],
   ];
   document.getElementById("findings").innerHTML=findings.map((f,i)=>`
     <div class="finding"><h3>${i+1}. ${esc(f[0])}</h3><p class="muted" style="margin:0">${esc(f[1])}</p></div>`).join("");

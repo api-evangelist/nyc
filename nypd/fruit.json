@@ -1,0 +1,139 @@
+{
+  "domain": "nyc.gov/site/nypd",
+  "agency": "New York City Police Department (NYPD)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting; nyc.gov Disallow /html/misc/ only). Fingerprinted nyc.gov/site/nypd (Oracle WebCenter Sites behind Akamai/nginx, Dynatrace RUM), nypdonline.org and compstat.nypdonline.org (Angular + Kendo UI SPAs); inspected the nypdonline main.js bundle (backend officer.search.azure.us on Azure Government). Open Data verified via the Socrata Discovery API: agency label 'Police Department (NYPD)' → 42 datasets fetched by agency facet.",
+  "related_domains": ["nypdonline.org", "compstat.nypdonline.org", "officer.search.azure.us", "data.cityofnewyork.us"],
+  "headline_findings": [
+    "NYPD is the most DATA-rich domain in the project: 42 datasets under the Socrata agency label 'Police Department (NYPD)' — including Motor Vehicle Collisions - Crashes (h9gi-nx95), the single most-viewed dataset in the entire NYC Open Data portal.",
+    "But that data is published as flattened periodic snapshots on a third-party portal, not a live, queryable, owned NYPD API.",
+    "The department's own interactive tools — CompStat 2.0 (compstat.nypdonline.org) and the Officer Profile discipline search (nypdonline.org) — are Angular/Kendo single-page apps talking to an UNDOCUMENTED Azure Government backend (officer.search.azure.us). Real, current data, no public contract.",
+    "Three different stacks in one department: Oracle WebCenter Sites for the informational site, a bespoke Angular + Azure Gov application tier for transparency tools.",
+    "See tech-stack.md and apis-observed.md for the platform + API inventory."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC / Socrata (Tyler)", "public": true, "note": "42 NYPD datasets (complaints, arrests, shootings, summonses, use of force, officer profiles, sectors, NCOs). Flattened snapshots, not a live incident API." },
+    { "endpoint": "officer.search.azure.us", "type": "officer-search backend API", "owner": "NYPD (Azure Government)", "public": "undocumented", "note": "Powers nypdonline.org Officer Profile (shields, commands, arrests, discipline history). No public contract or docs." },
+    { "endpoint": "nypdonline.org", "type": "Angular/Kendo SPA", "owner": "NYPD", "public": "html/js", "note": "Officer Profile / transparency app; consumes the Azure Gov backend client-side." },
+    { "endpoint": "compstat.nypdonline.org", "type": "Angular/Kendo SPA (CompStat 2.0)", "owner": "NYPD", "public": "html/js", "note": "Interactive weekly crime stats by precinct; no documented API." },
+    { "endpoint": "nyc.gov/site/nypd (Oracle WebCenter Sites)", "type": "CMS-rendered HTML", "owner": "NYPD / NYC DoITT", "public": "html", "note": "Informational site; no content API." },
+    { "endpoint": "Akamai edge", "type": "CDN", "owner": "Akamai", "public": "vendor", "note": "Edge/caching for nyc.gov." },
+    { "endpoint": "Dynatrace RUM", "type": "monitoring beacon", "owner": "Dynatrace", "public": "vendor", "note": "x-oneagent-js-injection on nyc.gov." }
+  ],
+  "fruit": [
+    {
+      "name": "Reported Complaints (crime incidents)",
+      "type": "data table (Open Data) + CompStat",
+      "entity": "ComplaintReport",
+      "url": "https://www.nyc.gov/site/nypd/stats/crime-statistics/compstat.page",
+      "count": "millions of rows",
+      "machine_readable": "Open Data (snapshot)",
+      "verified": true,
+      "opendata_match": ["NYPD Complaint Data Historic qgea-i56i (44c)", "NYPD Complaint Data Current (Year To Date) 5uac-w243 (45c)"],
+      "notes": "The flagship NYPD crime dataset; also the backbone of CompStat 2.0. Snapshot only — no live incident API."
+    },
+    {
+      "name": "Arrests",
+      "type": "data table (Open Data)",
+      "entity": "Arrest",
+      "url": "https://data.cityofnewyork.us/d/uip8-fykc",
+      "machine_readable": "Open Data (snapshot)",
+      "verified": true,
+      "opendata_match": ["NYPD Arrest Data (Year to Date) uip8-fykc (24c)", "NYPD Arrests Data (Historic) 8h9b-rp9u (24c)"],
+      "notes": "Arrest-level records with offense coding and arrestee demographics."
+    },
+    {
+      "name": "Shooting Incidents",
+      "type": "data table (Open Data)",
+      "entity": "ShootingIncident",
+      "url": "https://data.cityofnewyork.us/d/5ucz-vwe8",
+      "machine_readable": "Open Data (snapshot)",
+      "verified": true,
+      "opendata_match": ["Shootings (2006-Present) 5ucz-vwe8 (13c)", "ARCHIVED_NYPD Shooting Incident Data (Historic) 833y-fsy8 (26c)", "ARCHIVED_NYPD Shooting Incident Data (Year To Date) 98wc-x49t"],
+      "notes": "Every incident where a firearm was discharged with a victim struck; one of NYPD's most-cited datasets."
+    },
+    {
+      "name": "Criminal Court & OATH Summonses",
+      "type": "data table (Open Data)",
+      "entity": "ComplaintReport",
+      "url": "https://data.cityofnewyork.us/d/mv4k-y93f",
+      "machine_readable": "Open Data (snapshot)",
+      "verified": true,
+      "opendata_match": ["NYPD Criminal Court Summons Incident Level Data (YTD) mv4k-y93f (22c)", "NYPD Criminal Court Summons (Historic) sv2w-rv3k (22c)", "NYPD OATH Summons Data hxbk-grd3 (21c)"],
+      "notes": "Summons-level enforcement; modeled as an enforcement variant of the incident record."
+    },
+    {
+      "name": "Use of Force",
+      "type": "data table (Open Data)",
+      "entity": "ShootingIncident",
+      "url": "https://data.cityofnewyork.us/d/f4tj-796d",
+      "machine_readable": "Open Data (snapshot)",
+      "verified": true,
+      "opendata_match": ["NYPD Use of Force Incidents f4tj-796d (7c)", "NYPD Use of Force: Subjects dufe-vxb7 (8c)", "NYPD Use of Force: Members of Service v5jd-6wqn (8c)"],
+      "notes": "TRI (Threat, Resistance, Injury) incident-level use-of-force reporting."
+    },
+    {
+      "name": "Stop, Question and Frisk",
+      "type": "external data link (Open Data href)",
+      "entity": "Arrest",
+      "url": "https://data.cityofnewyork.us/d/ftxv-d5ix",
+      "machine_readable": "Open Data (href only)",
+      "verified": true,
+      "opendata_match": ["The Stop, Question and Frisk Data ftxv-d5ix (external href)", "Reasonable Suspicion Stops dnjp-mkjx (href)"],
+      "notes": "Published as an external href asset (annual CSVs off-portal), not a hosted, queryable table."
+    },
+    {
+      "name": "Precincts, Sectors & NCO Directory",
+      "type": "reference pages + Open Data",
+      "entity": "Precinct",
+      "url": "https://www.nyc.gov/site/nypd/bureaus/patrol/find-your-precinct.page",
+      "count": 77,
+      "machine_readable": "Open Data (partial)",
+      "verified": true,
+      "opendata_match": ["NYPD Sectors 5rqd-h5ci (7c)", "NYPD Neighborhood Coordination Officer (NCO) Directory rycv-p85i (6c)"],
+      "notes": "No single 'precinct directory' resource exists; stationhouse/contact is on nyc.gov, sectors + NCOs are separate datasets. Precinct number is the universal join key."
+    },
+    {
+      "name": "Officer Profiles & Discipline History",
+      "type": "transparency app (SPA)",
+      "entity": "Officer",
+      "url": "https://nypdonline.org/",
+      "machine_readable": "undocumented Azure Gov backend + Open Data mirror",
+      "verified": true,
+      "opendata_match": ["NYPD Officer Profile - Members of Service pmsy-ewrc (9c)", "NYPD Officer Profile - Disciplinary History Charges uafj-ik29 (7c)", "NYPD Officer Profile - Disciplinary History Summary wq9a-qu9a", "NYPD Officer Profile - Department Recognition i9n8-a8ed", "NYPD Officer Profile - Training n3mp-t5uj", "NYPD Officer Profile - Title Shield History sh6y-4tgb"],
+      "notes": "The live, searchable officer record — names, shields, commands, arrests, discipline — lives behind an Angular SPA and the undocumented officer.search.azure.us backend. Mirrored (partially) to Open Data snapshots."
+    },
+    {
+      "name": "CompStat 2.0",
+      "type": "interactive stats app (SPA)",
+      "entity": "ComplaintReport",
+      "url": "https://compstat.nypdonline.org/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["NYPD Complaint Data Current (Year To Date) 5uac-w243"],
+      "opendata_gap": true,
+      "notes": "Current weekly crime statistics by precinct, rendered client-side with no documented API — the numbers are not machine-consumable as an owned resource."
+    },
+    {
+      "name": "Motor Vehicle Collisions (Crashes)",
+      "type": "data table (Open Data)",
+      "entity": "CollisionCrash",
+      "url": "https://data.cityofnewyork.us/d/h9gi-nx95",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["Motor Vehicle Collisions - Crashes h9gi-nx95 (33c)", "Motor Vehicle Collisions - Vehicles bm4k-52h4 (25c)", "Motor Vehicle Collisions - Person f55k-p6yu (21c)"],
+      "notes": "Returned under the NYPD agency label (crash reports originate with NYPD), but jointly owned with OTI/DOT / Vision Zero. h9gi-nx95 is the single most-viewed dataset in the entire NYC Open Data portal."
+    },
+    {
+      "name": "Request a police / collision report or file FOIL",
+      "type": "request workflow (forms)",
+      "entity": "PoliceReportRequest",
+      "url": "https://www.nyc.gov/site/nypd/services/law-enforcement/collision-reports.page",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Requesting a copy of an incident/collision report, or filing a FOIL request, is a set of disconnected web/paper forms with no API. The one net-new write surface for this domain."
+    }
+  ]
+}

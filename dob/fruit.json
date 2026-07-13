@@ -1,0 +1,145 @@
+{
+  "domain": "dob",
+  "agency": "NYC Department of Buildings (DOB)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted www.nyc.gov/site/buildings (citywide NYC.gov CMS behind nginx + Akamai, Dynatrace/mPulse RUM). Probed the aNNN-*.nyc.gov application layer: a810-dobnow.nyc.gov (DOB NOW) and a810-bisweb.nyc.gov (BIS Web) both Akamai 'Access Denied' to non-browser clients; a810-efiling.nyc.gov is Apache Tomcat/9.0.117 (Java). Verified the exact Socrata agency label 'Department of Buildings (DOB)' and pulled all 44 DOB datasets from the NYC Open Data catalog API, plus column schemas of the top datasets.",
+  "related_domains": [
+    "a810-dobnow.nyc.gov",
+    "a810-bisweb.nyc.gov",
+    "a810-efiling.nyc.gov",
+    "data.cityofnewyork.us",
+    "a856-cityrecord.nyc.gov",
+    "a858-nycnotify.nyc.gov"
+  ],
+  "headline_findings": [
+    "The real legacy surface is the APPLICATION LAYER, not the website. www.nyc.gov/site/buildings is brochureware; the transactional systems of record are the aNNN-*.nyc.gov apps — BIS Web (a810-bisweb, legacy Building Information System), DOB NOW (a810-dobnow, the filing/permitting portal), and eFiling (a810-efiling, Apache Tomcat/Java).",
+    "None of the app-layer systems exposes a public API. BIS Web and DOB NOW are browser-only and Akamai-gated (Access Denied to non-browser clients).",
+    "The ONLY machine-readable output is a nightly Socrata BATCH DUMP. Every DOB dataset carries a 'DOBRunDate' column proving it is a one-way nightly extract, not a live interface.",
+    "44 DOB Open Data datasets, led by hugely popular ones: DOB Job Application Filings (ic3t-wcy2, 2.4M views, 95 cols), DOB Permit Issuance (ipu4-2q9a, 604k), DOB NOW Approved Permits (rbx6-tga4, 273k), DOB Complaints (eabe-havv), DOB Violations (3h2n-5cm9), DOB ECB Violations (6bgk-3dad), DOB Certificate of Occupancy (bs8b-p36w).",
+    "The domain is data-rich but transaction-closed: you can read yesterday's filings/permits/violations, but you cannot file, pay, or check status of a DOB NOW permit application via any API — that is the net-new write surface.",
+    "See tech-stack.md and apis-observed.md for the platform + app-layer inventory."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC / Socrata (Tyler)", "public": true, "note": "44 DOB datasets; nightly BATCH extract of BIS/DOB NOW (DOBRunDate column). The only machine-readable DOB surface — read-only, lossy, a day stale." },
+    { "endpoint": "a810-dobnow.nyc.gov", "type": "filing/permitting web app", "owner": "NYC DOB (Oracle-based DOB NOW)", "public": "browser-only, Akamai-gated", "note": "The modern transactional system for filings, permits, C of O, elevator/boiler/facade safety. No public API; 403 'Access Denied' to non-browser clients." },
+    { "endpoint": "a810-bisweb.nyc.gov", "type": "legacy record web app", "owner": "NYC DOB (BIS)", "public": "browser-only, Akamai-gated", "note": "Legacy Building Information System — the pre-DOB NOW system of record for jobs, permits, violations, complaints. Browser-only." },
+    { "endpoint": "a810-efiling.nyc.gov", "type": "eFiling web app", "owner": "NYC DOB", "public": "browser-only", "note": "Apache Tomcat/9.0.117 (Java) — DOB eFiling. No API." },
+    { "endpoint": "www.nyc.gov/site/buildings", "type": "content CMS", "owner": "NYC (citywide NYC.gov platform)", "public": true, "note": "Brochureware on the citywide NYC.gov CMS (nginx + Akamai edge; Dynatrace + mPulse RUM). Links out to the app layer; holds no records." },
+    { "endpoint": "translate.google.com", "type": "translation widget", "owner": "Google", "public": "vendor", "note": "Google Website Translator on the CMS." },
+    { "endpoint": "a856-cityrecord.nyc.gov / a858-nycnotify.nyc.gov", "type": "adjacent aNNN apps", "owner": "NYC", "public": "browser", "note": "City Record Online and NYC notification apps referenced from the DOB pages — same aNNN legacy-app pattern." }
+  ],
+  "fruit": [
+    {
+      "name": "DOB Job Application Filings",
+      "type": "record dataset (nightly extract)",
+      "entity": "JobFiling",
+      "url": "https://data.cityofnewyork.us/d/ic3t-wcy2",
+      "machine_readable": "Open Data (batch)",
+      "verified": true,
+      "opendata_match": ["DOB Job Application Filings ic3t-wcy2 (95c, 2.4M views)", "DOB NOW: Build – Job Application Filings w9ak-ipjd (95c)"],
+      "notes": "The project's single most-viewed agency dataset. Source system is BIS/DOB NOW; Open Data is a nightly dump. No live filing API."
+    },
+    {
+      "name": "DOB Permit Issuance",
+      "type": "record dataset (nightly extract)",
+      "entity": "Permit",
+      "url": "https://data.cityofnewyork.us/d/ipu4-2q9a",
+      "machine_readable": "Open Data (batch)",
+      "verified": true,
+      "opendata_match": ["DOB Permit Issuance ipu4-2q9a (60c)", "Historical DOB Permit Issuance bty7-2jhb (60c)", "DOB NOW: Build – Approved Permits rbx6-tga4 (46c)"],
+      "notes": "Issued work permits. Split across legacy (BIS) and DOB NOW extracts."
+    },
+    {
+      "name": "DOB Violations",
+      "type": "record dataset (nightly extract)",
+      "entity": "Violation",
+      "url": "https://data.cityofnewyork.us/d/3h2n-5cm9",
+      "machine_readable": "Open Data (batch)",
+      "verified": true,
+      "opendata_match": ["DOB Violations 3h2n-5cm9 (18c)", "DOB Safety Violations 855j-jady (24c)"],
+      "notes": "BIS-side violations; link to ECB via ECB_NUMBER."
+    },
+    {
+      "name": "DOB ECB Violations",
+      "type": "record dataset (nightly extract)",
+      "entity": "Violation",
+      "url": "https://data.cityofnewyork.us/d/6bgk-3dad",
+      "machine_readable": "Open Data (batch)",
+      "verified": true,
+      "opendata_match": ["DOB ECB Violations 6bgk-3dad (46c)"],
+      "notes": "ECB/OATH adjudication record with penalties, hearings, certification status."
+    },
+    {
+      "name": "DOB Complaints Received",
+      "type": "record dataset (nightly extract)",
+      "entity": "Complaint",
+      "url": "https://data.cityofnewyork.us/d/eabe-havv",
+      "machine_readable": "Open Data (batch)",
+      "verified": true,
+      "opendata_match": ["DOB Complaints Received eabe-havv (15c)"],
+      "notes": "311-sourced building complaints, keyed by BIN; disposition codes."
+    },
+    {
+      "name": "DOB Certificate Of Occupancy",
+      "type": "record dataset (nightly extract)",
+      "entity": "CertificateOfOccupancy",
+      "url": "https://data.cityofnewyork.us/d/bs8b-p36w",
+      "machine_readable": "Open Data (batch)",
+      "verified": true,
+      "opendata_match": ["DOB Certificate Of Occupancy bs8b-p36w (34c)", "DOB NOW: Certificate of Occupancy pkdm-hqz6 (24c)"],
+      "notes": "Legal use/occupancy of a building; Final vs Temporary."
+    },
+    {
+      "name": "Property Data (Buildings Information System)",
+      "type": "record dataset (nightly extract)",
+      "entity": "Building",
+      "url": "https://data.cityofnewyork.us/d/e98g-f8hy",
+      "machine_readable": "Open Data (batch)",
+      "verified": true,
+      "opendata_match": ["Property Data (Buildings Information System) e98g-f8hy (11c)"],
+      "notes": "BIN-keyed building/permit property view — the join spine. Underlying record is BIS Web (browser-only)."
+    },
+    {
+      "name": "DOB NOW filing / permitting portal",
+      "type": "transactional web app (no API)",
+      "entity": "PermitApplication",
+      "url": "https://a810-dobnow.nyc.gov",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The write side — filing a job/permit application. Browser-only, Akamai-gated, no API. THE net-new transactional surface for this domain."
+    },
+    {
+      "name": "BIS Web (Building Information System)",
+      "type": "legacy record web app (no API)",
+      "entity": "Building",
+      "url": "https://a810-bisweb.nyc.gov/bisweb/bispi00.jsp",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["Property Data (Buildings Information System) e98g-f8hy"],
+      "opendata_gap": true,
+      "notes": "Legacy per-building lookup (jobs/permits/violations/complaints). Browser-only; its data reaches the public only via the nightly Socrata dump."
+    },
+    {
+      "name": "DOB License Info (licensed trades)",
+      "type": "record dataset (nightly extract)",
+      "entity": "PartyReference",
+      "url": "https://data.cityofnewyork.us/d/t8hj-ruu2",
+      "machine_readable": "Open Data (batch)",
+      "verified": true,
+      "opendata_match": ["DOB License Info t8hj-ruu2 (22c)"],
+      "notes": "Licensed contractors/professionals — the party layer on filings/permits."
+    },
+    {
+      "name": "DOB NOW Safety (Facades / Boiler / Elevator)",
+      "type": "record datasets (nightly extract)",
+      "entity": "JobFiling",
+      "url": "https://data.cityofnewyork.us/d/xubg-57si",
+      "machine_readable": "Open Data (batch)",
+      "verified": true,
+      "opendata_match": ["DOB NOW: Safety – Facades Compliance Filings xubg-57si (40c)", "DOB NOW: Safety Boiler 52dp-yji6 (21c)", "DOB NOW: Build Elevator Permit Applications kfp4-dz4h (82c)"],
+      "notes": "Periodic-inspection safety filings — all DOB NOW, all read-only extracts."
+    }
+  ]
+}

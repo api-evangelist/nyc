@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/comptroller.nyc.gov/schemas/spending-transaction.json",
+  "title": "SpendingTransaction",
+  "description": "A single NYC spending (payment) transaction — the core of Checkbook NYC. Canonical, resource-oriented schema reconciling the Checkbook NYC API `Spending` domain (POST checkbooknyc.com/api, type_of_data=Spending; ~3.2M FY2024 records) with the federated Checkbook NYC 2.0 Open Data asset (mxwn-eh3b). One agency payment against a budget/contract.",
+  "type": "object",
+  "x-source": {
+    "checkbook_api": "https://www.checkbooknyc.com/api (type_of_data=Spending)",
+    "opendata": "https://data.cityofnewyork.us/d/mxwn-eh3b",
+    "portal": "https://www.checkbooknyc.com/spending_landing/yeartype/B/year/125"
+  },
+  "properties": {
+    "documentId": { "type": ["string", "null"], "description": "Checkbook `document_id` — the transaction/check document identifier." },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "issueDate": { "type": ["string", "null"], "format": "date", "description": "Check/payment issue date (`issue_date`)." },
+    "agency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "department": { "type": ["string", "null"], "description": "Department within the agency (`department`)." },
+    "vendor": { "$ref": "_common.json#/$defs/VendorReference" },
+    "checkAmount": { "$ref": "_common.json#/$defs/Money", "description": "Payment amount (`check_amount`)." },
+    "spendingCategory": { "type": ["string", "null"], "description": "Spending category (`spending_category`)." },
+    "expenseCategory": { "type": ["string", "null"], "description": "Expense category / object code (`expense_category`)." },
+    "budgetCode": { "type": ["string", "null"], "description": "Budget code (`budget_code`)." },
+    "contractId": { "type": ["string", "null"], "description": "Associated contract id, if any (`contract_id`)." },
+    "capitalProject": { "type": ["string", "null"], "description": "Capital project identifier for capital spending (`capital_project`)." },
+    "spendingType": {
+      "type": ["string", "null"],
+      "enum": ["Expense", "Capital", "Revenue Contract", "Grant", null],
+      "description": "Whether the spend is expense, capital, etc."
+    },
+    "industry": { "type": ["string", "null"], "description": "Vendor industry classification (`industry`)." }
+  },
+  "required": ["fiscalYear", "agency", "checkAmount"],
+  "additionalProperties": false
+}

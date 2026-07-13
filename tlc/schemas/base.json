@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/tlc/schemas/base.json",
+  "title": "Base",
+  "description": "An FHV / SHL base station — the licensed entity that dispatches for-hire vehicles. Reconciles 'CURRENT BASES' (eccv-9dzr, 24c — with full geocoded address + geography spine) and the 'FHV Base Aggregate Report' (2v9c-2k7f, 9c — monthly dispatched-trip counts). Keyed on the base License Number (e.g. 'B00256').",
+  "type": "object",
+  "x-source": {
+    "opendataCurrentBases": "https://data.cityofnewyork.us/d/eccv-9dzr",
+    "opendataAggregate": "https://data.cityofnewyork.us/d/2v9c-2k7f"
+  },
+  "properties": {
+    "baseNumber": { "type": "string", "description": "Base License Number." },
+    "entityName": { "type": ["string", "null"], "description": "Entity Name / DBA / Base Name." },
+    "typeOfBase": { "type": ["string", "null"], "description": "Type of Base (e.g. 'Black Car', 'Livery', 'Luxury', 'Paratransit')." },
+    "shlEndorsed": { "type": ["boolean", "null"], "description": "SHL Endorsed." },
+    "telephone": { "type": ["string", "null"], "description": "Telephone Number." },
+    "address": { "type": ["string", "null"], "description": "Street address (Building + Street)." },
+    "city": { "type": ["string", "null"] },
+    "state": { "type": ["string", "null"] },
+    "zip": { "type": ["string", "null"], "description": "Postcode / Location (zip)." },
+    "location": { "$ref": "_common.json#/$defs/Coordinates" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "aggregate": {
+      "type": "object",
+      "description": "Monthly dispatch aggregate (from the FHV Base Aggregate Report).",
+      "properties": {
+        "year": { "type": ["integer", "null"] },
+        "month": { "type": ["integer", "null"] },
+        "uniqueDispatchedVehicles": { "type": ["integer", "null"] },
+        "totalDispatchedTrips": { "type": ["integer", "null"] },
+        "totalDispatchedSharedTrips": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["baseNumber"],
+  "additionalProperties": false
+}

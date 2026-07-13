@@ -1,0 +1,167 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Operationalizes the TLC's batch-only open data (monthly parquet trip files + flat Socrata license snapshots) behind one agent contract, and adds a net-new license-application write.",
+    "openapi": "../openapi/tlc.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.tlc",
+    "title": "NYC Taxi & Limousine Commission",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Taxi & Limousine Commission — trip records, licensed vehicles and drivers, FHV bases, taxi zones, and inspections. Turns the batch-only TLC Trip Record parquet files and flat NYC Open Data license snapshots into a live queryable surface; adds a net-new TLC license application.",
+    "instructions": "Use find_trip_records for yellow/green/FHV trip history (filter by service type, taxi zone, and date). find_vehicles / get_vehicle and find_drivers / get_driver look up TLC-licensed vehicles and drivers by license number. find_bases covers FHV/SHL dispatch bases. find_taxi_zones resolves the PULocationID/DOLocationID codes that trip records use. find_inspections lists scheduled medallion inspections. apply_for_license (net-new) submits a TLC driver/vehicle license application and requires an authenticated user and mutates state — confirm details with the user before submitting; get_application_status tracks it."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_trip_records",
+      "title": "Find Trip Records",
+      "description": "Search taxi & for-hire trip records by service type, pickup/drop-off taxi zone, and date range. Fronts the TLC Trip Record parquet files and Open Data snapshots.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "serviceType": { "type": "string", "enum": ["yellow", "green", "fhv", "fhvhv"] },
+          "pickupZone": { "type": "integer", "minimum": 1, "maximum": 265 },
+          "dropoffZone": { "type": "integer", "minimum": 1, "maximum": 265 },
+          "from": { "type": "string", "format": "date-time" },
+          "to": { "type": "string", "format": "date-time" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/trip-record.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listTripRecords"
+    },
+    {
+      "name": "find_vehicles",
+      "title": "Find Vehicles",
+      "description": "Search TLC-licensed vehicles (FHV, medallion, SHL) by license type, active status, wheelchair accessibility, or base.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "licenseType": { "type": "string", "enum": ["Medallion Taxi", "Street Hail Livery (SHL)", "For-Hire Vehicle (FHV)"] },
+          "active": { "type": "boolean" },
+          "wheelchairAccessible": { "type": "boolean" },
+          "baseNumber": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/vehicle.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listVehicles"
+    },
+    {
+      "name": "get_vehicle",
+      "title": "Get Vehicle",
+      "description": "Fetch a TLC-licensed vehicle by its license/permit number.",
+      "inputSchema": { "type": "object", "properties": { "licenseNumber": { "type": "string" } }, "required": ["licenseNumber"] },
+      "outputSchema": { "$ref": "../schemas/vehicle.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getVehicle"
+    },
+    {
+      "name": "find_drivers",
+      "title": "Find Drivers",
+      "description": "Search TLC-licensed drivers (medallion, FHV, SHL) by license type, active status, or passenger-assistance training.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "licenseType": { "type": "string", "enum": ["Medallion Driver", "FHV Driver", "Street Hail Livery (SHL)"] },
+          "active": { "type": "boolean" },
+          "passengerAssistanceTrained": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/driver-license.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listDrivers"
+    },
+    {
+      "name": "get_driver",
+      "title": "Get Driver",
+      "description": "Fetch a TLC-licensed driver by license number.",
+      "inputSchema": { "type": "object", "properties": { "licenseNumber": { "type": "string" } }, "required": ["licenseNumber"] },
+      "outputSchema": { "$ref": "../schemas/driver-license.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getDriver"
+    },
+    {
+      "name": "find_bases",
+      "title": "Find Bases",
+      "description": "Search FHV / SHL dispatch base stations by type, borough, or free text (includes dispatch aggregates).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "typeOfBase": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", "EWR", "Unknown"] },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/base.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listBases"
+    },
+    {
+      "name": "find_taxi_zones",
+      "title": "Find Taxi Zones",
+      "description": "Resolve TLC Taxi Zones — the ~263 LocationIDs behind trip-record PULocationID/DOLocationID — by borough or service zone.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", "EWR", "Unknown"] },
+          "serviceZone": { "type": "string" }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/taxi-zone.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listTaxiZones"
+    },
+    {
+      "name": "find_inspections",
+      "title": "Find Inspections",
+      "description": "List scheduled medallion taxi inspections by medallion number or inspection agent.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "medallionNumber": { "type": "string" },
+          "agentName": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/inspection.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listInspections"
+    },
+    {
+      "name": "apply_for_license",
+      "title": "Apply for a TLC License",
+      "description": "Submit an application for a TLC driver or vehicle license. NET-NEW workflow with no equivalent today (Open Data exposes only read-only status). Requires an authenticated user. Mutates state — confirm details with the user first.",
+      "inputSchema": { "$ref": "../schemas/license-application.json" },
+      "outputSchema": { "$ref": "../schemas/license-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createLicenseApplication",
+      "x-auth": "user"
+    },
+    {
+      "name": "get_application_status",
+      "title": "Get License Application Status",
+      "description": "Fetch a TLC license application and its requirement checklist (drug test, defensive driving, exam, WAV, medical) by application id.",
+      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
+      "outputSchema": { "$ref": "../schemas/license-application.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getLicenseApplication",
+      "x-auth": "user"
+    }
+  ]
+}

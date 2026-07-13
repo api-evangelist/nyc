@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/tlc/schemas/license-application.json",
+  "title": "LicenseApplication",
+  "description": "An application for a TLC driver or vehicle license — the NET-NEW WRITE surface for this domain. Today TLC exposes only READ-ONLY application STATUS on Open Data: 'TLC New Driver Application Status' (dpec-ucu7, 12c) and 'Historical Driver Application Status' (p32s-yqxq). There is no API to CREATE or advance an application. This schema serves as both the submission body (POST) and the returned status record — reconciled with the dpec-ucu7 columns.",
+  "type": "object",
+  "x-source": {
+    "opendataStatus": "https://data.cityofnewyork.us/d/dpec-ucu7",
+    "opendataHistorical": "https://data.cityofnewyork.us/d/p32s-yqxq",
+    "applyOnline": "https://www.nyc.gov/site/tlc/drivers/get-a-tlc-drivers-license.page"
+  },
+  "properties": {
+    "applicationId": { "type": ["string", "null"], "description": "Application number (App No). Server-assigned on create." },
+    "applicantName": { "type": ["string", "null"], "description": "Applicant name (not published in the public status dataset)." },
+    "licenseType": { "$ref": "_common.json#/$defs/LicenseType" },
+    "applicationType": { "type": ["string", "null"], "description": "Type of application (Type), e.g. 'New', 'Renewal'." },
+    "status": {
+      "type": ["string", "null"],
+      "description": "Overall application status (Status), e.g. 'Under Review', 'Approved', 'Denied', 'Incomplete'."
+    },
+    "applicationDate": { "type": ["string", "null"], "format": "date", "description": "App Date." },
+    "requirements": {
+      "type": "object",
+      "description": "Per-requirement completion state, mirroring the dpec-ucu7 checklist columns.",
+      "properties": {
+        "drugTest": { "type": ["string", "null"], "description": "Drug Test." },
+        "defensiveDriving": { "type": ["string", "null"], "description": "Defensive Driving." },
+        "driverExam": { "type": ["string", "null"], "description": "Driver Exam." },
+        "wavCourse": { "type": ["string", "null"], "description": "WAV Course." },
+        "medicalClearanceForm": { "type": ["string", "null"], "description": "Medical Clearance Form." },
+        "fruInterviewScheduled": { "type": ["string", "null"], "description": "FRU Interview Scheduled." },
+        "otherRequirements": { "type": ["string", "null"], "description": "Other Requirements." }
+      },
+      "additionalProperties": false
+    },
+    "lastUpdated": { "type": ["string", "null"], "format": "date-time", "description": "Last Updated." }
+  },
+  "required": ["licenseType"],
+  "additionalProperties": false
+}

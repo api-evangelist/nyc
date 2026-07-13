@@ -1,0 +1,386 @@
+openapi: 3.1.0
+info:
+  title: NYPD API (proposed)
+  version: 0.1.0
+  summary: One owned, resource-oriented API that exposes the NYPD's richest-in-the-city open data as a live, queryable contract — and unlocks the operational record trapped inside the CompStat 2.0 and Officer Profile apps — behind a single agent-native surface.
+  description: >-
+    Proposed API-first surface for the New York City Police Department, from the NYC Modernization
+    low-hanging-fruit assessment of nyc.gov/site/nypd, nypdonline.org, and compstat.nypdonline.org.
+
+
+    NYPD is the most DATA-rich domain in the project: 42 datasets on NYC Open Data, including
+    the single most-viewed dataset in the entire portal (Motor Vehicle Collisions - Crashes).
+    But that data is published as flattened periodic CSV snapshots, not a live incident API — and
+    the department's own interactive transparency tools (**CompStat 2.0** and the **Officer Profile**
+    discipline search) are Angular single-page apps talking to an **undocumented Azure Government
+    backend** (officer.search.azure.us), with no public contract.
+
+
+    So the modernization verb here is **expose**: standardize the snapshot datasets and the
+    app-trapped operational record behind one owned, coherent, agent-native contract — complaints,
+    arrests, shootings, precincts, and officer profiles — plus the one net-new write workflow,
+    **police report / FOIL requests**.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.nypd.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Complaints
+    description: Reported criminal complaints / incidents (fronts NYPD Complaint Data).
+  - name: Arrests
+    description: Arrests effected by the NYPD (fronts NYPD Arrest Data).
+  - name: Shootings
+    description: Shooting incidents (fronts NYPD Shooting Incident Data).
+  - name: Precincts
+    description: Patrol precincts, sectors, and neighborhood coordination officers.
+  - name: Officers
+    description: Officer profiles and disciplinary history (fronts the nypdonline.org Officer Profile app).
+  - name: Records
+    description: Request a copy of a police/collision report or file a FOIL request (read + write). The net-new surface.
+
+paths:
+  /complaints:
+    get:
+      operationId: listComplaints
+      summary: Search reported criminal complaints
+      tags: [Complaints]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/precinct'
+        - name: offense
+          in: query
+          description: Offense description (OFNS_DESC) or key code (KY_CD).
+          schema: { type: string }
+        - name: lawCategory
+          in: query
+          schema: { type: string, enum: [FELONY, MISDEMEANOR, VIOLATION] }
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of complaints.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/complaint.json' } }
+  /complaints/{complaintNumber}:
+    get:
+      operationId: getComplaint
+      summary: Get a complaint by number
+      tags: [Complaints]
+      parameters:
+        - name: complaintNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The complaint.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/complaint.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /arrests:
+    get:
+      operationId: listArrests
+      summary: Search arrests
+      tags: [Arrests]
+      parameters:
+        - $ref: '#/components/parameters/precinct'
+        - name: offense
+          in: query
+          schema: { type: string }
+        - name: lawCategory
+          in: query
+          schema: { type: string, enum: [FELONY, MISDEMEANOR, VIOLATION] }
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of arrests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/arrest.json' } }
+  /arrests/{arrestKey}:
+    get:
+      operationId: getArrest
+      summary: Get an arrest by key
+      tags: [Arrests]
+      parameters:
+        - name: arrestKey
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The arrest.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/arrest.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /shooting-incidents:
+    get:
+      operationId: listShootingIncidents
+      summary: Search shooting incidents
+      tags: [Shootings]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/precinct'
+        - name: murderFlag
+          in: query
+          description: Filter to shootings counted as a murder (STATISTICAL_MURDER_FLAG).
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of shooting incidents.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/shooting-incident.json' } }
+  /shooting-incidents/{incidentKey}:
+    get:
+      operationId: getShootingIncident
+      summary: Get a shooting incident by key
+      tags: [Shootings]
+      parameters:
+        - name: incidentKey
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The shooting incident.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/shooting-incident.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /precincts:
+    get:
+      operationId: listPrecincts
+      summary: List patrol precincts
+      tags: [Precincts]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+      responses:
+        '200':
+          description: Precincts.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/precinct.json' } }
+  /precincts/{precinct}:
+    get:
+      operationId: getPrecinct
+      summary: Get a precinct (with sectors and NCOs)
+      tags: [Precincts]
+      parameters:
+        - name: precinct
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1, maximum: 123 }
+      responses:
+        '200':
+          description: The precinct.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/precinct.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /officers:
+    get:
+      operationId: listOfficers
+      summary: Search officer profiles
+      description: Fronts the nypdonline.org Officer Profile application (today an Angular SPA with no public API).
+      tags: [Officers]
+      parameters:
+        - name: name
+          in: query
+          schema: { type: string }
+        - name: command
+          in: query
+          schema: { type: string }
+        - name: rank
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of officer profiles.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/officer.json' } }
+  /officers/{profileId}:
+    get:
+      operationId: getOfficer
+      summary: Get an officer profile (with discipline history)
+      tags: [Officers]
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The officer profile.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/officer.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /report-requests:
+    get:
+      operationId: listPoliceReportRequests
+      summary: List the authenticated user's report / FOIL requests
+      tags: [Records]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Requests.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/police-report-request.json' } }
+    post:
+      operationId: createPoliceReportRequest
+      summary: Request a police/collision report or file a FOIL request
+      description: The net-new write surface — a single API for requesting NYPD records (incident report, collision report, or FOIL).
+      tags: [Records]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/police-report-request.json' }
+      responses:
+        '201':
+          description: Request created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/police-report-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /report-requests/{requestId}:
+    get:
+      operationId: getPoliceReportRequest
+      summary: Get a report / FOIL request
+      tags: [Records]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The request.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/police-report-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ComplaintReport: { $ref: '../schemas/complaint.json' }
+    Arrest: { $ref: '../schemas/arrest.json' }
+    ShootingIncident: { $ref: '../schemas/shooting-incident.json' }
+    Precinct: { $ref: '../schemas/precinct.json' }
+    Officer: { $ref: '../schemas/officer.json' }
+    PoliceReportRequest: { $ref: '../schemas/police-report-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    precinct:
+      name: precinct
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 123 }
+    from:
+      name: from
+      in: query
+      description: Start of date range (inclusive).
+      schema: { type: string, format: date }
+    to:
+      name: to
+      in: query
+      description: End of date range (inclusive).
+      schema: { type: string, format: date }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

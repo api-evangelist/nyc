@@ -1,0 +1,130 @@
+{
+  "domain": "nyc.gov/site/dsny",
+  "agency": "New York City Department of Sanitation (DSNY)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting; robots.txt only disallows /html/misc/). Homepage + section pages fingerprinted from headers; the /assets/dsny/forms/ React SPA bundle (index-*.js) reverse-engineered to recover the undocumented first-party backend APIs. Socrata catalog API queried for the DSNY agency footprint (Dataset-Information_Agency = 'Department of Sanitation (DSNY)', verified).",
+  "related_domains": ["dsnypublic.nyc.gov", "a827-donatenyc.nyc.gov", "dsnydonate.nyc.gov", "apps.nyc.gov", "portal.311.nyc.gov"],
+  "headline_findings": [
+    "DSNY already runs REAL first-party backend APIs — but every one is undocumented and reachable only by reverse-engineering the DSNY React forms: dsnypublic.nyc.gov/dsny/api (geocoder/DSNYCollection collection-schedule lookup, geocoder/BCW), the ePickups API (ePickupsAPI/api/PickupRequest/AddUpdatePickUpRequest, GetUnavailableDates, IsDistrictActive), and the CFC appointment API (dsnydonate.nyc.gov/cfc/api/appointment).",
+    "So the net-new WRITE object — BulkPickupRequest (schedule a bulk/appointment pickup) — is not truly net-new capability; the ePickups backend already does it. What is net-new is an OWNED, documented, agent-native contract over it.",
+    "51 DSNY datasets on NYC Open Data (356K lifetime views), led by DSNY Monthly Tonnage (ebb7-mvp5, 58K), Public Recycling Bins, Recycling Diversion & Capture Rates, and Electronics/Food-Scrap/Special-Waste drop-off locations.",
+    "The website is Oracle WebCenter Sites (.page URLs, livesite-version header) with React SPA forms; backends are ASP.NET Web API on IIS behind ARR, with permissive CORS (access-control-allow-origin: *).",
+    "See tech-stack.md and apis-observed.md for the vendor + API inventory."
+  ],
+  "apis_observed": [
+    { "endpoint": "dsnypublic.nyc.gov/dsny/api (geocoder/DSNYCollection, geocoder/BCW, brs, clientapp)", "type": "collection-schedule / geocoder REST API", "owner": "NYC DSNY", "public": "live, undocumented (500 without valid params)", "note": "First-party. Resolves an address to a DSNY district + collection schedule; BCW geocodes commercial-waste zones. No docs, no OpenAPI." },
+    { "endpoint": "a827-donatenyc.nyc.gov/ePickupsAPI/api (PickupRequest/AddUpdatePickUpRequest, GetUnavailableDates, IsDistrictActive)", "type": "bulk-pickup scheduling REST API", "owner": "NYC DSNY", "public": "live, undocumented", "note": "First-party ASP.NET Web API. Already schedules bulk/large-item pickups (AppointmentDate/Time/Items, BulkPickup). CORS *. The backend behind the net-new BulkPickupRequest." },
+    { "endpoint": "dsnydonate.nyc.gov/cfc/api/appointment", "type": "special-waste appointment REST API", "owner": "NYC DSNY", "public": "live, undocumented", "note": "First-party CFC/special-waste drop-off appointment booking behind the React forms." },
+    { "endpoint": "a827-donatenyc.nyc.gov/DSNYApi/api", "type": "DSNY services REST API", "owner": "NYC DSNY", "public": "live, undocumented", "note": "ASP.NET Web API; permissive CORS; serves the DSNY forms/services." },
+    { "endpoint": "apps.nyc.gov/content-api/v1/content/dsny", "type": "content API", "owner": "NYC (DoITT)", "public": true, "note": "Open JSON content API (200) serving DSNY page/form content." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC/Socrata", "public": true, "note": "51 DSNY datasets (tonnage, recycling rates, drop-off sites, litter baskets, districts/zones)." },
+    { "endpoint": "ArcGIS REST (services.arcgis.com/.../DSNY_commercial_waste_zones)", "type": "maps/geo API", "owner": "Esri / DSNY", "public": "vendor", "note": "Commercial-waste-zone map layers." },
+    { "endpoint": "portal.311.nyc.gov", "type": "service-request portal", "owner": "NYC 311", "public": "html/api", "note": "Where missed-collection and sanitation complaints are filed today." },
+    { "endpoint": "go-mpulse.net / Dynatrace (x-oneagent) / Google Translate", "type": "RUM / APM / i18n", "owner": "Akamai / Dynatrace / Google", "public": "vendor", "note": "Performance monitoring and page translation." }
+  ],
+  "fruit": [
+    {
+      "name": "Collection schedule lookup",
+      "type": "address lookup (React form → geocoder API)",
+      "entity": "CollectionSchedule",
+      "url": "https://www.nyc.gov/assets/dsny/forms/collection-schedule",
+      "machine_readable": "backend API (undocumented)",
+      "verified": true,
+      "opendata_match": ["DSNY Frequencies rv63-53db (12c)", "DSNY Districts i6mn-amj2 (6c)"],
+      "notes": "A React form calls dsnypublic.nyc.gov/dsny/api/geocoder/DSNYCollection to return refuse/recycling/organics days. Real first-party API, but undocumented and forms-only."
+    },
+    {
+      "name": "DSNY districts / sections / zones + frequencies",
+      "type": "geo + data tables",
+      "entity": "SanitationDistrict",
+      "url": "https://www.nyc.gov/site/dsny/about/about-dsny/garage-locations.page",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["DSNY Districts i6mn-amj2", "DSNY Zones ak2e-nbe8", "DSNY Frequencies rv63-53db", "DSNY District (Map) uqhg-h4at"],
+      "notes": "Operational geography and per-stream collection frequencies (refuse/recycling/organics/bulk/e-waste). The join key the schedule geocoder resolves to."
+    },
+    {
+      "name": "E-waste / food-scrap / special-waste drop-off sites",
+      "type": "location directories",
+      "entity": "DropOffSite",
+      "url": "https://www.nyc.gov/site/dsny/what-we-do/programs/special-waste-drop-off.page",
+      "machine_readable": "Open Data + appointment API",
+      "verified": true,
+      "opendata_match": ["Electronics Drop Off wshr-5vic (26c)", "Food Scrap Drop-Off if26-z6xq (32c)", "DSNY Special Waste Drop-off Sites 242c-ru4i (16c)", "Public Recycling Bins sxx4-xhzg (7c)", "DSNY DonateNYC Directory gkgs-za6m"],
+      "notes": "Several point datasets across material types; special-waste (CFC) sites book via dsnydonate.nyc.gov/cfc/api/appointment. Unified here as one DropOffSite resource."
+    },
+    {
+      "name": "Litter basket inventory",
+      "type": "geo inventory",
+      "entity": "LitterBasket",
+      "url": "https://www.nyc.gov/site/dsny/what-we-do/cleaning/sidewalks-gutters.page",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["DSNY Litter Basket Inventory 8znf-7b2c (19c)", "DSNY Litter Basket (Map) d6m8-cwh9"],
+      "notes": "Every corner litter basket citywide with type, owner, and location — a rich machine-readable dataset with no resource API."
+    },
+    {
+      "name": "Monthly tonnage & recycling rates",
+      "type": "data tables",
+      "entity": "Tonnage",
+      "url": "https://www.nyc.gov/site/dsny/what-we-do/what-we-do.page",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["DSNY Monthly Tonnage Data ebb7-mvp5 (12c)", "Recycling Diversion and Capture Rates gaq9-z3hz (9c)", "DSNY Other Organics Collection Tonnages 6yag-pnij"],
+      "notes": "The most-viewed DSNY dataset (58K views). Refuse/paper/MGP/organics tons per community district per month; recycling rates alongside."
+    },
+    {
+      "name": "Public recycling bins",
+      "type": "location directory",
+      "entity": "DropOffSite",
+      "url": "https://www.nyc.gov/site/dsny/collection/residents/recycling.page",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["Public Recycling Bins sxx4-xhzg (7c)"],
+      "notes": "On-street public recycling bins (paper + MGP) with partner and DSNY zone/district. Modeled as a DropOffSite material type."
+    },
+    {
+      "name": "Commercial waste zones + rate calculator",
+      "type": "geo + form",
+      "entity": "SanitationDistrict",
+      "url": "https://www.nyc.gov/assets/dsny/forms/commercial-waste-zones-rate-calculator",
+      "machine_readable": "Open Data + BCW geocoder + ArcGIS",
+      "verified": true,
+      "opendata_match": ["DSNY Commercial Waste Zones 8ev8-jjxq (7c)", "DSNY Commercial Waste Zones (Map) a7bv-5698"],
+      "notes": "The commercial-waste franchise zones; a rate-calculator form uses the geocoder/BCW backend + ArcGIS layers."
+    },
+    {
+      "name": "Bulk / large-item / special-waste pickup request",
+      "type": "scheduling workflow (React form → ePickups API)",
+      "entity": "BulkPickupRequest",
+      "url": "https://www.nyc.gov/assets/dsny/forms/collection-schedule",
+      "machine_readable": "backend API (undocumented)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "NET-NEW owned contract. The ePickups backend (ePickupsAPI/api/PickupRequest/AddUpdatePickUpRequest, GetUnavailableDates, IsDistrictActive) already schedules pickups, but there is no documented, agent-native API for it. The one transactional write surface promoted to a first-class resource."
+    },
+    {
+      "name": "Missed-collection complaint",
+      "type": "complaint workflow (via 311)",
+      "entity": "Complaint",
+      "url": "https://portal.311.nyc.gov/",
+      "machine_readable": "311 (separate system)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Missed-collection and sanitation complaints route through NYC 311, not a DSNY API — outside the DSNY-owned surface. Noted, not modeled here."
+    },
+    {
+      "name": "Sanitation enforcement / violations",
+      "type": "enforcement records",
+      "entity": "Violation",
+      "url": "https://www.nyc.gov/site/dsny/what-we-do/cleaning/illegal-dumping.page",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Illegal-dumping, street-vending, and dirty-sidewalk enforcement is described on-site; the summons/violation records live in OATH/ECB, not a DSNY dataset — a gap."
+    }
+  ]
+}

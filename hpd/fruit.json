@@ -1,0 +1,128 @@
+{
+  "domain": "nyc.gov/hpd",
+  "agency": "NYC Department of Housing Preservation and Development (HPD)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted three surfaces: the nyc.gov/hpd agency site (Akamai/nginx CMS), HPD Online (hpdonline.nyc.gov — Angular SPA), and NYC Housing Connect (housingconnect.nyc.gov — ASP.NET SPA). Parsed the HPD Online main.js bundle to recover backend config (apiBaseURL, documentApiBaseURL, WSO2 gateway, GeoSearch). Verified the exact Open Data agency label 'Department of Housing Preservation and Development (HPD)' via the Socrata Discovery API and pulled all 47 datasets with per-column schemas.",
+  "related_domains": ["hpdonline.nyc.gov", "housingconnect.nyc.gov", "mspwvw-hpdleov3.nyc.gov", "hpdnyc.org", "geosearch.planninglabs.nyc", "data.cityofnewyork.us"],
+  "headline_findings": [
+    "HPD has already BUILT a modern, owned backend REST API — mspwvw-hpdleov3.nyc.gov/hpdonline.api/1.0/api — behind a WSO2 API gateway (*.hpdnyc.org:8243), with NYC GeoSearch integration. But it is private, undocumented, and serves only the HPD Online Angular SPA.",
+    "The public machine-readable surface is instead 47 NYC Open Data datasets (Housing Maintenance Code Violations at 215k+ views leads) — flattened periodic snapshots describing the same objects/keys as the private live API.",
+    "The highest-value citizen transaction — applying to an affordable-housing lottery on NYC Housing Connect — is a closed ASP.NET silo with NO public API; only read-only 'advertised lotteries' Open Data twins exist.",
+    "Entities recover cleanly from both the SPA and Open Data, joined by buildingId / registrationId / BBL / BIN: Building, Violation, Complaint (+problems), Registration (+contacts), Litigation, AffordableHousingProject.",
+    "Fourth distinct modernization pattern: not replatform (Parks), reclaim (DOE), or consolidate (Council) — but EXPOSE an owned API that already exists. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "mspwvw-hpdleov3.nyc.gov/hpdonline.api/1.0/api", "type": "backend REST API", "owner": "NYC HPD", "public": false, "note": "The live HPD record (buildings, violations, complaints, registrations, litigation, charges, bedbug, vacate). Owned .nyc.gov host, versioned /1.0; hard-coded as apiBaseURL in HPD Online main.js. Private/undocumented." },
+    { "endpoint": "mspwvw-hpdleov3.nyc.gov/DocService/v1/api", "type": "document service API", "owner": "NYC HPD", "public": false, "note": "documentApiBaseURL; serves NOV/order PDFs via /documents/content." },
+    { "endpoint": "*.hpdnyc.org:8243", "type": "API gateway", "owner": "NYC HPD (WSO2 API Manager)", "public": "internal", "note": "Port 8243 = WSO2 gateway default; whitelisted in the SPA CSP connect-src. HPD already runs API management internally." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "47 HPD datasets; flattened periodic snapshots of the same data." },
+    { "endpoint": "geosearch.planninglabs.nyc/v2", "type": "geocoding API", "owner": "NYC Planning Labs (Pelias)", "public": true, "note": "Address autocomplete -> BBL/BIN/coords; used by HPD Online property lookup." },
+    { "endpoint": "hpdgis-enterprise.hpdnyc.org/HPDMap4", "type": "map service (ArcGIS/Esri)", "owner": "NYC HPD", "public": "internal", "note": "Enterprise GIS map referenced by the SPA." },
+    { "endpoint": "housingconnect.nyc.gov/PublicWeb", "type": "lottery portal (ASP.NET SPA)", "owner": "NYC HPD/HDC", "public": "html", "note": "Housing Connect 2; affordable-housing applications are UI-only, no public API." },
+    { "endpoint": "www.googletagmanager.com", "type": "analytics API", "owner": "Google", "public": "vendor", "note": "GA4 G-GYRKWPJBCL." }
+  ],
+  "fruit": [
+    {
+      "name": "Building lookup (HPD Online)",
+      "type": "record lookup (SPA over private API)",
+      "entity": "Building",
+      "url": "https://hpdonline.nyc.gov/hpdonline/",
+      "machine_readable": "private backend API + Open Data",
+      "verified": true,
+      "opendata_match": ["Buildings Subject to HPD Jurisdiction kj4p-ruqc (23c)"],
+      "notes": "The spine — every violation/complaint/registration/litigation hangs off buildingId. Live via private hpdonline.api; snapshot on Open Data."
+    },
+    {
+      "name": "Housing Maintenance Code Violations",
+      "type": "conditions record",
+      "entity": "HousingMaintenanceViolation",
+      "url": "https://hpdonline.nyc.gov/hpdonline/",
+      "count": "millions of NOVs",
+      "machine_readable": "private backend API + Open Data",
+      "verified": true,
+      "opendata_match": ["Housing Maintenance Code Violations wvxf-dwi5 (41c)", "HMC Violations NYCHA im9z-53hg (35c)"],
+      "notes": "HPD's flagship dataset (215k+ views). Class A/B/C hazard severity; keyed on violationId + buildingId."
+    },
+    {
+      "name": "Complaints and Problems",
+      "type": "conditions record + intake",
+      "entity": "Complaint",
+      "url": "https://hpdonline.nyc.gov/hpdonline/",
+      "machine_readable": "private backend API + Open Data",
+      "verified": true,
+      "opendata_match": ["Housing Maintenance Code Complaints and Problems ygpa-z7cr (33c)"],
+      "notes": "Tenant complaints with nested problems (one Open Data row per problem). Intake today is 311/UI — read side is data-rich; write side is the net-new file_complaint path."
+    },
+    {
+      "name": "Multiple Dwelling Registrations + Contacts",
+      "type": "ownership record",
+      "entity": "Registration",
+      "url": "https://hpdonline.nyc.gov/hpdonline/",
+      "machine_readable": "private backend API + Open Data",
+      "verified": true,
+      "opendata_match": ["Multiple Dwelling Registrations tesw-yqqr (16c)", "Registration Contacts feu5-w2e2 (15c)"],
+      "notes": "Answers 'who owns/manages this building?' — owner, managing agent, head officer. Keyed on registrationId."
+    },
+    {
+      "name": "Housing Litigations",
+      "type": "enforcement record",
+      "entity": "LitigationCase",
+      "url": "https://hpdonline.nyc.gov/hpdonline/",
+      "machine_readable": "private backend API + Open Data",
+      "verified": true,
+      "opendata_match": ["Housing Litigations 59kj-x8nc (24c)"],
+      "notes": "HPD housing-court cases incl. findings of harassment and penalties. Keyed on litigationId + buildingId."
+    },
+    {
+      "name": "Affordable Housing Production (Housing New York)",
+      "type": "program data",
+      "entity": "AffordableHousingProject",
+      "url": "https://www.nyc.gov/site/hpd/about/annual-reports.page",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["Affordable Housing Production by Building hg8x-zxpr (41c)", "Affordable Housing Production by Project hq68-rnsi (19c)"],
+      "notes": "Counted affordable units by affordability band + bedroom mix; new construction vs preservation. No live API (Open Data only)."
+    },
+    {
+      "name": "Order to Repair / Vacate Orders + Charges",
+      "type": "enforcement record",
+      "entity": "HousingMaintenanceViolation",
+      "url": "https://hpdonline.nyc.gov/hpdonline/",
+      "machine_readable": "private backend API + Open Data",
+      "verified": true,
+      "opendata_match": ["Order to Repair/Vacate Orders tb8q-a3ar (20c)", "OMO Charges mdbu-nrqn (32c)", "HWO Charges sbnd-xujn (32c)", "Fee Charges cp6j-7bjj (27c)"],
+      "notes": "Vacate orders and emergency-repair charges surfaced in HPD Online's Charges tab; snapshots on Open Data."
+    },
+    {
+      "name": "Local Law 44 (financed-project transparency)",
+      "type": "program data family",
+      "entity": "AffordableHousingProject",
+      "url": "https://www.nyc.gov/site/hpd/about/local-law-44.page",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["Local Law 44 - Building hu6m-9cfi (24c)", "Local Law 44 - Projects ucdy-byxd (15c)", "Local Law 44 Disqualified List 9s68-zggy (42c)"],
+      "notes": "A 14-dataset LL44 family (building, projects, rent affordability, development team, wages, funding, LIHTC…). Rich but Open Data only."
+    },
+    {
+      "name": "Advertised lotteries (Housing Connect, read)",
+      "type": "listing",
+      "entity": "HousingLotteryApplication",
+      "url": "https://housingconnect.nyc.gov/PublicWeb/",
+      "machine_readable": "Open Data (read-only twin)",
+      "verified": true,
+      "opendata_match": ["Advertised Lotteries on Housing Connect By Building nibs-na6y (30c)", "Advertised Lotteries on Housing Connect by Lottery vy5i-a666 (30c)"],
+      "notes": "The open lotteries are published as read-only Open Data twins, but the application transaction is closed."
+    },
+    {
+      "name": "Apply to an affordable-housing lottery (Housing Connect)",
+      "type": "transactional workflow",
+      "entity": "HousingLotteryApplication",
+      "url": "https://housingconnect.nyc.gov/PublicWeb/",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The city's highest-value affordable-housing transaction is a closed ASP.NET silo with no public API. The net-new write surface for this domain (apply_to_lottery)."
+    }
+  ]
+}

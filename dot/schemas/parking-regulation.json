@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/schemas/parking-regulation.json",
+  "title": "ParkingRegulation",
+  "description": "A curbside parking regulation and the physical sign that posts it (No Parking, Parking Meter, No Standing, etc.). Canonical schema reconciling the 'Parking Regulation Locations and Signs' Open Data dataset (nfid-uabd, 25 columns). Keyed on order_number + sign position along a blockface.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/nfid-uabd",
+    "related": ["https://data.cityofnewyork.us/d/693u-uax6 (Parking Meters Locations and Status)"]
+  },
+  "properties": {
+    "orderNumber": { "type": ["string", "null"], "description": "Sign order number (order_number)." },
+    "orderType": { "type": ["string", "null"], "description": "Order type (order_type)." },
+    "recordType": { "type": ["string", "null"], "description": "Record type (record_type), e.g. 'Current', 'Historical'." },
+    "signCode": { "type": ["string", "null"], "description": "Sign code (sign_code), e.g. 'NP', 'PM', 'NS'." },
+    "signDescription": { "type": "string", "description": "Full regulation text on the sign (sign_description)." },
+    "signNotes": { "type": ["string", "null"], "description": "sign_notes." },
+    "location": {
+      "type": "object",
+      "description": "Where the sign sits along a blockface.",
+      "properties": {
+        "onStreet": { "type": ["string", "null"], "description": "on_street (+ on_street_suffix)." },
+        "fromStreet": { "type": ["string", "null"], "description": "from_street (+ from_street_suffix)." },
+        "toStreet": { "type": ["string", "null"], "description": "to_street (+ to_street_suffix)." },
+        "sideOfStreet": { "type": ["string", "null"], "description": "side_of_street." },
+        "distanceFromIntersection": { "type": ["number", "null"], "description": "distance_from_intersection (feet)." },
+        "signLocation": { "type": ["string", "null"], "description": "sign_location descriptor." },
+        "borough": { "$ref": "_common.json#/$defs/Borough" }
+      },
+      "additionalProperties": false
+    },
+    "sign": {
+      "type": "object",
+      "description": "Physical sign attributes.",
+      "properties": {
+        "size": { "type": ["string", "null"], "description": "sign_size." },
+        "sheetingType": { "type": ["string", "null"], "description": "sheeting_type." },
+        "support": { "type": ["string", "null"], "description": "support (post/pole)." },
+        "arrowDirection": { "type": ["string", "null"], "description": "arrow_direction." },
+        "facingDirection": { "type": ["string", "null"], "description": "facing_direction." }
+      },
+      "additionalProperties": false
+    },
+    "statePlane": {
+      "type": "object",
+      "description": "NY State Plane sign coordinates (sign_x_coord / sign_y_coord).",
+      "properties": {
+        "signX": { "type": ["number", "null"] },
+        "signY": { "type": ["number", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "dates": {
+      "type": "object",
+      "properties": {
+        "orderCompleted": { "type": ["string", "null"], "format": "date", "description": "order_completed_on_date." },
+        "signDesignVoided": { "type": ["string", "null"], "format": "date", "description": "sign_design_voided_on_date." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["signDescription"],
+  "additionalProperties": false
+}

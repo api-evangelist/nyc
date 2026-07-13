@@ -1,0 +1,367 @@
+openapi: 3.1.0
+info:
+  title: NYC City Planning (DCP) API (proposed)
+  version: 0.1.0
+  summary: One owned, resource-oriented API for the NYC Department of City Planning — the authoritative source of the citywide geography spine (BBL, community districts, NTAs, census tracts, zoning) that every other agency references.
+  description: >-
+    Proposed API-first surface for the New York City Department of City Planning (DCP), from the
+    NYC Modernization low-hanging-fruit assessment of nyc.gov/site/planning, ZoLa, and the DCP
+    open-source stack.
+
+
+    DCP is different from the other domains in this project: it is NOT a transactional agency, it is
+    the city's **reference-geography source**. PLUTO/MapPLUTO is the authoritative origin of the BBL;
+    DCP also defines community districts, Neighborhood Tabulation Areas (NTAs), census tracts, and the
+    council/election-district boundaries that Parks, DOE, Council, and BOE datasets all join on. The
+    modernization verb here is therefore **Anchor**: make DCP the explicit, owned base of the planned
+    `nyc-commons` shared geography schema set (see ../../ROADMAP.md), rather than leaving that spine
+    implicit and re-declared in every agency's private `_common.json`.
+
+
+    This contract is READ-MOSTLY by design and honest about it. DCP has no obvious citizen write-workflow
+    (its ULURP land-use process is an agency/applicant pipeline, not a resident transaction — see
+    `GET /land-use-applications`). The single highest-value net-new surface is not a write endpoint but a
+    canonical, owned **geocoder** (`GET /geocode`) that resolves an address to a BBL/BIN and the full
+    geography spine — today only reachable through the subscription-gated Azure-hosted GeoClient at
+    `api.nyc.gov/geo`. Fronting it with a city-owned contract is the ownership move.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.planning.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Lots
+    description: Tax lots — PLUTO/MapPLUTO, the source of the BBL.
+  - name: Zoning
+    description: Zoning districts, overlays, and special districts.
+  - name: Geographies
+    description: Community districts, NTAs, and census geographies — the shared geography spine.
+  - name: Land Use
+    description: ULURP / land-use applications (reference, not a citizen write workflow).
+  - name: Geocode
+    description: Resolve an address to a BBL/BIN and the geography spine (fronts DCP GeoClient/GeoService).
+
+paths:
+  /lots:
+    get:
+      operationId: listLots
+      summary: Search tax lots (PLUTO)
+      description: Search DCP's PLUTO by borough, block, geography, land use, or zoning. The authoritative citywide lot inventory.
+      tags: [Lots]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: block
+          in: query
+          schema: { type: integer }
+        - name: communityDistrict
+          in: query
+          schema: { type: integer }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - name: zoningDistrict
+          in: query
+          description: Filter by base zoning district code (e.g. 'R6').
+          schema: { type: string }
+        - name: landUse
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of tax lots.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/tax-lot.json' } }
+  /lots/{bbl}:
+    get:
+      operationId: getLot
+      summary: Look up a tax lot by BBL
+      description: Fetch the full PLUTO record for a Borough-Block-Lot — the primary geographic lookup in the city.
+      tags: [Lots]
+      parameters:
+        - name: bbl
+          in: path
+          required: true
+          description: 10-digit Borough-Block-Lot.
+          schema: { type: string, pattern: '^[1-5][0-9]{9}$' }
+      responses:
+        '200':
+          description: The tax lot.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/tax-lot.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /zoning-districts:
+    get:
+      operationId: listZoningDistricts
+      summary: List zoning districts
+      description: List DCP zoning districts, overlays, and special districts.
+      tags: [Zoning]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string, enum: [Residential, Commercial, Manufacturing, Special Purpose, Battery Park City, Park] }
+        - $ref: '#/components/parameters/q'
+      responses:
+        '200':
+          description: Zoning districts.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/zoning-district.json' } }
+  /zoning-districts/{code}:
+    get:
+      operationId: getZoningDistrict
+      summary: Get a zoning district by code
+      tags: [Zoning]
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Zoning district code, e.g. 'R6', 'C1-2', 'M1-1'.
+          schema: { type: string }
+      responses:
+        '200':
+          description: The zoning district.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/zoning-district.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /community-districts:
+    get:
+      operationId: listCommunityDistricts
+      summary: List community districts
+      tags: [Geographies]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+      responses:
+        '200':
+          description: The 59 community districts.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/community-district.json' } }
+  /community-districts/{borocd}:
+    get:
+      operationId: getCommunityDistrict
+      summary: Get a community district
+      description: Fetch a community district by its borough+district code (e.g. 101 = Manhattan CD 1).
+      tags: [Geographies]
+      parameters:
+        - name: borocd
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: The community district.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/community-district.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /ntas:
+    get:
+      operationId: listNtas
+      summary: List Neighborhood Tabulation Areas
+      tags: [Geographies]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/q'
+      responses:
+        '200':
+          description: 2020 NTAs.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/nta.json' } }
+  /ntas/{nta2020}:
+    get:
+      operationId: getNta
+      summary: Get an NTA by code
+      tags: [Geographies]
+      parameters:
+        - name: nta2020
+          in: path
+          required: true
+          description: NTA code, e.g. 'MN0101'.
+          schema: { type: string }
+      responses:
+        '200':
+          description: The NTA.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/nta.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /census-tracts/{geoid}:
+    get:
+      operationId: getCensusTract
+      summary: Get a census tract by GEOID
+      tags: [Geographies]
+      parameters:
+        - name: geoid
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The census geography.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/census-geography.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /land-use-applications:
+    get:
+      operationId: listLandUseApplications
+      summary: Search ULURP / land-use applications
+      description: >-
+        Search DCP land-use applications (ULURP, special permits, zoning amendments). Reference data on
+        an agency/applicant review pipeline — NOT a citizen write workflow. Included to be honest about
+        DCP's one quasi-transactional surface.
+      tags: [Land Use]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: communityDistrict
+          in: query
+          schema: { type: integer }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: actionType
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          description: Applications affecting a given tax lot.
+          schema: { type: string, pattern: '^[1-5][0-9]{9}$' }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of land-use applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/land-use-application.json' } }
+  /land-use-applications/{ulurpNumber}:
+    get:
+      operationId: getLandUseApplication
+      summary: Get a land-use application by ULURP number
+      tags: [Land Use]
+      parameters:
+        - name: ulurpNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The land-use application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/land-use-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /geocode:
+    get:
+      operationId: geocode
+      summary: Resolve an address to a BBL/BIN and geography spine
+      description: >-
+        The highest-value net-new surface for DCP — a canonical, owned geocoder that turns an address into
+        a BBL, BIN, coordinates, and the full geography spine (community district, council district, census
+        tract, NTA, precinct, school district). Today this capability exists only behind the
+        subscription-gated Azure-hosted GeoClient at api.nyc.gov/geo; this fronts it with a city-owned contract.
+      tags: [Geocode]
+      parameters:
+        - name: address
+          in: query
+          description: Free-form or house-number + street address.
+          schema: { type: string }
+        - name: borough
+          in: query
+          schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+      responses:
+        '200':
+          description: The resolved location.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bbl: { $ref: '../schemas/_common.json#/$defs/BBL' }
+                  bin: { $ref: '../schemas/_common.json#/$defs/BIN' }
+                  address: { type: string }
+                  coordinates: { $ref: '../schemas/_common.json#/$defs/Coordinates' }
+                  geography: { $ref: '../schemas/_common.json#/$defs/GeographySpine' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  schemas:
+    TaxLot: { $ref: '../schemas/tax-lot.json' }
+    ZoningDistrict: { $ref: '../schemas/zoning-district.json' }
+    CommunityDistrict: { $ref: '../schemas/community-district.json' }
+    NTA: { $ref: '../schemas/nta.json' }
+    CensusGeography: { $ref: '../schemas/census-geography.json' }
+    LandUseApplication: { $ref: '../schemas/land-use-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

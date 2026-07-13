@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/schemas/speed-hump.json",
+  "title": "SpeedHump",
+  "description": "A traffic-calming speed hump installation on a blockface, part of the Vision Zero program. Canonical schema reconciling the 'VZV Speed Humps' Open Data dataset (jknp-skuy, 8 columns; map twin eqxx-j5y8). Keyed on OBJECTID + blockface.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/jknp-skuy",
+    "map": "https://data.cityofnewyork.us/d/eqxx-j5y8",
+    "program": "https://www.nyc.gov/content/visionzero/pages/"
+  },
+  "properties": {
+    "objectId": { "type": ["string", "integer"], "description": "Feature id (OBJECTID)." },
+    "onStreet": { "type": "string", "description": "Street the hump(s) are on (on_street)." },
+    "fromStreet": { "type": ["string", "null"], "description": "from_stree." },
+    "toStreet": { "type": ["string", "null"], "description": "to_street." },
+    "humps": { "type": ["integer", "null"], "description": "Number of speed humps on the segment (humps)." },
+    "lengthFeet": { "type": ["number", "null"], "description": "Segment length (Shape_STLe)." },
+    "dateInstalled": { "type": ["string", "null"], "format": "date", "description": "date_insta." },
+    "geometry": { "$ref": "_common.json#/$defs/GeoJSONGeometry" }
+  },
+  "required": ["onStreet"],
+  "additionalProperties": false
+}

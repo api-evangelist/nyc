@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycha/schemas/work-order.json",
+  "title": "WorkOrder",
+  "description": "A NYCHA maintenance / repair work order — the everyday resident transaction. NET-NEW: there is NO public API and NO Open Data twin for work orders; today residents create and track repair tickets only inside the Oracle Siebel Self Service Portal (selfserve.nycha.info) or by phone to the Customer Contact Center. This schema serves both the read surface (list/get a resident's own work orders) and the WorkOrderRequest write surface (report a repair).",
+  "type": "object",
+  "x-source": {
+    "portal": "https://selfserve.nycha.info/nycha/app/eservice/enu",
+    "contact_center": "https://data.cityofnewyork.us/d/37fm-7uaa",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "workOrderId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned work order / ticket number (Siebel SR number). Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Scheduled", "In Progress", "On Hold", "Completed", "Cancelled", null],
+      "description": "Lifecycle status. Set by NYCHA, not the requester.",
+      "readOnly": true
+    },
+    "development": { "$ref": "_common.json#/$defs/DevelopmentReference" },
+    "address": { "type": ["string", "null"], "description": "Building address of the unit." },
+    "apartment": { "type": ["string", "null"], "description": "Apartment / unit number." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "category": {
+      "type": "string",
+      "description": "Repair category.",
+      "enum": ["Plumbing", "Heat/Hot Water", "Electrical", "Appliance", "Carpentry/Doors", "Plastering/Painting", "Flooring", "Pest Control", "Elevator", "Mold/Moisture", "Exterminating", "Grounds/Common Area", "Other"]
+    },
+    "problem": { "type": "string", "description": "Free-text description of the repair needed." },
+    "location": {
+      "type": ["string", "null"],
+      "enum": ["Kitchen", "Bathroom", "Bedroom", "Living Room", "Hallway", "Common Area", "Building Exterior", "Other", null],
+      "description": "Where in the unit/building the problem is."
+    },
+    "emergency": { "type": "boolean", "default": false, "description": "Flag life-safety emergencies (no heat/hot water, gas, flooding). Emergencies are routed to the 24-hour Customer Contact Center." },
+    "accessInstructions": { "type": ["string", "null"], "description": "How/when the resident can be reached to schedule access." },
+    "contact": {
+      "type": "object",
+      "description": "Requester contact details.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "createdDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "scheduledDate": { "type": ["string", "null"], "format": "date", "readOnly": true },
+    "completedDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "required": ["category", "problem"],
+  "additionalProperties": false
+}

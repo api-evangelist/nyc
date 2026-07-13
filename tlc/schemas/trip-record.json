@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/tlc/schemas/trip-record.json",
+  "title": "TripRecord",
+  "description": "A single taxi / for-hire trip — the TLC's flagship dataset. The authoritative source is the TLC Trip Record Data: monthly PARQUET files (yellow/green/FHV/FHVHV) hosted on CloudFront (d37ci6vzurychx.cloudfront.net/trip-data), NOT a queryable API. Yearly flattened snapshots also appear on NYC Open Data (e.g. 2023 Yellow t29m-... 4b4i-vvec, Green hvrh-b6nb). Pickup and drop-off are TLC Taxi Zone LocationIDs, not lat/long, in current data. This schema is a queryable, agent-native reconciliation of those bulk files.",
+  "type": "object",
+  "x-source": {
+    "tripRecordFiles": "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page",
+    "parquetHost": "https://d37ci6vzurychx.cloudfront.net/trip-data/",
+    "opendataYellow": "https://data.cityofnewyork.us/d/4b4i-vvec",
+    "opendataGreen": "https://data.cityofnewyork.us/d/hvrh-b6nb"
+  },
+  "properties": {
+    "serviceType": { "$ref": "_common.json#/$defs/ServiceType" },
+    "vendorId": { "type": ["integer", "null"], "description": "TPEP/LPEP provider code (VendorID)." },
+    "pickupDatetime": { "type": "string", "format": "date-time", "description": "tpep_pickup_datetime / lpep_pickup_datetime." },
+    "dropoffDatetime": { "type": ["string", "null"], "format": "date-time", "description": "tpep_dropoff_datetime / lpep_dropoff_datetime." },
+    "passengerCount": { "type": ["integer", "null"], "description": "passenger_count." },
+    "tripDistance": { "type": ["number", "null"], "description": "trip_distance, in miles." },
+    "rateCodeId": { "type": ["integer", "null"], "description": "RatecodeID (1=Standard, 2=JFK, 3=Newark, 4=Nassau/Westchester, 5=Negotiated, 6=Group)." },
+    "storeAndFwdFlag": { "type": ["string", "null"], "enum": ["Y", "N", null], "description": "store_and_fwd_flag." },
+    "pickupLocationId": { "type": ["integer", "null"], "description": "PULocationID — TLC Taxi Zone (see taxi-zone.json)." },
+    "dropoffLocationId": { "type": ["integer", "null"], "description": "DOLocationID — TLC Taxi Zone." },
+    "pickupZone": { "$ref": "_common.json#/$defs/TaxiZoneReference" },
+    "dropoffZone": { "$ref": "_common.json#/$defs/TaxiZoneReference" },
+    "paymentType": { "type": ["integer", "null"], "description": "payment_type (1=Credit, 2=Cash, 3=No charge, 4=Dispute, 5=Unknown, 6=Voided)." },
+    "tripType": { "type": ["integer", "null"], "description": "Green only: 1=Street-hail, 2=Dispatch (trip_type)." },
+    "fareAmount": { "type": ["number", "null"], "description": "fare_amount." },
+    "extra": { "type": ["number", "null"] },
+    "mtaTax": { "type": ["number", "null"] },
+    "tipAmount": { "type": ["number", "null"] },
+    "tollsAmount": { "type": ["number", "null"] },
+    "ehailFee": { "type": ["number", "null"], "description": "Green only." },
+    "improvementSurcharge": { "type": ["number", "null"] },
+    "congestionSurcharge": { "type": ["number", "null"] },
+    "airportFee": { "type": ["number", "null"] },
+    "totalAmount": { "type": ["number", "null"], "description": "total_amount." }
+  },
+  "required": ["serviceType", "pickupDatetime"],
+  "additionalProperties": false
+}

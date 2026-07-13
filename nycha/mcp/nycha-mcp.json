@@ -1,0 +1,162 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces NYCHA's open reference data (developments, addresses, facilities, utility metering, resident statistics) and adds report_repair — the net-new write workflow locked today inside the Oracle Siebel Self Service Portal.",
+    "openapi": "../openapi/nycha.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.nycha",
+    "title": "NYC Housing Authority (NYCHA)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the New York City Housing Authority — public housing developments, residential addresses, community facilities, utility consumption metering, and aggregate resident statistics from NYC Open Data, plus the net-new ability to report and track a maintenance repair (work order) that today lives only in the Siebel Self Service Portal.",
+    "instructions": "Use find_developments / get_development (and get_development_addresses) to locate public housing developments by borough, program, or council district and drill into their buildings. find_facilities covers community facilities, senior/day-care centers, and customer contact centers. find_utility_consumption answers energy/water cost-and-consumption questions per development (PropertyMeter). find_resident_statistics returns AGGREGATE demographics only — NYCHA never exposes individual households. report_repair (net-new) creates a maintenance work order; it requires an authenticated resident and mutates state — confirm the unit, category, and problem with the user before submitting, and set emergency=true for no-heat/hot-water/gas/flooding so it routes to the 24-hour contact center."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_developments",
+      "title": "Find Developments",
+      "description": "Search NYCHA public housing developments by borough, program, senior status, council district, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "program": { "type": "string" },
+          "seniorDevelopment": { "type": "boolean" },
+          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/development.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listDevelopments"
+    },
+    {
+      "name": "get_development",
+      "title": "Get Development",
+      "description": "Fetch a NYCHA development (units, buildings, population, geography) by TDS number.",
+      "inputSchema": { "type": "object", "properties": { "tds": { "type": "string" } }, "required": ["tds"] },
+      "outputSchema": { "$ref": "../schemas/development.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getDevelopment"
+    },
+    {
+      "name": "get_development_addresses",
+      "title": "Get Development Addresses",
+      "description": "List the residential building addresses within a development.",
+      "inputSchema": { "type": "object", "properties": { "tds": { "type": "string" } }, "required": ["tds"] },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/residential-address.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getDevelopmentAddresses"
+    },
+    {
+      "name": "find_addresses",
+      "title": "Find Addresses",
+      "description": "Search NYCHA residential addresses by borough, BIN, BBL, ZIP, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "bin": { "type": "string" },
+          "bbl": { "type": "string" },
+          "zipCode": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/residential-address.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listAddresses"
+    },
+    {
+      "name": "find_facilities",
+      "title": "Find Facilities",
+      "description": "List NYCHA community facilities, service centers, and customer contact centers by borough, type, program type, or development.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "type": { "type": "string" },
+          "programType": { "type": "string" },
+          "development": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-facility.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listFacilities"
+    },
+    {
+      "name": "find_utility_consumption",
+      "title": "Find Utility Consumption",
+      "description": "Search development-level utility consumption and cost metering (electric, water, gas, steam, oil) — the PropertyMeter data — by utility, development, borough, or period.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "utility": { "type": "string", "enum": ["Electric", "Water", "Heating Gas", "Cooking Gas", "Steam", "Heating Oil"] },
+          "development": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "revenueMonth": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/utility-consumption.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listUtilityConsumption"
+    },
+    {
+      "name": "find_resident_statistics",
+      "title": "Find Resident Statistics",
+      "description": "Return AGGREGATE resident demographics by development or program (population, families, income, age bands). Never returns individual households.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "development": { "type": "string" },
+          "program": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/resident-statistics.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listResidentStatistics"
+    },
+    {
+      "name": "list_my_work_orders",
+      "title": "List My Work Orders",
+      "description": "List the authenticated resident's own repair work orders and their status — today visible only inside the Siebel Self Service Portal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Scheduled", "In Progress", "On Hold", "Completed", "Cancelled"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/work-order.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listWorkOrders",
+      "x-auth": "user"
+    },
+    {
+      "name": "report_repair",
+      "title": "Report a Repair",
+      "description": "Create a NYCHA maintenance work order (report a repair). NET-NEW workflow with no public API today — it lives only in the Oracle Siebel Self Service Portal or a phone call to the Customer Contact Center. Requires an authenticated resident. Mutates state — confirm unit, category, and problem first; set emergency=true for no heat/hot water, gas, or flooding.",
+      "inputSchema": { "$ref": "../schemas/work-order.json" },
+      "outputSchema": { "$ref": "../schemas/work-order.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createWorkOrder",
+      "x-auth": "user"
+    }
+  ]
+}

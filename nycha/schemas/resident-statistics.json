@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycha/schemas/resident-statistics.json",
+  "title": "ResidentStatistics",
+  "description": "Aggregated resident demographics for a NYCHA development or program — the household/resident record, published only in aggregate (never per household). Canonical schema reconciling the 'NYCHA Resident Data Book Summary' (5r5y-pvs3). NYCHA never publishes an individual HouseholdRecord to Open Data; that data lives only inside the Tenant Data System and the Self Service Portal.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/5r5y-pvs3"
+  },
+  "properties": {
+    "development": { "type": ["string", "null"], "description": "Development name (blank on citywide/program rollups)." },
+    "program": { "$ref": "_common.json#/$defs/Program" },
+    "stateCitySection8Flag": { "type": ["string", "null"], "description": "'STATECITY_SECTION8_FLAG'." },
+    "totalPopulation": { "type": ["integer", "null"], "description": "'Total Population'." },
+    "totalFamilies": { "type": ["integer", "null"], "description": "'Total Families'." },
+    "averageFamilySize": { "type": ["number", "null"], "description": "'Average Family Size'." },
+    "averageYearsInPublicHousing": { "type": ["number", "null"], "description": "'All Families Average Years in Public Housing'." },
+    "avgGrossRent": { "type": ["number", "null"], "description": "'All Average Gross Rent'." },
+    "avgTotalGrossIncome": { "type": ["number", "null"], "description": "'All Average Total Gross Income'." },
+    "totalMinorsUnder18": { "type": ["integer", "null"], "description": "'Total Minors Under 18'." },
+    "totalElderlyPopulation": { "type": ["integer", "null"], "description": "'Total Elderly Population'." },
+    "totalOn62AndOver": { "type": ["integer", "null"], "description": "'Total HOH 62 Years and Over'." },
+    "totalFamiliesOnWelfare": { "type": ["integer", "null"], "description": "'Total Families on Welfare'." },
+    "totalFixedIncomeFamilies": { "type": ["integer", "null"], "description": "'Total Fixed Income Families'." },
+    "totalFamiliesOneOrMoreEmployed": { "type": ["integer", "null"], "description": "'Total Families - 1 or More Employed'." },
+    "totalFemaleHeadedFamilies": { "type": ["integer", "null"], "description": "'Total Female Headed Families'." },
+    "totalMaleHeadedFamilies": { "type": ["integer", "null"], "description": "'Total Male Headed Families'." }
+  },
+  "additionalProperties": false
+}

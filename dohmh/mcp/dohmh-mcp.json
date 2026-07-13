@@ -1,0 +1,173 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Consolidates the read-heavy DOHMH Open Data (restaurant/rodent/childcare inspections, complaints) with the siloed transactional systems (ABC Eats, eVital/VitalChek, Accela) behind one agent contract; adds the net-new write workflow, ordering a vital record.",
+    "openapi": "../openapi/dohmh.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.dohmh",
+    "title": "NYC Health (DOHMH)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Department of Health and Mental Hygiene — restaurant grades & inspections, rodent inspections, childcare centers, clinics, and public-health complaints. Fronts NYC Open Data for the read-heavy records and the ABC Eats grade lookup; adds ordering and tracking of birth/death certificates (today locked in eVital/VitalChek).",
+    "instructions": "Use find_food_establishments / get_food_establishment (and get_food_establishment_inspections) for restaurant grades and inspection history — the city's most-consumed dataset. find_inspections searches inspections across establishments. find_rodent_inspections answers 'are there rat signs at this address?'. find_childcare_centers covers permitted daycares and their violation rates. find_health_facilities locates DOHMH clinics by service and location. find_complaints surfaces indoor environmental complaints. order_vital_record (net-new) and track_vital_record_request require an authenticated user; order_vital_record mutates state and places a paid order — confirm all details with the user before submitting."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_food_establishments",
+      "title": "Find Food Establishments",
+      "description": "Search NYC restaurants / food establishments by borough, cuisine, current letter grade, ZIP, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "cuisine": { "type": "string" },
+          "grade": { "type": "string", "enum": ["A", "B", "C", "Z", "N", "P", "G"] },
+          "zipCode": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/food-establishment.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listFoodEstablishments"
+    },
+    {
+      "name": "get_food_establishment",
+      "title": "Get Food Establishment",
+      "description": "Fetch a food establishment (name, address, current grade) by CAMIS id.",
+      "inputSchema": { "type": "object", "properties": { "camis": { "type": "string" } }, "required": ["camis"] },
+      "outputSchema": { "$ref": "../schemas/food-establishment.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getFoodEstablishment"
+    },
+    {
+      "name": "get_food_establishment_inspections",
+      "title": "Get Establishment Inspections",
+      "description": "List the full inspection history (scores, grades, violations) for a food establishment by CAMIS.",
+      "inputSchema": { "type": "object", "properties": { "camis": { "type": "string" } }, "required": ["camis"] },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/inspection.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getFoodEstablishmentInspections"
+    },
+    {
+      "name": "find_inspections",
+      "title": "Find Inspections",
+      "description": "Search food-establishment inspections by CAMIS, critical-only, and/or date range.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "camis": { "type": "string" },
+          "criticalOnly": { "type": "boolean" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/inspection.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listInspections"
+    },
+    {
+      "name": "find_rodent_inspections",
+      "title": "Find Rodent Inspections",
+      "description": "Search DOHMH rat/rodent inspections by borough, result, tax lot (BBL), or date range ('are there rat signs at this address?').",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "result": { "type": "string" },
+          "bbl": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/rodent-inspection.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listRodentInspections"
+    },
+    {
+      "name": "find_childcare_centers",
+      "title": "Find Childcare Centers",
+      "description": "Search permitted group childcare centers by borough, program type, status, or free text; includes violation-rate outcomes.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "programType": { "type": "string" },
+          "status": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/childcare-center.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listChildcareCenters"
+    },
+    {
+      "name": "find_health_facilities",
+      "title": "Find Health Facilities & Clinics",
+      "description": "Locate DOHMH clinics and service sites (sexual health, immunization, TB, mental health) by service category, borough, proximity, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "serviceCategory": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "near": { "type": "string", "description": "Center point as 'lat,lng'." },
+          "q": { "type": "string" }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/health-facility.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listHealthFacilities"
+    },
+    {
+      "name": "find_complaints",
+      "title": "Find Health Complaints",
+      "description": "Search indoor environmental / public-health complaints (mold, air quality, pests, lead) by borough, type, status, or date range.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "complaintType": { "type": "string" },
+          "status": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/environmental-complaint.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listComplaints"
+    },
+    {
+      "name": "order_vital_record",
+      "title": "Order Birth/Death Certificate",
+      "description": "Order a certified copy of a NYC birth or death certificate. NET-NEW workflow with no open API today (locked in eVital VRRTS / VitalChek). Requires an authenticated user, places a paid order, and mutates state — confirm all subject, requester, and delivery details with the user before submitting.",
+      "inputSchema": { "$ref": "../schemas/vital-record-request.json" },
+      "outputSchema": { "$ref": "../schemas/vital-record-request.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createVitalRecordRequest",
+      "x-auth": "user"
+    },
+    {
+      "name": "track_vital_record_request",
+      "title": "Track Vital Record Request",
+      "description": "Fetch the status of a previously placed birth/death certificate order by request id. Requires an authenticated user.",
+      "inputSchema": { "type": "object", "properties": { "requestId": { "type": "string" } }, "required": ["requestId"] },
+      "outputSchema": { "$ref": "../schemas/vital-record-request.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getVitalRecordRequest",
+      "x-auth": "user"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/schemas/bike-route.json",
+  "title": "BikeRoute",
+  "description": "A segment of the NYC cycling network — a bike lane, path, greenway, or signed route. Canonical schema reconciling the 'New York City Bike Routes' Open Data dataset (mzxg-pwib, 25 columns; map twin 9e2b-mctv). Keyed on bikeId and the LION SegmentID.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/mzxg-pwib",
+    "map": "https://data.cityofnewyork.us/d/9e2b-mctv",
+    "site": "https://www.nyc.gov/html/dot/html/bicyclists/bikemaps.shtml"
+  },
+  "properties": {
+    "bikeId": { "type": ["string", "integer"], "description": "Bike route feature id (bikeid)." },
+    "previousBikeId": { "type": ["string", "null"], "description": "prevbikeid (lineage)." },
+    "segment": { "$ref": "_common.json#/$defs/SegmentReference" },
+    "street": { "type": ["string", "null"], "description": "Street the route runs on (street)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "facilityClass": { "type": ["string", "null"], "description": "Facility class (facilitycl) — e.g. I/II/III protected/standard/sharrow classification." },
+    "allClasses": { "type": ["string", "null"], "description": "All facility classes present on the segment (allclasses)." },
+    "facilityToFrom": {
+      "type": "object",
+      "description": "Directional facility type in each direction of travel (Open Data ft_facilit / tf_facilit and secondary ft2facilit / tf2facilit).",
+      "properties": {
+        "toFrom": { "type": ["string", "null"], "description": "tf_facilit." },
+        "fromTo": { "type": ["string", "null"], "description": "ft_facilit." },
+        "toFromSecondary": { "type": ["string", "null"], "description": "tf2facilit." },
+        "fromToSecondary": { "type": ["string", "null"], "description": "ft2facilit." }
+      },
+      "additionalProperties": false
+    },
+    "bikeDirection": { "type": ["string", "null"], "description": "Direction of bike travel (bikedir), e.g. 'With', 'Against', 'Two-Way'." },
+    "onOffStreet": { "type": ["string", "null"], "description": "On-street vs off-street (onoffst)." },
+    "laneCount": { "type": ["integer", "null"], "description": "Number of bike lanes on the segment (lanecount)." },
+    "greenway": {
+      "type": "object",
+      "description": "Greenway attributes where the route is part of a greenway.",
+      "properties": {
+        "isGreenway": { "type": ["string", "null"], "description": "grnwy flag." },
+        "greenwaySystem": { "type": ["string", "null"], "description": "gwsystem." },
+        "greenwaySystem2": { "type": ["string", "null"], "description": "gwsys2." },
+        "jurisdiction": { "type": ["string", "null"], "description": "gwyjuris." }
+      },
+      "additionalProperties": false
+    },
+    "spur": { "type": ["string", "null"], "description": "Spur flag (spur)." },
+    "status": { "type": ["string", "null"], "description": "Status (status), e.g. 'Existing', 'Proposed'." },
+    "dates": {
+      "type": "object",
+      "properties": {
+        "installed": { "type": ["string", "null"], "format": "date", "description": "instdate." },
+        "retired": { "type": ["string", "null"], "format": "date", "description": "ret_date." }
+      },
+      "additionalProperties": false
+    },
+    "geometry": { "$ref": "_common.json#/$defs/GeoJSONGeometry" }
+  },
+  "required": ["bikeId"],
+  "additionalProperties": false
+}

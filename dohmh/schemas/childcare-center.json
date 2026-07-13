@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dohmh/schemas/childcare-center.json",
+  "title": "ChildcareCenter",
+  "description": "A DOHMH-permitted group child care center and its inspection/violation profile. Reconciles the 'DOHMH Childcare Center Inspections' Open Data dataset (dsg6-ifza, 34 columns). Keyed on the Day Care ID (dc_id); permit and capacity describe the center, violation-rate fields summarize inspection outcomes.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/dsg6-ifza"
+  },
+  "properties": {
+    "dcId": { "type": "string", "description": "Day Care ID — the center identifier (Open Data 'dc_id')." },
+    "centerName": { "type": "string", "description": "Center name (Open Data 'centername')." },
+    "legalName": { "type": ["string", "null"], "description": "Legal name (Open Data 'legalname')." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "permitNumber": { "type": ["string", "null"], "description": "Permit number (Open Data 'permitnumber')." },
+    "permitExpiration": { "type": ["string", "null"], "format": "date", "description": "Permit expiration date (Open Data 'permitexp')." },
+    "status": { "type": ["string", "null"], "description": "Permit status (Open Data 'status')." },
+    "programType": { "type": ["string", "null"], "description": "Program type, e.g. 'INFANT TODDLER', 'PRESCHOOL' (Open Data 'programtype')." },
+    "facilityType": { "type": ["string", "null"], "description": "Facility type (Open Data 'facilitytype')." },
+    "ageRange": { "type": ["string", "null"], "description": "Served age range (Open Data 'agerange')." },
+    "maximumCapacity": { "type": ["number", "null"], "description": "Maximum permitted capacity (Open Data 'maximumcapacity')." },
+    "lastInspectionDate": { "type": ["string", "null"], "format": "date", "description": "Most recent inspection date (Open Data 'inspectiondate')." },
+    "violationRatePercent": { "type": ["number", "null"], "description": "Center's violation rate percent (Open Data 'violationratepercent')." },
+    "publicHealthHazardViolationRate": { "type": ["number", "null"], "description": "Public-health-hazard violation rate (Open Data 'publichealthhazardviolationrate')." },
+    "bin": { "type": ["string", "null"], "description": "Building Identification Number (Open Data 'bin')." }
+  },
+  "required": ["dcId", "centerName"],
+  "additionalProperties": false
+}

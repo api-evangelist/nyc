@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/comptroller.nyc.gov/schemas/pension-holding.json",
+  "title": "PensionHolding",
+  "description": "A single security holding within one of the five NYC public pension funds, for which the Comptroller serves as investment adviser and custodian. Canonical schema reconciling the five Comptroller 'Holdings Data' Open Data assets (NYCERS p3e6-t4zv, TRS 5u2d-n46s, BERS fypi-ruxh, Police dy3p-ay2d, Fire 95aa-k2ka; 25 columns each).",
+  "type": "object",
+  "x-source": {
+    "opendata_nycers": "https://data.cityofnewyork.us/d/p3e6-t4zv",
+    "opendata_trs": "https://data.cityofnewyork.us/d/5u2d-n46s",
+    "opendata_bers": "https://data.cityofnewyork.us/d/fypi-ruxh",
+    "opendata_police": "https://data.cityofnewyork.us/d/dy3p-ay2d",
+    "opendata_fire": "https://data.cityofnewyork.us/d/95aa-k2ka"
+  },
+  "properties": {
+    "system": {
+      "type": "string",
+      "description": "Which of the five pension systems holds the security.",
+      "enum": ["NYCERS", "TRS", "BERS", "Police", "Fire"]
+    },
+    "securityName": { "type": ["string", "null"], "description": "Security name (`security_name`)." },
+    "securityDescription": { "type": ["string", "null"], "description": "Security description (`security_description`)." },
+    "assetClass": { "type": ["string", "null"], "description": "Asset class (`asset_class`)." },
+    "investmentType": { "type": ["string", "null"], "description": "Investment type (`investment_type_name`)." },
+    "sharesParValue": { "type": ["number", "null"], "description": "Shares or par value held (`shares_par_value`)." },
+    "originalFace": { "type": ["number", "null"], "description": "Original face value for fixed income (`original_face`)." },
+    "marketValue": { "$ref": "_common.json#/$defs/Money", "description": "Base market value (`base_market_value`)." },
+    "totalCost": { "$ref": "_common.json#/$defs/Money", "description": "Base total cost (`base_total_cost`)." },
+    "unrealizedGainLoss": { "$ref": "_common.json#/$defs/Money", "description": "Base unrealized gain/loss (`base_unrealized_gain_loss`)." },
+    "interestRate": { "type": ["number", "null"], "description": "Coupon/interest rate (`interest_rate`)." },
+    "maturityDate": { "type": ["string", "null"], "format": "date", "description": "Maturity date (`maturity_date`)." },
+    "country": { "type": ["string", "null"], "description": "Trade country (`trade_country_name`)." },
+    "majorIndustry": { "type": ["string", "null"], "description": "Major industry (`major_industry_name`)." },
+    "minorIndustry": { "type": ["string", "null"], "description": "Minor industry (`minor_industry_name`)." },
+    "spRating": { "type": ["string", "null"], "description": "S&P quality rating (`s_and_p_quality_rating`)." },
+    "moodyRating": { "type": ["string", "null"], "description": "Moody's quality rating (`moody_s_quality_rating`)." },
+    "periodEndDate": { "type": ["string", "null"], "format": "date", "description": "Reporting period end date (`period_end_date`)." },
+    "dataAsOf": { "type": ["string", "null"], "format": "date", "description": "As-of date for the holdings snapshot (`data_as_of`)." }
+  },
+  "required": ["system"],
+  "additionalProperties": false
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dsny/schemas/sanitation-district.json",
+  "title": "SanitationDistrict",
+  "description": "A DSNY operational district / section with its collection frequencies. Reconciles the DSNY Districts (i6mn-amj2), DSNY Zones (ak2e-nbe8), and DSNY Frequencies (rv63-53db) Open Data datasets. The DSNY district (e.g. 'MN01') is the join key that the collection-schedule geocoder resolves an address to.",
+  "type": "object",
+  "x-source": {
+    "opendata_districts": "https://data.cityofnewyork.us/d/i6mn-amj2",
+    "opendata_zones": "https://data.cityofnewyork.us/d/ak2e-nbe8",
+    "opendata_frequencies": "https://data.cityofnewyork.us/d/rv63-53db",
+    "backend": "https://dsnypublic.nyc.gov/dsny/api/geocoder/DSNYCollection"
+  },
+  "properties": {
+    "district": { "type": "string", "description": "DSNY district code, e.g. 'MN01' (district / districtcode)." },
+    "section": { "type": ["string", "null"], "description": "Collection section within the district (section)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "scheduleCode": { "type": ["string", "null"], "description": "Frequencies schedule code (schedulecode)." },
+    "frequencies": {
+      "type": "object",
+      "description": "Weekly collection frequencies per stream, from the DSNY Frequencies dataset.",
+      "properties": {
+        "refuse": { "type": ["string", "null"], "description": "Refuse pickup frequency (freq_refuse)." },
+        "recycling": { "type": ["string", "null"], "description": "Recycling frequency (freq_recycling)." },
+        "organics": { "type": ["string", "null"], "description": "Curbside composting frequency (freq_organics)." },
+        "bulk": { "type": ["string", "null"], "description": "Bulk / large-item frequency (freq_bulk)." },
+        "eWaste": { "type": ["string", "null"], "description": "E-waste frequency (freq_ewaste)." }
+      },
+      "additionalProperties": false
+    },
+    "shapeArea": { "type": ["number", "null"], "description": "Polygon area (shape_area)." },
+    "shapeLength": { "type": ["number", "null"], "description": "Polygon perimeter (shape_length)." }
+  },
+  "required": ["district"],
+  "additionalProperties": false
+}

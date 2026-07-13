@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dohmh/schemas/vital-record-request.json",
+  "title": "VitalRecordRequest",
+  "description": "An order for a certified copy of a NYC birth or death certificate from the DOHMH Office of Vital Records — the net-new WRITE object for this domain. Today this transaction lives inside the eVital VRRTS application (a816-evital.nyc.gov/eVitalVRRTS) and the third-party VitalChek portal, with no open, agent-native API. This schema models the request and its status so an agent could place and track an order.",
+  "type": "object",
+  "x-source": {
+    "system": "https://a816-evital.nyc.gov/eVitalVRRTS/",
+    "vendor": "https://www.vitalchek.com/",
+    "info": "https://www.nyc.gov/site/doh/services/birth-death-records.page"
+  },
+  "properties": {
+    "requestId": { "type": ["string", "null"], "description": "Server-assigned request/order id (read-only; present on responses)." },
+    "recordType": {
+      "type": "string",
+      "enum": ["Birth", "Death"],
+      "description": "Which vital record is being ordered."
+    },
+    "subject": {
+      "type": "object",
+      "description": "The person named on the certificate.",
+      "properties": {
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "middleName": { "type": ["string", "null"] },
+        "eventDate": { "type": "string", "format": "date", "description": "Date of birth or date of death." },
+        "borough": { "$ref": "_common.json#/$defs/Borough" }
+      },
+      "required": ["firstName", "lastName", "eventDate"],
+      "additionalProperties": false
+    },
+    "requester": {
+      "type": "object",
+      "description": "The person placing the order and their eligibility relationship to the subject.",
+      "properties": {
+        "name": { "type": "string" },
+        "relationship": {
+          "type": "string",
+          "enum": ["Self", "Parent", "Child", "Spouse", "Sibling", "Legal Representative", "Other Eligible"],
+          "description": "Relationship to the record subject (drives eligibility)."
+        },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "mailingAddress": { "$ref": "_common.json#/$defs/Address" }
+      },
+      "required": ["name", "relationship", "email"],
+      "additionalProperties": false
+    },
+    "copies": { "type": "integer", "minimum": 1, "default": 1, "description": "Number of certified copies requested." },
+    "purpose": { "type": ["string", "null"], "description": "Stated reason for the request (e.g. passport, benefits, estate)." },
+    "deliveryMethod": {
+      "type": ["string", "null"],
+      "enum": ["Standard Mail", "Expedited", "In-Person Pickup", null],
+      "description": "How the certificate should be delivered."
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "In Review", "Additional Info Needed", "Approved", "Issued", "Rejected", null],
+      "description": "Order status (read-only; set by the system)."
+    },
+    "submittedAt": { "type": ["string", "null"], "format": "date-time", "description": "Submission timestamp (read-only)." }
+  },
+  "required": ["recordType", "subject", "requester"],
+  "additionalProperties": false
+}

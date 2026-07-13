@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/tlc/schemas/inspection.json",
+  "title": "Inspection",
+  "description": "A scheduled TLC vehicle inspection. Reconciles the 'Medallion Taxi Initial Inspection Schedule' (sp7n-275u, 9c) — up to three scheduled inspection appointments at a DMV facility per medallion, keyed on the Medallion Number.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/sp7n-275u"
+  },
+  "properties": {
+    "medallionNumber": { "type": "string", "description": "Medallion Number being inspected." },
+    "agentName": { "type": ["string", "null"], "description": "AgentName." },
+    "fleetAgentCode": { "type": ["string", "null"], "description": "FleetAgentCode." },
+    "dmvFacilityMonth": { "type": ["string", "null"], "description": "1st Inspection DMV Facility Inspection Month." },
+    "appointments": {
+      "type": "array",
+      "description": "Scheduled inspection appointments (1st through 3rd).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sequence": { "type": "integer", "minimum": 1, "maximum": 3 },
+          "scheduledDate": { "type": ["string", "null"], "format": "date" },
+          "scheduledTime": { "type": ["string", "null"] }
+        },
+        "required": ["sequence"],
+        "additionalProperties": false
+      }
+    },
+    "lastUpdated": { "type": ["string", "null"], "format": "date-time", "description": "Last Updated Date/Time." }
+  },
+  "required": ["medallionNumber"],
+  "additionalProperties": false
+}

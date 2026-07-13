@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/schemas/pedestrian-plaza.json",
+  "title": "PedestrianPlaza",
+  "description": "A NYC DOT pedestrian plaza — a public space reclaimed from the roadway and maintained with a community partner. Canonical schema reconciling 'NYC DOT Pedestrian Plazas - Polygon' (k5k6-6jex, 19 columns; point feature twin 5dck-9m6g). Keyed on plazaName + OBJECTID.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/k5k6-6jex",
+    "pointFeature": "https://data.cityofnewyork.us/d/5dck-9m6g",
+    "program": "https://www.nyc.gov/html/dot/html/pedestrians/nyc-plaza-program.shtml"
+  },
+  "properties": {
+    "objectId": { "type": ["string", "integer"], "description": "Feature id (OBJECTID)." },
+    "plazaName": { "type": "string", "description": "Plaza name (PlazaName)." },
+    "partner": { "type": ["string", "null"], "description": "Maintenance / programming partner organization (Partner)." },
+    "location": {
+      "type": "object",
+      "properties": {
+        "onStreet": { "type": ["string", "null"], "description": "OnStreet." },
+        "fromStreet": { "type": ["string", "null"], "description": "FromStreet." },
+        "toStreet": { "type": ["string", "null"], "description": "ToStreet." },
+        "borough": { "$ref": "_common.json#/$defs/Borough" }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "areaSqFt": { "type": ["number", "null"], "description": "Plaza area (Shape_Area)." },
+    "perimeterFt": { "type": ["number", "null"], "description": "Plaza perimeter (Shape_Leng)." },
+    "floodZone": {
+      "type": "object",
+      "description": "FEMA flood and hurricane-evacuation context.",
+      "properties": {
+        "femaFloodZone": { "type": ["string", "null"], "description": "FEMAFldz." },
+        "femaFloodType": { "type": ["string", "null"], "description": "FEMAFldT." },
+        "hurricaneEvac": { "type": ["string", "null"], "description": "HrcEvac." }
+      },
+      "additionalProperties": false
+    },
+    "geometry": { "$ref": "_common.json#/$defs/GeoJSONGeometry" }
+  },
+  "required": ["plazaName"],
+  "additionalProperties": false
+}

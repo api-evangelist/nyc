@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypd/schemas/complaint.json",
+  "title": "ComplaintReport",
+  "description": "A reported criminal complaint (incident) known to the NYPD. Canonical schema reconciling 'NYPD Complaint Data Historic' (qgea-i56i, 44 columns) and 'NYPD Complaint Data Current (Year To Date)' (5uac-w243, 45 columns). Keyed on CMPLNT_NUM. The single most-requested class of NYPD open data.",
+  "type": "object",
+  "x-source": {
+    "opendata_historic": "https://data.cityofnewyork.us/d/qgea-i56i",
+    "opendata_current": "https://data.cityofnewyork.us/d/5uac-w243"
+  },
+  "properties": {
+    "complaintNumber": { "type": "string", "description": "Randomly generated persistent complaint identifier (CMPLNT_NUM)." },
+    "reportedDate": { "type": ["string", "null"], "format": "date", "description": "Date the incident was reported to police (RPT_DT)." },
+    "fromDate": { "type": ["string", "null"], "format": "date", "description": "Start date of occurrence (CMPLNT_FR_DT)." },
+    "fromTime": { "type": ["string", "null"], "description": "Start time of occurrence (CMPLNT_FR_TM)." },
+    "toDate": { "type": ["string", "null"], "format": "date", "description": "End date of occurrence (CMPLNT_TO_DT)." },
+    "toTime": { "type": ["string", "null"], "description": "End time of occurrence (CMPLNT_TO_TM)." },
+    "offense": { "$ref": "_common.json#/$defs/OffenseClassification" },
+    "attemptedCompleted": {
+      "type": ["string", "null"],
+      "description": "Whether the crime was completed or merely attempted (CRM_ATPT_CPTD_CD).",
+      "enum": ["COMPLETED", "ATTEMPTED", null]
+    },
+    "jurisdiction": { "type": ["string", "null"], "description": "Jurisdiction responsible (JURIS_DESC); JURISDICTION_CODE 0=Patrol, 1=Transit, 2=Housing." },
+    "jurisdictionCode": { "type": ["integer", "null"], "description": "JURISDICTION_CODE." },
+    "premisesType": { "type": ["string", "null"], "description": "Specific location type (PREM_TYP_DESC), e.g. 'RESIDENCE-APT/HOUSE'." },
+    "locationOfOccurrence": { "type": ["string", "null"], "description": "Inside/outside/front-of/etc. (LOC_OF_OCCUR_DESC)." },
+    "parkName": { "type": ["string", "null"], "description": "Park of occurrence if applicable (PARKS_NM)." },
+    "housingDevelopment": { "type": ["string", "null"], "description": "NYCHA development if applicable (HADEVELOPT)." },
+    "transitStation": { "type": ["string", "null"], "description": "Transit station name if applicable (STATION_NAME)." },
+    "suspect": { "$ref": "_common.json#/$defs/Demographics" },
+    "victim": { "$ref": "_common.json#/$defs/Demographics" },
+    "location": { "$ref": "_common.json#/$defs/GeoLocation" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["complaintNumber"],
+  "additionalProperties": false
+}

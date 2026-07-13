@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/tlc/schemas/vehicle.json",
+  "title": "Vehicle",
+  "description": "A TLC-licensed vehicle — a For-Hire Vehicle, authorized Medallion (yellow) taxi, or Street Hail Livery (green boro taxi) permit. Reconciles 'For Hire Vehicles (FHV) - Active' (8wbx-tsch, 23c), 'Medallion Vehicles - Authorized' (rhe8-mgbb, 16c), and 'Street Hail Livery (SHL) Permits' (yhuu-4pt3, 20c). Keyed on the TLC vehicle/permit license number.",
+  "type": "object",
+  "x-source": {
+    "opendataFHV": "https://data.cityofnewyork.us/d/8wbx-tsch",
+    "opendataMedallion": "https://data.cityofnewyork.us/d/rhe8-mgbb",
+    "opendataSHL": "https://data.cityofnewyork.us/d/yhuu-4pt3"
+  },
+  "properties": {
+    "licenseNumber": { "type": "string", "description": "TLC vehicle / permit license number (License Number / Permit License Number / Vehicle License Number)." },
+    "licenseType": { "$ref": "_common.json#/$defs/LicenseType" },
+    "medallionType": { "type": ["string", "null"], "description": "Medallion Type where applicable (e.g. 'ACCESSIBLE', 'UNRESTRICTED')." },
+    "active": { "type": ["boolean", "null"], "description": "Active flag." },
+    "currentStatus": { "type": ["string", "null"], "description": "Current Status (medallion vehicles)." },
+    "ownerName": { "type": ["string", "null"], "description": "Name on the license." },
+    "dmvPlate": { "type": ["string", "null"], "description": "DMV License Plate Number." },
+    "vin": { "type": ["string", "null"], "description": "Vehicle VIN Number." },
+    "vehicleYear": { "type": ["integer", "null"], "description": "Vehicle Year / Model Year." },
+    "vehicleType": { "type": ["string", "null"], "description": "Vehicle Type." },
+    "wheelchairAccessible": { "type": ["boolean", "null"], "description": "Wheelchair Accessible (WAV)." },
+    "base": { "$ref": "_common.json#/$defs/BaseReference" },
+    "agentNumber": { "type": ["string", "null"], "description": "Medallion agent number." },
+    "hackUpDate": { "type": ["string", "null"], "format": "date", "description": "Hack Up Date (vehicle placed in service)." },
+    "certificationDate": { "type": ["string", "null"], "format": "date" },
+    "expirationDate": { "type": ["string", "null"], "format": "date", "description": "License expiration." },
+    "reason": { "type": ["string", "null"], "description": "Status reason (SHL/FHV)." },
+    "lastUpdated": { "type": ["string", "null"], "format": "date-time", "description": "Last Date/Time Updated." }
+  },
+  "required": ["licenseNumber", "licenseType"],
+  "additionalProperties": false
+}

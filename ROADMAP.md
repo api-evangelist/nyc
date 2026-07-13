@@ -19,10 +19,10 @@ The synthesis's clearest structural finding: writing one `_common.json` per doma
 Synthesis finding 8: every domain has its own join key (`gisPropNum`, `DBN`, `matterId`, election-district) and nothing links them. Define shared `Address` and `Place` objects (keyed on BBL/BIN + coordinates) so cross-domain questions — "what's near me?", "who represents this block?" — become answerable. Part of `nyc-commons`.
 
 ### 🟡 More domains
-Continue the per-domain method to broaden coverage and stress-test the four-verb taxonomy.
-- 🟢 Parks · DOE · Council · Elections (done)
-- 🟡 **NYC311** — the citizen-services front door; introduces conformance to an **open standard (Open311)**.
-- ⚪ Candidates: DOB/Buildings (tests "the real legacy surface is the `aNNN-*` app layer"), HPD/Housing, Comptroller/Checkbook, DSNY, DEP, HRA/benefits (ACCESS NYC).
+Continue the per-domain method to broaden coverage and stress-test the modernization-verb taxonomy.
+- 🟢 Parks · DOE · Council · Elections · NYC311 (done)
+- 🟡 **Batch of 10 in progress:** Buildings (DOB) · Housing (HPD) · Transportation (DOT) · Health (DOHMH) · Sanitation (DSNY) · Police (NYPD) · Taxi & Limousine (TLC) · City Planning (DCP) · Comptroller · Housing Authority (NYCHA). DOB tests "the real legacy surface is the `aNNN-*` app layer"; DCP is the source of the shared geography; Comptroller/Checkbook is another "partial API exists"; TLC/NYPD carry some of the largest open datasets.
+- ⚪ Later candidates: DEP, DCWP, HRA/benefits (ACCESS NYC), DCAS, DOF, FDNY, DOE-adjacent (SCA), EDC.
 
 ## Soon
 
