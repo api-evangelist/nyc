@@ -1,0 +1,115 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Several tools are aspirational (candidates/contests/results have no source data yet — the schemas define what should exist).",
+    "openapi": "../openapi/nyc-elections.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.elections",
+    "title": "NYC Elections",
+    "version": "0.1.0",
+    "description": "Agent-native access to NYC Board of Elections data — poll sites, elections, contests, candidates, results (incl. ranked-choice), and mail-ballot request/tracking. Today only poll sites are machine-readable; this surface defines the elections API that should exist.",
+    "instructions": "find_poll_site answers 'where do I vote' (grounded in Open Data). list_elections / find_contests / find_candidates answer 'when is the election / what's on my ballot / who's running' (aspirational — PDF-only today). get_results returns contest results incl. ranked-choice rounds. request_mail_ballot and track_mail_ballot require an authenticated voter; request_mail_ballot mutates state — confirm details with the user first."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_poll_site",
+      "title": "Find Poll Site",
+      "description": "Find a NYC poll site by address, borough, or election district. Grounded in the Voting/Poll Sites Open Data dataset (with accessibility info).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "address": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "electionDistrict": { "type": "string" }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/poll-site.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPollSites"
+    },
+    {
+      "name": "list_elections",
+      "title": "List Elections",
+      "description": "List NYC elections and their key dates (registration, early voting, mail-ballot deadlines).",
+      "inputSchema": { "type": "object", "properties": { "upcoming": { "type": "boolean" }, "type": { "type": "string", "enum": ["Primary", "General", "Special", "Runoff"] } } },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/election.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listElections"
+    },
+    {
+      "name": "find_contests",
+      "title": "Find Contests (What's on my ballot)",
+      "description": "List the contests on the ballot for an election, optionally by office/district. Aspirational — PDF contest lists today.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "electionDate": { "type": "string", "format": "date" },
+          "office": { "type": "string" },
+          "district": { "type": "integer" }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/contest.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listContests"
+    },
+    {
+      "name": "find_candidates",
+      "title": "Find Candidates (Who's running)",
+      "description": "List candidates for an election/office. Aspirational — candidate lists are PDFs today.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "electionDate": { "type": "string", "format": "date" },
+          "office": { "type": "string" },
+          "party": { "type": "string" },
+          "q": { "type": "string" }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/candidate.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCandidates"
+    },
+    {
+      "name": "get_results",
+      "title": "Get Election Results",
+      "description": "Get election results for an election (by contest or election-district level), including ranked-choice rounds. Aspirational — PDFs + legacy viewer today.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "electionDate": { "type": "string", "format": "date" },
+          "office": { "type": "string" },
+          "reportingLevel": { "type": "string", "enum": ["Contest", "ElectionDistrict"] }
+        },
+        "required": ["electionDate"]
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/election-result.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listResults"
+    },
+    {
+      "name": "request_mail_ballot",
+      "title": "Request Mail Ballot",
+      "description": "Submit a request for an absentee / mail-in ballot. NET-NEW workflow (fronts requestballot.vote.nyc). Requires an authenticated voter. Mutates state — confirm details with the user first.",
+      "inputSchema": { "$ref": "../schemas/ballot-request.json" },
+      "outputSchema": { "$ref": "../schemas/ballot-request.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createMailBallotRequest",
+      "x-auth": "voter"
+    },
+    {
+      "name": "track_mail_ballot",
+      "title": "Track Mail Ballot",
+      "description": "Track the status of a mail-ballot request (mailed, returned, counted).",
+      "inputSchema": { "type": "object", "properties": { "requestId": { "type": "string" } }, "required": ["requestId"] },
+      "outputSchema": { "$ref": "../schemas/ballot-request.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getMailBallotRequest",
+      "x-auth": "voter"
+    }
+  ]
+}

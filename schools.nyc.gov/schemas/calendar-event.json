@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/schools.nyc.gov/schemas/calendar-event.json",
+  "title": "CalendarEvent",
+  "description": "A NYC public schools calendar event — holiday, recess, no-school day, professional development day, or first/last day. Modeled from the /calendar page on schools.nyc.gov. NO Open Data twin exists — a real (if small) gap; proposed as a first-class dataset/resource.",
+  "type": "object",
+  "x-source": { "website": "https://www.schools.nyc.gov/calendar", "opendata": null },
+  "properties": {
+    "id": { "type": "string", "readOnly": true },
+    "title": { "type": "string", "description": "Event title, e.g. 'Winter Recess', 'First Day of School'." },
+    "schoolYear": { "type": "string", "description": "e.g. '2025-2026'." },
+    "startDate": { "type": "string", "format": "date" },
+    "endDate": { "type": ["string", "null"], "format": "date", "description": "For multi-day events (recesses/breaks)." },
+    "category": {
+      "type": "string",
+      "enum": ["Holiday", "Recess/Break", "No School (Students)", "Professional Development", "First/Last Day", "Half Day", "Religious Observance", "Other"]
+    },
+    "appliesTo": {
+      "type": "array",
+      "description": "Which populations the event applies to (all students, staff, specific grades).",
+      "items": { "type": "string" }
+    },
+    "description": { "type": ["string", "null"] }
+  },
+  "required": ["title", "schoolYear", "startDate", "category"],
+  "additionalProperties": false
+}

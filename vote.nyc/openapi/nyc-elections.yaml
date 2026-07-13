@@ -1,0 +1,337 @@
+openapi: 3.1.0
+info:
+  title: NYC Elections API (proposed)
+  version: 0.1.0
+  summary: The machine-readable elections API that does not exist today — poll sites, elections, contests, candidates, and results (incl. ranked-choice), plus mail-ballot request/tracking — for a Board of Elections whose data is otherwise PDFs and a legacy viewer.
+  description: >-
+    Proposed API-first surface for the New York City Board of Elections (BOENY), from the NYC
+    Modernization low-hanging-fruit assessment of vote.nyc.
+
+
+    BOE is the least-modernized domain in the project: a Drupal 9 site with JSON:API disabled, only two
+    Open Data assets (poll sites), and everything voters most need — candidates, contests, and results —
+    distributed as **PDFs** plus a separate legacy viewer (enr.boenyc.gov). The modernization verb here is
+    **digitize**: create the machine-readable election data that does not yet exist, then productize it.
+
+
+    Accordingly, several resources below are ASPIRATIONAL — their JSON Schemas define the shape BOE data
+    *should* take (results with ranked-choice rounds, candidates, contests), not a shape that exists today.
+    `PollSite` and `ElectionDistrict` are grounded in real Open Data. `BallotRequest` fronts the existing
+    requestballot.vote.nyc app as a read/write resource.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.vote.nyc/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Poll Sites
+    description: Where to vote (grounded in Open Data).
+  - name: Elections
+    description: Elections and their key dates.
+  - name: Ballot
+    description: Contests and candidates on the ballot (aspirational — PDF-only today).
+  - name: Results
+    description: Election results incl. ranked-choice (aspirational — PDF + legacy viewer today).
+  - name: Mail Ballot
+    description: Absentee/mail-ballot request and tracking (read + write). The transactional surface.
+
+paths:
+  /poll-sites:
+    get:
+      operationId: listPollSites
+      summary: Find poll sites
+      tags: [Poll Sites]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: address
+          in: query
+          description: Address to locate the nearest poll site.
+          schema: { type: string }
+        - name: electionDistrict
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of poll sites.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/poll-site.json' } }
+  /poll-sites/{siteNumber}:
+    get:
+      operationId: getPollSite
+      summary: Get a poll site
+      tags: [Poll Sites]
+      parameters:
+        - name: siteNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The poll site.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/poll-site.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /election-districts/{electionDistrict}:
+    get:
+      operationId: getElectionDistrict
+      summary: Get an election district and its poll site
+      tags: [Poll Sites]
+      parameters:
+        - name: electionDistrict
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The election district.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/election-district.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /elections:
+    get:
+      operationId: listElections
+      summary: List elections and key dates
+      tags: [Elections]
+      parameters:
+        - name: upcoming
+          in: query
+          schema: { type: boolean }
+        - name: type
+          in: query
+          schema: { type: string, enum: [Primary, General, Special, Runoff] }
+      responses:
+        '200':
+          description: Elections.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/election.json' } }
+  /elections/{electionId}:
+    get:
+      operationId: getElection
+      summary: Get an election
+      tags: [Elections]
+      parameters:
+        - name: electionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The election.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/election.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /contests:
+    get:
+      operationId: listContests
+      summary: List contests on the ballot (what's on my ballot)
+      tags: [Ballot]
+      parameters:
+        - name: electionDate
+          in: query
+          schema: { type: string, format: date }
+        - name: office
+          in: query
+          schema: { type: string }
+        - name: district
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of contests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/contest.json' } }
+
+  /candidates:
+    get:
+      operationId: listCandidates
+      summary: List candidates (who's running)
+      tags: [Ballot]
+      parameters:
+        - name: electionDate
+          in: query
+          schema: { type: string, format: date }
+        - name: office
+          in: query
+          schema: { type: string }
+        - name: party
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of candidates.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/candidate.json' } }
+
+  /results:
+    get:
+      operationId: listResults
+      summary: Get election results (incl. ranked-choice)
+      tags: [Results]
+      parameters:
+        - name: electionDate
+          in: query
+          required: true
+          schema: { type: string, format: date }
+        - name: office
+          in: query
+          schema: { type: string }
+        - name: reportingLevel
+          in: query
+          schema: { type: string, enum: [Contest, ElectionDistrict] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/election-result.json' } }
+
+  /mail-ballot-requests:
+    get:
+      operationId: listMailBallotRequests
+      summary: List the authenticated voter's mail-ballot requests
+      tags: [Mail Ballot]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Requests.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/ballot-request.json' } }
+    post:
+      operationId: createMailBallotRequest
+      summary: Request an absentee / mail-in ballot
+      description: The net-new write surface — an API for requestballot.vote.nyc.
+      tags: [Mail Ballot]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/ballot-request.json' }
+      responses:
+        '201':
+          description: Request created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/ballot-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /mail-ballot-requests/{requestId}:
+    get:
+      operationId: getMailBallotRequest
+      summary: Track a mail-ballot request
+      tags: [Mail Ballot]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The request with tracking.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/ballot-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    PollSite: { $ref: '../schemas/poll-site.json' }
+    ElectionDistrict: { $ref: '../schemas/election-district.json' }
+    Election: { $ref: '../schemas/election.json' }
+    Contest: { $ref: '../schemas/contest.json' }
+    Candidate: { $ref: '../schemas/candidate.json' }
+    ElectionResult: { $ref: '../schemas/election-result.json' }
+    BallotRequest: { $ref: '../schemas/ballot-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

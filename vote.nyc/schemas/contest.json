@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/schemas/contest.json",
+  "title": "Contest",
+  "description": "A single race on the ballot for an election (an office + district being contested). ASPIRATIONAL — today this exists only as PDF contest lists and random-draw ballot-position notices; this schema defines the machine-readable shape.",
+  "type": "object",
+  "x-source": { "website": "https://vote.nyc/important-notices/june-23-2026-primary-election-contest-list", "opendata": null },
+  "properties": {
+    "contestId": { "type": "string" },
+    "election": { "$ref": "_common.json#/$defs/ElectionReference" },
+    "office": { "$ref": "_common.json#/$defs/OfficeDistrict" },
+    "party": { "type": ["string", "null"], "description": "For primaries — the party primary this contest belongs to." },
+    "rankedChoice": { "type": ["boolean", "null"] },
+    "candidates": {
+      "type": "array",
+      "description": "Candidates on the ballot, in drawn ballot order (references candidate.json).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "candidateId": { "type": ["string", "null"] },
+          "name": { "type": "string" },
+          "ballotPosition": { "type": ["integer", "null"], "description": "Position from the random draw." }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["contestId", "election", "office"],
+  "additionalProperties": false
+}

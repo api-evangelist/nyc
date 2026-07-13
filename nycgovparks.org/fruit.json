@@ -1,0 +1,741 @@
+{
+  "domain": "nycgovparks.org",
+  "agency": "New York City Department of Parks & Recreation (NYC Parks)",
+  "assessment_date": "2026-07-13",
+  "method": "Bounded outside-in crawl (browser UA, robots-respecting). Landing pages and a representative sample of listing/form/database pages fetched and analyzed for tables (>10 rows), structured record listings, forms, and machine-readable file links. Full-spider counts are extrapolated from the section index pages and marked verified=false.",
+  "headline_findings": [
+    "Rich structured data is published as HTML tables, div-based record listings, and PDFs.",
+    "ZERO machine-readable downloads (CSV, XLS, XLSX, XML, JSON, GeoJSON) were found linked anywhere on the domain during sampling.",
+    "The sitemap.xml declared in robots.txt returns the 404 page (broken sitemap).",
+    "Legacy backends surface directly in URLs (e.g. .php endpoints under /sub_your_park/).",
+    "There is no developer/API/open-data page on the domain; the interactive Tree Map (tree-map.nycgovparks.org) is the only app-like data surface."
+  ],
+  "apis_observed": [
+    {
+      "endpoint": "Tree Map data API (/cdn/tree, tree-map.nycgovparks.org)",
+      "type": "internal JSON/REST",
+      "owner": "NYC Parks",
+      "public": false,
+      "note": "Next.js app backend; ~650k trees; undocumented."
+    },
+    {
+      "endpoint": "/search (www.nycgovparks.org)",
+      "type": "internal site search",
+      "owner": "NYC Parks",
+      "public": "query",
+      "note": "Self-hosted; no vendor (unlike DOE HawkSearch)."
+    },
+    {
+      "endpoint": "/sub_your_park/historical_signs/hs_with_monument.php",
+      "type": "legacy PHP data endpoint",
+      "owner": "NYC Parks",
+      "public": "html",
+      "note": "Historical Signs/Monuments backend."
+    },
+    {
+      "endpoint": "res.cloudinary.com",
+      "type": "image API",
+      "owner": "Cloudinary",
+      "public": "assets",
+      "note": "image delivery/transform."
+    },
+    {
+      "endpoint": "a858-nycnotify.nyc.gov",
+      "type": "notification integration",
+      "owner": "NYC (Notify NYC)",
+      "public": "integration",
+      "note": "alerts."
+    },
+    {
+      "endpoint": "translate.google.com",
+      "type": "translation API",
+      "owner": "Google",
+      "public": "widget",
+      "note": "page translation."
+    },
+    {
+      "endpoint": "cloudfront.loggly.com",
+      "type": "logging API",
+      "owner": "Loggly",
+      "public": false,
+      "note": "Tree Map telemetry."
+    },
+    {
+      "endpoint": "data.cityofnewyork.us (SODA)",
+      "type": "open data API",
+      "owner": "NYC/Socrata",
+      "public": true,
+      "note": "237 DPR assets; disconnected from site."
+    }
+  ],
+  "fruit": [
+    {
+      "name": "Parks Directory (Find a Park)",
+      "type": "search-form + record-listing",
+      "entity": "Park",
+      "url": "https://www.nycgovparks.org/parks",
+      "count": "1700+ parks/properties citywide",
+      "machine_readable": false,
+      "verified": true,
+      "notes": "Master directory of all park properties. Search form drives paginated record listings; each park has a detail page. This is the core entity of the domain.",
+      "opendata_match": [
+        "Parks Properties (enfh-gkve)",
+        "OpenData_ParksProperties (ghu2-eden)"
+      ]
+    },
+    {
+      "name": "Facilities Directory (index)",
+      "type": "index",
+      "entity": "Facility",
+      "url": "https://www.nycgovparks.org/facilities",
+      "count": "~42 facility types, each a citywide directory",
+      "machine_readable": false,
+      "verified": true,
+      "notes": "Index page linking to one directory per facility type. Each type-directory is a >10-row structured listing (mix of HTML tables and repeated div records). Individual types enumerated below."
+    },
+    {
+      "name": "Tennis Courts directory",
+      "type": "html-table",
+      "entity": "Facility:Tennis",
+      "url": "https://www.nycgovparks.org/facilities/tennis",
+      "count": "116 table rows",
+      "machine_readable": false,
+      "verified": true,
+      "confirmed_rows": 116,
+      "website_columns": [
+        "Name",
+        "Location",
+        "Surface",
+        "In/Outdoor",
+        "Phone",
+        "# of Courts",
+        "Accessible"
+      ],
+      "opendata_match": [
+        "Directory of Tennis Courts (dies-sqgi)",
+        "Athletic Facilities (qnem-b8re)"
+      ]
+    },
+    {
+      "name": "Recreation Centers directory",
+      "type": "html-listing",
+      "entity": "Facility:RecreationCenter",
+      "url": "https://www.nycgovparks.org/facilities/recreationcenters",
+      "count": "73 facility records",
+      "machine_readable": false,
+      "verified": true,
+      "confirmed_rows": 73,
+      "opendata_match": [
+        "Directory of Recreation Centers (ydj7-rk56)"
+      ]
+    },
+    {
+      "name": "Handball Courts directory",
+      "type": "html-listing",
+      "entity": "Facility:Handball",
+      "url": "https://www.nycgovparks.org/facilities/handball",
+      "count": "large listing (83KB page)",
+      "machine_readable": false,
+      "verified": true,
+      "confirmed_rows": 552,
+      "website_columns": [
+        "Location",
+        "# of Courts"
+      ],
+      "opendata_match": [
+        "Athletic Facilities (qnem-b8re) [partial]"
+      ]
+    },
+    {
+      "name": "Dog-Friendly Areas / Dog Runs directory",
+      "type": "html-listing",
+      "entity": "Facility:DogArea",
+      "url": "https://www.nycgovparks.org/facilities/dogareas",
+      "count": "citywide off-leash areas + dog runs",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [
+        "Directory of Dog Runs & Off-Leash Areas (ipbu-mtcs)",
+        "Dog Runs (hxx3-bwgv)"
+      ]
+    },
+    {
+      "name": "Outdoor Pools directory",
+      "type": "html-listing",
+      "entity": "Facility:OutdoorPool",
+      "url": "https://www.nycgovparks.org/facilities/outdoor-pools",
+      "count": "11 facility records",
+      "machine_readable": false,
+      "verified": true,
+      "confirmed_rows": 11,
+      "opendata_match": [
+        "NYC Parks Pools (y5rm-wagw)",
+        "Directory of Outdoor Swimming Pools (fx7a-24mf)"
+      ]
+    },
+    {
+      "name": "Barbecue areas directory",
+      "type": "html-listing",
+      "entity": "Facility:Barbecue",
+      "url": "https://www.nycgovparks.org/facilities/barbecue",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 78,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Baseball fields directory",
+      "type": "html-listing",
+      "entity": "Facility:Baseball",
+      "url": "https://www.nycgovparks.org/facilities/baseball",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 249,
+      "website_columns": [
+        "Name",
+        "Location",
+        "# of Fields",
+        "Type of Surface",
+        "Accessible"
+      ],
+      "opendata_match": [
+        "Athletic Facilities (qnem-b8re) [partial]",
+        "Synthetic Turf Fields"
+      ]
+    },
+    {
+      "name": "Basketball courts directory",
+      "type": "html-listing",
+      "entity": "Facility:Basketball",
+      "url": "https://www.nycgovparks.org/facilities/basketball",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 582,
+      "website_columns": [
+        "Name",
+        "Location",
+        "Accessible"
+      ],
+      "opendata_match": [
+        "Directory of Basketball Courts (b937-zdky)"
+      ]
+    },
+    {
+      "name": "Beaches directory",
+      "type": "html-listing",
+      "entity": "Facility:Beach",
+      "url": "https://www.nycgovparks.org/facilities/beaches",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [
+        "Beaches",
+        "DPR_Beaches_001"
+      ]
+    },
+    {
+      "name": "Bikeways / Greenways directory",
+      "type": "html-listing",
+      "entity": "Facility:Bikeway",
+      "url": "https://www.nycgovparks.org/facilities/bikeways",
+      "machine_readable": false,
+      "verified": false
+    },
+    {
+      "name": "Boating directory",
+      "type": "html-listing",
+      "entity": "Facility:Boating",
+      "url": "https://www.nycgovparks.org/facilities/boating/",
+      "machine_readable": false,
+      "verified": false
+    },
+    {
+      "name": "Bocce courts directory",
+      "type": "html-listing",
+      "entity": "Facility:Bocce",
+      "url": "https://www.nycgovparks.org/facilities/bocce",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 41,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Cricket fields directory",
+      "type": "html-listing",
+      "entity": "Facility:Cricket",
+      "url": "https://www.nycgovparks.org/facilities/cricket",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 20
+    },
+    {
+      "name": "Fishing spots directory",
+      "type": "html-listing",
+      "entity": "Facility:Fishing",
+      "url": "https://www.nycgovparks.org/facilities/fishing",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 33,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Fitness Equipment directory",
+      "type": "html-listing",
+      "entity": "Facility:FitnessEquipment",
+      "url": "https://www.nycgovparks.org/facilities/fitnessequipment",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 192
+    },
+    {
+      "name": "Food / concessions directory",
+      "type": "html-listing",
+      "entity": "Facility:Food",
+      "url": "https://www.nycgovparks.org/facilities/food",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [
+        "Parks Concessions"
+      ]
+    },
+    {
+      "name": "Football fields directory",
+      "type": "html-listing",
+      "entity": "Facility:Football",
+      "url": "https://www.nycgovparks.org/facilities/football",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 60
+    },
+    {
+      "name": "Golf courses directory",
+      "type": "html-listing",
+      "entity": "Facility:Golf",
+      "url": "https://www.nycgovparks.org/facilities/golf",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 16,
+      "opendata_match": [
+        "Golf Courses",
+        "DPR_GolfCourses_001"
+      ]
+    },
+    {
+      "name": "Great Trees directory",
+      "type": "html-listing",
+      "entity": "Facility:GreatTree",
+      "url": "https://www.nycgovparks.org/facilities/great-trees",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 124
+    },
+    {
+      "name": "Hiking Trails directory",
+      "type": "html-listing",
+      "entity": "Facility:HikingTrail",
+      "url": "https://www.nycgovparks.org/facilities/hikingtrails",
+      "machine_readable": false,
+      "verified": false
+    },
+    {
+      "name": "Historic Houses directory",
+      "type": "html-listing",
+      "entity": "Facility:HistoricHouse",
+      "url": "https://www.nycgovparks.org/facilities/historichouses",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Hockey rinks directory",
+      "type": "html-listing",
+      "entity": "Facility:Hockey",
+      "url": "https://www.nycgovparks.org/facilities/hockey",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 24
+    },
+    {
+      "name": "Horseback riding directory",
+      "type": "html-listing",
+      "entity": "Facility:Horseback",
+      "url": "https://www.nycgovparks.org/facilities/horseback",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 12,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Ice Skating rinks directory",
+      "type": "html-listing",
+      "entity": "Facility:IceSkating",
+      "url": "https://www.nycgovparks.org/facilities/iceskating",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 11,
+      "opendata_match": [
+        "IceSkatingRinks_20190417"
+      ]
+    },
+    {
+      "name": "Indoor Pools directory",
+      "type": "html-listing",
+      "entity": "Facility:IndoorPool",
+      "url": "https://www.nycgovparks.org/facilities/indoor-pools/",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [
+        "Directory of Indoor Swimming Pools (x57r-az25)"
+      ]
+    },
+    {
+      "name": "Kayak / canoe launches directory",
+      "type": "html-listing",
+      "entity": "Facility:Kayak",
+      "url": "https://www.nycgovparks.org/facilities/kayak",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 27,
+      "opendata_match": [
+        "KayakCanoeLaunch_20190417"
+      ]
+    },
+    {
+      "name": "Media Labs directory",
+      "type": "html-listing",
+      "entity": "Facility:MediaLab",
+      "url": "https://www.nycgovparks.org/facilities/media-labs",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Model Aircraft Fields directory",
+      "type": "html-listing",
+      "entity": "Facility:ModelAircraft",
+      "url": "https://www.nycgovparks.org/facilities/modelaircraftfields",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [
+        "DPR_ModelAircraftFields_001"
+      ]
+    },
+    {
+      "name": "Nature Centers directory",
+      "type": "html-listing",
+      "entity": "Facility:NatureCenter",
+      "url": "https://www.nycgovparks.org/facilities/naturecenters",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Pickleball courts directory",
+      "type": "html-listing",
+      "entity": "Facility:Pickleball",
+      "url": "https://www.nycgovparks.org/facilities/pickleball",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Playgrounds directory",
+      "type": "html-listing",
+      "entity": "Facility:Playground",
+      "url": "https://www.nycgovparks.org/facilities/playgrounds/",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [
+        "Directory of Playgrounds (59gn-q4ai)",
+        "DPR_PlayAreas_001 (at6q-ktig)"
+      ]
+    },
+    {
+      "name": "Restrooms directory",
+      "type": "html-listing",
+      "entity": "Facility:Restroom",
+      "url": "https://www.nycgovparks.org/facilities/restrooms",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 1275,
+      "opendata_match": [
+        "Directory Of Toilets In Public Parks (hjae-yuav)"
+      ]
+    },
+    {
+      "name": "Rowboats directory",
+      "type": "html-listing",
+      "entity": "Facility:Rowboat",
+      "url": "https://www.nycgovparks.org/facilities/rowboats",
+      "machine_readable": false,
+      "verified": false
+    },
+    {
+      "name": "Running Tracks directory",
+      "type": "html-listing",
+      "entity": "Facility:RunningTrack",
+      "url": "https://www.nycgovparks.org/facilities/runningtracks",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 41
+    },
+    {
+      "name": "Skate Parks directory",
+      "type": "html-listing",
+      "entity": "Facility:SkatePark",
+      "url": "https://www.nycgovparks.org/facilities/skateparks",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [
+        "NYC Parks SkateParks"
+      ]
+    },
+    {
+      "name": "Soccer fields directory",
+      "type": "html-listing",
+      "entity": "Facility:Soccer",
+      "url": "https://www.nycgovparks.org/facilities/soccer",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 405,
+      "opendata_match": [
+        "Athletic Facilities (qnem-b8re) [partial]",
+        "Synthetic Turf Fields"
+      ]
+    },
+    {
+      "name": "Spray Showers directory",
+      "type": "html-listing",
+      "entity": "Facility:SprayShower",
+      "url": "https://www.nycgovparks.org/facilities/sprayshowers",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 594,
+      "website_columns": [
+        "Location",
+        "Number"
+      ],
+      "opendata_match": [
+        "NYC Parks Spray Showers",
+        "Cool It! NYC Spray Showers"
+      ]
+    },
+    {
+      "name": "Volleyball courts directory",
+      "type": "html-listing",
+      "entity": "Facility:Volleyball",
+      "url": "https://www.nycgovparks.org/facilities/volleyball",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 49
+    },
+    {
+      "name": "Drinking Water Fountains directory",
+      "type": "html-listing",
+      "entity": "Facility:WaterFountain",
+      "url": "https://www.nycgovparks.org/facilities/waterfountains",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [
+        "NYC Parks Drinking Fountains",
+        "Cool It! NYC Drinking Fountains"
+      ]
+    },
+    {
+      "name": "WiFi hotspots directory",
+      "type": "html-listing",
+      "entity": "Facility:WiFi",
+      "url": "https://www.nycgovparks.org/facilities/wifi",
+      "machine_readable": false,
+      "verified": false,
+      "confirmed_rows": 205,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Zoos directory",
+      "type": "html-listing",
+      "entity": "Facility:Zoo",
+      "url": "https://www.nycgovparks.org/facilities/zoo",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Capital Project Tracker",
+      "type": "html-table",
+      "entity": "CapitalProject",
+      "url": "https://www.nycgovparks.org/planning-and-building/capital-project-tracker",
+      "count": "6 tables / 535 table rows on initial load",
+      "machine_readable": false,
+      "verified": true,
+      "notes": "Large data table of capital construction projects (location, status, budget, phase, dates). 432KB page. Prime API candidate.",
+      "website_columns": [
+        "Project",
+        "Location",
+        "Phase"
+      ],
+      "opendata_match": [
+        "Capital Project Tracker (4hcv-tc5r)"
+      ]
+    },
+    {
+      "name": "Events Calendar",
+      "type": "search-form + record-listing",
+      "entity": "Event",
+      "url": "https://www.nycgovparks.org/events",
+      "count": "hundreds of events; 91 form inputs (heavy faceted filter)",
+      "machine_readable": false,
+      "verified": true,
+      "notes": "Faceted, date/borough/category-filterable event listing. There is an .ics/RSS-style surface historically but no linked machine-readable export found in sampling.",
+      "opendata_match": [
+        "NYC Parks Events Listing \u2013 Event Listing (fudw-fgrp) + related"
+      ]
+    },
+    {
+      "name": "Historical Signs Database",
+      "type": "search-form + database",
+      "entity": "HistoricalSign",
+      "url": "https://www.nycgovparks.org/about/history/historical-signs",
+      "count": "thousands of park history sign entries",
+      "machine_readable": false,
+      "verified": true,
+      "notes": "Browse by borough, by alphabet, or keyword search. Backed by a legacy PHP endpoint (/sub_your_park/historical_signs/hs_with_monument.php) \u2014 a monuments-linked history database.",
+      "opendata_match": [
+        "NYC Parks Monuments (6rrm-vxj9)",
+        "Parks Signs"
+      ]
+    },
+    {
+      "name": "NYC Tree Map",
+      "type": "map-app",
+      "entity": "Tree",
+      "url": "https://tree-map.nycgovparks.org/",
+      "count": "~650,000+ street & park trees",
+      "machine_readable": "app-internal (JSON API not publicly documented)",
+      "verified": true,
+      "notes": "Interactive JS map application over the street tree census on its own subdomain. Loads data via an undocumented internal JSON API \u2014 the closest thing to an API on the domain, but not a public/developer-facing one.",
+      "opendata_match": [
+        "2015 Street Tree Census \u2013 Tree Data (uvpi-gqnh)",
+        "Forestry Tree Points (hn5i-inap)"
+      ]
+    },
+    {
+      "name": "Rules & Regulations",
+      "type": "html-content + pdf",
+      "entity": "Rule",
+      "url": "https://www.nycgovparks.org/rules",
+      "machine_readable": false,
+      "verified": false,
+      "notes": "Park rules and regulations, partly as HTML, partly linked PDFs (e.g. Rockaway Surf Beach Rules).",
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Field & Court (Athletic Permit) request form",
+      "type": "form",
+      "entity": "PermitApplication:FieldAndCourt",
+      "url": "https://www.nycgovparks.org/permits/field-and-court/request",
+      "count": "12 form inputs",
+      "machine_readable": false,
+      "verified": true
+    },
+    {
+      "name": "Tennis Permit purchase",
+      "type": "form + pdf-form",
+      "entity": "PermitApplication:Tennis",
+      "url": "https://www.nycgovparks.org/permits/tennis-permits",
+      "machine_readable": false,
+      "verified": true,
+      "notes": "Includes downloadable PDF purchase form (e.g. /pagefiles/174/2023-Tennis-Purchase-Form...pdf)."
+    },
+    {
+      "name": "Special Events / Film & Photo permit",
+      "type": "form",
+      "entity": "PermitApplication:FilmPhoto",
+      "url": "https://www.nycgovparks.org/permits/film-and-photo-guidelines",
+      "machine_readable": false,
+      "verified": false
+    },
+    {
+      "name": "Metal Detector permit",
+      "type": "form",
+      "entity": "PermitApplication:MetalDetector",
+      "url": "https://www.nycgovparks.org/permits/metal-detector",
+      "machine_readable": false,
+      "verified": false
+    },
+    {
+      "name": "Summer Day Camp permit",
+      "type": "form",
+      "entity": "PermitApplication:SummerDayCamp",
+      "url": "https://www.nycgovparks.org/permits/summer-day-camp",
+      "machine_readable": false,
+      "verified": false
+    },
+    {
+      "name": "Research permit",
+      "type": "form",
+      "entity": "PermitApplication:Research",
+      "url": "https://www.nycgovparks.org/permits/research/",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [
+        "Research Permits (nnf6-km2a) [granted log]"
+      ]
+    },
+    {
+      "name": "Boating & Marinas permit",
+      "type": "form",
+      "entity": "PermitApplication:BoatingMarinas",
+      "url": "https://www.nycgovparks.org/permits/boating-marinas-permits",
+      "machine_readable": false,
+      "verified": false
+    },
+    {
+      "name": "Farmers Market permit",
+      "type": "form",
+      "entity": "PermitApplication:FarmersMarket",
+      "url": "https://www.nycgovparks.org/permits/farmers-market",
+      "machine_readable": false,
+      "verified": false
+    },
+    {
+      "name": "Construction permit",
+      "type": "form",
+      "entity": "PermitApplication:Construction",
+      "url": "https://www.nycgovparks.org/permits/construction",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [
+        "Interagency Construction Permits MOSYS (wye7-nyek) [partial]"
+      ]
+    },
+    {
+      "name": "Tree Work permit",
+      "type": "form",
+      "entity": "PermitApplication:TreeWork",
+      "url": "https://www.nycgovparks.org/services/forestry/tree-work-permit",
+      "machine_readable": false,
+      "verified": false
+    },
+    {
+      "name": "Site search",
+      "type": "search-form",
+      "entity": "n/a",
+      "url": "https://www.nycgovparks.org/",
+      "machine_readable": false,
+      "verified": true,
+      "notes": "Global search form present on every page."
+    }
+  ],
+  "opendata_crosscheck": "Cross-referenced against all 237 DPR assets on NYC Open Data (data.cityofnewyork.us) via Socrata Discovery API agency facet. See crosswalk.md and opendata-parks.json. Most website resources have a machine-readable Open Data twin; true gaps and all permit applications noted."
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/schemas/_common.json",
+  "title": "NYC Council — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Council object schemas. Reconciles fields common to council.nyc.gov (WordPress), the Legistar Web API, and the NYCC NYC Open Data datasets.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Party": {
+      "type": "string",
+      "enum": ["Democrat", "Republican", "Conservative", "Independent", "Working Families", "Other"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "MemberReference": {
+      "type": "object",
+      "description": "A reference to a Council Member.",
+      "properties": {
+        "councilMemberId": { "type": "string", "description": "Council Member ID (Open Data council_member_id) / Legistar PersonId." },
+        "name": { "type": "string" },
+        "district": { "type": "integer", "minimum": 1, "maximum": 51 }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    },
+    "Office": {
+      "type": "object",
+      "description": "A district or legislative office.",
+      "properties": {
+        "type": { "type": "string", "enum": ["District", "Legislative"] },
+        "address": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "fax": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/schemas/candidate.json",
+  "title": "Candidate",
+  "description": "A candidate for a NYC elective office. ASPIRATIONAL — today candidate lists are PDFs on vote.nyc with no dataset; this schema defines the machine-readable shape so 'who's running?' has an API answer.",
+  "type": "object",
+  "x-source": { "website": "https://vote.nyc/page/candidates", "opendata": null },
+  "properties": {
+    "candidateId": { "type": "string" },
+    "name": { "type": "string" },
+    "office": { "$ref": "_common.json#/$defs/OfficeDistrict" },
+    "election": { "$ref": "_common.json#/$defs/ElectionReference" },
+    "party": { "type": ["string", "null"] },
+    "ballotPosition": { "type": ["integer", "null"] },
+    "status": { "type": ["string", "null"], "enum": ["Filed", "On Ballot", "Withdrawn", "Disqualified", "Write-in", null] },
+    "incumbent": { "type": ["boolean", "null"] },
+    "campaignFinanceId": { "type": ["string", "null"], "description": "Link to CFB campaign finance record (nyccfb.info)." },
+    "website": { "type": ["string", "null"], "format": "uri" }
+  },
+  "required": ["candidateId", "name", "office"],
+  "additionalProperties": false
+}

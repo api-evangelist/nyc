@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Docs — NYC Modernization</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<section class="plain"><div class="wrap" style="max-width:840px">
+  <p class="small" id="crumb"></p>
+  <div class="md" id="doc"><div class="loading">Loading…</div></div>
+</div></section>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const dom=qs.get("d"), f=qs.get("f")||"README.md";
+  const base=dom?dom+"/":"";
+  const path=base+f;
+  document.getElementById("crumb").innerHTML=`<a href="./">Home</a> ${dom?` · <a href="domain.html?d=${dom}">${esc(dom)}</a>`:""} · <code>${esc(f)}</code> · <a href="${path}">raw</a>`;
+  try{
+    const md=await getText(path);
+    let html=mdToHtml(md);
+    // route relative .md links through this viewer
+    html=html.replace(/href="([^"]+\.md)(#[^"]*)?"/g,(m,link,frag)=>{
+      if(/^https?:/.test(link)) return m;
+      // link relative to current doc's directory
+      let target=link, d=dom;
+      if(link.includes("/")){ const parts=link.replace(/^\.\//,"").split("/"); d=parts[0]; target=parts.slice(1).join("/"); if(parts[0]==".."){d="";target=parts.slice(1).join("/");} }
+      return `href="docs.html?${d?("d="+encodeURIComponent(d)+"&"):""}f=${encodeURIComponent(target)}"`;
+    });
+    document.getElementById("doc").innerHTML=html;
+  }catch(e){ document.getElementById("doc").innerHTML="<p>Couldn't load <code>"+esc(path)+"</code>.</p>"; }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycgovparks.org/schemas/monument.json",
+  "title": "Monument",
+  "description": "A monument, public artwork, or historical marker in the NYC parks system (the 'Historical Signs' database on the website). Canonical schema reconciling /about/history/historical-signs on nycgovparks.org with the 'NYC Parks Monuments' Open Data dataset (6rrm-vxj9, 34 columns).",
+  "type": "object",
+  "x-source": {
+    "website": "https://www.nycgovparks.org/about/history/historical-signs",
+    "opendata": "https://data.cityofnewyork.us/d/6rrm-vxj9"
+  },
+  "properties": {
+    "id": { "type": ["integer", "string"], "description": "Monument number (number)." },
+    "name": { "type": "string", "description": "Primary name (name)." },
+    "alternateNames": {
+      "type": "array",
+      "description": "Alternate names (Name2, Name3).",
+      "items": { "type": "string" }
+    },
+    "park": { "$ref": "_common.json#/$defs/ParkReference" },
+    "parkName": { "type": ["string", "null"], "description": "Park name (parkname)." },
+    "parkNumber": { "type": ["string", "null"], "description": "Park number (parknumber)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "location": { "type": ["string", "null"], "description": "Location within the park (Location)." },
+    "categories": {
+      "type": "array",
+      "description": "Categories/classification (Categories).",
+      "items": { "type": "string" }
+    },
+    "description": { "type": ["string", "null"], "description": "Descriptive text (descrip)." },
+    "materials": { "type": ["string", "null"], "description": "Materials (materials)." },
+    "dimensions": { "type": ["string", "null"], "description": "Dimensions (dimen)." },
+    "cost": { "type": ["string", "null"], "description": "Original cost (Cost)." },
+    "inscription": { "type": ["string", "null"], "description": "Inscribed text (inscribed)." },
+    "creators": {
+      "type": "object",
+      "description": "People and firms credited (sculptor, architect, fabricator, foundry, contractor, donor, sponsor, cast).",
+      "properties": {
+        "sculptor": { "type": ["string", "null"] },
+        "architect": { "type": ["string", "null"] },
+        "fabricator": { "type": ["string", "null"] },
+        "foundry": { "type": ["string", "null"] },
+        "contractor": { "type": ["string", "null"] },
+        "donor": { "type": ["string", "null"] },
+        "sponsor": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "dates": {
+      "type": "object",
+      "description": "Key dates (dedicated, Installation, Rededication).",
+      "properties": {
+        "dedicated": { "type": ["string", "null"] },
+        "installation": { "type": ["string", "null"], "format": "date" },
+        "rededication": { "type": ["string", "null"], "format": "date" }
+      },
+      "additionalProperties": false
+    },
+    "maintainedByParks": { "type": ["boolean", "null"], "description": "Whether maintained by Parks (MaintainedByParks)." },
+    "extant": { "type": ["boolean", "null"], "description": "Whether the monument still exists (extant)." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "admin": { "$ref": "_common.json#/$defs/AdminBoundaries" }
+  },
+  "required": ["id", "name"],
+  "additionalProperties": false
+}

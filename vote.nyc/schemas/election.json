@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/schemas/election.json",
+  "title": "Election",
+  "description": "A NYC election event. ASPIRATIONAL — today this exists only as a PDF calendar of important dates; this schema defines the machine-readable shape it should take.",
+  "type": "object",
+  "x-source": { "website": "https://vote.nyc/page/all-important-dates", "opendata": null },
+  "properties": {
+    "electionId": { "type": "string" },
+    "date": { "type": "string", "format": "date" },
+    "type": { "type": "string", "enum": ["Primary", "General", "Special", "Runoff"] },
+    "name": { "type": "string", "description": "e.g. 'June 23, 2026 Primary Election'." },
+    "scope": { "type": ["string", "null"], "enum": ["Citywide", "Borough", "District", "Statewide", null] },
+    "keyDates": {
+      "type": "object",
+      "description": "Deadlines associated with the election.",
+      "properties": {
+        "registrationDeadline": { "type": ["string", "null"], "format": "date" },
+        "earlyVotingStart": { "type": ["string", "null"], "format": "date" },
+        "earlyVotingEnd": { "type": ["string", "null"], "format": "date" },
+        "mailBallotRequestDeadline": { "type": ["string", "null"], "format": "date" },
+        "mailBallotReturnDeadline": { "type": ["string", "null"], "format": "date" }
+      },
+      "additionalProperties": false
+    },
+    "rankedChoice": { "type": ["boolean", "null"], "description": "Whether ranked-choice voting applies (primaries/specials for city offices)." }
+  },
+  "required": ["date", "type", "name"],
+  "additionalProperties": false
+}

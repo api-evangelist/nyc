@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/schemas/legislation.json",
+  "title": "Legislation",
+  "description": "A NYC Council legislative matter — Introduction (bill), Resolution, or Local Law. Canonical schema reconciling the Legistar 'matters' record with the 'City Council Legislation: Bills and Local Laws' Open Data dataset (6ctv-n46c, 15 columns). Keyed on matterId / file number.",
+  "type": "object",
+  "x-source": {
+    "legistar": "https://webapi.legistar.com/v1/nyc/matters",
+    "opendata": "https://data.cityofnewyork.us/d/6ctv-n46c",
+    "portal": "https://legistar.council.nyc.gov/Legislation.aspx"
+  },
+  "properties": {
+    "matterId": { "type": "string", "description": "Legistar Matter ID (matter_id)." },
+    "fileNumber": { "type": "string", "description": "File Number, e.g. 'Int 0123-2024' (file_num)." },
+    "previousFileNumber": { "type": ["string", "null"] },
+    "name": { "type": ["string", "null"] },
+    "title": { "type": "string", "description": "Full title (title)." },
+    "summary": { "type": ["string", "null"] },
+    "type": {
+      "type": ["string", "null"],
+      "enum": ["Introduction", "Resolution", "Local Law", "Land Use Application", "Oversight", "Communication", "Report", null],
+      "description": "Matter type."
+    },
+    "status": { "type": ["string", "null"], "description": "Current status (status), e.g. 'Enacted', 'Committee', 'Filed'." },
+    "primarySponsor": { "type": ["string", "null"] },
+    "sponsors": {
+      "type": "array",
+      "description": "All sponsors (from Legistar).",
+      "items": { "$ref": "_common.json#/$defs/MemberReference" }
+    },
+    "committee": { "type": ["string", "null"], "description": "Committee of jurisdiction (committee)." },
+    "localLawNumber": { "type": ["string", "null"], "description": "Local Law number if enacted (law_number)." },
+    "dates": {
+      "type": "object",
+      "properties": {
+        "introduced": { "type": ["string", "null"], "format": "date" },
+        "agenda": { "type": ["string", "null"], "format": "date" },
+        "passed": { "type": ["string", "null"], "format": "date" },
+        "enacted": { "type": ["string", "null"], "format": "date" },
+        "modified": { "type": ["string", "null"], "format": "date" }
+      },
+      "additionalProperties": false
+    },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Legistar LegislationDetail page." }
+  },
+  "required": ["fileNumber", "title"],
+  "additionalProperties": false
+}

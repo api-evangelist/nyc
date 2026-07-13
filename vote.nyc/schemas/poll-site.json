@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/schemas/poll-site.json",
+  "title": "PollSite",
+  "description": "A NYC polling place. Canonical schema reconciling the /page/find-your-poll-site locator with the 'Voting/Poll Sites' Open Data dataset (mifw-tguq, 29 columns) — the one well-covered BOE resource.",
+  "type": "object",
+  "x-source": {
+    "website": "https://vote.nyc/page/find-your-poll-site",
+    "opendata": "https://data.cityofnewyork.us/d/mifw-tguq"
+  },
+  "properties": {
+    "siteNumber": { "type": "string", "description": "Poll site number (SITE_NUMBER)." },
+    "name": { "type": ["string", "null"], "description": "Facility name." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "address": {
+      "type": "object",
+      "properties": {
+        "streetName": { "type": ["string", "null"] },
+        "streetSuffix": { "type": ["string", "null"] },
+        "city": { "type": ["string", "null"] },
+        "zipCode": { "type": ["string", "null"], "pattern": "^\\d{5}$" }
+      },
+      "additionalProperties": false
+    },
+    "status": { "type": ["string", "null"], "description": "Site status (SITE_STATUS), e.g. active/inactive." },
+    "accessibility": {
+      "type": "object",
+      "description": "ADA accessibility of the site.",
+      "properties": {
+        "handicapEntrance": { "type": ["string", "null"], "description": "HANDICAP_ENTRANCE." },
+        "voterEntrance": { "type": ["string", "null"], "description": "VOTER_ENTRANCE." }
+      },
+      "additionalProperties": false
+    },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "admin": { "$ref": "_common.json#/$defs/AdminBoundaries" },
+    "electionDistricts": {
+      "type": "array",
+      "description": "Election districts served by this poll site (from Election District Poll Sites, i3a3-qxkf).",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["siteNumber", "borough"],
+  "additionalProperties": false
+}

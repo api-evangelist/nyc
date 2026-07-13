@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/schools.nyc.gov/schemas/school-demographics.json",
+  "title": "SchoolDemographics",
+  "description": "Enrollment and demographic breakdown for a school in a given year. Canonical schema reconciling the per-school demographics on schools.nyc.gov / InfoHub with the DOE 'Demographic Snapshot' Open Data dataset (c7ru-d68s, 44 columns). Keyed on DBN + year.",
+  "type": "object",
+  "x-source": { "opendata": "https://data.cityofnewyork.us/d/c7ru-d68s" },
+  "properties": {
+    "dbn": { "$ref": "_common.json#/$defs/DBN" },
+    "schoolName": { "type": ["string", "null"] },
+    "year": { "type": "string", "description": "School year, e.g. '2021-22'." },
+    "totalEnrollment": { "type": ["integer", "null"], "minimum": 0 },
+    "byGrade": {
+      "type": "object",
+      "description": "Enrollment counts by grade (Grade 3K … Grade 12).",
+      "additionalProperties": { "type": ["integer", "null"] }
+    },
+    "gender": {
+      "type": "object",
+      "properties": {
+        "female": { "type": ["integer", "null"] },
+        "male": { "type": ["integer", "null"] },
+        "femalePct": { "type": ["number", "null"] },
+        "malePct": { "type": ["number", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "raceEthnicity": {
+      "type": "object",
+      "description": "Counts and percentages by race/ethnicity (Asian, Black, Hispanic, White, Multi-Racial, Native American, Missing).",
+      "additionalProperties": { "type": ["integer", "number", "null"] }
+    },
+    "studentsWithDisabilities": { "type": ["integer", "null"] },
+    "englishLanguageLearners": { "type": ["integer", "null"] },
+    "povertyCount": { "type": ["integer", "string", "null"] },
+    "povertyPct": { "type": ["number", "string", "null"] },
+    "economicNeedIndex": { "type": ["number", "string", "null"], "description": "Economic Need Index (ENI)." }
+  },
+  "required": ["dbn", "year"],
+  "additionalProperties": false
+}

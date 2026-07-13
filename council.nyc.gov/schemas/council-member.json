@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/schemas/council-member.json",
+  "title": "CouncilMember",
+  "description": "A New York City Council member. Canonical schema reconciling the /district-N/ pages on council.nyc.gov (WordPress), Legistar 'persons', and the 'City Council Members (1999 to Present)' Open Data dataset (uvw5-9znb).",
+  "type": "object",
+  "x-source": {
+    "website": "https://council.nyc.gov/district-1/",
+    "legistar": "https://webapi.legistar.com/v1/nyc/persons",
+    "opendata": "https://data.cityofnewyork.us/d/uvw5-9znb"
+  },
+  "properties": {
+    "councilMemberId": { "type": "string", "description": "Council Member ID (council_member_id) / Legistar PersonId." },
+    "name": { "type": "string", "description": "Council Member Name." },
+    "district": { "type": "integer", "minimum": 1, "maximum": 51 },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "party": { "$ref": "_common.json#/$defs/Party" },
+    "officeId": { "type": ["string", "null"], "description": "Office ID (office_id)." },
+    "termStart": { "type": ["string", "null"], "format": "date" },
+    "termEnd": { "type": ["string", "null"], "format": "date" },
+    "current": { "type": ["boolean", "null"], "description": "Whether currently serving." },
+    "offices": {
+      "type": "array",
+      "description": "District and legislative offices.",
+      "items": { "$ref": "_common.json#/$defs/Office" }
+    },
+    "email": { "type": ["string", "null"], "format": "email" },
+    "website": { "type": ["string", "null"], "format": "uri" },
+    "twitter": { "type": ["string", "null"] },
+    "committees": {
+      "type": "array",
+      "description": "Committees the member sits on (with role).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "role": { "type": ["string", "null"], "enum": ["Chair", "Member", null] }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    },
+    "caucuses": { "type": "array", "items": { "type": "string" } },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "council.nyc.gov district page." }
+  },
+  "required": ["name", "district"],
+  "additionalProperties": false
+}

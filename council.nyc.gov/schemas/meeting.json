@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/schemas/meeting.json",
+  "title": "Meeting",
+  "description": "A NYC Council meeting or committee hearing. Canonical schema reconciling Legistar 'events' with the 'City Council Meetings (1999 to 2024)' Open Data dataset (m48u-yjt8). Video is hosted on Viebit/Livestream; captions via StreamText.",
+  "type": "object",
+  "x-source": {
+    "legistar": "https://webapi.legistar.com/v1/nyc/events",
+    "opendata": "https://data.cityofnewyork.us/d/m48u-yjt8",
+    "portal": "https://legistar.council.nyc.gov/Calendar.aspx"
+  },
+  "properties": {
+    "eventId": { "type": "string", "description": "Legistar Event ID." },
+    "body": { "type": "string", "description": "Committee/body meeting (e.g. 'Committee on Finance', 'Stated Meeting')." },
+    "date": { "type": "string", "format": "date" },
+    "time": { "type": ["string", "null"] },
+    "location": { "type": ["string", "null"] },
+    "status": { "type": ["string", "null"], "enum": ["Scheduled", "Final", "Cancelled", "Rescheduled", null] },
+    "agendaUrl": { "type": ["string", "null"], "format": "uri" },
+    "minutesUrl": { "type": ["string", "null"], "format": "uri" },
+    "videoUrl": { "type": ["string", "null"], "format": "uri", "description": "Viebit/Livestream recording." },
+    "captionsUrl": { "type": ["string", "null"], "format": "uri", "description": "StreamText transcript." },
+    "matters": {
+      "type": "array",
+      "description": "Legislative matters on the agenda (references legislation.json by fileNumber).",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["eventId", "body", "date"],
+  "additionalProperties": false
+}

@@ -1,0 +1,132 @@
+{
+  "domain": "council.nyc.gov",
+  "agency": "New York City Council (NYCC)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting; Crawl-delay 10, /wp-admin disallowed). WordPress: wp-sitemap.xml → posts, pages (121), custom types nycc_committee (40), nycc_caucus (9), nycc_report (47); districts at /district-1..51/. Legislative data probed via Legistar Web API (403) and cross-referenced to NYC Open Data.",
+  "related_domains": ["legistar.council.nyc.gov", "webapi.legistar.com", "rnd.council.nyc.gov", "councilnyc.viebit.com"],
+  "headline_findings": [
+    "Council is the most API-covered domain so far: a vendor Legistar Web API (webapi.legistar.com/v1/nyc), an OPEN WordPress REST API (council.nyc.gov/wp-json), and 11 NYCC Open Data datasets.",
+    "Yet none is an owned, unified, agent-native NYC Council API — the legislative record depends on a Granicus-branded, access-gated vendor API (403 to our client).",
+    "51 district/member pages (/district-N/), 40 committees, 9 caucuses, 47 reports — content in WordPress; bills/hearings/votes in Legistar.",
+    "Open Data has Members, Legislation (Bills & Local Laws), Discretionary Funding, Participatory Budgeting, Meetings, Committee Membership — flattened snapshots disconnected from Legistar and the site.",
+    "See tech-stack.md and apis-observed.md for the vendor + API inventory."
+  ],
+  "apis_observed": [
+    { "endpoint": "webapi.legistar.com/v1/nyc", "type": "legislative REST/OData API", "owner": "Granicus (Legistar)", "public": "documented, 403 to our client", "note": "bodies/matters/persons/events/votes; vendor-branded, access-gated." },
+    { "endpoint": "council.nyc.gov/wp-json (wp/v2)", "type": "WordPress REST API", "owner": "NYC Council", "public": true, "note": "open; content (posts/pages/media/nycc_feature), not legislative resources." },
+    { "endpoint": "legistar.council.nyc.gov", "type": "legislation portal", "owner": "Granicus", "public": "html", "note": "public bill/hearing/vote search UI." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC/Socrata", "public": true, "note": "11 NYCC datasets; flattened snapshots." },
+    { "endpoint": "CARTO/CartoDB", "type": "maps API", "owner": "CARTO", "public": "vendor", "note": "council district maps." },
+    { "endpoint": "councilnyc.viebit.com", "type": "video API", "owner": "Viebit", "public": "vendor", "note": "hearing video." },
+    { "endpoint": "streamtext.net", "type": "captioning API", "owner": "StreamText", "public": "vendor", "note": "live captions." }
+  ],
+  "fruit": [
+    {
+      "name": "Council Members / District pages",
+      "type": "record-listing (WP pages)",
+      "entity": "CouncilMember",
+      "url": "https://council.nyc.gov/districts/",
+      "count": "51 districts (/district-1..51/)",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["City Council Members (1999 to Present) uvw5-9znb (6c)", "City Council Committee Membership aabe-yfm9 (11c)"],
+      "notes": "Each /district-N/ page profiles the member: offices, phone, committees, caucuses, legislation, press. Also available via WP REST + Open Data."
+    },
+    {
+      "name": "Council Districts",
+      "type": "geo + pages",
+      "entity": "District",
+      "url": "https://council.nyc.gov/districts/",
+      "count": 51,
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["City Council Districts (DCP)", "City Council Districts (Water Areas Included) (DCP)"],
+      "notes": "District boundaries published by DCP (not NYCC); maps via CARTO on-site."
+    },
+    {
+      "name": "Committees",
+      "type": "record-listing (WP nycc_committee)",
+      "entity": "Committee",
+      "url": "https://council.nyc.gov/committees/",
+      "count": 40,
+      "machine_readable": "WP REST (partial)",
+      "verified": true,
+      "opendata_match": ["City Council Committee Membership (1999 to 2025) aabe-yfm9"],
+      "notes": "40 committees as WP custom posts; membership over time in Open Data; committee bodies also in Legistar."
+    },
+    {
+      "name": "Caucuses",
+      "type": "record-listing (WP nycc_caucus)",
+      "entity": "Committee",
+      "url": "https://council.nyc.gov/caucuses/",
+      "count": 9,
+      "machine_readable": "WP REST (partial)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Legislation (Bills, Resolutions, Local Laws)",
+      "type": "legislative records (Legistar)",
+      "entity": "Legislation",
+      "url": "https://legistar.council.nyc.gov/Legislation.aspx",
+      "count": "tens of thousands of matters",
+      "machine_readable": "Legistar API + Open Data",
+      "verified": true,
+      "opendata_match": ["City Council Legislation: Bills and Local Laws 6ctv-n46c (15c)"],
+      "notes": "Full record in Legistar (webapi.legistar.com); a flattened bills/local-laws snapshot on Open Data."
+    },
+    {
+      "name": "Meetings / Hearings",
+      "type": "calendar + video",
+      "entity": "Meeting",
+      "url": "https://legistar.council.nyc.gov/Calendar.aspx",
+      "machine_readable": "Legistar API + Open Data",
+      "verified": true,
+      "opendata_match": ["City Council Meetings (1999 to 2024) m48u-yjt8 (10c)"],
+      "notes": "Hearing calendar in Legistar; video via Viebit/Livestream; captions via StreamText."
+    },
+    {
+      "name": "Discretionary Funding",
+      "type": "data table",
+      "entity": "DiscretionaryFunding",
+      "url": "https://council.nyc.gov/budget/",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["City Council Discretionary Funding 4d7f-74pe (27c)"],
+      "notes": "Member-allocated funding to organizations; rich 27-col dataset."
+    },
+    {
+      "name": "Participatory Budgeting",
+      "type": "data table",
+      "entity": "DiscretionaryFunding",
+      "url": "https://council.nyc.gov/pb/",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["Participatory Budgeting Projects wwhr-5ven (20c)", "PB Project Tracker qm5f-frjb"],
+      "notes": "Community-voted capital projects."
+    },
+    {
+      "name": "Reports",
+      "type": "document listing (WP nycc_report)",
+      "entity": "Report",
+      "url": "https://council.nyc.gov/reports/",
+      "count": 47,
+      "machine_readable": "WP REST (partial)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true
+    },
+    {
+      "name": "Testify / speak at a hearing",
+      "type": "sign-up workflow",
+      "entity": "TestimonyRegistration",
+      "url": "https://council.nyc.gov/testimony/",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Public sign-up to testify at hearings — a transactional civic workflow with no API. The one net-new write surface for this domain."
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycgovparks.org/schemas/park.json",
+  "title": "Park",
+  "description": "A NYC Parks property. Canonical schema reconciling the /parks directory on nycgovparks.org with the 'Parks Properties' Open Data dataset (enfh-gkve, 33 columns). The Park is the root entity of the domain; facilities, events, monuments, trees and capital projects reference it by gisPropNum.",
+  "type": "object",
+  "x-source": {
+    "website": "https://www.nycgovparks.org/parks",
+    "opendata": "https://data.cityofnewyork.us/d/enfh-gkve"
+  },
+  "properties": {
+    "gisPropNum": {
+      "type": "string",
+      "description": "GIS property number — primary identifier (GISPROPNUM).",
+      "examples": ["B073", "M010"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Public park name (SIGNNAME / NAME311).",
+      "examples": ["Prospect Park", "Central Park"]
+    },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "address": { "type": ["string", "null"], "description": "Street address or cross-street description (ADDRESS)." },
+    "location": { "type": ["string", "null"], "description": "Location / cross-streets narrative (LOCATION)." },
+    "zipCode": { "type": ["string", "null"], "pattern": "^\\d{5}$" },
+    "typeCategory": {
+      "type": ["string", "null"],
+      "description": "Property type category (TYPECATEGORY), e.g. 'Neighborhood Park', 'Community Park', 'Triangle/Plaza'."
+    },
+    "subCategory": { "type": ["string", "null"], "description": "SUBCATEGORY." },
+    "class": { "type": ["string", "null"], "description": "Property class (CLASS)." },
+    "acres": { "type": ["number", "null"], "minimum": 0, "description": "Acreage (ACRES)." },
+    "waterfront": { "type": ["boolean", "null"], "description": "Whether the property is on the waterfront (WATERFRONT)." },
+    "permitAvailable": { "type": ["boolean", "null"], "description": "Whether the property is permittable (PERMIT)." },
+    "jurisdiction": { "type": ["string", "null"], "description": "Managing jurisdiction (JURISDICTION)." },
+    "department": { "type": ["string", "null"], "description": "Responsible department (DEPARTMENT)." },
+    "acquisitionDate": { "type": ["string", "null"], "format": "date", "description": "Date acquired by the City (ACQUISITIONDATE)." },
+    "admin": { "$ref": "_common.json#/$defs/AdminBoundaries" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "retired": { "type": ["boolean", "null"], "description": "Whether the property record is retired (RETIRED)." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical nycgovparks.org detail page." }
+  },
+  "required": ["gisPropNum", "name", "borough"],
+  "additionalProperties": false
+}

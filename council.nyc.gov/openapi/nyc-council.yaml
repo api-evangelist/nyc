@@ -1,0 +1,405 @@
+openapi: 3.1.0
+info:
+  title: NYC Council API (proposed)
+  version: 0.1.0
+  summary: One owned, resource-oriented API consolidating the NYC Council's three existing-but-fragmented APIs — the Legistar Web API (vendor), the WordPress REST API (content), and NYC Open Data (SODA) — into a single agent-native contract.
+  description: >-
+    Proposed API-first surface for the New York City Council, from the NYC Modernization
+    low-hanging-fruit assessment of council.nyc.gov.
+
+
+    Council is the most API-covered domain in the project — and that is exactly the problem. Its data
+    already lives behind THREE APIs: the **Legistar Web API** (Granicus vendor; authoritative legislative
+    record; access-gated), the **WordPress REST API** (open; member/committee content), and the **Open Data
+    SODA** endpoints (flattened snapshots). None is an owned, coherent, agent-native NYC Council API.
+
+
+    This contract consolidates them: Legistar for the live legislative record (matters, votes, events),
+    WordPress for member/committee/report content, Open Data for discretionary funding and participatory
+    budgeting — plus the one net-new write workflow, hearing **testimony registration**.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.council.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Members
+    description: Council members and districts.
+  - name: Committees
+    description: Committees, subcommittees, and caucuses.
+  - name: Legislation
+    description: Bills, resolutions, and local laws (fronts Legistar matters).
+  - name: Meetings
+    description: Meetings and committee hearings (fronts Legistar events).
+  - name: Budget
+    description: Discretionary funding and participatory budgeting.
+  - name: Testimony
+    description: Register to testify at a hearing (read + write). The net-new surface.
+
+paths:
+  /members:
+    get:
+      operationId: listMembers
+      summary: List / search council members
+      tags: [Members]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: district
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - name: current
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of members.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/council-member.json' } }
+  /members/{councilMemberId}:
+    get:
+      operationId: getMember
+      summary: Get a council member
+      tags: [Members]
+      parameters:
+        - name: councilMemberId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The member.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/council-member.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /members/{councilMemberId}/legislation:
+    get:
+      operationId: getMemberLegislation
+      summary: List legislation sponsored by a member
+      tags: [Members, Legislation]
+      parameters:
+        - name: councilMemberId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Sponsored legislation.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/legislation.json' } }
+
+  /districts:
+    get:
+      operationId: listDistricts
+      summary: List council districts
+      tags: [Members]
+      responses:
+        '200':
+          description: Districts.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/district.json' } }
+  /districts/{district}:
+    get:
+      operationId: getDistrict
+      summary: Get a district by number
+      tags: [Members]
+      parameters:
+        - name: district
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1, maximum: 51 }
+      responses:
+        '200':
+          description: The district.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/district.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /committees:
+    get:
+      operationId: listCommittees
+      summary: List committees, subcommittees, and caucuses
+      tags: [Committees]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [Committee, Subcommittee, Caucus, Task Force, Commission] }
+      responses:
+        '200':
+          description: Committees.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/committee.json' } }
+  /committees/{id}:
+    get:
+      operationId: getCommittee
+      summary: Get a committee
+      tags: [Committees]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The committee.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/committee.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /legislation:
+    get:
+      operationId: listLegislation
+      summary: Search legislation (fronts Legistar matters + Open Data)
+      tags: [Legislation]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: type
+          in: query
+          schema: { type: string, enum: [Introduction, Resolution, Local Law, Land Use Application, Oversight] }
+        - name: sponsor
+          in: query
+          schema: { type: string }
+        - name: committee
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of legislation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/legislation.json' } }
+  /legislation/{fileNumber}:
+    get:
+      operationId: getLegislation
+      summary: Get a legislative matter by file number
+      tags: [Legislation]
+      parameters:
+        - name: fileNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The legislation.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/legislation.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /meetings:
+    get:
+      operationId: listMeetings
+      summary: List meetings & hearings (fronts Legistar events)
+      tags: [Meetings]
+      parameters:
+        - name: body
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of meetings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/meeting.json' } }
+  /meetings/{eventId}:
+    get:
+      operationId: getMeeting
+      summary: Get a meeting/hearing
+      tags: [Meetings]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The meeting.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/meeting.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /discretionary-funding:
+    get:
+      operationId: listDiscretionaryFunding
+      summary: Search discretionary funding & participatory budgeting awards
+      tags: [Budget]
+      parameters:
+        - name: fiscalYear
+          in: query
+          schema: { type: integer }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer }
+        - name: councilMember
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of funding awards.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/discretionary-funding.json' } }
+
+  /testimony-registrations:
+    get:
+      operationId: listTestimonyRegistrations
+      summary: List the authenticated user's testimony registrations
+      tags: [Testimony]
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Registrations.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/testimony-registration.json' } }
+    post:
+      operationId: createTestimonyRegistration
+      summary: Register to testify at a hearing
+      description: The net-new write surface — an API for public hearing testimony sign-up.
+      tags: [Testimony]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/testimony-registration.json' }
+      responses:
+        '201':
+          description: Registration created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/testimony-registration.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /testimony-registrations/{registrationId}:
+    get:
+      operationId: getTestimonyRegistration
+      summary: Get a testimony registration
+      tags: [Testimony]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: registrationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The registration.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/testimony-registration.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    CouncilMember: { $ref: '../schemas/council-member.json' }
+    District: { $ref: '../schemas/district.json' }
+    Committee: { $ref: '../schemas/committee.json' }
+    Legislation: { $ref: '../schemas/legislation.json' }
+    Meeting: { $ref: '../schemas/meeting.json' }
+    DiscretionaryFunding: { $ref: '../schemas/discretionary-funding.json' }
+    TestimonyRegistration: { $ref: '../schemas/testimony-registration.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

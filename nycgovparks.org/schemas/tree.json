@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycgovparks.org/schemas/tree.json",
+  "title": "Tree",
+  "description": "A street or park tree. Canonical schema reconciling the interactive NYC Tree Map (tree-map.nycgovparks.org) with the '2015 Street Tree Census - Tree Data' Open Data dataset (uvpi-gqnh, 45 columns) — the richest and most-viewed DPR dataset (~140k views, ~650k records).",
+  "type": "object",
+  "x-source": {
+    "website": "https://tree-map.nycgovparks.org/",
+    "opendata": "https://data.cityofnewyork.us/d/uvpi-gqnh"
+  },
+  "properties": {
+    "treeId": { "type": ["integer", "string"], "description": "Unique tree id (tree_id)." },
+    "species": {
+      "type": "object",
+      "description": "Species names (spc_common, spc_latin).",
+      "properties": {
+        "common": { "type": ["string", "null"] },
+        "latin": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "status": { "type": ["string", "null"], "enum": ["Alive", "Dead", "Stump", null], "description": "Tree status (status)." },
+    "health": { "type": ["string", "null"], "enum": ["Good", "Fair", "Poor", null], "description": "Health rating (health)." },
+    "diameterInches": { "type": ["number", "null"], "minimum": 0, "description": "Trunk diameter at breast height in inches (tree_dbh)." },
+    "stumpDiameterInches": { "type": ["number", "null"], "minimum": 0, "description": "Stump diameter if a stump (stump_diam)." },
+    "address": { "type": ["string", "null"], "description": "Nearest address (address)." },
+    "zipCode": { "type": ["string", "null"], "pattern": "^\\d{5}$", "description": "postcode." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "curbLocation": { "type": ["string", "null"], "enum": ["OnCurb", "OffsetFromCurb", null], "description": "curb_loc." },
+    "sidewalkCondition": { "type": ["string", "null"], "enum": ["Damage", "NoDamage", null], "description": "sidewalk." },
+    "steward": { "type": ["string", "null"], "description": "Stewardship signs of care (steward)." },
+    "guards": { "type": ["string", "null"], "description": "Tree guard presence/type (guards)." },
+    "problems": {
+      "type": "array",
+      "description": "Observed problems, split from the 'problems' column and the root/trunk/branch condition flags.",
+      "items": { "type": "string" }
+    },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "admin": { "$ref": "_common.json#/$defs/AdminBoundaries" },
+    "censusYear": { "type": ["integer", "null"], "description": "Which street tree census (1995, 2005, 2015).", "examples": [2015] }
+  },
+  "required": ["treeId"],
+  "additionalProperties": false
+}

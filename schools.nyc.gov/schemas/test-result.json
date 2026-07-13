@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/schools.nyc.gov/schemas/test-result.json",
+  "title": "TestResult",
+  "description": "A school-level assessment result. Canonical schema generalizing the DOE Open Data assessment datasets (SAT, AP, Regents, State ELA/Math, Specialized High Schools Admissions Test) into one shape, keyed on DBN + exam + year.",
+  "type": "object",
+  "x-source": { "opendata": ["2012 SAT Results", "SAT (College Board) School Level Results", "AP School Level Results", "Specialized High Schools Admissions Tests Results"] },
+  "properties": {
+    "dbn": { "$ref": "_common.json#/$defs/DBN" },
+    "schoolName": { "type": ["string", "null"] },
+    "examType": {
+      "type": "string",
+      "enum": ["SAT", "AP", "Regents", "State ELA", "State Math", "SHSAT", "Other"]
+    },
+    "subject": { "type": ["string", "null"], "description": "Subject/section where applicable (e.g. 'Math', 'Critical Reading', 'Biology')." },
+    "year": { "type": ["string", "integer"], "description": "Test/administration year." },
+    "numberTested": { "type": ["integer", "null"], "minimum": 0 },
+    "metrics": {
+      "type": "object",
+      "description": "Result metrics — varies by exam (mean score, % passing, % 3+, offers, etc.).",
+      "additionalProperties": { "type": ["number", "integer", "string", "null"] }
+    }
+  },
+  "required": ["dbn", "examType", "year"],
+  "additionalProperties": false
+}

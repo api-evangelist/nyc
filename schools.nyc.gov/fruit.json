@@ -1,0 +1,100 @@
+{
+  "domain": "schools.nyc.gov",
+  "agency": "New York City Public Schools (NYCPS / Department of Education, DOE)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting; /CustomApi, /Sitefinity, /System disallowed and avoided). Sitemap decompressed (gzip) → 4,617 URLs. Section landing pages + representative school/calendar/search pages analyzed. Page data is largely JS-rendered from an internal /CustomApi backend, so on-page row/table counts understate the underlying records.",
+  "related_domains": ["myschools.nyc", "infohub.nyced.org", "teachhub.schools.nyc", "supporthub.schools.nyc", "parentu.schools.nyc", "schoolsaccount.nyc", "nycenet.edu"],
+  "headline_findings": [
+    "3,343 individual school pages (per the sitemap) form the school directory — each a structured School record rendered client-side.",
+    "On-domain the data is NOT machine-readable; but NYC Open Data has 638 DOE assets including 462-column High School Directories, School Locations, and Demographic Snapshots.",
+    "Site search / 'Find a School' is outsourced to a vendor (HawkSearch) — DOE does not own a public school-search API.",
+    "School pages are driven by an internal /CustomApi/* backend that is robots-disallowed, undocumented, and not public.",
+    "The enrollment/application workflow (MySchools) is transactional and has no Open Data twin — the net-new API opportunity, analogous to Parks permits.",
+    "See tech-stack.md and apis-observed.md for the vendor and backend-API inventory."
+  ],
+  "apis_observed": [
+    { "endpoint": "lusearchapi-na.hawksearch.com/sites/nycdoe", "type": "vendor search API", "owner": "HawkSearch", "public": false, "note": "Powers Find-a-School and site search." },
+    { "endpoint": "/CustomApi/* (www.schools.nyc.gov)", "type": "internal REST", "owner": "DOE (Sitefinity)", "public": false, "note": "robots-disallowed; drives page/school data." },
+    { "endpoint": "pwsblobprd.schools.nyc/prd-pws/*", "type": "blob storage REST", "owner": "DOE (Azure)", "public": "assets", "note": "images/docs." },
+    { "endpoint": "js.arcgis.com + Esri", "type": "mapping API", "owner": "Esri", "public": false, "note": "school locator maps." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC/Socrata", "public": true, "note": "per-dataset; disconnected from site." },
+    { "endpoint": "pwsauth.nycenet.edu", "type": "auth/OAuth", "owner": "DOE (NYC Schools Account)", "public": "login", "note": "identity." }
+  ],
+  "fruit": [
+    {
+      "name": "School Directory",
+      "type": "record-listing (JS-rendered)",
+      "entity": "School",
+      "url": "https://www.schools.nyc.gov/find-a-school",
+      "count": "3,343 school pages (sitemap); ~1,600 active schools",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["School Locations (various years, e.g. 9ck8-h43e class)", "DOE High School Directory (462 cols)", "DOE Middle School Directory (251 cols)", "Demographic Snapshot (c7ru-d68s)"],
+      "notes": "Each /schools/<LocationCode> page is a structured School profile (DBN, name, address, phone, principal, grades, district, enrollment). Rendered client-side from /CustomApi."
+    },
+    {
+      "name": "Find a School (search)",
+      "type": "search-form (vendor)",
+      "entity": "School",
+      "url": "https://www.schools.nyc.gov/find-a-school",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Powered by HawkSearch vendor API — not a DOE-owned or public search API."
+    },
+    {
+      "name": "School Year Calendar",
+      "type": "filterable event listing",
+      "entity": "CalendarEvent",
+      "url": "https://www.schools.nyc.gov/calendar",
+      "count": "full school-year of dates/events; faceted ('Narrow Results')",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Holidays, breaks, no-school days, PD days. No Open Data twin — small but real gap; high everyday value."
+    },
+    {
+      "name": "Enrollment / MySchools application",
+      "type": "transactional workflow (off-domain app)",
+      "entity": "EnrollmentApplication",
+      "url": "https://www.myschools.nyc/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "3K–12 admissions & application (3K/PreK/K/MS/HS/Specialized). Transactional; no Open Data twin. NET-NEW API opportunity, analogous to Parks permit applications."
+    },
+    {
+      "name": "School Quality Reports / Snapshots",
+      "type": "per-school reports (from InfoHub Excel)",
+      "entity": "SchoolQualityReport",
+      "url": "https://www.schools.nyc.gov/about-us/reports/school-quality",
+      "machine_readable": "off-domain (Excel on InfoHub)",
+      "verified": false,
+      "opendata_match": ["School Quality Reports / Framework datasets (on Open Data + InfoHub)"],
+      "notes": "Framework scores, survey results, student achievement per school."
+    },
+    {
+      "name": "Demographics (per school)",
+      "type": "reports",
+      "entity": "SchoolDemographics",
+      "url": "https://infohub.nyced.org/reports/school-quality/information-and-data-overview",
+      "machine_readable": "off-domain (Excel/Open Data)",
+      "verified": true,
+      "opendata_match": ["2017-18–2021-22 Demographic Snapshot (c7ru-d68s, 44 cols)", "2013-2018 Demographic Snapshot School"],
+      "notes": "Enrollment by grade, race/ethnicity, gender, poverty, ELL, SWD, Economic Need Index — DBN-keyed."
+    },
+    {
+      "name": "Test results (SAT / AP / Regents / Specialized HS)",
+      "type": "reports",
+      "entity": "TestResult",
+      "url": "https://infohub.nyced.org/reports/academics/test-results",
+      "machine_readable": "Open Data",
+      "verified": true,
+      "opendata_match": ["2012 SAT Results", "SAT (College Board) School Level Results", "AP School Level Results", "Specialized High Schools Admissions Tests Results"],
+      "notes": "School-level assessment outcomes; multiple datasets on Open Data."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/schemas/district.json",
+  "title": "District",
+  "description": "A New York City Council district (1–51). Canonical schema reconciling the /district-N/ pages on council.nyc.gov with the 'City Council Districts' geospatial dataset published by DCP.",
+  "type": "object",
+  "x-source": {
+    "website": "https://council.nyc.gov/districts/",
+    "opendata": "https://data.cityofnewyork.us (City Council Districts, DCP)"
+  },
+  "properties": {
+    "district": { "type": "integer", "minimum": 1, "maximum": 51, "description": "Council district number." },
+    "member": { "$ref": "_common.json#/$defs/MemberReference" },
+    "boroughs": {
+      "type": "array",
+      "description": "Borough(s) the district covers (some cross borough lines).",
+      "items": { "$ref": "_common.json#/$defs/Borough" }
+    },
+    "neighborhoods": { "type": "array", "items": { "type": "string" } },
+    "population": { "type": ["integer", "null"] },
+    "geometryUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the DCP district boundary (GeoJSON/shapefile)." },
+    "centroid": { "$ref": "_common.json#/$defs/Coordinates" },
+    "url": { "type": ["string", "null"], "format": "uri" }
+  },
+  "required": ["district"],
+  "additionalProperties": false
+}

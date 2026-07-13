@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Domain — NYC Modernization</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<div class="dhead"><div class="wrap" id="dhead"><div class="loading">Loading…</div></div></div>
+<div class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <div id="panes"></div>
+</div>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const id=qs.get("d");
+  const m=await getJSON("data/manifest.json");
+  const d=m.domains.find(x=>x.id===id);
+  if(!d){document.getElementById("dhead").innerHTML="<p>Unknown domain.</p>";return;}
+  document.title=d.short+" — NYC Modernization";
+  const c=d.counts;
+  document.getElementById("dhead").innerHTML=`
+    <span class="verb" style="background:${d.accent}">${esc(d.verb)}</span>
+    <h1>${esc(d.short)}</h1>
+    <div class="dom">${esc(d.id)} · ${esc(d.platform)} · ${esc(d.agency)}</div>
+    <p class="muted" style="max-width:70ch;margin-top:.6em">${esc(d.tagline)}</p>
+    <div class="stats" style="margin-top:18px">
+      ${[[c.fruit,"fruit items"],[c.opendata.toLocaleString(),"Open Data assets"],[c.schemas,"JSON Schemas"],[c.openapiOps,"API operations"],[c.mcpTools,"MCP tools"]]
+        .map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("")}
+    </div>`;
+
+  const tabs=[["overview","Overview"],["fruit","Fruit index"],["apis","APIs & tech"],["opendata","Open Data"],
+              ["schemas","Schemas"],["api","OpenAPI"],["mcp","MCP tools"],["docs","Documents"]];
+  document.getElementById("tabs").innerHTML=tabs.map((t,i)=>`<button data-t="${t[0]}" class="${i===0?"active":""}">${t[1]}</button>`).join("");
+  const panes=document.getElementById("panes");
+  panes.innerHTML=tabs.map((t,i)=>`<div class="tabpane ${i===0?"active":""}" id="pane-${t[0]}"><div class="loading">…</div></div>`).join("");
+  document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+    document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".tabpane").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active"); document.getElementById("pane-"+b.dataset.t).classList.add("active");
+  });
+
+  // OVERVIEW
+  document.getElementById("pane-overview").innerHTML=`
+    <h3>Headline findings</h3><ol>${d.findings.map(f=>`<li style="margin:.4em 0">${esc(f)}</li>`).join("")}</ol>
+    <h3 style="margin-top:1.4em">Entities → schemas</h3>
+    <p class="muted small">The reverse-engineered object model. Net-new write resource: <span class="badge write">${esc(d.netnew)}</span></p>
+    <p>${d.schemas.filter(s=>!s.shared).map(s=>`<a class="badge neutral" style="margin:3px;display:inline-block" href="${s.file}">${esc(s.title)}</a>`).join(" ")}</p>`;
+
+  // FRUIT
+  const fruit=await getJSON(d.files.fruit);
+  (function(){
+    const pane=document.getElementById("pane-fruit");
+    const rows=fruit.fruit.map(it=>({...it,_cov:coverageOf(it)}));
+    pane.innerHTML=`<div class="toolbar">
+      <input id="ffilter" placeholder="Filter by name, entity, type…">
+      <select id="fcov"><option value="">All coverage</option><option value="twin">Open Data twin</option><option value="partial">Partial</option><option value="gap">Gap / net-new</option></select>
+      <span class="count-pill" id="fcount"></span></div><div id="ftable"></div>`;
+    const cols=[
+      {key:"name",label:"Resource",render:r=>`${esc(r.name)}${r.url?` <a href="${esc(r.url)}" title="source">↗</a>`:""}`},
+      {key:"entity",label:"Entity",render:r=>r.entity?`<code>${esc(r.entity)}</code>`:""},
+      {key:"type",label:"Type",render:r=>esc(r.type)},
+      {key:"confirmed_rows",label:"Rows",render:r=>r.confirmed_rows?r.confirmed_rows.toLocaleString():""},
+      {key:"_cov",label:"Open Data",render:r=>covBadge(r._cov)+(Array.isArray(r.opendata_match)&&r.opendata_match.length?`<br><span class="muted small">${esc(r.opendata_match.slice(0,2).join("; "))}</span>`:"")},
+    ];
+    const tbl=makeTable(document.getElementById("ftable"),cols,rows);
+    function apply(){const q=document.getElementById("ffilter").value.toLowerCase();const cv=document.getElementById("fcov").value;
+      const f=rows.filter(r=>(!cv||r._cov===cv)&&(!q||JSON.stringify([r.name,r.entity,r.type]).toLowerCase().includes(q)));
+      tbl.render(f);document.getElementById("fcount").textContent=f.length+" / "+rows.length;}
+    document.getElementById("ffilter").oninput=apply;document.getElementById("fcov").onchange=apply;apply();
+  })();
+
+  // APIS & TECH
+  document.getElementById("pane-apis").innerHTML=`
+    <h3>APIs observed while crawling</h3>
+    <div class="tablewrap"><table><thead><tr><th>Endpoint</th><th>Type</th><th>Owner</th><th>Public?</th><th>Notes</th></tr></thead><tbody>
+    ${(d.apis_observed||[]).map(a=>`<tr><td><code>${esc(a.endpoint)}</code></td><td>${esc(a.type)}</td><td>${esc(a.owner)}</td>
+      <td>${a.public===true?'<span class="badge ok">yes</span>':a.public===false?'<span class="badge gap">no</span>':'<span class="badge partial">'+esc(a.public)+'</span>'}</td>
+      <td class="muted small">${esc(a.note||"")}</td></tr>`).join("")}
+    </tbody></table></div>
+    <p style="margin-top:1em"><a class="btn sec" href="docs.html?d=${id}&f=tech-stack.md">Full technology &amp; vendor inventory →</a>
+    <a class="btn sec" href="docs.html?d=${id}&f=apis-observed.md">APIs-observed writeup →</a></p>`;
+
+  // OPEN DATA
+  if(d.files.opendata){
+    const od=await getJSON(d.files.opendata);
+    const pane=document.getElementById("pane-opendata");
+    const rows=od.map(x=>({name:x.name,type:x.type,cols:(x.columns||[]).length,views:x.page_views||0,link:x.permalink}));
+    pane.innerHTML=`<p class="muted small">${od.length} assets attributed to this agency on NYC Open Data, pulled via the Socrata Discovery API. Sortable; click a name to open the dataset.</p>
+      <div class="toolbar"><input id="odf" placeholder="Filter datasets…"><span class="count-pill" id="odc"></span></div><div id="odt"></div>`;
+    const cols=[
+      {key:"name",label:"Dataset",render:r=>`<a href="${esc(r.link)}">${esc(r.name)}</a>`},
+      {key:"type",label:"Type",render:r=>`<span class="badge neutral">${esc(r.type)}</span>`},
+      {key:"cols",label:"Cols"},{key:"views",label:"Views",render:r=>r.views.toLocaleString()},
+    ];
+    const tbl=makeTable(document.getElementById("odt"),cols.map(c=>c),rows.sort((a,b)=>b.views-a.views));
+    function apply(){const q=document.getElementById("odf").value.toLowerCase();
+      const f=rows.filter(r=>!q||r.name.toLowerCase().includes(q));tbl.render(f);
+      document.getElementById("odc").textContent=f.length+" / "+rows.length;}
+    document.getElementById("odf").oninput=apply;apply();
+  } else document.getElementById("pane-opendata").innerHTML="<p class='muted'>No Open Data index.</p>";
+
+  // SCHEMAS
+  (function(){
+    const pane=document.getElementById("pane-schemas");
+    pane.innerHTML=`<div class="grid cols-2"><div>
+      <ul class="schema-list">${d.schemas.map(s=>`<li><a href="#" data-f="${s.file}">${esc(s.title)}</a>${s.shared?' <span class="badge neutral">shared</span>':''}${s.desc?`<br><span class="muted small">${esc(s.desc)}</span>`:''}</li>`).join("")}</ul>
+      <p class="muted small">Individual JSON Schema (2020-12) files. The OpenAPI <code>$ref</code>s these.</p></div>
+      <div><div class="jsonbox" id="schemabox">Select a schema to view its JSON…</div></div></div>`;
+    pane.querySelectorAll("a[data-f]").forEach(a=>a.onclick=async e=>{e.preventDefault();
+      const box=document.getElementById("schemabox");box.textContent="Loading…";
+      try{const t=await getText(id+"/"+a.dataset.f);box.textContent=t;}catch(err){box.textContent=String(err);}});
+  })();
+
+  // OPENAPI
+  (function(){
+    const ops=d.openapiOps||[];
+    document.getElementById("pane-api").innerHTML=`
+      <p class="muted small">${ops.length} operations across ${new Set(ops.map(o=>o.path)).size} paths. Contract: <code>${esc(d.files.openapi||"")}</code>
+      <a href="${id}/${d.files.openapi}">view raw YAML →</a></p>
+      <div class="tablewrap"><table><thead><tr><th>Method</th><th>Path</th><th>Operation</th><th>Summary</th></tr></thead><tbody>
+      ${ops.map(o=>`<tr><td><span class="badge ${o.write?'write':'neutral'}">${esc(o.method)}</span></td>
+        <td><code>${esc(o.path)}</code></td><td class="small">${esc(o.op)}</td><td class="muted small">${esc(o.summary)}</td></tr>`).join("")}
+      </tbody></table></div>`;
+  })();
+
+  // MCP
+  (function(){
+    const t=d.mcpTools||[];
+    document.getElementById("pane-mcp").innerHTML=`
+      <p class="muted small">${t.length} agent tools. Design artifact (not deployed): <code>${esc(d.files.mcp||"")}</code>
+      <a href="${id}/${d.files.mcp}">view raw JSON →</a>. Each tool maps to an OpenAPI operation and <code>$ref</code>s the same object schemas.</p>
+      <div class="grid cols-2">${t.map(x=>`<div class="card"><h3 style="font-size:1rem;margin-bottom:.2em"><code>${esc(x.name)}</code> ${x.write?'<span class="badge write">write</span>':'<span class="badge ok">read</span>'}</h3>
+        <p class="muted small" style="margin:0">${esc(x.desc)}</p></div>`).join("")}</div>`;
+  })();
+
+  // DOCS
+  document.getElementById("pane-docs").innerHTML=`
+    <p class="muted small">Full narrative writeups (rendered from the repo markdown).</p>
+    <div class="grid cols-2">${(d.files.docs||[]).map(f=>`<a class="card" href="docs.html?d=${id}&f=${encodeURIComponent(f)}">
+      <h3 style="font-size:1rem;margin:0"><code>${esc(f)}</code></h3></a>`).join("")}
+      <a class="card" href="docs.html?d=${id}&f=README.md"><h3 style="font-size:1rem;margin:0"><code>README.md</code></h3></a></div>`;
+})();
+</script>
+</body>
+</html>

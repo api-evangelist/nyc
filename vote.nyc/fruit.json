@@ -1,0 +1,98 @@
+{
+  "domain": "vote.nyc",
+  "agency": "New York City Board of Elections (BOENY)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting). Drupal 9 site; JSON:API disabled (404). Key pages (poll site locator, election-results-summary, candidates, contest list, important notices) sampled; results/candidates/contests found to be PDFs. Open Data checked under agency 'Board of Elections (BOENY)'.",
+  "related_domains": ["enr.boenyc.gov", "requestballot.vote.nyc", "boenyc.gov"],
+  "headline_findings": [
+    "The least-modernized domain in the project: Drupal 9 with JSON:API disabled (no site API), and only 2 Open Data assets (poll sites).",
+    "The two things voters most need — candidates (who's running) and results — have NO API and NO dataset; they are PDFs (one Recap + one EDLevel PDF per contest) plus a separate legacy viewer (enr.boenyc.gov).",
+    "Poll sites ARE machine-readable: Voting/Poll Sites (29 cols) + Election District Poll Sites (4 cols) on Open Data; election district geometry via DCP.",
+    "Ballot request/tracking is a separate app (requestballot.vote.nyc) with no public API.",
+    "This is the original pre-open-data low-hanging-fruit case, largely untouched — the sharpest validation of 'data liberation only partially worked.'",
+    "See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "vote.nyc/jsonapi (Drupal JSON:API)", "type": "would-be REST API", "owner": "NYC BOE", "public": false, "note": "404 — disabled; no content API." },
+    { "endpoint": "enr.boenyc.gov (+ /rcv/)", "type": "election results viewer", "owner": "NYC BOE", "public": "html", "note": "separate legacy app; no documented data API." },
+    { "endpoint": "requestballot.vote.nyc (+ /tracking)", "type": "ballot request/tracking app", "owner": "NYC BOE", "public": "transactional", "note": "no public API." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC/Socrata", "public": true, "note": "only 2 BOENY datasets (poll sites)." }
+  ],
+  "fruit": [
+    {
+      "name": "Poll Sites (locator)",
+      "type": "locator form + dataset",
+      "entity": "PollSite",
+      "url": "https://vote.nyc/page/find-your-poll-site",
+      "machine_readable": true,
+      "verified": true,
+      "opendata_match": ["Voting/Poll Sites (mifw-tguq, 29c)", "Election District Poll Sites (i3a3-qxkf, 4c)"],
+      "notes": "The one well-covered resource: poll site locations with accessibility (handicap/voter entrance), geo, and admin boundaries."
+    },
+    {
+      "name": "Election Districts",
+      "type": "geo",
+      "entity": "ElectionDistrict",
+      "url": "https://vote.nyc/",
+      "machine_readable": true,
+      "verified": true,
+      "opendata_match": ["Election Districts (DCP)", "Election District Poll Sites (BOENY, i3a3-qxkf)"],
+      "notes": "ED boundaries published by DCP; ED→poll-site mapping by BOENY."
+    },
+    {
+      "name": "Election Results",
+      "type": "PDF-per-contest + legacy viewer",
+      "entity": "ElectionResult",
+      "url": "https://vote.nyc/page/election-results-summary",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "One 'Recap' + one 'EDLevel' PDF per contest, foldered by election date under /sites/default/files/pdf/election_results/. Live results only in enr.boenyc.gov. NO machine-readable results anywhere. The flagship gap."
+    },
+    {
+      "name": "Candidates",
+      "type": "PDF listings",
+      "entity": "Candidate",
+      "url": "https://vote.nyc/page/candidates",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Candidate lists / announcements as PDFs. No dataset. Who's-running has no API."
+    },
+    {
+      "name": "Contests / Ballot",
+      "type": "PDF contest lists",
+      "entity": "Contest",
+      "url": "https://vote.nyc/important-notices/june-23-2026-primary-election-contest-list",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Per-election contest lists + random-draw ballot positions as PDFs. What's-on-my-ballot has no API."
+    },
+    {
+      "name": "Elections / Important Dates",
+      "type": "calendar + notices (PDF)",
+      "entity": "Election",
+      "url": "https://vote.nyc/page/all-important-dates",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Election calendar + petition/certificate filing calendars as PDFs."
+    },
+    {
+      "name": "Ballot Request / Tracking",
+      "type": "transactional app",
+      "entity": "BallotRequest",
+      "url": "https://requestballot.vote.nyc/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Absentee/mail-ballot request + tracking. Separate app, no public API. The net-new write surface."
+    }
+  ]
+}

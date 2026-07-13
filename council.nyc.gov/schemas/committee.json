@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/schemas/committee.json",
+  "title": "Committee",
+  "description": "A NYC Council committee, subcommittee, or caucus. Canonical schema reconciling the WordPress custom types nycc_committee (40) and nycc_caucus (9) on council.nyc.gov, Legistar 'bodies', and the 'City Council Committee Membership' Open Data dataset (aabe-yfm9).",
+  "type": "object",
+  "x-source": {
+    "website": "https://council.nyc.gov/committees/",
+    "legistar": "https://webapi.legistar.com/v1/nyc/bodies",
+    "opendata": "https://data.cityofnewyork.us/d/aabe-yfm9"
+  },
+  "properties": {
+    "id": { "type": "string", "description": "Committee id (Legistar BodyId or WP slug)." },
+    "name": { "type": "string" },
+    "type": { "type": "string", "enum": ["Committee", "Subcommittee", "Caucus", "Task Force", "Commission"] },
+    "description": { "type": ["string", "null"] },
+    "chair": { "$ref": "_common.json#/$defs/MemberReference" },
+    "members": {
+      "type": "array",
+      "items": { "$ref": "_common.json#/$defs/MemberReference" }
+    },
+    "jurisdiction": { "type": ["string", "null"], "description": "Policy areas the committee oversees." },
+    "url": { "type": ["string", "null"], "format": "uri" }
+  },
+  "required": ["name", "type"],
+  "additionalProperties": false
+}

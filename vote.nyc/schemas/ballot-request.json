@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/schemas/ballot-request.json",
+  "title": "BallotRequest",
+  "description": "A request for an absentee / mail-in ballot, with tracking. NET-NEW object — today this is a separate app (requestballot.vote.nyc + /tracking) with no public API. This models the request + tracking as a first-class read/write resource: the transactional write surface for this domain, analogous to Parks permits and DOE enrollment.",
+  "type": "object",
+  "x-source": { "website": "https://requestballot.vote.nyc/", "opendata": null },
+  "properties": {
+    "requestId": { "type": "string", "readOnly": true },
+    "election": { "$ref": "_common.json#/$defs/ElectionReference" },
+    "reason": {
+      "type": "string",
+      "description": "Statutory reason for the absentee/mail ballot.",
+      "enum": ["Absence", "Illness/Disability", "Caregiver", "Detention", "Nursing Home/Facility", "Other"]
+    },
+    "voter": {
+      "type": "object",
+      "properties": {
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "dateOfBirth": { "type": "string", "format": "date" },
+        "registeredAddress": { "type": "string" },
+        "mailingAddress": { "type": ["string", "null"], "description": "If the ballot should go elsewhere." },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] }
+      },
+      "required": ["firstName", "lastName", "dateOfBirth", "registeredAddress"],
+      "additionalProperties": false
+    },
+    "deliveryMethod": { "type": "string", "enum": ["mail", "email", "in-person"], "default": "mail" },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "submitted", "accepted", "ballot-mailed", "ballot-received-by-voter", "returned", "counted", "rejected"],
+      "default": "draft"
+    },
+    "tracking": {
+      "type": ["object", "null"],
+      "description": "Ballot tracking milestones (from requestballot.vote.nyc/tracking).",
+      "properties": {
+        "mailedAt": { "type": ["string", "null"], "format": "date" },
+        "returnedAt": { "type": ["string", "null"], "format": "date" },
+        "countedAt": { "type": ["string", "null"], "format": "date" }
+      },
+      "additionalProperties": false
+    },
+    "submittedAt": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["election", "reason", "voter"],
+  "additionalProperties": false
+}

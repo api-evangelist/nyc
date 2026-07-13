@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycgovparks.org/schemas/capital-project.json",
+  "title": "CapitalProject",
+  "description": "A NYC Parks capital construction/reconstruction project. Canonical schema reconciling the /planning-and-building/capital-project-tracker page (columns Project, Location, Phase) with the 'Capital Project Tracker' Open Data dataset (4hcv-tc5r, 29 columns). Each project moves through Design → Procurement → Construction phases, each with start/projected/adjusted/actual dates and a percent-complete.",
+  "type": "object",
+  "x-source": {
+    "website": "https://www.nycgovparks.org/planning-and-building/capital-project-tracker",
+    "opendata": "https://data.cityofnewyork.us/d/4hcv-tc5r"
+  },
+  "properties": {
+    "trackerId": { "type": ["integer", "string"], "description": "Capital Project Tracker id (TrackerID)." },
+    "fmsId": { "type": ["string", "null"], "description": "Financial Management System id (FMSID)." },
+    "title": { "type": "string", "description": "Project title (Title)." },
+    "name": { "type": ["string", "null"], "description": "Short project name (name)." },
+    "summary": { "type": ["string", "null"], "description": "Project summary/scope (Summary)." },
+    "park": { "$ref": "_common.json#/$defs/ParkReference" },
+    "parkId": { "type": ["string", "null"], "description": "Associated park id (ParkID)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "currentPhase": {
+      "type": ["string", "null"],
+      "description": "Current lifecycle phase (CurrentPhase).",
+      "enum": ["Design", "Procurement", "Construction", "Completed", "On Hold", null]
+    },
+    "fundingSource": { "type": ["string", "null"], "description": "Funding source (FundingSource)." },
+    "totalFunding": { "type": ["string", "null"], "description": "Total funding amount (TotalFunding; published as a formatted string)." },
+    "phases": {
+      "type": "object",
+      "description": "Per-phase schedule and progress.",
+      "properties": {
+        "design": { "$ref": "#/$defs/PhaseProgress" },
+        "procurement": { "$ref": "#/$defs/PhaseProgress" },
+        "construction": { "$ref": "#/$defs/PhaseProgress" }
+      },
+      "additionalProperties": false
+    },
+    "projectLiaison": { "type": ["string", "null"], "description": "Project liaison contact (ProjectLiaison)." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "lastUpdated": { "type": ["string", "null"], "format": "date", "description": "Record last-updated date (LastUpdated)." }
+  },
+  "required": ["trackerId", "title"],
+  "additionalProperties": false,
+  "$defs": {
+    "PhaseProgress": {
+      "type": "object",
+      "properties": {
+        "start": { "type": ["string", "null"], "format": "date" },
+        "projectedCompletion": { "type": ["string", "null"], "format": "date" },
+        "adjustedCompletion": { "type": ["string", "null"], "format": "date" },
+        "actualCompletion": { "type": ["string", "null"], "format": "date" },
+        "percentComplete": { "type": ["number", "null"], "minimum": 0, "maximum": 100 }
+      },
+      "additionalProperties": false
+    }
+  }
+}

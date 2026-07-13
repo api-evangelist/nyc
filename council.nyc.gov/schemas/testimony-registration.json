@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/schemas/testimony-registration.json",
+  "title": "TestimonyRegistration",
+  "description": "A registration to testify (speak or submit written testimony) at a NYC Council hearing. NET-NEW object — public testimony sign-up is a transactional civic workflow with NO API today (the legislative record is well-covered by Legistar/Open Data, but participation is not). Modeled as a first-class read/write resource: the one net-new write surface for this domain, analogous to Parks permits and DOE enrollment.",
+  "type": "object",
+  "x-source": { "website": "https://council.nyc.gov/testimony/", "opendata": null, "note": "No existing dataset or API; proposed canonical resource." },
+  "properties": {
+    "registrationId": { "type": "string", "readOnly": true },
+    "meetingEventId": { "type": "string", "description": "The hearing to testify at (references meeting.json)." },
+    "matterFileNumber": { "type": ["string", "null"], "description": "Specific legislation the testimony concerns (references legislation.json)." },
+    "mode": { "type": "string", "enum": ["in-person", "remote", "written-only"] },
+    "position": { "type": ["string", "null"], "enum": ["support", "oppose", "neutral", null] },
+    "registrant": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "organization": { "type": ["string", "null"] },
+        "councilDistrict": { "type": ["integer", "null"] },
+        "zipCode": { "type": ["string", "null"] }
+      },
+      "required": ["name", "email"],
+      "additionalProperties": false
+    },
+    "writtenTestimony": {
+      "type": ["object", "null"],
+      "properties": {
+        "text": { "type": ["string", "null"] },
+        "documentUrl": { "type": ["string", "null"], "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "submitted", "confirmed", "waitlisted", "cancelled", "heard"],
+      "default": "draft"
+    },
+    "submittedAt": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["meetingEventId", "mode", "registrant"],
+  "additionalProperties": false
+}

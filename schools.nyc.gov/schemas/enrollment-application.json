@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/schools.nyc.gov/schemas/enrollment-application.json",
+  "title": "EnrollmentApplication",
+  "description": "A NYC Public Schools admissions/enrollment application (the MySchools workflow). NET-NEW object — MySchools is a login-gated transactional app with NO machine-readable or Open Data equivalent (Open Data has school directories, not applications). This models the family-facing application as a first-class read/write API resource: the highest-value modernization target for this domain, analogous to Parks PermitApplication.",
+  "type": "object",
+  "x-source": { "website": "https://www.myschools.nyc/", "opendata": null, "note": "No existing dataset or API; proposed canonical resource." },
+  "properties": {
+    "applicationId": { "type": "string", "readOnly": true },
+    "admissionsProcess": {
+      "type": "string",
+      "description": "Which admissions round this application is for.",
+      "enum": ["3K", "PreK", "Kindergarten", "Gifted-and-Talented", "Middle School", "High School", "Specialized High School", "Charter"]
+    },
+    "schoolYear": { "type": "string", "description": "Target school year, e.g. '2026-2027'." },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "submitted", "under-review", "offer-made", "offer-accepted", "offer-declined", "waitlisted", "not-matched", "withdrawn"],
+      "default": "draft"
+    },
+    "student": {
+      "type": "object",
+      "properties": {
+        "studentId": { "type": ["string", "null"], "description": "OSIS / student id if enrolled." },
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "dateOfBirth": { "type": "string", "format": "date" },
+        "currentGrade": { "$ref": "_common.json#/$defs/GradeLevel" },
+        "currentSchoolDbn": { "$ref": "_common.json#/$defs/DBN" }
+      },
+      "required": ["firstName", "lastName", "dateOfBirth"],
+      "additionalProperties": false
+    },
+    "guardian": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "address": { "type": ["string", "null"] },
+        "relationship": { "type": ["string", "null"] }
+      },
+      "required": ["name", "email"],
+      "additionalProperties": false
+    },
+    "choices": {
+      "type": "array",
+      "description": "Ranked school/program choices.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rank": { "type": "integer", "minimum": 1 },
+          "dbn": { "$ref": "_common.json#/$defs/DBN" },
+          "programCode": { "type": ["string", "null"] }
+        },
+        "required": ["rank", "dbn"],
+        "additionalProperties": false
+      }
+    },
+    "offer": {
+      "type": ["object", "null"],
+      "description": "The matched offer once decisions are released.",
+      "properties": {
+        "dbn": { "$ref": "_common.json#/$defs/DBN" },
+        "programCode": { "type": ["string", "null"] },
+        "offeredAt": { "type": ["string", "null"], "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "submittedAt": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "decisionAt": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["admissionsProcess", "schoolYear", "student", "guardian"],
+  "additionalProperties": false
+}

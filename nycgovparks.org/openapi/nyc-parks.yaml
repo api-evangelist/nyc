@@ -1,0 +1,474 @@
+openapi: 3.1.0
+info:
+  title: NYC Parks API (proposed)
+  version: 0.1.0
+  summary: A resource-oriented API unifying NYC Parks data that today is split between HTML on nycgovparks.org and per-dataset endpoints on NYC Open Data.
+  description: >-
+    Proposed API-first surface for the NYC Department of Parks & Recreation, produced by the
+    NYC Modernization low-hanging-fruit assessment of nycgovparks.org.
+
+
+    This is deliberately NOT another data-liberation dump (2010–2018 already did that via Socrata;
+    it only partially worked). It is a **productized, resource-oriented API** that: (1) unifies the
+    ~237 existing DPR Open Data assets behind coherent resources (Park → its facilities → events →
+    monuments → trees → capital projects), and (2) adds the missing **PermitApplication** write API —
+    the one high-value workflow that has no machine-readable surface today.
+
+
+    Every resource schema is an individual JSON Schema file referenced here by `$ref`. See
+    `../schemas/` and the crosswalk in `../crosswalk.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+  license:
+    name: Reference / research artifact
+servers:
+  - url: https://api.parks.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Parks
+    description: Park properties — the root entity.
+  - name: Facilities
+    description: Courts, fields, pools, playgrounds, dog runs, restrooms and other in-park facilities.
+  - name: Events
+    description: Public events and programs.
+  - name: Monuments
+    description: Monuments, public art, and historical signs.
+  - name: Trees
+    description: Street and park trees (tree census).
+  - name: Capital Projects
+    description: Capital construction/reconstruction projects.
+  - name: Permits
+    description: Permit applications (read + write). The net-new modernization surface.
+
+paths:
+  /parks:
+    get:
+      operationId: listParks
+      summary: List / search park properties
+      tags: [Parks]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of parks.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '../schemas/park.json' }
+  /parks/{gisPropNum}:
+    get:
+      operationId: getPark
+      summary: Get a single park by GIS property number
+      tags: [Parks]
+      parameters:
+        - $ref: '#/components/parameters/gisPropNum'
+      responses:
+        '200':
+          description: The park.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/park.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /parks/{gisPropNum}/facilities:
+    get:
+      operationId: listParkFacilities
+      summary: List facilities within a park
+      tags: [Parks, Facilities]
+      parameters:
+        - $ref: '#/components/parameters/gisPropNum'
+        - $ref: '#/components/parameters/facilityType'
+      responses:
+        '200':
+          description: Facilities in the park.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '../schemas/facility.json' }
+
+  /facilities:
+    get:
+      operationId: listFacilities
+      summary: List / search facilities citywide
+      tags: [Facilities]
+      parameters:
+        - $ref: '#/components/parameters/facilityType'
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of facilities.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '../schemas/facility.json' }
+  /facilities/{id}:
+    get:
+      operationId: getFacility
+      summary: Get a facility
+      tags: [Facilities]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The facility.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/facility.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /events:
+    get:
+      operationId: listEvents
+      summary: List / search events
+      tags: [Events]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - name: category
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of events.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '../schemas/event.json' }
+  /events/{eventId}:
+    get:
+      operationId: getEvent
+      summary: Get an event
+      tags: [Events]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The event.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/event.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /monuments:
+    get:
+      operationId: listMonuments
+      summary: List / search monuments and historical signs
+      tags: [Monuments]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of monuments.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '../schemas/monument.json' }
+  /monuments/{id}:
+    get:
+      operationId: getMonument
+      summary: Get a monument
+      tags: [Monuments]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The monument.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/monument.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /trees:
+    get:
+      operationId: listTrees
+      summary: List / search trees (tree census)
+      tags: [Trees]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: species
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [Alive, Dead, Stump] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of trees.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '../schemas/tree.json' }
+  /trees/{treeId}:
+    get:
+      operationId: getTree
+      summary: Get a tree
+      tags: [Trees]
+      parameters:
+        - name: treeId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The tree.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/tree.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /capital-projects:
+    get:
+      operationId: listCapitalProjects
+      summary: List / search capital projects
+      tags: [Capital Projects]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: phase
+          in: query
+          schema: { type: string, enum: [Design, Procurement, Construction, Completed, On Hold] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of capital projects.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '../schemas/capital-project.json' }
+  /capital-projects/{trackerId}:
+    get:
+      operationId: getCapitalProject
+      summary: Get a capital project
+      tags: [Capital Projects]
+      parameters:
+        - name: trackerId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The capital project.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/capital-project.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /permit-applications:
+    get:
+      operationId: listPermitApplications
+      summary: List the authenticated applicant's permit applications
+      tags: [Permits]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: permitType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of permit applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: '../schemas/permit-application.json' }
+    post:
+      operationId: createPermitApplication
+      summary: Submit a new permit application
+      description: The net-new write surface — replaces the login-gated HTML permit forms.
+      tags: [Permits]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/permit-application.json' }
+      responses:
+        '201':
+          description: Application created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/permit-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /permit-applications/{applicationId}:
+    get:
+      operationId: getPermitApplication
+      summary: Get a permit application
+      tags: [Permits]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The permit application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/permit-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      operationId: updatePermitApplication
+      summary: Update or withdraw a draft/submitted application
+      tags: [Permits]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/permit-application.json' }
+      responses:
+        '200':
+          description: Updated application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/permit-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Park: { $ref: '../schemas/park.json' }
+    Facility: { $ref: '../schemas/facility.json' }
+    Event: { $ref: '../schemas/event.json' }
+    Monument: { $ref: '../schemas/monument.json' }
+    Tree: { $ref: '../schemas/tree.json' }
+    CapitalProject: { $ref: '../schemas/capital-project.json' }
+    PermitApplication: { $ref: '../schemas/permit-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Bronx, Brooklyn, Manhattan, Queens, Staten Island] }
+    facilityType:
+      name: type
+      in: query
+      description: Facility type slug (see facility.json enum).
+      schema: { type: string }
+    gisPropNum:
+      name: gisPropNum
+      in: path
+      required: true
+      schema: { type: string }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

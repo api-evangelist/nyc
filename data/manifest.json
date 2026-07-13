@@ -1,0 +1,1445 @@
+{
+ "project": {
+  "title": "NYC \u2014 API & Agent Modernization",
+  "site": "nyc.apievangelist.com",
+  "repo": "https://github.com/api-evangelist/nyc",
+  "tagline": "Mapping the digital surface of New York City government and turning it into an API-first, agent-native layer \u2014 one JSON Schema per object, an OpenAPI that $refs them, and an MCP server per domain."
+ },
+ "thesis": {
+  "heading": "Not another data-liberation project",
+  "body": "From 2010\u20132018 the open-data movement (Socrata, Obama-era directives, NYC's Open Data law) pushed cities to publish data. It only partially worked: data got published but stayed disconnected from the front door, read-only, unproductized, and not agent-ready. This project is step two \u2014 unify what exists behind resource-oriented APIs, complete the missing write workflows, and expose it all through MCP so agents are first-class consumers. Make the city programmable."
+ },
+ "method": [
+  {
+   "n": 1,
+   "t": "Low-hanging-fruit assessment",
+   "d": "Outside-in crawl; index every table, form, and data file as name \u00b7 type \u00b7 URL \u00b7 entity."
+  },
+  {
+   "n": 2,
+   "t": "Technology & vendor inventory",
+   "d": "Fingerprint the CMS, hosting, CDN, analytics, and any outsourced capabilities."
+  },
+  {
+   "n": 3,
+   "t": "APIs-observed inventory",
+   "d": "Document every backend/service API the site calls while crawling."
+  },
+  {
+   "n": 4,
+   "t": "Open Data crosswalk",
+   "d": "Match each resource to existing data.cityofnewyork.us datasets; separate gaps from disconnects."
+  },
+  {
+   "n": 5,
+   "t": "JSON Schema per object",
+   "d": "One canonical schema file per entity, reconciling website columns with Open Data schemas."
+  },
+  {
+   "n": 6,
+   "t": "OpenAPI",
+   "d": "A resource-oriented contract that $refs each object schema; reads over unified data, writes for missing workflows."
+  },
+  {
+   "n": 7,
+   "t": "MCP",
+   "d": "Expose the same resources as agent tools (design artifact, not a deployment)."
+  }
+ ],
+ "inventory": {
+  "count": 85,
+  "doc": "domains.md",
+  "note": "Distinct registrable domains/subdomains catalogued; the true surface is larger (~100 agencies mostly under nyc.gov/site/* paths, plus hundreds of aNNN-*.nyc.gov app hosts)."
+ },
+ "domains": [
+  {
+   "id": "nycgovparks.org",
+   "agency": "New York City Department of Parks & Recreation (NYC Parks)",
+   "short": "NYC Parks & Recreation",
+   "verb": "Replatform",
+   "platform": "Smarty 2.6.2 / jQuery (legacy PHP)",
+   "tagline": "Data-rich but rendered as HTML; a legacy delivery layer with one modern island (the Next.js Tree Map). Modernize by replatforming behind a resource API.",
+   "accent": "#3098d8",
+   "netnew": "PermitApplication",
+   "findings": [
+    "Rich structured data is published as HTML tables, div-based record listings, and PDFs.",
+    "ZERO machine-readable downloads (CSV, XLS, XLSX, XML, JSON, GeoJSON) were found linked anywhere on the domain during sampling.",
+    "The sitemap.xml declared in robots.txt returns the 404 page (broken sitemap).",
+    "Legacy backends surface directly in URLs (e.g. .php endpoints under /sub_your_park/).",
+    "There is no developer/API/open-data page on the domain; the interactive Tree Map (tree-map.nycgovparks.org) is the only app-like data surface."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "Tree Map data API (/cdn/tree, tree-map.nycgovparks.org)",
+     "type": "internal JSON/REST",
+     "owner": "NYC Parks",
+     "public": false,
+     "note": "Next.js app backend; ~650k trees; undocumented."
+    },
+    {
+     "endpoint": "/search (www.nycgovparks.org)",
+     "type": "internal site search",
+     "owner": "NYC Parks",
+     "public": "query",
+     "note": "Self-hosted; no vendor (unlike DOE HawkSearch)."
+    },
+    {
+     "endpoint": "/sub_your_park/historical_signs/hs_with_monument.php",
+     "type": "legacy PHP data endpoint",
+     "owner": "NYC Parks",
+     "public": "html",
+     "note": "Historical Signs/Monuments backend."
+    },
+    {
+     "endpoint": "res.cloudinary.com",
+     "type": "image API",
+     "owner": "Cloudinary",
+     "public": "assets",
+     "note": "image delivery/transform."
+    },
+    {
+     "endpoint": "a858-nycnotify.nyc.gov",
+     "type": "notification integration",
+     "owner": "NYC (Notify NYC)",
+     "public": "integration",
+     "note": "alerts."
+    },
+    {
+     "endpoint": "translate.google.com",
+     "type": "translation API",
+     "owner": "Google",
+     "public": "widget",
+     "note": "page translation."
+    },
+    {
+     "endpoint": "cloudfront.loggly.com",
+     "type": "logging API",
+     "owner": "Loggly",
+     "public": false,
+     "note": "Tree Map telemetry."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC/Socrata",
+     "public": true,
+     "note": "237 DPR assets; disconnected from site."
+    }
+   ],
+   "counts": {
+    "fruit": 59,
+    "opendata": 237,
+    "schemas": 7,
+    "openapiOps": 17,
+    "mcpTools": 15,
+    "entities": 59
+   },
+   "entities": [
+    "Park",
+    "Facility",
+    "Facility:Tennis",
+    "Facility:RecreationCenter",
+    "Facility:Handball",
+    "Facility:DogArea",
+    "Facility:OutdoorPool",
+    "Facility:Barbecue",
+    "Facility:Baseball",
+    "Facility:Basketball",
+    "Facility:Beach",
+    "Facility:Bikeway",
+    "Facility:Boating",
+    "Facility:Bocce",
+    "Facility:Cricket",
+    "Facility:Fishing",
+    "Facility:FitnessEquipment",
+    "Facility:Food",
+    "Facility:Football",
+    "Facility:Golf",
+    "Facility:GreatTree",
+    "Facility:HikingTrail",
+    "Facility:HistoricHouse",
+    "Facility:Hockey",
+    "Facility:Horseback",
+    "Facility:IceSkating",
+    "Facility:IndoorPool",
+    "Facility:Kayak",
+    "Facility:MediaLab",
+    "Facility:ModelAircraft",
+    "Facility:NatureCenter",
+    "Facility:Pickleball",
+    "Facility:Playground",
+    "Facility:Restroom",
+    "Facility:Rowboat",
+    "Facility:RunningTrack",
+    "Facility:SkatePark",
+    "Facility:Soccer",
+    "Facility:SprayShower",
+    "Facility:Volleyball",
+    "Facility:WaterFountain",
+    "Facility:WiFi",
+    "Facility:Zoo",
+    "CapitalProject",
+    "Event",
+    "HistoricalSign",
+    "Tree",
+    "Rule",
+    "PermitApplication:FieldAndCourt",
+    "PermitApplication:Tennis",
+    "PermitApplication:FilmPhoto",
+    "PermitApplication:MetalDetector",
+    "PermitApplication:SummerDayCamp",
+    "PermitApplication:Research",
+    "PermitApplication:BoatingMarinas",
+    "PermitApplication:FarmersMarket",
+    "PermitApplication:Construction",
+    "PermitApplication:TreeWork",
+    "n/a"
+   ],
+   "files": {
+    "fruit": "nycgovparks.org/fruit.json",
+    "opendata": "nycgovparks.org/opendata-parks.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-parks.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/nyc-parks.yaml",
+    "mcp": "mcp/nyc-parks-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Parks \u2014 Shared Definitions",
+     "shared": true
+    },
+    {
+     "file": "schemas/capital-project.json",
+     "title": "CapitalProject",
+     "desc": "A NYC Parks capital construction/reconstruction project. Canonical schema reconciling the /planning-and-building/capital-project-tracker pag"
+    },
+    {
+     "file": "schemas/event.json",
+     "title": "Event",
+     "desc": "A public event or program at a NYC park. Canonical schema reconciling the /events calendar on nycgovparks.org with the normalized 'NYC Parks"
+    },
+    {
+     "file": "schemas/facility.json",
+     "title": "Facility",
+     "desc": "A recreational facility within a park (court, field, pool, playground, dog run, restroom, etc.). Canonical schema reconciling the ~42 /facil"
+    },
+    {
+     "file": "schemas/monument.json",
+     "title": "Monument",
+     "desc": "A monument, public artwork, or historical marker in the NYC parks system (the 'Historical Signs' database on the website). Canonical schema "
+    },
+    {
+     "file": "schemas/park.json",
+     "title": "Park",
+     "desc": "A NYC Parks property. Canonical schema reconciling the /parks directory on nycgovparks.org with the 'Parks Properties' Open Data dataset (en"
+    },
+    {
+     "file": "schemas/permit-application.json",
+     "title": "PermitApplication",
+     "desc": "An application for a NYC Parks permit. NET-NEW object \u2014 the ~10 permit workflows on nycgovparks.org are login-gated HTML forms with NO machi"
+    },
+    {
+     "file": "schemas/tree.json",
+     "title": "Tree",
+     "desc": "A street or park tree. Canonical schema reconciling the interactive NYC Tree Map (tree-map.nycgovparks.org) with the '2015 Street Tree Censu"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/parks",
+     "op": "listParks",
+     "summary": "List / search park properties",
+     "tags": [
+      "Parks"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/parks/{gisPropNum}",
+     "op": "getPark",
+     "summary": "Get a single park by GIS property number",
+     "tags": [
+      "Parks"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/parks/{gisPropNum}/facilities",
+     "op": "listParkFacilities",
+     "summary": "List facilities within a park",
+     "tags": [
+      "Parks",
+      "Facilities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/facilities",
+     "op": "listFacilities",
+     "summary": "List / search facilities citywide",
+     "tags": [
+      "Facilities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/facilities/{id}",
+     "op": "getFacility",
+     "summary": "Get a facility",
+     "tags": [
+      "Facilities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/events",
+     "op": "listEvents",
+     "summary": "List / search events",
+     "tags": [
+      "Events"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/events/{eventId}",
+     "op": "getEvent",
+     "summary": "Get an event",
+     "tags": [
+      "Events"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/monuments",
+     "op": "listMonuments",
+     "summary": "List / search monuments and historical signs",
+     "tags": [
+      "Monuments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/monuments/{id}",
+     "op": "getMonument",
+     "summary": "Get a monument",
+     "tags": [
+      "Monuments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/trees",
+     "op": "listTrees",
+     "summary": "List / search trees (tree census)",
+     "tags": [
+      "Trees"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/trees/{treeId}",
+     "op": "getTree",
+     "summary": "Get a tree",
+     "tags": [
+      "Trees"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/capital-projects",
+     "op": "listCapitalProjects",
+     "summary": "List / search capital projects",
+     "tags": [
+      "Capital Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/capital-projects/{trackerId}",
+     "op": "getCapitalProject",
+     "summary": "Get a capital project",
+     "tags": [
+      "Capital Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/permit-applications",
+     "op": "listPermitApplications",
+     "summary": "List the authenticated applicant's permit applications",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/permit-applications",
+     "op": "createPermitApplication",
+     "summary": "Submit a new permit application",
+     "tags": [
+      "Permits"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/permit-applications/{applicationId}",
+     "op": "getPermitApplication",
+     "summary": "Get a permit application",
+     "tags": [
+      "Permits"
+     ],
+     "write": false
+    },
+    {
+     "method": "PATCH",
+     "path": "/permit-applications/{applicationId}",
+     "op": "updatePermitApplication",
+     "summary": "Update or withdraw a draft/submitted application",
+     "tags": [
+      "Permits"
+     ],
+     "write": true
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_parks",
+     "title": "Find Parks",
+     "desc": "Search NYC park properties by borough and/or free text. Returns a page of parks.",
+     "write": false
+    },
+    {
+     "name": "get_park",
+     "title": "Get Park",
+     "desc": "Fetch a single park by its GIS property number (gisPropNum).",
+     "write": false
+    },
+    {
+     "name": "list_park_facilities",
+     "title": "List Park Facilities",
+     "desc": "List the facilities (courts, fields, pools, playgrounds, dog runs, restrooms, etc.) within a given park, optionally filtered by facility type.",
+     "write": false
+    },
+    {
+     "name": "find_facilities",
+     "title": "Find Facilities",
+     "desc": "Search recreational facilities citywide by type (e.g. tennis, basketball, dog-area, outdoor-pool), borough, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "find_events",
+     "title": "Find Events",
+     "desc": "Search public park events and programs by borough, date range, and/or category.",
+     "write": false
+    },
+    {
+     "name": "get_event",
+     "title": "Get Event",
+     "desc": "Fetch a single event by id.",
+     "write": false
+    },
+    {
+     "name": "find_monuments",
+     "title": "Find Monuments",
+     "desc": "Search monuments, public art, and historical signs by borough and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_monument",
+     "title": "Get Monument",
+     "desc": "Fetch a single monument / historical sign by id.",
+     "write": false
+    },
+    {
+     "name": "find_trees",
+     "title": "Find Trees",
+     "desc": "Search the street/park tree census by borough, species, and/or status (Alive/Dead/Stump).",
+     "write": false
+    },
+    {
+     "name": "find_capital_projects",
+     "title": "Find Capital Projects",
+     "desc": "Search NYC Parks capital construction projects by borough and/or phase (Design, Procurement, Construction, Completed).",
+     "write": false
+    },
+    {
+     "name": "get_capital_project",
+     "title": "Get Capital Project",
+     "desc": "Fetch a single capital project by tracker id.",
+     "write": false
+    },
+    {
+     "name": "submit_permit_application",
+     "title": "Submit Permit Application",
+     "desc": "Submit a new NYC Parks permit application (field-and-court, tennis, special-event, film-photo, research, etc.). NET-NEW workflow with no equivalent today. Requi",
+     "write": true
+    },
+    {
+     "name": "check_permit_status",
+     "title": "Check Permit Status",
+     "desc": "Fetch the status and details of a permit application by id (draft, submitted, under-review, approved, denied, issued...).",
+     "write": false
+    },
+    {
+     "name": "list_permit_applications",
+     "title": "List My Permit Applications",
+     "desc": "List the authenticated applicant's permit applications, optionally filtered by status or type.",
+     "write": false
+    },
+    {
+     "name": "update_permit_application",
+     "title": "Update Permit Application",
+     "desc": "Update or withdraw a draft/submitted permit application. Requires an authenticated applicant. Mutates state \u2014 confirm with the user first.",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "schools.nyc.gov",
+   "agency": "New York City Public Schools (NYCPS / Department of Education, DOE)",
+   "short": "NYC Public Schools (DOE)",
+   "verb": "Reclaim",
+   "platform": "Progress Sitefinity (.NET)",
+   "tagline": "638 Open Data assets, yet search is rented to a vendor (HawkSearch) and the backend is hidden behind an internal API. Modernize by reclaiming those capabilities.",
+   "accent": "#e0803a",
+   "netnew": "EnrollmentApplication",
+   "findings": [
+    "3,343 individual school pages (per the sitemap) form the school directory \u2014 each a structured School record rendered client-side.",
+    "On-domain the data is NOT machine-readable; but NYC Open Data has 638 DOE assets including 462-column High School Directories, School Locations, and Demographic Snapshots.",
+    "Site search / 'Find a School' is outsourced to a vendor (HawkSearch) \u2014 DOE does not own a public school-search API.",
+    "School pages are driven by an internal /CustomApi/* backend that is robots-disallowed, undocumented, and not public.",
+    "The enrollment/application workflow (MySchools) is transactional and has no Open Data twin \u2014 the net-new API opportunity, analogous to Parks permits.",
+    "See tech-stack.md and apis-observed.md for the vendor and backend-API inventory."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "lusearchapi-na.hawksearch.com/sites/nycdoe",
+     "type": "vendor search API",
+     "owner": "HawkSearch",
+     "public": false,
+     "note": "Powers Find-a-School and site search."
+    },
+    {
+     "endpoint": "/CustomApi/* (www.schools.nyc.gov)",
+     "type": "internal REST",
+     "owner": "DOE (Sitefinity)",
+     "public": false,
+     "note": "robots-disallowed; drives page/school data."
+    },
+    {
+     "endpoint": "pwsblobprd.schools.nyc/prd-pws/*",
+     "type": "blob storage REST",
+     "owner": "DOE (Azure)",
+     "public": "assets",
+     "note": "images/docs."
+    },
+    {
+     "endpoint": "js.arcgis.com + Esri",
+     "type": "mapping API",
+     "owner": "Esri",
+     "public": false,
+     "note": "school locator maps."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC/Socrata",
+     "public": true,
+     "note": "per-dataset; disconnected from site."
+    },
+    {
+     "endpoint": "pwsauth.nycenet.edu",
+     "type": "auth/OAuth",
+     "owner": "DOE (NYC Schools Account)",
+     "public": "login",
+     "note": "identity."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 638,
+    "schemas": 5,
+    "openapiOps": 11,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "School",
+    "CalendarEvent",
+    "EnrollmentApplication",
+    "SchoolQualityReport",
+    "SchoolDemographics",
+    "TestResult"
+   ],
+   "files": {
+    "fruit": "schools.nyc.gov/fruit.json",
+    "opendata": "schools.nyc.gov/opendata-doe.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-doe.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/nyc-schools.yaml",
+    "mcp": "mcp/nyc-schools-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Public Schools \u2014 Shared Definitions",
+     "shared": true
+    },
+    {
+     "file": "schemas/calendar-event.json",
+     "title": "CalendarEvent",
+     "desc": "A NYC public schools calendar event \u2014 holiday, recess, no-school day, professional development day, or first/last day. Modeled from the /cal"
+    },
+    {
+     "file": "schemas/enrollment-application.json",
+     "title": "EnrollmentApplication",
+     "desc": "A NYC Public Schools admissions/enrollment application (the MySchools workflow). NET-NEW object \u2014 MySchools is a login-gated transactional a"
+    },
+    {
+     "file": "schemas/school-demographics.json",
+     "title": "SchoolDemographics",
+     "desc": "Enrollment and demographic breakdown for a school in a given year. Canonical schema reconciling the per-school demographics on schools.nyc.g"
+    },
+    {
+     "file": "schemas/school.json",
+     "title": "School",
+     "desc": "A NYC public school. Canonical schema reconciling the /schools/<LocationCode> directory pages on schools.nyc.gov with the DOE Open Data 'Sch"
+    },
+    {
+     "file": "schemas/test-result.json",
+     "title": "TestResult",
+     "desc": "A school-level assessment result. Canonical schema generalizing the DOE Open Data assessment datasets (SAT, AP, Regents, State ELA/Math, Spe"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/schools",
+     "op": "listSchools",
+     "summary": "List / search schools",
+     "tags": [
+      "Schools"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/schools/{dbn}",
+     "op": "getSchool",
+     "summary": "Get a school by DBN",
+     "tags": [
+      "Schools"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/schools/{dbn}/demographics",
+     "op": "getSchoolDemographics",
+     "summary": "Get demographic snapshots for a school",
+     "tags": [
+      "Schools",
+      "Demographics"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/schools/{dbn}/test-results",
+     "op": "getSchoolTestResults",
+     "summary": "Get assessment results for a school",
+     "tags": [
+      "Schools",
+      "Assessments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/demographics",
+     "op": "listDemographics",
+     "summary": "Query demographic snapshots across schools",
+     "tags": [
+      "Demographics"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/test-results",
+     "op": "listTestResults",
+     "summary": "Query assessment results across schools",
+     "tags": [
+      "Assessments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/calendar-events",
+     "op": "listCalendarEvents",
+     "summary": "List school-year calendar events",
+     "tags": [
+      "Calendar"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/enrollment-applications",
+     "op": "listEnrollmentApplications",
+     "summary": "List the authenticated guardian's enrollment applications",
+     "tags": [
+      "Enrollment"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/enrollment-applications",
+     "op": "createEnrollmentApplication",
+     "summary": "Submit a new enrollment application",
+     "tags": [
+      "Enrollment"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/enrollment-applications/{applicationId}",
+     "op": "getEnrollmentApplication",
+     "summary": "Get an enrollment application (status, offer)",
+     "tags": [
+      "Enrollment"
+     ],
+     "write": false
+    },
+    {
+     "method": "PATCH",
+     "path": "/enrollment-applications/{applicationId}",
+     "op": "updateEnrollmentApplication",
+     "summary": "Update or withdraw a draft/submitted application (e.g. re-rank choices)",
+     "tags": [
+      "Enrollment"
+     ],
+     "write": true
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_schools",
+     "title": "Find Schools",
+     "desc": "Search NYC public schools by borough, district, school type, grade, and/or free text. Owned replacement for the HawkSearch-powered Find-a-School.",
+     "write": false
+    },
+    {
+     "name": "get_school",
+     "title": "Get School",
+     "desc": "Fetch a single school by DBN (District-Borough-Number, e.g. 15K261).",
+     "write": false
+    },
+    {
+     "name": "get_school_demographics",
+     "title": "Get School Demographics",
+     "desc": "Get demographic snapshots (enrollment by grade/race/gender/poverty/ELL/SWD, ENI) for a school, optionally by year.",
+     "write": false
+    },
+    {
+     "name": "get_school_test_results",
+     "title": "Get School Test Results",
+     "desc": "Get school-level assessment results (SAT, AP, Regents, SHSAT) for a school.",
+     "write": false
+    },
+    {
+     "name": "find_calendar_events",
+     "title": "Find Calendar Events",
+     "desc": "Look up NYC public schools calendar events (holidays, recesses, no-school days) by school year and/or date range.",
+     "write": false
+    },
+    {
+     "name": "submit_enrollment_application",
+     "title": "Submit Enrollment Application",
+     "desc": "Submit a new NYC schools admissions/enrollment application (3K, PreK, K, G&T, Middle, High School, Specialized). NET-NEW workflow (MySchools) with no equivalent",
+     "write": true
+    },
+    {
+     "name": "check_application_status",
+     "title": "Check Application Status",
+     "desc": "Fetch the status and offer of an enrollment application by id (draft, submitted, offer-made, waitlisted, not-matched...).",
+     "write": false
+    },
+    {
+     "name": "list_enrollment_applications",
+     "title": "List My Enrollment Applications",
+     "desc": "List the authenticated guardian's enrollment applications, optionally filtered by status or admissions process.",
+     "write": false
+    },
+    {
+     "name": "update_enrollment_application",
+     "title": "Update Enrollment Application",
+     "desc": "Update or withdraw a draft/submitted application (e.g. re-rank school choices). Requires an authenticated guardian. Mutates state \u2014 confirm with the user first.",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "council.nyc.gov",
+   "agency": "New York City Council (NYCC)",
+   "short": "NYC Council",
+   "verb": "Consolidate & Own",
+   "platform": "WordPress / WP Engine",
+   "tagline": "The most API-covered domain \u2014 three APIs (Legistar, WordPress REST, Open Data), none owned or unified. Modernize by consolidating them behind one owned contract.",
+   "accent": "#7a5cc0",
+   "netnew": "TestimonyRegistration",
+   "findings": [
+    "Council is the most API-covered domain so far: a vendor Legistar Web API (webapi.legistar.com/v1/nyc), an OPEN WordPress REST API (council.nyc.gov/wp-json), and 11 NYCC Open Data datasets.",
+    "Yet none is an owned, unified, agent-native NYC Council API \u2014 the legislative record depends on a Granicus-branded, access-gated vendor API (403 to our client).",
+    "51 district/member pages (/district-N/), 40 committees, 9 caucuses, 47 reports \u2014 content in WordPress; bills/hearings/votes in Legistar.",
+    "Open Data has Members, Legislation (Bills & Local Laws), Discretionary Funding, Participatory Budgeting, Meetings, Committee Membership \u2014 flattened snapshots disconnected from Legistar and the site.",
+    "See tech-stack.md and apis-observed.md for the vendor + API inventory."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "webapi.legistar.com/v1/nyc",
+     "type": "legislative REST/OData API",
+     "owner": "Granicus (Legistar)",
+     "public": "documented, 403 to our client",
+     "note": "bodies/matters/persons/events/votes; vendor-branded, access-gated."
+    },
+    {
+     "endpoint": "council.nyc.gov/wp-json (wp/v2)",
+     "type": "WordPress REST API",
+     "owner": "NYC Council",
+     "public": true,
+     "note": "open; content (posts/pages/media/nycc_feature), not legislative resources."
+    },
+    {
+     "endpoint": "legistar.council.nyc.gov",
+     "type": "legislation portal",
+     "owner": "Granicus",
+     "public": "html",
+     "note": "public bill/hearing/vote search UI."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC/Socrata",
+     "public": true,
+     "note": "11 NYCC datasets; flattened snapshots."
+    },
+    {
+     "endpoint": "CARTO/CartoDB",
+     "type": "maps API",
+     "owner": "CARTO",
+     "public": "vendor",
+     "note": "council district maps."
+    },
+    {
+     "endpoint": "councilnyc.viebit.com",
+     "type": "video API",
+     "owner": "Viebit",
+     "public": "vendor",
+     "note": "hearing video."
+    },
+    {
+     "endpoint": "streamtext.net",
+     "type": "captioning API",
+     "owner": "StreamText",
+     "public": "vendor",
+     "note": "live captions."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 11,
+    "schemas": 7,
+    "openapiOps": 15,
+    "mcpTools": 10,
+    "entities": 8
+   },
+   "entities": [
+    "CouncilMember",
+    "District",
+    "Committee",
+    "Legislation",
+    "Meeting",
+    "DiscretionaryFunding",
+    "Report",
+    "TestimonyRegistration"
+   ],
+   "files": {
+    "fruit": "council.nyc.gov/fruit.json",
+    "opendata": "council.nyc.gov/opendata-nycc.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-nycc.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/nyc-council.yaml",
+    "mcp": "mcp/nyc-council-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Council \u2014 Shared Definitions",
+     "shared": true
+    },
+    {
+     "file": "schemas/committee.json",
+     "title": "Committee",
+     "desc": "A NYC Council committee, subcommittee, or caucus. Canonical schema reconciling the WordPress custom types nycc_committee (40) and nycc_caucu"
+    },
+    {
+     "file": "schemas/council-member.json",
+     "title": "CouncilMember",
+     "desc": "A New York City Council member. Canonical schema reconciling the /district-N/ pages on council.nyc.gov (WordPress), Legistar 'persons', and "
+    },
+    {
+     "file": "schemas/discretionary-funding.json",
+     "title": "DiscretionaryFunding",
+     "desc": "A NYC Council discretionary funding award \u2014 a member-allocated grant to an organization. Canonical schema reconciling the 'City Council Disc"
+    },
+    {
+     "file": "schemas/district.json",
+     "title": "District",
+     "desc": "A New York City Council district (1\u201351). Canonical schema reconciling the /district-N/ pages on council.nyc.gov with the 'City Council Distr"
+    },
+    {
+     "file": "schemas/legislation.json",
+     "title": "Legislation",
+     "desc": "A NYC Council legislative matter \u2014 Introduction (bill), Resolution, or Local Law. Canonical schema reconciling the Legistar 'matters' record"
+    },
+    {
+     "file": "schemas/meeting.json",
+     "title": "Meeting",
+     "desc": "A NYC Council meeting or committee hearing. Canonical schema reconciling Legistar 'events' with the 'City Council Meetings (1999 to 2024)' O"
+    },
+    {
+     "file": "schemas/testimony-registration.json",
+     "title": "TestimonyRegistration",
+     "desc": "A registration to testify (speak or submit written testimony) at a NYC Council hearing. NET-NEW object \u2014 public testimony sign-up is a trans"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/members",
+     "op": "listMembers",
+     "summary": "List / search council members",
+     "tags": [
+      "Members"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/members/{councilMemberId}",
+     "op": "getMember",
+     "summary": "Get a council member",
+     "tags": [
+      "Members"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/members/{councilMemberId}/legislation",
+     "op": "getMemberLegislation",
+     "summary": "List legislation sponsored by a member",
+     "tags": [
+      "Members",
+      "Legislation"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/districts",
+     "op": "listDistricts",
+     "summary": "List council districts",
+     "tags": [
+      "Members"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/districts/{district}",
+     "op": "getDistrict",
+     "summary": "Get a district by number",
+     "tags": [
+      "Members"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/committees",
+     "op": "listCommittees",
+     "summary": "List committees, subcommittees, and caucuses",
+     "tags": [
+      "Committees"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/committees/{id}",
+     "op": "getCommittee",
+     "summary": "Get a committee",
+     "tags": [
+      "Committees"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/legislation",
+     "op": "listLegislation",
+     "summary": "Search legislation (fronts Legistar matters + Open Data)",
+     "tags": [
+      "Legislation"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/legislation/{fileNumber}",
+     "op": "getLegislation",
+     "summary": "Get a legislative matter by file number",
+     "tags": [
+      "Legislation"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/meetings",
+     "op": "listMeetings",
+     "summary": "List meetings & hearings (fronts Legistar events)",
+     "tags": [
+      "Meetings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/meetings/{eventId}",
+     "op": "getMeeting",
+     "summary": "Get a meeting/hearing",
+     "tags": [
+      "Meetings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/discretionary-funding",
+     "op": "listDiscretionaryFunding",
+     "summary": "Search discretionary funding & participatory budgeting awards",
+     "tags": [
+      "Budget"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/testimony-registrations",
+     "op": "listTestimonyRegistrations",
+     "summary": "List the authenticated user's testimony registrations",
+     "tags": [
+      "Testimony"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/testimony-registrations",
+     "op": "createTestimonyRegistration",
+     "summary": "Register to testify at a hearing",
+     "tags": [
+      "Testimony"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/testimony-registrations/{registrationId}",
+     "op": "getTestimonyRegistration",
+     "summary": "Get a testimony registration",
+     "tags": [
+      "Testimony"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_members",
+     "title": "Find Council Members",
+     "desc": "Search NYC Council members by borough, district, current status, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_member",
+     "title": "Get Council Member",
+     "desc": "Fetch a council member (offices, committees, caucuses) by id.",
+     "write": false
+    },
+    {
+     "name": "get_member_legislation",
+     "title": "Get Member's Legislation",
+     "desc": "List the legislation a council member has sponsored.",
+     "write": false
+    },
+    {
+     "name": "get_district",
+     "title": "Get District",
+     "desc": "Get a council district (1-51) and its current member.",
+     "write": false
+    },
+    {
+     "name": "find_committees",
+     "title": "Find Committees",
+     "desc": "List NYC Council committees, subcommittees, and caucuses, optionally filtered by type.",
+     "write": false
+    },
+    {
+     "name": "find_legislation",
+     "title": "Find Legislation",
+     "desc": "Search bills, resolutions, and local laws by status, type, sponsor, committee, date range, or free text. Fronts the Legistar record.",
+     "write": false
+    },
+    {
+     "name": "get_legislation",
+     "title": "Get Legislation",
+     "desc": "Fetch a legislative matter by file number (e.g. 'Int 0123-2024').",
+     "write": false
+    },
+    {
+     "name": "find_meetings",
+     "title": "Find Meetings & Hearings",
+     "desc": "List Council meetings and committee hearings (with video/caption links) by body and/or date range. Fronts Legistar events.",
+     "write": false
+    },
+    {
+     "name": "find_discretionary_funding",
+     "title": "Find Discretionary Funding",
+     "desc": "Search discretionary funding and participatory budgeting awards by fiscal year, district, or member ('what funding went to my district?').",
+     "write": false
+    },
+    {
+     "name": "register_testimony",
+     "title": "Register to Testify",
+     "desc": "Register to testify (in-person, remote, or written) at a Council hearing. NET-NEW workflow with no equivalent today. Requires an authenticated user. Mutates sta",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "vote.nyc",
+   "agency": "New York City Board of Elections (BOENY)",
+   "short": "NYC Board of Elections",
+   "verb": "Digitize",
+   "platform": "Drupal 9",
+   "tagline": "The least-modernized: no site API, only 2 Open Data assets; results and candidates are PDFs. Modernize by digitizing the data that does not yet exist.",
+   "accent": "#c0504d",
+   "netnew": "BallotRequest",
+   "findings": [
+    "The least-modernized domain in the project: Drupal 9 with JSON:API disabled (no site API), and only 2 Open Data assets (poll sites).",
+    "The two things voters most need \u2014 candidates (who's running) and results \u2014 have NO API and NO dataset; they are PDFs (one Recap + one EDLevel PDF per contest) plus a separate legacy viewer (enr.boenyc.gov).",
+    "Poll sites ARE machine-readable: Voting/Poll Sites (29 cols) + Election District Poll Sites (4 cols) on Open Data; election district geometry via DCP.",
+    "Ballot request/tracking is a separate app (requestballot.vote.nyc) with no public API.",
+    "This is the original pre-open-data low-hanging-fruit case, largely untouched \u2014 the sharpest validation of 'data liberation only partially worked.'",
+    "See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "vote.nyc/jsonapi (Drupal JSON:API)",
+     "type": "would-be REST API",
+     "owner": "NYC BOE",
+     "public": false,
+     "note": "404 \u2014 disabled; no content API."
+    },
+    {
+     "endpoint": "enr.boenyc.gov (+ /rcv/)",
+     "type": "election results viewer",
+     "owner": "NYC BOE",
+     "public": "html",
+     "note": "separate legacy app; no documented data API."
+    },
+    {
+     "endpoint": "requestballot.vote.nyc (+ /tracking)",
+     "type": "ballot request/tracking app",
+     "owner": "NYC BOE",
+     "public": "transactional",
+     "note": "no public API."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC/Socrata",
+     "public": true,
+     "note": "only 2 BOENY datasets (poll sites)."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 2,
+    "schemas": 7,
+    "openapiOps": 11,
+    "mcpTools": 7,
+    "entities": 7
+   },
+   "entities": [
+    "PollSite",
+    "ElectionDistrict",
+    "ElectionResult",
+    "Candidate",
+    "Contest",
+    "Election",
+    "BallotRequest"
+   ],
+   "files": {
+    "fruit": "vote.nyc/fruit.json",
+    "opendata": "vote.nyc/opendata-boeny.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-boeny.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/nyc-elections.yaml",
+    "mcp": "mcp/nyc-elections-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Elections \u2014 Shared Definitions",
+     "shared": true
+    },
+    {
+     "file": "schemas/ballot-request.json",
+     "title": "BallotRequest",
+     "desc": "A request for an absentee / mail-in ballot, with tracking. NET-NEW object \u2014 today this is a separate app (requestballot.vote.nyc + /tracking"
+    },
+    {
+     "file": "schemas/candidate.json",
+     "title": "Candidate",
+     "desc": "A candidate for a NYC elective office. ASPIRATIONAL \u2014 today candidate lists are PDFs on vote.nyc with no dataset; this schema defines the ma"
+    },
+    {
+     "file": "schemas/contest.json",
+     "title": "Contest",
+     "desc": "A single race on the ballot for an election (an office + district being contested). ASPIRATIONAL \u2014 today this exists only as PDF contest lis"
+    },
+    {
+     "file": "schemas/election-district.json",
+     "title": "ElectionDistrict",
+     "desc": "A NYC election district (ED) \u2014 the smallest election geography. Reconciles the DCP 'Election Districts' boundaries with BOENY 'Election Dist"
+    },
+    {
+     "file": "schemas/election-result.json",
+     "title": "ElectionResult",
+     "desc": "Results for a single contest. ASPIRATIONAL \u2014 the flagship gap. Today results exist ONLY as per-contest PDFs (a 'Recap' + an 'EDLevel' file) "
+    },
+    {
+     "file": "schemas/election.json",
+     "title": "Election",
+     "desc": "A NYC election event. ASPIRATIONAL \u2014 today this exists only as a PDF calendar of important dates; this schema defines the machine-readable s"
+    },
+    {
+     "file": "schemas/poll-site.json",
+     "title": "PollSite",
+     "desc": "A NYC polling place. Canonical schema reconciling the /page/find-your-poll-site locator with the 'Voting/Poll Sites' Open Data dataset (mifw"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/poll-sites",
+     "op": "listPollSites",
+     "summary": "Find poll sites",
+     "tags": [
+      "Poll Sites"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/poll-sites/{siteNumber}",
+     "op": "getPollSite",
+     "summary": "Get a poll site",
+     "tags": [
+      "Poll Sites"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/election-districts/{electionDistrict}",
+     "op": "getElectionDistrict",
+     "summary": "Get an election district and its poll site",
+     "tags": [
+      "Poll Sites"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/elections",
+     "op": "listElections",
+     "summary": "List elections and key dates",
+     "tags": [
+      "Elections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/elections/{electionId}",
+     "op": "getElection",
+     "summary": "Get an election",
+     "tags": [
+      "Elections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/contests",
+     "op": "listContests",
+     "summary": "List contests on the ballot (what's on my ballot)",
+     "tags": [
+      "Ballot"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/candidates",
+     "op": "listCandidates",
+     "summary": "List candidates (who's running)",
+     "tags": [
+      "Ballot"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/results",
+     "op": "listResults",
+     "summary": "Get election results (incl. ranked-choice)",
+     "tags": [
+      "Results"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/mail-ballot-requests",
+     "op": "listMailBallotRequests",
+     "summary": "List the authenticated voter's mail-ballot requests",
+     "tags": [
+      "Mail Ballot"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/mail-ballot-requests",
+     "op": "createMailBallotRequest",
+     "summary": "Request an absentee / mail-in ballot",
+     "tags": [
+      "Mail Ballot"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/mail-ballot-requests/{requestId}",
+     "op": "getMailBallotRequest",
+     "summary": "Track a mail-ballot request",
+     "tags": [
+      "Mail Ballot"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_poll_site",
+     "title": "Find Poll Site",
+     "desc": "Find a NYC poll site by address, borough, or election district. Grounded in the Voting/Poll Sites Open Data dataset (with accessibility info).",
+     "write": false
+    },
+    {
+     "name": "list_elections",
+     "title": "List Elections",
+     "desc": "List NYC elections and their key dates (registration, early voting, mail-ballot deadlines).",
+     "write": false
+    },
+    {
+     "name": "find_contests",
+     "title": "Find Contests (What's on my ballot)",
+     "desc": "List the contests on the ballot for an election, optionally by office/district. Aspirational \u2014 PDF contest lists today.",
+     "write": false
+    },
+    {
+     "name": "find_candidates",
+     "title": "Find Candidates (Who's running)",
+     "desc": "List candidates for an election/office. Aspirational \u2014 candidate lists are PDFs today.",
+     "write": false
+    },
+    {
+     "name": "get_results",
+     "title": "Get Election Results",
+     "desc": "Get election results for an election (by contest or election-district level), including ranked-choice rounds. Aspirational \u2014 PDFs + legacy viewer today.",
+     "write": false
+    },
+    {
+     "name": "request_mail_ballot",
+     "title": "Request Mail Ballot",
+     "desc": "Submit a request for an absentee / mail-in ballot. NET-NEW workflow (fronts requestballot.vote.nyc). Requires an authenticated voter. Mutates state \u2014 confirm de",
+     "write": true
+    },
+    {
+     "name": "track_mail_ballot",
+     "title": "Track Mail Ballot",
+     "desc": "Track the status of a mail-ballot request (mailed, returned, counted).",
+     "write": false
+    }
+   ]
+  }
+ ]
+}

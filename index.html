@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NYC — API &amp; Agent Modernization</title>
+<meta name="description" content="Mapping the digital surface of New York City government and turning it into an API-first, agent-native layer.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">API Evangelist · New York City</div>
+    <h1 id="h-title">NYC — API &amp; Agent Modernization</h1>
+    <p class="lead" id="h-tagline"></p>
+    <div class="cta">
+      <a class="btn" href="#domains">Explore the domains</a>
+      <a class="btn sec" href="docs.html?f=CHANGELOG.md">Changelog</a>
+      <a class="btn sec" href="https://github.com/api-evangelist/nyc">Repository</a>
+    </div>
+    <div class="stats" style="margin-top:34px" id="h-stats"></div>
+  </div>
+</div>
+
+<section class="plain">
+  <div class="wrap">
+    <div class="callout">
+      <h2 id="thesis-h"></h2>
+      <p id="thesis-b" class="muted" style="margin-bottom:0"></p>
+    </div>
+  </div>
+</section>
+
+<section id="domains">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="k">The work</div>
+      <h2>Domains assessed</h2>
+      <p class="muted">Each domain taken through the full method and turned into explorable artifacts — a fruit index, an Open Data crosswalk, tech &amp; API inventories, JSON Schemas, an OpenAPI contract, and an MCP server definition.</p>
+    </div>
+    <div class="grid cols-2" id="domain-cards"></div>
+  </div>
+</section>
+
+<section id="verbs">
+  <div class="wrap">
+    <div class="section-head"><div class="k">The pattern</div><h2>Four domains, four modernization verbs</h2>
+    <p class="muted">Each domain is a different way “data liberation only partially worked.”</p></div>
+    <div class="tablewrap"><table class="verbtable"><thead><tr>
+      <th>Domain</th><th>Platform</th><th>Machine-readable coverage</th><th>Verb</th></tr></thead>
+      <tbody id="verb-rows"></tbody></table></div>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap">
+    <div class="section-head"><div class="k">How</div><h2>The method — seven steps per domain</h2></div>
+    <div class="grid cols-3" id="method-cards"></div>
+  </div>
+</section>
+
+<section id="inventory">
+  <div class="wrap">
+    <div class="section-head"><div class="k">The map</div><h2>NYC government domains inventory</h2></div>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="stat"><b id="inv-count">—</b><span>distinct domains &amp; subdomains catalogued</span></div>
+        <p class="muted small" id="inv-note" style="margin-top:14px"></p>
+        <a class="btn sec" href="docs.html?f=domains.md" style="margin-top:6px">Browse the inventory →</a>
+      </div>
+      <div class="card">
+        <h3>Design-first, three contracts</h3>
+        <p class="muted small">One object model drives every domain: individual <strong>JSON Schema</strong> per object → an <strong>OpenAPI</strong> that <code>$ref</code>s them → an <strong>MCP</strong> server that maps to the same operations. The APIs and MCP servers are design artifacts, not running services.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar("home");
+  document.getElementById("footer").innerHTML=footer();
+  const m = await getJSON("data/manifest.json");
+  document.getElementById("h-title").textContent=m.project.title;
+  document.getElementById("h-tagline").textContent=m.project.tagline;
+  document.getElementById("thesis-h").textContent=m.thesis.heading;
+  document.getElementById("thesis-b").textContent=m.thesis.body;
+
+  // stats
+  const totOD=m.domains.reduce((s,d)=>s+d.counts.opendata,0);
+  const totSchemas=m.domains.reduce((s,d)=>s+d.counts.schemas,0);
+  const totTools=m.domains.reduce((s,d)=>s+d.counts.mcpTools,0);
+  document.getElementById("h-stats").innerHTML=[
+    [m.domains.length,"domains assessed"],[m.inventory.count,"domains catalogued"],
+    [totOD.toLocaleString(),"Open Data assets mapped"],[totSchemas,"JSON Schemas"],[totTools,"MCP tools designed"]
+  ].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+
+  // domain cards
+  document.getElementById("domain-cards").innerHTML=m.domains.map(d=>`
+    <a class="card" href="domain.html?d=${encodeURIComponent(d.id)}">
+      <span class="verb" style="background:${d.accent}">${esc(d.verb)}</span>
+      <h3>${esc(d.short)}</h3>
+      <div class="dom">${esc(d.id)} · ${esc(d.platform)}</div>
+      <p class="muted small" style="margin:.7em 0 0">${esc(d.tagline)}</p>
+      <div class="metrics">
+        <div class="m"><b>${d.counts.fruit}</b>fruit</div>
+        <div class="m"><b>${d.counts.opendata.toLocaleString()}</b>OD assets</div>
+        <div class="m"><b>${d.counts.schemas}</b>schemas</div>
+        <div class="m"><b>${d.counts.openapiOps}</b>API ops</div>
+        <div class="m"><b>${d.counts.mcpTools}</b>MCP tools</div>
+      </div>
+    </a>`).join("");
+
+  // verb table
+  document.getElementById("verb-rows").innerHTML=m.domains.map(d=>{
+    const cov=d.counts.opendata>200?d.counts.opendata+" Open Data assets"
+      :d.counts.opendata>50?d.counts.opendata+" assets; capability outsourced"
+      :d.counts.opendata>5?d.counts.opendata+" assets across three APIs":d.counts.opendata+" assets; mostly PDFs";
+    return `<tr><td><a href="domain.html?d=${encodeURIComponent(d.id)}">${esc(d.short)}</a><br><span class="muted small">${esc(d.id)}</span></td>
+      <td>${esc(d.platform)}</td><td>${esc(cov)}</td>
+      <td><span class="badge write" style="background:color-mix(in srgb,${d.accent} 18%,transparent);color:${d.accent}">${esc(d.verb)}</span></td></tr>`;
+  }).join("");
+
+  // method
+  document.getElementById("method-cards").innerHTML=m.method.map(s=>`
+    <div class="card"><div class="stat"><b style="color:var(--brand-dark)">${s.n}</b></div>
+    <h3 style="font-size:1.05rem;margin:.3em 0 .2em">${esc(s.t)}</h3>
+    <p class="muted small" style="margin:0">${esc(s.d)}</p></div>`).join("");
+
+  document.getElementById("inv-count").textContent=m.inventory.count;
+  document.getElementById("inv-note").textContent=m.inventory.note;
+})();
+</script>
+</body>
+</html>

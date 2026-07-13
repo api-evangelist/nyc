@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/schemas/discretionary-funding.json",
+  "title": "DiscretionaryFunding",
+  "description": "A NYC Council discretionary funding award — a member-allocated grant to an organization. Canonical schema reconciling the 'City Council Discretionary Funding' Open Data dataset (4d7f-74pe, 27 columns); the same shape also covers Participatory Budgeting projects.",
+  "type": "object",
+  "x-source": { "opendata": "https://data.cityofnewyork.us/d/4d7f-74pe" },
+  "properties": {
+    "fiscalYear": { "type": "integer" },
+    "source": { "type": ["string", "null"], "description": "Funding source/program (source)." },
+    "programName": { "type": ["string", "null"] },
+    "purpose": { "type": ["string", "null"], "description": "Purpose of Funds." },
+    "amount": { "type": ["number", "null"], "minimum": 0, "description": "Award amount in USD (amount)." },
+    "status": { "type": ["string", "null"] },
+    "councilMember": { "type": ["string", "null"], "description": "Allocating council member (council_member)." },
+    "councilDistrict": { "type": ["integer", "null"] },
+    "agency": { "type": ["string", "null"], "description": "Administering agency (agency)." },
+    "organization": {
+      "type": "object",
+      "description": "Recipient organization.",
+      "properties": {
+        "legalName": { "type": ["string", "null"], "description": "legal_name_of_organization." },
+        "ein": { "type": ["string", "null"] },
+        "fiscalConduitName": { "type": ["string", "null"] },
+        "address": { "type": ["string", "null"] },
+        "borough": { "$ref": "_common.json#/$defs/Borough" },
+        "postcode": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "mocsId": { "type": ["string", "null"], "description": "MOCS contract id (mocs_id)." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["fiscalYear"],
+  "additionalProperties": false
+}

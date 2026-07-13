@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycgovparks.org/schemas/permit-application.json",
+  "title": "PermitApplication",
+  "description": "An application for a NYC Parks permit. NET-NEW object — the ~10 permit workflows on nycgovparks.org are login-gated HTML forms with NO machine-readable or API equivalent (Open Data exposes only permit AREAS c5vm-g2dk and granted-permit logs). This schema models the citizen-facing application as a first-class read/write API resource: the highest-value modernization target for this domain.",
+  "type": "object",
+  "x-source": {
+    "website": "https://www.nycgovparks.org/permits",
+    "opendata": null,
+    "note": "No existing dataset or API; this is a proposed canonical resource."
+  },
+  "properties": {
+    "applicationId": { "type": "string", "description": "System-assigned application identifier.", "readOnly": true },
+    "permitType": {
+      "type": "string",
+      "description": "Type of permit being requested — one per /permits/<type> workflow.",
+      "enum": [
+        "field-and-court", "tennis", "special-event", "film-photo", "metal-detector",
+        "summer-day-camp", "research", "boating-marina", "farmers-market", "construction", "tree-work"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "description": "Application lifecycle status.",
+      "enum": ["draft", "submitted", "under-review", "approved", "denied", "cancelled", "issued", "expired"],
+      "default": "draft"
+    },
+    "applicant": {
+      "type": "object",
+      "description": "The person or organization applying.",
+      "properties": {
+        "name": { "type": "string" },
+        "organization": { "type": ["string", "null"] },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "address": { "type": ["string", "null"] }
+      },
+      "required": ["name", "email"],
+      "additionalProperties": false
+    },
+    "park": { "$ref": "_common.json#/$defs/ParkReference" },
+    "facilityId": { "type": ["string", "null"], "description": "Specific facility requested, if applicable (references facility.json)." },
+    "location": { "type": ["string", "null"], "description": "Requested location description." },
+    "requestedDates": {
+      "type": "array",
+      "description": "One or more requested date/time blocks.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "startTime": { "type": ["string", "null"] },
+          "endTime": { "type": ["string", "null"] }
+        },
+        "required": ["date"],
+        "additionalProperties": false
+      }
+    },
+    "attendanceEstimate": { "type": ["integer", "null"], "minimum": 0, "description": "Estimated number of participants/attendees." },
+    "purpose": { "type": ["string", "null"], "description": "Description of the requested activity." },
+    "fee": {
+      "type": "object",
+      "description": "Fee assessment and payment status.",
+      "properties": {
+        "amount": { "type": ["number", "null"], "minimum": 0 },
+        "currency": { "type": "string", "default": "USD" },
+        "status": { "type": "string", "enum": ["unassessed", "unpaid", "paid", "waived", "refunded"], "default": "unassessed" }
+      },
+      "additionalProperties": false
+    },
+    "documents": {
+      "type": "array",
+      "description": "Supporting documents (insurance, site plans, etc.).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "type": { "type": ["string", "null"] }
+        },
+        "required": ["name", "url"],
+        "additionalProperties": false
+      }
+    },
+    "permitNumber": { "type": ["string", "null"], "description": "Issued permit number once approved/issued.", "readOnly": true },
+    "submittedAt": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "reviewedAt": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "decisionAt": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "decisionNotes": { "type": ["string", "null"], "readOnly": true }
+  },
+  "required": ["permitType", "applicant"],
+  "additionalProperties": false
+}
