@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Master Technology List — NYC Modernization</title>
+<meta name="description" content="Every platform, vendor, hosting/CDN, and API/standard in use across NYC government domains.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<div class="dhead"><div class="wrap">
+  <div class="eyebrow" style="color:var(--brand-dark);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase">Cross-domain</div>
+  <h1>Master Technology List</h1>
+  <p class="muted" style="max-width:72ch">Every platform, framework, host/CDN, vendor SaaS, and API/standard detected across the assessed domains — from each domain's platform fingerprint and observed APIs. Keyword-matched on the structured fields, so read as a strong signal, not a certified bill of materials.</p>
+  <div class="stats" style="margin-top:16px" id="stats"></div>
+</div></div>
+<div class="wrap">
+  <div class="toolbar">
+    <input id="q" placeholder="Filter technology or domain…">
+    <select id="mode"><option value="cat">Group by category</option><option value="domain">Group by domain</option></select>
+    <span class="count-pill" id="count"></span>
+  </div>
+  <div id="out"></div>
+</div>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const T=await getJSON("data/technology.json");
+  const nDom=T.byDomain.length;
+  document.getElementById("stats").innerHTML=[
+    [T.distinct_technologies,"distinct technologies"],[T.categories.length,"categories"],[nDom,"domains"]
+  ].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  const out=document.getElementById("out");
+  const domLink=d=>`<a href="domain.html?d=${encodeURIComponent(d.id)}">${esc(d.short)}</a>`;
+  function render(){
+    const q=document.getElementById("q").value.toLowerCase();
+    const mode=document.getElementById("mode").value;
+    if(mode==="cat"){
+      let html="",shown=0;
+      T.categories.forEach(c=>{
+        const techs=c.techs.filter(t=>!q||t.tech.toLowerCase().includes(q)||t.domains.some(d=>d.short.toLowerCase().includes(q)));
+        if(!techs.length)return; shown+=techs.length;
+        html+=`<h3 style="margin:1.2em 0 .4em">${esc(c.name)}</h3><div class="tablewrap"><table><thead><tr><th>Technology</th><th># domains</th><th>Domains</th></tr></thead><tbody>`+
+          techs.map(t=>`<tr><td><strong>${esc(t.tech)}</strong></td><td>${t.count>1?`<span class="badge ok">${t.count}</span>`:1}</td>
+            <td class="small">${t.domains.map(domLink).join(", ")}</td></tr>`).join("")+`</tbody></table></div>`;
+      });
+      out.innerHTML=html; document.getElementById("count").textContent=shown+" technologies";
+    } else {
+      const rows=T.byDomain.filter(d=>!q||d.short.toLowerCase().includes(q)||(d.platform||"").toLowerCase().includes(q)||d.techs.some(t=>t.toLowerCase().includes(q)));
+      out.innerHTML=rows.map(d=>`<div class="card" style="margin-bottom:12px"><h3 style="font-size:1.05rem;margin:0 0 .2em">${domLink(d)}</h3>
+        <div class="muted small" style="margin-bottom:8px">${esc(d.platform||"")}</div>
+        <p style="margin:0">${d.techs.map(t=>`<span class="badge neutral" style="margin:2px">${esc(t)}</span>`).join(" ")}</p></div>`).join("");
+      document.getElementById("count").textContent=rows.length+" / "+nDom+" domains";
+    }
+  }
+  document.getElementById("q").oninput=render;document.getElementById("mode").onchange=render;render();
+})();
+</script>
+</body>
+</html>

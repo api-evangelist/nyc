@@ -1,0 +1,212 @@
+#!/usr/bin/env python3
+"""Build master cross-domain inventories from the repo artifacts:
+  data/entities.json   + ENTITIES.md    — every object schema (entity) across all domains
+  data/technology.json + TECHNOLOGY.md  — every platform / vendor / API / standard in use
+Run from repo root: python3 scripts/build-inventories.py"""
+import json, glob, os, re, collections
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(ROOT)
+
+manifest = json.load(open("data/manifest.json"))
+DOMAINS = manifest["domains"]
+short = {d["id"]: d["short"] for d in DOMAINS}
+verb = {d["id"]: d.get("verb", "") for d in DOMAINS}
+platform = {d["id"]: (json.load(open(f'{d["id"]}/fruit.json')).get("meta", {}) or {}).get("platform", "") for d in DOMAINS}
+
+# ---------------- ENTITIES ----------------
+by_entity = collections.defaultdict(list)   # title -> [domain ids]
+by_domain_ent = {}
+for d in DOMAINS:
+    did = d["id"]
+    titles = []
+    for sp in sorted(glob.glob(f"{did}/schemas/*.json")):
+        if os.path.basename(sp) == "_common.json":
+            continue
+        try:
+            t = json.load(open(sp)).get("title")
+        except Exception:
+            t = None
+        if t:
+            titles.append(t)
+            by_entity[t].append(did)
+    by_domain_ent[did] = titles
+
+ent_rows = sorted(([e, doms] for e, doms in by_entity.items()),
+                  key=lambda x: (-len(x[1]), x[0].lower()))
+entities_json = {
+    "generated_from": "schemas/*.json titles across all domains",
+    "total_entities": sum(len(v) for v in by_domain_ent.values()),
+    "distinct_entities": len(by_entity),
+    "byEntity": [{"entity": e, "count": len(doms),
+                  "domains": [{"id": x, "short": short[x]} for x in doms]} for e, doms in ent_rows],
+    "byDomain": [{"id": d["id"], "short": d["short"], "verb": d.get("verb", ""),
+                  "entities": by_domain_ent[d["id"]]} for d in DOMAINS],
+}
+json.dump(entities_json, open("data/entities.json", "w"), indent=1)
+
+L = ["# Master Entity List\n",
+     f"Every object modeled across the **{len(DOMAINS)} assessed domains** — {entities_json['total_entities']} object schemas, **{entities_json['distinct_entities']} distinct entity names**. Generated from each domain's `schemas/*.json` titles. Interactive: [entities.html](https://nyc.apievangelist.com/entities.html).\n",
+     "## Recurring entities (shared across domains)\n",
+     "Entities modeled in 2+ domains — the natural candidates for shared, citywide schemas.\n",
+     "| Entity | # domains | Domains |", "|---|---|---|"]
+for e, doms in ent_rows:
+    if len(doms) >= 2:
+        L.append(f"| `{e}` | {len(doms)} | {', '.join(short[x] for x in doms)} |")
+L.append("\n## All entities by domain\n")
+for d in DOMAINS:
+    ents = by_domain_ent[d["id"]]
+    L.append(f"- **{d['short']}** (`{d['id']}`) — {', '.join('`'+e+'`' for e in ents)}")
+open("ENTITIES.md", "w").write("\n".join(L) + "\n")
+
+# ---------------- TECHNOLOGY ----------------
+# canonical tech -> (category, [alias regexes])
+TECH = {
+ # Platforms / frameworks
+ "WordPress": ("Platform / CMS", [r"wordpress", r"wp[- ]engine", r"wp/v2", r"wp-json"]),
+ "Drupal": ("Platform / CMS", [r"drupal"]),
+ "Progress Sitefinity": ("Platform / CMS", [r"sitefinity"]),
+ "Smarty (PHP)": ("Platform / CMS", [r"smarty"]),
+ "Microsoft Dynamics 365": ("Platform / CMS", [r"dynamics ?365", r"power apps portal"]),
+ "Oracle WebCenter Sites": ("Platform / CMS", [r"webcenter"]),
+ "DotNetNuke (DNN)": ("Platform / CMS", [r"dotnetnuke", r"\bdnn\b"]),
+ "Adobe Experience Manager": ("Platform / CMS", [r"\baem\b", r"adobe experience manager"]),
+ "Weebly": ("Platform / CMS", [r"weebly"]),
+ "Revize": ("Platform / CMS", [r"revize"]),
+ "NYC.gov Livesite": ("Platform / CMS", [r"livesite"]),
+ "ASP.NET / IIS": ("Framework / runtime", [r"asp\.net", r"\biis\b", r"\.aspx"]),
+ "Java / Tomcat / WebLogic": ("Framework / runtime", [r"tomcat", r"weblogic", r"\bjsf\b", r"\bjsp\b", r"apache struts", r"struts"]),
+ "Spring": ("Framework / runtime", [r"spring"]),
+ "Next.js": ("Framework / runtime", [r"next\.js", r"_next"]),
+ "React": ("Framework / runtime", [r"\breact\b"]),
+ "Angular": ("Framework / runtime", [r"angular"]),
+ "nginx": ("Framework / runtime", [r"nginx"]),
+ "Apache": ("Framework / runtime", [r"\bapache\b"]),
+ # Hosting / CDN / edge
+ "Akamai": ("Hosting / CDN / edge", [r"akamai", r"mpulse"]),
+ "Cloudflare": ("Hosting / CDN / edge", [r"cloudflare"]),
+ "AWS CloudFront": ("Hosting / CDN / edge", [r"cloudfront"]),
+ "AWS (ALB/S3/EC2)": ("Hosting / CDN / edge", [r"\balb\b", r"\bs3\b", r"\bec2\b", r"aws "]),
+ "Microsoft Azure": ("Hosting / CDN / edge", [r"\bazure\b", r"app service", r"azure ad b2c", r"azure blob"]),
+ "WP Engine": ("Hosting / CDN / edge", [r"wp ?engine"]),
+ "Pantheon": ("Hosting / CDN / edge", [r"pantheon"]),
+ "Netlify": ("Hosting / CDN / edge", [r"netlify"]),
+ "Vercel": ("Hosting / CDN / edge", [r"vercel"]),
+ "Kinsta": ("Hosting / CDN / edge", [r"kinsta"]),
+ "SiteGround": ("Hosting / CDN / edge", [r"siteground"]),
+ "Fastly": ("Hosting / CDN / edge", [r"fastly"]),
+ "Imperva": ("Hosting / CDN / edge", [r"imperva"]),
+ "Varnish": ("Hosting / CDN / edge", [r"varnish"]),
+ "Oracle Cloud": ("Hosting / CDN / edge", [r"oracle cloud"]),
+ # Vendor SaaS / applications
+ "Accela": ("Vendor SaaS / app", [r"accela"]),
+ "Salesforce": ("Vendor SaaS / app", [r"salesforce", r"experience cloud", r"portico"]),
+ "Oracle Siebel": ("Vendor SaaS / app", [r"siebel"]),
+ "Unqork": ("Vendor SaaS / app", [r"unqork"]),
+ "Kaseware": ("Vendor SaaS / app", [r"kaseware"]),
+ "Epic / MyChart": ("Vendor SaaS / app", [r"\bepic\b", r"mychart"]),
+ "PeopleSoft (CUNYfirst)": ("Vendor SaaS / app", [r"peoplesoft", r"cunyfirst"]),
+ "Legistar (Granicus)": ("Vendor SaaS / app", [r"legistar", r"granicus"]),
+ "Checkbook NYC": ("Vendor SaaS / app", [r"checkbook"]),
+ "Everbridge": ("Vendor SaaS / app", [r"everbridge"]),
+ "Combined Arms": ("Vendor SaaS / app", [r"combined arms"]),
+ "HawkSearch": ("Vendor SaaS / app", [r"hawksearch"]),
+ "Viebit": ("Vendor SaaS / app", [r"viebit"]),
+ "StreamText": ("Vendor SaaS / app", [r"streamtext"]),
+ "BiblioCommons": ("Vendor SaaS / app", [r"bibliocommons"]),
+ "Communico": ("Vendor SaaS / app", [r"communico"]),
+ "OverDrive / hoopla": ("Vendor SaaS / app", [r"overdrive", r"hoopla", r"axis 360"]),
+ "Preservica": ("Vendor SaaS / app", [r"preservica"]),
+ "LUNA Imaging": ("Vendor SaaS / app", [r"luna"]),
+ "Microsoft SharePoint": ("Vendor SaaS / app", [r"sharepoint"]),
+ "Microsoft Power BI": ("Vendor SaaS / app", [r"power ?bi"]),
+ "Shopify": ("Vendor SaaS / app", [r"shopify"]),
+ "Constant Contact": ("Vendor SaaS / app", [r"constant contact"]),
+ "WSO2 API Gateway": ("Vendor SaaS / app", [r"wso2"]),
+ "Divi / GeneratePress / Themeco": ("Vendor SaaS / app", [r"\bdivi\b", r"generatepress", r"themeco", r"beaver builder"]),
+ # Maps / geo
+ "Esri ArcGIS": ("Maps / geospatial", [r"arcgis", r"\besri\b"]),
+ "CARTO": ("Maps / geospatial", [r"carto"]),
+ "Mapbox": ("Maps / geospatial", [r"mapbox"]),
+ "Google Maps": ("Maps / geospatial", [r"google maps"]),
+ "NYC GeoClient / GeoSearch": ("Maps / geospatial", [r"geoclient", r"geosearch", r"geosupport"]),
+ # Media / assets
+ "Cloudinary": ("Media / assets", [r"cloudinary"]),
+ "Azure Blob Storage": ("Media / assets", [r"blob"]),
+ # Analytics / monitoring
+ "Google Tag Manager": ("Analytics / monitoring", [r"tag ?manager", r"gtag", r"googletagmanager"]),
+ "Google Analytics": ("Analytics / monitoring", [r"google.analytics", r"\bga4\b"]),
+ "Dynatrace": ("Analytics / monitoring", [r"dynatrace"]),
+ "New Relic": ("Analytics / monitoring", [r"new ?relic"]),
+ "Siteimprove": ("Analytics / monitoring", [r"siteimprove"]),
+ "Matomo": ("Analytics / monitoring", [r"matomo"]),
+ "Loggly": ("Analytics / monitoring", [r"loggly"]),
+ "Meta / Facebook Pixel": ("Analytics / monitoring", [r"facebook", r"meta pixel"]),
+ "Wordfence": ("Analytics / monitoring", [r"wordfence"]),
+ # APIs / standards / data
+ "Socrata / Tyler (SODA)": ("API / standard / data", [r"socrata", r"\bsoda\b", r"tyler"]),
+ "WordPress REST API": ("API / standard / data", [r"wp/v2", r"wordpress rest", r"wp-json"]),
+ "Drupal JSON:API": ("API / standard / data", [r"json:api", r"jsonapi"]),
+ "FHIR / SMART on FHIR": ("API / standard / data", [r"\bfhir\b", r"smart on fhir"]),
+ "Open311 (GeoReport v2)": ("API / standard / data", [r"open311", r"georeport"]),
+ "api.nyc.gov (Azure APIM)": ("API / standard / data", [r"api\.nyc\.gov", r"api management", r"\bapim\b"]),
+ "Google Translate": ("API / standard / data", [r"google translate"]),
+ "Contact Form 7": ("API / standard / data", [r"contact form 7", r"\bcf7\b"]),
+}
+
+def blob(did):
+    # Only the structured, domain-specific fields — NOT tech-stack.md prose, which
+    # often name-drops the exemplar/other agencies for comparison (false positives).
+    parts = [platform.get(did, "")]
+    try:
+        fr = json.load(open(f"{did}/fruit.json"))
+        for a in fr.get("apis_observed", []):
+            parts += [str(a.get("endpoint","")), str(a.get("type","")), str(a.get("owner","")), str(a.get("note",""))]
+        parts.append((fr.get("meta", {}) or {}).get("tagline", ""))
+        parts.append((fr.get("meta", {}) or {}).get("headline", ""))
+    except Exception:
+        pass
+    return " \n ".join(parts).lower()
+
+by_tech = collections.defaultdict(list)
+by_domain_tech = {}
+for d in DOMAINS:
+    did = d["id"]; b = blob(did); found = []
+    for tech, (cat, aliases) in TECH.items():
+        if any(re.search(a, b) for a in aliases):
+            by_tech[tech].append(did); found.append(tech)
+    by_domain_tech[did] = sorted(found)
+
+cats = collections.OrderedDict()
+for tech, (cat, _) in TECH.items():
+    cats.setdefault(cat, [])
+    if tech in by_tech:
+        cats[cat].append(tech)
+
+tech_json = {
+    "generated_from": "meta.platform + apis_observed + tech-stack.md across all domains (keyword match)",
+    "distinct_technologies": len([t for t in by_tech]),
+    "categories": [{"name": c, "techs": [
+        {"tech": t, "category": c, "count": len(by_tech[t]),
+         "domains": [{"id": x, "short": short[x]} for x in by_tech[t]]}
+        for t in sorted(cats[c], key=lambda t: -len(by_tech[t]))]} for c in cats if cats[c]],
+    "byDomain": [{"id": d["id"], "short": d["short"], "platform": platform.get(d["id"], ""),
+                  "techs": by_domain_tech[d["id"]]} for d in DOMAINS],
+}
+json.dump(tech_json, open("data/technology.json", "w"), indent=1)
+
+T = ["# Master Technology List\n",
+     f"Every platform, framework, hosting/CDN, vendor SaaS, and API/standard detected across the **{len(DOMAINS)} assessed domains**, from each domain's platform fingerprint, observed APIs, and tech-stack inventory. **{tech_json['distinct_technologies']} distinct technologies.** Keyword-matched, so read as a strong signal, not a certified BOM. Interactive: [technology.html](https://nyc.apievangelist.com/technology.html).\n"]
+for c in tech_json["categories"]:
+    T.append(f"## {c['name']}\n")
+    T.append("| Technology | # domains | Domains |")
+    T.append("|---|---|---|")
+    for t in c["techs"]:
+        T.append(f"| **{t['tech']}** | {t['count']} | {', '.join(x['short'] for x in t['domains'])} |")
+    T.append("")
+open("TECHNOLOGY.md", "w").write("\n".join(T) + "\n")
+
+print(f"entities: {entities_json['distinct_entities']} distinct ({entities_json['total_entities']} total)")
+print(f"technology: {tech_json['distinct_technologies']} distinct across {len(tech_json['categories'])} categories")
+print("top recurring entities:", [(e, len(d)) for e, d in ent_rows[:8]])
+print("top technologies:", sorted(((t, len(v)) for t, v in by_tech.items()), key=lambda x: -x[1])[:10])

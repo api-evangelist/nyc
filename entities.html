@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Master Entity List — NYC Modernization</title>
+<meta name="description" content="Every object modeled across all NYC government domains — the reverse-engineered entity catalog, and which entities recur across agencies.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<div class="dhead"><div class="wrap">
+  <div class="eyebrow" style="color:var(--brand-dark);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase">Cross-domain</div>
+  <h1>Master Entity List</h1>
+  <p class="muted" style="max-width:70ch">Every object modeled across the assessed domains, from each domain's JSON Schemas. Entities appearing in multiple domains are the natural candidates for shared, citywide schemas.</p>
+  <div class="stats" style="margin-top:16px" id="stats"></div>
+</div></div>
+<div class="wrap">
+  <div class="toolbar">
+    <input id="q" placeholder="Filter entities or domains…">
+    <select id="mode"><option value="entity">Group by entity (recurring first)</option><option value="domain">Group by domain</option></select>
+    <span class="count-pill" id="count"></span>
+  </div>
+  <div id="out"></div>
+</div>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const E=await getJSON("data/entities.json");
+  document.getElementById("stats").innerHTML=[
+    [E.distinct_entities,"distinct entities"],[E.total_entities,"object schemas"],[E.byDomain.length,"domains"],
+    [E.byEntity.filter(x=>x.count>1).length,"shared (2+ domains)"]
+  ].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  const out=document.getElementById("out");
+  function domLink(d){return `<a href="domain.html?d=${encodeURIComponent(d.id)}">${esc(d.short)}</a>`;}
+  function render(){
+    const q=document.getElementById("q").value.toLowerCase();
+    const mode=document.getElementById("mode").value;
+    if(mode==="entity"){
+      const rows=E.byEntity.filter(r=>!q||r.entity.toLowerCase().includes(q)||r.domains.some(d=>d.short.toLowerCase().includes(q)));
+      out.innerHTML=`<div class="tablewrap"><table><thead><tr><th>Entity</th><th># domains</th><th>Domains</th></tr></thead><tbody>`+
+        rows.map(r=>`<tr><td><code>${esc(r.entity)}</code></td><td>${r.count>1?`<span class="badge ok">${r.count}</span>`:1}</td>
+          <td class="small">${r.domains.map(domLink).join(", ")}</td></tr>`).join("")+`</tbody></table></div>`;
+      document.getElementById("count").textContent=rows.length+" / "+E.byEntity.length+" entities";
+    } else {
+      const rows=E.byDomain.filter(d=>!q||d.short.toLowerCase().includes(q)||d.entities.some(e=>e.toLowerCase().includes(q)));
+      out.innerHTML=rows.map(d=>`<div class="card" style="margin-bottom:12px"><h3 style="font-size:1.05rem;margin:0 0 .3em">${domLink(d)} <span class="muted small">${esc(d.verb)}</span></h3>
+        <p style="margin:0">${d.entities.map(e=>`<span class="badge neutral" style="margin:2px">${esc(e)}</span>`).join(" ")}</p></div>`).join("");
+      document.getElementById("count").textContent=rows.length+" / "+E.byDomain.length+" domains";
+    }
+  }
+  document.getElementById("q").oninput=render;document.getElementById("mode").onchange=render;render();
+})();
+</script>
+</body>
+</html>
