@@ -4,6 +4,8 @@ Every platform, framework, hosting/CDN, vendor SaaS, and API/standard detected a
 
 Each technology is tagged **🟢 open source**, **🟡 hybrid** (open-core / dual-licensed / open standard with a commercial host), or **🔴 commercial** — 17 open source, 4 hybrid, 57 commercial. For every commercial or hybrid tool there's a credible **open-source alternative** a NYC agency could actually adopt.
 
+**Proprietary share:** the median domain's detected stack is **71% strictly commercial**, and **57 of 67 domains are majority-proprietary** (4 entirely so in what was detected). Lock-in is a default, not a constraint — an open-source path exists for the whole commercial set below.
+
 ## Commercial & hybrid → open-source alternatives
 
 The **61** proprietary/open-core technologies in use, each with a recommended open-source replacement, ranked by how many domains run it.

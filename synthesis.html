@@ -70,7 +70,7 @@
 </div></section>
 
 <section><div class="wrap">
-  <div class="section-head"><div class="k">The findings</div><h2>Twelve patterns across the corpus</h2></div>
+  <div class="section-head"><div class="k">The findings</div><h2>Thirteen patterns across the corpus</h2></div>
   <div id="findings"></div>
   <p style="margin-top:1.4em"><a class="btn" href="docs.html?f=SYNTHESIS.md">Full synthesis, with recommendations →</a>
   <a class="btn sec" href="./#domains">Explore all 67 domains →</a></p>
@@ -145,6 +145,7 @@
     ["Digital assets are decaying","brooklyn-usa.org lapsed (redirects off-site); the Public Advocate site 502'd; rcda.nyc.gov is dead."],
     ["A shared geography spine recurs in all 67","Borough, Community Board, Council District, Census Tract/NTA, BBL/BIN — the basis for nyc-commons."],
     ["No cross-domain identity","Every domain has its own join key; a resident is the same person across all 67, but nothing links them."],
+    ["The stack is majority-proprietary — but the exits exist","78 technologies detected: 57 commercial, 4 open-core, 17 open source; the median domain runs a 71%-proprietary stack and 57/67 are majority-proprietary. Yet all 61 commercial tools have a credible OSS alternative (Socrata→CKAN, ArcGIS→QGIS+PostGIS, Salesforce→SuiteCRM/Odoo, GA→Matomo, APIM→Kong/Tyk). Lock-in is a default, not a constraint."],
   ];
   document.getElementById("findings").innerHTML=findings.map((f,i)=>`<div class="finding"><h3>${i+1}. ${esc(f[0])}</h3><p class="muted" style="margin:0">${esc(f[1])}</p></div>`).join("");
 })();

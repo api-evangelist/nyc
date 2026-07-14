@@ -50,6 +50,7 @@ The method assigns each domain a one-word *modernization verb*. Sixty-seven asse
 10. **Digital assets are decaying.** `brooklyn-usa.org` lapsed and now redirects off-site; the Public Advocate's site returned 502 during the crawl; `rcda.nyc.gov` is dead. Ungoverned surfaces rot.
 11. **The shared geography spine recurs in all 67.** Borough · Community Board · Council District · Census Tract/NTA · BBL/BIN — every schema's `_common.json`. City Planning is its authoritative source: the basis for **`nyc-commons`**.
 12. **No cross-domain identity.** Every domain has its own join key (gisPropNum, DBN, matterId, service_request_id…). A resident is the same person across all 67, but nothing links them.
+13. **The stack is majority-proprietary — but the exits exist.** Of the 78 distinct technologies detected, **57 are commercial, 4 open-core, 17 open source**; the median domain's detected stack is **71% strictly-commercial** and **57 of 67 domains are majority-proprietary** (four are entirely proprietary in what we could see). Yet **every one of the 61 commercial/open-core tools has a credible open-source alternative** — Socrata→CKAN, Esri ArcGIS→QGIS+GeoServer+PostGIS, Salesforce/Siebel→SuiteCRM/Odoo, Accela→Form.io+Camunda, Google Analytics→Matomo, New Relic/Dynatrace→OpenTelemetry+Grafana, Azure APIM→Kong/Tyk/APISIX. Vendor lock-in is a choice the city re-makes by default, not a constraint. See [technology.html](https://nyc.apievangelist.com/technology.html).
 
 ## Recommendations — the NYC API playbook
 

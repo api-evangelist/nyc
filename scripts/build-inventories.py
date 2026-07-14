@@ -310,16 +310,50 @@ tech_json = {
          "domains": [{"id": x, "short": short[x]} for x in by_tech[t]]}
         for t in sorted(cats[c], key=str.lower)]} for c in cats if cats[c]],
     "alternatives": alt_rows,
-    "byDomain": [{"id": d["id"], "short": d["short"], "platform": platform.get(d["id"], ""),
-                  "techs": [{"tech": t, "license": LIC[t][0]} for t in by_domain_tech[d["id"]]]} for d in DOMAINS],
+    "byDomain": [],
+}
+
+# ---- per-domain proprietary-stack share ----
+# Share of a domain's DETECTED stack that is strictly commercial. Reported over the
+# observed technologies only (not a certified BOM), so read as a signal. Kept
+# SEPARATE from the recalibrated scorecard's ownership dimension — this is a finer
+# lens on the whole stack, not the core-record vendor question.
+for d in DOMAINS:
+    did = d["id"]
+    techs = by_domain_tech[did]
+    lic_counts = collections.Counter(LIC[t][0] for t in techs)
+    total = len(techs)
+    comm = lic_counts.get("commercial", 0)
+    hyb = lic_counts.get("hybrid", 0)
+    oss = lic_counts.get("open source", 0)
+    share = round(comm / total, 3) if total else None
+    tech_json["byDomain"].append({
+        "id": did, "short": d["short"], "platform": platform.get(did, ""),
+        "openSource": oss, "hybrid": hyb, "commercial": comm, "total": total,
+        "proprietaryShare": share,
+        "techs": [{"tech": t, "license": LIC[t][0], "alternative": LIC[t][1]} for t in techs],
+    })
+
+_scored = [b for b in tech_json["byDomain"] if b["proprietaryShare"] is not None]
+_shares = sorted(b["proprietaryShare"] for b in _scored)
+_median = _shares[len(_shares) // 2] if _shares else None
+tech_json["proprietary_summary"] = {
+    "domains_scored": len(_scored),
+    "avg_proprietary_share": round(sum(_shares) / len(_shares), 3) if _shares else None,
+    "median_proprietary_share": _median,
+    "majority_proprietary": sum(1 for s in _shares if s > 0.5),
+    "fully_proprietary_detected": sum(1 for b in _scored if b["commercial"] == b["total"] and b["total"]),
+    "any_open_source": sum(1 for b in _scored if b["openSource"] or b["hybrid"]),
 }
 json.dump(tech_json, open("data/technology.json", "w"), indent=1)
+ps = tech_json["proprietary_summary"]
 
 ls = tech_json["license_summary"]
 LICLABEL = {"open source": "🟢 open source", "hybrid": "🟡 hybrid", "commercial": "🔴 commercial"}
 T = ["# Master Technology List\n",
      f"Every platform, framework, hosting/CDN, vendor SaaS, and API/standard detected across the **{len(DOMAINS)} assessed domains**, from each domain's platform fingerprint, observed APIs, and tech-stack inventory. **{tech_json['distinct_technologies']} distinct technologies.** Keyword-matched, so read as a strong signal, not a certified BOM. Interactive: [technology.html](https://nyc.apievangelist.com/technology.html).\n",
      f"Each technology is tagged **🟢 open source**, **🟡 hybrid** (open-core / dual-licensed / open standard with a commercial host), or **🔴 commercial** — {ls['open source']} open source, {ls['hybrid']} hybrid, {ls['commercial']} commercial. For every commercial or hybrid tool there's a credible **open-source alternative** a NYC agency could actually adopt.\n",
+     f"**Proprietary share:** the median domain's detected stack is **{round(ps['median_proprietary_share']*100)}% strictly commercial**, and **{ps['majority_proprietary']} of {ps['domains_scored']} domains are majority-proprietary** ({ps['fully_proprietary_detected']} entirely so in what was detected). Lock-in is a default, not a constraint — an open-source path exists for the whole commercial set below.\n",
      "## Commercial & hybrid → open-source alternatives\n",
      f"The **{ls['with_oss_alternative']}** proprietary/open-core technologies in use, each with a recommended open-source replacement, ranked by how many domains run it.\n",
      "| Technology | License | # domains | Open-source alternative |",
@@ -339,5 +373,6 @@ open("TECHNOLOGY.md", "w").write("\n".join(T) + "\n")
 print(f"entities: {entities_json['distinct_entities']} distinct ({entities_json['total_entities']} total)")
 print(f"technology: {tech_json['distinct_technologies']} distinct across {len(tech_json['categories'])} categories")
 print(f"licensing: {ls['open source']} open source · {ls['hybrid']} hybrid · {ls['commercial']} commercial · {ls['with_oss_alternative']} with OSS alternative")
+print(f"proprietary share: median {ps['median_proprietary_share']} · avg {ps['avg_proprietary_share']} · {ps['majority_proprietary']}/{ps['domains_scored']} majority-proprietary · {ps['fully_proprietary_detected']} fully proprietary (detected)")
 print("top recurring entities:", [(e, len(d)) for e, d in ent_rows[:8]])
 print("top technologies:", sorted(((t, len(v)) for t, v in by_tech.items()), key=lambda x: -x[1])[:10])

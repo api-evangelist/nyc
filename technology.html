@@ -44,12 +44,13 @@ td.altcell{max-width:34ch}
   document.getElementById("nav").innerHTML=navBar();
   document.getElementById("footer").innerHTML=footer();
   const T=await getJSON("data/technology.json");
-  const nDom=T.byDomain.length, L=T.license_summary;
+  const nDom=T.byDomain.length, L=T.license_summary, P=T.proprietary_summary;
   document.getElementById("stats").innerHTML=[
     [T.distinct_technologies,"distinct technologies"],
     [L["open source"],"open source"],
     [L.commercial+L.hybrid,"commercial / hybrid"],
-    [L.with_oss_alternative,"OSS alternatives named"]
+    [L.with_oss_alternative,"OSS alternatives named"],
+    [Math.round(P.median_proprietary_share*100)+"%","median proprietary stack"]
   ].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
   const out=document.getElementById("out"), intro=document.getElementById("intro");
   const domLink=d=>`<a href="domain.html?d=${encodeURIComponent(d.id)}">${esc(d.short)}</a>`;
@@ -83,11 +84,16 @@ td.altcell{max-width:34ch}
       });
       out.innerHTML=html; document.getElementById("count").textContent=shown+" technologies";
     } else {
-      intro.textContent="";
-      const rows=T.byDomain.filter(d=>!q||d.short.toLowerCase().includes(q)||(d.platform||"").toLowerCase().includes(q)||d.techs.some(t=>t.tech.toLowerCase().includes(q)));
-      out.innerHTML=rows.map(d=>`<div class="card" style="margin-bottom:12px"><h3 style="font-size:1.05rem;margin:0 0 .2em">${domLink(d)}</h3>
-        <div class="muted small" style="margin-bottom:8px">${esc(d.platform||"")}</div>
-        <p style="margin:0">${d.techs.map(t=>`<span class="lic ${CLS[t.license]}" style="margin:2px" title="${esc(t.license)}">${esc(t.tech)}</span>`).join(" ")}</p></div>`).join("");
+      intro.textContent=`Each domain's detected stack, sorted by proprietary share (strictly-commercial ÷ detected). Median ${Math.round(P.median_proprietary_share*100)}%; ${P.majority_proprietary} of ${P.domains_scored} domains are majority-proprietary.`;
+      const rows=T.byDomain.filter(d=>!q||d.short.toLowerCase().includes(q)||(d.platform||"").toLowerCase().includes(q)||d.techs.some(t=>t.tech.toLowerCase().includes(q)))
+        .slice().sort((a,b)=>(b.proprietaryShare??-1)-(a.proprietaryShare??-1)||b.commercial-a.commercial);
+      out.innerHTML=rows.map(d=>{
+        const pct=d.proprietaryShare==null?null:Math.round(d.proprietaryShare*100);
+        const bar=pct==null?"":`<div style="display:flex;align-items:center;gap:8px;margin:2px 0 8px"><div style="flex:1;height:7px;border-radius:5px;background:color-mix(in srgb,#2e9e6b 20%,transparent);overflow:hidden"><span style="display:block;height:100%;width:${pct}%;background:#c0504d"></span></div><span class="small" style="color:var(--fg-soft);white-space:nowrap">${pct}% proprietary · ${d.commercial}🔴 ${d.hybrid}🟡 ${d.openSource}🟢</span></div>`;
+        return `<div class="card" style="margin-bottom:12px"><h3 style="font-size:1.05rem;margin:0 0 .2em">${domLink(d)}</h3>
+        <div class="muted small" style="margin-bottom:6px">${esc(d.platform||"")}</div>${bar}
+        <p style="margin:0">${d.techs.map(t=>`<span class="lic ${CLS[t.license]}" style="margin:2px" title="${esc(t.license)}${t.alternative?' — OSS: '+esc(t.alternative):''}">${esc(t.tech)}</span>`).join(" ")}</p></div>`;
+      }).join("");
       document.getElementById("count").textContent=rows.length+" / "+nDom+" domains";
     }
   }

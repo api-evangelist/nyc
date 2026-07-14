@@ -4307,30 +4307,41 @@
    "id": "nycgovparks.org",
    "short": "NYC Parks & Recreation",
    "platform": "",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "AWS CloudFront",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server or nginx caching in front of the origin"
     },
     {
      "tech": "Cloudinary",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "imgproxy or Thumbor (OSS image transform/CDN) + MinIO/S3 storage"
     },
     {
      "tech": "HawkSearch",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenSearch, Meilisearch, or Typesense (OSS search)"
     },
     {
      "tech": "Loggly",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Grafana Loki or OpenSearch + Fluent Bit (OSS log aggregation)"
     },
     {
      "tech": "Next.js",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -4338,30 +4349,41 @@
    "id": "schools.nyc.gov",
    "short": "NYC Public Schools (DOE)",
    "platform": "",
+   "openSource": 0,
+   "hybrid": 0,
+   "commercial": 6,
+   "total": 6,
+   "proprietaryShare": 1.0,
    "techs": [
     {
      "tech": "Azure Blob Storage",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "MinIO (S3-compatible OSS object storage)"
     },
     {
      "tech": "Esri ArcGIS",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "QGIS + GeoServer/MapServer + PostGIS + Leaflet/MapLibre (OSS geospatial stack)"
     },
     {
      "tech": "HawkSearch",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenSearch, Meilisearch, or Typesense (OSS search)"
     },
     {
      "tech": "Microsoft Azure",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack; MinIO for blob storage"
     },
     {
      "tech": "Progress Sitefinity",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal or WordPress \u2014 OSS CMSs with strong government deployments (e.g. the govCMS Drupal distribution)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -4369,34 +4391,46 @@
    "id": "council.nyc.gov",
    "short": "NYC Council",
    "platform": "",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 7,
+   "proprietaryShare": 0.714,
    "techs": [
     {
      "tech": "CARTO",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "PostGIS + MapLibre/Leaflet; kepler.gl for exploration"
     },
     {
      "tech": "Legistar (Granicus)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "No turnkey OSS legislative suite; Councilmatic (OSS) can re-expose the record openly over an OSS database"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "StreamText",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Self-hosted Whisper (OSS speech-to-text) for live/near-live captioning"
     },
     {
      "tech": "Viebit",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "PeerTube or Owncast (OSS video streaming)"
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress REST API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -4404,18 +4438,26 @@
    "id": "vote.nyc",
    "short": "NYC Board of Elections",
    "platform": "",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 1,
+   "total": 3,
+   "proprietaryShare": 0.333,
    "techs": [
     {
      "tech": "Drupal",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Drupal JSON:API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -4423,30 +4465,41 @@
    "id": "nyc311",
    "short": "NYC311",
    "platform": "",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 6,
+   "proprietaryShare": 0.667,
    "techs": [
     {
      "tech": "Microsoft Azure",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack; MinIO for blob storage"
     },
     {
      "tech": "Microsoft Dynamics 365",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Odoo or ERPNext (OSS CRM/ERP) for constituent & case management; Drupal for the public portal"
     },
     {
      "tech": "NYC GeoClient / GeoSearch",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Open311 (GeoReport v2)",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "api.nyc.gov (Azure APIM)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kong, Tyk, Apache APISIX, or Gravitee (OSS API gateways)"
     }
    ]
   },
@@ -4454,30 +4507,41 @@
    "id": "dob",
    "short": "NYC Buildings (DOB)",
    "platform": "",
+   "openSource": 2,
+   "hybrid": 1,
+   "commercial": 3,
+   "total": 6,
+   "proprietaryShare": 0.5,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Apache",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Java / Tomcat / WebLogic",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "Apache Tomcat or WildFly (OSS app servers) in place of Oracle WebLogic"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -4485,38 +4549,51 @@
    "id": "hpd",
    "short": "NYC Housing (HPD)",
    "platform": "",
+   "openSource": 2,
+   "hybrid": 1,
+   "commercial": 5,
+   "total": 8,
+   "proprietaryShare": 0.625,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "Esri ArcGIS",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "QGIS + GeoServer/MapServer + PostGIS + Leaflet/MapLibre (OSS geospatial stack)"
     },
     {
      "tech": "Google Analytics",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Matomo, Plausible, or Umami (OSS, privacy-friendly analytics)"
     },
     {
      "tech": "Google Tag Manager",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Matomo Tag Manager (OSS)"
     },
     {
      "tech": "NYC GeoClient / GeoSearch",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "WSO2 API Gateway",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "api.nyc.gov (Azure APIM)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kong, Tyk, Apache APISIX, or Gravitee (OSS API gateways)"
     }
    ]
   },
@@ -4524,30 +4601,41 @@
    "id": "dot",
    "short": "NYC Transportation (DOT)",
    "platform": "",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 6,
+   "proprietaryShare": 0.667,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Drupal",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Drupal JSON:API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Pantheon",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Self-hosted Drupal/WordPress with DDEV or Lando"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -4555,34 +4643,46 @@
    "id": "dohmh",
    "short": "NYC Health (DOHMH)",
    "platform": "",
+   "openSource": 1,
+   "hybrid": 1,
+   "commercial": 5,
+   "total": 7,
+   "proprietaryShare": 0.714,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "Accela",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Form.io + Camunda (OSS forms + BPM/workflow) as a build-your-own permitting/licensing stack"
     },
     {
      "tech": "Angular",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Esri ArcGIS",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "QGIS + GeoServer/MapServer + PostGIS + Leaflet/MapLibre (OSS geospatial stack)"
     },
     {
      "tech": "Salesforce",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "SuiteCRM, EspoCRM, or Odoo (OSS CRM)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -4590,34 +4690,46 @@
    "id": "dsny",
    "short": "NYC Sanitation (DSNY)",
    "platform": "",
+   "openSource": 1,
+   "hybrid": 1,
+   "commercial": 5,
+   "total": 7,
+   "proprietaryShare": 0.714,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Esri ArcGIS",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "QGIS + GeoServer/MapServer + PostGIS + Leaflet/MapLibre (OSS geospatial stack)"
     },
     {
      "tech": "Google Translate",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "LibreTranslate (OSS, self-hosted machine translation)"
     },
     {
      "tech": "React",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -4625,30 +4737,41 @@
    "id": "nypd",
    "short": "NYPD",
    "platform": "",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Angular",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Microsoft Azure",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack; MinIO for blob storage"
     },
     {
      "tech": "Oracle WebCenter Sites",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal or WordPress"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -4656,26 +4779,36 @@
    "id": "tlc",
    "short": "NYC Taxi & Limousine (TLC)",
    "platform": "",
+   "openSource": 0,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 5,
+   "proprietaryShare": 1.0,
    "techs": [
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "AWS CloudFront",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server or nginx caching in front of the origin"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -4683,34 +4816,46 @@
    "id": "dcp",
    "short": "NYC City Planning (DCP)",
    "platform": "",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 6,
+   "total": 7,
+   "proprietaryShare": 0.857,
    "techs": [
     {
      "tech": "CARTO",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "PostGIS + MapLibre/Leaflet; kepler.gl for exploration"
     },
     {
      "tech": "Mapbox",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "MapLibre GL (OSS fork of Mapbox GL) on OpenStreetMap tiles"
     },
     {
      "tech": "Microsoft Azure",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack; MinIO for blob storage"
     },
     {
      "tech": "NYC GeoClient / GeoSearch",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Netlify",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Static hosting on nginx; Coolify or CapRover (OSS PaaS) for CI/deploy"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "api.nyc.gov (Azure APIM)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kong, Tyk, Apache APISIX, or Gravitee (OSS API gateways)"
     }
    ]
   },
@@ -4718,30 +4863,41 @@
    "id": "comptroller.nyc.gov",
    "short": "NYC Comptroller",
    "platform": "",
+   "openSource": 4,
+   "hybrid": 0,
+   "commercial": 2,
+   "total": 6,
+   "proprietaryShare": 0.333,
    "techs": [
     {
      "tech": "Checkbook NYC",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Drupal",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "New Relic",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "SigNoz, or OpenTelemetry + Grafana (Loki/Tempo/Prometheus)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress REST API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -4749,30 +4905,41 @@
    "id": "nycha",
    "short": "NYC Housing Authority (NYCHA)",
    "platform": "",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Oracle Siebel",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "SuiteCRM or Odoo (OSS CRM)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -4780,30 +4947,41 @@
    "id": "acs",
    "short": "NYC Children's Services (ACS)",
    "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace + Google Maps JS); no ACS-owned application \u2014 public actions delegated to NY State OCFS (Central Register) and NYC 311",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Google Maps",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Leaflet or MapLibre + OpenStreetMap + Nominatim/Pelias geocoding"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -4811,30 +4989,41 @@
    "id": "bic",
    "short": "NYC Business Integrity Commission (BIC)",
    "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) + Salesforce Experience Cloud portal (bicportal.nyc.gov)",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Salesforce",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "SuiteCRM, EspoCRM, or Odoo (OSS CRM)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -4842,26 +5031,36 @@
    "id": "bklynlibrary",
    "short": "Brooklyn Public Library (BPL)",
    "platform": "Drupal (Cloudflare) + BiblioCommons ILS + discover.bklynlibrary.org events",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 3,
+   "total": 5,
+   "proprietaryShare": 0.6,
    "techs": [
     {
      "tech": "BiblioCommons",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "VuFind or Blacklight (OSS library discovery layers)"
     },
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Drupal",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Drupal JSON:API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -4869,38 +5068,51 @@
    "id": "bronxbp",
    "short": "Bronx Borough President",
    "platform": "Revize government SaaS CMS (PHP front end + JSP admin at cms2.revize.com), on Oracle Cloud; NOT the shared NYC.gov 'Livesite' platform. Events on Google Calendar; Curator.io + Constant Contact + UserWay + GA4 widgets.",
+   "openSource": 0,
+   "hybrid": 1,
+   "commercial": 7,
+   "total": 8,
+   "proprietaryShare": 0.875,
    "techs": [
     {
      "tech": "Constant Contact",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Listmonk or Mautic (OSS email / newsletter)"
     },
     {
      "tech": "Google Analytics",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Matomo, Plausible, or Umami (OSS, privacy-friendly analytics)"
     },
     {
      "tech": "Google Tag Manager",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Matomo Tag Manager (OSS)"
     },
     {
      "tech": "Java / Tomcat / WebLogic",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "Apache Tomcat or WildFly (OSS app servers) in place of Oracle WebLogic"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Oracle Cloud",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux"
     },
     {
      "tech": "Revize",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS distribution) or WordPress"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -4908,34 +5120,46 @@
    "id": "bronxda",
    "short": "Bronx District Attorney",
    "platform": "Legacy NYC.gov /html/ SHTML site \u2014 server-side-includes (.shtml) pages, a JavaScript-built nav (nav-nodes.js/top-nav.js) and jQuery/Bootstrap/Tether; Akamai edge + AWS ALB origin + Dynatrace and Akamai mPulse RUM + Google Analytics/Translate. Aggregate prosecution data is embedded from Microsoft Power BI (Gov) (app.powerbigov.us). NOT the shared NYC.gov 'Livesite' platform.",
+   "openSource": 0,
+   "hybrid": 0,
+   "commercial": 7,
+   "total": 7,
+   "proprietaryShare": 1.0,
    "techs": [
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Google Analytics",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Matomo, Plausible, or Umami (OSS, privacy-friendly analytics)"
     },
     {
      "tech": "Microsoft Power BI",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Superset, Metabase, or Grafana (OSS BI / dashboards)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -4943,34 +5167,46 @@
    "id": "brooklynbp",
    "short": "Brooklyn Borough President",
    "platform": "Headless WordPress on WP Engine + Next.js, behind Cloudflare (www.brooklynbp.nyc.gov) \u2014 after the office let its former primary domain brooklyn-usa.org lapse (now redirecting offsite to batman-news.com).",
+   "openSource": 3,
+   "hybrid": 1,
+   "commercial": 3,
+   "total": 7,
+   "proprietaryShare": 0.429,
    "techs": [
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Next.js",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "WP Engine",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Self-hosted WordPress on nginx/Apache (DDEV/Lando for local dev)"
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress REST API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Wordfence",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "Free tier suffices; the premium tier maps to ModSecurity + OWASP CRS (OSS WAF)"
     }
    ]
   },
@@ -4978,30 +5214,41 @@
    "id": "brooklynda",
    "short": "Brooklyn District Attorney",
    "platform": "WordPress 6.8.5 (GeneratePress / GP Premium) on Apache; Wordfence, Yoast, MonsterInsights; accidental WordPress REST API (wp/v2)",
+   "openSource": 3,
+   "hybrid": 1,
+   "commercial": 2,
+   "total": 6,
+   "proprietaryShare": 0.333,
    "techs": [
     {
      "tech": "Apache",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Divi / GeneratePress / Themeco",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "WordPress core block themes / full-site editing (GPL, no premium-builder lock-in)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress REST API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Wordfence",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "Free tier suffices; the premium tier maps to ModSecurity + OWASP CRS (OSS WAF)"
     }
    ]
   },
@@ -5009,30 +5256,41 @@
    "id": "bsa",
    "short": "NYC Standards & Appeals (BSA)",
    "platform": "NYC.gov 'Livesite' (Akamai + nginx + AWS ALB + Dynatrace); records/decisions search is a server-rendered Livesite widget; intake is paper PDF forms \u2014 no online application portal",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5040,30 +5298,41 @@
    "id": "cchr",
    "short": "NYC Human Rights (CCHR)",
    "platform": "NYC.gov shared 'Livesite' platform (Akamai edge, nginx, AWS ALB, Dynatrace + mPulse RUM) \u2014 no CCHR-specific application platform and, unlike NYCHA, no vendor CRM.",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5071,30 +5340,41 @@
    "id": "ccrb",
    "short": "NYC Civilian Complaint Review (CCRB)",
    "platform": "NYC.gov 'Livesite' shared platform (Akamai/nginx/AWS ALB/Dynatrace) + a Complaint Status Lookup app on apps.nyc.gov; data via NYC Open Data (Socrata) and in-house Data Transparency Initiative dashboards",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5102,22 +5382,31 @@
    "id": "cfb",
    "short": "NYC Campaign Finance Board (CFB)",
    "platform": "Microsoft IIS 8.5 / ASP.NET MVC 5.2 + AngularJS 1.5 (nyccfb.info + FTMSearchWebAPI); Umbraco CMS / ASP.NET on Azure (nycvotes.org); C-SMART / IEDS / C-Access ASP.NET applications",
+   "openSource": 1,
+   "hybrid": 1,
+   "commercial": 2,
+   "total": 4,
+   "proprietaryShare": 0.5,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "Angular",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Microsoft Azure",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack; MinIO for blob storage"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -5125,34 +5414,46 @@
    "id": "cityclerk",
    "short": "NYC City Clerk",
    "platform": "cityclerk.nyc.gov on the NYC.gov Content API (AWS ALB + Akamai + nginx + Dynatrace, jQuery/Bootstrap, WebTrends); Project Cupid marriage system on the rented Unqork no-code platform (Angular SPA); e-Lobbyist Java filing app behind SAP CDC / Gigya SSO; Lobbyist Search JS SPA over a .do Java backend",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 7,
+   "proprietaryShare": 0.714,
    "techs": [
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Angular",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "Unqork",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Budibase, Appsmith, or ToolJet (OSS low-code app builders)"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5160,30 +5461,41 @@
    "id": "coib",
    "short": "NYC Conflicts of Interest Board (COIB)",
    "platform": "NYC.gov shared 'Livesite' chassis (Akamai + nginx + Dynatrace) for the informational site, plus a separate login-gated Annual Financial Disclosure electronic filing website",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Google Maps",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Leaflet or MapLibre + OpenStreetMap + Nominatim/Pelias geocoding"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5191,26 +5503,36 @@
    "id": "cuny",
    "short": "City University of New York (CUNY)",
    "platform": "WordPress Multisite (nginx) + Oracle PeopleSoft Campus Solutions (CUNYfirst)",
+   "openSource": 3,
+   "hybrid": 0,
+   "commercial": 2,
+   "total": 5,
+   "proprietaryShare": 0.4,
    "techs": [
     {
      "tech": "PeopleSoft (CUNYfirst)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Odoo or ERPNext (OSS ERP)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress REST API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5218,46 +5540,61 @@
    "id": "dcas",
    "short": "NYC Citywide Admin Services (DCAS)",
    "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) content + a fragmented aNNN vendor app layer: City Jobs (ASP.NET Core/Azure), Employee Self-Service (PeopleSoft/NYCAPS), OASys, and the CityStore (Shopify)",
+   "openSource": 1,
+   "hybrid": 1,
+   "commercial": 8,
+   "total": 10,
+   "proprietaryShare": 0.8,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Microsoft Azure",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack; MinIO for blob storage"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "PeopleSoft (CUNYfirst)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Odoo or ERPNext (OSS ERP)"
     },
     {
      "tech": "Shopify",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Medusa, Saleor, or WooCommerce (OSS commerce)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5265,34 +5602,46 @@
    "id": "dcla",
    "short": "NYC Cultural Affairs (DCLA)",
    "platform": "NYC.gov 'Livesite' v22 info site (Akamai/nginx/Dynatrace) + a separate Salesforce Experience Cloud grants portal (dclagms.nyc.gov, backed by culturalaffairsnyc.my.salesforce.com); 9 Socrata datasets",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 6,
+   "total": 7,
+   "proprietaryShare": 0.857,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Google Maps",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Leaflet or MapLibre + OpenStreetMap + Nominatim/Pelias geocoding"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Salesforce",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "SuiteCRM, EspoCRM, or Odoo (OSS CRM)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5300,30 +5649,41 @@
    "id": "dcwp",
    "short": "NYC Consumer & Worker Protection (DCWP)",
    "platform": "NYC.gov 'Livesite' info site (Akamai/nginx/Dynatrace) + a separate Java/Spring NYC Business licensing portal (nyc-business.nyc.gov) + CityPay (CityBase) payments; 37 Socrata datasets",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 6,
+   "proprietaryShare": 0.667,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "Spring",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5331,34 +5691,46 @@
    "id": "ddc",
    "short": "NYC Design & Construction (DDC)",
    "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace + mPulse + AWS ALB) for the informational site; the transaction layer is entirely citywide systems DDC does not own \u2014 PASSPort (MOCS), City Record, Checkbook NYC (Comptroller), plus DDC's own API-less DDC Anywhere portal.",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 7,
+   "proprietaryShare": 0.714,
    "techs": [
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Checkbook NYC",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5366,34 +5738,46 @@
    "id": "dep",
    "short": "NYC Environmental Protection (DEP)",
    "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) + uMAX CIS on ASP.NET + Azure AD B2C",
+   "openSource": 1,
+   "hybrid": 1,
+   "commercial": 5,
+   "total": 7,
+   "proprietaryShare": 0.714,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Microsoft Azure",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack; MinIO for blob storage"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5401,26 +5785,36 @@
    "id": "dfta",
    "short": "NYC Aging (DFTA)",
    "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace) \u2014 no separate vendor system; the service layer is a phone-based Aging Connect information-and-referral contact center.",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 5,
+   "proprietaryShare": 0.8,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5428,26 +5822,36 @@
    "id": "dhs",
    "short": "NYC Homeless Services (DHS)",
    "platform": "NYC.gov 'Livesite' shared chassis (Akamai/nginx/Dynatrace); no service portal \u2014 transactions route through NYC311",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 5,
+   "proprietaryShare": 0.8,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5455,34 +5859,46 @@
    "id": "doc",
    "short": "NYC Correction (DOC)",
    "platform": "NYC.gov 'Livesite' (Akamai edge, nginx, Dynatrace RUM) informational site + a legacy Apache MyFaces (JSF/Java) Inmate Lookup Service ('P.I.C. Lookup', a073-ils-web.nyc.gov) with no API; Socrata SODA open data",
+   "openSource": 2,
+   "hybrid": 1,
+   "commercial": 4,
+   "total": 7,
+   "proprietaryShare": 0.571,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Apache",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Java / Tomcat / WebLogic",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "Apache Tomcat or WildFly (OSS app servers) in place of Oracle WebLogic"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5490,30 +5906,41 @@
    "id": "dof",
    "short": "NYC Finance (DOF)",
    "platform": "NYC.gov 'Livesite' informational chassis (Akamai/nginx/Dynatrace) plus a fleet of aging, siloed a836-*.nyc.gov apps \u2014 ACRIS (ASP.NET/IIS, 2013-era), CityPay (PayPal/Braintree form), and the Property Tax System.",
+   "openSource": 1,
+   "hybrid": 1,
+   "commercial": 4,
+   "total": 6,
+   "proprietaryShare": 0.667,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5521,34 +5948,46 @@
    "id": "doi",
    "short": "NYC Investigation (DOI)",
    "platform": "NYC.gov 'Livesite' shared chassis (Akamai + nginx + Livesite v22 + Dynatrace) for the informational site; public reports are static PDFs under /assets/doi/reports/pdf/. The complaint-intake service layer is Kaseware, a third-party case-management SaaS (app.kaseware.us, Cloudflare-fronted) \u2014 a public web form with no API.",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 6,
+   "total": 7,
+   "proprietaryShare": 0.857,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Kaseware",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Appsmith/Budibase over PostgreSQL for case management (no turnkey OSS equivalent)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5556,34 +5995,46 @@
    "id": "doris",
    "short": "NYC Records (DORIS)",
    "platform": "NYC.gov Livesite site + Squarespace (archives.nyc) + Preservica DAMS (formerly LUNA Imaging) + Akamai vital-records portal + OpenRecords; Socrata for the indexes",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 6,
+   "total": 7,
+   "proprietaryShare": 0.857,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "LUNA Imaging",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Omeka S + IIIF viewers (Mirador / OpenSeadragon, OSS image collections)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Preservica",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Archivematica + AtoM (OSS digital preservation + description)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5591,38 +6042,51 @@
    "id": "dvs",
    "short": "NYC Veterans' Services (DVS)",
    "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace) for the info site; the care-coordination service layer is VetConnectNYC, a third-party vendor portal on Combined Arms' 'Military Resource Portal' (Next.js on CloudFront) \u2014 a web form, no API.",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 6,
+   "total": 8,
+   "proprietaryShare": 0.75,
    "techs": [
     {
      "tech": "AWS CloudFront",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server or nginx caching in front of the origin"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Combined Arms",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "An OpenReferral/HSDS directory (OSS) for the human-services referral graph"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Next.js",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5630,42 +6094,56 @@
    "id": "dycd",
    "short": "NYC Youth & Community Dev (DYCD)",
    "platform": "Informational site on the NYC.gov 'Livesite' chassis (nginx/Akamai/Dynatrace); the DYCD Connect / DiscoverDYCD apps on Microsoft-IIS + Angular with a private internal /api/",
+   "openSource": 2,
+   "hybrid": 1,
+   "commercial": 6,
+   "total": 9,
+   "proprietaryShare": 0.667,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Angular",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Google Maps",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Leaflet or MapLibre + OpenStreetMap + Nominatim/Pelias geocoding"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5673,22 +6151,31 @@
    "id": "edc",
    "short": "NYC Economic Development (EDC)",
    "platform": "Drupal behind Cloudflare (bot-challenged); NYC Ferry on Cloudflare + CloudFront",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 3,
+   "total": 4,
+   "proprietaryShare": 0.75,
    "techs": [
     {
      "tech": "AWS CloudFront",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server or nginx caching in front of the origin"
     },
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Drupal",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -5696,42 +6183,56 @@
    "id": "fdny",
    "short": "NYC Fire (FDNY)",
    "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) informational site + FDNY Business on a rented Accela Civic Platform (fires.fdnycloud.org, Cloudflare + Azure App Gateway, Datadog RUM)",
+   "openSource": 1,
+   "hybrid": 1,
+   "commercial": 7,
+   "total": 9,
+   "proprietaryShare": 0.778,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "Accela",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Form.io + Camunda (OSS forms + BPM/workflow) as a build-your-own permitting/licensing stack"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Microsoft Azure",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack; MinIO for blob storage"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5739,22 +6240,31 @@
    "id": "hhc",
    "short": "NYC Health + Hospitals",
    "platform": "Epic (MyChart on IIS + live FHIR R4 / SMART on FHIR) behind Radware Bot Manager",
+   "openSource": 1,
+   "hybrid": 1,
+   "commercial": 2,
+   "total": 4,
+   "proprietaryShare": 0.5,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "Epic / MyChart",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenMRS or OpenEMR (OSS EHR); Bahmni for the patient-facing layer"
     },
     {
      "tech": "FHIR / SMART on FHIR",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -5762,42 +6272,56 @@
    "id": "hra",
    "short": "NYC Social Services (HRA)",
    "platform": "NYC.gov Livesite (informational) + ACCESS NYC (WordPress/WP Engine, open-source Drools eligibility rules) + ACCESS HRA (React SPA behind Akamai) application portal",
+   "openSource": 3,
+   "hybrid": 0,
+   "commercial": 6,
+   "total": 9,
+   "proprietaryShare": 0.667,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "React",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "WP Engine",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Self-hosted WordPress on nginx/Apache (DDEV/Lando for local dev)"
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5805,26 +6329,36 @@
    "id": "ibo",
    "short": "NYC Independent Budget Office (IBO)",
    "platform": "NYC.gov Content API v2 SPA (Akamai/nginx/Dynatrace/WebTrends); off legacy ibo.nyc.ny.us; 20 Socrata datasets; Airtable/ArcGIS/Infogram embeds",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 5,
+   "proprietaryShare": 0.8,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Esri ArcGIS",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "QGIS + GeoServer/MapServer + PostGIS + Leaflet/MapLibre (OSS geospatial stack)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5832,26 +6366,36 @@
    "id": "law",
    "short": "NYC Law Department",
    "platform": "NYC.gov shared 'Livesite' CMS (Akamai + nginx + Dynatrace) \u2014 no Law-specific platform, portal, or application system",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 5,
+   "proprietaryShare": 0.8,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5859,38 +6403,51 @@
    "id": "lpc",
    "short": "NYC Landmarks (LPC)",
    "platform": "NYC.gov 'Livesite' informational site (Akamai/nginx/Dynatrace) + Esri ArcGIS Online (Discover NYC Landmarks map) + Salesforce Experience Cloud (Portico permit portal)",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 7,
+   "total": 8,
+   "proprietaryShare": 0.875,
    "techs": [
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Esri ArcGIS",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "QGIS + GeoServer/MapServer + PostGIS + Leaflet/MapLibre (OSS geospatial stack)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Salesforce",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "SuiteCRM, EspoCRM, or Odoo (OSS CRM)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5898,30 +6455,41 @@
    "id": "manhattanbp",
    "short": "Manhattan Borough President",
    "platform": "WordPress (Divi theme) on WP Engine, behind Cloudflare; only API is the default WordPress REST API + Forminator forms",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 6,
+   "proprietaryShare": 0.667,
    "techs": [
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Divi / GeneratePress / Themeco",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "WordPress core block themes / full-site editing (GPL, no premium-builder lock-in)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "WP Engine",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Self-hosted WordPress on nginx/Apache (DDEV/Lando for local dev)"
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress REST API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5929,22 +6497,31 @@
    "id": "manhattanda",
    "short": "Manhattan District Attorney",
    "platform": "WordPress (custom 'dany' theme) behind Sucuri CloudProxy; Jetpack Search; The Events Calendar; WPForms/Contact Form 7; Mailchimp; exposed WP REST API; FOIL delegated to NYC OpenRecords",
+   "openSource": 3,
+   "hybrid": 1,
+   "commercial": 0,
+   "total": 4,
+   "proprietaryShare": 0.0,
    "techs": [
     {
      "tech": "Contact Form 7",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress REST API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Wordfence",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "Free tier suffices; the premium tier maps to ModSecurity + OWASP CRS (OSS WAF)"
     }
    ]
   },
@@ -5952,46 +6529,61 @@
    "id": "mocj",
    "short": "NYC Criminal Justice (MOCJ)",
    "platform": "WordPress (WP Engine) behind Cloudflare; Kadence/ACF/Contact Form 7 + accidental wp/v2 REST API",
+   "openSource": 4,
+   "hybrid": 0,
+   "commercial": 6,
+   "total": 10,
+   "proprietaryShare": 0.6,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Contact Form 7",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "WP Engine",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Self-hosted WordPress on nginx/Apache (DDEV/Lando for local dev)"
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress REST API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -5999,30 +6591,41 @@
    "id": "mome",
    "short": "NYC Media & Entertainment (MOME)",
    "platform": "NYC.gov 'Livesite' informational site (Akamai/nginx/Dynatrace) + a login-walled ASP.NET Core 'MOME E-Apply' film-permit portal on the shared nyceventpermits.nyc.gov event-permitting platform",
+   "openSource": 1,
+   "hybrid": 1,
+   "commercial": 4,
+   "total": 6,
+   "proprietaryShare": 0.667,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -6030,30 +6633,41 @@
    "id": "nycem",
    "short": "NYC Emergency Management (NYCEM)",
    "platform": "Informational site on shared NYC.gov Livesite (Akamai/nginx/Dynatrace); Notify NYC alerting rented from Everbridge (a858-nycnotify.nyc.gov + feeds.everbridge.net CAP RSS feed)",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Everbridge",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Novu (OSS notification infrastructure) wired to IPAWS/Twilio for multichannel alerts"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -6061,26 +6675,36 @@
    "id": "nypl",
    "short": "New York Public Library (NYPL)",
    "platform": "NYPL-owned open-source stack \u2014 Ruby on Rails Digital Collections API (api.repo.nypl.org), PHP Slim Locations API (refinery.nypl.org), Node/AWS discovery-api + Sierra ILS, accessibility-first React design system; site behind Imperva Incapsula",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 3,
+   "total": 5,
+   "proprietaryShare": 0.6,
    "techs": [
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Imperva",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "ModSecurity + OWASP Core Rule Set (OSS WAF)"
     },
     {
      "tech": "React",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -6088,34 +6712,46 @@
    "id": "oath",
    "short": "NYC Admin Trials & Hearings (OATH)",
    "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) informational site + a legacy Apache Struts / Oracle WebLogic ECB Ticket Finder portal",
+   "openSource": 2,
+   "hybrid": 1,
+   "commercial": 4,
+   "total": 7,
+   "proprietaryShare": 0.571,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Apache",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Java / Tomcat / WebLogic",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "Apache Tomcat or WildFly (OSS app servers) in place of Oracle WebLogic"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -6123,30 +6759,41 @@
    "id": "ocme",
    "short": "NYC Medical Examiner (OCME)",
    "platform": "NYC.gov 'Livesite' shared chassis (Akamai + nginx + AWS ALB + Dynatrace) \u2014 informational only; no OCME application. Transactions run on paper (notarized) forms + NYC 311.",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -6154,38 +6801,51 @@
    "id": "oti",
    "short": "NYC Technology & Innovation (OTI)",
    "platform": "NYC.gov 'Livesite' informational site (Akamai + nginx + mPulse + Dynatrace); OTI OPERATES NYC Open Data (Socrata/Tyler), the api.nyc.gov gateway (Microsoft Azure API Management; GeoClient/GeoSearch), and the 311 pipeline.",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 6,
+   "total": 8,
+   "proprietaryShare": 0.75,
    "techs": [
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "Microsoft Azure",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack; MinIO for blob storage"
     },
     {
      "tech": "NYC GeoClient / GeoSearch",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "api.nyc.gov (Azure APIM)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kong, Tyk, Apache APISIX, or Gravitee (OSS API gateways)"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -6193,30 +6853,41 @@
    "id": "pubadvocate",
    "short": "NYC Public Advocate",
    "platform": "Self-hosted nginx/1.18.0 (Ubuntu) main site (502/down during crawl) + an orphan Next.js/Vercel product (the Worst Landlord Watchlist)",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 6,
+   "proprietaryShare": 0.667,
    "techs": [
     {
      "tech": "Legistar (Granicus)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "No turnkey OSS legislative suite; Councilmatic (OSS) can re-expose the record openly over an OSS database"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Next.js",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "Vercel",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Self-hosted Next.js on Node + nginx; Coolify (OSS PaaS)"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -6224,34 +6895,46 @@
    "id": "queensbp",
    "short": "Queens Borough President",
    "platform": "WordPress (Divi + Elementor) on WP Engine behind Cloudflare; Yoast + Wordfence; queensbp.org 301s to www.queensbp.nyc.gov",
+   "openSource": 2,
+   "hybrid": 1,
+   "commercial": 4,
+   "total": 7,
+   "proprietaryShare": 0.571,
    "techs": [
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Divi / GeneratePress / Themeco",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "WordPress core block themes / full-site editing (GPL, no premium-builder lock-in)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "WP Engine",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Self-hosted WordPress on nginx/Apache (DDEV/Lando for local dev)"
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress REST API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Wordfence",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "Free tier suffices; the premium tier maps to ModSecurity + OWASP CRS (OSS WAF)"
     }
    ]
   },
@@ -6259,34 +6942,46 @@
    "id": "queensda",
    "short": "Queens District Attorney",
    "platform": "WordPress 7.0.1 (Divi + Beaver Builder + WPML) on Kinsta behind Cloudflare; FacetWP search; self-hosted Matomo",
+   "openSource": 3,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 7,
+   "proprietaryShare": 0.571,
    "techs": [
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Divi / GeneratePress / Themeco",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "WordPress core block themes / full-site editing (GPL, no premium-builder lock-in)"
     },
     {
      "tech": "Kinsta",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Self-hosted WordPress on nginx"
     },
     {
      "tech": "Matomo",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress REST API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -6294,30 +6989,41 @@
    "id": "queenslibrary",
    "short": "Queens Public Library (QPL)",
    "platform": "Drupal site (behind F5 BIG-IP WAF) + BiblioCommons catalog + Communico events + OverDrive/Libby/Axis 360/hoopla digital + Springshare help",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 6,
+   "proprietaryShare": 0.667,
    "techs": [
     {
      "tech": "BiblioCommons",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "VuFind or Blacklight (OSS library discovery layers)"
     },
     {
      "tech": "Communico",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Koha (OSS ILS) plus a custom events layer"
     },
     {
      "tech": "Drupal",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "OverDrive / hoopla",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "The Palace Project / Library Simplified (OSS e-content platform, DPLA)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "Spring",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -6325,34 +7031,46 @@
    "id": "sbs",
    "short": "NYC Small Business Services (SBS)",
    "platform": "Informational site on the NYC.gov shared 'Livesite' chassis (Akamai/nginx/Dynatrace); the transactional MyCity Business portal on Spring (Java) + Adobe AEM + jQuery/Handlebars, hosting the Step-by-Step licensing wizard and certification/enrollment flows.",
+   "openSource": 2,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 7,
+   "proprietaryShare": 0.714,
    "techs": [
     {
      "tech": "Adobe Experience Manager",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal or WordPress"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "Spring",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -6360,34 +7078,46 @@
    "id": "sca",
    "short": "NYC School Construction Authority (SCA)",
    "platform": "DotNetNuke (DNN) ASP.NET CMS (obvio skin) behind AWS ALB, content in Azure Blob; login-walled bidset SharePoint vendor portal",
+   "openSource": 0,
+   "hybrid": 2,
+   "commercial": 5,
+   "total": 7,
+   "proprietaryShare": 0.714,
    "techs": [
     {
      "tech": "ASP.NET / IIS",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "ASP.NET Core (cross-platform, MIT) on Linux/nginx, or Node.js / Django \u2014 drops the Windows Server + IIS licensing"
     },
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Azure Blob Storage",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "MinIO (S3-compatible OSS object storage)"
     },
     {
      "tech": "DotNetNuke (DNN)",
-     "license": "hybrid"
+     "license": "hybrid",
+     "alternative": "DNN Platform is open-source (MIT); replace the commercial Evoq tier with WordPress or Drupal"
     },
     {
      "tech": "Microsoft Azure",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack; MinIO for blob storage"
     },
     {
      "tech": "Microsoft SharePoint",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Nextcloud (OSS document collaboration / intranet)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     }
    ]
   },
@@ -6395,22 +7125,31 @@
    "id": "statenislandbp",
    "short": "Staten Island Borough President",
    "platform": "Weebly brochure site behind Cloudflare (Weebly Forms + Constant Contact); no CMS of record, no API",
+   "openSource": 0,
+   "hybrid": 0,
+   "commercial": 4,
+   "total": 4,
+   "proprietaryShare": 1.0,
    "techs": [
     {
      "tech": "Cloudflare",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "nginx + Varnish + Let's Encrypt for cache/TLS; ModSecurity + OWASP CRS for WAF"
     },
     {
      "tech": "Constant Contact",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Listmonk or Mautic (OSS email / newsletter)"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "Weebly",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "WordPress, Ghost, or Grav (flat-file OSS CMS)"
     }
    ]
   },
@@ -6418,30 +7157,41 @@
    "id": "statenislandda",
    "short": "Staten Island District Attorney",
    "platform": "Self-hosted WordPress (Themeco 'Pro' theme) on SiteGround \u2014 off the NYC.gov platform, bot-walled by a SiteGround captcha",
+   "openSource": 3,
+   "hybrid": 0,
+   "commercial": 3,
+   "total": 6,
+   "proprietaryShare": 0.5,
    "techs": [
     {
      "tech": "Contact Form 7",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "Divi / GeneratePress / Themeco",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "WordPress core block themes / full-site editing (GPL, no premium-builder lock-in)"
     },
     {
      "tech": "SiteGround",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Self-hosted LEMP/LAMP stack"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "WordPress",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     },
     {
      "tech": "WordPress REST API",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   },
@@ -6449,32 +7199,51 @@
    "id": "taxcommission",
    "short": "NYC Tax Commission",
    "platform": "NYC.gov shared 'Livesite' CMS (Akamai + nginx + Dynatrace + mPulse/Boomerang + AWS ALB) plus a browser-only online filing system; no distinct Tax Commission platform.",
+   "openSource": 1,
+   "hybrid": 0,
+   "commercial": 5,
+   "total": 6,
+   "proprietaryShare": 0.833,
    "techs": [
     {
      "tech": "AWS (ALB/S3/EC2)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Kubernetes / OpenStack on Linux; MinIO (S3-compatible OSS object store); HAProxy for load balancing"
     },
     {
      "tech": "Akamai",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Apache Traffic Server (the OSS CDN used at scale) or self-managed nginx + Varnish edge cache"
     },
     {
      "tech": "Dynatrace",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "OpenTelemetry + Prometheus + Grafana; SigNoz (OSS APM)"
     },
     {
      "tech": "NYC.gov Livesite",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "Drupal (govCMS) or WordPress as the shared publishing platform"
     },
     {
      "tech": "Socrata / Tyler (SODA)",
-     "license": "commercial"
+     "license": "commercial",
+     "alternative": "CKAN (OSS open-data portal) \u2014 the standard open-source alternative to Socrata"
     },
     {
      "tech": "nginx",
-     "license": "open source"
+     "license": "open source",
+     "alternative": ""
     }
    ]
   }
- ]
+ ],
+ "proprietary_summary": {
+  "domains_scored": 67,
+  "avg_proprietary_share": 0.703,
+  "median_proprietary_share": 0.714,
+  "majority_proprietary": 57,
+  "fully_proprietary_detected": 4,
+  "any_open_source": 63
+ }
 }
