@@ -67,7 +67,7 @@ td.altcell{max-width:34ch}
       out.innerHTML=`<div class="tablewrap"><table><thead><tr><th>Technology</th><th>License</th><th># domains</th><th>Open-source alternative</th><th>Domains</th></tr></thead><tbody>`+
         rows.map(r=>`<tr><td><strong>${r.url?`<a href="${esc(r.url)}">${esc(r.tech)}</a>`:esc(r.tech)}</strong></td><td>${licBadge(r.license)}</td>
           <td>${r.count>1?`<span class="badge ok">${r.count}</span>`:1}</td>
-          <td class="altcell alt">${esc(r.alternative)}</td>
+          <td class="altcell alt">${esc(r.alternative)}${r.altUrl?` <a href="${esc(r.altUrl)}" title="open-source project">↗</a>`:''}</td>
           <td class="small">${r.domains.map(domLink).join(", ")}</td></tr>`).join("")+`</tbody></table></div>`;
       document.getElementById("count").textContent=rows.length+" / "+T.alternatives.length+" alternatives";
     } else if(mode==="cat"){
@@ -79,7 +79,7 @@ td.altcell{max-width:34ch}
         html+=`<h3 style="margin:1.2em 0 .4em">${esc(c.name)}</h3><div class="tablewrap"><table><thead><tr><th>Technology</th><th>License</th><th># domains</th><th>Open-source alternative</th><th>Domains</th></tr></thead><tbody>`+
           techs.map(t=>`<tr><td><strong>${t.url?`<a href="${esc(t.url)}">${esc(t.tech)}</a>`:esc(t.tech)}</strong></td><td>${licBadge(t.license)}</td>
             <td>${t.count>1?`<span class="badge ok">${t.count}</span>`:1}</td>
-            <td class="altcell alt">${t.alternative?esc(t.alternative):'—'}</td>
+            <td class="altcell alt">${t.alternative?esc(t.alternative)+(t.altUrl?` <a href="${esc(t.altUrl)}" title="open-source project">↗</a>`:''):'—'}</td>
             <td class="small">${t.domains.map(domLink).join(", ")}</td></tr>`).join("")+`</tbody></table></div>`;
       });
       out.innerHTML=html; document.getElementById("count").textContent=shown+" technologies";

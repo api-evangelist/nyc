@@ -303,6 +303,41 @@ URL = {
 }
 assert set(TECH) == set(URL), f"URL map mismatch: {set(TECH) ^ set(URL)}"
 
+# Homepage of the primary recommended open-source alternative (for commercial/hybrid techs).
+ALT_URL = {
+ "Progress Sitefinity": "https://www.drupal.org", "Microsoft Dynamics 365": "https://www.odoo.com",
+ "Oracle WebCenter Sites": "https://www.drupal.org", "DotNetNuke (DNN)": "https://dnncommunity.org",
+ "Adobe Experience Manager": "https://www.drupal.org", "Weebly": "https://wordpress.org",
+ "Revize": "https://www.drupal.org", "NYC.gov Livesite": "https://www.drupal.org",
+ "ASP.NET / IIS": "https://dotnet.microsoft.com/apps/aspnet", "Java / Tomcat / WebLogic": "https://tomcat.apache.org",
+ "Akamai": "https://trafficserver.apache.org", "Cloudflare": "https://nginx.org",
+ "AWS CloudFront": "https://trafficserver.apache.org", "AWS (ALB/S3/EC2)": "https://kubernetes.io",
+ "Microsoft Azure": "https://kubernetes.io", "WP Engine": "https://wordpress.org", "Pantheon": "https://ddev.com",
+ "Netlify": "https://coolify.io", "Vercel": "https://coolify.io", "Kinsta": "https://wordpress.org",
+ "SiteGround": "https://nginx.org", "Fastly": "https://varnish-cache.org", "Imperva": "https://coreruleset.org",
+ "Oracle Cloud": "https://kubernetes.io", "Accela": "https://form.io", "Salesforce": "https://suitecrm.com",
+ "Oracle Siebel": "https://suitecrm.com", "Unqork": "https://budibase.com", "Kaseware": "https://www.appsmith.com",
+ "Epic / MyChart": "https://openmrs.org", "PeopleSoft (CUNYfirst)": "https://www.odoo.com",
+ "Legistar (Granicus)": "https://www.councilmatic.org", "Everbridge": "https://novu.co",
+ "Combined Arms": "https://openreferral.org", "HawkSearch": "https://opensearch.org", "Viebit": "https://joinpeertube.org",
+ "StreamText": "https://github.com/openai/whisper", "BiblioCommons": "https://vufind.org",
+ "Communico": "https://koha-community.org", "OverDrive / hoopla": "https://thepalaceproject.org",
+ "Preservica": "https://www.archivematica.org", "LUNA Imaging": "https://omeka.org",
+ "Microsoft SharePoint": "https://nextcloud.com", "Microsoft Power BI": "https://superset.apache.org",
+ "Shopify": "https://medusajs.com", "Constant Contact": "https://listmonk.app",
+ "WSO2 API Gateway": "", "Divi / GeneratePress / Themeco": "https://wordpress.org",
+ "Esri ArcGIS": "https://qgis.org", "CARTO": "https://postgis.net", "Mapbox": "https://maplibre.org",
+ "Google Maps": "https://leafletjs.com", "Cloudinary": "https://imgproxy.net", "Azure Blob Storage": "https://min.io",
+ "Google Tag Manager": "https://matomo.org/tag-manager/", "Google Analytics": "https://matomo.org",
+ "Dynatrace": "https://opentelemetry.io", "New Relic": "https://signoz.io", "Siteimprove": "https://pa11y.org",
+ "Loggly": "https://grafana.com/oss/loki/", "Meta / Facebook Pixel": "https://plausible.io",
+ "Wordfence": "https://coreruleset.org", "Socrata / Tyler (SODA)": "https://ckan.org",
+ "api.nyc.gov (Azure APIM)": "https://konghq.com", "Google Translate": "https://libretranslate.com",
+}
+# every tech that has an alternative string must have an alternative URL
+_need = {t for t in TECH if LIC[t][0] in ("commercial", "hybrid") and LIC[t][1]}
+assert _need <= set(ALT_URL), f"missing alt URLs: {_need - set(ALT_URL)}"
+
 def blob(did):
     # Only the structured, domain-specific fields — NOT tech-stack.md prose, which
     # often name-drops the exemplar/other agencies for comparison (false positives).
@@ -336,7 +371,7 @@ detected = [t for t in by_tech]
 lic_summary = collections.Counter(LIC[t][0] for t in detected)
 # commercial/hybrid techs (in use) that have an OSS alternative, ranked by reach
 alt_rows = sorted(
-    [{"tech": t, "category": TECH[t][0], "license": LIC[t][0], "alternative": LIC[t][1], "url": URL[t],
+    [{"tech": t, "category": TECH[t][0], "license": LIC[t][0], "alternative": LIC[t][1], "url": URL[t], "altUrl": ALT_URL.get(t, ""),
       "count": len(by_tech[t]), "domains": [{"id": x, "short": short[x]} for x in by_tech[t]]}
      for t in detected if LIC[t][0] in ("commercial", "hybrid") and LIC[t][1]],
     key=lambda r: (-r["count"], r["tech"].lower()))
@@ -352,7 +387,7 @@ tech_json = {
     },
     "categories": [{"name": c, "techs": [
         {"tech": t, "category": c, "count": len(by_tech[t]),
-         "license": LIC[t][0], "alternative": LIC[t][1], "url": URL[t],
+         "license": LIC[t][0], "alternative": LIC[t][1], "url": URL[t], "altUrl": ALT_URL.get(t, ""),
          "domains": [{"id": x, "short": short[x]} for x in by_tech[t]]}
         for t in sorted(cats[c], key=str.lower)]} for c in cats if cats[c]],
     "alternatives": alt_rows,
