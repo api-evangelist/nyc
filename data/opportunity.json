@@ -1,0 +1,1165 @@
+{
+ "method": "opportunity = demand x gap x feasibility (each 0-1), x100. demand = max(log-scaled Open Data page-views, reach-weight of the net-new citizen transaction); gap = locked citizen transaction + low site-API + disconnected core data; feasibility = inverse build cost (an existing/private API or open data is cheaper than digitizing).",
+ "domains": [
+  {
+   "id": "dcas",
+   "short": "NYC Citywide Admin Services (DCAS)",
+   "verb": "Transact",
+   "accent": "#6a8fb0",
+   "netnew": "ExamRegistration \u2014 register for a civil-service exam (alt: JobApplication)",
+   "odViews": 5769681,
+   "demand": 0.967,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 87.0,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.87,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "dob",
+   "short": "NYC Buildings (DOB)",
+   "verb": "Transact",
+   "accent": "#b07d3a",
+   "netnew": "PermitApplication",
+   "odViews": 4524590,
+   "demand": 0.952,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 85.7,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.857,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "nypd",
+   "short": "NYPD",
+   "verb": "Expose",
+   "accent": "#2f5fb0",
+   "netnew": "PoliceReportRequest",
+   "odViews": 2502417,
+   "demand": 0.915,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 82.3,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.824,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "dof",
+   "short": "NYC Finance (DOF)",
+   "verb": "modernize",
+   "accent": "#3a7d6a",
+   "netnew": "ParkingTicketPayment \u2014 pay a parking/camera violation via API instead of the CityPay-only web form.",
+   "odViews": 2424314,
+   "demand": 0.913,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 82.2,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.822,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "nycgovparks.org",
+   "short": "NYC Parks & Recreation",
+   "verb": "Replatform",
+   "accent": "#3098d8",
+   "netnew": "PermitApplication",
+   "odViews": 1217897,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 81.0,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "schools.nyc.gov",
+   "short": "NYC Public Schools (DOE)",
+   "verb": "Reclaim",
+   "accent": "#e0803a",
+   "netnew": "EnrollmentApplication",
+   "odViews": 1516499,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 81.0,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "nyc311",
+   "short": "NYC311",
+   "verb": "Standardize",
+   "accent": "#1f9e8f",
+   "netnew": "ServiceRequest (Open311)",
+   "odViews": 1347752,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 81.0,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "dot",
+   "short": "NYC Transportation (DOT)",
+   "verb": "Unify",
+   "accent": "#c99a1f",
+   "netnew": "StreetWorkPermit",
+   "odViews": 1831560,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 81.0,
+   "drivers": [
+    "open data to wrap",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "dohmh",
+   "short": "NYC Health (DOHMH)",
+   "verb": "Transact",
+   "accent": "#c85a86",
+   "netnew": "VitalRecordRequest",
+   "odViews": 1966473,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 81.0,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "dep",
+   "short": "NYC Environmental Protection (DEP)",
+   "verb": "Transact",
+   "accent": "#2f8fb0",
+   "netnew": "WaterServiceRequest",
+   "odViews": 569180,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 81.0,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "dfta",
+   "short": "NYC Aging (DFTA)",
+   "verb": "connect",
+   "accent": "#3a9a8a",
+   "netnew": "ServiceReferral \u2014 connect an older adult to DFTA services (case management, meals, benefits, caregiver, elder abuse, center enrollment) with an urgent path to Aging Connect / Adult Protective Services.",
+   "odViews": 21557,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 81.0,
+   "drivers": [
+    "open data to wrap",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "doris",
+   "short": "NYC Records (DORIS)",
+   "verb": "retrieve",
+   "accent": "#5a8a7a",
+   "netnew": "RecordsRequest \u2014 request/retrieve a record: order a copy of a historical vital record, an archival item/photo, a library publication, or file a FOIL request",
+   "odViews": 130751,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 81.0,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "fdny",
+   "short": "NYC Fire (FDNY)",
+   "verb": "front",
+   "accent": "#c23b2b",
+   "netnew": "FirePermitApplication \u2014 apply for and track a fire permit / Certificate of Operation / inspection request via FDNY Business",
+   "odViews": 443349,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 81.0,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "lpc",
+   "short": "NYC Landmarks (LPC)",
+   "verb": "bind",
+   "accent": "#8a6a4a",
+   "netnew": "LandmarkPermitApplication \u2014 file a Certificate of Appropriateness / No Effect / Minor Work application (today Salesforce Portico only, no API)",
+   "odViews": 101310,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 81.0,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "hhc",
+   "short": "NYC Health + Hospitals",
+   "verb": "extend",
+   "accent": "#c24a6a",
+   "netnew": "AppointmentRequest \u2014 request/book an appointment (no write in the live FHIR surface)",
+   "odViews": 0,
+   "demand": 0.9,
+   "gap": 0.8,
+   "feasibility": 1.0,
+   "score": 72.0,
+   "drivers": [
+    "an API already exists (expose/document)",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.72,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "dcwp",
+   "short": "NYC Consumer & Worker Protection (DCWP)",
+   "verb": "bind",
+   "accent": "#b06fb0",
+   "netnew": "File a consumer complaint (ConsumerComplaint) and apply for a business license (LicenseApplication) \u2014 the two citizen writes with no API",
+   "odViews": 388764,
+   "demand": 0.799,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 71.9,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.719,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "sbs",
+   "short": "NYC Small Business Services (SBS)",
+   "verb": "navigate",
+   "accent": "#c9702a",
+   "netnew": "MWBECertificationApplication \u2014 apply for M/WBE (also EBE/LBE) certification; no API today, only the MyCity Business portal.",
+   "odViews": 289335,
+   "demand": 0.781,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 70.3,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.703,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "tlc",
+   "short": "NYC Taxi & Limousine (TLC)",
+   "verb": "Operationalize",
+   "accent": "#d99a2a",
+   "netnew": "LicenseApplication",
+   "odViews": 9839737,
+   "demand": 1.0,
+   "gap": 0.7,
+   "feasibility": 1.0,
+   "score": 70.0,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.7,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "sca",
+   "short": "NYC School Construction Authority (SCA)",
+   "verb": "onboard",
+   "accent": "#b0862a",
+   "netnew": "VendorPrequalification \u2014 apply to become a prequalified SCA vendor",
+   "odViews": 258456,
+   "demand": 0.774,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 69.7,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.697,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "nycha",
+   "short": "NYC Housing Authority (NYCHA)",
+   "verb": "Unlock",
+   "accent": "#8a5fb0",
+   "netnew": "WorkOrder",
+   "odViews": 245660,
+   "demand": 0.771,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 69.4,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.694,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "dhs",
+   "short": "NYC Homeless Services (DHS)",
+   "verb": "connect",
+   "accent": "#7a6fb0",
+   "netnew": "OutreachRequest \u2014 request street outreach for a person experiencing homelessness (today only via NYC311)",
+   "odViews": 230043,
+   "demand": 0.767,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 69.0,
+   "drivers": [
+    "open data to wrap"
+   ],
+   "impact": 0.69,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "doc",
+   "short": "NYC Correction (DOC)",
+   "verb": "expose",
+   "accent": "#5a7a9a",
+   "netnew": "VisitScheduling \u2014 schedule a visit with a person in custody (no API today; arranged by phone, in person, or vendor portal). Complaint / records request is a second net-new write.",
+   "odViews": 154307,
+   "demand": 0.742,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 66.8,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.668,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "oti",
+   "short": "NYC Technology & Innovation (OTI)",
+   "verb": "productize",
+   "accent": "#2f9e8f",
+   "netnew": "One owned, unified gateway + catalog API \u2014 plus two write surfaces: register a dataset, and request an api.nyc.gov gateway key.",
+   "odViews": 2315363,
+   "demand": 0.91,
+   "gap": 0.7,
+   "feasibility": 1.0,
+   "score": 63.7,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.637,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "hpd",
+   "short": "NYC Housing (HPD)",
+   "verb": "Expose",
+   "accent": "#3f8f6a",
+   "netnew": "HousingLotteryApplication",
+   "odViews": 785414,
+   "demand": 0.9,
+   "gap": 0.7,
+   "feasibility": 1.0,
+   "score": 63.0,
+   "drivers": [
+    "an API already exists (expose/document)",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.63,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "hra",
+   "short": "NYC Social Services (HRA)",
+   "verb": "connect",
+   "accent": "#4a8f5a",
+   "netnew": "BenefitsApplication \u2014 apply for and track SNAP / Cash Assistance / Medicaid, today locked in the ACCESS HRA portal",
+   "odViews": 158822,
+   "demand": 0.9,
+   "gap": 0.7,
+   "feasibility": 1.0,
+   "score": 63.0,
+   "drivers": [
+    "an API already exists (expose/document)",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.63,
+   "quadrant": "Quick win"
+  },
+  {
+   "id": "acs",
+   "short": "NYC Children's Services (ACS)",
+   "verb": "insource",
+   "accent": "#d98a3a",
+   "netnew": "ChildCareComplaint \u2014 submit a complaint about a child care provider (models the provider concern, never case data; abuse routed to the State Central Register)",
+   "odViews": 54964,
+   "demand": 0.678,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 61.0,
+   "drivers": [
+    "open data to wrap"
+   ],
+   "impact": 0.61,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "ibo",
+   "short": "NYC Independent Budget Office (IBO)",
+   "verb": "formalize",
+   "accent": "#7a8a4a",
+   "netnew": "DataRequest \u2014 an API for the 'Ask IBO' data/analysis request, today a web form / email only",
+   "odViews": 52724,
+   "demand": 0.675,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 60.8,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.608,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "manhattanbp",
+   "short": "Manhattan Borough President",
+   "verb": "federate",
+   "accent": "#b04a4a",
+   "netnew": "CommunityBoardApplication \u2014 apply to serve on a Manhattan community board (today a Forminator web form / PDF, no API)",
+   "odViews": 44153,
+   "demand": 0.664,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 59.8,
+   "drivers": [
+    "open data to wrap"
+   ],
+   "impact": 0.598,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "dycd",
+   "short": "NYC Youth & Community Dev (DYCD)",
+   "verb": "surface",
+   "accent": "#d9a02a",
+   "netnew": "ProgramApplication \u2014 apply to a program (e.g. an SYEP application)",
+   "odViews": 35661,
+   "demand": 0.651,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 58.6,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.586,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "cfb",
+   "short": "NYC Campaign Finance Board (CFB)",
+   "verb": "document",
+   "accent": "#3a8a9a",
+   "netnew": "DisclosureFiling \u2014 a filer submits a disclosure statement (today only via the login-walled C-SMART disclosure application)",
+   "odViews": 22572,
+   "demand": 0.623,
+   "gap": 0.9,
+   "feasibility": 1.0,
+   "score": 56.0,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.561,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "dsny",
+   "short": "NYC Sanitation (DSNY)",
+   "verb": "Expose",
+   "accent": "#5f9e42",
+   "netnew": "BulkPickupRequest",
+   "odViews": 356134,
+   "demand": 0.794,
+   "gap": 0.7,
+   "feasibility": 1.0,
+   "score": 55.6,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.556,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "vote.nyc",
+   "short": "NYC Board of Elections",
+   "verb": "Digitize",
+   "accent": "#c0504d",
+   "netnew": "BallotRequest",
+   "odViews": 29114,
+   "demand": 0.9,
+   "gap": 1.0,
+   "feasibility": 0.6,
+   "score": 54.0,
+   "drivers": [
+    "data must be digitized",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.9,
+   "quadrant": "Big bet"
+  },
+  {
+   "id": "cityclerk",
+   "short": "NYC City Clerk",
+   "verb": "contract",
+   "accent": "#b06f8a",
+   "netnew": "MarriageLicenseApplication \u2014 a couple applies for a NYC marriage license (today only via Project Cupid's Unqork screens)",
+   "odViews": 7582,
+   "demand": 0.9,
+   "gap": 1.0,
+   "feasibility": 0.6,
+   "score": 54.0,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.9,
+   "quadrant": "Big bet"
+  },
+  {
+   "id": "cuny",
+   "short": "City University of New York (CUNY)",
+   "verb": "federate",
+   "accent": "#2f6ab0",
+   "netnew": "AdmissionsApplication (submit a CUNY application)",
+   "odViews": 5115,
+   "demand": 0.9,
+   "gap": 1.0,
+   "feasibility": 0.6,
+   "score": 54.0,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.9,
+   "quadrant": "Big bet"
+  },
+  {
+   "id": "nypl",
+   "short": "New York Public Library (NYPL)",
+   "verb": "lead",
+   "accent": "#b03a3a",
+   "netnew": "Hold (BookHold) \u2014 place and track a reservation on a catalog item via a clean, agent-native public API (backed by NYPL's existing internal hold services)",
+   "odViews": 36057,
+   "demand": 0.652,
+   "gap": 0.8,
+   "feasibility": 1.0,
+   "score": 52.1,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.522,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "nycem",
+   "short": "NYC Emergency Management (NYCEM)",
+   "verb": "syndicate",
+   "accent": "#c24b3b",
+   "netnew": "NotifyNYCSubscription \u2014 subscribe to Notify NYC emergency alerts by channel, location, and category through an owned write API",
+   "odViews": 157900,
+   "demand": 0.743,
+   "gap": 0.7,
+   "feasibility": 1.0,
+   "score": 52.0,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.52,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "council.nyc.gov",
+   "short": "NYC Council",
+   "verb": "Consolidate & Own",
+   "accent": "#7a5cc0",
+   "netnew": "TestimonyRegistration",
+   "odViews": 110823,
+   "demand": 0.721,
+   "gap": 0.7,
+   "feasibility": 1.0,
+   "score": 50.5,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.505,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "bsa",
+   "short": "NYC Standards & Appeals (BSA)",
+   "verb": "digitize",
+   "accent": "#6a7a8a",
+   "netnew": "VarianceApplication \u2014 file a zoning variance / special permit / extension / appeal (today a paper PDF-form process)",
+   "odViews": 18488,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 48.6,
+   "drivers": [
+    "data must be digitized",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Big bet"
+  },
+  {
+   "id": "dvs",
+   "short": "NYC Veterans' Services (DVS)",
+   "verb": "coordinate",
+   "accent": "#4a6a9a",
+   "netnew": "ServiceReferral \u2014 make a VetConnectNYC care-coordination referral connecting a veteran to services (housing, benefits, VA claims, health, employment, education, food, legal), routed to DVS Care Coordinators with an urgent path to a Veteran Resource Center.",
+   "odViews": 7924,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 48.6,
+   "drivers": [
+    "data must be digitized",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Big bet"
+  },
+  {
+   "id": "mome",
+   "short": "NYC Media & Entertainment (MOME)",
+   "verb": "greenlight",
+   "accent": "#c25a8a",
+   "netnew": "FilmPermitApplication \u2014 apply for a film/photography permit via API instead of the login-walled E-Apply portal",
+   "odViews": 532005,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 48.6,
+   "drivers": [
+    "a private API to open",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Big bet"
+  },
+  {
+   "id": "taxcommission",
+   "short": "NYC Tax Commission",
+   "verb": "digitize",
+   "accent": "#5a7a6a",
+   "netnew": "AssessmentAppeal \u2014 file a property-tax assessment appeal (Application for Correction).",
+   "odViews": 14943,
+   "demand": 0.9,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 48.6,
+   "drivers": [
+    "data must be digitized",
+    "high-reach citizen transaction"
+   ],
+   "impact": 0.81,
+   "quadrant": "Big bet"
+  },
+  {
+   "id": "comptroller.nyc.gov",
+   "short": "NYC Comptroller",
+   "verb": "Consolidate & Own",
+   "accent": "#2fa08f",
+   "netnew": "ClaimFiling",
+   "odViews": 58562,
+   "demand": 0.682,
+   "gap": 0.7,
+   "feasibility": 1.0,
+   "score": 47.7,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.477,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "bklynlibrary",
+   "short": "Brooklyn Public Library (BPL)",
+   "verb": "formalize",
+   "accent": "#3a7ab0",
+   "netnew": "place a hold (BookHold)",
+   "odViews": 8879,
+   "demand": 0.565,
+   "gap": 0.8,
+   "feasibility": 1.0,
+   "score": 45.2,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.452,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "ddc",
+   "short": "NYC Design & Construction (DDC)",
+   "verb": "surface",
+   "accent": "#7a8a5a",
+   "netnew": "VendorPrequalification \u2014 a firm submits a prequalification / expression of interest (optionally against a solicitation, with an optional City Record notice opt-in). A B2G write; DDC is vendor-facing, so there is no citizen write in this domain.",
+   "odViews": 29735,
+   "demand": 0.64,
+   "gap": 0.7,
+   "feasibility": 1.0,
+   "score": 44.8,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.448,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "brooklynbp",
+   "short": "Brooklyn Borough President",
+   "verb": "template",
+   "accent": "#4a7ab0",
+   "netnew": "CommunityBoardApplication \u2014 apply to serve on a Brooklyn community board (net-new write; today only a web form).",
+   "odViews": 27607,
+   "demand": 0.635,
+   "gap": 0.7,
+   "feasibility": 1.0,
+   "score": 44.5,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.444,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "manhattanda",
+   "short": "Manhattan District Attorney",
+   "verb": "standardize",
+   "accent": "#a04a5a",
+   "netnew": "TipSubmission \u2014 submit a routable tip to a DA bureau (no API today; only a generic reCAPTCHA contact form). FOIL is delegated off-site to NYC OpenRecords.",
+   "odViews": 0,
+   "demand": 0.55,
+   "gap": 0.8,
+   "feasibility": 1.0,
+   "score": 44.0,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.44,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "mocj",
+   "short": "NYC Criminal Justice (MOCJ)",
+   "verb": "route",
+   "accent": "#8a5a5a",
+   "netnew": "ProgramReferral \u2014 route a person or court case to a MOCJ-coordinated program",
+   "odViews": 1074,
+   "demand": 0.55,
+   "gap": 0.8,
+   "feasibility": 1.0,
+   "score": 44.0,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.44,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "oath",
+   "short": "NYC Admin Trials & Hearings (OATH)",
+   "verb": "respond",
+   "accent": "#5a7a5a",
+   "netnew": "SummonsDispute \u2014 respond to / dispute a summons (request a hearing) via an owned API",
+   "odViews": 412337,
+   "demand": 0.803,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 43.4,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.723,
+   "quadrant": "Big bet"
+  },
+  {
+   "id": "doi",
+   "short": "NYC Investigation (DOI)",
+   "verb": "Digitize",
+   "accent": "#7a5a4a",
+   "netnew": "CorruptionComplaint \u2014 file and track a fraud/waste/corruption tip (with anonymous filing and Whistleblower-Law protection), the transaction that starts every DOI investigation and today lives only in a vendor Kaseware form.",
+   "odViews": 247426,
+   "demand": 0.771,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 41.6,
+   "drivers": [
+    "data must be digitized"
+   ],
+   "impact": 0.694,
+   "quadrant": "Big bet"
+  },
+  {
+   "id": "bic",
+   "short": "NYC Business Integrity Commission (BIC)",
+   "verb": "transact",
+   "accent": "#6a5a7a",
+   "netnew": "TradeWasteLicenseApplication \u2014 apply for a trade waste license/registration",
+   "odViews": 214191,
+   "demand": 0.762,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 41.2,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.686,
+   "quadrant": "Big bet"
+  },
+  {
+   "id": "queensbp",
+   "short": "Queens Borough President",
+   "verb": "standardize",
+   "accent": "#d98a2a",
+   "netnew": "CommunityBoardApplication \u2014 apply to serve on a Queens community board (today an HTML/PDF form)",
+   "odViews": 2909,
+   "demand": 0.495,
+   "gap": 0.8,
+   "feasibility": 1.0,
+   "score": 39.6,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.396,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "queenslibrary",
+   "short": "Queens Public Library (QPL)",
+   "verb": "federate",
+   "accent": "#7a9a3a",
+   "netnew": "BookHold \u2014 place a hold/reservation on a catalog item (also: library-card application)",
+   "odViews": 21337,
+   "demand": 0.619,
+   "gap": 1.0,
+   "feasibility": 0.6,
+   "score": 37.1,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.619,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "ccrb",
+   "short": "NYC Civilian Complaint Review (CCRB)",
+   "verb": "expose",
+   "accent": "#c25b6b",
+   "netnew": "MisconductComplaint \u2014 file a police-misconduct complaint against an officer via API (today an online web form only)",
+   "odViews": 43569,
+   "demand": 0.663,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 35.8,
+   "drivers": [
+    "data must be digitized"
+   ],
+   "impact": 0.597,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "dcla",
+   "short": "NYC Cultural Affairs (DCLA)",
+   "verb": "open",
+   "accent": "#b05fa0",
+   "netnew": "Apply for a Cultural Development Fund grant (GrantApplication) \u2014 the core transaction with no API, locked in the Salesforce Grants Management System",
+   "odViews": 42329,
+   "demand": 0.662,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 35.7,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.596,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "edc",
+   "short": "NYC Economic Development (EDC)",
+   "verb": "surface",
+   "accent": "#3a9a7a",
+   "netnew": "RFPResponse \u2014 register interest in / submit a proposal to an EDC solicitation (RFP/RFEI)",
+   "odViews": 38627,
+   "demand": 0.656,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 35.4,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.59,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "law",
+   "short": "NYC Law Department",
+   "verb": "catalog",
+   "accent": "#4a4a6a",
+   "netnew": "LawInternshipApplication \u2014 submit a legal internship / fellowship application (the one citizen-initiated transaction with this agency)",
+   "odViews": 20586,
+   "demand": 0.617,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 33.3,
+   "drivers": [
+    "data must be digitized"
+   ],
+   "impact": 0.555,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "cchr",
+   "short": "NYC Human Rights (CCHR)",
+   "verb": "structure",
+   "accent": "#b06f5a",
+   "netnew": "A typed DiscriminationComplaint intake API (report discrimination) \u2014 replacing the untyped Report Discrimination HTML form.",
+   "odViews": 3864,
+   "demand": 0.55,
+   "gap": 1.0,
+   "feasibility": 0.6,
+   "score": 33.0,
+   "drivers": [
+    "data must be digitized"
+   ],
+   "impact": 0.55,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "pubadvocate",
+   "short": "NYC Public Advocate",
+   "verb": "Respond",
+   "accent": "#3a7aa0",
+   "netnew": "OmbudsmanComplaint \u2014 file and track a 'help with a city agency' case against a NYC agency",
+   "odViews": 0,
+   "demand": 0.55,
+   "gap": 1.0,
+   "feasibility": 0.6,
+   "score": 33.0,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.55,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "coib",
+   "short": "NYC Conflicts of Interest Board (COIB)",
+   "verb": "attest",
+   "accent": "#6a6a8a",
+   "netnew": "FinancialDisclosureFiling \u2014 a public servant files/attests an annual financial disclosure report, today locked inside the login-only COIB filing website with no API",
+   "odViews": 14041,
+   "demand": 0.593,
+   "gap": 0.9,
+   "feasibility": 0.6,
+   "score": 32.0,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.534,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "bronxbp",
+   "short": "Bronx Borough President",
+   "verb": "templatize",
+   "accent": "#5a9a4a",
+   "netnew": "CommunityBoardApplication \u2014 apply to serve on one of the Bronx's twelve community boards (today a PDF/email; no structured intake or status).",
+   "odViews": 2695,
+   "demand": 0.491,
+   "gap": 1.0,
+   "feasibility": 0.6,
+   "score": 29.4,
+   "drivers": [
+    "data must be digitized"
+   ],
+   "impact": 0.491,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "ocme",
+   "short": "NYC Medical Examiner (OCME)",
+   "verb": "instrument",
+   "accent": "#6a6a6a",
+   "netnew": "DeathRecordRequest \u2014 request and track a decedent's medical-examiner casefile record/report",
+   "odViews": 2180,
+   "demand": 0.477,
+   "gap": 1.0,
+   "feasibility": 0.6,
+   "score": 28.6,
+   "drivers": [
+    "data must be digitized"
+   ],
+   "impact": 0.477,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "statenislandbp",
+   "short": "Staten Island Borough President",
+   "verb": "federate",
+   "accent": "#7a5aa0",
+   "netnew": "CommunityBoardApplication \u2014 apply to serve on a Staten Island community board (today an opaque Weebly form)",
+   "odViews": 1591,
+   "demand": 0.458,
+   "gap": 1.0,
+   "feasibility": 0.6,
+   "score": 27.5,
+   "drivers": [
+    "data must be digitized"
+   ],
+   "impact": 0.458,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "dcp",
+   "short": "NYC City Planning (DCP)",
+   "verb": "Anchor",
+   "accent": "#6f8aad",
+   "netnew": "\u2014 reference agency (owned /geocode)",
+   "odViews": 1422966,
+   "demand": 0.88,
+   "gap": 0.3,
+   "feasibility": 1.0,
+   "score": 26.4,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.264,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "brooklynda",
+   "short": "Brooklyn District Attorney",
+   "verb": "template",
+   "accent": "#4a6ab0",
+   "netnew": "TipSubmission \u2014 submit and track a confidential tip (report fraud, an unsafe landlord, a hate incident, trafficking, or information on an open case)",
+   "odViews": 0,
+   "demand": 0.3,
+   "gap": 0.8,
+   "feasibility": 1.0,
+   "score": 24.0,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.24,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "queensda",
+   "short": "Queens District Attorney",
+   "verb": "structure",
+   "accent": "#d9922a",
+   "netnew": "TipSubmission \u2014 submit a tip, cold-case lead, or FOIL request (no inbound channel today)",
+   "odViews": 0,
+   "demand": 0.3,
+   "gap": 0.8,
+   "feasibility": 1.0,
+   "score": 24.0,
+   "drivers": [
+    "an API already exists (expose/document)"
+   ],
+   "impact": 0.24,
+   "quadrant": "Easy add"
+  },
+  {
+   "id": "statenislandda",
+   "short": "Staten Island District Attorney",
+   "verb": "surface",
+   "accent": "#7a5a9a",
+   "netnew": "TipSubmission \u2014 an API for the confidential drug/scam tip forms (today Contact Form 7 email only)",
+   "odViews": 0,
+   "demand": 0.3,
+   "gap": 1.0,
+   "feasibility": 0.6,
+   "score": 18.0,
+   "drivers": [
+    "a private API to open"
+   ],
+   "impact": 0.3,
+   "quadrant": "Backlog"
+  },
+  {
+   "id": "bronxda",
+   "short": "Bronx District Attorney",
+   "verb": "standardize",
+   "accent": "#5a9a5a",
+   "netnew": "TipSubmission \u2014 a structured, trackable intake for a crime tip, a Civilian Complaint Unit complaint of police misconduct, or a FOIL records request (today a phone call to 718-590-2300 or an email to FOILREQUEST@BRONXDA.NYC.GOV, with no tracking number).",
+   "odViews": 0,
+   "demand": 0.55,
+   "gap": 1.0,
+   "feasibility": 0.3,
+   "score": 16.5,
+   "drivers": [
+    "data must be digitized"
+   ],
+   "impact": 0.55,
+   "quadrant": "Backlog"
+  }
+ ]
+}

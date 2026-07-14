@@ -1,0 +1,317 @@
+{
+ "note": "The net-new citizen write-workflows (one per domain) grouped into reusable transaction primitives. Build each primitive once; reuse across agencies.",
+ "primitives": [
+  {
+   "primitive": "Apply",
+   "count": 30,
+   "items": [
+    {
+     "domain": "City University of New York (CUNY)",
+     "object": "AdmissionsApplication (submit a CUNY application)"
+    },
+    {
+     "domain": "NYC Cultural Affairs (DCLA)",
+     "object": "Apply for a Cultural Development Fund grant (GrantApplication) \u2014 the core transaction with no API, locked in the Salesforce Grants Management System"
+    },
+    {
+     "domain": "NYC Tax Commission",
+     "object": "AssessmentAppeal \u2014 file a property-tax assessment appeal (Application for Correction)."
+    },
+    {
+     "domain": "NYC Social Services (HRA)",
+     "object": "BenefitsApplication \u2014 apply for and track SNAP / Cash Assistance / Medicaid, today locked in the ACCESS HRA portal"
+    },
+    {
+     "domain": "Queens Public Library (QPL)",
+     "object": "BookHold \u2014 place a hold/reservation on a catalog item (also: library-card application)"
+    },
+    {
+     "domain": "Brooklyn Borough President",
+     "object": "CommunityBoardApplication \u2014 apply to serve on a Brooklyn community board (net-new write; today only a web form)."
+    },
+    {
+     "domain": "Manhattan Borough President",
+     "object": "CommunityBoardApplication \u2014 apply to serve on a Manhattan community board (today a Forminator web form / PDF, no API)"
+    },
+    {
+     "domain": "Queens Borough President",
+     "object": "CommunityBoardApplication \u2014 apply to serve on a Queens community board (today an HTML/PDF form)"
+    },
+    {
+     "domain": "Staten Island Borough President",
+     "object": "CommunityBoardApplication \u2014 apply to serve on a Staten Island community board (today an opaque Weebly form)"
+    },
+    {
+     "domain": "Bronx Borough President",
+     "object": "CommunityBoardApplication \u2014 apply to serve on one of the Bronx's twelve community boards (today a PDF/email; no structured intake or status)."
+    },
+    {
+     "domain": "NYC Campaign Finance Board (CFB)",
+     "object": "DisclosureFiling \u2014 a filer submits a disclosure statement (today only via the login-walled C-SMART disclosure application)"
+    },
+    {
+     "domain": "NYC Public Schools (DOE)",
+     "object": "EnrollmentApplication"
+    },
+    {
+     "domain": "NYC Citywide Admin Services (DCAS)",
+     "object": "ExamRegistration \u2014 register for a civil-service exam (alt: JobApplication)"
+    },
+    {
+     "domain": "NYC Consumer & Worker Protection (DCWP)",
+     "object": "File a consumer complaint (ConsumerComplaint) and apply for a business license (LicenseApplication) \u2014 the two citizen writes with no API"
+    },
+    {
+     "domain": "NYC Media & Entertainment (MOME)",
+     "object": "FilmPermitApplication \u2014 apply for a film/photography permit via API instead of the login-walled E-Apply portal"
+    },
+    {
+     "domain": "NYC Fire (FDNY)",
+     "object": "FirePermitApplication \u2014 apply for and track a fire permit / Certificate of Operation / inspection request via FDNY Business"
+    },
+    {
+     "domain": "NYC Housing (HPD)",
+     "object": "HousingLotteryApplication"
+    },
+    {
+     "domain": "NYC Landmarks (LPC)",
+     "object": "LandmarkPermitApplication \u2014 file a Certificate of Appropriateness / No Effect / Minor Work application (today Salesforce Portico only, no API)"
+    },
+    {
+     "domain": "NYC Law Department",
+     "object": "LawInternshipApplication \u2014 submit a legal internship / fellowship application (the one citizen-initiated transaction with this agency)"
+    },
+    {
+     "domain": "NYC Taxi & Limousine (TLC)",
+     "object": "LicenseApplication"
+    },
+    {
+     "domain": "NYC Small Business Services (SBS)",
+     "object": "MWBECertificationApplication \u2014 apply for M/WBE (also EBE/LBE) certification; no API today, only the MyCity Business portal."
+    },
+    {
+     "domain": "NYC City Clerk",
+     "object": "MarriageLicenseApplication \u2014 a couple applies for a NYC marriage license (today only via Project Cupid's Unqork screens)"
+    },
+    {
+     "domain": "NYC Parks & Recreation",
+     "object": "PermitApplication"
+    },
+    {
+     "domain": "NYC Buildings (DOB)",
+     "object": "PermitApplication"
+    },
+    {
+     "domain": "NYC Youth & Community Dev (DYCD)",
+     "object": "ProgramApplication \u2014 apply to a program (e.g. an SYEP application)"
+    },
+    {
+     "domain": "NYC Aging (DFTA)",
+     "object": "ServiceReferral \u2014 connect an older adult to DFTA services (case management, meals, benefits, caregiver, elder abuse, center enrollment) with an urgent path to Aging Connect / Adult Protective Services."
+    },
+    {
+     "domain": "NYC Business Integrity Commission (BIC)",
+     "object": "TradeWasteLicenseApplication \u2014 apply for a trade waste license/registration"
+    },
+    {
+     "domain": "NYC Standards & Appeals (BSA)",
+     "object": "VarianceApplication \u2014 file a zoning variance / special permit / extension / appeal (today a paper PDF-form process)"
+    },
+    {
+     "domain": "NYC Design & Construction (DDC)",
+     "object": "VendorPrequalification \u2014 a firm submits a prequalification / expression of interest (optionally against a solicitation, with an optional City Record notice opt-in). A B2G write; DDC is vendor-facing, so there is no citizen write in this domain."
+    },
+    {
+     "domain": "NYC School Construction Authority (SCA)",
+     "object": "VendorPrequalification \u2014 apply to become a prequalified SCA vendor"
+    }
+   ]
+  },
+  {
+   "primitive": "Pay",
+   "count": 1,
+   "items": [
+    {
+     "domain": "NYC Finance (DOF)",
+     "object": "ParkingTicketPayment \u2014 pay a parking/camera violation via API instead of the CityPay-only web form."
+    }
+   ]
+  },
+  {
+   "primitive": "Report / Complain",
+   "count": 17,
+   "items": [
+    {
+     "domain": "NYC Human Rights (CCHR)",
+     "object": "A typed DiscriminationComplaint intake API (report discrimination) \u2014 replacing the untyped Report Discrimination HTML form."
+    },
+    {
+     "domain": "NYC Children's Services (ACS)",
+     "object": "ChildCareComplaint \u2014 submit a complaint about a child care provider (models the provider concern, never case data; abuse routed to the State Central Register)"
+    },
+    {
+     "domain": "NYC Investigation (DOI)",
+     "object": "CorruptionComplaint \u2014 file and track a fraud/waste/corruption tip (with anonymous filing and Whistleblower-Law protection), the transaction that starts every DOI investigation and today lives only in a vendor Kaseware form."
+    },
+    {
+     "domain": "NYC Medical Examiner (OCME)",
+     "object": "DeathRecordRequest \u2014 request and track a decedent's medical-examiner casefile record/report"
+    },
+    {
+     "domain": "NYC Conflicts of Interest Board (COIB)",
+     "object": "FinancialDisclosureFiling \u2014 a public servant files/attests an annual financial disclosure report, today locked inside the login-only COIB filing website with no API"
+    },
+    {
+     "domain": "NYC Civilian Complaint Review (CCRB)",
+     "object": "MisconductComplaint \u2014 file a police-misconduct complaint against an officer via API (today an online web form only)"
+    },
+    {
+     "domain": "NYC Public Advocate",
+     "object": "OmbudsmanComplaint \u2014 file and track a 'help with a city agency' case against a NYC agency"
+    },
+    {
+     "domain": "NYC Homeless Services (DHS)",
+     "object": "OutreachRequest \u2014 request street outreach for a person experiencing homelessness (today only via NYC311)"
+    },
+    {
+     "domain": "NYPD",
+     "object": "PoliceReportRequest"
+    },
+    {
+     "domain": "NYC311",
+     "object": "ServiceRequest (Open311)"
+    },
+    {
+     "domain": "Bronx District Attorney",
+     "object": "TipSubmission \u2014 a structured, trackable intake for a crime tip, a Civilian Complaint Unit complaint of police misconduct, or a FOIL records request (today a phone call to 718-590-2300 or an email to FOILREQUEST@BRONXDA.NYC.GOV, with no tracking number)."
+    },
+    {
+     "domain": "Staten Island District Attorney",
+     "object": "TipSubmission \u2014 an API for the confidential drug/scam tip forms (today Contact Form 7 email only)"
+    },
+    {
+     "domain": "Manhattan District Attorney",
+     "object": "TipSubmission \u2014 submit a routable tip to a DA bureau (no API today; only a generic reCAPTCHA contact form). FOIL is delegated off-site to NYC OpenRecords."
+    },
+    {
+     "domain": "Queens District Attorney",
+     "object": "TipSubmission \u2014 submit a tip, cold-case lead, or FOIL request (no inbound channel today)"
+    },
+    {
+     "domain": "Brooklyn District Attorney",
+     "object": "TipSubmission \u2014 submit and track a confidential tip (report fraud, an unsafe landlord, a hate incident, trafficking, or information on an open case)"
+    },
+    {
+     "domain": "NYC Correction (DOC)",
+     "object": "VisitScheduling \u2014 schedule a visit with a person in custody (no API today; arranged by phone, in person, or vendor portal). Complaint / records request is a second net-new write."
+    },
+    {
+     "domain": "NYC Environmental Protection (DEP)",
+     "object": "WaterServiceRequest"
+    }
+   ]
+  },
+  {
+   "primitive": "Register / Subscribe",
+   "count": 2,
+   "items": [
+    {
+     "domain": "NYC Emergency Management (NYCEM)",
+     "object": "NotifyNYCSubscription \u2014 subscribe to Notify NYC emergency alerts by channel, location, and category through an owned write API"
+    },
+    {
+     "domain": "NYC Council",
+     "object": "TestimonyRegistration"
+    }
+   ]
+  },
+  {
+   "primitive": "Schedule / Reserve",
+   "count": 4,
+   "items": [
+    {
+     "domain": "NYC Health + Hospitals",
+     "object": "AppointmentRequest \u2014 request/book an appointment (no write in the live FHIR surface)"
+    },
+    {
+     "domain": "NYC Sanitation (DSNY)",
+     "object": "BulkPickupRequest"
+    },
+    {
+     "domain": "New York Public Library (NYPL)",
+     "object": "Hold (BookHold) \u2014 place and track a reservation on a catalog item via a clean, agent-native public API (backed by NYPL's existing internal hold services)"
+    },
+    {
+     "domain": "Brooklyn Public Library (BPL)",
+     "object": "place a hold (BookHold)"
+    }
+   ]
+  },
+  {
+   "primitive": "Request records / service",
+   "count": 5,
+   "items": [
+    {
+     "domain": "NYC Independent Budget Office (IBO)",
+     "object": "DataRequest \u2014 an API for the 'Ask IBO' data/analysis request, today a web form / email only"
+    },
+    {
+     "domain": "NYC Criminal Justice (MOCJ)",
+     "object": "ProgramReferral \u2014 route a person or court case to a MOCJ-coordinated program"
+    },
+    {
+     "domain": "NYC Records (DORIS)",
+     "object": "RecordsRequest \u2014 request/retrieve a record: order a copy of a historical vital record, an archival item/photo, a library publication, or file a FOIL request"
+    },
+    {
+     "domain": "NYC Veterans' Services (DVS)",
+     "object": "ServiceReferral \u2014 make a VetConnectNYC care-coordination referral connecting a veteran to services (housing, benefits, VA claims, health, employment, education, food, legal), routed to DVS Care Coordinators with an urgent path to a Veteran Resource Center."
+    },
+    {
+     "domain": "NYC Health (DOHMH)",
+     "object": "VitalRecordRequest"
+    }
+   ]
+  },
+  {
+   "primitive": "Dispute / Appeal / File",
+   "count": 2,
+   "items": [
+    {
+     "domain": "NYC Comptroller",
+     "object": "ClaimFiling"
+    },
+    {
+     "domain": "NYC Admin Trials & Hearings (OATH)",
+     "object": "SummonsDispute \u2014 respond to / dispute a summons (request a hearing) via an owned API"
+    }
+   ]
+  },
+  {
+   "primitive": "Other",
+   "count": 5,
+   "items": [
+    {
+     "domain": "NYC Board of Elections",
+     "object": "BallotRequest"
+    },
+    {
+     "domain": "NYC Technology & Innovation (OTI)",
+     "object": "One owned, unified gateway + catalog API \u2014 plus two write surfaces: register a dataset, and request an api.nyc.gov gateway key."
+    },
+    {
+     "domain": "NYC Economic Development (EDC)",
+     "object": "RFPResponse \u2014 register interest in / submit a proposal to an EDC solicitation (RFP/RFEI)"
+    },
+    {
+     "domain": "NYC Transportation (DOT)",
+     "object": "StreetWorkPermit"
+    },
+    {
+     "domain": "NYC Housing Authority (NYCHA)",
+     "object": "WorkOrder"
+    }
+   ]
+  }
+ ]
+}

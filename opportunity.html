@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Opportunity Ranking — NYC Modernization</title>
+<meta name="description" content="Where NYC API modernization matters most — every domain ranked by demand x gap x feasibility.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.quad{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.quad{grid-template-columns:1fr}}
+.quad .cell{border:1px solid var(--border);border-radius:var(--radius);padding:16px;background:var(--bg-card)}
+.quad .cell h3{margin:0 0 .2em;font-size:1.05rem}
+.quad .cell .sub{color:var(--fg-soft);font-size:.82rem;margin-bottom:10px}
+.qtag{display:inline-block;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px}
+.bar{height:9px;border-radius:5px;background:var(--brand);display:inline-block;vertical-align:middle}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+<div class="dhead"><div class="wrap">
+  <div class="eyebrow" style="color:var(--brand-dark);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase">Assessment</div>
+  <h1>Opportunity Ranking</h1>
+  <p class="muted" style="max-width:74ch">Where modernization matters most. Each domain scored <strong>demand × gap × feasibility</strong> — demand from Open Data page-views and the reach of its locked citizen transaction; gap from how un-programmable it is; feasibility from whether an API or open data already exists (cheap) vs. data that must be digitized (expensive).</p>
+  <div class="stats" style="margin-top:14px" id="stats"></div>
+</div></div>
+<div class="wrap">
+  <div class="section-head"><h2>The 2×2 — impact vs. feasibility</h2><p class="muted">Start top-left. Quick wins are high-impact and already feasible.</p></div>
+  <div class="quad" id="quad"></div>
+  <div class="section-head" style="margin-top:34px"><h2>Full ranking</h2></div>
+  <div class="toolbar"><input id="q" placeholder="Filter…"><span class="count-pill" id="count"></span></div>
+  <div id="table"></div>
+</div>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const O=await getJSON("data/opportunity.json");
+  const R=O.domains;
+  const qc={"Quick win":0,"Big bet":0,"Easy add":0,"Backlog":0};R.forEach(r=>qc[r.quadrant]++);
+  document.getElementById("stats").innerHTML=[[R.length,"domains ranked"],[qc["Quick win"],"quick wins"],[qc["Big bet"],"big bets"],[R[0].score,"top score"]]
+    .map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  const meta={"Quick win":["#2e9e6b","high impact · feasible now — do these first"],
+    "Big bet":["#c78a2a","high impact · needs the data digitized first"],
+    "Easy add":["#3098d8","lower impact · cheap — batch them"],
+    "Backlog":["#8a8f98","lower impact · higher cost — later"]};
+  document.getElementById("quad").innerHTML=["Quick win","Big bet","Easy add","Backlog"].map(qd=>{
+    const list=R.filter(r=>r.quadrant===qd).sort((a,b)=>b.score-a.score);
+    return `<div class="cell"><span class="qtag" style="background:${meta[qd][0]}22;color:${meta[qd][0]}">${qd} · ${list.length}</span>
+      <div class="sub" style="margin-top:8px">${meta[qd][1]}</div>
+      ${list.slice(0,14).map(r=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:2px 0;font-size:.9rem">
+        <a href="domain.html?d=${encodeURIComponent(r.id)}">${esc(r.short)}</a><span class="muted">${r.score}</span></div>`).join("")}
+      ${list.length>14?`<div class="muted small" style="margin-top:6px">+${list.length-14} more</div>`:""}</div>`;
+  }).join("");
+  const cols=[
+    {key:"rank",label:"#",render:(r,i)=>i+1},
+    {key:"short",label:"Domain",render:r=>`<a href="domain.html?d=${encodeURIComponent(r.id)}">${esc(r.short)}</a>`},
+    {key:"score",label:"Score",render:r=>`<span class="bar" style="width:${Math.max(4,r.score*0.9)}px"></span> <b>${r.score}</b>`},
+    {key:"demand",label:"Demand",render:r=>r.demand},
+    {key:"gap",label:"Gap",render:r=>r.gap},
+    {key:"feasibility",label:"Feas.",render:r=>r.feasibility},
+    {key:"quadrant",label:"Quadrant",render:r=>`<span class="badge neutral">${esc(r.quadrant)}</span>`},
+    {key:"netnew",label:"Net-new write",render:r=>`<code>${esc(r.netnew||"—")}</code>`},
+  ];
+  function draw(list){
+    document.getElementById("table").innerHTML=`<div class="tablewrap"><table><thead><tr>`+
+      cols.map(c=>`<th>${c.label}</th>`).join("")+`</tr></thead><tbody>`+
+      list.map((r,i)=>"<tr>"+cols.map(c=>`<td>${c.render(r,i)}</td>`).join("")+"</tr>").join("")+`</tbody></table></div>`;
+    document.getElementById("count").textContent=list.length+" / "+R.length;
+  }
+  document.getElementById("q").oninput=e=>{const q=e.target.value.toLowerCase();
+    draw(R.filter(r=>!q||r.short.toLowerCase().includes(q)||(r.netnew||"").toLowerCase().includes(q)||r.quadrant.toLowerCase().includes(q)));};
+  draw(R);
+})();
+</script>
+</body>
+</html>

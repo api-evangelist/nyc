@@ -12,19 +12,19 @@ Sixty-seven NYC government domains — mayoral agencies, elected offices, the fi
 
 ## The definitive finding: two flat columns
 
-Scoring every domain 0–3 across seven dimensions ([data/scorecard.json](data/scorecard.json)) produces one inescapable result. Two columns are flat across the **entire** city government:
+Every domain is scored 0–3 on seven dimensions by **one deterministic rule-based function** applied uniformly ([data/scorecard.json](data/scorecard.json); see `scoring_method`) — Open Data asset counts, the observed-API inventory, and platform fingerprints, *not* the earlier per-subagent self-scores, so the numbers are comparable across all 67. The result is inescapable — two columns are flat across the **entire** city government:
 
 | Dimension | Mean | Domains scoring 0 | Domains scoring ≥2 |
 |---|---|---|---|
-| Open Data breadth | 1.9 | 9 / 67 | **43 / 67** |
-| Core data machine-readable | 1.8 | 7 / 67 | 44 / 67 |
-| Platform modernity | 1.6 | 0 / 67 | 33 / 67 |
-| Vendor independence | 1.5 | 1 / 67 | 30 / 67 |
-| Site / content API | 0.8 | **33 / 67** | 16 / 67 |
-| **Transactional (write) API** | **0.10** | **60 / 67** | **0 / 67** |
-| **Agent-readiness** | **0.04** | **64 / 67** | **0 / 67** |
+| Platform modernity | 2.1 | 0 / 67 | **59 / 67** |
+| Vendor independence | 2.1 | 0 / 67 | 51 / 67 |
+| Core data machine-readable | 2.0 | 7 / 67 | 48 / 67 |
+| Open Data breadth | 1.5 | 7 / 67 | 35 / 67 |
+| Site / content API | 1.2 | **17 / 67** | 19 / 67 |
+| **Transactional (write) API** | **0.03** | **65 / 67** | **0 / 67** |
+| **Agent-readiness** | **0.00** | **67 / 67** | **0 / 67** |
 
-Open data is broad — 43 of 67 agencies publish substantially. But **not one of 67 domains scores above a 1 on having a transactional write API, and not one scores above a 1 on agent-readiness.** 60 of 67 have *no* citizen write API at all; 64 of 67 have *no* agent surface. These two gaps are independent of platform, budget, or open-data maturity. They are the citywide condition.
+Open data is broad and platforms are mostly maintained. But **not one of 67 domains scores above a 1 on having a transactional write API, and every single one scores 0 on agent-readiness.** 65 of 67 have *no* citizen write API at all; 67 of 67 have *no* agent surface. These two gaps are independent of platform, budget, or open-data maturity. They are the citywide condition.
 
 ## The taxonomy: ~40 verbs, five families
 
@@ -62,6 +62,16 @@ The method assigns each domain a one-word *modernization verb*. Sixty-seven asse
 7. **Adopt the standards already made for the problem** — revive Open311, extend FHIR, model NYPL.
 8. **Register everything** in an [APIs.json](https://apisjson.org) index so the citywide surface is navigable by humans and agents — the connective tissue open data never had.
 9. **Govern the surface.** Lapsed domains and 502s are a security and trust problem; inventory and monitor what the city runs.
+
+## Turning the assessment into a roadmap
+
+Three analyses mine the collected data to move from "what's broken" to "what to do":
+
+**Priority — where to start** ([opportunity.html](https://nyc.apievangelist.com/opportunity.html)). Every domain scored **demand × gap × feasibility** — demand from Open Data page-views and the reach of its locked citizen transaction, feasibility from whether an API/open data already exists (cheap) vs. data that must be digitized (expensive). The top of the list is high-demand agencies with a locked high-value transaction and data already in hand: **DCAS, DOB, NYPD, DOF, Parks, DOHMH, HPD, 311**. **25 domains are "quick wins"** — high impact and already feasible.
+
+**Linkage — the connective tissue** ([linkage.html](https://nyc.apievangelist.com/linkage.html)). The shared join keys, detected across all 67 schemas: **Borough and Coordinates appear in every one of the 67**; Council District (62), Community Board (56), Census Tract / NTA (53). The **property keys — BBL and BIN** — are the real connectors that would stitch Buildings ↔ Finance ↔ Housing ↔ Planning ↔ 311 into one addressable graph. This is the `nyc-commons` case in data.
+
+**Transactions — build these once** ([transactions.html](https://nyc.apievangelist.com/transactions.html)). The 66 net-new write workflows collapse into a handful of primitives: **Apply (30)**, Report/Complain (17), Request-records (5), Schedule/Reserve (4), Register (2), Dispute/File (2), Pay (1). The city doesn't need 66 bespoke builds — it needs one excellent "Apply" pattern (permits, enrollment, benefits, licenses, lottery) and a "Report" pattern (complaints, tips, 311), reused across agencies.
 
 ## Coda
 

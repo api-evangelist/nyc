@@ -27,6 +27,8 @@ This repo doubles as an explorable, data-driven website (**[nyc.apievangelist.co
 
 - `index.html` — project overview: thesis, cross-domain stats, the five verb families, the method, and cards for all 67 domains.
 - `domain.html?d=<domain>` — per-domain explorer: interactive fruit index, searchable Open Data index, JSON Schema browser, OpenAPI operations, MCP tools, and rendered docs.
+- `opportunity.html` · `linkage.html` · `transactions.html` — the assessment layer: priority ranking (demand×gap×feasibility), the cross-domain join-key graph, and the citizen-transaction taxonomy.
+- `entities.html` · `technology.html` — master cross-domain inventories.
 - `docs.html?f=…` — in-browser Markdown viewer (also serves the [CHANGELOG](CHANGELOG.md)).
 - `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain: `python3 scripts/build-manifest.py && python3 scripts/build-scorecard.py`.
 

@@ -31,15 +31,20 @@
   <div class="wrap">
     <div class="eyebrow">Cross-domain synthesis</div>
     <h1 style="font-size:2.3rem;max-width:24ch">Sixty-seven domains, one flat truth</h1>
-    <p class="lead">Assessed the same way, every NYC government domain publishes data but almost none is programmable. Two capabilities score zero across the entire city: <strong>transactional APIs</strong> and <strong>agent-readiness</strong>.</p>
-    <div class="cta"><a class="btn" href="docs.html?f=SYNTHESIS.md">Read the full synthesis</a></div>
+    <p class="lead">Assessed the same way, every NYC government domain publishes data but almost none is programmable. Two capabilities score zero across the entire city: <strong>transactional APIs</strong> (65/67) and <strong>agent-readiness</strong> (67/67).</p>
+    <div class="cta">
+      <a class="btn" href="docs.html?f=SYNTHESIS.md">Read the full synthesis</a>
+      <a class="btn sec" href="opportunity.html">Opportunity ranking</a>
+      <a class="btn sec" href="linkage.html">Linkage</a>
+      <a class="btn sec" href="transactions.html">Transactions</a>
+    </div>
     <div class="stats" style="margin-top:30px" id="tot"></div>
   </div>
 </div>
 
 <section><div class="wrap">
   <div class="section-head"><div class="k">The evidence</div><h2>Aggregate maturity — all 67 domains</h2>
-  <p class="muted">How many domains score 0–3 on each dimension. Open data is broad; the write layer and agent layer are empty citywide.</p></div>
+  <p class="muted">How many domains score 0–3 on each dimension — scored by one <strong>rule-based function applied uniformly</strong> (not per-subagent self-scores). Open data is broad; the write and agent layers are empty citywide.</p></div>
   <div id="dist"></div>
   <div class="legend" id="legend"></div>
 </div></section>
@@ -126,8 +131,8 @@
 
   const findings=[
     ["The service layer is the universal gap, not the data","Reporting data is broadly open; the transactional service layer is missing, hidden, or vendor-locked almost everywhere."],
-    ["A citizen write-workflow with no API — nearly every domain","66 net-new write objects; 60 of 67 have no transactional API at all."],
-    ["Agent-readiness is essentially zero — 64 of 67","Not one domain ships a meaningful agent surface. Every MCP artifact here is net-new."],
+    ["A citizen write-workflow with no API — nearly every domain","66 net-new write objects; 65 of 67 have no transactional API at all."],
+    ["Agent-readiness is zero — all 67","Not one domain ships a meaningful agent surface. Every MCP artifact here is net-new."],
     ["Accidental APIs are everywhere","Dozens of agencies unknowingly expose a WordPress REST or Drupal JSON:API; several run real private APIs. The surface often already exists — undocumented."],
     ["Near-identical offices multiply cost","5 Borough Presidents, 5 DAs, 3 libraries, ~25 CUNY campuses — each bespoke. Shared, templated APIs are the clearest efficiency win."],
     ["Vendor sprawl, uncoordinated","Accela, Salesforce, Siebel, Unqork, Dynamics, Epic, BiblioCommons, PeopleSoft, Struts — different SaaS per agency; sometimes the vendor IS the only API."],

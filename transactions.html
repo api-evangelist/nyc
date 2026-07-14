@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Transaction Taxonomy — NYC Modernization</title>
+<meta name="description" content="The city's un-API'd citizen write-workflows grouped into a handful of reusable transaction primitives.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<div class="dhead"><div class="wrap">
+  <div class="eyebrow" style="color:var(--brand-dark);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase">Assessment</div>
+  <h1>Citizen-Transaction Taxonomy</h1>
+  <p class="muted" style="max-width:74ch">Every domain's net-new write workflow — the citizen action with no API today — grouped into reusable primitives. The city doesn't need 66 bespoke builds; it needs a handful of transaction patterns, built once and reused. <strong>"Apply" alone covers nearly half.</strong></p>
+  <div class="stats" style="margin-top:14px" id="stats"></div>
+</div></div>
+<div class="wrap">
+  <div id="prims"></div>
+</div>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const T=await getJSON("data/transactions.json");
+  const total=T.primitives.reduce((s,p)=>s+p.count,0);
+  document.getElementById("stats").innerHTML=[[total,"write workflows"],[T.primitives.length,"primitives"],
+    [T.primitives[0].primitive,"biggest ("+T.primitives[0].count+")"]]
+    .map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  document.getElementById("prims").innerHTML=T.primitives.map(p=>`
+    <div class="card" style="margin-bottom:14px">
+      <h3 style="margin:0 0 .1em">${esc(p.primitive)} <span class="badge ok">${p.count}</span></h3>
+      <p class="muted small" style="margin:.2em 0 .8em">Build once → reuse across ${p.count} agencies.</p>
+      <div class="tablewrap"><table><tbody>${p.items.map(it=>`<tr><td style="white-space:nowrap"><code>${esc(it.object)}</code></td><td>${esc(it.domain)}</td></tr>`).join("")}</tbody></table></div>
+    </div>`).join("");
+})();
+</script>
+</body>
+</html>

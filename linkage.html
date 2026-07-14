@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cross-Domain Linkage — NYC Modernization</title>
+<meta name="description" content="The shared join keys that connect NYC agencies — the basis for nyc-commons and cross-domain interoperability.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.keybar{display:grid;grid-template-columns:190px 1fr 48px;gap:12px;align-items:center;margin:7px 0}
+.keybar .kn{font-weight:600;font-size:.9rem}
+.keybar .kn small{display:block;font-weight:400;color:var(--fg-soft)}
+.keybar .track{height:20px;border-radius:5px;background:var(--bg-soft);border:1px solid var(--border);overflow:hidden}
+.keybar .fill{height:100%;background:var(--brand)}
+.cat-property .fill{background:var(--gap)} .cat-identity .fill{background:var(--warn)}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+<div class="dhead"><div class="wrap">
+  <div class="eyebrow" style="color:var(--brand-dark);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase">Assessment</div>
+  <h1>Cross-Domain Linkage</h1>
+  <p class="muted" style="max-width:74ch">The join keys that recur across agencies — detected in every domain's JSON Schemas. Geography keys (borough, council district) are near-universal; the <strong>property keys (BBL/BIN)</strong> are the real connectors that could stitch Buildings, Finance, Housing, Planning, and 311 together. This is the case for <code>nyc-commons</code>, in data.</p>
+  <div class="stats" style="margin-top:14px" id="stats"></div>
+</div></div>
+<div class="wrap">
+  <div class="section-head"><h2>Shared keys, by reach</h2><p class="muted">How many of the 67 domains carry each key. <span style="color:var(--gap)">■ property</span> · <span style="color:var(--warn)">■ identity</span> · <span style="color:var(--brand)">■ geography</span></p></div>
+  <div id="keys"></div>
+  <div class="section-head" style="margin-top:32px"><h2>Most-connected domain pairs</h2><p class="muted">Domains sharing the most property/identity keys — the natural first integrations.</p></div>
+  <div class="tablewrap"><table id="pairs"></table></div>
+</div>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const K=await getJSON("data/linkage.json");
+  const N=K.byDomain.length;
+  const prop=K.keys.filter(k=>k.category==="property");
+  document.getElementById("stats").innerHTML=[[K.keys.length,"shared keys"],[N,"domains"],
+    [Math.max(...K.keys.map(k=>k.count)),"widest key reach"],[prop.reduce((s,k)=>s+k.count,0),"property-key uses"]]
+    .map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  document.getElementById("keys").innerHTML=K.keys.sort((a,b)=>b.count-a.count).map(k=>`
+    <div class="keybar cat-${k.category}"><div class="kn">${esc(k.key)}<small>${k.category} · ${k.domains.slice(0,6).map(d=>esc(d.short)).join(", ")}${k.domains.length>6?" +"+(k.domains.length-6):""}</small></div>
+    <div class="track"><div class="fill" style="width:${k.count/N*100}%"></div></div><div style="text-align:right;font-weight:700">${k.count}</div></div>`).join("");
+  document.getElementById("pairs").innerHTML="<thead><tr><th>Domain A</th><th>Domain B</th><th>Shared keys</th></tr></thead><tbody>"+
+    K.topPairs.map(p=>`<tr><td>${esc(p.a)}</td><td>${esc(p.b)}</td><td><span class="badge ok">${p.shared}</span></td></tr>`).join("")+"</tbody>";
+})();
+</script>
+</body>
+</html>
