@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>References — NYC Modernization</title>
+<meta name="description" content="The growing reference library behind the NYC Modernization strategy — the PIT Crew initiative, API Evangelist's writing, and the standards this project publishes.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.refcat{margin:26px 0}
+.ref{border-left:3px solid var(--border);padding:2px 0 2px 16px;margin:12px 0}
+.ref a{font-weight:600}
+.ref .m{font-size:.78rem;color:var(--fg-soft)}
+.ref .n{color:var(--fg-soft);font-size:.9rem;margin:.25em 0 0}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+<div class="dhead"><div class="wrap">
+  <div class="eyebrow" style="color:var(--brand-dark);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase">Reference library</div>
+  <h1>References</h1>
+  <p class="muted" style="max-width:74ch">The sources behind the <a href="strategy.html">strategy</a> — the NYC PIT Crew initiative, fifteen years of API Evangelist's writing on government APIs and open data, and the open standards this project publishes. This library grows as the work does.</p>
+  <div class="stats" style="margin-top:14px" id="stats"></div>
+</div></div>
+<div class="wrap" id="cats"></div>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const D=await getJSON("data/references.json");
+  const n=D.categories.reduce((s,c)=>s+c.refs.length,0);
+  document.getElementById("stats").innerHTML=[[n,"references"],[D.categories.length,"groups"]]
+    .map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  document.getElementById("cats").innerHTML=D.categories.map(c=>`
+    <div class="refcat"><div class="section-head"><h2 style="font-size:1.25rem">${esc(c.name)}</h2>
+    ${c.blurb?`<p class="muted">${esc(c.blurb)}</p>`:""}</div>
+    ${c.refs.map(r=>`<div class="ref">
+      <a href="${esc(r.url)}">${esc(r.title)}</a>
+      <div class="m">${[r.source,r.date].filter(Boolean).map(esc).join(" · ")} — <span style="word-break:break-all">${esc(r.url)}</span></div>
+      ${r.note?`<div class="n">${esc(r.note)}</div>`:""}
+    </div>`).join("")}</div>`).join("");
+})();
+</script>
+</body>
+</html>

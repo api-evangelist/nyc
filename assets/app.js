@@ -77,6 +77,7 @@ function navBar(active){
   return `<div class="nav"><div class="wrap">
     <a class="brand" href="./"><span class="dot"></span>NYC Modernization</a>
     <a class="link" href="./#domains">Domains</a>
+    <a class="link" href="./strategy.html">Strategy</a>
     <a class="link" href="./synthesis.html">Synthesis</a>
     <a class="link" href="./opportunity.html">Opportunity</a>
     <a class="link" href="./experience.html">Experience</a>
@@ -84,6 +85,7 @@ function navBar(active){
     <a class="link" href="./commons.html">Commons</a>
     <a class="link" href="./entities.html">Entities</a>
     <a class="link" href="./technology.html">Technology</a>
+    <a class="link" href="./references.html">References</a>
     <a class="link" href="./docs.html?f=ROADMAP.md">Roadmap</a>
     <span class="spacer"></span>
     <a class="link ghost" href="https://github.com/api-evangelist/nyc">GitHub</a>

@@ -4,6 +4,15 @@ Where the NYC — API & Agent Modernization project is headed. Derived from the 
 
 ## Now / next
 
+### 🟡 Public Interest Technology (PIT) Crew engagement (strategic)
+NYC launched the [PIT Crew](https://www.nyc.gov/content/pitcrew/pages/) (2026-07-13) to [rapidly build digital solutions to public problems](https://www.nyc.gov/mayors-office/news/2026/07/mayor-mamdani-launches--public-interest-technology--pit--crew--t). This project is the substrate. See the [strategy](https://nyc.apievangelist.com/strategy.html) and [references](https://nyc.apievangelist.com/references.html). Concrete next work:
+- ⚪ **DCWP “Click to Cancel” worked example** — build crew #1's complaint API + MCP + the *report-a-problem* skill end-to-end against the reference data, as a fork-ready starting point (DCWP is already assessed).
+- ⚪ **Civic API kit (city-in-a-box)** — package the seven-step method + generators + nyc-commons + skills so any city forks the repo and runs its own assessment (make the repo a GitHub template).
+- ⚪ **OSS-alternative migration playbooks** — turn the [technology](https://nyc.apievangelist.com/technology.html) commercial→open-source pairings into per-agency migration guides (Socrata→CKAN, Esri→QGIS/PostGIS, …).
+- ⚪ **“Standards NYC publishes” positioning** — package nyc-commons + APIs.json catalog + the ten government-process skills as the standards other cities adopt.
+- ⚪ **Reference library** — keep [references.html](https://nyc.apievangelist.com/references.html) growing as the argument is built out.
+
+
 ### 🟢 The Programmable City — API · MCP · Skills experience layer — **shipped**
 The design-first payoff, assembled: the **REST operation → MCP tool → Agent Skill** chain across all 67 agencies in one place ([experience.html](https://nyc.apievangelist.com/experience.html)), built on the [API Experience](https://experience.apicommons.org) model. **721 operations, 624 MCP tools**, mapped to **ten common government processes** (Apply, Report, Request-records, Schedule, Register, Dispute, Pay + look-up-a-place, check-status, search-data), plus **7 cross-agency MCP prompts** and **7 resources** anchored on nyc-commons. Machine artifacts (`experience/`): one unified OpenAPI with `x-mcp-tool`/`x-agent-skill` on every operation, a NYC-wide MCP definition, an APIs.json descriptor (opens in experience.apicommons.org), and the ten Agent Skills. `scripts/build-experience.py` regenerates it all. **Shipped since:** per-agency MCP prompts + resources (167 prompts / 208 resources); a **static reference API** with GET-callable example data (`experience/api/`, `scripts/build-gateway.py`); and a **working, installable MCP server** [`@api-common/nyc-mcp`](experience/mcp-server/) with an [install.apicommons.org](https://install.apicommons.org) button on the page. **Next:** publish `@api-common/nyc-mcp` to npm to activate one-click install; optional AWS deploy for live writes.
 

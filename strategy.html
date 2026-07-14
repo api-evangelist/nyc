@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Why This Work Matters — NYC's Moment to Lead</title>
+<meta name="description" content="A strategic case for the NYC Modernization project as the substrate for the Public Interest Technology (PIT) Crew — and for New York setting the standard other cities fork.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.tl{border-left:3px solid var(--brand);margin:8px 0 8px 6px;padding-left:20px}
+.tl .item{position:relative;margin:16px 0}
+.tl .yr{font-family:ui-monospace,Menlo,monospace;font-weight:700;color:var(--brand);font-size:.85rem}
+.tl h3{margin:.1em 0;font-size:1.02rem}
+.obj{display:grid;grid-template-columns:1fr 1.3fr;gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:8px 0}
+.obj>div{padding:12px 15px}
+.obj .a{background:var(--bg-soft);font-weight:600;border-right:1px solid var(--border)}
+.obj .b{color:var(--fg-soft);font-size:.92rem}
+@media(max-width:640px){.obj{grid-template-columns:1fr}.obj .a{border-right:none;border-bottom:1px solid var(--border)}}
+.ask{counter-reset:a}
+.ask li{margin:8px 0}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+<div class="hero" style="padding:52px 0 30px">
+  <div class="wrap">
+    <div class="eyebrow">Strategy</div>
+    <h1 style="font-size:2.3rem;max-width:24ch">A PIT Crew should never start from a blank page</h1>
+    <p class="lead">On July 13, 2026 New York launched the <a href="https://www.nyc.gov/content/pitcrew/pages/">Public Interest Technology (PIT) Crew</a> to <a href="https://www.nyc.gov/mayors-office/news/2026/07/mayor-mamdani-launches--public-interest-technology--pit--crew--t">“rapidly build digital solutions to public problems”</a> — in months, not years. This project is the substrate that makes that speed real: for all 67 agencies the models, contracts, agent tools, and the missing write workflows are already drafted, open, and forkable.</p>
+    <div class="cta">
+      <a class="btn" href="docs.html?f=STRATEGY.md">Read the full case</a>
+      <a class="btn sec" href="references.html">References</a>
+      <a class="btn sec" href="experience.html">The Programmable City</a>
+    </div>
+    <div class="stats" style="margin-top:28px" id="ev"></div>
+  </div>
+</div>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The through-line</div><h2>A fifteen-year argument, now proven</h2>
+  <p class="muted">API Evangelist has made this case since 2011. The NYC assessment is the evidence — the open-data era (2010–2018) half-worked; it published reporting data and never touched the transaction.</p></div>
+  <div class="tl">
+    <div class="item"><div class="yr">2011</div><h3><a href="https://apievangelist.com/2011/09/06/every-city-county-and-state-should-have-an-api/">Every City, County, and State Should Have an API</a></h3><p class="muted" style="margin:0">The problem isn't bureaucracy — it's the vendor tooling agencies are handed. “PDF is not Portable Data Format… expect more from the technology purchased with our tax dollars.”</p></div>
+    <div class="item"><div class="yr">2012</div><h3><a href="https://apievangelist.com/2012/10/25/apis-can-save-money-and-make-government-more-efficient/">APIs Can Save Money and Make Government More Efficient</a></h3><p class="muted" style="margin:0">The Department of Energy estimated $882,000 saved by bundling one API with a study.</p></div>
+    <div class="item"><div class="yr">2013</div><h3><a href="https://apievangelist.com/2013/09/25/a-huge-need-for-writeable-apis-in-government/">A Huge Need for Writeable APIs in Government</a></h3><p class="muted" style="margin:0">“Huge demand… this could be the thing that changes how government operates.” The write-layer gap, called thirteen years before it was measured across 67 agencies.</p></div>
+    <div class="item"><div class="yr">2016</div><h3><a href="https://apievangelist.com/2016/04/13/formalizing-my-approach-to-identifying-the-low-hanging-api-fruit/">Formalizing the Low-Hanging-Fruit Method</a></h3><p class="muted" style="margin:0">The outside-in assessment this project runs, agency by agency — after the University of Oklahoma and the Dept. of Veterans Affairs.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">Directly addressing the mandate</div><h2>What the PIT Crew needs — and what already exists</h2></div>
+  <div id="obj"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The opportunity</div><h2>How New York leads other cities</h2>
+  <p class="muted">The open-data era had a standard — but it was a vendor's (Socrata/SODA). This time the standard is open, forkable, and agent-native, and New York authors it.</p></div>
+  <div class="grid cols-3">
+    <div class="card"><h3 style="margin:0 0 .3em">Standards</h3><p class="muted small" style="margin:0"><a href="commons.html">nyc-commons</a> geography/identity spine · an <a href="https://apisjson.org">APIs.json</a> catalog · the ten <a href="experience.html">government-process skills</a> · the design-first chain.</p></div>
+    <div class="card"><h3 style="margin:0 0 .3em">Tooling</h3><p class="muted small" style="margin:0">The <a href="experience.html">experience layer</a> · a callable reference API · the installable <code>@api-common/nyc-mcp</code> · the open generators.</p></div>
+    <div class="card"><h3 style="margin:0 0 .3em">Processes</h3><p class="muted small" style="margin:0">The seven-step method and the whole repository — forkable as a <strong>civic API kit</strong>. Any city clones it and runs its own assessment.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The ask</div><h2>What to do next</h2></div>
+  <ol class="ask">
+    <li><strong>Fork the DCWP complaint contract</strong> as crew #1's starting point.</li>
+    <li><strong>Adopt <a href="commons.html">nyc-commons</a></strong> as the citywide geography/identity spine.</li>
+    <li><strong>Register every agency in an APIs.json catalog</strong> — the connective tissue open data never had.</li>
+    <li><strong>Make an MCP surface a standard deliverable</strong> for every PIT Crew build.</li>
+    <li><strong>Require an open-source-alternative assessment</strong> for every new proprietary purchase.</li>
+    <li><strong>Publish the kit</strong> so other cities fork it — NYC as the reference city.</li>
+  </ol>
+  <p style="margin-top:1.2em"><a class="btn" href="docs.html?f=STRATEGY.md">Read the full strategic case →</a> <a class="btn sec" href="references.html">References →</a></p>
+  <p class="muted small" style="margin-top:1em">From API Evangelist, offered to inform the PIT Crew — not an official City document.</p>
+</div></section>
+
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  let writeZero=65, agentZero=67, N=67, prop=71;
+  try{
+    const sc=await getJSON("data/scorecard.json"); N=sc.domains.length;
+    writeZero=sc.domains.filter(d=>d.scores.writeApi===0).length;
+    agentZero=sc.domains.filter(d=>d.scores.agent===0).length;
+  }catch(e){}
+  try{ const t=await getJSON("data/technology.json"); prop=Math.round((t.proprietary_summary.median_proprietary_share)*100); }catch(e){}
+  document.getElementById("ev").innerHTML=[
+    [`${writeZero}/${N}`,"agencies with no write API"],
+    [`${agentZero}/${N}`,"agencies not agent-ready"],
+    [`${prop}%`,"median proprietary stack"],
+    ["67","agencies already mapped"]
+  ].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+
+  const OBJ=[
+    ["“Rapidly build” — months, not years","A design-first contract per agency (JSON Schema → OpenAPI → MCP → Skill). Fork it and implement — the discovery is done."],
+    ["First crew: DCWP “Click to Cancel” complaint portal","DCWP is already assessed; the complaint is a modeled net-new write workflow; the “report-a-problem” skill, a reference API, and an installable MCP already exist."],
+    ["Digital public goods, in-house","Everything is open-source and vendor-independent — with a named open-source alternative for every proprietary incumbent."],
+    ["Dignified & delightful for every New Yorker","One shared nyc-commons geography/identity spine + agent-native surfaces, so services compose around the resident, not the org chart."],
+    ["Five crews, many agencies","A repeatable seven-step method and open generators — not five bespoke starts from scratch."]
+  ];
+  document.getElementById("obj").innerHTML=OBJ.map(([a,b])=>`<div class="obj"><div class="a">${esc(a)}</div><div class="b">${esc(b)}</div></div>`).join("");
+})();
+</script>
+</body>
+</html>
