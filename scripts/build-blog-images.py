@@ -131,8 +131,8 @@ def scene_skyline(r):
     while x < W:
         bw = r.uniform(46, 106)
         cf = 1 - abs((x+bw/2)/W - 0.5)*1.25
-        top = water_y - r.uniform(80, 250)*max(0.32, cf) - 26
-        top = max(top, H*0.15)
+        top = water_y - r.uniform(70, 205)*max(0.36, cf) - 22
+        top = max(top, H*0.30)                # keep a generous band of white sky up top
         e += building(r, x, top, bw, water_y)
         if tanks > 0 and bw > 56 and r.random() < 0.45:
             e += watertank(r, x+bw/2, top); tanks -= 1
@@ -240,9 +240,9 @@ def bench(r, cx, gy):
             line(cx-w/2, gy-16, cx-w/2, gy), line(cx+w/2, gy-16, cx+w/2, gy)]
 
 def storefront(r, x, w, base_y):
-    top = base_y - r.uniform(120, 170)
+    top = base_y - r.uniform(86, 126)        # lower storefronts -> more white sky above
     e = [rectp(x, top, w, base_y-top)]
-    ay = base_y - r.uniform(56, 78)          # awning
+    ay = base_y - r.uniform(50, 66)          # awning
     d = f"M{x+4:.1f},{ay:.1f} L{x+w-4:.1f},{ay:.1f} L{x+w-4:.1f},{ay+12:.1f}"
     n = int((w-8)/16); xi = x+w-4
     for i in range(n):
@@ -278,13 +278,13 @@ def scene_street(r):
         e += stall(r, r.uniform(W*0.12, W*0.88), side_y)
     for fn in r.sample([tree, lamp, hydrant, bench, tree], r.randint(2, 4)):
         e += fn(r, r.uniform(40, W-40), side_y)
-    # people evenly spaced across the foreground (jittered), varied size for depth
-    n = r.randint(6, 9)
+    # a busy sidewalk — more people, evenly spaced with jitter, varied size for depth
+    n = r.randint(12, 17)
     for i in range(n):
-        px = (i+0.5)*W/n + r.uniform(-W/(n*3.2), W/(n*3.2))
-        s = r.uniform(80, 118)
-        gy = side_y + r.uniform(2, 9)        # feet near the sidewalk
-        if r.random() < 0.16:
+        px = (i+0.5)*W/n + r.uniform(-W/(n*3.5), W/(n*3.5))
+        s = r.uniform(62, 104)
+        gy = side_y + r.uniform(1, 10)       # feet near the sidewalk
+        if r.random() < 0.18:
             e += couple(r, px, gy, s)
         else:
             e += person(r, px, gy, s, r.choice([-1, 1]))
