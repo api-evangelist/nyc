@@ -104,9 +104,9 @@ inv=open("domains.md").read()
 inv_count=len(set(re.findall(r'\b[a-z0-9][a-z0-9.-]+\.(?:gov|nyc|us|org|com|info|edu|net)\b', inv)) - {"apievangelist.com","github.com"})
 
 manifest={
- "project":{"title":"NYC — API & Agent Modernization","site":"nyc.apievangelist.com",
+ "project":{"title":"NYC — Digital Modernization","site":"nyc.apievangelist.com",
    "repo":"https://github.com/api-evangelist/nyc",
-   "tagline":"Mapping the digital surface of New York City government and turning it into an API-first, agent-native layer — one JSON Schema per object, an OpenAPI that $refs them, and an MCP server per domain."},
+   "tagline":"Mapping the digital surface of New York City government and turning it into an API-first, copilot, and agent-native layer — assessing the gap that lives across existing city government domains, and the current open data efforts within the public commons."},
  "thesis":{"heading":"Not another data-liberation project",
    "body":"From 2010–2018 the open-data movement (Socrata, Obama-era directives, NYC's Open Data law) pushed cities to publish data. It only partially worked: data got published but stayed disconnected from the front door, read-only, unproductized, and not agent-ready. This project is step two — unify what exists behind resource-oriented APIs, complete the missing write workflows, and expose it all through MCP so agents are first-class consumers. Make the city programmable."},
  "method":[
