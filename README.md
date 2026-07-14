@@ -47,7 +47,7 @@ See the **[CHANGELOG](CHANGELOG.md)** for the full project history, and the **[c
 
 ## Method (per domain)
 
-1. **Low-hanging-fruit assessment** — outside-in crawl of the domain; index every table (>10 rows), form, and data file as `name · type · URL · entity`.
+1. **Low-hanging-fruit assessment** — outside-in crawl of the domain; index every table (>10 rows), form, and **downloadable data file — CSV, Excel (`.xlsx`/`.xls`), XML, JSON, PDF, or other** — as `name · type · URL · entity`. Excel/spreadsheet exports are one of the most common ways agencies share data that should be an API; capture them explicitly, not just on-page HTML tables.
 2. **Technology & vendor inventory** — fingerprint the CMS, hosting, CDN, analytics, and any outsourced capabilities (search, maps, identity) from headers and page markup. Vendor lock-in is a modernization constraint.
 3. **APIs-observed inventory** — document every backend/service API the site itself calls while crawling (internal REST, vendor APIs, blob stores, the open-data SODA endpoints). The *existing* programmatic surface.
 4. **Open Data crosswalk** — match each resource to any existing `data.cityofnewyork.us` dataset; separate real gaps from already-published-but-disconnected data.

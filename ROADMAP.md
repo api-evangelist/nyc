@@ -11,6 +11,7 @@ NYC launched the [PIT Crew](https://www.nyc.gov/content/pitcrew/pages/) (2026-07
 - ⚪ **OSS-alternative migration playbooks** — turn the [technology](https://nyc.apievangelist.com/technology.html) commercial→open-source pairings into per-agency migration guides (Socrata→CKAN, Esri→QGIS/PostGIS, …).
 - ⚪ **“Standards NYC publishes” positioning** — package nyc-commons + APIs.json catalog + the ten government-process skills as the standards other cities adopt.
 - ⚪ **Reference library** — keep [references.html](https://nyc.apievangelist.com/references.html) growing as the argument is built out.
+- ⚪ **Excel / spreadsheet backfill sweep** — the initial assessments under-captured downloadable `.xlsx`/`.xls` files (only 3 items across 2 domains). Re-scan all 67 domains specifically for spreadsheet exports (budget books, statistical tables, per-facility reports, rosters), add them as fruit items with an Open Data crosswalk, and fold them into the schemas/OpenAPI — Excel is one of the most common "should-be-an-API" formats.
 
 
 ### 🟢 The Programmable City — API · MCP · Skills experience layer — **shipped**
