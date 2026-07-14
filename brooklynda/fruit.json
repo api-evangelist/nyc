@@ -1,0 +1,117 @@
+{
+  "domain": "brooklynda",
+  "agency": "Kings County (Brooklyn) District Attorney's Office",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — brooklynda.org/robots.txt is a Yoast block with no disallows). Fingerprinted www.brooklynda.org from response headers and page markup: Apache + WordPress 6.8.5 + GeneratePress/GP Premium theme, with Wordfence, Yoast, MonsterInsights (Google Analytics), MetaSlider, FileBird, Redirection, UserFeedback, Google Language Translator, and Embed Any Document. Enumerated the WordPress REST API (/wp-json) namespaces and the wp/v2 content categories (Press Releases = 911 posts). Verified via the Socrata Discovery API that NO NYC Open Data asset exists under any Brooklyn/Kings County DA agency label (resultSetSize 0 for every variant).",
+  "related_domains": ["manhattanda.org", "bronxda.nyc.gov", "queensda.org", "statenislandda.org", "nycourts.gov", "criminaljustice.ny.gov"],
+  "headline_findings": [
+    "The Brooklyn DA is a content-only domain with no data: a single self-hosted WordPress 6.8.5 brochure site (brooklynda.org, Apache, GeneratePress, Wordfence) — no portal, no application, no data platform.",
+    "The only machine-readable surface is the WordPress REST API (/wp-json/wp/v2), an accidental content API that exposes ~911 press releases plus notifications, statements, and bureau/program pages.",
+    "There is ZERO NYC Open Data for any DA office — the Socrata Discovery API returns no assets for every Brooklyn/Kings County DA label. The core justice data (caseloads, dispositions, diversions, conviction-review outcomes) is published nowhere as data, only as prose inside press releases.",
+    "No inbound machine surface: submitting a tip — the everyday inbound transaction — has only a captcha-gated web form, a phone hotline, or a bureau email.",
+    "All five NYC county DA offices share the same functions (bureaus, diversion, conviction review, victim services, press). This is a candidate for ONE shared DA API, built once and adopted five times. Net-new write surface: submit a confidential tip (TipSubmission). See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "brooklynda.org/wp-json/wp/v2", "type": "content REST API (WordPress default)", "owner": "Brooklyn DA (WordPress core)", "public": true, "note": "The one real machine-readable surface. ~911 press releases (?categories=pr) plus notifications, statements, and bureau/program pages. Accidental — CMS default, raw WordPress fields, not a designed resource model." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": "no assets for this agency", "note": "ZERO datasets under any Brooklyn/Kings County DA label (verified via Socrata Discovery API). The office publishes no open data." },
+    { "endpoint": "brooklynda.org (contact form)", "type": "inbound web form", "owner": "Brooklyn DA (WordPress)", "public": "captcha-gated UI, no API", "note": "Only inbound path for a tip/complaint besides phone/email. reCAPTCHA/hCaptcha/Turnstile per Permissions-Policy header. No JSON, no documented submit endpoint." },
+    { "endpoint": "www.brooklynda.org", "type": "informational site", "owner": "Brooklyn DA (self-hosted WordPress on Apache)", "public": "html", "note": "Bureaus, programs, press releases, brochures, resources. NOT on the nyc.gov shared platform — the office runs its own domain." }
+  ],
+  "fruit": [
+    {
+      "name": "Press Releases, Statements & Notifications",
+      "type": "content archive",
+      "entity": "PressRelease",
+      "url": "https://www.brooklynda.org/category/pr/",
+      "count": "~911 press releases (+ 27 notifications, 2 statements, 1 newsletter)",
+      "machine_readable": "WordPress REST API (/wp-json/wp/v2/posts)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The office's only substantial published data. Reachable via the CMS default content API — an accident, not a design. Raw WordPress fields, no resource model."
+    },
+    {
+      "name": "Programs, Bureaus & Initiatives",
+      "type": "directory (pages)",
+      "entity": "Program",
+      "url": "https://www.brooklynda.org/youth-diversion-and-initiatives/",
+      "count": "dozens of bureau/program pages",
+      "machine_readable": "WordPress REST API (/wp-json/wp/v2/pages)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Bureaus, diversion and re-entry programs, Conviction Review Unit, Red Hook Community Court, Young Adult Court, Virtual Currency Unit, etc. Exist only as unstructured WordPress pages; no structured program directory."
+    },
+    {
+      "name": "Community Resources (brochures, palm cards, hotlines)",
+      "type": "resource library",
+      "entity": "CommunityResource",
+      "url": "https://www.brooklynda.org/resources/",
+      "machine_readable": "WordPress REST API (pages + embedded PDFs)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Elder abuse, human trafficking, tenant protection, deed fraud, anti-bullying, immigrant affairs — many in 'all languages' variants (Google Language Translator + PDF embeds). No structured directory."
+    },
+    {
+      "name": "Victim Services",
+      "type": "service descriptions",
+      "entity": "VictimService",
+      "url": "https://www.brooklynda.org/please-call-me-we-are-here-to-help/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Advocacy, safety planning, court accompaniment, case notification, compensation help, language access — described within bureau pages (Domestic Violence, Hate Crimes, Human Trafficking, Elder Abuse, Immigrant Affairs). Unstructured prose."
+    },
+    {
+      "name": "Case / Prosecution Statistics (aggregate)",
+      "type": "data (absent)",
+      "entity": "CaseStatistics",
+      "url": "https://www.brooklynda.org/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The office's biggest gap. Caseloads, arraignments, dispositions, declined prosecutions, diversions, and conviction-review outcomes are published NOWHERE as data — only as prose inside press releases. Aggregate-only by design; individual cases must never be exposed. Proposed net-new data surface."
+    },
+    {
+      "name": "Submit a confidential tip",
+      "type": "inbound transaction (form)",
+      "entity": "TipSubmission",
+      "url": "https://www.brooklynda.org/please-call-me-we-are-here-to-help/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The everyday inbound transaction — report a fraud, an unsafe landlord, a hate incident, trafficking, or information on an open matter. No API and no Open Data twin; lives only behind a reCAPTCHA/hCaptcha web form, a phone hotline, or a bureau email. The net-new WRITE surface for this domain."
+    }
+  ],
+  "meta": {
+    "short": "Brooklyn District Attorney",
+    "verb": "template",
+    "platform": "WordPress 6.8.5 (GeneratePress / GP Premium) on Apache; Wordfence, Yoast, MonsterInsights; accidental WordPress REST API (wp/v2)",
+    "netnew": "TipSubmission — submit and track a confidential tip (report fraud, an unsafe landlord, a hate incident, trafficking, or information on an open case)",
+    "accent": "#4a6ab0",
+    "tagline": "A WordPress brochure site with no data, an accidental content API, and no way to send in a tip — one of five identical county DA offices.",
+    "headline": "The Brooklyn DA publishes no open data at all; its only machine-readable surface is the accidental WordPress REST API over ~911 press releases, so the modernization move is to template one shared, agent-native API across all five NYC county DA offices."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 1,
+    "openData": 0,
+    "coreData": 0,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Current WordPress 6.8.5 but brochureware on a heavy third-party plugin stack; no application tier.",
+    "siteApi": "Only the accidental WordPress REST API (wp/v2) — real but undesigned, content-only, raw CMS fields.",
+    "openData": "Zero NYC Open Data assets under any Brooklyn/Kings County DA label (verified).",
+    "coreData": "Caseloads, dispositions, diversions, conviction-review outcomes published nowhere as data — only prose in press releases.",
+    "writeApi": "No inbound API; tips go through a captcha web form, phone hotline, or bureau email.",
+    "agent": "No agent-native surface of any kind; no MCP, no structured contract.",
+    "ownership": "Owns its domain and content, but every data/security/analytics capability is a rented WordPress plugin; no owned API."
+  }
+}

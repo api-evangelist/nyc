@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanda/schemas/victim-service.json",
+  "title": "VictimService",
+  "description": "A victim resource / community resource offered or referred by the Manhattan District Attorney's Office — organized on manhattanda.org/victim-resources by crime type (child abuse, elder abuse, financial crimes, frauds targeting immigrants, hate crimes, housing/tenant protection, human trafficking, intimate partner & sexual violence, worker protection / wage theft). Reverse-engineered from the site; no structured data source exists, so this is a design-first schema.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.manhattanda.org/victim-resources/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Service or resource name." },
+    "category": { "$ref": "_common.json#/$defs/CrimeCategory" },
+    "slug": { "type": ["string", "null"], "description": "URL slug under /victim-resources/." },
+    "summary": { "type": ["string", "null"], "description": "What the service provides." },
+    "provider": { "type": ["string", "null"], "description": "Delivering organization (the DA's Office or a referred partner)." },
+    "eligibility": { "type": ["string", "null"], "description": "Who qualifies / who it serves." },
+    "languages": {
+      "type": "array",
+      "description": "Languages the service is offered in, where published.",
+      "items": { "type": "string" }
+    },
+    "confidential": { "type": ["boolean", "null"], "description": "Whether the service is confidential." },
+    "url": { "type": ["string", "null"], "format": "uri" },
+    "contact": { "$ref": "_common.json#/$defs/ContactInfo" }
+  },
+  "required": ["name", "category"],
+  "additionalProperties": false
+}

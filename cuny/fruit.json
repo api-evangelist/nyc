@@ -1,0 +1,162 @@
+{
+  "domain": "cuny",
+  "agency": "City University of New York (CUNY)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — cuny.edu/robots.txt sets a 30s crawl-delay and disallows /search/, /wp-admin/, /wp-content/plugins/, etc.). Fingerprinted www.cuny.edu as WordPress Multisite (nginx; wp-json REST responds 200; wp-content/uploads/sites/<n>/ paths; WPBakery Page Builder + Slider Revolution generators). Identified CUNYfirst as Oracle PeopleSoft Campus Solutions from its PIA URLs (cssa.cunyfirst.cuny.edu/psc/cnycsprd/GUEST/SA/c/...GBL; home.cunyfirst.cuny.edu redirects to /psc/cnyihprd/EMPLOYEE/EMPL/c/NUI_FRAMEWORK.PT_LANDINGPAGE.GBL — PeopleSoft Fluid behind an F5 BIG-IP). Verified the NYC Open Data agency label 'City University of New York (CUNY)' via the Socrata Discovery API: it returns exactly ONE asset, and that asset is an external-link (href), not a dataset. A q=CUNY search surfaces only one genuinely CUNY-subject dataset, tagged to OMB not CUNY.",
+  "related_domains": ["cunyfirst.cuny.edu", "cssa.cunyfirst.cuny.edu", "home.cunyfirst.cuny.edu", "academicworks.cuny.edu", "policy.cuny.edu", "data.ny.gov", "data.cityofnewyork.us"],
+  "headline_findings": [
+    "CUNY is a FEDERATED system: ~25 colleges and schools, each with its own website, all on a shared WordPress Multisite (cuny.edu, nginx) and a single shared Oracle PeopleSoft Campus Solutions student information system branded CUNYfirst.",
+    "CUNY is a New York STATE public benefit corporation, not a NYC agency — so unlike NYCHA, DOE, or the Council it publishes NOTHING under a CUNY agency label on NYC Open Data. The label returns exactly one asset, and it is an external link, not a dataset.",
+    "Its reference data is scattered: campus directories and program search are HTML on cuny.edu; enrollment/demographics are PDF/Excel data books from the Office of Institutional Research and Assessment (OIRA); state enrollment tables live on data.ny.gov. None is a clean API.",
+    "The transactional system of record — applications, courses, enrollment, financial aid — is CUNYfirst (PeopleSoft), reachable only through login-optional guest self-service screens (/psc/...GBL). No public API, no OpenAPI, no JSON.",
+    "Net-new write surface: submit a CUNY admissions application (AdmissionsApplication) — the single most common prospective-student transaction, covering multiple campuses in one application, with no API today. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "cssa.cunyfirst.cuny.edu/psc/cnycsprd/GUEST/SA/c/", "type": "student information system (ERP)", "owner": "CUNY (Oracle PeopleSoft Campus Solutions)", "public": "guest/login self-service UI, no API", "note": "CUNYfirst — admissions (CU_E1385_CNSLR_FL), course catalog browse (SSS_BROWSE_CATLG), enrollment, financial aid. Server-rendered PeopleSoft PIA (/psc/, .GBL, PT_LANDINGPAGE), JavaScript-only, no JSON/OpenAPI. Behind an F5 BIG-IP." },
+    { "endpoint": "www.cuny.edu (wp-json)", "type": "CMS / content", "owner": "CUNY (WordPress Multisite on nginx)", "public": "html + wp-json REST", "note": "Central site + ~25 federated college subsites. WPBakery + Slider Revolution. wp-json responds but is content-only; no product/reference API." },
+    { "endpoint": "www.cuny.edu/academics/programs/", "type": "program search tool", "owner": "CUNY", "public": "html/client-rendered", "note": "'Explore Programs' degree-program finder; no documented backing API exposed to consumers." },
+    { "endpoint": "academicworks.cuny.edu", "type": "institutional repository", "owner": "CUNY (bepress Digital Commons)", "public": "html + OAI-PMH", "note": "CUNY Academic Works — faculty/research output; OAI-PMH harvest per college, no unified REST API." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Effectively ZERO CUNY presence: the CUNY agency label returns one external-link asset; one CUNY-subject budget dataset (wusu-mzmq) is tagged to OMB." },
+    { "endpoint": "data.ny.gov", "type": "open data API", "owner": "NY State (Socrata)", "public": true, "note": "State-level SUNY/CUNY enrollment tables live on the STATE portal, not the city's — reflecting CUNY's status as a state public benefit corporation." }
+  ],
+  "fruit": [
+    {
+      "name": "Colleges & Schools (~25 campuses)",
+      "type": "directory",
+      "entity": "Campus",
+      "url": "https://www.cuny.edu/about/colleges-schools/",
+      "count": "~25 colleges/schools",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The federated core — senior colleges, community colleges, graduate/professional schools, Macaulay Honors. HTML directory on cuny.edu + institution records in CUNYfirst. No Open Data twin."
+    },
+    {
+      "name": "Degree & Certificate Programs (Explore Programs)",
+      "type": "search tool",
+      "entity": "DegreeProgram",
+      "url": "https://www.cuny.edu/academics/programs/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Client-rendered program finder across all campuses; associate through doctoral + certificates. No public API, no Open Data twin."
+    },
+    {
+      "name": "Course Catalog / Class Schedule",
+      "type": "catalog (portal)",
+      "entity": "Course",
+      "url": "https://cssa.cunyfirst.cuny.edu/psc/cnycsprd/GUEST/SA/c/COMMUNITY_ACCESS.SSS_BROWSE_CATLG.GBL",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The catalog browse lives inside CUNYfirst PeopleSoft guest self-service (SSS_BROWSE_CATLG). JavaScript-only, no API."
+    },
+    {
+      "name": "Enrollment & Demographics (OIRA data book)",
+      "type": "data book (PDF/Excel)",
+      "entity": "EnrollmentStatistics",
+      "url": "https://www.cuny.edu/about/administration/offices/oira/institutional/data/",
+      "machine_readable": "PDF/Excel only",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Office of Institutional Research and Assessment publishes enrollment, degrees, and demographics as data books — AGGREGATE ONLY. State tables also on data.ny.gov. No per-student record is ever published (FERPA)."
+    },
+    {
+      "name": "Faculty & Research (CUNY Academic Works)",
+      "type": "repository + directories",
+      "entity": "FacultyResearch",
+      "url": "https://academicworks.cuny.edu/",
+      "machine_readable": "OAI-PMH only",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Faculty directories (HTML per college) + the CUNY Academic Works institutional repository (bepress; OAI-PMH harvest). No unified REST API."
+    },
+    {
+      "name": "CUNY Community College Expenditures (budget)",
+      "type": "data table",
+      "entity": "EnrollmentStatistics",
+      "url": "https://data.cityofnewyork.us/d/wusu-mzmq",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["CUNY Community College Expenditures By Source wusu-mzmq (5c) — tagged to OMB, not CUNY"],
+      "opendata_gap": false,
+      "notes": "The ONE machine-readable CUNY-subject asset on NYC Open Data — a city budget rollup, published by the Mayor's Office of Management & Budget, not by CUNY. Financial, not academic."
+    },
+    {
+      "name": "Apply to CUNY (CUNY Application)",
+      "type": "sign-up / application workflow",
+      "entity": "AdmissionsApplication",
+      "url": "https://www.cuny.edu/admissions/undergraduate/apply/cuny-application/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common prospective-student transaction — one application covering multiple campuses. Runs inside CUNYfirst (CU_E1385_CNSLR_FL). No API and no Open Data twin. The net-new WRITE surface for this domain."
+    },
+    {
+      "name": "Check application status",
+      "type": "workflow (portal)",
+      "entity": "AdmissionsApplication",
+      "url": "https://home.cunyfirst.cuny.edu/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Track an admissions decision — CUNYfirst-only; no API."
+    },
+    {
+      "name": "Register for classes / enrollment",
+      "type": "workflow (portal)",
+      "entity": "Course",
+      "url": "https://home.cunyfirst.cuny.edu/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Enroll in courses — CUNYfirst PeopleSoft self-service only; no API."
+    },
+    {
+      "name": "Financial aid application",
+      "type": "workflow (portal)",
+      "entity": "AdmissionsApplication",
+      "url": "https://www.cuny.edu/financial-aid/applying-for-financial-aid/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "FAFSA/TAP-linked aid packaging surfaces in CUNYfirst; no API. An alternative net-new write surface."
+    }
+  ],
+  "meta": {
+    "short": "City University of New York (CUNY)",
+    "verb": "federate",
+    "platform": "WordPress Multisite (nginx) + Oracle PeopleSoft Campus Solutions (CUNYfirst)",
+    "netnew": "AdmissionsApplication (submit a CUNY application)",
+    "accent": "#2f6ab0",
+    "tagline": "One owned API to federate ~25 campuses' reference data and unlock the CUNYfirst application it now hides.",
+    "headline": "CUNY is a state public-benefit corporation whose ~25 campuses share one WordPress and one PeopleSoft ERP — publishing nothing to NYC Open Data and hiding every transaction behind CUNYfirst."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 1,
+    "openData": 0,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Modern-ish: WordPress Multisite on nginx, but plugin-heavy (WPBakery/Slider Revolution); core ERP is legacy Oracle PeopleSoft.",
+    "siteApi": "wp-json REST responds but is content-only; no reference/product API; CUNYfirst has no public API.",
+    "openData": "Effectively none on NYC Open Data — the CUNY agency label returns one external link, not a dataset.",
+    "coreData": "Core entities exist but are HTML directories, a client-rendered program finder, PDF/Excel data books, and PeopleSoft screens — not machine-readable.",
+    "writeApi": "No public write API; applications, enrollment, and aid live only in CUNYfirst self-service.",
+    "agent": "No agent-native surface of any kind.",
+    "ownership": "CUNY self-operates its own WordPress and CUNYfirst (via CUNY Computing & Information Services), but the SIS is a packaged Oracle ERP."
+  }
+}

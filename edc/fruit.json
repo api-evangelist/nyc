@@ -1,0 +1,125 @@
+{
+  "domain": "edc",
+  "agency": "New York City Economic Development Corporation (EDC)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting). edc.nyc and nycedc.com both sit behind a Cloudflare bot challenge (HTTP 403 'cf-mitigated: challenge') so the HTML is not directly fetchable; the site is fingerprinted as Drupal from robots.txt (/core/, /profiles/ paths) and the Cloudflare edge from response headers. NYC Ferry's ferry.nyc resolves via Cloudflare + CloudFront. Verified the NYC Open Data agency label 'Economic Development Corporation (EDC)' via the Socrata Discovery API — it returns only 5 assets, all pulled with column schemas. Core EDC entities (projects, real estate, solicitations) are modeled from how edc.nyc presents them; EDC publishes none of them to Open Data.",
+  "related_domains": ["nycedc.com", "www.ferry.nyc", "data.cityofnewyork.us", "passport.cityofnewyork.us"],
+  "headline_findings": [
+    "EDC is a public benefit corporation, not a mayoral agency — and its data footprint reflects that: only 5 NYC Open Data assets carry the 'Economic Development Corporation (EDC)' label, and they are peripheral (a marketing company map, NYC Ferry ridership, and three WiredNYC broadband tables).",
+    "EDC's actual business is invisible to machines. Its ~60M sq ft real-estate portfolio, its development/capital projects, and its solicitations (RFPs/RFEIs) — the core of what EDC does — have NO Open Data twin and NO API; they exist only as Drupal pages on edc.nyc behind a Cloudflare bot challenge.",
+    "The one genuinely operational open dataset is NYC Ferry Ridership (t5n6-gx8c); the rest are a promotional 'Mapped In NY' company map (f4yq-wry5) and the WiredNYC broadband-certification program (3 datasets).",
+    "The site itself is not machine-accessible: edc.nyc and nycedc.com return 403 with a Cloudflare challenge to non-browser clients, so even the project/asset/RFP listings can't be reliably scraped.",
+    "Net-new write surface: respond to a solicitation (RFPResponse) — register interest or submit a proposal to an EDC RFP/RFEI, which today happens only by email, at a pre-submission conference, or by manual document submission. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Only 5 EDC-labeled datasets: Mapped In NY, NYC Ferry Ridership, and 3 WiredNYC tables. SODA /resource/<id>.json endpoints. EDC's only real, open, machine-readable surface — and it misses the core business entirely." },
+    { "endpoint": "edc.nyc", "type": "informational site (Drupal)", "owner": "EDC", "public": "html, bot-challenged", "note": "Drupal (robots.txt /core/, /profiles/) behind Cloudflare; returns 403 'cf-mitigated: challenge' to non-browser clients. Projects, real estate, and RFPs live here as pages with no API and no JSON." },
+    { "endpoint": "nycedc.com", "type": "legacy/alias domain", "owner": "EDC", "public": "403 (Cloudflare)", "note": "Alias of edc.nyc; same Cloudflare bot challenge." },
+    { "endpoint": "www.ferry.nyc", "type": "NYC Ferry site", "owner": "EDC (ferry operated via contractor)", "public": "html", "note": "Cloudflare + CloudFront. Rider-facing schedules/booking; no documented public API under EDC. Ridership is the one operational dataset EDC publishes to Open Data." },
+    { "endpoint": "passport.cityofnewyork.us (PASSPort)", "type": "citywide procurement portal", "owner": "NYC (MOCS)", "public": "login", "note": "Where formal city procurement/solicitation responses are handled; EDC solicitations are not natively exposed as an API here." }
+  ],
+  "fruit": [
+    {
+      "name": "Development Projects",
+      "type": "listing (site)",
+      "entity": "DevelopmentProject",
+      "url": "https://edc.nyc/projects",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "EDC's waterfront, industrial, life-sciences, neighborhood, and infrastructure projects — the visible core of its mission — published only as Drupal pages. No Open Data twin, no API. Modeled entity."
+    },
+    {
+      "name": "EDC-Managed Real Estate",
+      "type": "listing (site)",
+      "entity": "PropertyAsset",
+      "url": "https://edc.nyc/work-with-us/real-estate",
+      "count": "~60M sq ft managed",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Industrial parks, markets, piers, campuses, ground leases EDC stewards for the City. Central to EDC yet entirely unpublished as data. Modeled entity."
+    },
+    {
+      "name": "Solicitations (RFP / RFEI / RFQ / RFI)",
+      "type": "listing (site)",
+      "entity": "Solicitation",
+      "url": "https://edc.nyc/rfps",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Open solicitations posted on edc.nyc with no machine-readable feed. The read half of the net-new write workflow. Modeled entity."
+    },
+    {
+      "name": "Mapped In NY Companies",
+      "type": "data table + map",
+      "entity": "MappedCompany",
+      "url": "https://data.cityofnewyork.us/d/f4yq-wry5",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Mapped In NY Companies f4yq-wry5 (19c)"],
+      "notes": "EDC's marketing map of notable NYC companies with hiring links. A real open dataset — but a promotional directory, not EDC operations."
+    },
+    {
+      "name": "NYC Ferry Ridership",
+      "type": "data table",
+      "entity": "FerryRidership",
+      "url": "https://data.cityofnewyork.us/d/t5n6-gx8c",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["NYC Ferry Ridership t5n6-gx8c (7c)"],
+      "notes": "Boardings by route, stop, hour, day type. NYC Ferry is run on behalf of EDC — this is EDC's one genuinely operational open dataset."
+    },
+    {
+      "name": "WiredNYC Broadband Buildings",
+      "type": "data table",
+      "entity": "WiredBuilding",
+      "url": "https://data.cityofnewyork.us/d/a6nj-cfbz",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["WiredNYC All Buildings a6nj-cfbz (19c)", "WiredNYC Certified Buildings 37it-gmcp (31c)", "WiredNYC Participating Buildings cfzn-4iza (30c)"],
+      "notes": "Three parallel tables of building telecom/broadband readiness and WiredScore certification. A niche EDC program, well published for what it is."
+    },
+    {
+      "name": "Respond to a solicitation",
+      "type": "sign-up / submission workflow",
+      "entity": "RFPResponse",
+      "url": "https://edc.nyc/rfps",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Registering interest in or submitting a proposal to an EDC RFP/RFEI — today only via email, pre-submission conference, or manual document submission. No API and no Open Data twin. The net-new WRITE surface for this domain."
+    }
+  ],
+  "meta": {
+    "short": "NYC Economic Development (EDC)",
+    "verb": "surface",
+    "platform": "Drupal behind Cloudflare (bot-challenged); NYC Ferry on Cloudflare + CloudFront",
+    "netnew": "RFPResponse — register interest in / submit a proposal to an EDC solicitation (RFP/RFEI)",
+    "accent": "#3a9a7a",
+    "tagline": "EDC publishes ferry rides and a company map, but keeps its real estate, projects, and RFPs off the machine-readable web entirely.",
+    "headline": "As a public benefit corporation EDC has almost no open data about its actual business, so the work is to surface the portfolio and open the solicitation pipeline."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 0,
+    "openData": 1,
+    "coreData": 0,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Drupal identified via robots.txt, but the site is bot-walled behind Cloudflare (403 challenge).",
+    "siteApi": "No content/site API; edc.nyc and nycedc.com return 403 to non-browser clients, no JSON.",
+    "openData": "5 datasets, all peripheral (company map, ferry ridership, WiredNYC) — some open data, none of the core.",
+    "coreData": "EDC's real estate, projects, and solicitations have no Open Data and no API at all.",
+    "writeApi": "No write surface; solicitation responses happen by email / manual document submission.",
+    "agent": "No agent-native surface anywhere across EDC.",
+    "ownership": "EDC owns its Drupal site but publishes little; NYC Ferry ops are contracted out and procurement runs through citywide PASSPort."
+  }
+}

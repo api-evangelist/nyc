@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynda/schemas/_common.json",
+  "title": "Brooklyn DA — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across Kings County (Brooklyn) District Attorney object schemas. Reconciles fields common to the WordPress content on brooklynda.org (the only machine-readable surface, via its /wp-json/wp/v2 REST API) and the net-new resource model this assessment proposes. There is NO NYC Open Data for the Brooklyn DA, so unlike other NYC domains these definitions are grounded in the site's own information architecture (bureaus, programs, press releases) plus the shared NYC geography spine. Because all five NYC county DA offices share the same functions, these definitions are intentionally office-neutral — a candidate spine for one shared DA API.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "description": "NYC borough. The Kings County DA covers Brooklyn; the enum is kept full-width so a shared five-office DA API can reuse it unchanged.",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "County": {
+      "type": "string",
+      "description": "The NY county a District Attorney's office prosecutes for. Brooklyn = Kings.",
+      "enum": ["New York", "Bronx", "Kings", "Queens", "Richmond"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point for a physical location (community court, resource center, task-force site).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine — the join keys back to the rest of city government. Sparsely populated for a DA office (its content is rarely geocoded), but carried so records can be located and so a shared DA API aligns with the citywide model.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "neighborhood": { "type": ["string", "null"], "description": "Neighborhood / area name (e.g. Red Hook, Brownsville)." },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district." },
+        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code." },
+        "zipCode": { "type": ["string", "null"], "description": "ZIP / postal code." }
+      },
+      "additionalProperties": false
+    },
+    "Bureau": {
+      "type": ["string", "null"],
+      "description": "The DA bureau, unit, or division a record belongs to — derived from the brooklynda.org site sections (bureaus and units are the office's primary organizing structure).",
+      "examples": [
+        "Criminal Court Bureau",
+        "Appeals Bureau",
+        "Domestic Violence Bureau",
+        "Hate Crimes Bureau",
+        "Young Adult Bureau",
+        "School Advocacy and Juvenile Crimes Bureau",
+        "Early Case Assessment Bureau",
+        "Law Enforcement Accountability Bureau",
+        "Conviction Review Unit",
+        "Immigrant Affairs Unit",
+        "Forensic Science Unit",
+        "Virtual Currency Unit",
+        "Human Trafficking",
+        "Elder Abuse",
+        "Re-Entry"
+      ]
+    },
+    "Language": {
+      "type": ["string", "null"],
+      "description": "Language for language-access content (the site publishes many brochures in multiple languages).",
+      "examples": ["English", "Spanish", "Chinese", "Russian", "Haitian Creole", "Arabic", "Bengali", "Yiddish"]
+    },
+    "ContentStatus": {
+      "type": ["string", "null"],
+      "description": "WordPress publication status of a content-derived record.",
+      "enum": ["publish", "draft", "pending", "private", null]
+    }
+  }
+}

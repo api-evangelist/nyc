@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandda/schemas/community-resource.json",
+  "title": "CommunityResource",
+  "description": "A public-safety advisory, scam alert, or community resource published by the Richmond County DA. Modeled from statenislandda.org/scams-information/ (fraud/scam warnings aimed especially at seniors) and related safety-workshop material. These are consumer-protection notices the office wants residents to act on; today they exist only as HTML pages with no feed, no API, and no Open Data twin.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.statenislandda.org/scams-information/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "title": { "type": "string", "description": "Advisory / resource title." },
+    "resourceType": {
+      "type": ["string", "null"],
+      "description": "Kind of community resource.",
+      "enum": ["Scam Alert", "Fraud Prevention", "Safety Tip", "Consumer Protection", "Workshop / Event", "Referral", "Other", null]
+    },
+    "summary": { "type": ["string", "null"], "description": "Short description of the advisory." },
+    "body": { "type": ["string", "null"], "description": "Full text (HTML stripped)." },
+    "audience": { "type": ["string", "null"], "description": "Primary audience (e.g. seniors, parents, small businesses)." },
+    "publishedDate": { "type": ["string", "null"], "format": "date", "description": "Date published, where available." },
+    "relatedTipForm": {
+      "type": ["string", "null"],
+      "description": "Tip form residents can use to act on the advisory.",
+      "enum": ["drug-tip-form", "scam-tip-form", null]
+    },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical URL on statenislandda.org." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

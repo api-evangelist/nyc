@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynda/schemas/case-statistics.json",
+  "title": "CaseStatistics",
+  "description": "AGGREGATE prosecution / caseload statistics for the Brooklyn DA — arraignments, dispositions, diversions, declined prosecutions, conviction-review outcomes, and similar rollups, sliced by bureau, crime category, and period. This is the office's most important MISSING data: nothing of the kind is published on brooklynda.org (only prose in press releases) and there is NO NYC Open Data for any DA office. Individual cases and defendant records are NEVER published (privacy / due-process by design); this schema is aggregate-only and is proposed net-new.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.brooklynda.org/",
+    "opendata": null,
+    "opendata_gap": true,
+    "note": "No published source. Statewide analogs exist under the NY Office of Court Administration / DCJS, not under a Brooklyn DA label; the DA office itself publishes no case data."
+  },
+  "properties": {
+    "period": { "type": "string", "description": "Reporting period label (e.g. '2025', '2025-Q1', '2025-01')." },
+    "periodStart": { "type": ["string", "null"], "format": "date" },
+    "periodEnd": { "type": ["string", "null"], "format": "date" },
+    "county": { "$ref": "_common.json#/$defs/County" },
+    "bureau": { "$ref": "_common.json#/$defs/Bureau" },
+    "crimeCategory": {
+      "type": ["string", "null"],
+      "description": "Offense grouping the figures cover.",
+      "enum": ["Violent Felony", "Property", "Drug", "Domestic Violence", "Hate Crime", "Human Trafficking", "Gun / Firearm", "White Collar / Financial", "Vehicular / Auto", "Environmental", "All", null]
+    },
+    "casesInitiated": { "type": ["integer", "null"], "description": "Matters / arrests referred for prosecution in the period." },
+    "casesArraigned": { "type": ["integer", "null"] },
+    "casesDeclined": { "type": ["integer", "null"], "description": "Declined-to-prosecute count." },
+    "casesDismissed": { "type": ["integer", "null"] },
+    "convictions": { "type": ["integer", "null"] },
+    "acquittals": { "type": ["integer", "null"] },
+    "pleaAgreements": { "type": ["integer", "null"] },
+    "divertedToProgram": { "type": ["integer", "null"], "description": "Matters routed to a diversion / alternative-to-incarceration program." },
+    "convictionReviewsOpened": { "type": ["integer", "null"], "description": "Conviction Review Unit intakes." },
+    "convictionsVacated": { "type": ["integer", "null"], "description": "Convictions vacated following review." },
+    "pending": { "type": ["integer", "null"], "description": "Open matters at period end." },
+    "source": { "type": ["string", "null"], "description": "Where the figure was drawn from, if disclosed (e.g. annual report, press release)." }
+  },
+  "required": ["period"],
+  "additionalProperties": false
+}

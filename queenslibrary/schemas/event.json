@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queenslibrary/schemas/event.json",
+  "title": "Event",
+  "description": "A Queens Public Library event or program (story time, computer class, author talk, ESOL session, etc.). NO Open Data twin and NO owned API: events are managed in Communico (queens.libnet.info / connect.queenslibrary.org) and embedded on the queenslibrary.org calendar. Communico exposes a vendor API/feeds, but there is no owned QPL contract. This schema is a clean resource model for a program.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.queenslibrary.org/calendar",
+    "events": "https://queens.libnet.info/events",
+    "vendor": "Communico",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "eventId": { "type": ["string", "null"], "description": "Communico event identifier." },
+    "title": { "type": "string", "description": "Event / program title." },
+    "description": { "type": ["string", "null"] },
+    "programType": { "type": ["string", "null"], "description": "Program category (e.g. Computer Classes, Story Time, Author Talk, ESOL)." },
+    "audience": {
+      "type": ["array", "null"],
+      "items": { "type": "string", "enum": ["Kids", "Teens", "Adults", "Families", "Seniors", "All Ages"] },
+      "description": "Target audience(s)."
+    },
+    "branch": { "$ref": "_common.json#/$defs/BranchReference" },
+    "room": { "type": ["string", "null"], "description": "Room / space within the branch." },
+    "startDateTime": { "type": ["string", "null"], "format": "date-time" },
+    "endDateTime": { "type": ["string", "null"], "format": "date-time" },
+    "recurrence": { "type": ["string", "null"], "description": "Recurrence rule / description if the program repeats." },
+    "registrationRequired": { "type": ["boolean", "null"] },
+    "registrationUrl": { "type": ["string", "null"], "format": "uri" },
+    "seatsTotal": { "type": ["integer", "null"] },
+    "seatsAvailable": { "type": ["integer", "null"] },
+    "cost": { "type": ["string", "null"], "description": "Cost — QPL programs are free unless otherwise noted." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Public event page URL." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sca/schemas/prequalified-firm.json",
+  "title": "PrequalifiedFirm",
+  "description": "A vendor/contractor firm that SCA has prequalified to bid on work — the approved-vendor directory, plus a firm's disqualification status. Canonical schema reconciling 'Prequalified Firms' (szkz-syh6, 15 columns) and 'SCA Disqualified Firms' (krwf-eng6, 4 columns). Keyed on Prequalified Vendor Name + Master Trade Code. This is the READ view of the vendor roster; becoming a prequalified firm is the net-new WRITE workflow (see vendor-prequalification.json).",
+  "type": "object",
+  "x-source": {
+    "opendata_prequalified": "https://data.cityofnewyork.us/d/szkz-syh6",
+    "opendata_disqualified": "https://data.cityofnewyork.us/d/krwf-eng6",
+    "site": "https://www.nycsca.org/Vendor/Vendor-List"
+  },
+  "properties": {
+    "vendorName": { "type": "string", "description": "'Prequalified Vendor Name' / 'Vendor Name'." },
+    "contactPerson": { "type": ["string", "null"], "description": "'Prequalified Vendor Contact Person'." },
+    "tradeCode": { "type": ["string", "null"], "description": "'Prequalified Vendor Master Trade Code'." },
+    "tradeDescription": { "type": ["string", "null"], "description": "'Prequalified Vendor Trade Description'." },
+    "prequalifiedDate": { "type": ["string", "null"], "format": "date", "description": "'Prequalified Vendor Date'." },
+    "address": { "type": ["string", "null"], "description": "'Prequalified Vendor Address'." },
+    "city": { "type": ["string", "null"], "description": "'Prequalified Vendor City Name'." },
+    "state": { "type": ["string", "null"], "description": "'Prequalified Vendor State Code'." },
+    "zipCode": { "type": ["string", "null"], "description": "'Prequalified Vendor Zip Code'." },
+    "phone": { "type": ["string", "null"], "description": "'Prequalified Vendor Phone Number'." },
+    "fax": { "type": ["string", "null"], "description": "'Prequalified Vendor Fax Number'." },
+    "certifications": {
+      "type": "object",
+      "description": "Business certification / size indicators carried on the prequalified roster.",
+      "properties": {
+        "minorityBusiness": { "type": ["boolean", "string", "null"], "description": "'Prequalified Vendor Minority Business Indicator'." },
+        "womenBusiness": { "type": ["boolean", "string", "null"], "description": "'Prequalified Vendor Women Business Indicator'." },
+        "localBusiness": { "type": ["boolean", "string", "null"], "description": "'Prequalified Vendor Local Business Indicator'." },
+        "overMillionDollarRevenue": { "type": ["boolean", "string", "null"], "description": "'Prequalified Vendor Over Million Dollar Revenue Indicator'." }
+      },
+      "additionalProperties": false
+    },
+    "disqualification": {
+      "type": "object",
+      "description": "Disqualification status ('SCA Disqualified Firms'), when the firm is barred from bidding.",
+      "properties": {
+        "status": { "type": ["string", "null"], "description": "'Vendor Status'." },
+        "fromDate": { "type": ["string", "null"], "format": "date", "description": "'Disqualified From Date'." },
+        "toDate": { "type": ["string", "null"], "format": "date", "description": "'Disqualified To Date'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["vendorName"],
+  "additionalProperties": false
+}

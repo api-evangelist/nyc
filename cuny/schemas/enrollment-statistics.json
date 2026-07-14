@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cuny/schemas/enrollment-statistics.json",
+  "title": "EnrollmentStatistics",
+  "description": "Aggregated enrollment and demographic statistics for a CUNY college and term — published only in aggregate, never per student. Canonical schema reconciling the CUNY Office of Institutional Research and Assessment (OIRA) data books (published as PDF/Excel) and the state-level enrollment tables on data.ny.gov. CUNY never exposes an individual StudentRecord; per-student data lives only inside CUNYfirst (FERPA-protected).",
+  "type": "object",
+  "x-source": {
+    "oira": "https://www.cuny.edu/about/administration/offices/oira/institutional/data/",
+    "state_opendata": "https://data.ny.gov/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "campus": { "$ref": "_common.json#/$defs/CampusReference" },
+    "term": { "$ref": "_common.json#/$defs/Term" },
+    "totalEnrollment": { "type": ["integer", "null"], "description": "Total headcount enrollment." },
+    "fullTime": { "type": ["integer", "null"], "description": "Full-time headcount." },
+    "partTime": { "type": ["integer", "null"], "description": "Part-time headcount." },
+    "undergraduate": { "type": ["integer", "null"], "description": "Undergraduate headcount." },
+    "graduate": { "type": ["integer", "null"], "description": "Graduate headcount." },
+    "female": { "type": ["integer", "null"], "description": "Enrollment identifying as female." },
+    "male": { "type": ["integer", "null"], "description": "Enrollment identifying as male." },
+    "raceEthnicity": {
+      "type": "object",
+      "description": "Aggregate race/ethnicity counts (IPEDS categories).",
+      "properties": {
+        "hispanic": { "type": ["integer", "null"] },
+        "black": { "type": ["integer", "null"] },
+        "white": { "type": ["integer", "null"] },
+        "asianPacificIslander": { "type": ["integer", "null"] },
+        "nativeAmerican": { "type": ["integer", "null"] },
+        "other": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "firstGeneration": { "type": ["integer", "null"], "description": "First-generation college students." },
+    "pellRecipients": { "type": ["integer", "null"], "description": "Pell grant recipients." }
+  },
+  "required": ["campus"],
+  "additionalProperties": false
+}

@@ -1,0 +1,138 @@
+{
+  "domain": "bronxda",
+  "agency": "Office of the Bronx District Attorney (Darcel D. Clark)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted bronxda.nyc.gov: the bare domain is a meta-refresh stub to /html/home/home.shtml, a legacy NYC.gov '/html/' SHTML application (server-side-includes, JS-built nav in nav-nodes.js/top-nav.js, jQuery/Bootstrap/Tether) behind Akamai (ak_p server-timing) and an AWS ALB (AWSALB cookie), with Dynatrace/ruxit and Akamai mPulse (Boomerang) RUM and Google Analytics/Translate. Identified the /html/data/ dashboards as Microsoft Power BI (Gov) iframes (app.powerbigov.us, report 'Public Dash Case v9a'). Queried the NYC Open Data agency label via the Socrata Discovery API and confirmed ZERO datasets under every plausible label.",
+  "related_domains": ["app.powerbigov.us", "data.cityofnewyork.us", "manhattanda.org", "brooklynda.org", "queensda.org", "rcda.nyc.gov", "ag.ny.gov"],
+  "headline_findings": [
+    "The Bronx DA exposes NO API and has ZERO NYC Open Data datasets — the Socrata Discovery API returns 0 for every agency label. Prosecution is a county function outside the Open Data program.",
+    "The public site is a legacy NYC.gov '/html/' SHTML application (SSI pages, JavaScript-built nav, jQuery/Bootstrap) behind Akamai and an AWS ALB — not the shared 'Livesite' chassis.",
+    "The office's only quantitative public data — arrests, charging decisions, case outcomes, defendant demographics — is trapped inside Microsoft Power BI (Gov) iframes: rendered pixels with no download, no query endpoint, and no Open Data twin.",
+    "There is no write surface: crime tips and Civilian Complaint Unit complaints are a phone call (718-590-2300) and FOIL requests are a plain email (FOILREQUEST@BRONXDA.NYC.GOV), neither returning a tracking number.",
+    "All five NYC borough DA offices run the same charter functions, so the low-hanging fruit is ONE shared District Attorney API (see OfficeReference in the schemas), not a bespoke Bronx build. Net-new write surface: submit a tip/complaint/FOIL request. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (Socrata)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": "N/A — zero datasets", "note": "Socrata Discovery API returns 0 datasets for every Bronx DA agency label. The county-prosecutor function sits outside NYC Open Data." },
+    { "endpoint": "app.powerbigov.us", "type": "BI dashboard embed", "owner": "Microsoft Power BI (Gov)", "public": "embed only, no data API", "note": "The /html/data/ dashboards (arrests, charging decisions, case outcomes, defendant demographics; report 'Public Dash Case v9a') are iframe embeds — rendered pixels, no CSV/JSON/query endpoint, no Open Data twin. The office's only quantitative public data." },
+    { "endpoint": "www.bronxda.nyc.gov/html/", "type": "informational site", "owner": "Bronx DA (legacy NYC.gov /html/ SHTML)", "public": "html", "note": "Server-side-includes .shtml pages; JS-built nav (nav-nodes.js). No content API, no JSON, no OpenAPI." },
+    { "endpoint": "s.go-mpulse.net (Boomerang)", "type": "RUM beacon", "owner": "Akamai mPulse", "public": "vendor", "note": "Real-user monitoring snippet on every page." },
+    { "endpoint": "ruxitagentjs / Dynatrace", "type": "RUM beacon", "owner": "Dynatrace", "public": "vendor", "note": "x-oneagent-js-injection, x-ruxit-js-agent." }
+  ],
+  "fruit": [
+    {
+      "name": "Press releases (2016-2025)",
+      "type": "newsroom pages",
+      "entity": "PressRelease",
+      "url": "https://www.bronxda.nyc.gov/html/newsroom/press-releases.shtml",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Indictments, sentencings, initiatives, statements — hand-published .shtml pages grouped into per-year archives. No RSS/JSON/API."
+    },
+    {
+      "name": "Case statistics dashboards",
+      "type": "data dashboards (aggregate)",
+      "entity": "CaseStatistic",
+      "url": "https://www.bronxda.nyc.gov/html/data/dashboards.shtml",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Arrests, charging decisions, case outcomes ('Case Decision Points'), defendant demographics, plus a data/legal glossary and 'Data Stories'. Published ONLY as Microsoft Power BI (Gov) iframes (app.powerbigov.us) — rendered pixels, no download, no query endpoint, no Open Data twin. Aggregate only; never an individual case or defendant. The office's one data asset, trapped in a vendor iframe."
+    },
+    {
+      "name": "Bureaus, divisions & programs",
+      "type": "directory",
+      "entity": "Program",
+      "url": "https://www.bronxda.nyc.gov/html/bureaus/trial-division.shtml",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Trial, Investigations, Special Victims, Strategic Enforcement, General Counsel divisions; ODEI/EEO; plus outreach programs (Community Affairs, Immigrant Affairs, 'Your Day in Court'). HTML only."
+    },
+    {
+      "name": "Community resources & important numbers",
+      "type": "directory",
+      "entity": "CommunityResource",
+      "url": "https://www.bronxda.nyc.gov/html/outreach/sealing-old-convictions.shtml",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Sealing old convictions (CPL 160.59), enroll in BronxCAMS, immigrant affairs, court navigation, and the homepage 'Important Numbers'. HTML only."
+    },
+    {
+      "name": "Crime-victim services",
+      "type": "directory",
+      "entity": "VictimService",
+      "url": "https://www.bronxda.nyc.gov/html/bureaus/special-victims-division.shtml",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Crime Victims Assistance Bureau and Special Victims Division — counseling, compensation help, court accompaniment, elder-abuse and domestic-violence support. Access by phone/in person; no API."
+    },
+    {
+      "name": "Civilian complaint (police misconduct)",
+      "type": "intake (phone)",
+      "entity": "TipSubmission",
+      "url": "https://www.bronxda.nyc.gov/html/contact/civilian-complaint-unit.shtml",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Civilian Complaint Unit takes complaints of police misconduct/brutality and other crimes by phone (718-590-2300) or correspondence. No structured intake or tracking. A net-new write surface."
+    },
+    {
+      "name": "FOIL records request",
+      "type": "intake (email)",
+      "entity": "TipSubmission",
+      "url": "https://www.bronxda.nyc.gov/html/newsroom/foil-requests.shtml",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Freedom of Information Law requests are a plain email to FOILREQUEST@BRONXDA.NYC.GOV; no structured intake, no tracking number. An alternative net-new write surface."
+    },
+    {
+      "name": "Submit a tip / complaint / FOIL request",
+      "type": "sign-up / ticket workflow",
+      "entity": "TipSubmission",
+      "url": "https://www.bronxda.nyc.gov/html/contact/contact.shtml",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The net-new WRITE surface for this domain — a structured, trackable intake for crime tips, Civilian Complaint Unit complaints, and FOIL requests, replacing a phone number and a shared mailbox. No API today."
+    }
+  ],
+  "meta": {
+    "short": "Bronx District Attorney",
+    "verb": "standardize",
+    "platform": "Legacy NYC.gov /html/ SHTML site — server-side-includes (.shtml) pages, a JavaScript-built nav (nav-nodes.js/top-nav.js) and jQuery/Bootstrap/Tether; Akamai edge + AWS ALB origin + Dynatrace and Akamai mPulse RUM + Google Analytics/Translate. Aggregate prosecution data is embedded from Microsoft Power BI (Gov) (app.powerbigov.us). NOT the shared NYC.gov 'Livesite' platform.",
+    "netnew": "TipSubmission — a structured, trackable intake for a crime tip, a Civilian Complaint Unit complaint of police misconduct, or a FOIL records request (today a phone call to 718-590-2300 or an email to FOILREQUEST@BRONXDA.NYC.GOV, with no tracking number).",
+    "accent": "#5a9a5a",
+    "tagline": "A legacy SHTML brochure site with no API and zero Open Data, where the only prosecution data the office publishes is locked inside Power BI iframes — and where the real fix is one shared District Attorney API across all five boroughs.",
+    "headline": "The Bronx District Attorney runs a legacy .shtml site with no API, no Open Data, and its aggregate case statistics trapped in Power BI iframes; because all five DA offices share the same functions, the low-hanging fruit is one standard, shared District Attorney API."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 0,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Legacy NYC.gov /html/ SHTML (SSI + JS nav, jQuery/Bootstrap) on Akamai + AWS ALB; functioning and city-hosted but hand-maintained, with no CMS API.",
+    "siteApi": "No site API at all — no JSON, no OpenAPI; content is .shtml pages and the nav is a static JS file.",
+    "openData": "Zero NYC Open Data datasets under any agency label (verified via the Socrata Discovery API).",
+    "coreData": "Core data exists but is not machine-readable — press releases are HTML and the only quantitative figures are trapped in Power BI iframes with no download or query endpoint.",
+    "writeApi": "None — tips/complaints are a phone call and FOIL is a plain email; no structured intake, no tracking.",
+    "agent": "No agent-native surface of any kind.",
+    "ownership": "Site content is city-hosted (bronxda.nyc.gov), but the one data asset depends on Microsoft Power BI (Gov) and there is no owned data layer beneath it; RUM/analytics are Akamai/Dynatrace/Google, social is Twitter/Facebook/Instagram."
+  }
+}

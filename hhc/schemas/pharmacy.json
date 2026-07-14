@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/schemas/pharmacy.json",
+  "title": "Pharmacy",
+  "description": "An NYC Health + Hospitals outpatient / retail pharmacy located at a facility. FHIR-aligned to a Location (with a pharmacy type). No Open Data twin and no open directory; refill workflows live inside MyChart. This schema is a directory record, not a prescription record (prescriptions are protected FHIR MedicationRequest data behind SMART auth).",
+  "type": "object",
+  "x-fhir": { "resourceType": "Location" },
+  "x-source": {
+    "site": "https://www.nychealthandhospitals.org/pharmacy/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "pharmacyId": { "type": "string", "description": "Pharmacy identifier." },
+    "name": { "type": "string", "description": "Pharmacy name." },
+    "facility": { "$ref": "_common.json#/$defs/FacilityReference" },
+    "ncpdpId": { "type": ["string", "null"], "description": "NCPDP pharmacy identifier, if available." },
+    "npi": { "type": ["string", "null"], "description": "Pharmacy NPI, if available." },
+    "phone": { "type": ["string", "null"] },
+    "fax": { "type": ["string", "null"] },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "hours": { "type": ["string", "null"] },
+    "services": {
+      "type": "array",
+      "description": "Pharmacy services (e.g. refills, immunizations, specialty pharmacy, mail order).",
+      "items": { "type": "string" }
+    },
+    "refillViaMyChart": { "type": ["boolean", "null"], "description": "Whether refills can be requested through the MyChart patient portal." }
+  },
+  "required": ["pharmacyId", "name"],
+  "additionalProperties": false
+}

@@ -1,0 +1,354 @@
+openapi: 3.1.0
+info:
+  title: CUNY API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the City University of New York — federating its ~25 campuses'
+    reference data (campuses, degree programs, courses, aggregate enrollment, faculty/research) behind a
+    single contract, and adding the missing write surface locked inside CUNYfirst (Oracle PeopleSoft) —
+    submitting a CUNY admissions application.
+  description: >-
+    Proposed API-first surface for the City University of New York (CUNY), from the NYC Modernization
+    low-hanging-fruit assessment of cuny.edu and the CUNYfirst student information system.
+
+
+    CUNY is a **federated system**: ~25 colleges and schools (senior colleges, community colleges,
+    graduate/professional schools, and the Macaulay Honors College), each with its own website, all sitting
+    on a shared WordPress Multisite (`cuny.edu`) and a single shared Oracle **PeopleSoft Campus Solutions**
+    student information system branded **CUNYfirst**. It is a New York **State** public benefit corporation,
+    so — unlike NYCHA, DOE, or the Council — it publishes **nothing** under a CUNY agency label on NYC Open
+    Data. Its reference data is scattered across 25 campus sites and PDF/Excel data books; its transactional
+    system of record has no public API.
+
+
+    This contract does two things: (1) presents the federated reference data — campuses, degree programs,
+    courses, aggregate enrollment statistics, and faculty/research — as one coherent resource model, and
+    (2) adds the one net-new **write** workflow — submitting a **CUNY admissions application** — that today
+    exists only behind the CUNYfirst PeopleSoft self-service screens.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.cuny.edu/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Campuses
+    description: CUNY colleges and schools — the ~25 institutions in the federated system.
+  - name: Programs
+    description: Degree and certificate programs offered across the campuses.
+  - name: Courses
+    description: Course catalog / class schedule, today locked in the CUNYfirst PeopleSoft catalog browse.
+  - name: Enrollment
+    description: Aggregate enrollment and demographic statistics (never individual students).
+  - name: Research
+    description: Faculty and research output across the colleges and CUNY Academic Works.
+  - name: Applications
+    description: Submit and track a CUNY admissions application (read + write). The net-new surface, today locked in CUNYfirst.
+
+paths:
+  /campuses:
+    get:
+      operationId: listCampuses
+      summary: List / search CUNY colleges and schools
+      tags: [Campuses]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: type
+          in: query
+          schema: { type: string, enum: [Senior College, Community College, Graduate/Professional School, Honors College, Other] }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of campuses.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/campus.json' } }
+  /campuses/{institutionCode}:
+    get:
+      operationId: getCampus
+      summary: Get a campus by institution code
+      tags: [Campuses]
+      parameters:
+        - name: institutionCode
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The campus.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/campus.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /programs:
+    get:
+      operationId: listPrograms
+      summary: List / search degree and certificate programs
+      tags: [Programs]
+      parameters:
+        - name: campus
+          in: query
+          schema: { type: string }
+        - name: degreeType
+          in: query
+          schema: { type: string, enum: [Associate, "Bachelor's", "Master's", Doctoral, Certificate, Advanced Certificate, Other] }
+        - name: field
+          in: query
+          schema: { type: string }
+        - name: modality
+          in: query
+          schema: { type: string, enum: [In Person, Online, Hybrid] }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of degree programs.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/degree-program.json' } }
+  /programs/{programId}:
+    get:
+      operationId: getProgram
+      summary: Get a degree program
+      tags: [Programs]
+      parameters:
+        - name: programId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The degree program.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/degree-program.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /courses:
+    get:
+      operationId: listCourses
+      summary: Search the CUNY course catalog
+      tags: [Courses]
+      parameters:
+        - name: campus
+          in: query
+          schema: { type: string }
+        - name: subject
+          in: query
+          schema: { type: string }
+        - name: term
+          in: query
+          schema: { type: string }
+        - name: modality
+          in: query
+          schema: { type: string, enum: [In Person, Online, Hybrid] }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of courses.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/course.json' } }
+
+  /enrollment-statistics:
+    get:
+      operationId: listEnrollmentStatistics
+      summary: Aggregate enrollment & demographics by campus / term
+      tags: [Enrollment]
+      parameters:
+        - name: campus
+          in: query
+          schema: { type: string }
+        - name: term
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate enrollment statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/enrollment-statistics.json' } }
+
+  /faculty-research:
+    get:
+      operationId: listFacultyResearch
+      summary: Search faculty and research output across the colleges
+      tags: [Research]
+      parameters:
+        - name: campus
+          in: query
+          schema: { type: string }
+        - name: department
+          in: query
+          schema: { type: string }
+        - name: researchArea
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of faculty / research records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/faculty-research.json' } }
+
+  /applications:
+    get:
+      operationId: listApplications
+      summary: List the authenticated applicant's CUNY applications
+      description: Reads the applicant's own admissions applications — today only visible inside the CUNYfirst self-service screens.
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Draft, Submitted, Under Review, Admitted, Waitlisted, Denied, Deposit Paid, Withdrawn] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the applicant's applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/admissions-application.json' } }
+    post:
+      operationId: createApplication
+      summary: Submit a CUNY admissions application
+      description: >-
+        The net-new write surface — an API for submitting a CUNY admissions application (the single
+        application covering multiple campuses), replacing the CUNYfirst-only PeopleSoft workflow. Set
+        `feeWaiverRequested` for applicants who qualify for a fee waiver.
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/admissions-application.json' }
+      responses:
+        '201':
+          description: Application created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/admissions-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /applications/{applicationId}:
+    get:
+      operationId: getApplication
+      summary: Get a CUNY admissions application
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/admissions-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Campus: { $ref: '../schemas/campus.json' }
+    DegreeProgram: { $ref: '../schemas/degree-program.json' }
+    Course: { $ref: '../schemas/course.json' }
+    EnrollmentStatistics: { $ref: '../schemas/enrollment-statistics.json' }
+    FacultyResearch: { $ref: '../schemas/faculty-research.json' }
+    AdmissionsApplication: { $ref: '../schemas/admissions-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

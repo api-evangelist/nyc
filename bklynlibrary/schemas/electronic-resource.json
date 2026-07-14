@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bklynlibrary/schemas/electronic-resource.json",
+  "title": "ElectronicResource",
+  "description": "A licensed electronic database or research resource available with a Brooklyn Public Library card. Canonical schema reconciling BPL's public Drupal JSON:API 'node--eres' (field_eres_link, field_eres_vendor, field_eres_status, field_eres_language) with the 'BPL Electronic Resources' NYC Open Data asset (b7t4-zm44).",
+  "type": "object",
+  "x-source": {
+    "jsonapi": "https://www.bklynlibrary.org/jsonapi/node/eres",
+    "opendata": "https://data.cityofnewyork.us/d/b7t4-zm44"
+  },
+  "properties": {
+    "title": { "type": "string", "description": "Resource name ('title')." },
+    "description": { "type": ["string", "null"], "description": "Description ('body')." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Access link ('field_eres_link')." },
+    "vendor": { "type": ["string", "null"], "description": "Provider / vendor ('field_eres_vendor')." },
+    "status": { "type": ["string", "null"], "description": "Availability status ('field_eres_status')." },
+    "language": { "type": ["string", "null"], "description": "'field_eres_language'." },
+    "note": { "type": ["string", "null"], "description": "'field_eres_note'." },
+    "alert": { "type": ["string", "null"], "description": "'field_eres_alert'." },
+    "expirationDate": { "type": ["string", "null"], "format": "date", "description": "'field_eres_exp_date'." },
+    "cardRequired": { "type": ["boolean", "null"], "default": true, "description": "Whether a BPL library card is required for access." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

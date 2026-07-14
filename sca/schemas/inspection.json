@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sca/schemas/inspection.json",
+  "title": "Inspection",
+  "description": "An SCA construction inspection request and its observations/status — the field-inspection lifecycle on a school project. Canonical schema reconciling 'Inspections Requested' (n4tc-j6kh, 7 columns) and 'Observations And Statuses For Inspections' (6246-94tp, 7 columns). Keyed on School Code + Inspection Date + Category.",
+  "type": "object",
+  "x-source": {
+    "opendata_requested": "https://data.cityofnewyork.us/d/n4tc-j6kh",
+    "opendata_observations": "https://data.cityofnewyork.us/d/6246-94tp"
+  },
+  "properties": {
+    "schoolCode": { "type": ["string", "null"], "description": "'School Code'." },
+    "dobNumber": { "type": ["string", "null"], "description": "'DOB#' — NYC Dept. of Buildings job number." },
+    "borough": { "type": ["string", "null"], "description": "'Borough Name'." },
+    "category": { "type": ["string", "null"], "description": "'Inspection Category'." },
+    "dateRequested": { "type": ["string", "null"], "format": "date", "description": "'Date Requested'." },
+    "inspectionDate": { "type": ["string", "null"], "format": "date", "description": "'Inspection Date'." },
+    "requestStatus": { "type": ["string", "null"], "description": "'Request Status Description'." },
+    "stage": { "type": ["string", "null"], "description": "'Inspection Stage Description'." },
+    "observation": { "type": ["string", "null"], "description": "'Observation Description'." },
+    "tcoObtainedDate": { "type": ["string", "null"], "format": "date", "description": "'TCO Obtained Date' — Temporary Certificate of Occupancy." }
+  },
+  "additionalProperties": false
+}

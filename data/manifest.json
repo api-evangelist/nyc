@@ -5655,6 +5655,352 @@
    ]
   },
   {
+   "id": "bklynlibrary",
+   "agency": "Brooklyn Public Library (BPL)",
+   "short": "Brooklyn Public Library (BPL)",
+   "verb": "formalize",
+   "platform": "Drupal (Cloudflare) + BiblioCommons ILS + discover.bklynlibrary.org events",
+   "tagline": "BPL already runs a full, public Drupal JSON:API it never advertised \u2014 formalize it, own it, and add the catalog hold write locked inside the BiblioCommons ILS.",
+   "accent": "#3a7ab0",
+   "netnew": "place a hold (BookHold)",
+   "findings": [
+    "BPL is an independent NONPROFIT (not a city agency) running Drupal behind Cloudflare, with the catalog on the BiblioCommons ILS and events on discover.bklynlibrary.org.",
+    "The standout finding is the inverse of the usual one: BPL's content data is ALREADY a working public API. The Drupal JSON:API module is fully open at www.bklynlibrary.org/jsonapi \u2014 ~22 content types (node--branch, node--event, node--book_profile, node--digital_asset, node--eres, finding aids, and more) served as read-only JSON \u2014 real, comprehensive, and entirely UNDOCUMENTED and unadvertised.",
+    "Branch data on that API is rich: full address, weekly hours (seconds-from-midnight), geo point, subway/bus lines, holds-pickup flag, and ~40 service fields \u2014 far more than the two file-link datasets BPL posts to NYC Open Data.",
+    "What has NO owned public API is the catalog transaction layer, locked in the BiblioCommons ILS: searching the bibliographic catalog, the patron account/library card, and \u2014 above all \u2014 placing a HOLD on an item.",
+    "Net-new write surface: place a hold (BookHold) \u2014 the everyday library transaction, with no public API today; plus applying for a library card (a Drupal webform). See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "www.bklynlibrary.org/jsonapi",
+     "type": "content API (Drupal JSON:API)",
+     "owner": "BPL (self-hosted Drupal)",
+     "public": true,
+     "note": "FULLY PUBLIC, read-only. 289 resource links, ~22 node types (branch, event, external_event, book_profile, digital_asset, eres, exhibition, finding_aid, research_guide, podcasts, video, press_release, blog\u2026). Real and comprehensive but undocumented/unadvertised \u2014 the accidental API. This is the content surface to formalize."
+    },
+    {
+     "endpoint": "bklynlibrary.bibliocommons.com",
+     "type": "catalog / ILS (discovery + patron account)",
+     "owner": "BiblioCommons (vendor)",
+     "public": "login-walled UI, no documented API",
+     "note": "Bibliographic catalog search, patron account, library card, and holds/reservations. Server-rendered vendor app (SRV/app cookies, select_library redirect). The catalog write layer \u2014 placing a hold \u2014 has no owned public API."
+    },
+    {
+     "endpoint": "discover.bklynlibrary.org",
+     "type": "events calendar",
+     "owner": "BPL (PHP app, Cloudflare)",
+     "public": "html",
+     "note": "The public programs/events calendar (bklynlibrary.org/calendar redirects here). Backs node--event; no documented JSON API of its own."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (Socrata)",
+     "type": "open data catalog",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Only 2 BPL-labeled assets (BPL Branches, BPL Electronic Resources), both type=href external links \u2014 NOT live SODA tables. BPL, as a nonprofit, has no Open Data mandate."
+    },
+    {
+     "endpoint": "cloudflare edge",
+     "type": "CDN / edge",
+     "owner": "Cloudflare",
+     "public": "vendor",
+     "note": "server: cloudflare, cf-ray, cf-cache-status HIT on the main site and discover subdomain."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 2,
+    "schemas": 7,
+    "openapiOps": 13,
+    "mcpTools": 13,
+    "entities": 7
+   },
+   "entities": [
+    "Branch",
+    "Event",
+    "CatalogItem",
+    "DigitalCollection",
+    "ElectronicResource",
+    "LibraryCard",
+    "BookHold"
+   ],
+   "files": {
+    "fruit": "bklynlibrary/fruit.json",
+    "opendata": "bklynlibrary/opendata-bklynlibrary.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-bklynlibrary.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/bklynlibrary.yaml",
+    "mcp": "mcp/bklynlibrary-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Brooklyn Public Library \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across Brooklyn Public Library (BPL) object schemas. Reconciles fields observed on BPL's public Drup"
+    },
+    {
+     "file": "schemas/book-hold.json",
+     "title": "BookHold",
+     "shared": false,
+     "desc": "A hold / reservation a patron places on a Brooklyn Public Library catalog item, to be picked up at a chosen branch \u2014 the everyday library tr"
+    },
+    {
+     "file": "schemas/branch.json",
+     "title": "Branch",
+     "shared": false,
+     "desc": "A Brooklyn Public Library branch / location \u2014 the core physical unit. Canonical schema reconciling BPL's public Drupal JSON:API 'node--branc"
+    },
+    {
+     "file": "schemas/catalog-item.json",
+     "title": "CatalogItem",
+     "shared": false,
+     "desc": "A bibliographic item in the Brooklyn Public Library catalog \u2014 a book, e-book, audiobook, DVD, or other holding, plus its availability across"
+    },
+    {
+     "file": "schemas/digital-collection.json",
+     "title": "DigitalCollection",
+     "shared": false,
+     "desc": "A Brooklyn Public Library digital collection item \u2014 a digitized asset, feature collection, or archival finding aid from BPL's Center for Bro"
+    },
+    {
+     "file": "schemas/electronic-resource.json",
+     "title": "ElectronicResource",
+     "shared": false,
+     "desc": "A licensed electronic database or research resource available with a Brooklyn Public Library card. Canonical schema reconciling BPL's public"
+    },
+    {
+     "file": "schemas/event.json",
+     "title": "Event",
+     "shared": false,
+     "desc": "A Brooklyn Public Library event / program \u2014 story times, classes, author talks, workshops. Canonical schema reconciling BPL's public Drupal "
+    },
+    {
+     "file": "schemas/library-card.json",
+     "title": "LibraryCard",
+     "shared": false,
+     "desc": "A Brooklyn Public Library patron account / library card, and the application to obtain one. Reading a card (status, expiry, fines) lives onl"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/branches",
+     "op": "listBranches",
+     "summary": "List / search library branches",
+     "tags": [
+      "Branches"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/branches/{branchId}",
+     "op": "getBranch",
+     "summary": "Get a branch by Branch ID",
+     "tags": [
+      "Branches"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/events",
+     "op": "listEvents",
+     "summary": "List / search events and programs",
+     "tags": [
+      "Events"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/events/{eventId}",
+     "op": "getEvent",
+     "summary": "Get an event by id",
+     "tags": [
+      "Events"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/catalog",
+     "op": "searchCatalog",
+     "summary": "Search the library catalog",
+     "tags": [
+      "Catalog"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/catalog/{itemId}",
+     "op": "getCatalogItem",
+     "summary": "Get a catalog item and its availability",
+     "tags": [
+      "Catalog"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/digital-collections",
+     "op": "listDigitalCollections",
+     "summary": "Search digital collections and finding aids",
+     "tags": [
+      "Collections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/electronic-resources",
+     "op": "listElectronicResources",
+     "summary": "List licensed electronic databases / research resources",
+     "tags": [
+      "Collections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/library-card",
+     "op": "getMyLibraryCard",
+     "summary": "Get the authenticated patron's library card",
+     "tags": [
+      "LibraryCard"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/library-card/applications",
+     "op": "applyForLibraryCard",
+     "summary": "Apply for a library card",
+     "tags": [
+      "LibraryCard"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/holds",
+     "op": "listMyHolds",
+     "summary": "List the authenticated patron's holds",
+     "tags": [
+      "Holds"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/holds",
+     "op": "placeHold",
+     "summary": "Place a hold on a catalog item",
+     "tags": [
+      "Holds"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/holds/{holdId}",
+     "op": "getHold",
+     "summary": "Get a hold",
+     "tags": [
+      "Holds"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_branches",
+     "title": "Find Branches",
+     "desc": "Search BPL branches by holds-pickup availability, service region, open-now, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_branch",
+     "title": "Get Branch",
+     "desc": "Fetch a BPL branch (address, hours, geography, services) by Branch ID.",
+     "write": false
+    },
+    {
+     "name": "find_events",
+     "title": "Find Events",
+     "desc": "Search BPL events and programs by branch, program type, audience, virtual flag, or date range.",
+     "write": false
+    },
+    {
+     "name": "get_event",
+     "title": "Get Event",
+     "desc": "Fetch a BPL event / program by id, including its registration details.",
+     "write": false
+    },
+    {
+     "name": "search_catalog",
+     "title": "Search Catalog",
+     "desc": "Search the BiblioCommons bibliographic catalog by keyword, format, author, or availability \u2014 today reachable only through the vendor UI.",
+     "write": false
+    },
+    {
+     "name": "get_catalog_item",
+     "title": "Get Catalog Item",
+     "desc": "Fetch a catalog item and its availability across branches by item id.",
+     "write": false
+    },
+    {
+     "name": "find_digital_collections",
+     "title": "Find Digital Collections",
+     "desc": "Search BPL digital collections, feature collections, and archival finding aids by kind, creator, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_electronic_resources",
+     "title": "Find Electronic Resources",
+     "desc": "List BPL licensed electronic databases / research resources by vendor, language, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_my_library_card",
+     "title": "Get My Library Card",
+     "desc": "Return the authenticated patron's own library card \u2014 status, expiry, and fines. Today visible only inside the BiblioCommons account.",
+     "write": false
+    },
+    {
+     "name": "apply_for_library_card",
+     "title": "Apply for a Library Card",
+     "desc": "Apply for a BPL library card. NET-NEW workflow with no owned public API today \u2014 it lives only in a Drupal webform. Mutates state \u2014 confirm the applicant details",
+     "write": true
+    },
+    {
+     "name": "list_my_holds",
+     "title": "List My Holds",
+     "desc": "List the authenticated patron's own holds and their status \u2014 today visible only inside the BiblioCommons catalog.",
+     "write": false
+    },
+    {
+     "name": "place_hold",
+     "title": "Place a Hold",
+     "desc": "Place a hold / reservation on a BPL catalog item and choose a pickup branch. NET-NEW workflow with no public API today \u2014 it lives only in the BiblioCommons cata",
+     "write": true
+    },
+    {
+     "name": "get_hold",
+     "title": "Get Hold",
+     "desc": "Fetch a single hold by id, including queue position and pickup status.",
+     "write": false
+    }
+   ]
+  },
+  {
    "id": "bronxbp",
    "agency": "Office of the Bronx Borough President",
    "short": "Bronx Borough President",
@@ -5943,6 +6289,265 @@
      "title": "Apply to a Community Board",
      "desc": "Submit a resident's application to serve on one of the Bronx's twelve community boards. NET-NEW workflow with no API today \u2014 currently a downloadable PDF or an ",
      "write": true
+    }
+   ]
+  },
+  {
+   "id": "bronxda",
+   "agency": "Office of the Bronx District Attorney (Darcel D. Clark)",
+   "short": "Bronx District Attorney",
+   "verb": "standardize",
+   "platform": "Legacy NYC.gov /html/ SHTML site \u2014 server-side-includes (.shtml) pages, a JavaScript-built nav (nav-nodes.js/top-nav.js) and jQuery/Bootstrap/Tether; Akamai edge + AWS ALB origin + Dynatrace and Akamai mPulse RUM + Google Analytics/Translate. Aggregate prosecution data is embedded from Microsoft Power BI (Gov) (app.powerbigov.us). NOT the shared NYC.gov 'Livesite' platform.",
+   "tagline": "A legacy SHTML brochure site with no API and zero Open Data, where the only prosecution data the office publishes is locked inside Power BI iframes \u2014 and where the real fix is one shared District Attorney API across all five boroughs.",
+   "accent": "#5a9a5a",
+   "netnew": "TipSubmission \u2014 a structured, trackable intake for a crime tip, a Civilian Complaint Unit complaint of police misconduct, or a FOIL records request (today a phone call to 718-590-2300 or an email to FOILREQUEST@BRONXDA.NYC.GOV, with no tracking number).",
+   "findings": [
+    "The Bronx DA exposes NO API and has ZERO NYC Open Data datasets \u2014 the Socrata Discovery API returns 0 for every agency label. Prosecution is a county function outside the Open Data program.",
+    "The public site is a legacy NYC.gov '/html/' SHTML application (SSI pages, JavaScript-built nav, jQuery/Bootstrap) behind Akamai and an AWS ALB \u2014 not the shared 'Livesite' chassis.",
+    "The office's only quantitative public data \u2014 arrests, charging decisions, case outcomes, defendant demographics \u2014 is trapped inside Microsoft Power BI (Gov) iframes: rendered pixels with no download, no query endpoint, and no Open Data twin.",
+    "There is no write surface: crime tips and Civilian Complaint Unit complaints are a phone call (718-590-2300) and FOIL requests are a plain email (FOILREQUEST@BRONXDA.NYC.GOV), neither returning a tracking number.",
+    "All five NYC borough DA offices run the same charter functions, so the low-hanging fruit is ONE shared District Attorney API (see OfficeReference in the schemas), not a bespoke Bronx build. Net-new write surface: submit a tip/complaint/FOIL request. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (Socrata)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": "N/A \u2014 zero datasets",
+     "note": "Socrata Discovery API returns 0 datasets for every Bronx DA agency label. The county-prosecutor function sits outside NYC Open Data."
+    },
+    {
+     "endpoint": "app.powerbigov.us",
+     "type": "BI dashboard embed",
+     "owner": "Microsoft Power BI (Gov)",
+     "public": "embed only, no data API",
+     "note": "The /html/data/ dashboards (arrests, charging decisions, case outcomes, defendant demographics; report 'Public Dash Case v9a') are iframe embeds \u2014 rendered pixels, no CSV/JSON/query endpoint, no Open Data twin. The office's only quantitative public data."
+    },
+    {
+     "endpoint": "www.bronxda.nyc.gov/html/",
+     "type": "informational site",
+     "owner": "Bronx DA (legacy NYC.gov /html/ SHTML)",
+     "public": "html",
+     "note": "Server-side-includes .shtml pages; JS-built nav (nav-nodes.js). No content API, no JSON, no OpenAPI."
+    },
+    {
+     "endpoint": "s.go-mpulse.net (Boomerang)",
+     "type": "RUM beacon",
+     "owner": "Akamai mPulse",
+     "public": "vendor",
+     "note": "Real-user monitoring snippet on every page."
+    },
+    {
+     "endpoint": "ruxitagentjs / Dynatrace",
+     "type": "RUM beacon",
+     "owner": "Dynatrace",
+     "public": "vendor",
+     "note": "x-oneagent-js-injection, x-ruxit-js-agent."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 0,
+    "schemas": 6,
+    "openapiOps": 8,
+    "mcpTools": 8,
+    "entities": 6
+   },
+   "entities": [
+    "PressRelease",
+    "CaseStatistic",
+    "Program",
+    "CommunityResource",
+    "VictimService",
+    "TipSubmission"
+   ],
+   "files": {
+    "fruit": "bronxda/fruit.json",
+    "opendata": "bronxda/opendata-bronxda.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-bronxda.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/bronxda.yaml",
+    "mcp": "mcp/bronxda-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Bronx DA \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across Office of the Bronx District Attorney object schemas. Because the Bronx DA publishes no Open "
+    },
+    {
+     "file": "schemas/case-statistic.json",
+     "title": "CaseStatistic",
+     "shared": false,
+     "desc": "An AGGREGATE prosecution metric for the Bronx District Attorney \u2014 arrests, charging decisions, case outcomes, and defendant demographics. Th"
+    },
+    {
+     "file": "schemas/community-resource.json",
+     "title": "CommunityResource",
+     "shared": false,
+     "desc": "A public-facing resource, service, or information item the Bronx DA offers the community \u2014 sealing old convictions (CPL 160.59), the BronxCA"
+    },
+    {
+     "file": "schemas/press-release.json",
+     "title": "PressRelease",
+     "shared": false,
+     "desc": "A Bronx District Attorney press release or newsroom item \u2014 indictments, sentencings, initiatives, and statements. Reverse-engineered from th"
+    },
+    {
+     "file": "schemas/program.json",
+     "title": "Program",
+     "shared": false,
+     "desc": "An organizational unit or public-facing program of the Bronx District Attorney \u2014 a prosecutorial bureau/division (Trial, Investigations, Spe"
+    },
+    {
+     "file": "schemas/tip-submission.json",
+     "title": "TipSubmission",
+     "shared": false,
+     "desc": "A submission FROM the public TO the Bronx District Attorney \u2014 a crime tip, a Civilian Complaint Unit complaint of police misconduct, a witne"
+    },
+    {
+     "file": "schemas/victim-service.json",
+     "title": "VictimService",
+     "shared": false,
+     "desc": "A service offered to crime victims and witnesses by the Bronx DA's Crime Victims Assistance Bureau and Special Victims Division \u2014 counseling"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/press-releases",
+     "op": "listPressReleases",
+     "summary": "List / search press releases",
+     "tags": [
+      "Newsroom"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/press-releases/{id}",
+     "op": "getPressRelease",
+     "summary": "Get a press release",
+     "tags": [
+      "Newsroom"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/case-statistics",
+     "op": "listCaseStatistics",
+     "summary": "Search aggregate prosecution statistics",
+     "tags": [
+      "Data"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs",
+     "op": "listPrograms",
+     "summary": "List bureaus, divisions, units, and public programs",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-resources",
+     "op": "listCommunityResources",
+     "summary": "List community resources and services",
+     "tags": [
+      "Community"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/victim-services",
+     "op": "listVictimServices",
+     "summary": "List crime-victim and witness services",
+     "tags": [
+      "Community"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/submissions",
+     "op": "createSubmission",
+     "summary": "Submit a tip, civilian complaint, or FOIL request",
+     "tags": [
+      "Submissions"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/submissions/{submissionId}",
+     "op": "getSubmission",
+     "summary": "Check the status of a submission",
+     "tags": [
+      "Submissions"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_press_releases",
+     "title": "Find Press Releases",
+     "desc": "Search Bronx DA press releases and newsroom items by year, category, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_press_release",
+     "title": "Get Press Release",
+     "desc": "Fetch a single Bronx DA press release by id.",
+     "write": false
+    },
+    {
+     "name": "find_case_statistics",
+     "title": "Find Case Statistics",
+     "desc": "Search AGGREGATE prosecution statistics (arrests, charging decisions, case outcomes, defendant demographics) \u2014 the figures locked today inside the office's Powe",
+     "write": false
+    },
+    {
+     "name": "find_programs",
+     "title": "Find Programs",
+     "desc": "List Bronx DA bureaus, divisions, units, and public-facing programs by kind or free text.",
+     "write": false
+    },
+    {
+     "name": "find_community_resources",
+     "title": "Find Community Resources",
+     "desc": "List Bronx DA community resources and services \u2014 record sealing (CPL 160.59), BronxCAMS, immigrant affairs, court navigation, important numbers \u2014 by category or",
+     "write": false
+    },
+    {
+     "name": "find_victim_services",
+     "title": "Find Victim Services",
+     "desc": "List crime-victim and witness services from the Crime Victims Assistance Bureau and Special Victims Division by service type or free text.",
+     "write": false
+    },
+    {
+     "name": "submit_tip",
+     "title": "Submit a Tip / Complaint / FOIL Request",
+     "desc": "Create a submission to the Bronx DA \u2014 a crime tip, a Civilian Complaint Unit complaint of police misconduct/brutality, a witness contact, or a FOIL records requ",
+     "write": true
+    },
+    {
+     "name": "check_submission",
+     "title": "Check Submission Status",
+     "desc": "Retrieve a non-anonymous submission and its status by tracking number.",
+     "write": false
     }
    ]
   },
@@ -6245,6 +6850,274 @@
      "name": "get_application_status",
      "title": "Get Application Status",
      "desc": "Read back the status of a submitted community board application by its reference id.",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "brooklynda",
+   "agency": "Kings County (Brooklyn) District Attorney's Office",
+   "short": "Brooklyn District Attorney",
+   "verb": "template",
+   "platform": "WordPress 6.8.5 (GeneratePress / GP Premium) on Apache; Wordfence, Yoast, MonsterInsights; accidental WordPress REST API (wp/v2)",
+   "tagline": "A WordPress brochure site with no data, an accidental content API, and no way to send in a tip \u2014 one of five identical county DA offices.",
+   "accent": "#4a6ab0",
+   "netnew": "TipSubmission \u2014 submit and track a confidential tip (report fraud, an unsafe landlord, a hate incident, trafficking, or information on an open case)",
+   "findings": [
+    "The Brooklyn DA is a content-only domain with no data: a single self-hosted WordPress 6.8.5 brochure site (brooklynda.org, Apache, GeneratePress, Wordfence) \u2014 no portal, no application, no data platform.",
+    "The only machine-readable surface is the WordPress REST API (/wp-json/wp/v2), an accidental content API that exposes ~911 press releases plus notifications, statements, and bureau/program pages.",
+    "There is ZERO NYC Open Data for any DA office \u2014 the Socrata Discovery API returns no assets for every Brooklyn/Kings County DA label. The core justice data (caseloads, dispositions, diversions, conviction-review outcomes) is published nowhere as data, only as prose inside press releases.",
+    "No inbound machine surface: submitting a tip \u2014 the everyday inbound transaction \u2014 has only a captcha-gated web form, a phone hotline, or a bureau email.",
+    "All five NYC county DA offices share the same functions (bureaus, diversion, conviction review, victim services, press). This is a candidate for ONE shared DA API, built once and adopted five times. Net-new write surface: submit a confidential tip (TipSubmission). See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "brooklynda.org/wp-json/wp/v2",
+     "type": "content REST API (WordPress default)",
+     "owner": "Brooklyn DA (WordPress core)",
+     "public": true,
+     "note": "The one real machine-readable surface. ~911 press releases (?categories=pr) plus notifications, statements, and bureau/program pages. Accidental \u2014 CMS default, raw WordPress fields, not a designed resource model."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": "no assets for this agency",
+     "note": "ZERO datasets under any Brooklyn/Kings County DA label (verified via Socrata Discovery API). The office publishes no open data."
+    },
+    {
+     "endpoint": "brooklynda.org (contact form)",
+     "type": "inbound web form",
+     "owner": "Brooklyn DA (WordPress)",
+     "public": "captcha-gated UI, no API",
+     "note": "Only inbound path for a tip/complaint besides phone/email. reCAPTCHA/hCaptcha/Turnstile per Permissions-Policy header. No JSON, no documented submit endpoint."
+    },
+    {
+     "endpoint": "www.brooklynda.org",
+     "type": "informational site",
+     "owner": "Brooklyn DA (self-hosted WordPress on Apache)",
+     "public": "html",
+     "note": "Bureaus, programs, press releases, brochures, resources. NOT on the nyc.gov shared platform \u2014 the office runs its own domain."
+    }
+   ],
+   "counts": {
+    "fruit": 6,
+    "opendata": 0,
+    "schemas": 6,
+    "openapiOps": 9,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "PressRelease",
+    "Program",
+    "CommunityResource",
+    "VictimService",
+    "CaseStatistics",
+    "TipSubmission"
+   ],
+   "files": {
+    "fruit": "brooklynda/fruit.json",
+    "opendata": "brooklynda/opendata-brooklynda.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-brooklynda.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/brooklynda.yaml",
+    "mcp": "mcp/brooklynda-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Brooklyn DA \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across Kings County (Brooklyn) District Attorney object schemas. Reconciles fields common to the Wor"
+    },
+    {
+     "file": "schemas/case-statistics.json",
+     "title": "CaseStatistics",
+     "shared": false,
+     "desc": "AGGREGATE prosecution / caseload statistics for the Brooklyn DA \u2014 arraignments, dispositions, diversions, declined prosecutions, conviction-"
+    },
+    {
+     "file": "schemas/community-resource.json",
+     "title": "CommunityResource",
+     "shared": false,
+     "desc": "A public-facing Brooklyn DA resource \u2014 a brochure, palm card, task-force listing, hotline, or guide the office publishes for residents (e.g."
+    },
+    {
+     "file": "schemas/press-release.json",
+     "title": "PressRelease",
+     "shared": false,
+     "desc": "A Brooklyn DA press release, statement, or notification \u2014 the office's primary published record and the ONLY substantial machine-readable da"
+    },
+    {
+     "file": "schemas/program.json",
+     "title": "Program",
+     "shared": false,
+     "desc": "A Brooklyn DA program, bureau, unit, or initiative \u2014 the office's diversion, re-entry, conviction-review, and public-safety offerings. Today"
+    },
+    {
+     "file": "schemas/tip-submission.json",
+     "title": "TipSubmission",
+     "shared": false,
+     "desc": "A confidential tip, complaint, or information referral submitted to the Brooklyn DA \u2014 the everyday inbound transaction (report a crime conce"
+    },
+    {
+     "file": "schemas/victim-service.json",
+     "title": "VictimService",
+     "shared": false,
+     "desc": "A Brooklyn DA victim-services or victim/witness support offering \u2014 advocacy, safety planning, court accompaniment, notifications, compensati"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/press-releases",
+     "op": "listPressReleases",
+     "summary": "List / search press releases, statements, and notifications",
+     "tags": [
+      "PressReleases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/press-releases/{id}",
+     "op": "getPressRelease",
+     "summary": "Get a press release by ID",
+     "tags": [
+      "PressReleases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs",
+     "op": "listPrograms",
+     "summary": "List / search programs, bureaus, units, and initiatives",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs/{slug}",
+     "op": "getProgram",
+     "summary": "Get a program by slug",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-resources",
+     "op": "listCommunityResources",
+     "summary": "List / search public resources (brochures, palm cards, guides, hotlines)",
+     "tags": [
+      "Resources"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/victim-services",
+     "op": "listVictimServices",
+     "summary": "List victim / witness support services",
+     "tags": [
+      "VictimServices"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/case-statistics",
+     "op": "listCaseStatistics",
+     "summary": "Aggregate prosecution statistics by period, bureau, and crime category",
+     "tags": [
+      "CaseStatistics"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/tips",
+     "op": "submitTip",
+     "summary": "Submit a confidential tip",
+     "tags": [
+      "Tips"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/tips/{tipId}",
+     "op": "getTip",
+     "summary": "Check the status of a submitted tip",
+     "tags": [
+      "Tips"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_press_releases",
+     "title": "Find Press Releases",
+     "desc": "Search Brooklyn DA press releases, statements, and notifications by category, bureau, date range, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_press_release",
+     "title": "Get Press Release",
+     "desc": "Fetch a single Brooklyn DA press release, statement, or notification by ID.",
+     "write": false
+    },
+    {
+     "name": "find_programs",
+     "title": "Find Programs",
+     "desc": "Search Brooklyn DA programs, bureaus, units, diversion / re-entry programs, community courts, and initiatives by type, bureau, audience, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_program",
+     "title": "Get Program",
+     "desc": "Fetch a Brooklyn DA program, bureau, or unit by slug.",
+     "write": false
+    },
+    {
+     "name": "find_community_resources",
+     "title": "Find Community Resources",
+     "desc": "List Brooklyn DA public resources \u2014 brochures, palm cards, guides, and hotlines (elder abuse, human trafficking, tenant protection, deed fraud, anti-bullying, a",
+     "write": false
+    },
+    {
+     "name": "find_victim_services",
+     "title": "Find Victim Services",
+     "desc": "List Brooklyn DA victim / witness support offerings \u2014 advocacy, safety planning, court accompaniment, case notification, compensation help, and language access ",
+     "write": false
+    },
+    {
+     "name": "find_case_statistics",
+     "title": "Find Case Statistics",
+     "desc": "Return AGGREGATE Brooklyn DA prosecution statistics (arraignments, dispositions, diversions, conviction-review outcomes) by period, bureau, and crime category. ",
+     "write": false
+    },
+    {
+     "name": "submit_tip",
+     "title": "Submit a Confidential Tip",
+     "desc": "File a confidential tip, complaint, or information referral with the Brooklyn DA (report fraud, an unsafe landlord, a hate incident, trafficking, or information",
+     "write": true
+    },
+    {
+     "name": "get_tip_status",
+     "title": "Get Tip Status",
+     "desc": "Check the status of a previously submitted tip by its confidential reference number.",
      "write": false
     }
    ]
@@ -7908,6 +8781,298 @@
      "name": "file_financial_disclosure",
      "title": "File Financial Disclosure",
      "desc": "Submit an annual financial disclosure report (NYC Annual Disclosure Law). NET-NEW workflow with no public API today \u2014 it lives only in the login-gated COIB Annu",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "cuny",
+   "agency": "City University of New York (CUNY)",
+   "short": "City University of New York (CUNY)",
+   "verb": "federate",
+   "platform": "WordPress Multisite (nginx) + Oracle PeopleSoft Campus Solutions (CUNYfirst)",
+   "tagline": "One owned API to federate ~25 campuses' reference data and unlock the CUNYfirst application it now hides.",
+   "accent": "#2f6ab0",
+   "netnew": "AdmissionsApplication (submit a CUNY application)",
+   "findings": [
+    "CUNY is a FEDERATED system: ~25 colleges and schools, each with its own website, all on a shared WordPress Multisite (cuny.edu, nginx) and a single shared Oracle PeopleSoft Campus Solutions student information system branded CUNYfirst.",
+    "CUNY is a New York STATE public benefit corporation, not a NYC agency \u2014 so unlike NYCHA, DOE, or the Council it publishes NOTHING under a CUNY agency label on NYC Open Data. The label returns exactly one asset, and it is an external link, not a dataset.",
+    "Its reference data is scattered: campus directories and program search are HTML on cuny.edu; enrollment/demographics are PDF/Excel data books from the Office of Institutional Research and Assessment (OIRA); state enrollment tables live on data.ny.gov. None is a clean API.",
+    "The transactional system of record \u2014 applications, courses, enrollment, financial aid \u2014 is CUNYfirst (PeopleSoft), reachable only through login-optional guest self-service screens (/psc/...GBL). No public API, no OpenAPI, no JSON.",
+    "Net-new write surface: submit a CUNY admissions application (AdmissionsApplication) \u2014 the single most common prospective-student transaction, covering multiple campuses in one application, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "cssa.cunyfirst.cuny.edu/psc/cnycsprd/GUEST/SA/c/",
+     "type": "student information system (ERP)",
+     "owner": "CUNY (Oracle PeopleSoft Campus Solutions)",
+     "public": "guest/login self-service UI, no API",
+     "note": "CUNYfirst \u2014 admissions (CU_E1385_CNSLR_FL), course catalog browse (SSS_BROWSE_CATLG), enrollment, financial aid. Server-rendered PeopleSoft PIA (/psc/, .GBL, PT_LANDINGPAGE), JavaScript-only, no JSON/OpenAPI. Behind an F5 BIG-IP."
+    },
+    {
+     "endpoint": "www.cuny.edu (wp-json)",
+     "type": "CMS / content",
+     "owner": "CUNY (WordPress Multisite on nginx)",
+     "public": "html + wp-json REST",
+     "note": "Central site + ~25 federated college subsites. WPBakery + Slider Revolution. wp-json responds but is content-only; no product/reference API."
+    },
+    {
+     "endpoint": "www.cuny.edu/academics/programs/",
+     "type": "program search tool",
+     "owner": "CUNY",
+     "public": "html/client-rendered",
+     "note": "'Explore Programs' degree-program finder; no documented backing API exposed to consumers."
+    },
+    {
+     "endpoint": "academicworks.cuny.edu",
+     "type": "institutional repository",
+     "owner": "CUNY (bepress Digital Commons)",
+     "public": "html + OAI-PMH",
+     "note": "CUNY Academic Works \u2014 faculty/research output; OAI-PMH harvest per college, no unified REST API."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Effectively ZERO CUNY presence: the CUNY agency label returns one external-link asset; one CUNY-subject budget dataset (wusu-mzmq) is tagged to OMB."
+    },
+    {
+     "endpoint": "data.ny.gov",
+     "type": "open data API",
+     "owner": "NY State (Socrata)",
+     "public": true,
+     "note": "State-level SUNY/CUNY enrollment tables live on the STATE portal, not the city's \u2014 reflecting CUNY's status as a state public benefit corporation."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 2,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "Campus",
+    "DegreeProgram",
+    "Course",
+    "EnrollmentStatistics",
+    "FacultyResearch",
+    "AdmissionsApplication"
+   ],
+   "files": {
+    "fruit": "cuny/fruit.json",
+    "opendata": "cuny/opendata-cuny.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-cuny.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/cuny.yaml",
+    "mcp": "mcp/cuny-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "CUNY \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across City University of New York (CUNY) object schemas. Reconciles fields common to cuny.edu (Word"
+    },
+    {
+     "file": "schemas/admissions-application.json",
+     "title": "AdmissionsApplication",
+     "shared": false,
+     "desc": "A CUNY admissions application (the 'CUNY Application' / Apply to CUNY flow) \u2014 the everyday prospective-student transaction. NET-NEW: there i"
+    },
+    {
+     "file": "schemas/campus.json",
+     "title": "Campus",
+     "shared": false,
+     "desc": "A CUNY college or school \u2014 one of the ~25 institutions in the federated City University of New York system (senior colleges, community colle"
+    },
+    {
+     "file": "schemas/course.json",
+     "title": "Course",
+     "shared": false,
+     "desc": "A course in a CUNY college course catalog / class schedule. Canonical schema reconciling the CUNYfirst course catalog browse (PeopleSoft sel"
+    },
+    {
+     "file": "schemas/degree-program.json",
+     "title": "DegreeProgram",
+     "shared": false,
+     "desc": "An academic degree or certificate program offered by a CUNY college. Canonical schema reconciling the CUNY 'Explore Programs' / program sear"
+    },
+    {
+     "file": "schemas/enrollment-statistics.json",
+     "title": "EnrollmentStatistics",
+     "shared": false,
+     "desc": "Aggregated enrollment and demographic statistics for a CUNY college and term \u2014 published only in aggregate, never per student. Canonical sch"
+    },
+    {
+     "file": "schemas/faculty-research.json",
+     "title": "FacultyResearch",
+     "shared": false,
+     "desc": "A faculty member or research output at a CUNY college \u2014 bridging the public faculty directories on cuny.edu / college sites and the CUNY Aca"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/campuses",
+     "op": "listCampuses",
+     "summary": "List / search CUNY colleges and schools",
+     "tags": [
+      "Campuses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/campuses/{institutionCode}",
+     "op": "getCampus",
+     "summary": "Get a campus by institution code",
+     "tags": [
+      "Campuses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs",
+     "op": "listPrograms",
+     "summary": "List / search degree and certificate programs",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs/{programId}",
+     "op": "getProgram",
+     "summary": "Get a degree program",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/courses",
+     "op": "listCourses",
+     "summary": "Search the CUNY course catalog",
+     "tags": [
+      "Courses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/enrollment-statistics",
+     "op": "listEnrollmentStatistics",
+     "summary": "Aggregate enrollment & demographics by campus / term",
+     "tags": [
+      "Enrollment"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/faculty-research",
+     "op": "listFacultyResearch",
+     "summary": "Search faculty and research output across the colleges",
+     "tags": [
+      "Research"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/applications",
+     "op": "listApplications",
+     "summary": "List the authenticated applicant's CUNY applications",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/applications",
+     "op": "createApplication",
+     "summary": "Submit a CUNY admissions application",
+     "tags": [
+      "Applications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/applications/{applicationId}",
+     "op": "getApplication",
+     "summary": "Get a CUNY admissions application",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_campuses",
+     "title": "Find Campuses",
+     "desc": "Search CUNY colleges and schools by borough, type (senior/community/graduate/honors), and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_campus",
+     "title": "Get Campus",
+     "desc": "Fetch a CUNY college/school (type, address, enrollment, geography) by CUNYfirst institution code.",
+     "write": false
+    },
+    {
+     "name": "find_programs",
+     "title": "Find Programs",
+     "desc": "Search CUNY degree and certificate programs by campus, degree type, field, modality, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_program",
+     "title": "Get Program",
+     "desc": "Fetch a CUNY degree or certificate program by program ID.",
+     "write": false
+    },
+    {
+     "name": "find_courses",
+     "title": "Find Courses",
+     "desc": "Search the CUNY course catalog by campus, subject, term, or modality \u2014 the catalog data today locked in the CUNYfirst PeopleSoft catalog browse.",
+     "write": false
+    },
+    {
+     "name": "find_enrollment_statistics",
+     "title": "Find Enrollment Statistics",
+     "desc": "Return AGGREGATE enrollment and demographics by campus and term (headcount, full/part-time, undergrad/grad, race/ethnicity, Pell). Never returns individual stud",
+     "write": false
+    },
+    {
+     "name": "find_faculty_research",
+     "title": "Find Faculty & Research",
+     "desc": "Search CUNY faculty and research output by campus, department, or research area \u2014 bridging faculty directories and the CUNY Academic Works repository.",
+     "write": false
+    },
+    {
+     "name": "list_my_applications",
+     "title": "List My Applications",
+     "desc": "List the authenticated applicant's own CUNY admissions applications and their status \u2014 today visible only inside the CUNYfirst self-service screens.",
+     "write": false
+    },
+    {
+     "name": "submit_application",
+     "title": "Submit a CUNY Application",
+     "desc": "Create and submit a CUNY admissions application (one application covering multiple campuses). NET-NEW workflow with no public API today \u2014 it lives only in the C",
      "write": true
     }
    ]
@@ -11718,6 +12883,330 @@
    ]
   },
   {
+   "id": "edc",
+   "agency": "New York City Economic Development Corporation (EDC)",
+   "short": "NYC Economic Development (EDC)",
+   "verb": "surface",
+   "platform": "Drupal behind Cloudflare (bot-challenged); NYC Ferry on Cloudflare + CloudFront",
+   "tagline": "EDC publishes ferry rides and a company map, but keeps its real estate, projects, and RFPs off the machine-readable web entirely.",
+   "accent": "#3a9a7a",
+   "netnew": "RFPResponse \u2014 register interest in / submit a proposal to an EDC solicitation (RFP/RFEI)",
+   "findings": [
+    "EDC is a public benefit corporation, not a mayoral agency \u2014 and its data footprint reflects that: only 5 NYC Open Data assets carry the 'Economic Development Corporation (EDC)' label, and they are peripheral (a marketing company map, NYC Ferry ridership, and three WiredNYC broadband tables).",
+    "EDC's actual business is invisible to machines. Its ~60M sq ft real-estate portfolio, its development/capital projects, and its solicitations (RFPs/RFEIs) \u2014 the core of what EDC does \u2014 have NO Open Data twin and NO API; they exist only as Drupal pages on edc.nyc behind a Cloudflare bot challenge.",
+    "The one genuinely operational open dataset is NYC Ferry Ridership (t5n6-gx8c); the rest are a promotional 'Mapped In NY' company map (f4yq-wry5) and the WiredNYC broadband-certification program (3 datasets).",
+    "The site itself is not machine-accessible: edc.nyc and nycedc.com return 403 with a Cloudflare challenge to non-browser clients, so even the project/asset/RFP listings can't be reliably scraped.",
+    "Net-new write surface: respond to a solicitation (RFPResponse) \u2014 register interest or submit a proposal to an EDC RFP/RFEI, which today happens only by email, at a pre-submission conference, or by manual document submission. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Only 5 EDC-labeled datasets: Mapped In NY, NYC Ferry Ridership, and 3 WiredNYC tables. SODA /resource/<id>.json endpoints. EDC's only real, open, machine-readable surface \u2014 and it misses the core business entirely."
+    },
+    {
+     "endpoint": "edc.nyc",
+     "type": "informational site (Drupal)",
+     "owner": "EDC",
+     "public": "html, bot-challenged",
+     "note": "Drupal (robots.txt /core/, /profiles/) behind Cloudflare; returns 403 'cf-mitigated: challenge' to non-browser clients. Projects, real estate, and RFPs live here as pages with no API and no JSON."
+    },
+    {
+     "endpoint": "nycedc.com",
+     "type": "legacy/alias domain",
+     "owner": "EDC",
+     "public": "403 (Cloudflare)",
+     "note": "Alias of edc.nyc; same Cloudflare bot challenge."
+    },
+    {
+     "endpoint": "www.ferry.nyc",
+     "type": "NYC Ferry site",
+     "owner": "EDC (ferry operated via contractor)",
+     "public": "html",
+     "note": "Cloudflare + CloudFront. Rider-facing schedules/booking; no documented public API under EDC. Ridership is the one operational dataset EDC publishes to Open Data."
+    },
+    {
+     "endpoint": "passport.cityofnewyork.us (PASSPort)",
+     "type": "citywide procurement portal",
+     "owner": "NYC (MOCS)",
+     "public": "login",
+     "note": "Where formal city procurement/solicitation responses are handled; EDC solicitations are not natively exposed as an API here."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 5,
+    "schemas": 7,
+    "openapiOps": 12,
+    "mcpTools": 11,
+    "entities": 7
+   },
+   "entities": [
+    "DevelopmentProject",
+    "PropertyAsset",
+    "Solicitation",
+    "MappedCompany",
+    "FerryRidership",
+    "WiredBuilding",
+    "RFPResponse"
+   ],
+   "files": {
+    "fruit": "edc/fruit.json",
+    "opendata": "edc/opendata-edc.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-edc.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/edc.yaml",
+    "mcp": "mcp/edc-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "EDC \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across New York City Economic Development Corporation (EDC) object schemas. Reconciles fields common"
+    },
+    {
+     "file": "schemas/development-project.json",
+     "title": "DevelopmentProject",
+     "shared": false,
+     "desc": "An EDC economic-development / capital project \u2014 waterfront, industrial, neighborhood, life-sciences, and infrastructure investments that EDC"
+    },
+    {
+     "file": "schemas/ferry-ridership.json",
+     "title": "FerryRidership",
+     "shared": false,
+     "desc": "A NYC Ferry ridership record \u2014 boardings by route, stop, hour, and day type. NYC Ferry is operated on behalf of EDC (public benefit corporat"
+    },
+    {
+     "file": "schemas/mapped-company.json",
+     "title": "MappedCompany",
+     "shared": false,
+     "desc": "A company featured in EDC's 'Mapped In NY' \u2014 the marketing map of notable NYC companies EDC promotes as reasons to locate in the city, with "
+    },
+    {
+     "file": "schemas/property-asset.json",
+     "title": "PropertyAsset",
+     "shared": false,
+     "desc": "A piece of EDC-managed real estate \u2014 one of the ~60 million square feet of city-owned property (industrial parks, markets, piers, campuses, "
+    },
+    {
+     "file": "schemas/rfp-response.json",
+     "title": "RFPResponse",
+     "shared": false,
+     "desc": "A response / notice of interest submitted to an EDC solicitation (RFP / RFEI / RFQ / RFI). NET-NEW: there is NO public API and NO Open Data "
+    },
+    {
+     "file": "schemas/solicitation.json",
+     "title": "Solicitation",
+     "shared": false,
+     "desc": "An EDC public solicitation \u2014 a Request for Proposals (RFP), Request for Expressions of Interest (RFEI), Request for Qualifications (RFQ), or"
+    },
+    {
+     "file": "schemas/wired-building.json",
+     "title": "WiredBuilding",
+     "shared": false,
+     "desc": "A building assessed under EDC's WiredNYC / WiredScore broadband-readiness program \u2014 telecom infrastructure, ISPs, fiber, and certification c"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/projects",
+     "op": "listProjects",
+     "summary": "List / search EDC development projects",
+     "tags": [
+      "Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/projects/{projectId}",
+     "op": "getProject",
+     "summary": "Get a development project",
+     "tags": [
+      "Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/properties",
+     "op": "listProperties",
+     "summary": "List / search EDC-managed real-estate assets",
+     "tags": [
+      "RealEstate"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/properties/{assetId}",
+     "op": "getProperty",
+     "summary": "Get an EDC-managed property asset",
+     "tags": [
+      "RealEstate"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/solicitations",
+     "op": "listSolicitations",
+     "summary": "List / search EDC solicitations (RFP / RFEI / RFQ / RFI)",
+     "tags": [
+      "Solicitations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/solicitations/{solicitationId}",
+     "op": "getSolicitation",
+     "summary": "Get a solicitation",
+     "tags": [
+      "Solicitations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/rfp-responses",
+     "op": "listRfpResponses",
+     "summary": "List the authenticated respondent's solicitation responses",
+     "tags": [
+      "Solicitations"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/rfp-responses",
+     "op": "createRfpResponse",
+     "summary": "Respond to a solicitation (register interest / submit a proposal)",
+     "tags": [
+      "Solicitations"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/rfp-responses/{responseId}",
+     "op": "getRfpResponse",
+     "summary": "Get a solicitation response",
+     "tags": [
+      "Solicitations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/mapped-companies",
+     "op": "listMappedCompanies",
+     "summary": "Search Mapped In NY companies",
+     "tags": [
+      "Companies"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/ferry-ridership",
+     "op": "listFerryRidership",
+     "summary": "Search NYC Ferry ridership records",
+     "tags": [
+      "Ferry"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/wired-buildings",
+     "op": "listWiredBuildings",
+     "summary": "Search WiredNYC broadband-certified buildings",
+     "tags": [
+      "WiredNYC"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_projects",
+     "title": "Find Projects",
+     "desc": "Search EDC development / capital projects by borough, category, status, neighborhood, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_project",
+     "title": "Get Project",
+     "desc": "Fetch a single EDC development project by its identifier.",
+     "write": false
+    },
+    {
+     "name": "find_properties",
+     "title": "Find Properties",
+     "desc": "Search EDC-managed real-estate assets (industrial parks, markets, piers, campuses, ground leases) by borough, asset type, neighborhood, or status.",
+     "write": false
+    },
+    {
+     "name": "get_property",
+     "title": "Get Property",
+     "desc": "Fetch a single EDC-managed property asset by its identifier.",
+     "write": false
+    },
+    {
+     "name": "find_solicitations",
+     "title": "Find Solicitations",
+     "desc": "List EDC solicitations (RFP / RFEI / RFQ / RFI) by type, status, category, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_solicitation",
+     "title": "Get Solicitation",
+     "desc": "Fetch a single EDC solicitation by its identifier.",
+     "write": false
+    },
+    {
+     "name": "find_mapped_companies",
+     "title": "Find Mapped In NY Companies",
+     "desc": "Search EDC's Mapped In NY company directory by borough, category, hiring status, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_ferry_ridership",
+     "title": "Find Ferry Ridership",
+     "desc": "Search NYC Ferry ridership (boardings by route, stop, hour, and day type) \u2014 the ferry system EDC operates.",
+     "write": false
+    },
+    {
+     "name": "find_wired_buildings",
+     "title": "Find WiredNYC Buildings",
+     "desc": "Search WiredNYC broadband-readiness buildings by borough, cohort, certification class, or BBL \u2014 EDC's telecom-infrastructure certification program.",
+     "write": false
+    },
+    {
+     "name": "list_my_rfp_responses",
+     "title": "List My Solicitation Responses",
+     "desc": "List the authenticated respondent's own solicitation responses and their status \u2014 today tracked only in email threads.",
+     "write": false
+    },
+    {
+     "name": "submit_rfp_response",
+     "title": "Respond to a Solicitation",
+     "desc": "Submit a response to an EDC solicitation (register interest, submit a proposal, request documents, or ask a question). NET-NEW workflow with no public API today",
+     "write": true
+    }
+   ]
+  },
+  {
    "id": "fdny",
    "agency": "Fire Department of the City of New York (FDNY)",
    "short": "NYC Fire (FDNY)",
@@ -12005,6 +13494,330 @@
      "title": "Get Permit Application",
      "desc": "Fetch one of the authenticated applicant's FDNY fire permit applications by application id.",
      "write": false
+    }
+   ]
+  },
+  {
+   "id": "hhc",
+   "agency": "NYC Health + Hospitals (H+H)",
+   "short": "NYC Health + Hospitals",
+   "verb": "extend",
+   "platform": "Epic (MyChart on IIS + live FHIR R4 / SMART on FHIR) behind Radware Bot Manager",
+   "tagline": "A real health-data standard (Epic FHIR R4 / SMART on FHIR) is already live here \u2014 the work is to extend it to booking and open the facility directory, not to invent an API.",
+   "accent": "#c24a6a",
+   "netnew": "AppointmentRequest \u2014 request/book an appointment (no write in the live FHIR surface)",
+   "findings": [
+    "H+H is the FIRST domain in this project with a real, live, standards-based API already in production: an Epic FHIR R4 / SMART on FHIR endpoint (epicproxypda.nychhc.org, 'Epic November 2025') exposing 59 resource types with an OAuth2 authorize/token surface. The health-data standard exists \u2014 the work is not to invent an API.",
+    "But that FHIR surface is read-mostly and patient-scoped. Appointment is read + search only; there is NO Slot resource and NO $book/$find operation, so BOOKING has no machine-readable contract even inside the standard. Location/Organization/Practitioner exist but require SMART authorization (unauthenticated Location search returns HTTP 401).",
+    "There is no OPEN directory. A patient or agent asking 'which H+H hospital near me has cardiology and takes new patients?' has nothing to call \u2014 the facility/service/provider directory is HTML on a bot-walled marketing site, not on FHIR (auth-gated) and not on Open Data.",
+    "H+H publishes NOTHING to NYC Open Data. Its data is clinical and lives in Epic (HIPAA-protected); the health datasets on data.cityofnewyork.us belong to a different agency, DOHMH. See opendata-hhc.md.",
+    "Everything runs on a vendor EHR. The FHIR API, the MyChart portal, and the OAuth surface are all Epic \u2014 H+H owns the data but not the contract. The site is protected by Radware Bot Manager, a third vendor.",
+    "Net-new write surface: AppointmentRequest \u2014 request/book an appointment \u2014 the most common patient transaction, with no API today and outside the live FHIR surface. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "epicproxypda.nychhc.org/FHIRProxy/api/FHIR/R4",
+     "type": "FHIR R4 API (SMART on FHIR)",
+     "owner": "H+H on Epic",
+     "public": "metadata + smart-config public; data SMART-authorized",
+     "note": "THE real H+H API. CapabilityStatement: fhirVersion 4.0.1, software 'Epic November 2025', 59 resource types (Patient, Condition, Observation, Appointment, Location, Organization, Practitioner, MedicationRequest, DocumentReference, ...). OAuth2 authorize/token at /FHIRProxy/oauth2. Appointment is read+search only; no Slot, no $book, no open directory (Location search \u2192 401)."
+    },
+    {
+     "endpoint": "mychart.nychhc.org",
+     "type": "patient portal (Epic MyChart)",
+     "owner": "H+H on Epic",
+     "public": "login-walled UI",
+     "note": "Epic MyChart on Microsoft-IIS/10.0 (MyChartPersistence cookie). The human UI over the same Epic system \u2014 where patients see appointments, message providers, refill prescriptions, pay bills. No open API of its own; the machine surface is the FHIR endpoint above."
+    },
+    {
+     "endpoint": "open.epic.com/Endpoints/R4",
+     "type": "vendor endpoint directory",
+     "owner": "Epic",
+     "public": true,
+     "note": "Epic's public FHIR endpoint directory (480 orgs); lists 'NYC Health + Hospitals' \u2192 the FHIRProxy base URL. How the H+H FHIR endpoint is discoverable at all."
+    },
+    {
+     "endpoint": "www.nychealthandhospitals.org",
+     "type": "informational site",
+     "owner": "H+H",
+     "public": "html, bot-walled",
+     "note": "Marketing/directory site (locations, services, doctors, help-paying-your-bill). Behind Radware Bot Manager (server: rdwr, 302 to validate.perfdrive.com) \u2014 crawl blocked at the edge. No content API."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler) \u2014 DOHMH, not H+H",
+     "public": true,
+     "note": "Health datasets here belong to the Department of Health and Mental Hygiene (DOHMH). H+H owns ZERO datasets. Adjacent, not owned."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 0,
+    "schemas": 7,
+    "openapiOps": 13,
+    "mcpTools": 9,
+    "entities": 7
+   },
+   "entities": [
+    "Facility",
+    "Service",
+    "Provider",
+    "FinancialAssistance",
+    "Pharmacy",
+    "Appointment",
+    "AppointmentRequest"
+   ],
+   "files": {
+    "fruit": "hhc/fruit.json",
+    "opendata": "hhc/opendata-hhc.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-hhc.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/hhc.yaml",
+    "mcp": "mcp/hhc-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Health + Hospitals \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Health + Hospitals (H+H) object schemas. Reconciles fields common to the H+H public site "
+    },
+    {
+     "file": "schemas/appointment-request.json",
+     "title": "AppointmentRequest",
+     "shared": false,
+     "desc": "NET-NEW write object: a request to book an appointment at NYC Health + Hospitals. This is the single most common patient transaction and it "
+    },
+    {
+     "file": "schemas/appointment.json",
+     "title": "Appointment",
+     "shared": false,
+     "desc": "A patient's existing / booked appointment at NYC Health + Hospitals \u2014 the read side of scheduling, as surfaced in the MyChart patient portal"
+    },
+    {
+     "file": "schemas/facility.json",
+     "title": "Facility",
+     "shared": false,
+     "desc": "An NYC Health + Hospitals care location \u2014 an acute-care hospital, a Gotham Health federally qualified health center, a post-acute / long-ter"
+    },
+    {
+     "file": "schemas/financial-assistance.json",
+     "title": "FinancialAssistance",
+     "shared": false,
+     "desc": "A financial-assistance or coverage program offered by NYC Health + Hospitals \u2014 the sliding-scale fee schedule (Options / HHC Options), NYC C"
+    },
+    {
+     "file": "schemas/pharmacy.json",
+     "title": "Pharmacy",
+     "shared": false,
+     "desc": "An NYC Health + Hospitals outpatient / retail pharmacy located at a facility. FHIR-aligned to a Location (with a pharmacy type). No Open Dat"
+    },
+    {
+     "file": "schemas/provider.json",
+     "title": "Provider",
+     "shared": false,
+     "desc": "A clinician who practices at NYC Health + Hospitals \u2014 the 'Find a Doctor' entity. FHIR-aligned to Practitioner (the person) plus Practitione"
+    },
+    {
+     "file": "schemas/service.json",
+     "title": "Service",
+     "shared": false,
+     "desc": "A clinical service line or specialty offered by NYC Health + Hospitals at one or more facilities (e.g. Primary Care, Cardiology, Behavioral "
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/facilities",
+     "op": "listFacilities",
+     "summary": "List / search H+H facilities",
+     "tags": [
+      "Facilities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/facilities/{facilityId}",
+     "op": "getFacility",
+     "summary": "Get a facility by id",
+     "tags": [
+      "Facilities"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/facilities/{facilityId}/services",
+     "op": "getFacilityServices",
+     "summary": "List the service lines offered at a facility",
+     "tags": [
+      "Facilities",
+      "Services"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/services",
+     "op": "listServices",
+     "summary": "Search H+H service lines / specialties",
+     "tags": [
+      "Services"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/providers",
+     "op": "listProviders",
+     "summary": "Search H+H providers (Find a Doctor)",
+     "tags": [
+      "Providers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/providers/{providerId}",
+     "op": "getProvider",
+     "summary": "Get a provider by id",
+     "tags": [
+      "Providers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/financial-assistance",
+     "op": "listFinancialAssistance",
+     "summary": "List financial-assistance and coverage programs (NYC Care, sliding-scale, counseling)",
+     "tags": [
+      "FinancialAssistance"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/pharmacies",
+     "op": "listPharmacies",
+     "summary": "List H+H outpatient / retail pharmacies",
+     "tags": [
+      "Pharmacies"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/appointments",
+     "op": "listAppointments",
+     "summary": "List the authenticated patient's appointments",
+     "tags": [
+      "Appointments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/appointments/{appointmentId}",
+     "op": "getAppointment",
+     "summary": "Get one of the patient's appointments",
+     "tags": [
+      "Appointments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/appointment-requests",
+     "op": "listAppointmentRequests",
+     "summary": "List the authenticated patient's appointment requests",
+     "tags": [
+      "Appointments"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/appointment-requests",
+     "op": "createAppointmentRequest",
+     "summary": "Request an appointment (net-new write)",
+     "tags": [
+      "Appointments"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/appointment-requests/{requestId}",
+     "op": "getAppointmentRequest",
+     "summary": "Get an appointment request",
+     "tags": [
+      "Appointments"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_facilities",
+     "title": "Find Facilities",
+     "desc": "Search NYC Health + Hospitals care sites by borough, network, facility type, emergency services, service offered, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_facility",
+     "title": "Get Facility",
+     "desc": "Fetch a single H+H facility (network, type, services, hours, location) by id.",
+     "write": false
+    },
+    {
+     "name": "get_facility_services",
+     "title": "Get Facility Services",
+     "desc": "List the clinical service lines offered at a given facility.",
+     "write": false
+    },
+    {
+     "name": "find_services",
+     "title": "Find Services",
+     "desc": "Search H+H clinical service lines / specialties by category, facility, new-patient status, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_providers",
+     "title": "Find Providers",
+     "desc": "Find a Doctor \u2014 search H+H clinicians by specialty, language, facility, or new-patient status.",
+     "write": false
+    },
+    {
+     "name": "find_financial_assistance",
+     "title": "Find Financial Assistance",
+     "desc": "List H+H financial-assistance and coverage programs \u2014 NYC Care, the sliding-scale (Options) fee schedule, and financial counseling. Use for uninsured or under-i",
+     "write": false
+    },
+    {
+     "name": "find_pharmacies",
+     "title": "Find Pharmacies",
+     "desc": "List H+H outpatient / retail pharmacies by borough or facility.",
+     "write": false
+    },
+    {
+     "name": "list_my_appointments",
+     "title": "List My Appointments",
+     "desc": "List the authenticated patient's booked appointments and their status \u2014 mirrors MyChart and the live Epic FHIR Appointment resource (read-only). Requires SMART ",
+     "write": false
+    },
+    {
+     "name": "request_appointment",
+     "title": "Request an Appointment",
+     "desc": "Request an appointment at NYC Health + Hospitals (net-new). NO public booking API exists today \u2014 patients call 1-844-NYC-4NYC or use a MyChart flow, and the liv",
+     "write": true
     }
    ]
   },
@@ -13448,6 +15261,312 @@
    ]
   },
   {
+   "id": "manhattanda",
+   "agency": "Manhattan District Attorney's Office (New York County District Attorney)",
+   "short": "Manhattan District Attorney",
+   "verb": "standardize",
+   "platform": "WordPress (custom 'dany' theme) behind Sucuri CloudProxy; Jetpack Search; The Events Calendar; WPForms/Contact Form 7; Mailchimp; exposed WP REST API; FOIL delegated to NYC OpenRecords",
+   "tagline": "A WordPress newsroom whose only API is accidental, no open data at all, FOIL delegated and tips un-built \u2014 five identical DA offices waiting on one shared contract.",
+   "accent": "#a04a5a",
+   "netnew": "TipSubmission \u2014 submit a routable tip to a DA bureau (no API today; only a generic reCAPTCHA contact form). FOIL is delegated off-site to NYC OpenRecords.",
+   "findings": [
+    "The Manhattan DA publishes NO NYC Open Data \u2014 as an independently elected county prosecutor it sits outside the mayoral open-data program; four agency-label queries against the Socrata Discovery API return zero datasets.",
+    "The only genuinely machine-readable object is accidental: the newsroom (~3,029 posts) is JSON solely because WordPress ships a REST API (wp/v2/posts). It is undocumented, unversioned, content-only.",
+    "Nothing the office actually does has an API \u2014 prosecutions, bureaus/initiatives, victim services, and tips exist only as HTML pages or prose; reporting suspected wrongdoing means a generic reCAPTCHA contact form or a phone call.",
+    "Two core workflows are outsourced or un-built: FOIL records requests are delegated off-site to NYC OpenRecords, and tip intake has no structured surface at all.",
+    "All five NYC District Attorneys run the same functions on the same kind of stack \u2014 this is a candidate for ONE shared DA API rather than five silos. Net-new write surface: submit a tip (TipSubmission). See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "manhattanda.org/wp-json/wp/v2/",
+     "type": "WordPress REST API",
+     "owner": "Manhattan DA (self-hosted WordPress)",
+     "public": true,
+     "note": "The one real API. wp/v2/posts returns the newsroom as JSON, x-wp-total: 3029 (press releases, media coverage, op-eds, reports, testimony). Accidental (WP default), undocumented, content-only."
+    },
+    {
+     "endpoint": "manhattanda.org/wp-json/tribe/events/v1/events",
+     "type": "events API (The Events Calendar)",
+     "owner": "Manhattan DA (plugin)",
+     "public": true,
+     "note": "Community events feed via the Modern Tribe Events Calendar plugin."
+    },
+    {
+     "endpoint": "jetpack/v4/search (WordPress.com site 137993268)",
+     "type": "site search API",
+     "owner": "Automattic / Jetpack",
+     "public": "rented",
+     "note": "On-site search delegated to Jetpack Search; not owned by the office."
+    },
+    {
+     "endpoint": "contact-form-7/v1 \u00b7 WPForms",
+     "type": "form submission",
+     "owner": "Manhattan DA (plugins)",
+     "public": "write (reCAPTCHA)",
+     "note": "Generic contact form is the closest thing to tip intake \u2014 no schema, no structured API."
+    },
+    {
+     "endpoint": "a856-cwprod.nyc.gov/openrecords (NYC OpenRecords)",
+     "type": "FOIL records-request portal",
+     "owner": "NYC (citywide)",
+     "public": "external",
+     "note": "The office delegates all FOIL requests here; its statutory intake workflow lives off its own domain. No DA-owned API."
+    },
+    {
+     "endpoint": "manhattanda.us9.list-manage.com",
+     "type": "newsletter subscribe",
+     "owner": "Mailchimp",
+     "public": "rented",
+     "note": "Newsletter signup posts to Mailchimp."
+    },
+    {
+     "endpoint": "Sucuri CloudProxy",
+     "type": "WAF / CDN",
+     "owner": "Sucuri",
+     "public": "vendor",
+     "note": "server: Sucuri/Cloudproxy fronts the whole site."
+    },
+    {
+     "endpoint": "Google reCAPTCHA / ExactMetrics (GA) / Wordfence",
+     "type": "bot mitigation, analytics, security",
+     "owner": "Google / Wordfence",
+     "public": "vendor",
+     "note": "reCAPTCHA gates forms; exactmetrics/v1 and wordfence/v1 REST namespaces present."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 0,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "PressRelease",
+    "Program",
+    "VictimService",
+    "Office",
+    "Prosecution",
+    "TipSubmission"
+   ],
+   "files": {
+    "fruit": "manhattanda/fruit.json",
+    "opendata": "manhattanda/opendata-manhattanda.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-manhattanda.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/manhattanda.yaml",
+    "mcp": "mcp/manhattanda-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Manhattan DA \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across the Manhattan District Attorney (New York County District Attorney's Office) object schemas. "
+    },
+    {
+     "file": "schemas/office.json",
+     "title": "Office",
+     "shared": false,
+     "desc": "A physical office location of the Manhattan District Attorney's Office \u2014 the Main Office at One Hogan Place plus community offices in Harlem"
+    },
+    {
+     "file": "schemas/press-release.json",
+     "title": "PressRelease",
+     "shared": false,
+     "desc": "A news item published by the Manhattan District Attorney's Office \u2014 press release, media coverage, op-ed, report, testimony, remarks, or vid"
+    },
+    {
+     "file": "schemas/program.json",
+     "title": "Program",
+     "shared": false,
+     "desc": "A bureau, unit, or initiative of the Manhattan District Attorney's Office \u2014 the office's 'Our Work' offering (e.g. Community Partnerships Un"
+    },
+    {
+     "file": "schemas/prosecution.json",
+     "title": "Prosecution",
+     "shared": false,
+     "desc": "Aggregate prosecution / caseload statistics for the Manhattan District Attorney's Office \u2014 arraignments, indictments, dispositions, convicti"
+    },
+    {
+     "file": "schemas/tip-submission.json",
+     "title": "TipSubmission",
+     "shared": false,
+     "desc": "A tip / report submitted to a Manhattan District Attorney bureau \u2014 report suspected financial fraud, elder abuse, human trafficking, a hate "
+    },
+    {
+     "file": "schemas/victim-service.json",
+     "title": "VictimService",
+     "shared": false,
+     "desc": "A victim resource / community resource offered or referred by the Manhattan District Attorney's Office \u2014 organized on manhattanda.org/victim"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/press-releases",
+     "op": "listPressReleases",
+     "summary": "List / search newsroom items (press releases, media coverage, op-eds, reports)",
+     "tags": [
+      "Newsroom"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/press-releases/{id}",
+     "op": "getPressRelease",
+     "summary": "Get a newsroom item by ID",
+     "tags": [
+      "Newsroom"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs",
+     "op": "listPrograms",
+     "summary": "List bureaus, units, and initiatives (Our Work)",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs/{slug}",
+     "op": "getProgram",
+     "summary": "Get a program by slug",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/victim-services",
+     "op": "listVictimServices",
+     "summary": "List victim and community resources by crime type",
+     "tags": [
+      "VictimServices"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/prosecution-statistics",
+     "op": "listProsecutionStatistics",
+     "summary": "Aggregate caseload / prosecution statistics",
+     "tags": [
+      "Prosecution"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/offices",
+     "op": "listOffices",
+     "summary": "List Manhattan DA office locations",
+     "tags": [
+      "Offices"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/tips",
+     "op": "listTips",
+     "summary": "List the authenticated submitter's tips",
+     "tags": [
+      "Tips"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/tips",
+     "op": "submitTip",
+     "summary": "Submit a tip to a DA bureau",
+     "tags": [
+      "Tips"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/tips/{tipId}",
+     "op": "getTip",
+     "summary": "Get a submitted tip's status",
+     "tags": [
+      "Tips"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_press_releases",
+     "title": "Find Press Releases",
+     "desc": "Search the Manhattan DA newsroom (press releases, media coverage, op-eds, reports, testimony, remarks, video) by type, topic, date range, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_press_release",
+     "title": "Get Press Release",
+     "desc": "Fetch a single newsroom item (headline, date, body, topics) by its WordPress post ID.",
+     "write": false
+    },
+    {
+     "name": "find_programs",
+     "title": "Find Programs",
+     "desc": "List the office's bureaus, units, and initiatives (Our Work) by type, crime category, or diversion flag \u2014 including gun violence, hate crimes, white-collar crim",
+     "write": false
+    },
+    {
+     "name": "get_program",
+     "title": "Get Program",
+     "desc": "Fetch a bureau, unit, or initiative by its slug under /our-work/.",
+     "write": false
+    },
+    {
+     "name": "find_victim_services",
+     "title": "Find Victim Services",
+     "desc": "List victim and community resources by crime type (child abuse, elder abuse, financial crimes, human trafficking, intimate partner & sexual violence, hate crime",
+     "write": false
+    },
+    {
+     "name": "find_prosecution_statistics",
+     "title": "Find Prosecution Statistics",
+     "desc": "Return AGGREGATE caseload / prosecution figures (arraignments, indictments, dispositions, convictions, declinations, diversions) by reporting period, bureau, ca",
+     "write": false
+    },
+    {
+     "name": "find_offices",
+     "title": "Find Offices",
+     "desc": "List Manhattan DA office locations (Main Office at One Hogan Place plus community offices in Harlem and Washington Heights) with addresses and phone numbers.",
+     "write": false
+    },
+    {
+     "name": "submit_tip",
+     "title": "Submit a Tip",
+     "desc": "Submit a tip to a Manhattan DA bureau (report suspected financial fraud, elder abuse, human trafficking, a hate crime, public corruption, cybercrime, and more).",
+     "write": true
+    },
+    {
+     "name": "get_tip",
+     "title": "Get Tip Status",
+     "desc": "Fetch a previously submitted tip and its intake status by reference number. Requires the submitter to be authenticated; anonymous tips are not retrievable.",
+     "write": false
+    }
+   ]
+  },
+  {
    "id": "mocj",
    "agency": "NYC Mayor's Office of Criminal Justice (MOCJ)",
    "short": "NYC Criminal Justice (MOCJ)",
@@ -14284,6 +16403,341 @@
      "title": "Get My Subscription",
      "desc": "Read the authenticated subscriber's own Notify NYC subscription (channels, locations, categories, status) \u2014 today visible only inside the Everbridge Member Port",
      "write": false
+    }
+   ]
+  },
+  {
+   "id": "nypl",
+   "agency": "New York Public Library (NYPL)",
+   "short": "New York Public Library (NYPL)",
+   "verb": "lead",
+   "platform": "NYPL-owned open-source stack \u2014 Ruby on Rails Digital Collections API (api.repo.nypl.org), PHP Slim Locations API (refinery.nypl.org), Node/AWS discovery-api + Sierra ILS, accessibility-first React design system; site behind Imperva Incapsula",
+   "tagline": "NYPL is the counter-example: an independent nonprofit that already built and open-sourced genuinely good public APIs for its collections, locations, and catalog.",
+   "accent": "#b03a3a",
+   "netnew": "Hold (BookHold) \u2014 place and track a reservation on a catalog item via a clean, agent-native public API (backed by NYPL's existing internal hold services)",
+   "findings": [
+    "NYPL is the counter-example of this project: an independent nonprofit (serving Manhattan, the Bronx, and Staten Island) that has already built and operated genuinely good PUBLIC APIs for years \u2014 where nearly every city agency traps its data in HTML or a vendor CRM.",
+    "The Digital Collections API (api.repo.nypl.org/api/v2) is a real, token-authenticated public API over millions of digitized items \u2014 items/search, items/{uuid}, MODS metadata, captures, rights, and collections; built on Ruby on Rails.",
+    "The Locations API (refinery.nypl.org/api/nypl/locations/v1.0) is an OPEN, hypermedia (HAL) API publishing every branch with hours, amenities, accessibility, and links to events, exhibitions, and alerts; built on PHP Slim.",
+    "NYPL open-sources nearly its entire stack at github.com/NYPL \u2014 the Research Catalog discovery-api, an accessibility-first React design system (nypl-design-system), the nypl-core ontology, a web-based ebook reader, and patron/hold/Sierra microservices. Ownership is exemplary.",
+    "NYC Open Data holds only 6 thin, mostly-stale NYPL datasets (2010-2011 branch-services stats + a facilities layer). NYPL's living data is on its own APIs, not NYC Open Data \u2014 a real finding, and the inverse of every other domain.",
+    "The remaining gaps are unification and one write: the three good APIs are separate contracts with different auth/hosts/shapes, and placing a HOLD (reservation) on a book \u2014 though backed by real internal services (on-site-hold-request-service, patron-eligibility-service, nypl-hold-request-consumer) \u2014 has no clean, documented, agent-native public API. See apis-observed.md and tech-stack.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "api.repo.nypl.org/api/v2",
+     "type": "public REST API (token auth)",
+     "owner": "NYPL",
+     "public": "token-authenticated",
+     "note": "Digital Collections API. items/search, items/{uuid}, items/mods/{uuid}, items/rights/{uuid}, collections, collections/{uuid}. Returns 401 'HTTP Basic: Access denied' without a registered token. Ruby on Rails + Phusion Passenger + nginx. A real, mature NYPL-owned API."
+    },
+    {
+     "endpoint": "refinery.nypl.org/api/nypl/locations/v1.0/locations",
+     "type": "public REST API (open, hypermedia)",
+     "owner": "NYPL",
+     "public": true,
+     "note": "Locations API. locations, locations/{id}, plus HAL _links to /events, /exhibitions, /alerts, /amenities, /blogs. Rich payload: hours_data, geolocation, access, contacts, fundraising. PHP Slim (NYPL\\Refinery\\Server). Fully open."
+    },
+    {
+     "endpoint": "github.com/NYPL/discovery-api",
+     "type": "open-source API + service",
+     "owner": "NYPL",
+     "public": true,
+     "note": "The primary API supporting the NYPL Research Catalog. Node/AWS. Backed by the Sierra ILS (ruby-sierra-api-client) and a stream of patron/hold microservices."
+    },
+    {
+     "endpoint": "github.com/NYPL (org)",
+     "type": "open-source org",
+     "owner": "NYPL",
+     "public": true,
+     "note": "nypl-design-system (accessibility-first React, 80 stars), web-reader (ebook reader), nypl-core (ontology), on-site-hold-request-service, nypl-hold-request-consumer, patron-eligibility-service, dgx-patron-creator-service, nypl-library-card-app, barcode-service. Exemplary open ownership."
+    },
+    {
+     "endpoint": "www.nypl.org",
+     "type": "web app",
+     "owner": "NYPL (behind Imperva Incapsula)",
+     "public": "html",
+     "note": "Patron-facing site + Research Catalog UI. Edge-obscured by Incapsula; front end uses the NYPL design system. Where patrons place holds today, inside an authenticated account."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Only 6 NYPL datasets, mostly stale 2010-2011 branch-services stats + a facilities layer. Not where NYPL's real data lives."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 6,
+    "schemas": 6,
+    "openapiOps": 13,
+    "mcpTools": 11,
+    "entities": 6
+   },
+   "entities": [
+    "DigitalItem",
+    "Collection",
+    "Branch",
+    "Event",
+    "CatalogItem",
+    "Hold"
+   ],
+   "files": {
+    "fruit": "nypl/fruit.json",
+    "opendata": "nypl/opendata-nypl.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-nypl.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/nypl.yaml",
+    "mcp": "mcp/nypl-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYPL \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across New York Public Library (NYPL) object schemas. Reconciles fields common to NYPL's own public "
+    },
+    {
+     "file": "schemas/branch.json",
+     "title": "Branch",
+     "shared": false,
+     "desc": "An NYPL location \u2014 a neighborhood branch or research center \u2014 from NYPL's own public Locations API (refinery.nypl.org/api/nypl/locations/v1."
+    },
+    {
+     "file": "schemas/catalog-item.json",
+     "title": "CatalogItem",
+     "shared": false,
+     "desc": "A bibliographic record (book, ebook, film, etc.) in the NYPL Research Catalog / circulating catalog \u2014 the Bib object behind NYPL's discovery"
+    },
+    {
+     "file": "schemas/collection.json",
+     "title": "Collection",
+     "shared": false,
+     "desc": "A NYPL Digital Collections collection \u2014 a curated grouping of digitized items, from NYPL's own public Digital Collections API (api.repo.nypl"
+    },
+    {
+     "file": "schemas/digital-item.json",
+     "title": "DigitalItem",
+     "shared": false,
+     "desc": "A digitized item in NYPL Digital Collections \u2014 the core object of NYPL's own public Digital Collections API (api.repo.nypl.org/api/v2). Reco"
+    },
+    {
+     "file": "schemas/event.json",
+     "title": "Event",
+     "shared": false,
+     "desc": "A public program, class, or exhibition at an NYPL location. Surfaced today through the Locations API events link (refinery.nypl.org/.../loca"
+    },
+    {
+     "file": "schemas/hold.json",
+     "title": "Hold",
+     "shared": false,
+     "desc": "A patron's hold / reservation on a catalog item (a BookHold) \u2014 placed against a CatalogItem and delivered to a pickup Branch. This is the ne"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/digital-items",
+     "op": "listDigitalItems",
+     "summary": "Search NYPL Digital Collections",
+     "tags": [
+      "DigitalCollections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/digital-items/{uuid}",
+     "op": "getDigitalItem",
+     "summary": "Get a digital item by UUID",
+     "tags": [
+      "DigitalCollections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/collections",
+     "op": "listCollections",
+     "summary": "List Digital Collections collections",
+     "tags": [
+      "DigitalCollections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/collections/{uuid}",
+     "op": "getCollection",
+     "summary": "Get a collection by UUID",
+     "tags": [
+      "DigitalCollections"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/branches",
+     "op": "listBranches",
+     "summary": "List NYPL locations (branches and research centers)",
+     "tags": [
+      "Locations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/branches/{slug}",
+     "op": "getBranch",
+     "summary": "Get a location by slug",
+     "tags": [
+      "Locations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/branches/{slug}/events",
+     "op": "getBranchEvents",
+     "summary": "List upcoming events at a location",
+     "tags": [
+      "Events"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/events",
+     "op": "listEvents",
+     "summary": "Search public programs and exhibitions",
+     "tags": [
+      "Events"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/catalog",
+     "op": "listCatalogItems",
+     "summary": "Search the Research / circulating catalog",
+     "tags": [
+      "Catalog"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/catalog/{bibId}",
+     "op": "getCatalogItem",
+     "summary": "Get a bibliographic record by bib id",
+     "tags": [
+      "Catalog"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/holds",
+     "op": "listHolds",
+     "summary": "List the authenticated patron's holds",
+     "tags": [
+      "Holds"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/holds",
+     "op": "placeHold",
+     "summary": "Place a hold (reservation) on a catalog item",
+     "tags": [
+      "Holds"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/holds/{holdId}",
+     "op": "getHold",
+     "summary": "Get one of the patron's holds",
+     "tags": [
+      "Holds"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "search_digital_collections",
+     "title": "Search Digital Collections",
+     "desc": "Search NYPL Digital Collections digitized items by free text, research division, and public-domain status.",
+     "write": false
+    },
+    {
+     "name": "get_digital_item",
+     "title": "Get Digital Item",
+     "desc": "Fetch a NYPL Digital Collections item (metadata, captures, rights) by UUID.",
+     "write": false
+    },
+    {
+     "name": "list_collections",
+     "title": "List Collections",
+     "desc": "List or search NYPL Digital Collections collections.",
+     "write": false
+    },
+    {
+     "name": "find_branches",
+     "title": "Find Branches",
+     "desc": "List NYPL locations (branches and research centers) by borough, type, and open-now status, with hours and amenities.",
+     "write": false
+    },
+    {
+     "name": "get_branch",
+     "title": "Get Branch",
+     "desc": "Fetch one NYPL location (hours, amenities, access, contacts, links) by slug.",
+     "write": false
+    },
+    {
+     "name": "get_branch_events",
+     "title": "Get Branch Events",
+     "desc": "List upcoming public programs and exhibitions at a specific NYPL location.",
+     "write": false
+    },
+    {
+     "name": "find_events",
+     "title": "Find Events",
+     "desc": "Search NYPL public programs, classes, and exhibitions across locations by text, branch, type, audience, or date range.",
+     "write": false
+    },
+    {
+     "name": "search_catalog",
+     "title": "Search Catalog",
+     "desc": "Search the NYPL Research and circulating catalog (books, ebooks, film, and more), filtering by material type, language, collection, and holdability.",
+     "write": false
+    },
+    {
+     "name": "get_catalog_item",
+     "title": "Get Catalog Item",
+     "desc": "Fetch a NYPL catalog bibliographic record and its copies/availability by bib id.",
+     "write": false
+    },
+    {
+     "name": "list_my_holds",
+     "title": "List My Holds",
+     "desc": "List the authenticated patron's own holds/reservations and their status \u2014 today reachable only inside the patron's Research Catalog account.",
+     "write": false
+    },
+    {
+     "name": "place_hold",
+     "title": "Place a Hold",
+     "desc": "Place a hold (reservation) on a NYPL catalog item for pickup at a branch. NET-NEW agent-native workflow \u2014 NYPL runs the internal hold/eligibility services but h",
+     "write": true
     }
    ]
   },
@@ -15752,6 +18206,622 @@
    ]
   },
   {
+   "id": "queensda",
+   "agency": "Queens County District Attorney",
+   "short": "Queens District Attorney",
+   "verb": "structure",
+   "platform": "WordPress 7.0.1 (Divi + Beaver Builder + WPML) on Kinsta behind Cloudflare; FacetWP search; self-hosted Matomo",
+   "tagline": "A prosecutor's office that publishes 1,200+ press releases and, by accident, already has an API \u2014 WordPress REST \u2014 but no designed contract, no open data, and no way in.",
+   "accent": "#d9922a",
+   "netnew": "TipSubmission \u2014 submit a tip, cold-case lead, or FOIL request (no inbound channel today)",
+   "findings": [
+    "Queens DA is a new distinct pattern: it publishes prolifically (1,557 WordPress posts, 1,216 press releases) and that content is ALREADY machine-readable \u2014 but through an ACCIDENTAL API (the fully-exposed WordPress REST API, wp-json/wp/v2), not a designed one.",
+    "There is NO NYC Open Data corpus for a District Attorney \u2014 verified zero Socrata datasets across four agency labels. DAs are county/state prosecutorial agencies and do not publish to NYC Open Data.",
+    "The prosecution lifecycle (arraignment 131 \u2192 charges 127 \u2192 indictment 119 \u2192 court-case 378 \u2192 conviction) exists only as press-release prose tagged by WordPress category; there is no structured Case resource.",
+    "The one genuinely structured dataset is trapped in prose: the cold-case / unidentified-persons initiative encodes NamUs case numbers, sex, age range, and date/location found inside post TITLES (e.g. 'MALE 4-12-2014 NAMUS UP13060').",
+    "There is NO inbound write channel at all \u2014 tips, cold-case leads, and FOIL records requests go by phone or a static contact page. That is the net-new WRITE surface.",
+    "All five NYC borough DA offices run the same functions on similar WordPress stacks \u2014 this is the strongest candidate yet for ONE shared, five-borough DA API rather than five accidental REST APIs."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "queensda.org/wp-json/wp/v2",
+     "type": "content API (accidental)",
+     "owner": "Queens DA (WordPress core)",
+     "public": true,
+     "note": "The WordPress REST API is fully exposed: 1,557 posts, 60 pages, categories, tags, media. Machine-readable but undesigned, uncontracted, and unofficial \u2014 press releases, court-case posts, and cold-case posts all readable as JSON. The de facto Queens DA API."
+    },
+    {
+     "endpoint": "queensda.org/wp-json/facetwp/v1/fetch",
+     "type": "faceted search API",
+     "owner": "Queens DA (FacetWP plugin)",
+     "public": true,
+     "note": "FacetWP powers on-site faceted search; its /refresh and /fetch endpoints are exposed under wp-json."
+    },
+    {
+     "endpoint": "queensda.org/wp-json/matomo/v1",
+     "type": "analytics API namespace",
+     "owner": "Queens DA (self-hosted Matomo)",
+     "public": "namespace present",
+     "note": "Self-hosted Matomo (first-party analytics) integrated into WordPress \u2014 notable choice for a public agency over pure third-party tracking."
+    },
+    {
+     "endpoint": "queensda.org/wp-json/wpml/v1",
+     "type": "translation/multilingual API",
+     "owner": "Queens DA (WPML)",
+     "public": "namespace present",
+     "note": "WPML drives the multilingual site (translation state for 15+ strings); explains per-language content."
+    },
+    {
+     "endpoint": "google-site-kit / yoast namespaces",
+     "type": "SEO + analytics connectors",
+     "owner": "Google / Yoast",
+     "public": "namespace present",
+     "note": "Google Site Kit and Yoast SEO REST namespaces present \u2014 third-party analytics/SEO tooling."
+    },
+    {
+     "endpoint": "Cloudflare edge + Kinsta hosting",
+     "type": "CDN + managed WordPress host",
+     "owner": "Cloudflare / Kinsta",
+     "public": "infra",
+     "note": "server: cloudflare; x-kinsta-cache / ki-edge headers; x-redirect-by: WordPress. Managed WordPress on Kinsta behind Cloudflare."
+    },
+    {
+     "endpoint": "NYC Open Data (Socrata)",
+     "type": "open data API",
+     "owner": "NYC / Socrata",
+     "public": "N/A",
+     "note": "NO Queens DA presence \u2014 zero datasets across four agency-label queries. DAs do not publish to NYC Open Data."
+    },
+    {
+     "endpoint": "FOIL records request",
+     "type": "manual records channel",
+     "owner": "Queens DA",
+     "public": "manual, no API",
+     "note": "Freedom of Information Law requests are the formal data-access path; handled manually via the Resources page. No API."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 0,
+    "schemas": 7,
+    "openapiOps": 11,
+    "mcpTools": 9,
+    "entities": 7
+   },
+   "entities": [
+    "PressRelease",
+    "Case",
+    "ColdCase",
+    "Program",
+    "CommunityResource",
+    "VictimService",
+    "TipSubmission"
+   ],
+   "files": {
+    "fruit": "queensda/fruit.json",
+    "opendata": "queensda/opendata-queensda.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-queensda.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/queensda.yaml",
+    "mcp": "mcp/queensda-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Queens DA \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across Queens County District Attorney (queensda.org) object schemas. There is NO NYC Open Data corp"
+    },
+    {
+     "file": "schemas/case.json",
+     "title": "Case",
+     "shared": false,
+     "desc": "A criminal prosecution (People v. \u2026) as it appears on the PUBLIC record and is announced by the Queens County DA. There is NO structured cas"
+    },
+    {
+     "file": "schemas/cold-case.json",
+     "title": "ColdCase",
+     "shared": false,
+     "desc": "A Queens DA cold case \u2014 chiefly the office's unidentified/identified human-remains initiative (WordPress categories cold-cases 67, unidentif"
+    },
+    {
+     "file": "schemas/community-resource.json",
+     "title": "CommunityResource",
+     "shared": false,
+     "desc": "A resource the Queens DA points the public to \u2014 the items on the Resources page (Conviction Integrity Unit, Property Release information, Fr"
+    },
+    {
+     "file": "schemas/press-release.json",
+     "title": "PressRelease",
+     "shared": false,
+     "desc": "A Queens County District Attorney press release, statement, or announcement \u2014 the dominant object on queensda.org (1,216 posts in the 'press"
+    },
+    {
+     "file": "schemas/program.json",
+     "title": "Program",
+     "shared": false,
+     "desc": "A Queens DA program, initiative, or diversion offering \u2014 the community-facing side of the office (e.g. A Bridge to Change, Brave Justice, Bl"
+    },
+    {
+     "file": "schemas/tip-submission.json",
+     "title": "TipSubmission",
+     "shared": false,
+     "desc": "A tip, case inquiry, or records (FOIL) request submitted TO the Queens County DA. NET-NEW: there is NO write surface on queensda.org today \u2014"
+    },
+    {
+     "file": "schemas/victim-service.json",
+     "title": "VictimService",
+     "shared": false,
+     "desc": "A victim/witness support service offered or referred by the Queens County DA (advocacy, safety planning, compensation guidance, court accomp"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/press-releases",
+     "op": "listPressReleases",
+     "summary": "List / search press releases, statements, and announcements",
+     "tags": [
+      "PressReleases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/press-releases/{id}",
+     "op": "getPressRelease",
+     "summary": "Get a press release by ID",
+     "tags": [
+      "PressReleases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/cases",
+     "op": "listCases",
+     "summary": "Search public-record prosecution activity",
+     "tags": [
+      "Cases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/cases/{id}",
+     "op": "getCase",
+     "summary": "Get a case by ID",
+     "tags": [
+      "Cases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/cold-cases",
+     "op": "listColdCases",
+     "summary": "Search cold cases and unidentified/identified persons",
+     "tags": [
+      "ColdCases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/cold-cases/{id}",
+     "op": "getColdCase",
+     "summary": "Get a cold case by ID",
+     "tags": [
+      "ColdCases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs",
+     "op": "listPrograms",
+     "summary": "List community programs and initiatives",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/resources",
+     "op": "listCommunityResources",
+     "summary": "List public resources (FOIL, property release, helplines, access plans)",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/victim-services",
+     "op": "listVictimServices",
+     "summary": "List victim/witness support services",
+     "tags": [
+      "VictimServices"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/submissions",
+     "op": "createSubmission",
+     "summary": "Submit a tip, cold-case lead, case inquiry, or FOIL request",
+     "tags": [
+      "Submissions"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/submissions/{submissionId}",
+     "op": "getSubmission",
+     "summary": "Check the status of a submission",
+     "tags": [
+      "Submissions"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_press_releases",
+     "title": "Find Press Releases",
+     "desc": "Search Queens DA press releases, statements, and announcements by kind, prosecution stage, date range, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_press_release",
+     "title": "Get Press Release",
+     "desc": "Fetch a single Queens DA press release by ID.",
+     "write": false
+    },
+    {
+     "name": "find_cases",
+     "title": "Find Cases",
+     "desc": "Search PUBLIC-RECORD prosecution activity (arraignment, charges, indictment, court case, conviction) structured from the press-release stream. Public record onl",
+     "write": false
+    },
+    {
+     "name": "get_case",
+     "title": "Get Case",
+     "desc": "Fetch a single public-record case by ID, including charges, division, disposition, and the press releases that announced it.",
+     "write": false
+    },
+    {
+     "name": "find_cold_cases",
+     "title": "Find Cold Cases",
+     "desc": "Search Queens DA cold cases and unidentified/identified persons \u2014 NamUs case number, sex, estimated age range, date and location found \u2014 recovered from post tit",
+     "write": false
+    },
+    {
+     "name": "find_programs",
+     "title": "Find Programs",
+     "desc": "List Queens DA community programs and initiatives (diversion, youth, violence prevention, reentry, conviction integrity, special initiatives) by category or sta",
+     "write": false
+    },
+    {
+     "name": "find_community_resources",
+     "title": "Find Community Resources",
+     "desc": "List public resources the office points to \u2014 FOIL records requests, property release, Conviction Integrity Unit, helplines, and language/disability access plans",
+     "write": false
+    },
+    {
+     "name": "find_victim_services",
+     "title": "Find Victim Services",
+     "desc": "List victim/witness support services (advocacy, safety planning, compensation, court accompaniment, helplines, interpreters). Describes services, not people.",
+     "write": false
+    },
+    {
+     "name": "submit_tip",
+     "title": "Submit a Tip",
+     "desc": "Create an inbound submission to the Queens DA \u2014 a crime tip, cold-case lead, case inquiry, or FOIL records request. NET-NEW workflow with no online channel toda",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "queenslibrary",
+   "agency": "Queens Public Library (QPL)",
+   "short": "Queens Public Library (QPL)",
+   "verb": "federate",
+   "platform": "Drupal site (behind F5 BIG-IP WAF) + BiblioCommons catalog + Communico events + OverDrive/Libby/Axis 360/hoopla digital + Springshare help",
+   "tagline": "An independent nonprofit whose every patron surface is a separate vendor SaaS silo, with only its branch directory open.",
+   "accent": "#7a9a3a",
+   "netnew": "BookHold \u2014 place a hold/reservation on a catalog item (also: library-card application)",
+   "findings": [
+    "Queens Public Library is an INDEPENDENT NONPROFIT, not a city agency \u2014 so it publishes almost nothing to NYC Open Data: a single dataset, Queens Library Branches (kh3d-xhq7), under the agency label 'Queens Library (QBPL)'.",
+    "Everything a patron actually uses is composed from packaged SaaS silos, each with its own login and its own vendor API: the BiblioCommons catalog, Communico events, and the OverDrive/Libby, Axis 360, and hoopla digital-lending platforms. None is an owned QPL API.",
+    "The public site runs on Drupal behind an F5 BIG-IP WAF that rejects even a polite browser-UA crawl of content pages \u2014 the site itself has no public API and actively resists machine access.",
+    "The patron TRANSACTIONS \u2014 placing a hold, tracking holds, applying for a card \u2014 have no machine-readable contract at all; they live only behind a BiblioCommons login. Placing a hold (BookHold) is the net-new write surface.",
+    "The three NYC public library systems \u2014 Queens, Brooklyn (BPL), and The New York Public Library (NYPL) \u2014 are separate nonprofits with separate catalogs, cards, and vendor stacks. There is no shared NYC library API; that absence is the opportunity."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Exactly ONE QPL dataset \u2014 Queens Library Branches (kh3d-xhq7, 21c) under agency 'Queens Library (QBPL)'. The only open, owned-ish QPL data; branch directory only."
+    },
+    {
+     "endpoint": "queenslibrary.bibliocommons.com",
+     "type": "catalog / discovery layer (SaaS)",
+     "owner": "BiblioCommons (vendor)",
+     "public": "public search UI; login for account",
+     "note": "The catalog, patron account, holds, and card live here. x-version 'nerf15 9.35.0'. A BiblioCommons partner API + widgets/RSS exist, but there is no owned QPL API. Holds and cards are behind login."
+    },
+    {
+     "endpoint": "queens.libnet.info / connect.queenslibrary.org",
+     "type": "events platform (SaaS)",
+     "owner": "Communico (vendor)",
+     "public": "public UI + vendor API",
+     "note": "Server: Communico. All programs/events; embedded on the queenslibrary.org calendar. Communico exposes a vendor API, not an owned QPL contract."
+    },
+    {
+     "endpoint": "queenslibrary.overdrive.com",
+     "type": "digital lending (SaaS)",
+     "owner": "OverDrive / Libby (vendor)",
+     "public": "public UI; login to borrow",
+     "note": "eBooks/eAudiobooks/eMagazines. Companion silos: Axis 360 and hoopla. Each has its own vendor API and its own catalog; none federated by QPL."
+    },
+    {
+     "endpoint": "qpl.libanswers.com",
+     "type": "FAQ / chat / help (SaaS)",
+     "owner": "Springshare (vendor)",
+     "public": "public",
+     "note": "LibAnswers (x-backend springyaws.com); QPL's help/FAQ knowledge base. Vendor-owned."
+    },
+    {
+     "endpoint": "www.queenslibrary.org",
+     "type": "informational site",
+     "owner": "QPL (Drupal, behind F5 BIG-IP)",
+     "public": "html (WAF-gated)",
+     "note": "Drupal (taxonomy/term URL scheme, /core/ paths). F5 BIG-IP ASM WAF rejects browser-UA crawls of content pages. No content API."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 1,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "Branch",
+    "CatalogItem",
+    "Event",
+    "DigitalCollection",
+    "LibraryCard",
+    "BookHold"
+   ],
+   "files": {
+    "fruit": "queenslibrary/fruit.json",
+    "opendata": "queenslibrary/opendata-queenslibrary.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-queenslibrary.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/queenslibrary.yaml",
+    "mcp": "mcp/queenslibrary-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Queens Public Library \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across Queens Public Library (QPL) object schemas. Reconciles fields common to the one QPL Open Data"
+    },
+    {
+     "file": "schemas/book-hold.json",
+     "title": "BookHold",
+     "shared": false,
+     "desc": "A hold / reservation placed by a patron on a Queens Public Library catalog item, to be picked up at a chosen branch. NET-NEW: there is NO ow"
+    },
+    {
+     "file": "schemas/branch.json",
+     "title": "Branch",
+     "shared": false,
+     "desc": "A Queens Public Library branch / location \u2014 the core physical unit of the system, and the ONLY QPL entity with an open, machine-readable twi"
+    },
+    {
+     "file": "schemas/catalog-item.json",
+     "title": "CatalogItem",
+     "shared": false,
+     "desc": "A bibliographic record (title) in the Queens Public Library catalog \u2014 a book, audiobook, DVD, or other holding. NO open API and NO Open Data"
+    },
+    {
+     "file": "schemas/digital-collection.json",
+     "title": "DigitalCollection",
+     "shared": false,
+     "desc": "A digital-lending title (or the collection it belongs to) borrowable with a QPL card \u2014 eBooks, eAudiobooks, eMagazines, eComics, and streami"
+    },
+    {
+     "file": "schemas/event.json",
+     "title": "Event",
+     "shared": false,
+     "desc": "A Queens Public Library event or program (story time, computer class, author talk, ESOL session, etc.). NO Open Data twin and NO owned API: "
+    },
+    {
+     "file": "schemas/library-card.json",
+     "title": "LibraryCard",
+     "shared": false,
+     "desc": "A Queens Public Library card and the application to obtain one \u2014 the resident's identity for borrowing, holds, digital lending, and computer"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/branches",
+     "op": "listBranches",
+     "summary": "List / search Queens Public Library branches",
+     "tags": [
+      "Branches"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/branches/{branchId}",
+     "op": "getBranch",
+     "summary": "Get a branch by id",
+     "tags": [
+      "Branches"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/catalog",
+     "op": "listCatalogItems",
+     "summary": "Search the catalog",
+     "tags": [
+      "Catalog"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/catalog/{itemId}",
+     "op": "getCatalogItem",
+     "summary": "Get a catalog item",
+     "tags": [
+      "Catalog"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/events",
+     "op": "listEvents",
+     "summary": "List / search library events and programs",
+     "tags": [
+      "Events"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/digital-collections",
+     "op": "listDigitalCollections",
+     "summary": "Search digital-lending titles across platforms",
+     "tags": [
+      "Digital"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/holds",
+     "op": "listHolds",
+     "summary": "List the authenticated patron's holds",
+     "tags": [
+      "Holds"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/holds",
+     "op": "placeHold",
+     "summary": "Place a hold (book hold)",
+     "tags": [
+      "Holds"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/holds/{holdId}",
+     "op": "getHold",
+     "summary": "Get a hold",
+     "tags": [
+      "Holds"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/library-cards",
+     "op": "applyForLibraryCard",
+     "summary": "Apply for a library card",
+     "tags": [
+      "Cards"
+     ],
+     "write": true
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_branches",
+     "title": "Find Branches",
+     "desc": "Search Queens Public Library branches by borough, council district, ZIP, and/or free text. The one open, machine-readable QPL dataset.",
+     "write": false
+    },
+    {
+     "name": "get_branch",
+     "title": "Get Branch",
+     "desc": "Fetch a QPL branch (address, phone, hours, geography) by id.",
+     "write": false
+    },
+    {
+     "name": "search_catalog",
+     "title": "Search Catalog",
+     "desc": "Search the QPL bibliographic catalog (books, audiobooks, DVDs) by keyword, author, format, or ISBN. Today reachable only through the BiblioCommons discovery lay",
+     "write": false
+    },
+    {
+     "name": "get_catalog_item",
+     "title": "Get Catalog Item",
+     "desc": "Fetch a single catalog item (title, author, format, availability, holds) by BiblioCommons id.",
+     "write": false
+    },
+    {
+     "name": "find_events",
+     "title": "Find Events",
+     "desc": "Search QPL events and programs (story times, computer classes, author talks, ESOL) by branch, program type, audience, or date range. Managed in Communico.",
+     "write": false
+    },
+    {
+     "name": "find_digital_collections",
+     "title": "Find Digital Collections",
+     "desc": "Search digital-lending titles (eBooks, eAudiobooks, eMagazines, streaming) across OverDrive/Libby, Axis 360, and hoopla \u2014 federated into one model \u2014 by platform",
+     "write": false
+    },
+    {
+     "name": "list_my_holds",
+     "title": "List My Holds",
+     "desc": "List the authenticated patron's own holds and their status/queue position \u2014 today visible only inside the BiblioCommons account.",
+     "write": false
+    },
+    {
+     "name": "place_hold",
+     "title": "Place a Hold",
+     "desc": "Place a hold/reservation on a QPL catalog item for pickup at a chosen branch (book hold). NET-NEW workflow with no owned public API today \u2014 it lives only inside",
+     "write": true
+    },
+    {
+     "name": "apply_for_library_card",
+     "title": "Apply for a Library Card",
+     "desc": "Submit a QPL library card application (Full or the world-available $50/year Digital card). NET-NEW workflow with no owned public API today \u2014 it lives behind a l",
+     "write": true
+    }
+   ]
+  },
+  {
    "id": "sbs",
    "agency": "NYC Department of Small Business Services (SBS)",
    "short": "NYC Small Business Services (SBS)",
@@ -16053,6 +19123,299 @@
    ]
   },
   {
+   "id": "sca",
+   "agency": "NYC School Construction Authority (SCA)",
+   "short": "NYC School Construction Authority (SCA)",
+   "verb": "onboard",
+   "platform": "DotNetNuke (DNN) ASP.NET CMS (obvio skin) behind AWS ALB, content in Azure Blob; login-walled bidset SharePoint vendor portal",
+   "tagline": "SCA opens its whole capital pipeline and its approved-vendor list as data, but the act of becoming a vendor stays locked in a SharePoint login.",
+   "accent": "#b0862a",
+   "netnew": "VendorPrequalification \u2014 apply to become a prequalified SCA vendor",
+   "findings": [
+    "SCA is a vendor-facing agency on a fifth distinct platform: a DotNetNuke (DNN) ASP.NET CMS (obvio skin) behind an AWS load balancer with content in Azure Blob Storage \u2014 after Parks' Smarty/PHP, DOE's Sitefinity/.NET, Council's WordPress, and NYCHA's Livesite + Oracle Siebel.",
+    "The reference data is unusually OPEN and procurement-rich: 43 NYC Open Data datasets covering the capital plan (active projects, schedules and budgets, capacity by school), the forward pipeline (upcoming CIP/CAP contracts, current and anticipated RFPs, change orders), the approved-vendor roster (prequalified and disqualified firms), enrollment/capacity demand, and inspections.",
+    "But the VENDOR TRANSACTION layer is locked: bid documents and the prequalification workflow live only behind the login-walled bidset.nycsca.org SharePoint portal and PDF forms. The thing a vendor most wants to do \u2014 get prequalified and transact on a bid \u2014 has no machine-readable contract.",
+    "SCA publishes the RESULT of prequalification (the Prequalified Firms roster, szkz-syh6) as Open Data, but never the ACT of applying \u2014 a clean read/write mismatch.",
+    "The /WS/Reports/ path looks like a web service but returns DNN-rendered HTML; there is no JSON/OpenAPI surface anywhere on the site. See tech-stack.md and apis-observed.md.",
+    "Net-new write surface: apply to become a prequalified vendor (VendorPrequalification) \u2014 the everyday vendor onboarding transaction, with no API today."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "43 SCA datasets; SODA /resource/<id>.json endpoints. The one real, open SCA API \u2014 capital-plan, procurement, vendor-roster, capacity, and inspection reference data."
+    },
+    {
+     "endpoint": "bidset.nycsca.org",
+     "type": "vendor bid-document portal (SharePoint)",
+     "owner": "SCA (Microsoft SharePoint)",
+     "public": "login-walled UI, no API",
+     "note": "Online Bidsets \u2014 bid documents and the vendor transaction layer. _layouts/OnlineBidsetsLogin/CustomLogin.aspx custom login; no JSON/OpenAPI."
+    },
+    {
+     "endpoint": "www.nycsca.org/WS/Reports/type/advbids",
+     "type": "DNN report page (advertised bids)",
+     "owner": "SCA (DotNetNuke)",
+     "public": "html",
+     "note": "Looks like a web service ('WS') but returns a rendered DNN HTML page, not JSON. No machine-readable contract."
+    },
+    {
+     "endpoint": "www.nycsca.org",
+     "type": "informational / vendor site",
+     "owner": "SCA (DotNetNuke on ASP.NET, obvio skin)",
+     "public": "html",
+     "note": "Capital plan, business/vendor guidance, RFPs. DNN CMS behind AWS ALB; content in Azure Blob (dnnhh5cc1.blob.core.windows.net). No content API."
+    },
+    {
+     "endpoint": "dnnhh5cc1.blob.core.windows.net",
+     "type": "object storage (documents)",
+     "owner": "Microsoft Azure Blob Storage",
+     "public": "SAS-signed URLs",
+     "note": "PDF general conditions, safety manuals, press \u2014 served via DNNFileManagerPolicy SAS signatures."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 43,
+    "schemas": 7,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 7
+   },
+   "entities": [
+    "CapitalProject",
+    "UpcomingContract",
+    "Solicitation",
+    "PrequalifiedFirm",
+    "EnrollmentCapacity",
+    "Inspection",
+    "VendorPrequalification"
+   ],
+   "files": {
+    "fruit": "sca/fruit.json",
+    "opendata": "sca/opendata-sca.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-sca.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/sca.yaml",
+    "mcp": "mcp/sca-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "SCA \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC School Construction Authority (SCA) object schemas. Reconciles fields common to the SCA O"
+    },
+    {
+     "file": "schemas/capital-project.json",
+     "title": "CapitalProject",
+     "shared": false,
+     "desc": "An SCA school-construction capital project \u2014 the core unit of the Authority's work: new schools, additions, capacity, and capital improvemen"
+    },
+    {
+     "file": "schemas/enrollment-capacity.json",
+     "title": "EnrollmentCapacity",
+     "shared": false,
+     "desc": "An enrollment / capacity / utilization record for a school building or organization \u2014 the demand signal that drives SCA's capital plan. Cano"
+    },
+    {
+     "file": "schemas/inspection.json",
+     "title": "Inspection",
+     "shared": false,
+     "desc": "An SCA construction inspection request and its observations/status \u2014 the field-inspection lifecycle on a school project. Canonical schema re"
+    },
+    {
+     "file": "schemas/prequalified-firm.json",
+     "title": "PrequalifiedFirm",
+     "shared": false,
+     "desc": "A vendor/contractor firm that SCA has prequalified to bid on work \u2014 the approved-vendor directory, plus a firm's disqualification status. Ca"
+    },
+    {
+     "file": "schemas/solicitation.json",
+     "title": "Solicitation",
+     "shared": false,
+     "desc": "An SCA Request for Proposals (RFP) / services solicitation \u2014 the professional-services procurement notices vendors respond to. Canonical sch"
+    },
+    {
+     "file": "schemas/upcoming-contract.json",
+     "title": "UpcomingContract",
+     "shared": false,
+     "desc": "An SCA construction/consultant contract expected to be advertised and awarded \u2014 the forward procurement pipeline vendors watch. Canonical sc"
+    },
+    {
+     "file": "schemas/vendor-prequalification.json",
+     "title": "VendorPrequalification",
+     "shared": false,
+     "desc": "An application by a firm to become an SCA-prequalified vendor (or to renew/add a trade) \u2014 the everyday vendor onboarding transaction. NET-NE"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/capital-projects",
+     "op": "listCapitalProjects",
+     "summary": "List / search SCA capital projects",
+     "tags": [
+      "CapitalProjects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/capital-projects/{buildingId}",
+     "op": "getCapitalProject",
+     "summary": "Get a capital project by Building ID",
+     "tags": [
+      "CapitalProjects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/upcoming-contracts",
+     "op": "listUpcomingContracts",
+     "summary": "List upcoming contracts to be awarded (CIP / CAP) and change orders",
+     "tags": [
+      "Procurement"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/solicitations",
+     "op": "listSolicitations",
+     "summary": "List SCA RFP solicitations (current and anticipated)",
+     "tags": [
+      "Procurement"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/vendors",
+     "op": "listVendors",
+     "summary": "List prequalified (and disqualified) vendor firms",
+     "tags": [
+      "Vendors"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/prequalifications",
+     "op": "listPrequalifications",
+     "summary": "List the authenticated firm's prequalification applications",
+     "tags": [
+      "Vendors"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/prequalifications",
+     "op": "createPrequalification",
+     "summary": "Apply to become a prequalified SCA vendor",
+     "tags": [
+      "Vendors"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/prequalifications/{applicationId}",
+     "op": "getPrequalification",
+     "summary": "Get a prequalification application",
+     "tags": [
+      "Vendors"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/enrollment-capacity",
+     "op": "listEnrollmentCapacity",
+     "summary": "Search enrollment / capacity / utilization records",
+     "tags": [
+      "Capacity"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/inspections",
+     "op": "listInspections",
+     "summary": "Search SCA construction inspection requests and observations",
+     "tags": [
+      "Inspections"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_capital_projects",
+     "title": "Find Capital Projects",
+     "desc": "Search SCA school-construction capital projects by borough, geographic (school) district, project type, status, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_capital_project",
+     "title": "Get Capital Project",
+     "desc": "Fetch an SCA capital project (schedule, budget, capacity, geography) by Building ID.",
+     "write": false
+    },
+    {
+     "name": "find_upcoming_contracts",
+     "title": "Find Upcoming Contracts",
+     "desc": "List SCA upcoming contracts to be awarded (CIP and CAP pipelines) and change-order events, by program, borough, geographic district, or category.",
+     "write": false
+    },
+    {
+     "name": "find_solicitations",
+     "title": "Find Solicitations",
+     "desc": "List SCA RFP solicitations (current and anticipated) by stage, department, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_vendors",
+     "title": "Find Vendors",
+     "desc": "Search the SCA prequalified vendor roster by trade code or M/WBE/local certification, or set disqualified=true to list firms currently barred from bidding.",
+     "write": false
+    },
+    {
+     "name": "find_enrollment_capacity",
+     "title": "Find Enrollment & Capacity",
+     "desc": "Search enrollment, capacity, and utilization records \u2014 the demand signal behind SCA's capital plan \u2014 by geographic district, building, or organization.",
+     "write": false
+    },
+    {
+     "name": "find_inspections",
+     "title": "Find Inspections",
+     "desc": "Search SCA construction inspection requests and observations by school code, borough, category, or date range.",
+     "write": false
+    },
+    {
+     "name": "list_my_prequalifications",
+     "title": "List My Prequalifications",
+     "desc": "List the authenticated firm's own vendor prequalification applications and their status \u2014 today trackable only inside the bidset SharePoint portal.",
+     "write": false
+    },
+    {
+     "name": "apply_for_prequalification",
+     "title": "Apply for Prequalification",
+     "desc": "Submit an SCA vendor prequalification application (become a prequalified firm). NET-NEW workflow with no public API today \u2014 it lives only as PDF forms and the b",
+     "write": true
+    }
+   ]
+  },
+  {
    "id": "statenislandbp",
    "agency": "Office of the Staten Island Borough President (BPSI)",
    "short": "Staten Island Borough President",
@@ -16341,6 +19704,275 @@
      "title": "Apply to a Community Board",
      "desc": "Submit a Staten Island community board membership application \u2014 the NET-NEW write surface that today is only an opaque Weebly form. Mutates state. The applicant",
      "write": true
+    }
+   ]
+  },
+  {
+   "id": "statenislandda",
+   "agency": "Office of the District Attorney, Richmond County (Staten Island DA)",
+   "short": "Staten Island District Attorney",
+   "verb": "surface",
+   "platform": "Self-hosted WordPress (Themeco 'Pro' theme) on SiteGround \u2014 off the NYC.gov platform, bot-walled by a SiteGround captcha",
+   "tagline": "A district attorney with no data, no API, and a marketing WordPress site the agents can't even read.",
+   "accent": "#7a5a9a",
+   "netnew": "TipSubmission \u2014 an API for the confidential drug/scam tip forms (today Contact Form 7 email only)",
+   "findings": [
+    "The prompt's rcda.nyc.gov is dead \u2014 the Staten Island DA's real site is statenislandda.org, self-hosted WordPress (Themeco 'Pro' theme) on SiteGround, entirely OFF the NYC.gov platform.",
+    "ZERO NYC Open Data / Socrata datasets under any Richmond County / Staten Island DA agency label (verified). The office publishes no data at all.",
+    "The core prosecution data is DARK: cases, dispositions, and diversion outcomes live only in an internal case-management system and surface, if ever, as prose in a press release \u2014 no API, no dataset, no structured record.",
+    "The site is bot-walled: a SiteGround captcha (/.well-known/sgcaptcha/) blocks crawlers and agents from even reading the HTML, and the latent WordPress REST API (/wp-json) is unreachable behind it \u2014 so the content is not agent-accessible.",
+    "The one real inbound transaction is a pair of Contact Form 7 email forms (/drug-tip-form/, /scam-tip-form/) with no API and no trackable ticket \u2014 the net-new WRITE surface: TipSubmission.",
+    "All five NYC borough DA offices share the same functions (press, programs, victim services, tips, caseload stats) yet run on five separate stacks \u2014 a strong candidate for ONE shared five-borough DA API."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "statenislandda.org (WordPress /wp-json)",
+     "type": "latent CMS REST API",
+     "owner": "Richmond County DA (self-hosted WordPress)",
+     "public": "present but bot-walled",
+     "note": "WordPress REST API exists (/wp-json/wp/v2/) but is unreachable behind the SiteGround captcha; undocumented and not intended as a public API. No OpenAPI."
+    },
+    {
+     "endpoint": "statenislandda.org/drug-tip-form/ + /scam-tip-form/",
+     "type": "Contact Form 7 (email intake)",
+     "owner": "Richmond County DA",
+     "public": "HTML form, no API",
+     "note": "The only inbound transaction \u2014 confidential drug/scam tips. Emails the office; no JSON contract, no ticket, no status read-back. The net-new WRITE surface."
+    },
+    {
+     "endpoint": "/.well-known/sgcaptcha/",
+     "type": "bot-protection challenge",
+     "owner": "SiteGround",
+     "public": "gate",
+     "note": "SiteGround CDN captcha; 202s and redirects non-human requests, blocking robots.txt, the sitemap, and /wp-json. Makes the whole site agent-inaccessible."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": "yes, but empty for this agency",
+     "note": "Verified ZERO datasets under any Richmond County / Staten Island DA label. The office has no Open Data presence."
+    }
+   ],
+   "counts": {
+    "fruit": 6,
+    "opendata": 0,
+    "schemas": 6,
+    "openapiOps": 9,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "PressRelease",
+    "Program",
+    "VictimService",
+    "CommunityResource",
+    "ProsecutionStatistics",
+    "TipSubmission"
+   ],
+   "files": {
+    "fruit": "statenislandda/fruit.json",
+    "opendata": "statenislandda/opendata-statenislandda.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-statenislandda.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/statenislandda.yaml",
+    "mcp": "mcp/statenislandda-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Staten Island DA \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across Office of the District Attorney, Richmond County (Staten Island DA) object schemas. Reconcile"
+    },
+    {
+     "file": "schemas/community-resource.json",
+     "title": "CommunityResource",
+     "shared": false,
+     "desc": "A public-safety advisory, scam alert, or community resource published by the Richmond County DA. Modeled from statenislandda.org/scams-infor"
+    },
+    {
+     "file": "schemas/press-release.json",
+     "title": "PressRelease",
+     "shared": false,
+     "desc": "A press release / news item published by the Office of the District Attorney, Richmond County. The office's single most-updated content type"
+    },
+    {
+     "file": "schemas/program.json",
+     "title": "Program",
+     "shared": false,
+     "desc": "A prosecution bureau, unit, or community initiative run by the Richmond County DA. Modeled from statenislandda.org/our-efforts/, which lists"
+    },
+    {
+     "file": "schemas/prosecution-statistics.json",
+     "title": "ProsecutionStatistics",
+     "shared": false,
+     "desc": "AGGREGATE prosecution / caseload statistics for the Richmond County DA \u2014 the office's core operational data, and the biggest gap. This is DA"
+    },
+    {
+     "file": "schemas/tip-submission.json",
+     "title": "TipSubmission",
+     "shared": false,
+     "desc": "A confidential tip submitted to the Richmond County DA \u2014 the office's one real inbound transaction. Today it exists ONLY as two Contact Form"
+    },
+    {
+     "file": "schemas/victim-service.json",
+     "title": "VictimService",
+     "shared": false,
+     "desc": "A victim/witness support service offered by the Richmond County DA \u2014 the office's public-facing help surface. Modeled from the Victim Servic"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/press-releases",
+     "op": "listPressReleases",
+     "summary": "List / search press releases",
+     "tags": [
+      "PressReleases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/press-releases/{slug}",
+     "op": "getPressRelease",
+     "summary": "Get a press release by slug",
+     "tags": [
+      "PressReleases"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs",
+     "op": "listPrograms",
+     "summary": "List / search programs and initiatives",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs/{slug}",
+     "op": "getProgram",
+     "summary": "Get a program by slug",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/victim-services",
+     "op": "listVictimServices",
+     "summary": "List victim and witness support services",
+     "tags": [
+      "VictimServices"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-resources",
+     "op": "listCommunityResources",
+     "summary": "List scam alerts and public-safety advisories",
+     "tags": [
+      "CommunityResources"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/prosecution-statistics",
+     "op": "listProsecutionStatistics",
+     "summary": "Aggregate caseload statistics (proposed)",
+     "tags": [
+      "ProsecutionStatistics"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/tips",
+     "op": "submitTip",
+     "summary": "Submit a confidential tip (net-new write)",
+     "tags": [
+      "Tips"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/tips/{tipId}",
+     "op": "getTip",
+     "summary": "Get the status of a submitted tip",
+     "tags": [
+      "Tips"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_press_releases",
+     "title": "Find Press Releases",
+     "desc": "Search the Richmond County DA's press releases by category, date range, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_press_release",
+     "title": "Get Press Release",
+     "desc": "Fetch a single press release by its WordPress slug.",
+     "write": false
+    },
+    {
+     "name": "find_programs",
+     "title": "Find Programs",
+     "desc": "List the office's prosecution bureaus, units, and community initiatives ('Our Efforts') by category or free text.",
+     "write": false
+    },
+    {
+     "name": "get_program",
+     "title": "Get Program",
+     "desc": "Fetch a single program / bureau / initiative by its slug.",
+     "write": false
+    },
+    {
+     "name": "find_victim_services",
+     "title": "Find Victim Services",
+     "desc": "List victim and witness support services offered by the office, by service type or free text.",
+     "write": false
+    },
+    {
+     "name": "find_community_resources",
+     "title": "Find Community Resources",
+     "desc": "List scam alerts, fraud-prevention notices, and public-safety advisories by resource type, audience, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_prosecution_statistics",
+     "title": "Find Prosecution Statistics",
+     "desc": "Return AGGREGATE caseload statistics by year and offense category (proposed \u2014 the office's dark data). Never returns an individual case or defendant.",
+     "write": false
+    },
+    {
+     "name": "submit_tip",
+     "title": "Submit a Tip",
+     "desc": "Submit a confidential drug or scam tip to the Richmond County DA. NET-NEW workflow with no public API today \u2014 it lives only in the Contact Form 7 email forms at",
+     "write": true
+    },
+    {
+     "name": "get_tip",
+     "title": "Get Tip Status",
+     "desc": "Read back the status of a previously submitted tip by its confidential reference. Requires the submitter's tip credential.",
+     "write": false
     }
    ]
   },

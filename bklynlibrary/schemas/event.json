@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bklynlibrary/schemas/event.json",
+  "title": "Event",
+  "description": "A Brooklyn Public Library event / program — story times, classes, author talks, workshops. Canonical schema reconciling BPL's public Drupal JSON:API 'node--event' (field_date, field_event_registration, field_registration_capacity, field_event_virtual, field_event_ptype …) and 'node--external_event', which today power the discover.bklynlibrary.org events calendar. Programs also carry a registration workflow that has no owned public API.",
+  "type": "object",
+  "x-source": {
+    "jsonapi_event": "https://www.bklynlibrary.org/jsonapi/node/event",
+    "jsonapi_external_event": "https://www.bklynlibrary.org/jsonapi/node/external_event",
+    "calendar": "https://discover.bklynlibrary.org/?event=true"
+  },
+  "properties": {
+    "id": { "type": ["string", "null"], "description": "Event UUID / node id.", "readOnly": true },
+    "title": { "type": "string", "description": "Event title ('title')." },
+    "description": { "type": ["string", "null"], "description": "Event description ('body')." },
+    "date": {
+      "type": "object",
+      "description": "Event date/time range ('field_date' — Drupal daterange).",
+      "properties": {
+        "start": { "type": ["string", "null"], "format": "date-time" },
+        "end": { "type": ["string", "null"], "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "programType": { "type": ["string", "null"], "description": "Program type ('field_event_ptype')." },
+    "audience": { "type": ["string", "null"], "description": "Target audience / age group." },
+    "branch": { "$ref": "_common.json#/$defs/BranchReference" },
+    "offsite": { "type": ["boolean", "string", "null"], "description": "Whether the event is offsite ('field_event_offsite')." },
+    "offsiteAddress": { "type": ["string", "null"], "description": "'field_event_offsite_address'." },
+    "virtual": { "type": ["boolean", "string", "null"], "description": "Virtual event flag ('field_event_virtual')." },
+    "hybrid": { "type": ["boolean", "string", "null"], "description": "'field_hybrid'." },
+    "virtualDetails": { "type": ["string", "null"], "description": "'field_event_virtual_details'." },
+    "public": { "type": ["boolean", "string", "null"], "description": "Public visibility ('field_event_public')." },
+    "instructor": { "type": ["string", "null"], "description": "'field_event_instructor'." },
+    "registration": {
+      "type": "object",
+      "description": "Program registration workflow ('field_event_registration', capacity/open/close).",
+      "properties": {
+        "required": { "type": ["boolean", "string", "null"], "description": "'field_event_registration'." },
+        "capacity": { "type": ["integer", "null"], "description": "'field_registration_capacity'." },
+        "opensAt": { "type": ["string", "null"], "format": "date-time", "description": "'field_registration_opening'." },
+        "closesAt": { "type": ["string", "null"], "format": "date-time", "description": "'field_registration_closing'." },
+        "externalUrl": { "type": ["string", "null"], "format": "uri", "description": "'field_other_registration' — external registration link." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

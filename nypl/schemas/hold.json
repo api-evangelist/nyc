@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypl/schemas/hold.json",
+  "title": "Hold",
+  "description": "A patron's hold / reservation on a catalog item (a BookHold) — placed against a CatalogItem and delivered to a pickup Branch. This is the net-new WRITE surface for the domain. NYPL already runs the pieces internally (on-site-hold-request-service, nypl-hold-request-consumer, patron-eligibility-service, ruby-sierra-api-client) and lets patrons place holds inside their authenticated account / the Research Catalog UI, but there is NO clean, documented, agent-native public hold API. This schema serves both the read surface (a patron's own holds) and the HoldRequest write surface (place a hold). Personal patron data is never exposed publicly — reads and writes require the authenticated patron.",
+  "type": "object",
+  "x-source": {
+    "existing_services": ["https://github.com/NYPL/on-site-hold-request-service", "https://github.com/NYPL/nypl-hold-request-consumer", "https://github.com/NYPL/patron-eligibility-service"],
+    "portal": "https://www.nypl.org/research/research-catalog",
+    "public_api": null,
+    "public_api_gap": true
+  },
+  "properties": {
+    "holdId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned hold id (Sierra hold number). Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Requested", "Ready for Pickup", "In Transit", "Frozen", "Fulfilled", "Cancelled", "Expired", null],
+      "description": "Hold lifecycle status. Set by NYPL, not the patron.",
+      "readOnly": true
+    },
+    "bibId": { "type": "string", "description": "The CatalogItem (bib) being placed on hold." },
+    "itemId": { "type": ["string", "null"], "description": "Specific copy (Sierra item id), when placing an item-level hold." },
+    "title": { "type": ["string", "null"], "description": "Denormalized title of the held item (returned on read).", "readOnly": true },
+    "pickupBranch": {
+      "allOf": [{ "$ref": "_common.json#/$defs/BranchReference" }],
+      "description": "The Branch where the patron will collect the item (Locations API slug)."
+    },
+    "requestType": {
+      "type": "string",
+      "enum": ["hold", "recall", "edd"],
+      "default": "hold",
+      "description": "hold = borrow when available; recall = request from another branch/ReCAP; edd = electronic document delivery (scan) for research items."
+    },
+    "neededBy": { "type": ["string", "null"], "format": "date", "description": "Optional 'not needed after' date." },
+    "notifyBy": {
+      "type": ["string", "null"],
+      "enum": ["email", "sms", "none", null],
+      "description": "How the patron wants to be notified when the hold is ready."
+    },
+    "placedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "readyDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "expirationDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "required": ["bibId", "pickupBranch"],
+  "additionalProperties": false
+}

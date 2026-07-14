@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/schemas/appointment-request.json",
+  "title": "AppointmentRequest",
+  "description": "NET-NEW write object: a request to book an appointment at NYC Health + Hospitals. This is the single most common patient transaction and it has NO machine-readable contract today — patients book by calling 1-844-NYC-4NYC or through a MyChart flow, and the live Epic FHIR R4 surface exposes NO Appointment create, NO Slot resource, and NO $book/$find scheduling operation. So even though H+H already runs a real FHIR standard, booking falls outside it. This schema is the request payload; a successful request yields an Appointment (see appointment.json). It intentionally models a 'request' (proposed) rather than a confirmed booking, matching how safety-net scheduling actually works (triage, callback, insurance/coverage check).",
+  "type": "object",
+  "x-fhir": { "resourceType": "Appointment", "note": "would map to Appointment.status=proposed / an Appointment $book request, neither exposed on the H+H FHIR endpoint today" },
+  "x-source": {
+    "portal": "https://mychart.nychhc.org/MyChart/",
+    "phone": "1-844-NYC-4NYC",
+    "fhir": null,
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "requestId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned request identifier. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "description": "Request lifecycle. Set by H+H, not the requester.",
+      "enum": ["Received", "In Review", "Scheduled", "Declined", "Cancelled", null],
+      "readOnly": true
+    },
+    "service": {
+      "type": "string",
+      "description": "The service line / specialty the appointment is for (e.g. 'Primary Care', 'Cardiology', 'Behavioral Health')."
+    },
+    "reason": { "type": ["string", "null"], "description": "Free-text reason for the visit." },
+    "facility": {
+      "$ref": "_common.json#/$defs/FacilityReference",
+      "description": "Preferred facility. Optional — H+H may triage to the nearest facility offering the service."
+    },
+    "preferredProviderId": { "type": ["string", "null"], "description": "Optional preferred provider." },
+    "visitType": {
+      "type": ["string", "null"],
+      "enum": ["In-Person", "Telehealth (Video)", "Telephone", "No Preference", null],
+      "default": "No Preference"
+    },
+    "newPatient": { "type": ["boolean", "null"], "description": "Whether the requester is a new patient to H+H." },
+    "preferredDates": {
+      "type": "array",
+      "description": "Preferred date windows, in priority order.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "from": { "type": ["string", "null"], "format": "date" },
+          "to": { "type": ["string", "null"], "format": "date" },
+          "partOfDay": { "type": ["string", "null"], "enum": ["Morning", "Afternoon", "Evening", "Any", null] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "urgent": { "type": "boolean", "default": false, "description": "Flag time-sensitive (but non-emergency) requests. True emergencies must call 911 or go to an Emergency Department, not book here." },
+    "patient": {
+      "type": "object",
+      "description": "Requester details. For an authenticated MyChart patient these may be inferred from the token.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "dateOfBirth": { "type": ["string", "null"], "format": "date" },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "mrn": { "type": ["string", "null"], "description": "H+H Medical Record Number, if known." },
+        "preferredLanguage": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "coverage": {
+      "type": "object",
+      "description": "Coverage / financial context, so intake can route to NYC Care or financial counseling when there is no insurance.",
+      "properties": {
+        "hasInsurance": { "type": ["boolean", "null"] },
+        "nycCareMember": { "type": ["boolean", "null"] },
+        "needsFinancialAssistance": { "type": ["boolean", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "notes": { "type": ["string", "null"], "description": "Additional notes or accommodation needs (interpreter, accessibility)." },
+    "createdDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "resultingAppointmentId": { "type": ["string", "null"], "description": "If scheduled, the id of the resulting Appointment.", "readOnly": true }
+  },
+  "required": ["service"],
+  "additionalProperties": false
+}

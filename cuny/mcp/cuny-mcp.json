@@ -1,0 +1,159 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces CUNY's federated reference data (campuses, degree programs, courses, aggregate enrollment, faculty/research) and adds submit_application — the net-new write workflow locked today inside CUNYfirst (Oracle PeopleSoft Campus Solutions).",
+    "openapi": "../openapi/cuny.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.cuny",
+    "title": "City University of New York (CUNY)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the City University of New York — the ~25 colleges and schools, their degree programs, course catalog, and aggregate enrollment/demographics, plus faculty and research, federated behind one contract, plus the net-new ability to submit and track a CUNY admissions application that today lives only in the CUNYfirst PeopleSoft self-service screens.",
+    "instructions": "Use find_campuses / get_campus to locate CUNY colleges by borough or type (senior, community, graduate/professional, honors). find_programs / get_program search degree and certificate programs across all campuses; find_courses searches the course catalog (today locked in CUNYfirst). find_enrollment_statistics returns AGGREGATE demographics only — CUNY never exposes an individual student record (FERPA). find_faculty_research surfaces faculty and CUNY Academic Works output. submit_application (net-new) creates a CUNY admissions application; it requires an authenticated applicant and mutates state — confirm applicant type, admit term, and campus choices with the user before submitting. Note: CUNY publishes nothing under a CUNY agency label on NYC Open Data, so all reference data here is federated from cuny.edu and CUNYfirst, not Socrata."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_campuses",
+      "title": "Find Campuses",
+      "description": "Search CUNY colleges and schools by borough, type (senior/community/graduate/honors), and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "type": { "type": "string", "enum": ["Senior College", "Community College", "Graduate/Professional School", "Honors College", "Other"] },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/campus.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCampuses"
+    },
+    {
+      "name": "get_campus",
+      "title": "Get Campus",
+      "description": "Fetch a CUNY college/school (type, address, enrollment, geography) by CUNYfirst institution code.",
+      "inputSchema": { "type": "object", "properties": { "institutionCode": { "type": "string" } }, "required": ["institutionCode"] },
+      "outputSchema": { "$ref": "../schemas/campus.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCampus"
+    },
+    {
+      "name": "find_programs",
+      "title": "Find Programs",
+      "description": "Search CUNY degree and certificate programs by campus, degree type, field, modality, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "campus": { "type": "string" },
+          "degreeType": { "type": "string", "enum": ["Associate", "Bachelor's", "Master's", "Doctoral", "Certificate", "Advanced Certificate", "Other"] },
+          "field": { "type": "string" },
+          "modality": { "type": "string", "enum": ["In Person", "Online", "Hybrid"] },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/degree-program.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPrograms"
+    },
+    {
+      "name": "get_program",
+      "title": "Get Program",
+      "description": "Fetch a CUNY degree or certificate program by program ID.",
+      "inputSchema": { "type": "object", "properties": { "programId": { "type": "string" } }, "required": ["programId"] },
+      "outputSchema": { "$ref": "../schemas/degree-program.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getProgram"
+    },
+    {
+      "name": "find_courses",
+      "title": "Find Courses",
+      "description": "Search the CUNY course catalog by campus, subject, term, or modality — the catalog data today locked in the CUNYfirst PeopleSoft catalog browse.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "campus": { "type": "string" },
+          "subject": { "type": "string" },
+          "term": { "type": "string" },
+          "modality": { "type": "string", "enum": ["In Person", "Online", "Hybrid"] },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/course.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCourses"
+    },
+    {
+      "name": "find_enrollment_statistics",
+      "title": "Find Enrollment Statistics",
+      "description": "Return AGGREGATE enrollment and demographics by campus and term (headcount, full/part-time, undergrad/grad, race/ethnicity, Pell). Never returns individual students.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "campus": { "type": "string" },
+          "term": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/enrollment-statistics.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listEnrollmentStatistics"
+    },
+    {
+      "name": "find_faculty_research",
+      "title": "Find Faculty & Research",
+      "description": "Search CUNY faculty and research output by campus, department, or research area — bridging faculty directories and the CUNY Academic Works repository.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "campus": { "type": "string" },
+          "department": { "type": "string" },
+          "researchArea": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/faculty-research.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listFacultyResearch"
+    },
+    {
+      "name": "list_my_applications",
+      "title": "List My Applications",
+      "description": "List the authenticated applicant's own CUNY admissions applications and their status — today visible only inside the CUNYfirst self-service screens.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Draft", "Submitted", "Under Review", "Admitted", "Waitlisted", "Denied", "Deposit Paid", "Withdrawn"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/admissions-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listApplications",
+      "x-auth": "user"
+    },
+    {
+      "name": "submit_application",
+      "title": "Submit a CUNY Application",
+      "description": "Create and submit a CUNY admissions application (one application covering multiple campuses). NET-NEW workflow with no public API today — it lives only in the CUNYfirst PeopleSoft self-service screens. Requires an authenticated applicant. Mutates state — confirm applicant type, admit term, and campus choices first.",
+      "inputSchema": { "$ref": "../schemas/admissions-application.json" },
+      "outputSchema": { "$ref": "../schemas/admissions-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createApplication",
+      "x-auth": "user"
+    }
+  ]
+}

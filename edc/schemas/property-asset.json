@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/edc/schemas/property-asset.json",
+  "title": "PropertyAsset",
+  "description": "A piece of EDC-managed real estate — one of the ~60 million square feet of city-owned property (industrial parks, markets, piers, campuses, retail, ground leases) that EDC stewards on behalf of the City. MODELED ENTITY: EDC's asset portfolio is central to its mission but has NO Open Data dataset and NO public API. Schema reverse-engineered from how EDC describes its real estate; keyed on BBL and asset identifier.",
+  "type": "object",
+  "x-source": {
+    "site": "https://edc.nyc/work-with-us/real-estate",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "assetId": { "type": ["string", "null"], "description": "EDC asset / property identifier." },
+    "name": { "type": "string", "description": "Asset name (e.g. Brooklyn Army Terminal, Hunts Point, Sunset Park)." },
+    "assetType": {
+      "type": ["string", "null"],
+      "description": "Type of managed asset.",
+      "enum": ["Industrial Park", "Market", "Pier / Waterfront", "Campus", "Retail", "Office", "Ground Lease", "Development Site", "Other", null]
+    },
+    "status": { "type": ["string", "null"], "description": "Availability / management status (e.g. Managed, Available, Leased, In Disposition)." },
+    "neighborhood": { "type": ["string", "null"], "description": "Neighborhood." },
+    "squareFeet": { "type": ["number", "null"], "description": "Rentable / managed square footage." },
+    "acres": { "type": ["number", "null"], "description": "Site acreage." },
+    "tenants": { "type": ["integer", "null"], "description": "Approximate number of tenants, if disclosed." },
+    "program": { "$ref": "_common.json#/$defs/IncentiveProgram" },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Asset page on edc.nyc." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

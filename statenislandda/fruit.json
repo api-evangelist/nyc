@@ -1,0 +1,116 @@
+{
+  "domain": "statenislandda",
+  "agency": "Office of the District Attorney, Richmond County (Staten Island DA)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA). The prompt's rcda.nyc.gov does not resolve — it is a dead legacy address (last live on Wayback ~2007); the office's real, current site is statenislandda.org. Live crawling is blocked: statenislandda.org sits behind a SiteGround bot-protection captcha (/.well-known/sgcaptcha/) that 202s and redirects every non-human request, including robots.txt and the sitemap, so the site was fingerprinted from response headers (nginx, x-sg-cdn, SiteGround 'nevercache' cookie, x-ce us-east4) plus a decompressed Wayback Machine snapshot (2026-07-01). Fingerprinted the stack as self-hosted WordPress (Themeco 'Pro'/'pro-child' theme) with Contact Form 7, Slider Revolution 7.0.14, Essential Grid, Custom Twitter Feeds Pro, WP Accessibility, Google Language Translator, and Perfmatters. Enumerated pages via Wayback CDX. Verified via the Socrata Discovery API that the agency has ZERO Open Data assets under any label.",
+  "related_domains": ["manhattanda.org", "brooklynda.gov", "queensda.org", "bronxda.nyc.gov", "statenislandusa.com"],
+  "headline_findings": [
+    "The prompt's rcda.nyc.gov is dead — the Staten Island DA's real site is statenislandda.org, self-hosted WordPress (Themeco 'Pro' theme) on SiteGround, entirely OFF the NYC.gov platform.",
+    "ZERO NYC Open Data / Socrata datasets under any Richmond County / Staten Island DA agency label (verified). The office publishes no data at all.",
+    "The core prosecution data is DARK: cases, dispositions, and diversion outcomes live only in an internal case-management system and surface, if ever, as prose in a press release — no API, no dataset, no structured record.",
+    "The site is bot-walled: a SiteGround captcha (/.well-known/sgcaptcha/) blocks crawlers and agents from even reading the HTML, and the latent WordPress REST API (/wp-json) is unreachable behind it — so the content is not agent-accessible.",
+    "The one real inbound transaction is a pair of Contact Form 7 email forms (/drug-tip-form/, /scam-tip-form/) with no API and no trackable ticket — the net-new WRITE surface: TipSubmission.",
+    "All five NYC borough DA offices share the same functions (press, programs, victim services, tips, caseload stats) yet run on five separate stacks — a strong candidate for ONE shared five-borough DA API."
+  ],
+  "apis_observed": [
+    { "endpoint": "statenislandda.org (WordPress /wp-json)", "type": "latent CMS REST API", "owner": "Richmond County DA (self-hosted WordPress)", "public": "present but bot-walled", "note": "WordPress REST API exists (/wp-json/wp/v2/) but is unreachable behind the SiteGround captcha; undocumented and not intended as a public API. No OpenAPI." },
+    { "endpoint": "statenislandda.org/drug-tip-form/ + /scam-tip-form/", "type": "Contact Form 7 (email intake)", "owner": "Richmond County DA", "public": "HTML form, no API", "note": "The only inbound transaction — confidential drug/scam tips. Emails the office; no JSON contract, no ticket, no status read-back. The net-new WRITE surface." },
+    { "endpoint": "/.well-known/sgcaptcha/", "type": "bot-protection challenge", "owner": "SiteGround", "public": "gate", "note": "SiteGround CDN captcha; 202s and redirects non-human requests, blocking robots.txt, the sitemap, and /wp-json. Makes the whole site agent-inaccessible." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": "yes, but empty for this agency", "note": "Verified ZERO datasets under any Richmond County / Staten Island DA label. The office has no Open Data presence." }
+  ],
+  "fruit": [
+    {
+      "name": "Press Releases",
+      "type": "news / content",
+      "entity": "PressRelease",
+      "url": "https://www.statenislandda.org/news-press-releases/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The office's most-updated content type (also /news/, /press/). WordPress posts rendered as themed HTML; a latent /wp-json/wp/v2/posts exists but is captcha-walled. No Open Data twin."
+    },
+    {
+      "name": "Programs & Initiatives ('Our Efforts')",
+      "type": "directory / content",
+      "entity": "Program",
+      "url": "https://www.statenislandda.org/our-efforts/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Domestic Violence Bureau, Animal Cruelty Prosecution Unit, Firearms Anti-Violence Unit, Anti-Drug Initiatives, Cash for Guns / Gun Buy Back, SI HOPE (Heroin, Overdose Prevention and Education), the Overdose Response Initiative, Saturday Night Lights, RCDA Youth Advisory Council, 'Stand Up. Stop Bullying.' contest, ShotSpotter/camera installs. HTML only."
+    },
+    {
+      "name": "Victim & Witness Services",
+      "type": "services / content",
+      "entity": "VictimService",
+      "url": "https://www.statenislandda.org/our-efforts/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Victim Services Unit and Victim and Witness Assistance Program — crisis support, court accompaniment, compensation-claim help. HTML only; no machine-readable eligibility or intake contract."
+    },
+    {
+      "name": "Scam & Safety Advisories",
+      "type": "consumer-protection content",
+      "entity": "CommunityResource",
+      "url": "https://www.statenislandda.org/scams-information/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Fraud/scam warnings (especially for seniors) and public-safety tips the office wants residents to act on. HTML pages with no feed or API."
+    },
+    {
+      "name": "Prosecution / Caseload Statistics (aggregate)",
+      "type": "operational data (dark)",
+      "entity": "ProsecutionStatistics",
+      "url": "https://www.statenislandda.org/news-press-releases/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The office's core data — cases prosecuted, dispositions, diversions — is entirely DARK. It lives in an internal case-management system and appears, if at all, only as prose in press releases. No dataset, no API. Proposed as an AGGREGATE-only, never-per-defendant surface."
+    },
+    {
+      "name": "Submit a confidential tip",
+      "type": "sign-up / ticket workflow",
+      "entity": "TipSubmission",
+      "url": "https://www.statenislandda.org/drug-tip-form/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single real inbound transaction — a confidential drug or scam tip. Today ONLY a Contact Form 7 email form (/drug-tip-form/ with fields senders-name/address/email/phone, name-of-suspect, alias, suspect-description, vehicle-description, location-description; and /scam-tip-form/). No API, no ticket, no status. The net-new WRITE surface for this domain."
+    }
+  ],
+  "meta": {
+    "short": "Staten Island District Attorney",
+    "verb": "surface",
+    "platform": "Self-hosted WordPress (Themeco 'Pro' theme) on SiteGround — off the NYC.gov platform, bot-walled by a SiteGround captcha",
+    "netnew": "TipSubmission — an API for the confidential drug/scam tip forms (today Contact Form 7 email only)",
+    "accent": "#7a5a9a",
+    "tagline": "A district attorney with no data, no API, and a marketing WordPress site the agents can't even read.",
+    "headline": "The Staten Island DA publishes zero data and locks its one transaction — a confidential tip — inside a Contact Form 7 email form on a bot-walled WordPress site, while its core prosecution data stays entirely dark; the fix is one owned API, ideally shared across all five borough DA offices."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 1,
+    "openData": 0,
+    "coreData": 0,
+    "writeApi": 1,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Real CMS (WordPress) but off the NYC.gov chassis, on commercial SiteGround, and bot-walled",
+    "siteApi": "Latent WordPress /wp-json exists but is captcha-walled, undocumented, and not a real public API",
+    "openData": "Zero Socrata datasets under any DA label — verified",
+    "coreData": "Prosecution/caseload data entirely dark; no dataset, no schema, no structured public record",
+    "writeApi": "A write path exists (two Contact Form 7 tip forms) but as email only — no API, no ticket, no status",
+    "agent": "SiteGround captcha blocks crawlers and agents from reading the site; no MCP, no structured data",
+    "ownership": "Owns its own domain and self-hosted WordPress, but publishes no data and depends on a commercial host"
+  }
+}

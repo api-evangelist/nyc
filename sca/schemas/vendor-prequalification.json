@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sca/schemas/vendor-prequalification.json",
+  "title": "VendorPrequalification",
+  "description": "An application by a firm to become an SCA-prequalified vendor (or to renew/add a trade) — the everyday vendor onboarding transaction. NET-NEW: there is NO public API for prequalification. SCA publishes the RESULTING roster ('Prequalified Firms' szkz-syh6) as Open Data, but the act of applying happens only through PDF forms and the login-walled bidset SharePoint portal. This schema serves both the write surface (submit an application) and the read surface (track an application's status).",
+  "type": "object",
+  "x-source": {
+    "roster_opendata": "https://data.cityofnewyork.us/d/szkz-syh6",
+    "bidset_portal": "https://bidset.nycsca.org/",
+    "site": "https://www.nycsca.org/Vendor/Prequalification",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned prequalification application number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Under Review", "Additional Info Requested", "Approved", "Denied", "Withdrawn", null],
+      "description": "Application lifecycle status. Set by SCA, not the applicant.",
+      "readOnly": true
+    },
+    "vendorName": { "type": "string", "description": "Legal name of the applying firm." },
+    "requestType": {
+      "type": "string",
+      "enum": ["New", "Renewal", "Add Trade", "Reinstatement"],
+      "description": "Whether this is a new prequalification, a renewal, an added trade, or a reinstatement after disqualification."
+    },
+    "tradeCode": { "type": "string", "description": "Master Trade Code the firm is applying to be prequalified in." },
+    "tradeDescription": { "type": ["string", "null"], "description": "Human-readable trade the firm performs." },
+    "contact": {
+      "type": "object",
+      "description": "Primary contact for the application.",
+      "properties": {
+        "contactPerson": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "street": { "type": ["string", "null"] },
+        "city": { "type": ["string", "null"] },
+        "state": { "type": ["string", "null"] },
+        "zipCode": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "certifications": {
+      "type": "object",
+      "description": "Self-declared business certifications, subject to SCA/city verification.",
+      "properties": {
+        "minorityBusiness": { "type": ["boolean", "null"] },
+        "womenBusiness": { "type": ["boolean", "null"] },
+        "localBusiness": { "type": ["boolean", "null"] },
+        "overMillionDollarRevenue": { "type": ["boolean", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "attachments": {
+      "type": "array",
+      "description": "Supporting documents (financials, references, licenses) uploaded with the application.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "documentType": { "type": ["string", "null"] },
+          "url": { "type": ["string", "null"], "format": "uri" }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "decisionDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "required": ["vendorName", "requestType", "tradeCode"],
+  "additionalProperties": false
+}

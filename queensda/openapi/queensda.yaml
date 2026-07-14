@@ -1,0 +1,379 @@
+openapi: 3.1.0
+info:
+  title: Queens District Attorney API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the Queens County District Attorney — turning the office's
+    prolific press-release narrative into structured resources (press releases, cases, cold cases,
+    programs, resources, victim services) and adding the missing inbound write surface: submitting a
+    tip, a cold-case lead, or a FOIL records request.
+  description: >-
+    Proposed API-first surface for the Queens County District Attorney (queensda.org), from the NYC
+    Modernization low-hanging-fruit assessment.
+
+
+    Queens DA is a new distinct pattern. It publishes an enormous amount — 1,557 WordPress posts,
+    1,216 of them press releases — and, unusually, that content is already machine-readable through an
+    **accidental** API: the WordPress REST API (`wp-json/wp/v2`) is fully exposed, along with a FacetWP
+    faceted-search endpoint and a self-hosted Matomo analytics namespace. But there is **no NYC Open
+    Data corpus** for a District Attorney (verified: zero Socrata datasets), and nothing on the site is
+    a *designed* API: the prosecution lifecycle (arraignment → charges → indictment → court case →
+    conviction) exists only as prose tagged by WordPress category, the cold-case / unidentified-persons
+    initiative encodes NamUs IDs in post titles, and there is **no inbound write channel at all** —
+    tips, leads, and FOIL requests go by phone or a static contact page.
+
+
+    This contract does two things: (1) presents the narrative content as structured resources so a
+    resident, journalist, or agent can actually query cases and cold cases; and (2) adds the one
+    net-new **write** workflow — submitting a **tip / cold-case lead / FOIL request**.
+
+
+    Because all five NYC borough DA offices run the same functions on similar stacks, this contract is
+    drafted to be shared: one five-borough DA API rather than five accidental WordPress REST APIs.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.queensda.org/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: PressReleases
+    description: Press releases, statements, and announcements — the office's dominant content.
+  - name: Cases
+    description: Public-record prosecution activity, structured from press-release prose.
+  - name: ColdCases
+    description: Cold cases and the unidentified/identified human-remains initiative (NamUs).
+  - name: Programs
+    description: Community programs, diversion initiatives, and resources.
+  - name: VictimServices
+    description: Victim/witness support services.
+  - name: Submissions
+    description: Inbound tips, cold-case leads, case inquiries, and FOIL requests (read + write). The net-new surface, absent today.
+
+paths:
+  /press-releases:
+    get:
+      operationId: listPressReleases
+      summary: List / search press releases, statements, and announcements
+      tags: [PressReleases]
+      parameters:
+        - name: kind
+          in: query
+          schema: { type: string, enum: [press-release, statement, announcement, press-clip, newsletter] }
+        - name: stage
+          in: query
+          schema: { type: string, enum: [arrest, arraignment, charges, indictment, trial, conviction, sentencing, other] }
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of press releases.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/press-release.json' } }
+  /press-releases/{id}:
+    get:
+      operationId: getPressRelease
+      summary: Get a press release by ID
+      tags: [PressReleases]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The press release.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/press-release.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /cases:
+    get:
+      operationId: listCases
+      summary: Search public-record prosecution activity
+      description: Cases structured from the arraignments / charges / indictments / court-cases press-release stream. Public record only.
+      tags: [Cases]
+      parameters:
+        - name: stage
+          in: query
+          schema: { type: string, enum: [arraignment, charges, indictment, pre-trial, trial, conviction, sentencing, appeal, closed] }
+        - name: division
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of cases.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/case.json' } }
+  /cases/{id}:
+    get:
+      operationId: getCase
+      summary: Get a case by ID
+      tags: [Cases]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The case.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/case.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /cold-cases:
+    get:
+      operationId: listColdCases
+      summary: Search cold cases and unidentified/identified persons
+      description: The one genuinely structured dataset — NamUs ID, sex, age range, date and location found — recovered from post titles/bodies.
+      tags: [ColdCases]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [unidentified, identified] }
+        - name: caseType
+          in: query
+          schema: { type: string, enum: [unidentified-person, missing-person, unsolved-homicide] }
+        - name: sex
+          in: query
+          schema: { type: string, enum: [Male, Female, Unknown] }
+        - name: namusId
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of cold cases.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/cold-case.json' } }
+  /cold-cases/{id}:
+    get:
+      operationId: getColdCase
+      summary: Get a cold case by ID
+      tags: [ColdCases]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The cold case.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/cold-case.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /programs:
+    get:
+      operationId: listPrograms
+      summary: List community programs and initiatives
+      tags: [Programs]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string, enum: [diversion, youth, community-partnership, violence-prevention, reentry, conviction-integrity, special-initiative, other] }
+        - name: status
+          in: query
+          schema: { type: string, enum: [active, archived, rfp-open] }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of programs.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/program.json' } }
+
+  /resources:
+    get:
+      operationId: listCommunityResources
+      summary: List public resources (FOIL, property release, helplines, access plans)
+      tags: [Programs]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string, enum: [records-request, property-release, conviction-integrity, helpline, language-access, disability-access, victim-service, other] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of resources.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/community-resource.json' } }
+
+  /victim-services:
+    get:
+      operationId: listVictimServices
+      summary: List victim/witness support services
+      tags: [VictimServices]
+      parameters:
+        - name: serviceType
+          in: query
+          schema: { type: string }
+        - name: language
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of victim services.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/victim-service.json' } }
+
+  /submissions:
+    post:
+      operationId: createSubmission
+      summary: Submit a tip, cold-case lead, case inquiry, or FOIL request
+      description: >-
+        The net-new write surface — an inbound channel that does not exist today. Tips and cold-case
+        leads may be submitted anonymously (`anonymous=true`); FOIL requests generally require contact
+        details. Nothing here is published; submissions are routed to the office.
+      tags: [Submissions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/tip-submission.json' }
+      responses:
+        '201':
+          description: Submission received.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/tip-submission.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /submissions/{submissionId}:
+    get:
+      operationId: getSubmission
+      summary: Check the status of a submission
+      tags: [Submissions]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The submission.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/tip-submission.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    PressRelease: { $ref: '../schemas/press-release.json' }
+    Case: { $ref: '../schemas/case.json' }
+    ColdCase: { $ref: '../schemas/cold-case.json' }
+    Program: { $ref: '../schemas/program.json' }
+    CommunityResource: { $ref: '../schemas/community-resource.json' }
+    VictimService: { $ref: '../schemas/victim-service.json' }
+    TipSubmission: { $ref: '../schemas/tip-submission.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    from:
+      name: from
+      in: query
+      schema: { type: string, format: date }
+    to:
+      name: to
+      in: query
+      schema: { type: string, format: date }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

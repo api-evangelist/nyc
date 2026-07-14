@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynda/schemas/program.json",
+  "title": "Program",
+  "description": "A Brooklyn DA program, bureau, unit, or initiative — the office's diversion, re-entry, conviction-review, and public-safety offerings. Today these exist only as WordPress pages (e.g. /re-entry-programs/, /youth-diversion-and-initiatives/, /red-hook-community-court/, /virtual-currency-unit/) reachable via the WP REST API (/wp-json/wp/v2/pages). There is no structured program directory and no Open Data twin; this schema proposes the canonical structured record.",
+  "type": "object",
+  "x-source": {
+    "wp_rest": "https://www.brooklynda.org/wp-json/wp/v2/pages",
+    "site": "https://www.brooklynda.org/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "id": { "type": ["integer", "string", "null"], "description": "WordPress page ID." },
+    "slug": { "type": ["string", "null"], "description": "URL slug (e.g. 'youth-diversion-and-initiatives')." },
+    "name": { "type": "string", "description": "Program / bureau / unit name." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Page permalink." },
+    "type": {
+      "type": ["string", "null"],
+      "description": "What kind of offering this is.",
+      "enum": ["Bureau", "Unit", "Diversion Program", "Re-Entry Program", "Conviction Review", "Community Court", "Task Force", "Initiative", "Accountability", "Other", null]
+    },
+    "bureau": { "$ref": "_common.json#/$defs/Bureau" },
+    "description": { "type": ["string", "null"], "description": "Program summary (from page content)." },
+    "eligibility": { "type": ["string", "null"], "description": "Who the program serves / eligibility criteria, where stated." },
+    "audience": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Populations served (e.g. Youth, Young Adults, Elderly, Immigrants, Tenants, Domestic Violence Survivors).",
+      "examples": [["Young Adults"], ["Immigrants"], ["Tenants"]]
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "address": { "type": ["string", "null"] },
+        "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "contactPhone": { "type": ["string", "null"] },
+    "contactEmail": { "type": ["string", "null"], "format": "email" },
+    "languages": { "type": "array", "items": { "$ref": "_common.json#/$defs/Language" }, "description": "Languages the program's materials are offered in." }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

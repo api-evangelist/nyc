@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypl/schemas/digital-item.json",
+  "title": "DigitalItem",
+  "description": "A digitized item in NYPL Digital Collections — the core object of NYPL's own public Digital Collections API (api.repo.nypl.org/api/v2). Reconciles the item / MODS / captures / rights responses (items/search, items/{uuid}, items/mods/{uuid}, items/rights/{uuid}) into one resource. Keyed on the NYPL UUID. Metadata is exposed via a real, token-authenticated public API — the reason NYPL is this project's counter-example.",
+  "type": "object",
+  "x-source": {
+    "api": "https://api.repo.nypl.org/api/v2/items/search",
+    "item": "https://api.repo.nypl.org/api/v2/items/{uuid}",
+    "mods": "https://api.repo.nypl.org/api/v2/items/mods/{uuid}",
+    "rights": "https://api.repo.nypl.org/api/v2/items/rights/{uuid}",
+    "site": "https://digitalcollections.nypl.org/"
+  },
+  "properties": {
+    "uuid": { "type": "string", "description": "NYPL Digital Collections UUID — the primary key across the Digital Collections API." },
+    "title": { "type": "string", "description": "Item title (MODS titleInfo)." },
+    "typeOfResource": { "type": ["string", "null"], "description": "MODS typeOfResource (e.g. still image, text, cartographic)." },
+    "genre": { "type": ["array", "null"], "items": { "type": "string" }, "description": "MODS genre term(s)." },
+    "names": {
+      "type": ["array", "null"],
+      "description": "Associated agents (creator, contributor) from MODS name.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "role": { "type": ["string", "null"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "dateIssued": { "type": ["string", "null"], "description": "MODS originInfo dateIssued / dateCreated." },
+    "publisher": { "type": ["string", "null"], "description": "MODS originInfo publisher." },
+    "physicalDescription": { "type": ["string", "null"], "description": "MODS physicalDescription." },
+    "subjects": { "type": ["array", "null"], "items": { "type": "string" }, "description": "MODS subject headings." },
+    "collection": { "type": ["string", "null"], "description": "Parent collection / container title." },
+    "division": { "type": ["string", "null"], "description": "NYPL research division holding the original (ResearchDivision), e.g. 'Photography Collection, Miriam and Ira D. Wallach Division'." },
+    "publicDomain": { "type": ["boolean", "null"], "description": "Whether the item is in the public domain (drives the publicDomainOnly search filter)." },
+    "rightsStatement": { "type": ["string", "null"], "description": "Use-and-reproduction rights (items/rights/{uuid})." },
+    "imageLinks": {
+      "type": ["array", "null"],
+      "description": "Capture image URLs at various sizes (items/{uuid} captures / imageLinks).",
+      "items": { "type": "string", "format": "uri" }
+    },
+    "captureCount": { "type": ["integer", "null"], "description": "Number of digitized captures (pages/views) under the item." },
+    "itemLink": { "type": ["string", "null"], "format": "uri", "description": "Public digitalcollections.nypl.org page for the item." }
+  },
+  "required": ["uuid", "title"],
+  "additionalProperties": false
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxda/schemas/tip-submission.json",
+  "title": "TipSubmission",
+  "description": "A submission FROM the public TO the Bronx District Attorney — a crime tip, a Civilian Complaint Unit complaint of police misconduct, a witness contact, or a records (FOIL) request. NET-NEW: there is NO public API and NO structured intake today. A tip or complaint is a phone call to 718-590-2300 (Civilian Complaint Unit) and a FOIL request is a plain email to FOILREQUEST@BRONXDA.NYC.GOV — neither returns a tracking number or status. This schema serves both the write surface (submit) and the read surface (check the status of one's own submission).",
+  "type": "object",
+  "x-source": {
+    "civilian_complaint": "https://www.bronxda.nyc.gov/html/contact/civilian-complaint-unit.shtml",
+    "foil": "https://www.bronxda.nyc.gov/html/newsroom/foil-requests.shtml",
+    "correspondence": "https://www.bronxda.nyc.gov/html/contact/correspondence.shtml",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "submissionId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned tracking number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Received", "Under Review", "Referred", "Closed", "Info Requested", null],
+      "description": "Lifecycle status. Set by the office, not the submitter.",
+      "readOnly": true
+    },
+    "type": {
+      "type": "string",
+      "description": "What kind of submission this is.",
+      "enum": ["Crime Tip", "Civilian Complaint", "Witness Contact", "FOIL Request", "General Correspondence"]
+    },
+    "subject": { "type": "string", "description": "Short subject line." },
+    "details": { "type": "string", "description": "Free-text description — the tip, complaint, or records requested." },
+    "complaintAbout": {
+      "type": ["string", "null"],
+      "description": "For a Civilian Complaint: the nature of the allegation (e.g. police misconduct or brutality).",
+      "enum": ["Police Misconduct", "Police Brutality", "Other Crime", "Prosecutorial Conduct", null]
+    },
+    "incidentDate": { "type": ["string", "null"], "format": "date", "description": "Date of the incident, if applicable." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "anonymous": { "type": "boolean", "default": false, "description": "Submit without providing contact details. Anonymous submissions cannot receive a status update." },
+    "contact": {
+      "type": "object",
+      "description": "Submitter contact details (omit if anonymous).",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "recordsRequested": { "type": ["string", "null"], "description": "For a FOIL Request: description of the records sought." },
+    "office": { "$ref": "_common.json#/$defs/OfficeReference" },
+    "routedTo": { "$ref": "_common.json#/$defs/Bureau" },
+    "createdDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "acknowledgedDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "required": ["type", "subject", "details"],
+  "additionalProperties": false
+}

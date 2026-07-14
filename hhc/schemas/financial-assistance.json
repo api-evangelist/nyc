@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/schemas/financial-assistance.json",
+  "title": "FinancialAssistance",
+  "description": "A financial-assistance or coverage program offered by NYC Health + Hospitals — the sliding-scale fee schedule (Options / HHC Options), NYC Care (the guaranteed-access program for New Yorkers who cannot get insurance), financial counseling, and Medicaid/insurance enrollment help. H+H is the safety-net system, so this is a first-class entity. No FHIR analogue and no Open Data twin; today it is HTML-only on the bot-walled site plus in-person financial counseling.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nychealthandhospitals.org/help-paying-your-bill/",
+    "nyc_care": "https://www.nyccare.nyc/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "programId": { "type": "string", "description": "Program identifier." },
+    "name": { "type": "string", "description": "Program name (e.g. 'NYC Care', 'HHC Options sliding-scale')." },
+    "programType": {
+      "type": ["string", "null"],
+      "enum": ["Sliding-Scale (Options)", "NYC Care", "Financial Counseling", "Medicaid Enrollment", "Charity Care", "Insurance Navigation", "Other", null]
+    },
+    "description": { "type": ["string", "null"] },
+    "eligibilitySummary": { "type": ["string", "null"], "description": "Plain-language eligibility summary (e.g. income thresholds, residency, immigration-status-blind)." },
+    "immigrationStatusBlind": { "type": ["boolean", "null"], "description": "Whether eligibility is available regardless of immigration status (true for NYC Care and the sliding scale)." },
+    "coversUninsured": { "type": ["boolean", "null"] },
+    "incomeBasedSlidingScale": { "type": ["boolean", "null"] },
+    "applyUrl": { "type": ["string", "null"], "format": "uri" },
+    "phone": { "type": ["string", "null"], "description": "Enrollment / counseling phone number (e.g. 1-646-NYC-CARE)." },
+    "languagesSupported": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["programId", "name"],
+  "additionalProperties": false
+}

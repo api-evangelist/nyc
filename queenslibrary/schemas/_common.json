@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queenslibrary/schemas/_common.json",
+  "title": "Queens Public Library — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across Queens Public Library (QPL) object schemas. Reconciles fields common to the one QPL Open Data dataset (data.cityofnewyork.us — 'Queens Library Branches', agency label 'Queens Library (QBPL)'), the queenslibrary.org Drupal site, and the packaged SaaS platforms QPL runs on: the BiblioCommons catalog (queenslibrary.bibliocommons.com), Communico events (queens.libnet.info / connect.queenslibrary.org), and the OverDrive/Libby, Axis 360, and hoopla digital-lending silos. Includes the NYC geography spine, a shared BranchReference, and a Vendor enum naming the third-party platforms that own each surface.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "description": "NYC borough. QPL is the public library system for Queens, so branches are effectively all Queens; the full enum is kept as the shared NYC geography spine.",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Open Data LATITUDE / LONGITUDE / 'Point').",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine carried by the Queens Library Branches dataset — the join keys back to the rest of city government.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board ('Community Board')." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district ('Council District')." },
+        "censusTract": { "type": ["string", "null"], "description": "Census tract ('Census Tract')." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code ('NTA')." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL')." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." }
+      },
+      "additionalProperties": false
+    },
+    "BranchReference": {
+      "type": "object",
+      "description": "A reference to a QPL branch/location by name and identifiers.",
+      "properties": {
+        "branch": { "type": "string", "description": "Branch name ('Branch')." },
+        "branchId": { "type": ["string", "null"], "description": "Branch code/slug used by the site, catalog, or Communico (not published to Open Data)." }
+      },
+      "required": ["branch"],
+      "additionalProperties": false
+    },
+    "Vendor": {
+      "type": ["string", "null"],
+      "description": "Third-party SaaS platform that owns the underlying surface. QPL is a nonprofit that composes its digital presence from packaged vendors; almost nothing is an owned QPL API.",
+      "enum": ["BiblioCommons", "Communico", "OverDrive", "Libby", "Axis 360", "hoopla", "Springshare", "NYC Open Data", "Drupal", null]
+    },
+    "MediaFormat": {
+      "type": ["string", "null"],
+      "description": "Catalog / digital media format.",
+      "enum": ["Book", "eBook", "Audiobook", "eAudiobook", "eMagazine", "eVideo", "DVD", "Blu-ray", "Music CD", "Large Print", "Graphic Novel", "eComic", "Kit", "Other", null]
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanda/schemas/press-release.json",
+  "title": "PressRelease",
+  "description": "A news item published by the Manhattan District Attorney's Office — press release, media coverage, op-ed, report, testimony, remarks, or video. This is the office's one genuinely machine-readable object: it is a WordPress post surfaced by the public WP REST API (manhattanda.org/wp-json/wp/v2/posts, ~3,029 items). Canonical schema reconciling the WP REST post shape with the site's news categories.",
+  "type": "object",
+  "x-source": {
+    "wp_rest": "https://www.manhattanda.org/wp-json/wp/v2/posts",
+    "site": "https://www.manhattanda.org/category/news/",
+    "note": "The WP REST API is exposed but undocumented and unversioned as a product; content only."
+  },
+  "properties": {
+    "id": { "type": ["integer", "null"], "description": "WordPress post ID ('id')." },
+    "slug": { "type": ["string", "null"], "description": "URL slug ('slug')." },
+    "date": { "type": ["string", "null"], "format": "date-time", "description": "Publish date ('date')." },
+    "modified": { "type": ["string", "null"], "format": "date-time", "description": "Last modified ('modified')." },
+    "title": { "type": "string", "description": "Headline ('title.rendered')." },
+    "excerpt": { "type": ["string", "null"], "description": "Summary ('excerpt.rendered')." },
+    "content": { "type": ["string", "null"], "description": "Full body HTML ('content.rendered')." },
+    "link": { "type": ["string", "null"], "format": "uri", "description": "Canonical URL ('link')." },
+    "type": {
+      "type": ["string", "null"],
+      "description": "News type, derived from WP category.",
+      "enum": ["Press Release", "Media Coverage", "Op-Ed", "Report", "Testimony", "Remarks", "Video", "Indictment", "News", null]
+    },
+    "categories": {
+      "type": "array",
+      "description": "WP category slugs ('categories', resolved).",
+      "items": { "type": "string" }
+    },
+    "topics": {
+      "type": "array",
+      "description": "Subject-matter tags derived from the office's bureaus/initiatives.",
+      "items": { "$ref": "_common.json#/$defs/CrimeCategory" }
+    },
+    "featuredImage": { "type": ["string", "null"], "format": "uri", "description": "Featured media URL." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

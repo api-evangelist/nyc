@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queenslibrary/schemas/branch.json",
+  "title": "Branch",
+  "description": "A Queens Public Library branch / location — the core physical unit of the system, and the ONLY QPL entity with an open, machine-readable twin. Canonical schema reconciling the 'Queens Library Branches' Open Data dataset (kh3d-xhq7, 21 columns; agency 'Queens Library (QBPL)') with the branch pages on queenslibrary.org and the branch selector in the BiblioCommons catalog.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/kh3d-xhq7",
+    "site": "https://www.queenslibrary.org/about-us/locations",
+    "catalog": "https://queenslibrary.bibliocommons.com/"
+  },
+  "properties": {
+    "branch": { "type": "string", "description": "Branch name ('Branch')." },
+    "branchId": { "type": ["string", "null"], "description": "Branch code/slug (site/catalog/Communico key; not in Open Data)." },
+    "address": { "type": ["string", "null"], "description": "'Address'." },
+    "city": { "type": ["string", "null"], "description": "'City'." },
+    "postcode": { "type": ["string", "null"], "description": "'Postcode'." },
+    "phone": { "type": ["string", "null"], "description": "'phone'." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Branch page URL on queenslibrary.org." },
+    "hours": { "type": ["string", "null"], "description": "Opening hours ('Hours' — free text; the dataset notes hours can be viewed via the branch URL)." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["branch"],
+  "additionalProperties": false
+}

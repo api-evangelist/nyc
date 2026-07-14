@@ -1,0 +1,173 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces SCA's open capital-plan and procurement data (capital projects, upcoming contracts, RFP solicitations, prequalified vendors, enrollment/capacity, inspections) and adds apply_for_prequalification — the net-new vendor write workflow locked today inside the bidset SharePoint portal.",
+    "openapi": "../openapi/sca.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.sca",
+    "title": "NYC School Construction Authority (SCA)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC School Construction Authority — school-construction capital projects, upcoming CIP/CAP contracts, RFP solicitations, the prequalified/disqualified vendor roster, enrollment and capacity, and construction inspections from NYC Open Data, plus the net-new ability to apply to become a prequalified vendor — a workflow that today lives only in PDF forms and the bidset SharePoint portal.",
+    "instructions": "Use find_capital_projects / get_capital_project to locate school-construction projects by borough, geographic (school) district, type, or status and drill into schedules, budgets, and capacity. find_upcoming_contracts and find_solicitations cover the forward procurement pipeline (CIP/CAP awards and current/anticipated RFPs) vendors watch. find_vendors searches the prequalified vendor roster (filter by trade code or M/WBE/local certifications, or disqualified=true for barred firms). find_enrollment_capacity returns the demand signal behind the capital plan; find_inspections covers field inspection requests and observations. apply_for_prequalification (net-new) submits a vendor prequalification application; it requires an authenticated firm and mutates state — confirm the firm name, request type, and trade code with the user before submitting. list_my_prequalifications tracks an authenticated firm's own applications."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_capital_projects",
+      "title": "Find Capital Projects",
+      "description": "Search SCA school-construction capital projects by borough, geographic (school) district, project type, status, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "geographicDistrict": { "type": "string" },
+          "projectType": { "type": "string" },
+          "status": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/capital-project.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCapitalProjects"
+    },
+    {
+      "name": "get_capital_project",
+      "title": "Get Capital Project",
+      "description": "Fetch an SCA capital project (schedule, budget, capacity, geography) by Building ID.",
+      "inputSchema": { "type": "object", "properties": { "buildingId": { "type": "string" } }, "required": ["buildingId"] },
+      "outputSchema": { "$ref": "../schemas/capital-project.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCapitalProject"
+    },
+    {
+      "name": "find_upcoming_contracts",
+      "title": "Find Upcoming Contracts",
+      "description": "List SCA upcoming contracts to be awarded (CIP and CAP pipelines) and change-order events, by program, borough, geographic district, or category.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "program": { "type": "string", "enum": ["CIP", "CAP"] },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "geographicDistrict": { "type": "string" },
+          "category": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/upcoming-contract.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listUpcomingContracts"
+    },
+    {
+      "name": "find_solicitations",
+      "title": "Find Solicitations",
+      "description": "List SCA RFP solicitations (current and anticipated) by stage, department, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "stage": { "type": "string", "enum": ["Anticipated", "Current"] },
+          "department": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/solicitation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listSolicitations"
+    },
+    {
+      "name": "find_vendors",
+      "title": "Find Vendors",
+      "description": "Search the SCA prequalified vendor roster by trade code or M/WBE/local certification, or set disqualified=true to list firms currently barred from bidding.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tradeCode": { "type": "string" },
+          "minorityBusiness": { "type": "boolean" },
+          "womenBusiness": { "type": "boolean" },
+          "localBusiness": { "type": "boolean" },
+          "disqualified": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/prequalified-firm.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listVendors"
+    },
+    {
+      "name": "find_enrollment_capacity",
+      "title": "Find Enrollment & Capacity",
+      "description": "Search enrollment, capacity, and utilization records — the demand signal behind SCA's capital plan — by geographic district, building, or organization.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "geographicDistrict": { "type": "string" },
+          "buildingId": { "type": "string" },
+          "orgId": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/enrollment-capacity.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listEnrollmentCapacity"
+    },
+    {
+      "name": "find_inspections",
+      "title": "Find Inspections",
+      "description": "Search SCA construction inspection requests and observations by school code, borough, category, or date range.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schoolCode": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "category": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/inspection.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listInspections"
+    },
+    {
+      "name": "list_my_prequalifications",
+      "title": "List My Prequalifications",
+      "description": "List the authenticated firm's own vendor prequalification applications and their status — today trackable only inside the bidset SharePoint portal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Under Review", "Additional Info Requested", "Approved", "Denied", "Withdrawn"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/vendor-prequalification.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPrequalifications",
+      "x-auth": "user"
+    },
+    {
+      "name": "apply_for_prequalification",
+      "title": "Apply for Prequalification",
+      "description": "Submit an SCA vendor prequalification application (become a prequalified firm). NET-NEW workflow with no public API today — it lives only as PDF forms and the bidset SharePoint portal. Requires an authenticated firm. Mutates state — confirm firm name, request type, and trade code first.",
+      "inputSchema": { "$ref": "../schemas/vendor-prequalification.json" },
+      "outputSchema": { "$ref": "../schemas/vendor-prequalification.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createPrequalification",
+      "x-auth": "user"
+    }
+  ]
+}

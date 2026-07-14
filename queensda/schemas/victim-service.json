@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensda/schemas/victim-service.json",
+  "title": "VictimService",
+  "description": "A victim/witness support service offered or referred by the Queens County DA (advocacy, safety planning, compensation guidance, court accompaniment, helplines). Today this is prose scattered across Resources and initiative pages with no directory; this schema is the structured resource a survivor or advocate — or an agent acting for them — can actually query. Carries no victim-identifying data; it describes SERVICES, not people.",
+  "type": "object",
+  "x-source": {
+    "site": "https://queensda.org/resources/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Service name." },
+    "serviceType": {
+      "type": ["string", "null"],
+      "enum": ["advocacy", "safety-planning", "compensation", "court-accompaniment", "counseling-referral", "helpline", "interpreter", "other", null]
+    },
+    "description": { "type": ["string", "null"] },
+    "eligibility": { "type": ["string", "null"], "description": "Who the service serves." },
+    "confidential": { "type": ["boolean", "null"], "description": "Whether contact is confidential." },
+    "languages": { "type": "array", "items": { "type": "string" }, "description": "Languages available (the site runs WPML multilingual)." },
+    "contact": { "$ref": "_common.json#/$defs/ContactPoint" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

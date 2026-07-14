@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandda/schemas/press-release.json",
+  "title": "PressRelease",
+  "description": "A press release / news item published by the Office of the District Attorney, Richmond County. The office's single most-updated content type. Modeled from the WordPress posts under statenislandda.org/news-press-releases/ (also /news/, /press/). Published today only as themed HTML; a latent WordPress REST API (/wp-json/wp/v2/posts) exists but is bot-walled by the SiteGround captcha. No Open Data twin.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.statenislandda.org/news-press-releases/",
+    "wp_rest_latent": "https://www.statenislandda.org/wp-json/wp/v2/posts",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "title": { "type": "string", "description": "Headline of the press release." },
+    "slug": { "type": ["string", "null"], "description": "WordPress post slug." },
+    "publishedDate": { "type": ["string", "null"], "format": "date", "description": "Date issued." },
+    "summary": { "type": ["string", "null"], "description": "Excerpt / dek." },
+    "body": { "type": ["string", "null"], "description": "Full release text (HTML stripped)." },
+    "category": {
+      "type": ["string", "null"],
+      "description": "Editorial category / prosecution theme.",
+      "examples": ["Gun Violence", "Domestic Violence", "Animal Cruelty", "Narcotics", "Public Safety", "Community"]
+    },
+    "tags": { "type": "array", "items": { "type": "string" }, "description": "Free-text tags." },
+    "relatedProgram": { "type": ["string", "null"], "description": "Associated Program/initiative name, if any (e.g. 'Overdose Response Initiative')." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical URL on statenislandda.org." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

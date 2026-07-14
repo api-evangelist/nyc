@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bklynlibrary/schemas/catalog-item.json",
+  "title": "CatalogItem",
+  "description": "A bibliographic item in the Brooklyn Public Library catalog — a book, e-book, audiobook, DVD, or other holding, plus its availability across branches. This is the ILS/discovery record: today it lives ONLY in the BiblioCommons catalog (bklynlibrary.bibliocommons.com), which has no documented public API and is not part of BPL's open Drupal JSON:API. The editorial 'node--book_profile' on the site is a curated staff-pick twin, not the catalog record. A CatalogItem is what a BookHold targets.",
+  "type": "object",
+  "x-source": {
+    "catalog": "https://bklynlibrary.bibliocommons.com/",
+    "editorial_twin": "https://www.bklynlibrary.org/jsonapi/node/book_profile",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "itemId": { "type": "string", "description": "BiblioCommons bibliographic record id / metadata id." },
+    "title": { "type": "string", "description": "Item title." },
+    "subtitle": { "type": ["string", "null"] },
+    "author": { "type": ["string", "null"], "description": "Primary author / creator." },
+    "contributors": { "type": "array", "items": { "type": "string" }, "description": "Additional authors, editors, performers." },
+    "format": {
+      "type": ["string", "null"],
+      "description": "Material format.",
+      "enum": ["Book", "eBook", "Audiobook", "eAudiobook", "DVD", "Blu-ray", "Music CD", "Magazine", "Large Print", "Graphic Novel", "Streaming Video", "Other", null]
+    },
+    "isbn": { "type": ["string", "null"], "description": "ISBN-10 or ISBN-13." },
+    "publisher": { "type": ["string", "null"] },
+    "publicationYear": { "type": ["integer", "string", "null"], "description": "Publication year (editorial twin 'field_pub_year')." },
+    "language": { "type": ["string", "null"] },
+    "subjects": { "type": "array", "items": { "type": "string" }, "description": "Subject headings / tags." },
+    "callNumber": { "type": ["string", "null"] },
+    "coverImageUrl": { "type": ["string", "null"], "format": "uri" },
+    "catalogUrl": { "type": ["string", "null"], "format": "uri", "description": "BiblioCommons detail-page URL." },
+    "availability": {
+      "type": "object",
+      "description": "Availability rollup across branches.",
+      "properties": {
+        "totalCopies": { "type": ["integer", "null"] },
+        "availableCopies": { "type": ["integer", "null"] },
+        "holdsCount": { "type": ["integer", "null"], "description": "Number of holds currently queued." },
+        "availableAt": {
+          "type": "array",
+          "description": "Branches with a copy available now.",
+          "items": { "$ref": "_common.json#/$defs/BranchReference" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["itemId", "title"],
+  "additionalProperties": false
+}

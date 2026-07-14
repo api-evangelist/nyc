@@ -1,0 +1,129 @@
+{
+  "domain": "hhc",
+  "agency": "NYC Health + Hospitals (H+H)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA). The public site www.nychealthandhospitals.org is behind a Radware Bot Manager (server: rdwr; 302 to validate.perfdrive.com), so HTML crawling is blocked at the edge. Fingerprinted the MyChart patient portal (mychart.nychhc.org → Microsoft-IIS/10.0, MyChartPersistence cookie = Epic MyChart) and, most importantly, discovered the LIVE Epic FHIR R4 / SMART on FHIR API for H+H via Epic's public endpoint directory (open.epic.com/Endpoints/R4): base https://epicproxypda.nychhc.org/FHIRProxy/api/FHIR/R4. Pulled its unauthenticated CapabilityStatement (fhirVersion 4.0.1, software 'Epic November 2025', 59 resource types) and .well-known/smart-configuration (OAuth2 authorize+token, SMART capabilities). Verified via the Socrata Discovery API that NO NYC Open Data dataset is owned by H+H (agency labels 'NYC Health + Hospitals' and 'Health and Hospitals Corporation (HHC)' both return 0; health datasets on data.cityofnewyork.us belong to DOHMH).",
+  "related_domains": ["mychart.nychhc.org", "epicproxypda.nychhc.org", "open.epic.com", "fhir.epic.com", "www.nyccare.nyc", "data.cityofnewyork.us"],
+  "headline_findings": [
+    "H+H is the FIRST domain in this project with a real, live, standards-based API already in production: an Epic FHIR R4 / SMART on FHIR endpoint (epicproxypda.nychhc.org, 'Epic November 2025') exposing 59 resource types with an OAuth2 authorize/token surface. The health-data standard exists — the work is not to invent an API.",
+    "But that FHIR surface is read-mostly and patient-scoped. Appointment is read + search only; there is NO Slot resource and NO $book/$find operation, so BOOKING has no machine-readable contract even inside the standard. Location/Organization/Practitioner exist but require SMART authorization (unauthenticated Location search returns HTTP 401).",
+    "There is no OPEN directory. A patient or agent asking 'which H+H hospital near me has cardiology and takes new patients?' has nothing to call — the facility/service/provider directory is HTML on a bot-walled marketing site, not on FHIR (auth-gated) and not on Open Data.",
+    "H+H publishes NOTHING to NYC Open Data. Its data is clinical and lives in Epic (HIPAA-protected); the health datasets on data.cityofnewyork.us belong to a different agency, DOHMH. See opendata-hhc.md.",
+    "Everything runs on a vendor EHR. The FHIR API, the MyChart portal, and the OAuth surface are all Epic — H+H owns the data but not the contract. The site is protected by Radware Bot Manager, a third vendor.",
+    "Net-new write surface: AppointmentRequest — request/book an appointment — the most common patient transaction, with no API today and outside the live FHIR surface. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "epicproxypda.nychhc.org/FHIRProxy/api/FHIR/R4", "type": "FHIR R4 API (SMART on FHIR)", "owner": "H+H on Epic", "public": "metadata + smart-config public; data SMART-authorized", "note": "THE real H+H API. CapabilityStatement: fhirVersion 4.0.1, software 'Epic November 2025', 59 resource types (Patient, Condition, Observation, Appointment, Location, Organization, Practitioner, MedicationRequest, DocumentReference, ...). OAuth2 authorize/token at /FHIRProxy/oauth2. Appointment is read+search only; no Slot, no $book, no open directory (Location search → 401)." },
+    { "endpoint": "mychart.nychhc.org", "type": "patient portal (Epic MyChart)", "owner": "H+H on Epic", "public": "login-walled UI", "note": "Epic MyChart on Microsoft-IIS/10.0 (MyChartPersistence cookie). The human UI over the same Epic system — where patients see appointments, message providers, refill prescriptions, pay bills. No open API of its own; the machine surface is the FHIR endpoint above." },
+    { "endpoint": "open.epic.com/Endpoints/R4", "type": "vendor endpoint directory", "owner": "Epic", "public": true, "note": "Epic's public FHIR endpoint directory (480 orgs); lists 'NYC Health + Hospitals' → the FHIRProxy base URL. How the H+H FHIR endpoint is discoverable at all." },
+    { "endpoint": "www.nychealthandhospitals.org", "type": "informational site", "owner": "H+H", "public": "html, bot-walled", "note": "Marketing/directory site (locations, services, doctors, help-paying-your-bill). Behind Radware Bot Manager (server: rdwr, 302 to validate.perfdrive.com) — crawl blocked at the edge. No content API." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler) — DOHMH, not H+H", "public": true, "note": "Health datasets here belong to the Department of Health and Mental Hygiene (DOHMH). H+H owns ZERO datasets. Adjacent, not owned." }
+  ],
+  "fruit": [
+    {
+      "name": "Find a location / facility",
+      "type": "directory + map",
+      "entity": "Facility",
+      "url": "https://www.nychealthandhospitals.org/locations/",
+      "count": "11 acute-care hospitals + Gotham Health FQHCs + post-acute/nursing + behavioral + Correctional Health",
+      "machine_readable": "FHIR Location/Organization (SMART-authorized); site bot-walled",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The core physical unit. FHIR Location/Organization exist but require auth (401 unauthenticated); no open directory, no Open Data twin. FHIR-aligned in facility.json."
+    },
+    {
+      "name": "Service lines & specialties",
+      "type": "directory",
+      "entity": "Service",
+      "url": "https://www.nychealthandhospitals.org/services/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Clinical service lines (primary care, cardiology, behavioral health, maternity, gender-affirming care...). HTML only on the bot-walled site; FHIR-aligned to HealthcareService (not exposed). No Open Data twin."
+    },
+    {
+      "name": "Find a doctor / provider",
+      "type": "directory + search",
+      "entity": "Provider",
+      "url": "https://www.nychealthandhospitals.org/doctors/",
+      "machine_readable": "FHIR Practitioner/PractitionerRole (SMART-authorized)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Find a Doctor. FHIR Practitioner + PractitionerRole exist on the endpoint (read+search) but auth-gated; no open provider directory, no Open Data twin."
+    },
+    {
+      "name": "Financial assistance / NYC Care / sliding-scale",
+      "type": "program directory",
+      "entity": "FinancialAssistance",
+      "url": "https://www.nychealthandhospitals.org/help-paying-your-bill/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "H+H is the safety-net system: NYC Care (1-646-NYC-CARE), the HHC Options sliding scale, and financial counseling — eligibility immigration-status-blind. HTML only; no API; no FHIR analogue; no Open Data twin."
+    },
+    {
+      "name": "Pharmacy",
+      "type": "directory",
+      "entity": "Pharmacy",
+      "url": "https://www.nychealthandhospitals.org/pharmacy/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Outpatient / retail pharmacies at facilities; refills run through MyChart. FHIR-aligned to Location; no open directory, no Open Data twin."
+    },
+    {
+      "name": "My appointments (MyChart)",
+      "type": "transaction (portal + FHIR read)",
+      "entity": "Appointment",
+      "url": "https://mychart.nychhc.org/MyChart/",
+      "machine_readable": "FHIR Appointment (read + search-type; SMART-authorized)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "A patient's booked appointments — visible in MyChart and, uniquely in this project, ALSO readable via the live FHIR Appointment resource under SMART patient authorization. Read-only: no create, no Slot, no $book on the H+H endpoint."
+    },
+    {
+      "name": "Request / book an appointment",
+      "type": "sign-up / booking workflow",
+      "entity": "AppointmentRequest",
+      "url": "https://mychart.nychhc.org/MyChart/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common patient transaction — request/book an appointment (call 1-844-NYC-4NYC or a MyChart flow). NO public API and, notably, NO contract even in the live FHIR surface (no Appointment create, no Slot, no $book). The net-new WRITE surface for this domain."
+    }
+  ],
+  "meta": {
+    "short": "NYC Health + Hospitals",
+    "verb": "extend",
+    "platform": "Epic (MyChart on IIS + live FHIR R4 / SMART on FHIR) behind Radware Bot Manager",
+    "netnew": "AppointmentRequest — request/book an appointment (no write in the live FHIR surface)",
+    "accent": "#c24a6a",
+    "tagline": "A real health-data standard (Epic FHIR R4 / SMART on FHIR) is already live here — the work is to extend it to booking and open the facility directory, not to invent an API.",
+    "headline": "H+H is the first NYC domain with a live, standards-based API, but it is read-mostly, patient-scoped, vendor-owned Epic FHIR — with no open directory and no way to book an appointment."
+  },
+  "scorecard": {
+    "platform": 3,
+    "siteApi": 0,
+    "openData": 0,
+    "coreData": 2,
+    "writeApi": 1,
+    "agent": 1,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Best platform in the series: production Epic FHIR R4 / SMART on FHIR + MyChart — a real, modern, standards-based stack.",
+    "siteApi": "Public site is bot-walled (Radware); no content/directory API of any kind.",
+    "openData": "Zero datasets owned by H+H on NYC Open Data; health data there belongs to DOHMH.",
+    "coreData": "Rich, standardized FHIR core model (59 resources) — but patient-scoped, no bulk/open access, and no open facility/service/provider directory.",
+    "writeApi": "FHIR exposes Patient.create only; the meaningful transaction — booking — has no create, no Slot, no $book.",
+    "agent": "Machine-readable FHIR standard exists but nothing agent-native (no MCP); directory is HTML behind a bot wall.",
+    "ownership": "Standards-based but entirely vendor-run — the API, portal, and OAuth are all Epic; H+H owns the data, not the contract."
+  }
+}

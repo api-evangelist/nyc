@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypl/schemas/catalog-item.json",
+  "title": "CatalogItem",
+  "description": "A bibliographic record (book, ebook, film, etc.) in the NYPL Research Catalog / circulating catalog — the Bib object behind NYPL's discovery-api (the primary API supporting the Research Catalog) and the Sierra ILS. Reconciles a bib and its availability into one resource so an agent can search the catalog and check what's holdable. Keyed on the NYPL bib id.",
+  "type": "object",
+  "x-source": {
+    "api": "https://github.com/NYPL/discovery-api",
+    "ils": "Sierra (Innovative/III) via ruby-sierra-api-client",
+    "site": "https://www.nypl.org/research/research-catalog"
+  },
+  "properties": {
+    "bibId": { "type": "string", "description": "NYPL bib identifier (Sierra bib number / discovery id) — primary key." },
+    "title": { "type": "string", "description": "Title." },
+    "author": { "type": ["string", "null"], "description": "Primary author / creator." },
+    "contributors": { "type": ["array", "null"], "items": { "type": "string" } },
+    "materialType": { "type": ["string", "null"], "description": "Format (e.g. Book, E-book, DVD, Audiobook, Microform)." },
+    "language": { "type": ["string", "null"] },
+    "publicationYear": { "type": ["integer", "null"] },
+    "publisher": { "type": ["string", "null"] },
+    "isbn": { "type": ["array", "null"], "items": { "type": "string" } },
+    "oclc": { "type": ["string", "null"], "description": "OCLC number." },
+    "subjects": { "type": ["array", "null"], "items": { "type": "string" } },
+    "collection": {
+      "type": ["string", "null"],
+      "enum": ["circulating", "research", "special-collections", null],
+      "description": "Whether the item circulates (holdable/borrowable) or is research/on-site only — this drives whether a Hold can be placed."
+    },
+    "items": {
+      "type": ["array", "null"],
+      "description": "Physical/electronic copies and their availability.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "itemId": { "type": ["string", "null"], "description": "Sierra item id." },
+          "branch": { "$ref": "_common.json#/$defs/BranchReference" },
+          "callNumber": { "type": ["string", "null"] },
+          "status": { "type": ["string", "null"], "description": "Availability status (e.g. Available, Checked out, On order)." },
+          "holdable": { "type": ["boolean", "null"], "description": "Whether a hold can be placed on this copy." }
+        },
+        "additionalProperties": false
+      }
+    },
+    "catalogLink": { "type": ["string", "null"], "format": "uri", "description": "Public Research Catalog page for the bib." }
+  },
+  "required": ["bibId", "title"],
+  "additionalProperties": false
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensda/schemas/case.json",
+  "title": "Case",
+  "description": "A criminal prosecution (People v. …) as it appears on the PUBLIC record and is announced by the Queens County DA. There is NO structured case system exposed — the office publishes case activity only as press-release prose tagged by lifecycle category (arraignments 131, charges 127, indictments 119, court-cases 378). This schema is the aggregate, public-record-only structured resource that prose implies; it deliberately carries no sealed, non-public, or victim-identifying data.",
+  "type": "object",
+  "x-source": {
+    "wp_rest": "https://queensda.org/wp-json/wp/v2/posts?categories=21",
+    "site": "https://queensda.org/upcoming-cases/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "caption": { "type": "string", "description": "Public case caption (People v. …)." },
+    "case": { "$ref": "_common.json#/$defs/CaseReference" },
+    "stage": {
+      "type": ["string", "null"],
+      "enum": ["arraignment", "charges", "indictment", "pre-trial", "trial", "conviction", "sentencing", "appeal", "closed", null],
+      "description": "Current public stage in the prosecution lifecycle."
+    },
+    "charges": {
+      "type": "array",
+      "description": "Charges as publicly announced (statute/offense text).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "offense": { "type": "string", "description": "Offense name as announced (e.g. 'Grand Larceny in the First Degree')." },
+          "statute": { "type": ["string", "null"], "description": "NY Penal Law citation if published." },
+          "class": { "type": ["string", "null"], "description": "Felony/misdemeanor class if published." }
+        },
+        "required": ["offense"],
+        "additionalProperties": false
+      }
+    },
+    "division": {
+      "type": ["string", "null"],
+      "description": "Prosecuting bureau/division (e.g. Major Crimes, Special Prosecutions, Supreme Court Trial, Appeals).",
+      "enum": ["Major Crimes", "Special Prosecutions", "Supreme Court Trial", "Appeals & Special Litigation", "Criminal Practice", "Investigations", "Conviction Integrity Unit", "Other", null]
+    },
+    "disposition": { "type": ["string", "null"], "description": "Public disposition/outcome if announced (e.g. convicted, pleaded guilty, acquitted, dismissed)." },
+    "sentence": { "type": ["string", "null"], "description": "Sentence as announced, if any." },
+    "announcedDate": { "type": ["string", "null"], "format": "date", "description": "Date the office publicly announced this activity." },
+    "pressReleases": {
+      "type": "array",
+      "description": "Links to the press release(s) that announced this case activity.",
+      "items": { "type": "string", "format": "uri" }
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "required": ["caption"],
+  "additionalProperties": false
+}

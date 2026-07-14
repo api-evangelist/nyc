@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypl/schemas/_common.json",
+  "title": "NYPL — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across New York Public Library (NYPL) object schemas. Reconciles fields common to NYPL's own public APIs — the Digital Collections API (api.repo.nypl.org/api/v2), the Locations API (refinery.nypl.org/api/nypl/locations/v1.0), and the Research Catalog / discovery-api — plus the handful of legacy NYPL datasets on NYC Open Data. NYPL is an independent nonprofit serving Manhattan, the Bronx, and Staten Island (Brooklyn and Queens have their own systems), so the geography spine is lighter than a city agency's.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "description": "NYPL directly serves Manhattan, the Bronx, and Staten Island; Brooklyn (BPL) and Queens (QPL) run separate systems. The full NYC enum is kept for join compatibility.",
+      "enum": ["Manhattan", "Bronx", "Staten Island", "Brooklyn", "Queens"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point. In the Locations API this arrives as geolocation.coordinates [longitude, latitude]; on Open Data as X/Y or LATITUDE/LONGITUDE.",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine — the join keys back to the rest of city and civic data. Lighter for NYPL than for a city agency, but branches still carry a borough and, where geocoded, BBL/BIN.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "boroughCode": { "type": ["integer", "string", "null"], "description": "Open Data 'BOROCODE' (1=Manhattan, 2=Bronx, 5=Staten Island)." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district, where geocoded." },
+        "communityDistrict": { "type": ["string", "integer", "null"], "description": "Community District / Board, where geocoded." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL'), from the Open Data 'LIBRARY' facilities layer." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN'), from the Open Data 'LIBRARY' facilities layer." }
+      },
+      "additionalProperties": false
+    },
+    "PostalAddress": {
+      "type": "object",
+      "description": "A civic street address, reconciled from the Locations API street_address block and Open Data address columns.",
+      "properties": {
+        "line1": { "type": ["string", "null"], "description": "Street address ('STREETNAME' + 'HOUSENUM' / Locations 'street_address')." },
+        "line2": { "type": ["string", "null"] },
+        "city": { "type": ["string", "null"] },
+        "state": { "type": ["string", "null"] },
+        "postalCode": { "type": ["string", "null"], "description": "'ZIP' / 'postal_code'." }
+      },
+      "additionalProperties": false
+    },
+    "RegularHours": {
+      "type": "array",
+      "description": "A week of opening hours as returned by the Locations API location_hours.regular_hours[].",
+      "items": {
+        "type": "object",
+        "properties": {
+          "day": { "type": "string", "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] },
+          "open": { "type": ["string", "null"], "description": "Opening time (e.g. '10:00 AM'); null when closed." },
+          "close": { "type": ["string", "null"], "description": "Closing time (e.g. '6:00 PM'); null when closed." }
+        },
+        "required": ["day"],
+        "additionalProperties": false
+      }
+    },
+    "BranchReference": {
+      "type": "object",
+      "description": "A lightweight reference to an NYPL location/branch by its Locations API slug and name.",
+      "properties": {
+        "slug": { "type": ["string", "null"], "description": "Locations API location id/slug (e.g. 'schwarzman', '115th-street')." },
+        "name": { "type": "string", "description": "Branch / research center name." }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    }
+  }
+}

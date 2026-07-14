@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cuny/schemas/course.json",
+  "title": "Course",
+  "description": "A course in a CUNY college course catalog / class schedule. Canonical schema reconciling the CUNYfirst course catalog browse (PeopleSoft self-service, SSS_BROWSE_CATLG) and per-college catalogs. There is no public API and no Open Data twin — the catalog is reachable only through the login-optional PeopleSoft guest self-service screens.",
+  "type": "object",
+  "x-source": {
+    "sis": "https://cssa.cunyfirst.cuny.edu/psc/cnycsprd/GUEST/SA/c/COMMUNITY_ACCESS.SSS_BROWSE_CATLG.GBL",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "courseId": { "type": ["string", "null"], "description": "CUNYfirst course ID." },
+    "subject": { "type": "string", "description": "Subject area code (e.g. 'CSCI')." },
+    "catalogNumber": { "type": "string", "description": "Catalog number (e.g. '111')." },
+    "title": { "type": "string", "description": "Course title." },
+    "description": { "type": ["string", "null"], "description": "Catalog description." },
+    "campus": { "$ref": "_common.json#/$defs/CampusReference" },
+    "credits": { "type": ["number", "null"], "description": "Credit hours." },
+    "term": { "$ref": "_common.json#/$defs/Term" },
+    "component": {
+      "type": ["string", "null"],
+      "description": "Instruction component.",
+      "enum": ["Lecture", "Laboratory", "Seminar", "Recitation", "Independent Study", "Other", null]
+    },
+    "modality": {
+      "type": ["string", "null"],
+      "enum": ["In Person", "Online", "Hybrid", null]
+    },
+    "prerequisites": { "type": ["string", "null"], "description": "Prerequisite text." }
+  },
+  "required": ["subject", "catalogNumber", "title"],
+  "additionalProperties": false
+}

@@ -1,0 +1,436 @@
+openapi: 3.1.0
+info:
+  title: NYC Health + Hospitals API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for NYC Health + Hospitals — publishing an open facility, service,
+    provider, pharmacy, and financial-assistance directory the system does not offer today, and adding
+    the missing write surface: requesting / booking an appointment. It is designed to sit on top of the
+    live Epic FHIR R4 standard H+H already runs, extending it where the standard stops (booking).
+  description: >-
+    Proposed API-first surface for NYC Health + Hospitals (H+H), from the NYC Modernization
+    low-hanging-fruit assessment of nychealthandhospitals.org, the MyChart patient portal, and the live
+    Epic FHIR R4 API.
+
+
+    H+H is the first domain in this project where a **real, live, standards-based API already exists**:
+    an **Epic FHIR R4 / SMART on FHIR** endpoint (`epicproxypda.nychhc.org/FHIRProxy/api/FHIR/R4`,
+    Epic November 2025) exposing 59 resource types with an OAuth2 authorization + token surface. But
+    that surface is **read-mostly and patient-scoped**: `Appointment` is read + search only, there is
+    **no `Slot` resource and no `$book`/`$find` scheduling operation**, and there is **no open
+    directory** — `Location`, `Organization`, and `Practitioner` all require SMART authorization. The
+    public website is behind a Radware bot manager, and **H+H publishes nothing to NYC Open Data**
+    (health datasets there belong to DOHMH).
+
+
+    This contract does two things: (1) presents an **open directory** — facilities, service lines,
+    providers, pharmacies, and financial-assistance programs — as one clean resource model, aligned to
+    FHIR where natural; and (2) adds the one net-new **write** workflow — **requesting an appointment**
+    (`AppointmentRequest`) — that today exists only in a MyChart flow or a phone call and falls outside
+    the live FHIR surface.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.nychealthandhospitals.org/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Facilities
+    description: Hospitals, Gotham Health centers, nursing/post-acute, behavioral-health, and Correctional Health locations.
+  - name: Services
+    description: Clinical service lines and specialties.
+  - name: Providers
+    description: Clinicians (Find a Doctor).
+  - name: FinancialAssistance
+    description: NYC Care, sliding-scale (Options), and financial counseling.
+  - name: Pharmacies
+    description: H+H outpatient / retail pharmacies.
+  - name: Appointments
+    description: The patient's booked appointments (read) and the net-new appointment-request write surface.
+
+paths:
+  /facilities:
+    get:
+      operationId: listFacilities
+      summary: List / search H+H facilities
+      tags: [Facilities]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: network
+          in: query
+          schema: { type: string, enum: [Acute Care, Gotham Health, Post-Acute / Long-Term Care, Behavioral Health, Correctional Health Services, Community Care] }
+        - name: facilityType
+          in: query
+          schema: { type: string }
+        - name: emergencyServices
+          in: query
+          schema: { type: boolean }
+        - name: service
+          in: query
+          description: Filter to facilities offering a given service line.
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of facilities.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/facility.json' } }
+  /facilities/{facilityId}:
+    get:
+      operationId: getFacility
+      summary: Get a facility by id
+      tags: [Facilities]
+      parameters:
+        - name: facilityId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The facility.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/facility.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /facilities/{facilityId}/services:
+    get:
+      operationId: getFacilityServices
+      summary: List the service lines offered at a facility
+      tags: [Facilities, Services]
+      parameters:
+        - name: facilityId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Service lines at the facility.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/service.json' } }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /services:
+    get:
+      operationId: listServices
+      summary: Search H+H service lines / specialties
+      tags: [Services]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: facilityId
+          in: query
+          schema: { type: string }
+        - name: acceptsNewPatients
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of services.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/service.json' } }
+
+  /providers:
+    get:
+      operationId: listProviders
+      summary: Search H+H providers (Find a Doctor)
+      tags: [Providers]
+      parameters:
+        - name: specialty
+          in: query
+          schema: { type: string }
+        - name: language
+          in: query
+          schema: { type: string }
+        - name: facilityId
+          in: query
+          schema: { type: string }
+        - name: acceptingNewPatients
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of providers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/provider.json' } }
+  /providers/{providerId}:
+    get:
+      operationId: getProvider
+      summary: Get a provider by id
+      tags: [Providers]
+      parameters:
+        - name: providerId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The provider.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/provider.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /financial-assistance:
+    get:
+      operationId: listFinancialAssistance
+      summary: List financial-assistance and coverage programs (NYC Care, sliding-scale, counseling)
+      tags: [FinancialAssistance]
+      parameters:
+        - name: programType
+          in: query
+          schema: { type: string }
+        - name: coversUninsured
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of financial-assistance programs.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/financial-assistance.json' } }
+
+  /pharmacies:
+    get:
+      operationId: listPharmacies
+      summary: List H+H outpatient / retail pharmacies
+      tags: [Pharmacies]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: facilityId
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of pharmacies.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/pharmacy.json' } }
+
+  /appointments:
+    get:
+      operationId: listAppointments
+      summary: List the authenticated patient's appointments
+      description: >-
+        Reads the patient's own appointments — mirroring the MyChart view and the live Epic FHIR
+        `Appointment` resource (read + search-type only). SMART patient authorization required.
+      tags: [Appointments]
+      security: [{ smartOnFhir: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [proposed, pending, booked, arrived, fulfilled, cancelled, noshow, waitlist] }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the patient's appointments.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/appointment.json' } }
+  /appointments/{appointmentId}:
+    get:
+      operationId: getAppointment
+      summary: Get one of the patient's appointments
+      tags: [Appointments]
+      security: [{ smartOnFhir: [] }]
+      parameters:
+        - name: appointmentId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The appointment.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/appointment.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /appointment-requests:
+    get:
+      operationId: listAppointmentRequests
+      summary: List the authenticated patient's appointment requests
+      tags: [Appointments]
+      security: [{ smartOnFhir: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Received, In Review, Scheduled, Declined, Cancelled] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the patient's appointment requests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/appointment-request.json' } }
+    post:
+      operationId: createAppointmentRequest
+      summary: Request an appointment (net-new write)
+      description: >-
+        The net-new write surface — an API for requesting an appointment, filling the gap the live Epic
+        FHIR endpoint leaves open (no Appointment create, no Slot, no $book). Models a request
+        (proposed) that H+H intake reviews and schedules; routes uninsured requesters to NYC Care /
+        financial counseling via the `coverage` block. True emergencies must use 911 / an Emergency
+        Department, not this endpoint.
+      tags: [Appointments]
+      security: [{ smartOnFhir: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/appointment-request.json' }
+      responses:
+        '201':
+          description: Appointment request received.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/appointment-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /appointment-requests/{requestId}:
+    get:
+      operationId: getAppointmentRequest
+      summary: Get an appointment request
+      tags: [Appointments]
+      security: [{ smartOnFhir: [] }]
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The appointment request.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/appointment-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    smartOnFhir:
+      type: oauth2
+      description: >-
+        SMART on FHIR (OAuth2 authorization code) — the same authorization model the live Epic FHIR R4
+        endpoint uses (epicproxypda.nychhc.org/FHIRProxy/oauth2).
+      flows:
+        authorizationCode:
+          authorizationUrl: https://epicproxypda.nychhc.org/FHIRProxy/oauth2/authorize
+          tokenUrl: https://epicproxypda.nychhc.org/FHIRProxy/oauth2/token
+          scopes:
+            patient/Appointment.read: Read the patient's appointments
+            patient/Appointment.write: Request/book appointments for the patient
+  schemas:
+    Facility: { $ref: '../schemas/facility.json' }
+    Service: { $ref: '../schemas/service.json' }
+    Provider: { $ref: '../schemas/provider.json' }
+    FinancialAssistance: { $ref: '../schemas/financial-assistance.json' }
+    Pharmacy: { $ref: '../schemas/pharmacy.json' }
+    Appointment: { $ref: '../schemas/appointment.json' }
+    AppointmentRequest: { $ref: '../schemas/appointment-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

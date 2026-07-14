@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandda/schemas/tip-submission.json",
+  "title": "TipSubmission",
+  "description": "A confidential tip submitted to the Richmond County DA — the office's one real inbound transaction. Today it exists ONLY as two Contact Form 7 forms on the WordPress site (statenislandda.org/drug-tip-form/ and /scam-tip-form/), which email the office; there is no API, no machine-readable contract, and no ticket the sender can track. This schema is modeled directly from those forms' real field names (senders-name, senders-address, senders-email, senders-phone-number, name-of-suspect, suspect-description, vehicle-description, location-description, drug-tip / scam-tip-info) and generalized into one net-new WRITE object. Serves both the create surface (submit a tip) and the read-back of a submitted tip's status.",
+  "type": "object",
+  "x-source": {
+    "drug_tip_form": "https://www.statenislandda.org/drug-tip-form/",
+    "scam_tip_form": "https://www.statenislandda.org/scam-tip-form/",
+    "mechanism": "Contact Form 7 (email only) — no API",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "tipId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned confidential tip reference. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Received", "Under Review", "Referred", "Closed", null],
+      "description": "Lifecycle status. Set by the DA's office, not the submitter.",
+      "readOnly": true
+    },
+    "tipType": {
+      "type": "string",
+      "enum": ["Drug", "Scam", "Other"],
+      "description": "Which tip channel this came from ('drug-tip-form' vs 'scam-tip-form')."
+    },
+    "tip": { "type": "string", "description": "The tip itself — narcotics activity ('drug-tip') or scam details ('scam-tip-info')." },
+    "suspect": {
+      "type": "object",
+      "description": "Optional details about the subject of the tip (drug tips).",
+      "properties": {
+        "name": { "type": ["string", "null"], "description": "'name-of-suspect'." },
+        "alias": { "type": ["string", "null"], "description": "'Alias'." },
+        "description": { "type": ["string", "null"], "description": "'suspect-description'." },
+        "vehicleDescription": { "type": ["string", "null"], "description": "'vehicle-description'." }
+      },
+      "additionalProperties": false
+    },
+    "locationDescription": { "type": ["string", "null"], "description": "Where the activity is occurring ('location-description')." },
+    "anonymous": { "type": "boolean", "default": true, "description": "Whether the submitter is withholding their identity. Tips may be fully anonymous." },
+    "sender": {
+      "type": "object",
+      "description": "Optional submitter contact — only if the tipster chooses to identify themselves. Maps the form's 'senders-*' fields.",
+      "properties": {
+        "name": { "type": ["string", "null"], "description": "'senders-name'." },
+        "address": { "type": ["string", "null"], "description": "'senders-address'." },
+        "email": { "type": ["string", "null"], "format": "email", "description": "'senders-email'." },
+        "phone": { "type": ["string", "null"], "description": "'senders-phone-number'." }
+      },
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["tipType", "tip"],
+  "additionalProperties": false
+}

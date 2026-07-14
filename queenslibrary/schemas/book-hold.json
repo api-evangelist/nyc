@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queenslibrary/schemas/book-hold.json",
+  "title": "BookHold",
+  "description": "A hold / reservation placed by a patron on a Queens Public Library catalog item, to be picked up at a chosen branch. NET-NEW: there is NO owned public API and NO Open Data twin for holds; today a patron places and tracks a hold only inside the login-walled BiblioCommons account (queenslibrary.bibliocommons.com). This schema serves both the read surface (list/get a patron's own holds) and the BookHoldRequest write surface (place a hold — the primary net-new write workflow).",
+  "type": "object",
+  "x-source": {
+    "catalog": "https://queenslibrary.bibliocommons.com/",
+    "vendor": "BiblioCommons",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "holdId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned hold identifier. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Pending", "Active", "In Transit", "Ready for Pickup", "Fulfilled", "Cancelled", "Expired", "Suspended", null],
+      "description": "Hold lifecycle status. Set by QPL/BiblioCommons, not the patron.",
+      "readOnly": true
+    },
+    "itemId": { "type": "string", "description": "Catalog item (BiblioCommons bib) identifier to place the hold on." },
+    "title": { "type": ["string", "null"], "description": "Title of the item, echoed for convenience.", "readOnly": true },
+    "format": { "$ref": "_common.json#/$defs/MediaFormat" },
+    "pickupBranch": { "$ref": "_common.json#/$defs/BranchReference" },
+    "queuePosition": { "type": ["integer", "null"], "description": "Position in the hold queue.", "readOnly": true },
+    "holdsAhead": { "type": ["integer", "null"], "description": "Number of holds ahead of this one.", "readOnly": true },
+    "estimatedWaitDays": { "type": ["integer", "null"], "readOnly": true },
+    "notificationPreference": {
+      "type": ["string", "null"],
+      "enum": ["email", "sms", "phone", "none", null],
+      "description": "How the patron wants to be notified when the hold is ready."
+    },
+    "suspendUntil": { "type": ["string", "null"], "format": "date", "description": "Optionally freeze the hold until this date (patron keeps queue position)." },
+    "placedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "readyDate": { "type": ["string", "null"], "format": "date", "readOnly": true },
+    "expiryDate": { "type": ["string", "null"], "format": "date", "description": "Date a ready-for-pickup hold expires.", "readOnly": true }
+  },
+  "required": ["itemId"],
+  "additionalProperties": false
+}

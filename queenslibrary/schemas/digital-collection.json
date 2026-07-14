@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queenslibrary/schemas/digital-collection.json",
+  "title": "DigitalCollection",
+  "description": "A digital-lending title (or the collection it belongs to) borrowable with a QPL card — eBooks, eAudiobooks, eMagazines, eComics, and streaming media. NO Open Data twin and NO owned API: QPL's digital collections are spread across multiple third-party platforms — OverDrive/Libby, Axis 360, and hoopla — each with its own catalog, login, and vendor API. This schema is a clean, platform-agnostic model over those silos.",
+  "type": "object",
+  "x-source": {
+    "overdrive": "https://queenslibrary.overdrive.com/",
+    "help": "https://qpl.libanswers.com/faq/297327",
+    "vendors": ["OverDrive", "Libby", "Axis 360", "hoopla"],
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "titleId": { "type": ["string", "null"], "description": "Vendor identifier for the digital title." },
+    "platform": {
+      "type": "string",
+      "description": "Which digital-lending platform hosts the title.",
+      "enum": ["OverDrive", "Libby", "Axis 360", "hoopla"]
+    },
+    "title": { "type": "string", "description": "Title of the work." },
+    "author": { "type": ["string", "null"] },
+    "format": { "$ref": "_common.json#/$defs/MediaFormat" },
+    "isbn": { "type": ["array", "null"], "items": { "type": "string" } },
+    "publisher": { "type": ["string", "null"] },
+    "language": { "type": ["string", "null"] },
+    "subjects": { "type": ["array", "null"], "items": { "type": "string" } },
+    "coverUrl": { "type": ["string", "null"], "format": "uri" },
+    "lendingModel": {
+      "type": ["string", "null"],
+      "description": "How the title lends: one-copy/one-user (OverDrive/Axis 360) vs. simultaneous/instant (hoopla).",
+      "enum": ["one-copy-one-user", "simultaneous-use", "metered", "instant", null]
+    },
+    "availability": {
+      "type": "object",
+      "properties": {
+        "status": { "type": ["string", "null"], "enum": ["Available", "Wait List", "On Order", "Unavailable", null] },
+        "copiesOwned": { "type": ["integer", "null"] },
+        "copiesAvailable": { "type": ["integer", "null"] },
+        "holdsCount": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Vendor detail / borrow URL." }
+  },
+  "required": ["platform", "title"],
+  "additionalProperties": false
+}

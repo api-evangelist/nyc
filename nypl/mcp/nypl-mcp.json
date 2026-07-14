@@ -1,0 +1,176 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. NYPL is the counter-example: it already operates real public APIs (Digital Collections, Locations, Research Catalog). This artifact unifies them into one agent-native contract and adds place_hold — the net-new write workflow that today has no clean, documented public API.",
+    "openapi": "../openapi/nypl.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.nypl",
+    "title": "New York Public Library (NYPL)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the New York Public Library — search Digital Collections, find branches and their hours/amenities/events, and search the Research Catalog, all over NYPL's already-real public APIs unified into one contract, plus the net-new ability to place and track a hold (reservation) on a catalog item.",
+    "instructions": "Use search_digital_collections / get_digital_item to explore digitized items (set publicDomainOnly for reusable images); list_collections for curated groupings. find_branches / get_branch return NYPL locations with hours, amenities, and accessibility (NYPL serves Manhattan, the Bronx, and Staten Island; Brooklyn and Queens have separate systems). find_events and get_branch_events cover public programs and exhibitions. search_catalog / get_catalog_item query the Research and circulating catalog; only circulating, holdable copies can be reserved. list_my_holds and place_hold require an authenticated patron and never expose other patrons' data — place_hold mutates state and needs patron eligibility, so confirm the exact item (bibId) and pickup branch with the user before submitting."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "search_digital_collections",
+      "title": "Search Digital Collections",
+      "description": "Search NYPL Digital Collections digitized items by free text, research division, and public-domain status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": { "type": "string" },
+          "publicDomainOnly": { "type": "boolean" },
+          "division": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/digital-item.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listDigitalItems"
+    },
+    {
+      "name": "get_digital_item",
+      "title": "Get Digital Item",
+      "description": "Fetch a NYPL Digital Collections item (metadata, captures, rights) by UUID.",
+      "inputSchema": { "type": "object", "properties": { "uuid": { "type": "string" } }, "required": ["uuid"] },
+      "outputSchema": { "$ref": "../schemas/digital-item.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getDigitalItem"
+    },
+    {
+      "name": "list_collections",
+      "title": "List Collections",
+      "description": "List or search NYPL Digital Collections collections.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/collection.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCollections"
+    },
+    {
+      "name": "find_branches",
+      "title": "Find Branches",
+      "description": "List NYPL locations (branches and research centers) by borough, type, and open-now status, with hours and amenities.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Staten Island", "Brooklyn", "Queens"] },
+          "locationType": { "type": "string", "enum": ["branch", "research", "administrative"] },
+          "openNow": { "type": "boolean" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/branch.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listBranches"
+    },
+    {
+      "name": "get_branch",
+      "title": "Get Branch",
+      "description": "Fetch one NYPL location (hours, amenities, access, contacts, links) by slug.",
+      "inputSchema": { "type": "object", "properties": { "slug": { "type": "string" } }, "required": ["slug"] },
+      "outputSchema": { "$ref": "../schemas/branch.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getBranch"
+    },
+    {
+      "name": "get_branch_events",
+      "title": "Get Branch Events",
+      "description": "List upcoming public programs and exhibitions at a specific NYPL location.",
+      "inputSchema": { "type": "object", "properties": { "slug": { "type": "string" } }, "required": ["slug"] },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/event.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getBranchEvents"
+    },
+    {
+      "name": "find_events",
+      "title": "Find Events",
+      "description": "Search NYPL public programs, classes, and exhibitions across locations by text, branch, type, audience, or date range.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": { "type": "string" },
+          "branch": { "type": "string" },
+          "eventType": { "type": "string" },
+          "audience": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/event.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listEvents"
+    },
+    {
+      "name": "search_catalog",
+      "title": "Search Catalog",
+      "description": "Search the NYPL Research and circulating catalog (books, ebooks, film, and more), filtering by material type, language, collection, and holdability.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": { "type": "string" },
+          "materialType": { "type": "string" },
+          "language": { "type": "string" },
+          "collection": { "type": "string", "enum": ["circulating", "research", "special-collections"] },
+          "holdableOnly": { "type": "boolean" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/catalog-item.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCatalogItems"
+    },
+    {
+      "name": "get_catalog_item",
+      "title": "Get Catalog Item",
+      "description": "Fetch a NYPL catalog bibliographic record and its copies/availability by bib id.",
+      "inputSchema": { "type": "object", "properties": { "bibId": { "type": "string" } }, "required": ["bibId"] },
+      "outputSchema": { "$ref": "../schemas/catalog-item.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCatalogItem"
+    },
+    {
+      "name": "list_my_holds",
+      "title": "List My Holds",
+      "description": "List the authenticated patron's own holds/reservations and their status — today reachable only inside the patron's Research Catalog account.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Requested", "Ready for Pickup", "In Transit", "Frozen", "Fulfilled", "Cancelled", "Expired"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/hold.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listHolds",
+      "x-auth": "user"
+    },
+    {
+      "name": "place_hold",
+      "title": "Place a Hold",
+      "description": "Place a hold (reservation) on a NYPL catalog item for pickup at a branch. NET-NEW agent-native workflow — NYPL runs the internal hold/eligibility services but has no clean public hold API. Requires an authenticated, eligible patron. Mutates state — confirm the item (bibId) and pickup branch first.",
+      "inputSchema": { "$ref": "../schemas/hold.json" },
+      "outputSchema": { "$ref": "../schemas/hold.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "placeHold",
+      "x-auth": "user"
+    }
+  ]
+}

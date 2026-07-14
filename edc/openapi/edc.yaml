@@ -1,0 +1,415 @@
+openapi: 3.1.0
+info:
+  title: NYC EDC API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the New York City Economic Development Corporation — surfacing
+    its core-but-unpublished portfolio (development projects, EDC-managed real estate assets, and open
+    solicitations), presenting its few real open datasets (Mapped In NY companies, NYC Ferry ridership,
+    WiredNYC buildings) as coherent resources, and adding the missing write surface: responding to an
+    EDC solicitation (RFP/RFEI).
+  description: >-
+    Proposed API-first surface for the New York City Economic Development Corporation (EDC), from the NYC
+    Modernization low-hanging-fruit assessment of edc.nyc / nycedc.com and NYC Open Data.
+
+
+    EDC is a **public benefit corporation**, not a mayoral agency — and it shows in the data. Only a
+    thin, peripheral slice of EDC is on NYC Open Data: **five datasets** (a marketing map of companies,
+    NYC Ferry ridership, and three WiredNYC broadband-certification tables). EDC's actual business —
+    its **~60M sq ft real-estate portfolio**, its **development projects**, and its **solicitations
+    (RFPs/RFEIs)** — has no Open Data twin and no API at all; it lives only as Drupal pages on edc.nyc
+    behind a Cloudflare bot challenge.
+
+
+    This contract does three things: (1) **surfaces** the core portfolio (projects, assets, solicitations)
+    as clean resources modeled from the site; (2) presents the real open datasets as coherent resources;
+    and (3) adds the one net-new **write** workflow — submitting a **response / notice of interest** to an
+    EDC solicitation — that today exists only via email, a pre-submission conference, or manual document
+    submission.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.edc.nyc/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Projects
+    description: EDC development / capital projects (modeled — not on Open Data today).
+  - name: RealEstate
+    description: EDC-managed property assets (modeled — not on Open Data today).
+  - name: Solicitations
+    description: Open RFPs / RFEIs / RFQs / RFIs, and responding to them (read + the net-new write).
+  - name: Companies
+    description: Mapped In NY — companies EDC promotes.
+  - name: Ferry
+    description: NYC Ferry ridership (operated on behalf of EDC).
+  - name: WiredNYC
+    description: Broadband-readiness building certification (WiredNYC / WiredScore).
+
+paths:
+  /projects:
+    get:
+      operationId: listProjects
+      summary: List / search EDC development projects
+      tags: [Projects]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: neighborhood
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of development projects.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/development-project.json' } }
+  /projects/{projectId}:
+    get:
+      operationId: getProject
+      summary: Get a development project
+      tags: [Projects]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The development project.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/development-project.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /properties:
+    get:
+      operationId: listProperties
+      summary: List / search EDC-managed real-estate assets
+      tags: [RealEstate]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: assetType
+          in: query
+          schema: { type: string }
+        - name: neighborhood
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of property assets.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/property-asset.json' } }
+  /properties/{assetId}:
+    get:
+      operationId: getProperty
+      summary: Get an EDC-managed property asset
+      tags: [RealEstate]
+      parameters:
+        - name: assetId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The property asset.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/property-asset.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /solicitations:
+    get:
+      operationId: listSolicitations
+      summary: List / search EDC solicitations (RFP / RFEI / RFQ / RFI)
+      tags: [Solicitations]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [RFP, RFEI, RFQ, RFI, Other] }
+        - name: status
+          in: query
+          schema: { type: string, enum: [Open, Closed, Awarded, Cancelled] }
+        - name: category
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of solicitations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/solicitation.json' } }
+  /solicitations/{solicitationId}:
+    get:
+      operationId: getSolicitation
+      summary: Get a solicitation
+      tags: [Solicitations]
+      parameters:
+        - name: solicitationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The solicitation.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/solicitation.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /rfp-responses:
+    get:
+      operationId: listRfpResponses
+      summary: List the authenticated respondent's solicitation responses
+      description: Reads the respondent's own submissions / notices of interest — today tracked only by email threads and manual records.
+      tags: [Solicitations]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: solicitationId
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [Received, Under Review, Shortlisted, Not Selected, Awarded, Withdrawn] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the respondent's responses.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/rfp-response.json' } }
+    post:
+      operationId: createRfpResponse
+      summary: Respond to a solicitation (register interest / submit a proposal)
+      description: >-
+        The net-new write surface — an API for responding to an EDC solicitation, replacing today's
+        email-and-manual-document workflow. `intent` ranges from a lightweight "Register Interest" to a
+        full "Submit Proposal". EDC sets status after review.
+      tags: [Solicitations]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/rfp-response.json' }
+      responses:
+        '201':
+          description: Response recorded.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/rfp-response.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /rfp-responses/{responseId}:
+    get:
+      operationId: getRfpResponse
+      summary: Get a solicitation response
+      tags: [Solicitations]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: responseId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The response.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/rfp-response.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /mapped-companies:
+    get:
+      operationId: listMappedCompanies
+      summary: Search Mapped In NY companies
+      tags: [Companies]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: hiring
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of mapped companies.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/mapped-company.json' } }
+
+  /ferry-ridership:
+    get:
+      operationId: listFerryRidership
+      summary: Search NYC Ferry ridership records
+      tags: [Ferry]
+      parameters:
+        - name: route
+          in: query
+          schema: { type: string }
+        - name: stop
+          in: query
+          schema: { type: string }
+        - name: typeDay
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of ferry ridership records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/ferry-ridership.json' } }
+
+  /wired-buildings:
+    get:
+      operationId: listWiredBuildings
+      summary: Search WiredNYC broadband-certified buildings
+      tags: [WiredNYC]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: cohort
+          in: query
+          schema: { type: string, enum: [All, Participating, Certified] }
+        - name: certificationClass
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of WiredNYC buildings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/wired-building.json' } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    DevelopmentProject: { $ref: '../schemas/development-project.json' }
+    PropertyAsset: { $ref: '../schemas/property-asset.json' }
+    Solicitation: { $ref: '../schemas/solicitation.json' }
+    RFPResponse: { $ref: '../schemas/rfp-response.json' }
+    MappedCompany: { $ref: '../schemas/mapped-company.json' }
+    FerryRidership: { $ref: '../schemas/ferry-ridership.json' }
+    WiredBuilding: { $ref: '../schemas/wired-building.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

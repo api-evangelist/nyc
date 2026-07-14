@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandda/schemas/program.json",
+  "title": "Program",
+  "description": "A prosecution bureau, unit, or community initiative run by the Richmond County DA. Modeled from statenislandda.org/our-efforts/, which lists initiatives such as the Domestic Violence Bureau, Animal Cruelty Prosecution Unit, Firearms Anti-Violence Unit, Anti-Drug Initiatives, Cash for Guns / Gun Buy Back, SI HOPE (Heroin, Overdose Prevention and Education), the Overdose Response Initiative, Saturday Night Lights, the RCDA Youth Advisory Council, and the 'Stand Up. Stop Bullying.' contest. Published as HTML only; no API and no Open Data twin.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.statenislandda.org/our-efforts/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Program / bureau / unit / initiative name." },
+    "slug": { "type": ["string", "null"], "description": "WordPress page slug where the program is described." },
+    "category": {
+      "type": ["string", "null"],
+      "description": "Type of effort.",
+      "enum": ["Prosecution Bureau", "Prosecution Unit", "Diversion / Treatment", "Community Outreach", "Youth", "Gun Violence", "Overdose / Public Health", "Animal Welfare", "Domestic Violence", "Victim Support", "Other", null]
+    },
+    "description": { "type": ["string", "null"], "description": "What the program does." },
+    "audience": { "type": ["string", "null"], "description": "Who it serves (e.g. students, victims, residents, at-risk youth)." },
+    "partners": { "type": "array", "items": { "type": "string" }, "description": "Partner agencies/organizations (e.g. NYPD, schools, community groups)." },
+    "contact": { "$ref": "_common.json#/$defs/ContactInfo" },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical URL on statenislandda.org." }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

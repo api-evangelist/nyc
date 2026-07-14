@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynda/schemas/victim-service.json",
+  "title": "VictimService",
+  "description": "A Brooklyn DA victim-services or victim/witness support offering — advocacy, safety planning, court accompaniment, notifications, compensation help, and language access for people harmed by crime. On brooklynda.org these are described within bureau pages (Domestic Violence, Hate Crimes, Human Trafficking, Elder Abuse, Immigrant Affairs) and 'please call me, we are here to help' style pages; there is no structured services directory and no Open Data twin. This schema proposes the canonical structured record.",
+  "type": "object",
+  "x-source": {
+    "wp_rest": "https://www.brooklynda.org/wp-json/wp/v2/pages",
+    "site": "https://www.brooklynda.org/please-call-me-we-are-here-to-help/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "id": { "type": ["integer", "string", "null"], "description": "WordPress page ID, where content-derived." },
+    "name": { "type": "string", "description": "Service name." },
+    "serviceType": {
+      "type": ["string", "null"],
+      "description": "Category of support.",
+      "enum": ["Advocacy", "Safety Planning", "Court Accompaniment", "Case Notification", "Crime Victim Compensation", "Counseling / Referral", "Language Access", "Immigration Relief", "Other", null]
+    },
+    "bureau": { "$ref": "_common.json#/$defs/Bureau" },
+    "servesPopulation": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Victim populations served.",
+      "examples": [["Domestic Violence Survivors"], ["Hate Crime Victims"], ["Trafficking Survivors"], ["Elderly Victims"], ["Immigrant Victims"]]
+    },
+    "description": { "type": ["string", "null"], "description": "What the service provides." },
+    "phone": { "type": ["string", "null"], "description": "Hotline / contact number." },
+    "email": { "type": ["string", "null"], "format": "email" },
+    "hours": { "type": ["string", "null"], "description": "Availability (e.g. 24/7, business hours)." },
+    "confidential": { "type": ["boolean", "null"], "description": "Whether the service is confidential." },
+    "languages": { "type": "array", "items": { "$ref": "_common.json#/$defs/Language" }, "description": "Languages the service is offered in." },
+    "location": {
+      "type": "object",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "address": { "type": ["string", "null"] },
+        "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

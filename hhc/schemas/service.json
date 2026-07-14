@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/schemas/service.json",
+  "title": "Service",
+  "description": "A clinical service line or specialty offered by NYC Health + Hospitals at one or more facilities (e.g. Primary Care, Cardiology, Behavioral Health, Maternity, Pediatrics, Gender Affirming Care). FHIR-aligned to HealthcareService. Today this is only navigable as HTML on the bot-walled public site; there is no Open Data twin and no open service directory.",
+  "type": "object",
+  "x-fhir": { "resourceType": "HealthcareService" },
+  "x-source": {
+    "site": "https://www.nychealthandhospitals.org/services/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "serviceId": { "type": "string", "description": "Service line identifier." },
+    "name": { "type": "string", "description": "Service / specialty name." },
+    "category": {
+      "type": ["string", "null"],
+      "description": "Broad service category.",
+      "enum": ["Primary Care", "Specialty Care", "Emergency Care", "Behavioral Health", "Maternity & Newborn", "Pediatrics", "Surgery", "Diagnostics & Imaging", "Rehabilitation", "Pharmacy", "Dental", "Vision", "Gender Affirming Care", "Long-Term Care", "Other", null]
+    },
+    "description": { "type": ["string", "null"], "description": "Free-text description of the service." },
+    "specialtyCode": { "type": ["string", "null"], "description": "Coded specialty (e.g. NUCC taxonomy), if available." },
+    "facility": { "$ref": "_common.json#/$defs/FacilityReference" },
+    "appointmentRequired": { "type": ["boolean", "null"], "description": "Whether the service requires an appointment (vs. walk-in / urgent care)." },
+    "acceptsNewPatients": { "type": ["boolean", "null"] },
+    "phone": { "type": ["string", "null"], "description": "Booking / intake phone number." },
+    "fhir": { "$ref": "_common.json#/$defs/FhirReference" }
+  },
+  "required": ["serviceId", "name"],
+  "additionalProperties": false
+}

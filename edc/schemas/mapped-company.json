@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/edc/schemas/mapped-company.json",
+  "title": "MappedCompany",
+  "description": "A company featured in EDC's 'Mapped In NY' — the marketing map of notable NYC companies EDC promotes as reasons to locate in the city, with hiring links. Canonical schema reconciling the 'Mapped In NY Companies' Open Data dataset (f4yq-wry5, 19 columns). This is one of EDC's few open datasets and its only company-directory surface.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/f4yq-wry5",
+    "site": "https://edc.nyc/"
+  },
+  "properties": {
+    "companyName": { "type": "string", "description": "'Company Name'." },
+    "category": { "type": ["string", "null"], "description": "Industry / sector category ('Category Name')." },
+    "whyNyc": { "type": ["string", "null"], "description": "Marketing blurb — why the company is in NYC ('Why NYC')." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Company website ('URL')." },
+    "jobsUrl": { "type": ["string", "null"], "format": "uri", "description": "Careers / hiring page ('Jobs URL')." },
+    "hiring": { "type": ["boolean", "string", "null"], "description": "Whether the company is actively hiring ('Hiring')." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["companyName"],
+  "additionalProperties": false
+}

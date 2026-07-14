@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxda/schemas/program.json",
+  "title": "Program",
+  "description": "An organizational unit or public-facing program of the Bronx District Attorney — a prosecutorial bureau/division (Trial, Investigations, Special Victims, Strategic Enforcement, General Counsel) or an outreach/diversion program. Reverse-engineered from the office's /html/bureaus/ and /html/outreach/ SHTML pages. No API or Open Data today.",
+  "type": "object",
+  "x-source": {
+    "bureaus": "https://www.bronxda.nyc.gov/html/bureaus/trial-division.shtml",
+    "outreach": "https://www.bronxda.nyc.gov/html/outreach/your-day-in-court.shtml",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Name of the bureau, division, unit, or program." },
+    "kind": {
+      "type": ["string", "null"],
+      "description": "What kind of program this is.",
+      "enum": ["Division", "Bureau", "Unit", "Outreach Program", "Diversion Program", "Initiative", null]
+    },
+    "bureau": { "$ref": "_common.json#/$defs/Bureau" },
+    "description": { "type": ["string", "null"], "description": "What the program does." },
+    "audience": { "type": ["string", "null"], "description": "Who it serves (e.g. victims, immigrants, community members, defendants seeking sealing)." },
+    "eligibility": { "type": ["string", "null"], "description": "Eligibility criteria, where applicable (e.g. CPL 160.59 sealing criteria)." },
+    "office": { "$ref": "_common.json#/$defs/OfficeReference" },
+    "contact": { "$ref": "_common.json#/$defs/ContactInfo" },
+    "url": { "type": ["string", "null"], "format": "uri" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

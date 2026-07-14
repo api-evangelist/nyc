@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bklynlibrary/schemas/branch.json",
+  "title": "Branch",
+  "description": "A Brooklyn Public Library branch / location — the core physical unit. Canonical schema reconciling BPL's public Drupal JSON:API 'node--branch' (field_address, field_branch_phone, field_hours_*, field_position, field_branchid, field_branch_holds_pickup, and the accessibility/service flags) with the 'BPL Branches' NYC Open Data asset (xmzf-uf2w). Keyed on Branch ID.",
+  "type": "object",
+  "x-source": {
+    "jsonapi": "https://www.bklynlibrary.org/jsonapi/node/branch",
+    "opendata": "https://data.cityofnewyork.us/d/xmzf-uf2w",
+    "site": "https://www.bklynlibrary.org/locations"
+  },
+  "properties": {
+    "branchId": { "type": ["string", "null"], "description": "BPL Branch ID ('field_branchid', e.g. '01') — primary key." },
+    "name": { "type": "string", "description": "Branch name ('title')." },
+    "nickname": { "type": ["string", "null"], "description": "'field_nickname'." },
+    "subtitle": { "type": ["string", "null"], "description": "'field_sub_title'." },
+    "description": { "type": ["string", "null"], "description": "Neighborhood/branch description ('body')." },
+    "status": { "type": ["string", "integer", "null"], "description": "Open/closed/temporary status ('field_branch_status')." },
+    "reopenDate": { "type": ["string", "null"], "format": "date", "description": "'field_reopen_date'." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "phone": { "type": ["string", "null"], "description": "'field_branch_phone'." },
+    "hours": { "$ref": "_common.json#/$defs/WeeklyHours" },
+    "subwayLines": { "type": "array", "items": { "type": "string" }, "description": "Nearby subway lines ('field_branch_subway')." },
+    "busLines": { "type": ["string", "null"], "description": "Nearby bus routes ('field_branch_bus')." },
+    "holdsPickup": { "type": ["boolean", "null"], "description": "Whether the branch is a holds pickup location ('field_branch_holds_pickup')." },
+    "pickupLocation": { "type": ["boolean", "null"], "description": "'field_pickup_location'." },
+    "services": {
+      "type": "object",
+      "description": "Branch service flags observed on node--branch.",
+      "properties": {
+        "wifi": { "type": ["boolean", "string", "null"], "description": "'field_branch_wifi'." },
+        "wifiReach": { "type": ["boolean", "string", "null"], "description": "'field_branch_reach_wifi'." },
+        "publicComputers": { "type": ["boolean", "string", "null"], "description": "'field_computer_res'." },
+        "laptopLoan": { "type": ["boolean", "string", "null"], "description": "'field_laptop_loan'." },
+        "printAnywhere": { "type": ["boolean", "string", "null"], "description": "'field_print_anywhere'." },
+        "notary": { "type": ["boolean", "string", "null"], "description": "'field_notary_service'." },
+        "passport": { "type": ["boolean", "string", "null"], "description": "'field_branch_passport'." },
+        "meetingRooms": { "type": ["boolean", "string", "null"], "description": "'field_branch_meetrooms' / 'field_branch_meet_rooms'." },
+        "teenTechCenter": { "type": ["boolean", "string", "null"], "description": "'field_teen_tech_center'." },
+        "coolingCenter": { "type": ["boolean", "string", "null"], "description": "'field_cooling_center'." },
+        "summerMeals": { "type": ["boolean", "string", "null"], "description": "'field_summer_meals'." },
+        "bookDrop": { "type": ["boolean", "string", "null"], "description": "'field_book_drop'." },
+        "handicapAccess": { "type": ["boolean", "string", "null"], "description": "'field_branch_handicap_access'." },
+        "accessibilityInfo": { "type": ["string", "null"], "description": "'field_branch_accessibility_info'." }
+      },
+      "additionalProperties": false
+    },
+    "facebookUrl": { "type": ["string", "null"], "format": "uri", "description": "'field_facebook_url'." }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

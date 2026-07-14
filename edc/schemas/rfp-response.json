@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/edc/schemas/rfp-response.json",
+  "title": "RFPResponse",
+  "description": "A response / notice of interest submitted to an EDC solicitation (RFP / RFEI / RFQ / RFI). NET-NEW: there is NO public API and NO Open Data twin for responding to an EDC solicitation; today respondents register interest by email, at a pre-submission conference, or through a portal, then submit documents manually. This schema serves both the read surface (a respondent's own submissions) and the write surface (submit a response / register interest).",
+  "type": "object",
+  "x-source": {
+    "site": "https://edc.nyc/rfps",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "responseId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned response / confirmation number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Received", "Under Review", "Shortlisted", "Not Selected", "Awarded", "Withdrawn", null],
+      "description": "Lifecycle status. Set by EDC, not the respondent.",
+      "readOnly": true
+    },
+    "solicitationId": { "type": "string", "description": "The Solicitation this response is for (RFP number / slug)." },
+    "intent": {
+      "type": "string",
+      "enum": ["Register Interest", "Submit Proposal", "Request Documents", "Ask a Question"],
+      "description": "What the respondent is doing — from a lightweight expression of interest to a full proposal submission."
+    },
+    "organization": {
+      "type": "object",
+      "description": "Responding organization.",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": ["string", "null"], "description": "e.g. Developer, Nonprofit, Contractor, Consultant, MWBE." },
+        "mwbe": { "type": ["boolean", "null"], "description": "Certified Minority/Women-owned Business Enterprise." },
+        "website": { "type": ["string", "null"], "format": "uri" }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    },
+    "contact": {
+      "type": "object",
+      "description": "Point of contact for the response.",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": ["string", "null"] }
+      },
+      "required": ["name", "email"],
+      "additionalProperties": false
+    },
+    "message": { "type": ["string", "null"], "description": "Cover note, question text, or proposal summary." },
+    "documentUrls": {
+      "type": ["array", "null"],
+      "description": "Links to proposal documents the respondent is submitting.",
+      "items": { "type": "string", "format": "uri" }
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["solicitationId", "intent", "organization", "contact"],
+  "additionalProperties": false
+}

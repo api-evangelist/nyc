@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandda/schemas/prosecution-statistics.json",
+  "title": "ProsecutionStatistics",
+  "description": "AGGREGATE prosecution / caseload statistics for the Richmond County DA — the office's core operational data, and the biggest gap. This is DARK data: it lives inside the office's case management system and appears, if at all, only as prose in press releases or annual reports. There is NO Open Data dataset, NO API, and NO structured public record of cases prosecuted, dispositions, or diversion outcomes. This schema is a DESIGN-FIRST proposal for how that aggregate data should be published — never per-defendant, always rolled up. It intentionally has no live source.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.statenislandda.org/news-press-releases/",
+    "case_management": "internal (DA case management system) — not public",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "period": { "type": "string", "description": "Reporting period label (e.g. '2025', '2025-Q1')." },
+    "year": { "type": ["integer", "null"], "minimum": 2000, "maximum": 2100 },
+    "offenseCategory": {
+      "type": ["string", "null"],
+      "description": "Top-level offense grouping this row aggregates.",
+      "enum": ["Violent Felony", "Firearms", "Narcotics", "Domestic Violence", "Property", "Animal Cruelty", "DWI / Vehicular", "Fraud / Scam", "Other", "All", null]
+    },
+    "casesInitiated": { "type": ["integer", "null"], "description": "Cases opened / arraigned in the period." },
+    "casesDisposed": { "type": ["integer", "null"], "description": "Cases resolved in the period." },
+    "convictions": { "type": ["integer", "null"], "description": "Convictions (plea or trial)." },
+    "dismissals": { "type": ["integer", "null"], "description": "Dismissals / declinations." },
+    "diversions": { "type": ["integer", "null"], "description": "Referrals to diversion / treatment (e.g. SI HOPE, overdose response)." },
+    "trials": { "type": ["integer", "null"], "description": "Cases resolved by trial." },
+    "notes": { "type": ["string", "null"], "description": "Methodology / caveats." },
+    "aggregateOnly": {
+      "type": "boolean",
+      "const": true,
+      "description": "Always true — this entity never exposes an individual case or defendant; only rolled-up counts."
+    }
+  },
+  "required": ["period", "aggregateOnly"],
+  "additionalProperties": false
+}

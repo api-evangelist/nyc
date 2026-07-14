@@ -1,0 +1,139 @@
+{
+  "domain": "queenslibrary",
+  "agency": "Queens Public Library (QPL)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA). queenslibrary.org sits behind an F5 BIG-IP ASM WAF (TS cookie + 'Request Rejected / support ID' interstitial) that blocks curl and WebFetch on content paths; the Drupal platform is inferred from the site's taxonomy/term URL scheme and /core/ paths. Fingerprinted the vendor platforms directly: the BiblioCommons catalog (queenslibrary.bibliocommons.com — x-version 'nerf15 9.35.0'), Communico events (queens.libnet.info + connect.queenslibrary.org — Server: Communico), OverDrive/Libby digital lending (queenslibrary.overdrive.com), and Springshare LibAnswers (qpl.libanswers.com). Verified NYC Open Data via the Socrata Discovery API: the agency label is 'Queens Library (QBPL)' and it holds exactly ONE asset (kh3d-xhq7, Queens Library Branches); QPL is a nonprofit, not a mayoral agency, so nearly nothing is on Open Data.",
+  "related_domains": ["queenslibrary.bibliocommons.com", "queens.libnet.info", "connect.queenslibrary.org", "queenslibrary.overdrive.com", "qpl.libanswers.com", "data.cityofnewyork.us"],
+  "headline_findings": [
+    "Queens Public Library is an INDEPENDENT NONPROFIT, not a city agency — so it publishes almost nothing to NYC Open Data: a single dataset, Queens Library Branches (kh3d-xhq7), under the agency label 'Queens Library (QBPL)'.",
+    "Everything a patron actually uses is composed from packaged SaaS silos, each with its own login and its own vendor API: the BiblioCommons catalog, Communico events, and the OverDrive/Libby, Axis 360, and hoopla digital-lending platforms. None is an owned QPL API.",
+    "The public site runs on Drupal behind an F5 BIG-IP WAF that rejects even a polite browser-UA crawl of content pages — the site itself has no public API and actively resists machine access.",
+    "The patron TRANSACTIONS — placing a hold, tracking holds, applying for a card — have no machine-readable contract at all; they live only behind a BiblioCommons login. Placing a hold (BookHold) is the net-new write surface.",
+    "The three NYC public library systems — Queens, Brooklyn (BPL), and The New York Public Library (NYPL) — are separate nonprofits with separate catalogs, cards, and vendor stacks. There is no shared NYC library API; that absence is the opportunity."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Exactly ONE QPL dataset — Queens Library Branches (kh3d-xhq7, 21c) under agency 'Queens Library (QBPL)'. The only open, owned-ish QPL data; branch directory only." },
+    { "endpoint": "queenslibrary.bibliocommons.com", "type": "catalog / discovery layer (SaaS)", "owner": "BiblioCommons (vendor)", "public": "public search UI; login for account", "note": "The catalog, patron account, holds, and card live here. x-version 'nerf15 9.35.0'. A BiblioCommons partner API + widgets/RSS exist, but there is no owned QPL API. Holds and cards are behind login." },
+    { "endpoint": "queens.libnet.info / connect.queenslibrary.org", "type": "events platform (SaaS)", "owner": "Communico (vendor)", "public": "public UI + vendor API", "note": "Server: Communico. All programs/events; embedded on the queenslibrary.org calendar. Communico exposes a vendor API, not an owned QPL contract." },
+    { "endpoint": "queenslibrary.overdrive.com", "type": "digital lending (SaaS)", "owner": "OverDrive / Libby (vendor)", "public": "public UI; login to borrow", "note": "eBooks/eAudiobooks/eMagazines. Companion silos: Axis 360 and hoopla. Each has its own vendor API and its own catalog; none federated by QPL." },
+    { "endpoint": "qpl.libanswers.com", "type": "FAQ / chat / help (SaaS)", "owner": "Springshare (vendor)", "public": "public", "note": "LibAnswers (x-backend springyaws.com); QPL's help/FAQ knowledge base. Vendor-owned." },
+    { "endpoint": "www.queenslibrary.org", "type": "informational site", "owner": "QPL (Drupal, behind F5 BIG-IP)", "public": "html (WAF-gated)", "note": "Drupal (taxonomy/term URL scheme, /core/ paths). F5 BIG-IP ASM WAF rejects browser-UA crawls of content pages. No content API." }
+  ],
+  "fruit": [
+    {
+      "name": "Library Branches",
+      "type": "data table + map",
+      "entity": "Branch",
+      "url": "https://www.queenslibrary.org/about-us/locations",
+      "count": "~65 branches",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Queens Library Branches kh3d-xhq7 (21c)"],
+      "notes": "The ONLY open, machine-readable QPL entity. Hours + locations with the full NYC geography spine (Borough, Community Board, Council District, Census Tract, BIN, BBL, NTA) and lat/long. 21,337 views."
+    },
+    {
+      "name": "Catalog (books & media)",
+      "type": "search + item pages",
+      "entity": "CatalogItem",
+      "url": "https://queenslibrary.bibliocommons.com/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The bibliographic catalog lives entirely inside BiblioCommons (nerf15 9.35.0). No Open Data twin and no owned QPL API — only vendor widgets/RSS or the BiblioCommons partner API."
+    },
+    {
+      "name": "Events & programs",
+      "type": "calendar",
+      "entity": "Event",
+      "url": "https://www.queenslibrary.org/calendar",
+      "machine_readable": "vendor API (Communico), not owned/open",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Story times, computer classes, author talks, ESOL — managed in Communico (queens.libnet.info) and embedded on the site. Free. Vendor API exists; no owned QPL contract, no Open Data twin."
+    },
+    {
+      "name": "Digital collections (eBooks/eAudio/streaming)",
+      "type": "multi-vendor lending",
+      "entity": "DigitalCollection",
+      "url": "https://queenslibrary.overdrive.com/",
+      "machine_readable": "vendor APIs, siloed",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Split across OverDrive/Libby, Axis 360, and hoopla — three separate catalogs, logins, and vendor APIs. QPL also offers a $50/year Digital library card available to anyone worldwide. No federation, no owned API, no Open Data twin."
+    },
+    {
+      "name": "Get a library card",
+      "type": "workflow (login-walled)",
+      "entity": "LibraryCard",
+      "url": "https://www.queenslibrary.org/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Applying for / renewing a card is a login-walled form with no owned public API. Net-new write surface (alternative to BookHold)."
+    },
+    {
+      "name": "My account (holds, checkouts, fines)",
+      "type": "transaction (login-walled)",
+      "entity": "BookHold",
+      "url": "https://queenslibrary.bibliocommons.com/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The patron account — holds, checkouts, renewals, fines — lives only inside the BiblioCommons login. No API, no Open Data twin."
+    },
+    {
+      "name": "Place a hold (book hold)",
+      "type": "reservation workflow",
+      "entity": "BookHold",
+      "url": "https://queenslibrary.bibliocommons.com/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common patron transaction — reserve a title for pickup at a branch. No owned public API; lives only behind the BiblioCommons login. The net-new WRITE surface for this domain."
+    },
+    {
+      "name": "Help / FAQ / chat",
+      "type": "knowledge base (vendor)",
+      "entity": "Event",
+      "url": "https://qpl.libanswers.com/",
+      "machine_readable": "vendor (Springshare)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Springshare LibAnswers/LibGuides. Vendor-owned; noted as another silo, not modeled as a first-class entity."
+    }
+  ],
+  "meta": {
+    "short": "Queens Public Library (QPL)",
+    "verb": "federate",
+    "platform": "Drupal site (behind F5 BIG-IP WAF) + BiblioCommons catalog + Communico events + OverDrive/Libby/Axis 360/hoopla digital + Springshare help",
+    "netnew": "BookHold — place a hold/reservation on a catalog item (also: library-card application)",
+    "accent": "#7a9a3a",
+    "tagline": "An independent nonprofit whose every patron surface is a separate vendor SaaS silo, with only its branch directory open.",
+    "headline": "QPL isn't a city agency, so almost nothing reaches NYC Open Data — its catalog, events, digital lending, holds, and cards are scattered across BiblioCommons, Communico, OverDrive, Axis 360, hoopla, and Springshare, none federated under an owned QPL API."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 1,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Modern SaaS, but a patchwork of vendor silos; Drupal site WAF-locked, no owned platform.",
+    "siteApi": "No public site API; F5 BIG-IP WAF rejects even a polite browser-UA crawl.",
+    "openData": "Exactly one dataset (branches) — QPL is a nonprofit, not a mayoral agency.",
+    "coreData": "Catalog/events/digital are machine-readable via vendor APIs, but siloed and not owned/open.",
+    "writeApi": "Holds and card applications are login-walled in BiblioCommons; no public write API.",
+    "agent": "No MCP or agent-native surface exists today.",
+    "ownership": "QPL owns almost nothing — all vendor SaaS; only the branch directory is published as open data."
+  }
+}

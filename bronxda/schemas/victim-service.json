@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxda/schemas/victim-service.json",
+  "title": "VictimService",
+  "description": "A service offered to crime victims and witnesses by the Bronx DA's Crime Victims Assistance Bureau and Special Victims Division — counseling, compensation help, court accompaniment, safety planning, and notification. Reverse-engineered from the office's bureau and outreach pages. No API or Open Data today; access is by phone or in person.",
+  "type": "object",
+  "x-source": {
+    "special_victims": "https://www.bronxda.nyc.gov/html/bureaus/special-victims-division.shtml",
+    "site": "https://www.bronxda.nyc.gov/html/home/home.shtml",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Name of the victim service." },
+    "serviceType": {
+      "type": ["string", "null"],
+      "description": "Category of assistance.",
+      "enum": ["Counseling", "Crime Victim Compensation", "Court Accompaniment", "Safety Planning", "Case Notification", "Referral", "Elder Abuse Support", "Domestic Violence Support", "Other", null]
+    },
+    "description": { "type": ["string", "null"], "description": "What the service provides." },
+    "eligibility": { "type": ["string", "null"], "description": "Who is eligible (victims, witnesses, family members)." },
+    "confidential": { "type": ["boolean", "null"], "description": "Whether the service is confidential." },
+    "office": { "$ref": "_common.json#/$defs/OfficeReference" },
+    "bureau": { "$ref": "_common.json#/$defs/Bureau" },
+    "contact": { "$ref": "_common.json#/$defs/ContactInfo" },
+    "url": { "type": ["string", "null"], "format": "uri" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

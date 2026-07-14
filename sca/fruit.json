@@ -1,0 +1,155 @@
+{
+  "domain": "sca",
+  "agency": "NYC School Construction Authority (SCA)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nycsca.org/robots.txt disallows DNN system paths like /admin/, /DesktopModules/, /Portals/, not content). Fingerprinted www.nycsca.org as a DotNetNuke (DNN) ASP.NET CMS (the 'obvio' skin) — evidence: .ASPXANONYMOUS + dnn_IsMobile + __RequestVerificationToken cookies, __VIEWSTATE, DNNGoContentBuilder markup, /Portals/_default/Skins/obvio assets — served behind an AWS Application Load Balancer (AWSALB cookies) with document content in Azure Blob Storage (dnnhh5cc1.blob.core.windows.net). Identified the vendor bid-document portal bidset.nycsca.org as a login-walled SharePoint app (_layouts/OnlineBidsetsLogin/CustomLogin.aspx). Confirmed the /WS/Reports/ 'web service' path returns rendered DNN HTML, not JSON. Verified the NYC Open Data agency label 'School Construction Authority (SCA)' via the Socrata Discovery API and pulled all 43 assets with column schemas.",
+  "related_domains": ["bidset.nycsca.org", "data.cityofnewyork.us", "schools.nyc.gov", "nyc.gov/site/ddc"],
+  "headline_findings": [
+    "SCA is a vendor-facing agency on a fifth distinct platform: a DotNetNuke (DNN) ASP.NET CMS (obvio skin) behind an AWS load balancer with content in Azure Blob Storage — after Parks' Smarty/PHP, DOE's Sitefinity/.NET, Council's WordPress, and NYCHA's Livesite + Oracle Siebel.",
+    "The reference data is unusually OPEN and procurement-rich: 43 NYC Open Data datasets covering the capital plan (active projects, schedules and budgets, capacity by school), the forward pipeline (upcoming CIP/CAP contracts, current and anticipated RFPs, change orders), the approved-vendor roster (prequalified and disqualified firms), enrollment/capacity demand, and inspections.",
+    "But the VENDOR TRANSACTION layer is locked: bid documents and the prequalification workflow live only behind the login-walled bidset.nycsca.org SharePoint portal and PDF forms. The thing a vendor most wants to do — get prequalified and transact on a bid — has no machine-readable contract.",
+    "SCA publishes the RESULT of prequalification (the Prequalified Firms roster, szkz-syh6) as Open Data, but never the ACT of applying — a clean read/write mismatch.",
+    "The /WS/Reports/ path looks like a web service but returns DNN-rendered HTML; there is no JSON/OpenAPI surface anywhere on the site. See tech-stack.md and apis-observed.md.",
+    "Net-new write surface: apply to become a prequalified vendor (VendorPrequalification) — the everyday vendor onboarding transaction, with no API today."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "43 SCA datasets; SODA /resource/<id>.json endpoints. The one real, open SCA API — capital-plan, procurement, vendor-roster, capacity, and inspection reference data." },
+    { "endpoint": "bidset.nycsca.org", "type": "vendor bid-document portal (SharePoint)", "owner": "SCA (Microsoft SharePoint)", "public": "login-walled UI, no API", "note": "Online Bidsets — bid documents and the vendor transaction layer. _layouts/OnlineBidsetsLogin/CustomLogin.aspx custom login; no JSON/OpenAPI." },
+    { "endpoint": "www.nycsca.org/WS/Reports/type/advbids", "type": "DNN report page (advertised bids)", "owner": "SCA (DotNetNuke)", "public": "html", "note": "Looks like a web service ('WS') but returns a rendered DNN HTML page, not JSON. No machine-readable contract." },
+    { "endpoint": "www.nycsca.org", "type": "informational / vendor site", "owner": "SCA (DotNetNuke on ASP.NET, obvio skin)", "public": "html", "note": "Capital plan, business/vendor guidance, RFPs. DNN CMS behind AWS ALB; content in Azure Blob (dnnhh5cc1.blob.core.windows.net). No content API." },
+    { "endpoint": "dnnhh5cc1.blob.core.windows.net", "type": "object storage (documents)", "owner": "Microsoft Azure Blob Storage", "public": "SAS-signed URLs", "note": "PDF general conditions, safety manuals, press — served via DNNFileManagerPolicy SAS signatures." }
+  ],
+  "fruit": [
+    {
+      "name": "Active Projects Under Construction",
+      "type": "data table + map",
+      "entity": "CapitalProject",
+      "url": "https://data.cityofnewyork.us/d/8586-3zfm",
+      "count": "SCA's most-viewed dataset (~131k views)",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Active Projects Under Construction 8586-3zfm (29c)", "Capital Project Schedules and Budgets 2xh6-psuq (14c)", "Capacity Projects by School a94k-kjys (25c)"],
+      "notes": "Core unit of SCA's work — new schools, additions, capacity, and CIP at a school building. Keyed on Building ID / DSF Number; full NYC geography spine plus SCA's Geographic (school) District dimension."
+    },
+    {
+      "name": "Capital Project Schedules & Budgets",
+      "type": "data table",
+      "entity": "CapitalProject",
+      "url": "https://data.cityofnewyork.us/d/2xh6-psuq",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Capital Project Schedules and Budgets 2xh6-psuq (14c)", "Five Year Plan Summary by Capital Category 24nr-gahi", "Five Year Summary By Citywide Category 9ddq-vbjj"],
+      "notes": "Per-project phase, planned vs. actual dates, budget amount, and phase spending — the capital-plan financials behind each project."
+    },
+    {
+      "name": "Upcoming Contracts to be Awarded (CIP / CAP)",
+      "type": "data table",
+      "entity": "UpcomingContract",
+      "url": "https://data.cityofnewyork.us/d/tsak-vtv3",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Upcoming contracts to be awarded (CIP) tsak-vtv3 (9c)", "Upcoming contracts to be awarded (CAP) 6m3u-8rbh (10c)", "Contractor / Sub Contractor Change Order Report gzvm-na49 (14c)"],
+      "notes": "The forward procurement pipeline vendors watch — design number, category, budget range, seat count, and status of contracts SCA expects to advertise and award; plus change-order events on awarded contracts."
+    },
+    {
+      "name": "RFP Solicitations (Current & Anticipated)",
+      "type": "data table",
+      "entity": "Solicitation",
+      "url": "https://data.cityofnewyork.us/d/bzjf-rmtp",
+      "machine_readable": "Open Data (SODA) for notices; bid docs login-walled",
+      "verified": true,
+      "opendata_match": ["Current RFP bzjf-rmtp (7c)", "Anticipated RFP p8e4-uwuv (5c)"],
+      "opendata_gap": true,
+      "notes": "Professional-services solicitation notices (services, department, due date, not-to-exceed award) are open, but the bid documents themselves live behind the bidset SharePoint login."
+    },
+    {
+      "name": "Prequalified & Disqualified Firms",
+      "type": "directory",
+      "entity": "PrequalifiedFirm",
+      "url": "https://data.cityofnewyork.us/d/szkz-syh6",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Prequalified Firms szkz-syh6 (15c)", "SCA Disqualified Firms krwf-eng6 (4c)"],
+      "notes": "The approved-vendor roster — firm, trade code, M/WBE/local certifications, prequalified date — plus firms currently barred from bidding. The READ view of the vendor list; applying is the net-new WRITE workflow."
+    },
+    {
+      "name": "Enrollment, Capacity & Utilization",
+      "type": "data table",
+      "entity": "EnrollmentCapacity",
+      "url": "https://data.cityofnewyork.us/d/gkd7-3vk7",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Enrollment Capacity And Utilization Reports gkd7-3vk7 (16c)", "Historical by Organization q9xk-w9iv (12c)", "Historical by Building hq56-zhrp (16c)", "DOE Building Space Usage wavz-fkw8 (8c)"],
+      "notes": "The demand signal behind the capital plan — building/organization enrollment, target capacity, and utilization by school (Geographic) district."
+    },
+    {
+      "name": "Enrollment Projections (Demographics)",
+      "type": "data table",
+      "entity": "EnrollmentCapacity",
+      "url": "https://data.cityofnewyork.us/d/e649-r223",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Statistical Forecasting Demographic Projection Report e649-r223 (19c)", "Demographic Projection Report xzy8-qqgf (20c)", "Projected New Housing Starts pa5t-ktd3 (3c)", "Projected Public School Ratio n7ta-pz8k (6c)"],
+      "notes": "The Statistical Forecasting demographic/enrollment projections and housing-starts inputs that justify new capacity — folds into the EnrollmentCapacity read model."
+    },
+    {
+      "name": "Construction Inspections",
+      "type": "data table",
+      "entity": "Inspection",
+      "url": "https://data.cityofnewyork.us/d/n4tc-j6kh",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Inspections Requested n4tc-j6kh (7c)", "Observations And Statuses For Inspections 6246-94tp (7c)"],
+      "notes": "Field-inspection lifecycle on a school project — request, category, DOB#, observation, stage, and TCO date. Keyed on School Code."
+    },
+    {
+      "name": "Obtain bid documents (bidset)",
+      "type": "transaction (portal)",
+      "entity": "VendorPrequalification",
+      "url": "https://bidset.nycsca.org/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Downloading bid sets / submitting on a solicitation lives only inside the login-walled bidset SharePoint portal; no API."
+    },
+    {
+      "name": "Apply to become a prequalified vendor",
+      "type": "sign-up / application workflow",
+      "entity": "VendorPrequalification",
+      "url": "https://www.nycsca.org/Vendor/Prequalification",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The everyday vendor onboarding transaction — apply/renew/add a trade to become a prequalified firm. Today only PDF forms and the bidset SharePoint portal; SCA publishes the resulting roster (szkz-syh6) but never the act of applying. The net-new WRITE surface for this domain."
+    }
+  ],
+  "meta": {
+    "short": "NYC School Construction Authority (SCA)",
+    "verb": "onboard",
+    "platform": "DotNetNuke (DNN) ASP.NET CMS (obvio skin) behind AWS ALB, content in Azure Blob; login-walled bidset SharePoint vendor portal",
+    "netnew": "VendorPrequalification — apply to become a prequalified SCA vendor",
+    "accent": "#b0862a",
+    "tagline": "SCA opens its whole capital pipeline and its approved-vendor list as data, but the act of becoming a vendor stays locked in a SharePoint login.",
+    "headline": "A vendor-facing agency that publishes 43 open procurement datasets yet gives vendors no API to onboard, bid, or get prequalified."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 3,
+    "coreData": 3,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Legacy DotNetNuke ASP.NET CMS (obvio skin) + SharePoint bid portal; packaged, dated, but functional.",
+    "siteApi": "No machine-readable site API; the /WS/Reports 'web service' returns DNN HTML, not JSON.",
+    "openData": "43 Socrata datasets — richer than any prior domain; capital plan, procurement, vendors, capacity, inspections.",
+    "coreData": "Every core entity (projects, contracts, RFPs, vendors, capacity, inspections) has a strong open twin.",
+    "writeApi": "No write API at all — bid documents and prequalification locked in the bidset SharePoint portal.",
+    "agent": "No agent-native surface today; no MCP, no structured contract over the vendor lifecycle.",
+    "ownership": "Open data self-published on city Socrata, but the vendor transaction layer is rented to Microsoft SharePoint."
+  }
+}

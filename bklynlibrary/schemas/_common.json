@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bklynlibrary/schemas/_common.json",
+  "title": "Brooklyn Public Library — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across Brooklyn Public Library (BPL) object schemas. Reconciles fields observed on BPL's public Drupal JSON:API (www.bklynlibrary.org/jsonapi — node--branch, node--event, node--book_profile, node--eres, node--digital_asset), the BiblioCommons catalog (bklynlibrary.bibliocommons.com), and BPL's two NYC Open Data assets. BPL is an independent nonprofit serving the borough of Brooklyn; its own numbering key is the Branch ID (field_branchid).",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "description": "NYC borough. BPL serves Brooklyn, but the enum keeps the citywide set so the model joins to the rest of city government and to the sibling systems (NYPL = Manhattan/Bronx/Staten Island, Queens Public Library = Queens).",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Drupal geofield field_position lat/lon).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Address": {
+      "type": "object",
+      "description": "Postal address, following the Drupal address field structure seen on node--branch (field_address).",
+      "properties": {
+        "addressLine1": { "type": ["string", "null"], "description": "'address_line1'." },
+        "addressLine2": { "type": ["string", "null"], "description": "'address_line2'." },
+        "locality": { "type": ["string", "null"], "description": "City ('locality') — typically Brooklyn." },
+        "administrativeArea": { "type": ["string", "null"], "description": "State ('administrative_area') — 'NY'." },
+        "postalCode": { "type": ["string", "null"], "description": "ZIP ('postal_code')." },
+        "countryCode": { "type": ["string", "null"], "default": "US", "description": "'country_code'." }
+      },
+      "additionalProperties": false
+    },
+    "DayHours": {
+      "type": ["object", "null"],
+      "description": "Open/close for a single day. BPL stores each day as seconds-from-midnight (field_hours_monday { from, to }).",
+      "properties": {
+        "from": { "type": ["integer", "null"], "description": "Opening time in seconds from midnight (e.g. 32400 = 09:00)." },
+        "to": { "type": ["integer", "null"], "description": "Closing time in seconds from midnight (e.g. 72000 = 20:00)." }
+      },
+      "additionalProperties": false
+    },
+    "WeeklyHours": {
+      "type": "object",
+      "description": "A branch's weekly service hours, one DayHours per day (Drupal field_hours_monday … field_hours_sunday).",
+      "properties": {
+        "monday": { "$ref": "#/$defs/DayHours" },
+        "tuesday": { "$ref": "#/$defs/DayHours" },
+        "wednesday": { "$ref": "#/$defs/DayHours" },
+        "thursday": { "$ref": "#/$defs/DayHours" },
+        "friday": { "$ref": "#/$defs/DayHours" },
+        "saturday": { "$ref": "#/$defs/DayHours" },
+        "sunday": { "$ref": "#/$defs/DayHours" }
+      },
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "NYC geography spine — the join keys back to the rest of city government.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "neighborhood": { "type": ["string", "null"], "description": "Neighborhood the branch serves (branch body/nickname)." },
+        "communityDistrict": { "type": ["string", "integer", "null"], "description": "Community District / Board." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district." },
+        "region": { "type": ["string", "integer", "null"], "description": "BPL internal service region ('field_region')." }
+      },
+      "additionalProperties": false
+    },
+    "BranchReference": {
+      "type": "object",
+      "description": "A reference to a BPL branch by its numbering key.",
+      "properties": {
+        "branchId": { "type": ["string", "null"], "description": "BPL Branch ID ('field_branchid', e.g. '01' = Central Library) — BPL's primary branch key." },
+        "name": { "type": "string", "description": "Branch name ('title')." }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    }
+  }
+}

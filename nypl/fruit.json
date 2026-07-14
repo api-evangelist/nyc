@@ -1,0 +1,137 @@
+{
+  "domain": "nypl",
+  "agency": "New York Public Library (NYPL)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA; www.nypl.org sits behind Imperva Incapsula, so headers are edge-obscured). Probed NYPL's OWN public APIs directly: the Digital Collections API at api.repo.nypl.org/api/v2 (token-authenticated — search returns HTTP 401 'HTTP Basic: Access denied' without a registered token; served by Ruby on Rails + Phusion Passenger + nginx), and the open, hypermedia Locations API at refinery.nypl.org/api/nypl/locations/v1.0/locations (PHP Slim — NYPL\\Refinery\\Server — returning branches, hours, amenities, access, and links to events/exhibitions/alerts). Enumerated the github.com/NYPL open-source org (discovery-api, nypl-design-system, web-reader, nypl-core, on-site-hold-request-service, patron-eligibility-service, nypl-library-card-app, ruby-sierra-api-client, and dozens more). Verified the NYC Open Data agency label 'New York Public Library (NYPL)' via the Socrata Discovery API: only 6 assets, mostly stale 2010-2011 branch-services stats plus a facilities layer.",
+  "related_domains": ["api.repo.nypl.org", "refinery.nypl.org", "digitalcollections.nypl.org", "github.com/NYPL", "data.cityofnewyork.us", "brooklynpubliclibrary.org", "queenslibrary.org"],
+  "headline_findings": [
+    "NYPL is the counter-example of this project: an independent nonprofit (serving Manhattan, the Bronx, and Staten Island) that has already built and operated genuinely good PUBLIC APIs for years — where nearly every city agency traps its data in HTML or a vendor CRM.",
+    "The Digital Collections API (api.repo.nypl.org/api/v2) is a real, token-authenticated public API over millions of digitized items — items/search, items/{uuid}, MODS metadata, captures, rights, and collections; built on Ruby on Rails.",
+    "The Locations API (refinery.nypl.org/api/nypl/locations/v1.0) is an OPEN, hypermedia (HAL) API publishing every branch with hours, amenities, accessibility, and links to events, exhibitions, and alerts; built on PHP Slim.",
+    "NYPL open-sources nearly its entire stack at github.com/NYPL — the Research Catalog discovery-api, an accessibility-first React design system (nypl-design-system), the nypl-core ontology, a web-based ebook reader, and patron/hold/Sierra microservices. Ownership is exemplary.",
+    "NYC Open Data holds only 6 thin, mostly-stale NYPL datasets (2010-2011 branch-services stats + a facilities layer). NYPL's living data is on its own APIs, not NYC Open Data — a real finding, and the inverse of every other domain.",
+    "The remaining gaps are unification and one write: the three good APIs are separate contracts with different auth/hosts/shapes, and placing a HOLD (reservation) on a book — though backed by real internal services (on-site-hold-request-service, patron-eligibility-service, nypl-hold-request-consumer) — has no clean, documented, agent-native public API. See apis-observed.md and tech-stack.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "api.repo.nypl.org/api/v2", "type": "public REST API (token auth)", "owner": "NYPL", "public": "token-authenticated", "note": "Digital Collections API. items/search, items/{uuid}, items/mods/{uuid}, items/rights/{uuid}, collections, collections/{uuid}. Returns 401 'HTTP Basic: Access denied' without a registered token. Ruby on Rails + Phusion Passenger + nginx. A real, mature NYPL-owned API." },
+    { "endpoint": "refinery.nypl.org/api/nypl/locations/v1.0/locations", "type": "public REST API (open, hypermedia)", "owner": "NYPL", "public": true, "note": "Locations API. locations, locations/{id}, plus HAL _links to /events, /exhibitions, /alerts, /amenities, /blogs. Rich payload: hours_data, geolocation, access, contacts, fundraising. PHP Slim (NYPL\\Refinery\\Server). Fully open." },
+    { "endpoint": "github.com/NYPL/discovery-api", "type": "open-source API + service", "owner": "NYPL", "public": true, "note": "The primary API supporting the NYPL Research Catalog. Node/AWS. Backed by the Sierra ILS (ruby-sierra-api-client) and a stream of patron/hold microservices." },
+    { "endpoint": "github.com/NYPL (org)", "type": "open-source org", "owner": "NYPL", "public": true, "note": "nypl-design-system (accessibility-first React, 80 stars), web-reader (ebook reader), nypl-core (ontology), on-site-hold-request-service, nypl-hold-request-consumer, patron-eligibility-service, dgx-patron-creator-service, nypl-library-card-app, barcode-service. Exemplary open ownership." },
+    { "endpoint": "www.nypl.org", "type": "web app", "owner": "NYPL (behind Imperva Incapsula)", "public": "html", "note": "Patron-facing site + Research Catalog UI. Edge-obscured by Incapsula; front end uses the NYPL design system. Where patrons place holds today, inside an authenticated account." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Only 6 NYPL datasets, mostly stale 2010-2011 branch-services stats + a facilities layer. Not where NYPL's real data lives." }
+  ],
+  "fruit": [
+    {
+      "name": "Digital Collections (digitized items)",
+      "type": "public API + web app",
+      "entity": "DigitalItem",
+      "url": "https://digitalcollections.nypl.org/",
+      "count": "millions of captures",
+      "machine_readable": "NYPL Digital Collections API (token)",
+      "verified": true,
+      "opendata_match": [],
+      "notes": "Real, token-authenticated public API (api.repo.nypl.org/api/v2): items/search, items/{uuid}, MODS, captures, rights, collections. The flagship example of NYPL already doing the right thing. Gap is only agent-native packaging."
+    },
+    {
+      "name": "Digital Collections collections",
+      "type": "public API",
+      "entity": "Collection",
+      "url": "https://api.repo.nypl.org/api/v2/collections",
+      "machine_readable": "NYPL Digital Collections API (token)",
+      "verified": true,
+      "opendata_match": [],
+      "notes": "Curated groupings of digitized items, keyed on UUID, exposed through the same API."
+    },
+    {
+      "name": "Branches, hours & amenities",
+      "type": "public API + directory",
+      "entity": "Branch",
+      "url": "https://www.nypl.org/locations",
+      "count": "~92 locations",
+      "machine_readable": "NYPL Locations API (open)",
+      "verified": true,
+      "opendata_match": ["Library map p4pf-fyc4", "LIBRARY facilities layer feuq-due4 (13c)"],
+      "notes": "Open, hypermedia Locations API (refinery.nypl.org) with hours_data, geolocation, access, amenities, and links to events/exhibitions/alerts. Far richer than the two stale Open Data facilities layers."
+    },
+    {
+      "name": "Events, classes & exhibitions",
+      "type": "public API + calendar",
+      "entity": "Event",
+      "url": "https://www.nypl.org/events/calendar",
+      "machine_readable": "Locations API events link",
+      "verified": true,
+      "opendata_match": [],
+      "notes": "Programs and exhibitions surfaced via the Locations API /events HAL link and the nypl.org calendar. Reconciled here as a first-class resource."
+    },
+    {
+      "name": "Research & circulating catalog",
+      "type": "public API + web app",
+      "entity": "CatalogItem",
+      "url": "https://www.nypl.org/research/research-catalog",
+      "machine_readable": "discovery-api (open source) + Sierra ILS",
+      "verified": true,
+      "opendata_match": [],
+      "notes": "Bibliographic search over research and circulating holdings; open-source discovery-api backed by the Sierra ILS. Availability/holdability drives whether a hold can be placed."
+    },
+    {
+      "name": "Branch-services statistics (historical)",
+      "type": "data table",
+      "entity": "Branch",
+      "url": "https://data.cityofnewyork.us/d/3nja-bsch",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Branch Services - Manhattan 3nja-bsch (22c)", "Branch Services - Bronx pfys-fabf", "Branch Services - Staten Island wibz-uqui", "Branch Services 7-2010 to 6-2011 ne9z-skhf"],
+      "opendata_gap": false,
+      "notes": "Circulation, attendance, program counts, and reference transactions by Adult/Young Adult/Juvenile — but STALE (2010-2011) and never updated. Boroughs present (Manhattan, Bronx, Staten Island) confirm NYPL's footprint vs. BPL/QPL."
+    },
+    {
+      "name": "Place a hold (reservation)",
+      "type": "transaction (patron account)",
+      "entity": "Hold",
+      "url": "https://www.nypl.org/research/research-catalog",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The everyday resident transaction and the net-new WRITE surface. NYPL runs the internal pieces (on-site-hold-request-service, nypl-hold-request-consumer, patron-eligibility-service, ruby-sierra-api-client) and patrons place holds inside their authenticated account — but there is NO clean, documented, agent-native public hold API. This is the one real gap."
+    },
+    {
+      "name": "Library card application",
+      "type": "workflow (web app)",
+      "entity": "Hold",
+      "url": "https://www.nypl.org/library-card",
+      "machine_readable": "nypl-library-card-app (open source, no public API)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Applying for a library card is a real open-source app (nypl-library-card-app) backed by dgx-patron-creator-service — but is a UI workflow, not a documented public write API. An alternative net-new write surface; already partially exists."
+    }
+  ],
+  "meta": {
+    "short": "New York Public Library (NYPL)",
+    "verb": "lead",
+    "platform": "NYPL-owned open-source stack — Ruby on Rails Digital Collections API (api.repo.nypl.org), PHP Slim Locations API (refinery.nypl.org), Node/AWS discovery-api + Sierra ILS, accessibility-first React design system; site behind Imperva Incapsula",
+    "netnew": "Hold (BookHold) — place and track a reservation on a catalog item via a clean, agent-native public API (backed by NYPL's existing internal hold services)",
+    "accent": "#b03a3a",
+    "tagline": "NYPL is the counter-example: an independent nonprofit that already built and open-sourced genuinely good public APIs for its collections, locations, and catalog.",
+    "headline": "Where city agencies trap data in HTML or a vendor CRM, NYPL leads with real public APIs — the modernization work is to unify its three good APIs into one agent-native contract and close the single gap: placing a hold."
+  },
+  "scorecard": {
+    "platform": 3,
+    "siteApi": 3,
+    "openData": 1,
+    "coreData": 3,
+    "writeApi": 1,
+    "agent": 1,
+    "ownership": 3
+  },
+  "scorecard_notes": {
+    "platform": "Modern, largely self-built and open-sourced stack (Rails, PHP Slim, Node/AWS microservices, Sierra ILS, React design system) — not a legacy CMS or rented SaaS.",
+    "siteApi": "Two real public APIs — Digital Collections (token) and the open hypermedia Locations API — plus the open-source Research Catalog discovery-api. The strongest siteApi of any domain assessed.",
+    "openData": "Only 6 thin, mostly-stale NYPL datasets on NYC Open Data (2010-2011 branch stats + a facilities layer); NYPL's real data is on its own APIs, not Open Data.",
+    "coreData": "Core objects — digital items, collections, locations, catalog bibs — are all fully available through NYPL-owned APIs.",
+    "writeApi": "Holds and patron creation run on real internal services and UI workflows (library-card-app), but there is no clean, documented, agent-native public write API for placing a hold.",
+    "agent": "No MCP or agent-native surface today; but the mature underlying APIs make the OpenAPI + MCP artifact here a light lift rather than a rebuild.",
+    "ownership": "Exemplary — NYPL owns and open-sources nearly its entire stack (github.com/NYPL), including the nypl-core ontology; no vendor lock on its core data."
+  }
+}

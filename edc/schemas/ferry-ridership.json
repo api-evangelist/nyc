@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/edc/schemas/ferry-ridership.json",
+  "title": "FerryRidership",
+  "description": "A NYC Ferry ridership record — boardings by route, stop, hour, and day type. NYC Ferry is operated on behalf of EDC (public benefit corporation). Canonical schema reconciling the 'NYC Ferry Ridership' Open Data dataset (t5n6-gx8c, 7 columns). This is EDC's one genuinely operational open dataset.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/t5n6-gx8c",
+    "site": "https://www.ferry.nyc/"
+  },
+  "properties": {
+    "date": { "type": ["string", "null"], "format": "date", "description": "Service date ('Date')." },
+    "typeDay": { "type": ["string", "null"], "description": "Day type — Weekday / Weekend / Holiday ('TypeDay')." },
+    "hour": { "type": ["integer", "null"], "minimum": 0, "maximum": 23, "description": "Hour of the day ('Hour')." },
+    "route": { "type": ["string", "null"], "description": "NYC Ferry route ('Route')." },
+    "stop": { "type": ["string", "null"], "description": "Landing / stop name ('Stop')." },
+    "direction": { "type": ["string", "null"], "description": "Travel direction ('Direction')." },
+    "boardings": { "type": ["integer", "null"], "minimum": 0, "description": "Number of boardings ('Boardings')." }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanda/schemas/office.json",
+  "title": "Office",
+  "description": "A physical office location of the Manhattan District Attorney's Office — the Main Office at One Hogan Place plus community offices in Harlem and Washington Heights. Reverse-engineered from manhattanda.org/contact-us; no structured data source exists, so this is a design-first schema over published addresses and phone numbers.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.manhattanda.org/contact-us/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Office name (e.g. 'Main Office', 'Harlem Office', 'Washington Heights Office')." },
+    "type": {
+      "type": ["string", "null"],
+      "enum": ["Main Office", "Community Office", null],
+      "description": "Office role."
+    },
+    "address": { "type": ["string", "null"], "description": "Street address." },
+    "postcode": { "type": ["string", "null"], "description": "ZIP code." },
+    "phone": { "type": ["string", "null"], "description": "Published phone number." },
+    "hours": { "type": ["string", "null"], "description": "Public hours, where published." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

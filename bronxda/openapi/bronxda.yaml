@@ -1,0 +1,303 @@
+openapi: 3.1.0
+info:
+  title: Bronx District Attorney API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the Office of the Bronx District Attorney — publishing the
+    content and aggregate prosecution data that today exist only as legacy SHTML pages and Power BI
+    iframes (press releases, case statistics, bureaus/programs, community resources, victim services),
+    and adding the missing write surface: submitting a crime tip, a Civilian Complaint Unit complaint,
+    or a FOIL records request.
+  description: >-
+    Proposed API-first surface for the Office of the Bronx District Attorney (Darcel D. Clark), from the
+    NYC Modernization low-hanging-fruit assessment of bronxda.nyc.gov.
+
+
+    The Bronx DA has **no API and zero NYC Open Data datasets**. Its public site is a legacy NYC.gov
+    `/html/` SHTML application (server-side-includes, a JavaScript-built nav, jQuery/Bootstrap) behind
+    Akamai and an AWS ALB. The only quantitative data it publishes — arrests, charging decisions, case
+    outcomes, defendant demographics — is embedded as **Microsoft Power BI (Gov)** dashboards
+    (`app.powerbigov.us`), rendered pixels with no download or query endpoint. Every entity in this
+    contract is therefore reverse-engineered from HTML and BI iframes, not from a machine-readable source.
+
+
+    Because all **five** NYC borough District Attorney offices run the same charter functions, this contract
+    is written generically (see `OfficeReference`) so it can back **one shared District Attorney API** rather
+    than a bespoke Bronx build.
+
+
+    The contract does two things: (1) publishes the office's content and aggregate figures as clean resources,
+    and (2) adds the one net-new **write** workflow — submitting a tip / complaint / FOIL request — that today
+    is only a phone call to 718-590-2300 or an email to FOILREQUEST@BRONXDA.NYC.GOV, with no tracking.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.bronxda.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Newsroom
+    description: Press releases and newsroom items.
+  - name: Data
+    description: Aggregate prosecution statistics (never individual cases) — today locked in Power BI dashboards.
+  - name: Programs
+    description: Prosecutorial bureaus/divisions and public-facing programs.
+  - name: Community
+    description: Community resources and crime-victim services.
+  - name: Submissions
+    description: Public submissions to the office — tips, civilian complaints, FOIL requests (read + write). The net-new surface.
+
+paths:
+  /press-releases:
+    get:
+      operationId: listPressReleases
+      summary: List / search press releases
+      tags: [Newsroom]
+      parameters:
+        - name: year
+          in: query
+          schema: { type: integer }
+        - name: category
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of press releases.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/press-release.json' } }
+  /press-releases/{id}:
+    get:
+      operationId: getPressRelease
+      summary: Get a press release
+      tags: [Newsroom]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The press release.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/press-release.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /case-statistics:
+    get:
+      operationId: listCaseStatistics
+      summary: Search aggregate prosecution statistics
+      description: >-
+        Aggregate case figures currently locked inside the office's Power BI (Gov) dashboards
+        (arrests, charging decisions, case outcomes, defendant demographics). Aggregate only —
+        never an individual case or defendant.
+      tags: [Data]
+      parameters:
+        - name: dashboard
+          in: query
+          schema: { type: string, enum: [Arrests, Charging Decisions, Case Outcomes, Defendant Demographics, Other] }
+        - name: decisionPoint
+          in: query
+          schema: { type: string }
+        - name: chargeCategory
+          in: query
+          schema: { type: string, enum: [Felony, Misdemeanor, Violation, All] }
+        - name: period
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate case statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/case-statistic.json' } }
+
+  /programs:
+    get:
+      operationId: listPrograms
+      summary: List bureaus, divisions, units, and public programs
+      tags: [Programs]
+      parameters:
+        - name: kind
+          in: query
+          schema: { type: string, enum: [Division, Bureau, Unit, Outreach Program, Diversion Program, Initiative] }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of programs.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/program.json' } }
+
+  /community-resources:
+    get:
+      operationId: listCommunityResources
+      summary: List community resources and services
+      description: Record sealing (CPL 160.59), BronxCAMS, immigrant affairs, court navigation, important numbers.
+      tags: [Community]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of community resources.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/community-resource.json' } }
+
+  /victim-services:
+    get:
+      operationId: listVictimServices
+      summary: List crime-victim and witness services
+      tags: [Community]
+      parameters:
+        - name: serviceType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of victim services.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/victim-service.json' } }
+
+  /submissions:
+    post:
+      operationId: createSubmission
+      summary: Submit a tip, civilian complaint, or FOIL request
+      description: >-
+        The net-new write surface — a structured intake for a crime tip, a Civilian Complaint Unit
+        complaint of police misconduct/brutality, a witness contact, or a FOIL records request. Today
+        these have no API: a complaint is a call to 718-590-2300 and a FOIL request is a plain email to
+        FOILREQUEST@BRONXDA.NYC.GOV, neither returning a tracking number. Submissions may be anonymous
+        (in which case no status can be returned).
+      tags: [Submissions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/tip-submission.json' }
+      responses:
+        '201':
+          description: Submission received.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/tip-submission.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /submissions/{submissionId}:
+    get:
+      operationId: getSubmission
+      summary: Check the status of a submission
+      description: Retrieve a non-anonymous submission and its status by tracking number.
+      tags: [Submissions]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The submission.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/tip-submission.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    PressRelease: { $ref: '../schemas/press-release.json' }
+    CaseStatistic: { $ref: '../schemas/case-statistic.json' }
+    Program: { $ref: '../schemas/program.json' }
+    CommunityResource: { $ref: '../schemas/community-resource.json' }
+    VictimService: { $ref: '../schemas/victim-service.json' }
+    TipSubmission: { $ref: '../schemas/tip-submission.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

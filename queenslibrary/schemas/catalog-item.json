@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queenslibrary/schemas/catalog-item.json",
+  "title": "CatalogItem",
+  "description": "A bibliographic record (title) in the Queens Public Library catalog — a book, audiobook, DVD, or other holding. NO open API and NO Open Data twin: the catalog lives entirely inside the BiblioCommons discovery layer (queenslibrary.bibliocommons.com), whose data is reachable only through vendor widgets/RSS or the BiblioCommons partner API, not an owned QPL contract. This schema is a clean, reverse-engineered resource model for a catalog item.",
+  "type": "object",
+  "x-source": {
+    "catalog": "https://queenslibrary.bibliocommons.com/",
+    "vendor": "BiblioCommons",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "itemId": { "type": ["string", "null"], "description": "BiblioCommons bib/metadata identifier for the title." },
+    "title": { "type": "string", "description": "Title of the work." },
+    "subtitle": { "type": ["string", "null"] },
+    "author": { "type": ["string", "null"], "description": "Primary author / creator." },
+    "contributors": { "type": ["array", "null"], "items": { "type": "string" }, "description": "Additional authors, narrators, editors." },
+    "format": { "$ref": "_common.json#/$defs/MediaFormat" },
+    "isbn": { "type": ["array", "null"], "items": { "type": "string" }, "description": "ISBN(s) associated with the edition." },
+    "publisher": { "type": ["string", "null"] },
+    "publicationYear": { "type": ["integer", "null"] },
+    "language": { "type": ["string", "null"], "description": "Primary language of the work." },
+    "subjects": { "type": ["array", "null"], "items": { "type": "string" }, "description": "Subject headings / genres." },
+    "summary": { "type": ["string", "null"], "description": "Description / annotation." },
+    "coverUrl": { "type": ["string", "null"], "format": "uri" },
+    "callNumber": { "type": ["string", "null"] },
+    "availability": {
+      "type": "object",
+      "description": "Aggregate availability across branches (as surfaced by the BiblioCommons catalog).",
+      "properties": {
+        "status": { "type": ["string", "null"], "enum": ["Available", "Checked Out", "On Order", "In Transit", "Not Available", null] },
+        "totalCopies": { "type": ["integer", "null"] },
+        "availableCopies": { "type": ["integer", "null"] },
+        "holdsCount": { "type": ["integer", "null"], "description": "Number of holds currently placed on the title." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

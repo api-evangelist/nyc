@@ -1,0 +1,162 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces an OPEN H+H directory (facilities, service lines, providers, pharmacies, financial-assistance) that H+H does not publish today, plus read access to the patient's appointments (mirroring the live Epic FHIR Appointment read) and request_appointment — the net-new write workflow that falls outside the live FHIR surface (no Appointment create, no Slot, no $book).",
+    "openapi": "../openapi/hhc.yaml",
+    "schemas": "../schemas/",
+    "live_fhir": "https://epicproxypda.nychhc.org/FHIRProxy/api/FHIR/R4"
+  },
+  "server": {
+    "name": "io.nyc.hhc",
+    "title": "NYC Health + Hospitals (H+H)",
+    "version": "0.1.0",
+    "description": "Agent-native access to NYC Health + Hospitals — an open directory of facilities (11 acute-care hospitals, Gotham Health federally qualified health centers, post-acute/nursing, behavioral-health, and Correctional Health), service lines, providers, pharmacies, and financial-assistance programs (NYC Care, sliding-scale), plus read access to a patient's appointments and the net-new ability to request an appointment. H+H already runs a live Epic FHIR R4 / SMART on FHIR standard, but it is read-mostly and patient-scoped with no open directory and no booking; this surface fills those gaps.",
+    "instructions": "Use find_facilities / get_facility (and get_facility_services) to locate H+H care sites by borough, network (Acute Care, Gotham Health, etc.), facility type, or service offered. find_services covers clinical service lines; find_providers is Find a Doctor by specialty, language, or facility. find_financial_assistance surfaces NYC Care, the sliding-scale (Options) program, and financial counseling — H+H is the safety-net system, so route uninsured users here; eligibility is immigration-status-blind for NYC Care and the sliding scale. find_pharmacies lists outpatient pharmacies. list_my_appointments returns the authenticated patient's booked appointments (SMART on FHIR patient authorization required) — this maps to the live Epic FHIR Appointment read. request_appointment (net-new) creates an appointment REQUEST; it requires an authenticated patient and mutates state — confirm the service, facility, and patient details before submitting, set urgent=true for time-sensitive but non-emergency needs, and NEVER use it for emergencies (direct the user to 911 or an Emergency Department). This is a design-first proposal, not a booking into a real EHR."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_facilities",
+      "title": "Find Facilities",
+      "description": "Search NYC Health + Hospitals care sites by borough, network, facility type, emergency services, service offered, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "network": { "type": "string", "enum": ["Acute Care", "Gotham Health", "Post-Acute / Long-Term Care", "Behavioral Health", "Correctional Health Services", "Community Care"] },
+          "facilityType": { "type": "string" },
+          "emergencyServices": { "type": "boolean" },
+          "service": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/facility.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listFacilities"
+    },
+    {
+      "name": "get_facility",
+      "title": "Get Facility",
+      "description": "Fetch a single H+H facility (network, type, services, hours, location) by id.",
+      "inputSchema": { "type": "object", "properties": { "facilityId": { "type": "string" } }, "required": ["facilityId"] },
+      "outputSchema": { "$ref": "../schemas/facility.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getFacility"
+    },
+    {
+      "name": "get_facility_services",
+      "title": "Get Facility Services",
+      "description": "List the clinical service lines offered at a given facility.",
+      "inputSchema": { "type": "object", "properties": { "facilityId": { "type": "string" } }, "required": ["facilityId"] },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getFacilityServices"
+    },
+    {
+      "name": "find_services",
+      "title": "Find Services",
+      "description": "Search H+H clinical service lines / specialties by category, facility, new-patient status, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string" },
+          "facilityId": { "type": "string" },
+          "acceptsNewPatients": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listServices"
+    },
+    {
+      "name": "find_providers",
+      "title": "Find Providers",
+      "description": "Find a Doctor — search H+H clinicians by specialty, language, facility, or new-patient status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "specialty": { "type": "string" },
+          "language": { "type": "string" },
+          "facilityId": { "type": "string" },
+          "acceptingNewPatients": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/provider.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listProviders"
+    },
+    {
+      "name": "find_financial_assistance",
+      "title": "Find Financial Assistance",
+      "description": "List H+H financial-assistance and coverage programs — NYC Care, the sliding-scale (Options) fee schedule, and financial counseling. Use for uninsured or under-insured users; NYC Care and the sliding scale are available regardless of immigration status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "programType": { "type": "string" },
+          "coversUninsured": { "type": "boolean" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/financial-assistance.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listFinancialAssistance"
+    },
+    {
+      "name": "find_pharmacies",
+      "title": "Find Pharmacies",
+      "description": "List H+H outpatient / retail pharmacies by borough or facility.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "facilityId": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/pharmacy.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPharmacies"
+    },
+    {
+      "name": "list_my_appointments",
+      "title": "List My Appointments",
+      "description": "List the authenticated patient's booked appointments and their status — mirrors MyChart and the live Epic FHIR Appointment resource (read-only). Requires SMART on FHIR patient authorization.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["proposed", "pending", "booked", "arrived", "fulfilled", "cancelled", "noshow", "waitlist"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/appointment.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listAppointments",
+      "x-auth": "user"
+    },
+    {
+      "name": "request_appointment",
+      "title": "Request an Appointment",
+      "description": "Request an appointment at NYC Health + Hospitals (net-new). NO public booking API exists today — patients call 1-844-NYC-4NYC or use a MyChart flow, and the live Epic FHIR surface exposes no Appointment create, no Slot, and no $book. Requires an authenticated patient. Mutates state — confirm service, facility, and patient details first; set urgent=true for time-sensitive but non-emergency needs; NEVER use for emergencies (direct to 911 / an Emergency Department). Route uninsured requesters to NYC Care / financial counseling via the coverage block.",
+      "inputSchema": { "$ref": "../schemas/appointment-request.json" },
+      "outputSchema": { "$ref": "../schemas/appointment-request.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createAppointmentRequest",
+      "x-auth": "user"
+    }
+  ]
+}

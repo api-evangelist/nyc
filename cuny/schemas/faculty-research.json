@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cuny/schemas/faculty-research.json",
+  "title": "FacultyResearch",
+  "description": "A faculty member or research output at a CUNY college — bridging the public faculty directories on cuny.edu / college sites and the CUNY Academic Works institutional repository (academicworks.cuny.edu). There is no unified public API; faculty listings are HTML and the repository exposes only OAI-PMH / HTML per college.",
+  "type": "object",
+  "x-source": {
+    "repository": "https://academicworks.cuny.edu/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Faculty member name." },
+    "campus": { "$ref": "_common.json#/$defs/CampusReference" },
+    "department": { "type": ["string", "null"], "description": "Academic department." },
+    "title": { "type": ["string", "null"], "description": "Academic rank / title (e.g. 'Associate Professor')." },
+    "researchAreas": { "type": "array", "items": { "type": "string" }, "description": "Fields of research / expertise." },
+    "profileUrl": { "type": ["string", "null"], "format": "uri", "description": "Faculty profile page." },
+    "orcid": { "type": ["string", "null"], "description": "ORCID identifier." },
+    "publications": {
+      "type": "array",
+      "description": "Selected works / publications (from CUNY Academic Works).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "year": { "type": ["integer", "null"] },
+          "type": { "type": ["string", "null"], "description": "e.g. Article, Book, Dataset, Thesis." },
+          "url": { "type": ["string", "null"], "format": "uri" }
+        },
+        "required": ["title"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

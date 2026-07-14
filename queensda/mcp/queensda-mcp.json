@@ -1,0 +1,159 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Queens DA's narrative content as structured resources (press releases, cases, cold cases, programs, resources, victim services) and adds submit_tip — the net-new inbound write workflow (tip / cold-case lead / FOIL request) that has no channel today. Drafted to be shareable across all five NYC borough DA offices.",
+    "openapi": "../openapi/queensda.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.queensda",
+    "title": "Queens County District Attorney",
+    "version": "0.1.0",
+    "description": "Agent-native access to the Queens County District Attorney — press releases, public-record prosecution activity, the cold-case / unidentified-persons (NamUs) initiative, community programs, resources, and victim services, all structured from the office's WordPress content — plus the net-new ability to submit a tip, cold-case lead, or FOIL records request that has no online channel today.",
+    "instructions": "Use find_press_releases to search the office's 1,200+ releases by kind, prosecution stage, date, or text, and get_press_release for one. find_cases returns PUBLIC-RECORD prosecution activity (arraignment/charges/indictment/court-case) structured from that prose — never sealed or non-public data. find_cold_cases is the highest-value read: it recovers NamUs case numbers, sex, age range, and date/location found from the unidentified-persons posts so a family or agent can actually query them. find_programs and find_community_resources cover diversion/youth/violence-prevention initiatives and public resources (FOIL, property release, helplines). find_victim_services lists survivor support (services, not people). submit_tip (net-new) creates an inbound submission — a crime tip, cold-case lead, case inquiry, or FOIL request; tips may be anonymous, FOIL requests generally are not. It mutates state and routes to the office — confirm the type and details with the user before submitting, and never fabricate case facts."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_press_releases",
+      "title": "Find Press Releases",
+      "description": "Search Queens DA press releases, statements, and announcements by kind, prosecution stage, date range, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string", "enum": ["press-release", "statement", "announcement", "press-clip", "newsletter"] },
+          "stage": { "type": "string", "enum": ["arrest", "arraignment", "charges", "indictment", "trial", "conviction", "sentencing", "other"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/press-release.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPressReleases"
+    },
+    {
+      "name": "get_press_release",
+      "title": "Get Press Release",
+      "description": "Fetch a single Queens DA press release by ID.",
+      "inputSchema": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] },
+      "outputSchema": { "$ref": "../schemas/press-release.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getPressRelease"
+    },
+    {
+      "name": "find_cases",
+      "title": "Find Cases",
+      "description": "Search PUBLIC-RECORD prosecution activity (arraignment, charges, indictment, court case, conviction) structured from the press-release stream. Public record only — no sealed or non-public data.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "stage": { "type": "string", "enum": ["arraignment", "charges", "indictment", "pre-trial", "trial", "conviction", "sentencing", "appeal", "closed"] },
+          "division": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/case.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCases"
+    },
+    {
+      "name": "get_case",
+      "title": "Get Case",
+      "description": "Fetch a single public-record case by ID, including charges, division, disposition, and the press releases that announced it.",
+      "inputSchema": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] },
+      "outputSchema": { "$ref": "../schemas/case.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCase"
+    },
+    {
+      "name": "find_cold_cases",
+      "title": "Find Cold Cases",
+      "description": "Search Queens DA cold cases and unidentified/identified persons — NamUs case number, sex, estimated age range, date and location found — recovered from post titles and bodies. The highest-value structured read in this domain.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["unidentified", "identified"] },
+          "caseType": { "type": "string", "enum": ["unidentified-person", "missing-person", "unsolved-homicide"] },
+          "sex": { "type": "string", "enum": ["Male", "Female", "Unknown"] },
+          "namusId": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/cold-case.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listColdCases"
+    },
+    {
+      "name": "find_programs",
+      "title": "Find Programs",
+      "description": "List Queens DA community programs and initiatives (diversion, youth, violence prevention, reentry, conviction integrity, special initiatives) by category or status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string", "enum": ["diversion", "youth", "community-partnership", "violence-prevention", "reentry", "conviction-integrity", "special-initiative", "other"] },
+          "status": { "type": "string", "enum": ["active", "archived", "rfp-open"] },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/program.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPrograms"
+    },
+    {
+      "name": "find_community_resources",
+      "title": "Find Community Resources",
+      "description": "List public resources the office points to — FOIL records requests, property release, Conviction Integrity Unit, helplines, and language/disability access plans.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string", "enum": ["records-request", "property-release", "conviction-integrity", "helpline", "language-access", "disability-access", "victim-service", "other"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-resource.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCommunityResources"
+    },
+    {
+      "name": "find_victim_services",
+      "title": "Find Victim Services",
+      "description": "List victim/witness support services (advocacy, safety planning, compensation, court accompaniment, helplines, interpreters). Describes services, not people.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "serviceType": { "type": "string" },
+          "language": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/victim-service.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listVictimServices"
+    },
+    {
+      "name": "submit_tip",
+      "title": "Submit a Tip",
+      "description": "Create an inbound submission to the Queens DA — a crime tip, cold-case lead, case inquiry, or FOIL records request. NET-NEW workflow with no online channel today (only phone or a static contact page). Tips may be anonymous; FOIL requests generally require contact details. Mutates state and routes to the office — confirm the type and details with the user first and never fabricate case facts.",
+      "inputSchema": { "$ref": "../schemas/tip-submission.json" },
+      "outputSchema": { "$ref": "../schemas/tip-submission.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createSubmission",
+      "x-auth": "optional"
+    }
+  ]
+}

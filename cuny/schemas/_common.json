@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cuny/schemas/_common.json",
+  "title": "CUNY — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across City University of New York (CUNY) object schemas. Reconciles fields common to cuny.edu (WordPress Multisite), the CUNYfirst student information system (Oracle PeopleSoft Campus Solutions), the CUNY Office of Institutional Research and Assessment (OIRA) data books, and NY State / NYC Open Data. Includes the NYC geography spine and CUNY's own federation keys (campus/college reference and college type).",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (LATITUDE / LONGITUDE).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine — the join keys back to the rest of city government for CUNY campuses located across the five boroughs.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityDistrict": { "type": ["string", "integer", "null"], "description": "Community District / Board." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district." },
+        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number." }
+      },
+      "additionalProperties": false
+    },
+    "CollegeType": {
+      "type": ["string", "null"],
+      "description": "The kind of CUNY institution in the federated system.",
+      "enum": ["Senior College", "Community College", "Graduate/Professional School", "Honors College", "Other", null]
+    },
+    "CampusReference": {
+      "type": "object",
+      "description": "A reference to one of CUNY's ~25 colleges/schools by name and institution code.",
+      "properties": {
+        "college": { "type": "string", "description": "College / school name (e.g. 'Hunter College', 'Borough of Manhattan Community College')." },
+        "institutionCode": { "type": ["string", "null"], "description": "CUNYfirst / PeopleSoft institution (business unit) code for the campus." },
+        "type": { "$ref": "#/$defs/CollegeType" }
+      },
+      "required": ["college"],
+      "additionalProperties": false
+    },
+    "Term": {
+      "type": ["string", "null"],
+      "description": "Academic term / semester label (e.g. 'Fall 2026', 'Spring 2027') or CUNYfirst term code."
+    }
+  }
+}

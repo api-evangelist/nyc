@@ -1,0 +1,380 @@
+openapi: 3.1.0
+info:
+  title: NYC School Construction Authority API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC School Construction Authority — publishing its
+    already-open capital-plan and procurement reference data (capital projects, upcoming contracts,
+    RFP solicitations, prequalified firms, enrollment/capacity, inspections) as coherent resources,
+    and adding the missing vendor write surface locked inside the bidset SharePoint portal — applying
+    to become a prequalified vendor.
+  description: >-
+    Proposed API-first surface for the NYC School Construction Authority (SCA), from the NYC
+    Modernization low-hanging-fruit assessment of nycsca.org and the bidset vendor portal.
+
+
+    SCA is a vendor-facing agency, and its reference data is unusually well published: 43 NYC Open
+    Data datasets cover the capital plan (active projects, schedules and budgets, capacity by school),
+    the forward procurement pipeline (upcoming CIP/CAP contracts, current and anticipated RFPs, change
+    orders), the approved-vendor roster (prequalified and disqualified firms), enrollment/capacity
+    demand, and field inspections. But the **vendor transaction layer is locked**: the public site is a
+    DotNetNuke (DNN) CMS, and bid documents plus the prequalification workflow live only behind the
+    login-walled `bidset.nycsca.org` SharePoint portal. There is no machine-readable contract for the
+    thing a vendor most wants to do — get prequalified and transact on a bid.
+
+
+    This contract does two things: (1) presents the open capital-plan and procurement datasets as one
+    clean resource model, and (2) adds the one net-new **write** workflow — submitting a
+    **vendor prequalification** application — that today exists only as PDF forms and a SharePoint login.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.nycsca.org/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: CapitalProjects
+    description: School-construction capital projects — schedules, budgets, and capacity.
+  - name: Procurement
+    description: The forward procurement pipeline — upcoming contracts and RFP solicitations.
+  - name: Vendors
+    description: The prequalified/disqualified vendor roster and the net-new prequalification workflow.
+  - name: Capacity
+    description: Enrollment, capacity, and utilization — the demand signal behind the capital plan.
+  - name: Inspections
+    description: Construction inspection requests and observations.
+
+paths:
+  /capital-projects:
+    get:
+      operationId: listCapitalProjects
+      summary: List / search SCA capital projects
+      tags: [CapitalProjects]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: geographicDistrict
+          in: query
+          schema: { type: string }
+        - name: projectType
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of capital projects.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/capital-project.json' } }
+  /capital-projects/{buildingId}:
+    get:
+      operationId: getCapitalProject
+      summary: Get a capital project by Building ID
+      tags: [CapitalProjects]
+      parameters:
+        - name: buildingId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The capital project.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/capital-project.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /upcoming-contracts:
+    get:
+      operationId: listUpcomingContracts
+      summary: List upcoming contracts to be awarded (CIP / CAP) and change orders
+      tags: [Procurement]
+      parameters:
+        - name: program
+          in: query
+          schema: { type: string, enum: [CIP, CAP] }
+        - $ref: '#/components/parameters/borough'
+        - name: geographicDistrict
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of upcoming contracts.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/upcoming-contract.json' } }
+
+  /solicitations:
+    get:
+      operationId: listSolicitations
+      summary: List SCA RFP solicitations (current and anticipated)
+      tags: [Procurement]
+      parameters:
+        - name: stage
+          in: query
+          schema: { type: string, enum: [Anticipated, Current] }
+        - name: department
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of solicitations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/solicitation.json' } }
+
+  /vendors:
+    get:
+      operationId: listVendors
+      summary: List prequalified (and disqualified) vendor firms
+      tags: [Vendors]
+      parameters:
+        - name: tradeCode
+          in: query
+          schema: { type: string }
+        - name: minorityBusiness
+          in: query
+          schema: { type: boolean }
+        - name: womenBusiness
+          in: query
+          schema: { type: boolean }
+        - name: localBusiness
+          in: query
+          schema: { type: boolean }
+        - name: disqualified
+          in: query
+          description: If true, return only firms currently disqualified from bidding.
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of vendor firms.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/prequalified-firm.json' } }
+
+  /prequalifications:
+    get:
+      operationId: listPrequalifications
+      summary: List the authenticated firm's prequalification applications
+      description: Reads the firm's own prequalification applications and their status — today only trackable inside the bidset SharePoint portal.
+      tags: [Vendors]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Under Review, Additional Info Requested, Approved, Denied, Withdrawn] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the firm's prequalification applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/vendor-prequalification.json' } }
+    post:
+      operationId: createPrequalification
+      summary: Apply to become a prequalified SCA vendor
+      description: >-
+        The net-new write surface — an API for submitting a vendor prequalification application,
+        replacing the PDF-forms-and-SharePoint workflow. The resulting approved roster is already
+        published as Open Data ('Prequalified Firms'); the act of applying has no contract today.
+      tags: [Vendors]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/vendor-prequalification.json' }
+      responses:
+        '201':
+          description: Prequalification application created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/vendor-prequalification.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /prequalifications/{applicationId}:
+    get:
+      operationId: getPrequalification
+      summary: Get a prequalification application
+      tags: [Vendors]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The prequalification application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/vendor-prequalification.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /enrollment-capacity:
+    get:
+      operationId: listEnrollmentCapacity
+      summary: Search enrollment / capacity / utilization records
+      tags: [Capacity]
+      parameters:
+        - name: geographicDistrict
+          in: query
+          schema: { type: string }
+        - name: buildingId
+          in: query
+          schema: { type: string }
+        - name: orgId
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of enrollment/capacity records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/enrollment-capacity.json' } }
+
+  /inspections:
+    get:
+      operationId: listInspections
+      summary: Search SCA construction inspection requests and observations
+      tags: [Inspections]
+      parameters:
+        - name: schoolCode
+          in: query
+          schema: { type: string }
+        - name: borough
+          in: query
+          schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of inspections.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/inspection.json' } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    CapitalProject: { $ref: '../schemas/capital-project.json' }
+    UpcomingContract: { $ref: '../schemas/upcoming-contract.json' }
+    Solicitation: { $ref: '../schemas/solicitation.json' }
+    PrequalifiedFirm: { $ref: '../schemas/prequalified-firm.json' }
+    VendorPrequalification: { $ref: '../schemas/vendor-prequalification.json' }
+    EnrollmentCapacity: { $ref: '../schemas/enrollment-capacity.json' }
+    Inspection: { $ref: '../schemas/inspection.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

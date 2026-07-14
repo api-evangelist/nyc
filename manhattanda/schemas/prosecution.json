@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanda/schemas/prosecution.json",
+  "title": "Prosecution",
+  "description": "Aggregate prosecution / caseload statistics for the Manhattan District Attorney's Office — arraignments, indictments, dispositions, convictions, declinations, and diversions summarized by reporting period, bureau, and crime category. This is the office's core operational subject, yet it has NO machine-readable surface: there is NO NYC Open Data twin and no structured API, only prose in press releases and periodic reports. Published AGGREGATE only; the office never exposes an individual case or defendant record. Design-first schema.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.manhattanda.org/category/news/reports/",
+    "opendata": null,
+    "opendata_gap": true,
+    "note": "No NYC Open Data agency label exists for the Manhattan DA; caseload data lives only inside the office's case management system (Odyssey/Ada) and its published reports as prose."
+  },
+  "properties": {
+    "reportingPeriod": { "type": ["string", "null"], "description": "Period the figures cover (e.g. '2025-Q1', 'FY2025')." },
+    "bureau": { "$ref": "_common.json#/$defs/Bureau" },
+    "category": { "$ref": "_common.json#/$defs/CrimeCategory" },
+    "chargeLevel": {
+      "type": ["string", "null"],
+      "enum": ["Felony", "Misdemeanor", "Violation", "All", null],
+      "description": "Charge severity the figures cover."
+    },
+    "arraignments": { "type": ["integer", "null"], "description": "Cases arraigned." },
+    "indictments": { "type": ["integer", "null"], "description": "Cases indicted." },
+    "dispositions": { "type": ["integer", "null"], "description": "Cases disposed." },
+    "convictions": { "type": ["integer", "null"], "description": "Convictions." },
+    "declinations": { "type": ["integer", "null"], "description": "Cases declined to prosecute." },
+    "dismissals": { "type": ["integer", "null"], "description": "Cases dismissed." },
+    "diversions": { "type": ["integer", "null"], "description": "Cases routed to diversion / alternative-to-incarceration programs." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "asOf": { "type": ["string", "null"], "format": "date", "description": "Data-as-of date." }
+  },
+  "required": ["reportingPeriod"],
+  "additionalProperties": false
+}

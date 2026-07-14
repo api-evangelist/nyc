@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandda/schemas/victim-service.json",
+  "title": "VictimService",
+  "description": "A victim/witness support service offered by the Richmond County DA — the office's public-facing help surface. Modeled from the Victim Services Unit and Victim and Witness Assistance Program described under statenislandda.org/our-efforts/. Includes crisis support, court accompaniment, compensation-claim help, and safety planning. Published as HTML only; no API, no Open Data twin, and no machine-readable eligibility or intake contract.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.statenislandda.org/our-efforts/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Service name (e.g. 'Victim and Witness Assistance Program')." },
+    "serviceType": {
+      "type": ["string", "null"],
+      "description": "Category of victim support.",
+      "enum": ["Crisis Intervention", "Court Accompaniment", "Compensation Claim Assistance", "Safety Planning", "Referral", "Orders of Protection", "Domestic Violence Support", "Elder / Vulnerable Victim", "Other", null]
+    },
+    "description": { "type": ["string", "null"], "description": "What the service provides." },
+    "eligibility": { "type": ["string", "null"], "description": "Who qualifies / how to access it." },
+    "languages": { "type": "array", "items": { "type": "string" }, "description": "Languages supported (site offers Google translation)." },
+    "confidential": { "type": ["boolean", "null"], "description": "Whether the service is confidential." },
+    "contact": { "$ref": "_common.json#/$defs/ContactInfo" },
+    "hours": { "type": ["string", "null"], "description": "Availability / hours." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical URL on statenislandda.org." }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

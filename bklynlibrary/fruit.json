@@ -1,0 +1,126 @@
+{
+  "domain": "bklynlibrary",
+  "agency": "Brooklyn Public Library (BPL)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — bklynlibrary.org/robots.txt is a standard Drupal robots.txt disallowing /core/, /admin/, /search/, /user/register etc.; nothing crawled was disallowed). Fingerprinted www.bklynlibrary.org as Drupal behind Cloudflare (drupal-settings-json, /core//profiles//modules//themes/ + composer scaffold paths, x-generator patterns). Discovered the Drupal JSON:API module is fully PUBLIC at www.bklynlibrary.org/jsonapi (289 resource links, ~22 node types) and enumerated node--branch/event/book_profile/eres/digital_asset field schemas from live records. Identified the catalog as BiblioCommons (bklynlibrary.bibliocommons.com, 302 to select_library, SRV/app cookies) and the events calendar as discover.bklynlibrary.org (PHP/Cloudflare). Verified the NYC Open Data agency label 'Brooklyn Public Library (BPL)' via the Socrata Discovery API — only 2 assets, both type=href (external links, no SODA table).",
+  "related_domains": ["bklynlibrary.bibliocommons.com", "discover.bklynlibrary.org", "data.cityofnewyork.us", "nypl.org", "queenslibrary.org"],
+  "headline_findings": [
+    "BPL is an independent NONPROFIT (not a city agency) running Drupal behind Cloudflare, with the catalog on the BiblioCommons ILS and events on discover.bklynlibrary.org.",
+    "The standout finding is the inverse of the usual one: BPL's content data is ALREADY a working public API. The Drupal JSON:API module is fully open at www.bklynlibrary.org/jsonapi — ~22 content types (node--branch, node--event, node--book_profile, node--digital_asset, node--eres, finding aids, and more) served as read-only JSON — real, comprehensive, and entirely UNDOCUMENTED and unadvertised.",
+    "Branch data on that API is rich: full address, weekly hours (seconds-from-midnight), geo point, subway/bus lines, holds-pickup flag, and ~40 service fields — far more than the two file-link datasets BPL posts to NYC Open Data.",
+    "What has NO owned public API is the catalog transaction layer, locked in the BiblioCommons ILS: searching the bibliographic catalog, the patron account/library card, and — above all — placing a HOLD on an item.",
+    "Net-new write surface: place a hold (BookHold) — the everyday library transaction, with no public API today; plus applying for a library card (a Drupal webform). See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "www.bklynlibrary.org/jsonapi", "type": "content API (Drupal JSON:API)", "owner": "BPL (self-hosted Drupal)", "public": true, "note": "FULLY PUBLIC, read-only. 289 resource links, ~22 node types (branch, event, external_event, book_profile, digital_asset, eres, exhibition, finding_aid, research_guide, podcasts, video, press_release, blog…). Real and comprehensive but undocumented/unadvertised — the accidental API. This is the content surface to formalize." },
+    { "endpoint": "bklynlibrary.bibliocommons.com", "type": "catalog / ILS (discovery + patron account)", "owner": "BiblioCommons (vendor)", "public": "login-walled UI, no documented API", "note": "Bibliographic catalog search, patron account, library card, and holds/reservations. Server-rendered vendor app (SRV/app cookies, select_library redirect). The catalog write layer — placing a hold — has no owned public API." },
+    { "endpoint": "discover.bklynlibrary.org", "type": "events calendar", "owner": "BPL (PHP app, Cloudflare)", "public": "html", "note": "The public programs/events calendar (bklynlibrary.org/calendar redirects here). Backs node--event; no documented JSON API of its own." },
+    { "endpoint": "data.cityofnewyork.us (Socrata)", "type": "open data catalog", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Only 2 BPL-labeled assets (BPL Branches, BPL Electronic Resources), both type=href external links — NOT live SODA tables. BPL, as a nonprofit, has no Open Data mandate." },
+    { "endpoint": "cloudflare edge", "type": "CDN / edge", "owner": "Cloudflare", "public": "vendor", "note": "server: cloudflare, cf-ray, cf-cache-status HIT on the main site and discover subdomain." }
+  ],
+  "fruit": [
+    {
+      "name": "Library Branches",
+      "type": "data + directory + map",
+      "entity": "Branch",
+      "url": "https://www.bklynlibrary.org/locations",
+      "count": "~60 branches",
+      "machine_readable": "Drupal JSON:API (node--branch)",
+      "verified": true,
+      "opendata_match": ["BPL Branches xmzf-uf2w (href, no SODA table)"],
+      "notes": "Core physical unit. JSON:API record carries full address, weekly hours, geo point, subway/bus, holds-pickup flag, and ~40 service fields. Keyed on Branch ID (field_branchid, e.g. '01' = Central Library)."
+    },
+    {
+      "name": "Events & Programs",
+      "type": "calendar + data",
+      "entity": "Event",
+      "url": "https://discover.bklynlibrary.org/?event=true",
+      "machine_readable": "Drupal JSON:API (node--event, node--external_event)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Story times, classes, author talks. JSON:API record carries date range, program type, virtual/hybrid flags, offsite address, and a registration workflow (capacity, open/close, external URL). Program registration itself has no owned API."
+    },
+    {
+      "name": "Catalog (books & materials)",
+      "type": "search + item detail",
+      "entity": "CatalogItem",
+      "url": "https://bklynlibrary.bibliocommons.com/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The bibliographic catalog lives in the BiblioCommons ILS — no documented public API. The site's node--book_profile is only a curated editorial staff-pick twin, not the catalog record. A CatalogItem is what a BookHold targets."
+    },
+    {
+      "name": "Digital Collections",
+      "type": "data + media",
+      "entity": "DigitalCollection",
+      "url": "https://www.bklynlibrary.org/digitalcollections",
+      "machine_readable": "Drupal JSON:API (node--digital_asset, node--feature_collection_digcoll, node--finding_aid)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Digitized assets, feature collections, and archival finding aids from the Center for Brooklyn History. JSON:API carries creator, place, alt title, audio derivative, note."
+    },
+    {
+      "name": "Electronic Resources",
+      "type": "data table",
+      "entity": "ElectronicResource",
+      "url": "https://www.bklynlibrary.org/eresources",
+      "machine_readable": "Drupal JSON:API (node--eres)",
+      "verified": true,
+      "opendata_match": ["BPL Electronic Resources b7t4-zm44 (href, no SODA table)"],
+      "notes": "Licensed research databases available with a BPL card. JSON:API carries link, vendor, status, language, note, expiration."
+    },
+    {
+      "name": "Get a library card",
+      "type": "sign-up workflow (webform)",
+      "entity": "LibraryCard",
+      "url": "https://www.bklynlibrary.org/card/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Applying for a card is a Drupal webform (webform_submission--library_card_access); reading a card (status/expiry/fines) lives in the BiblioCommons account. No owned public API. An alternative net-new write surface."
+    },
+    {
+      "name": "Place a hold (reservation)",
+      "type": "transaction (catalog)",
+      "entity": "BookHold",
+      "url": "https://bklynlibrary.bibliocommons.com/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common library transaction — reserve a catalog item and choose a pickup branch. Lives only inside the login-walled BiblioCommons catalog; no documented public API and no Open Data twin. The net-new WRITE surface for this domain."
+    }
+  ],
+  "meta": {
+    "short": "Brooklyn Public Library (BPL)",
+    "verb": "formalize",
+    "platform": "Drupal (Cloudflare) + BiblioCommons ILS + discover.bklynlibrary.org events",
+    "netnew": "place a hold (BookHold)",
+    "accent": "#3a7ab0",
+    "tagline": "BPL already runs a full, public Drupal JSON:API it never advertised — formalize it, own it, and add the catalog hold write locked inside the BiblioCommons ILS.",
+    "headline": "The content API already exists and is public; the catalog transaction layer is locked in a vendor ILS."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 3,
+    "openData": 1,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Modern Drupal behind Cloudflare, but catalog/events on vendor systems (BiblioCommons, discover).",
+    "siteApi": "A fully public, comprehensive Drupal JSON:API (~22 content types) already exists — best site API in the project, just undocumented.",
+    "openData": "Only 2 BPL assets on NYC Open Data, both external file links, no SODA — nonprofit, no mandate.",
+    "coreData": "Content data (branches/events/collections) rich and machine-readable; the catalog/bibliographic core is locked in BiblioCommons.",
+    "writeApi": "No public write anywhere — holds, card applications, and program registration are all vendor UI or webform.",
+    "agent": "No MCP or agent-native surface today.",
+    "ownership": "Owns the self-hosted Drupal JSON:API content; catalog, events, and card are vendor-owned."
+  }
+}

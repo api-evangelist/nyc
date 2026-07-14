@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cuny/schemas/degree-program.json",
+  "title": "DegreeProgram",
+  "description": "An academic degree or certificate program offered by a CUNY college. Canonical schema reconciling the CUNY 'Explore Programs' / program search on cuny.edu and the academic program records in CUNYfirst (PeopleSoft Campus Solutions). Today this catalog is a client-rendered HTML search tool with no public API and no Open Data twin.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.cuny.edu/academics/programs/",
+    "sis": "https://home.cunyfirst.cuny.edu/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "programId": { "type": ["string", "null"], "description": "CUNYfirst academic program code." },
+    "name": { "type": "string", "description": "Program / major name (e.g. 'Computer Science')." },
+    "campus": { "$ref": "_common.json#/$defs/CampusReference" },
+    "degreeType": {
+      "type": ["string", "null"],
+      "description": "Award level.",
+      "enum": ["Associate", "Bachelor's", "Master's", "Doctoral", "Certificate", "Advanced Certificate", "Other", null]
+    },
+    "award": { "type": ["string", "null"], "description": "Specific degree awarded (e.g. 'BA', 'BS', 'AAS', 'MA', 'PhD')." },
+    "field": { "type": ["string", "null"], "description": "Discipline / field of study." },
+    "cipCode": { "type": ["string", "null"], "description": "Classification of Instructional Programs (CIP) code." },
+    "modality": {
+      "type": ["string", "null"],
+      "description": "Delivery mode.",
+      "enum": ["In Person", "Online", "Hybrid", null]
+    },
+    "hegisCode": { "type": ["string", "null"], "description": "NY State HEGIS program code." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Program detail page." }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

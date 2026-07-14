@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sca/schemas/upcoming-contract.json",
+  "title": "UpcomingContract",
+  "description": "An SCA construction/consultant contract expected to be advertised and awarded — the forward procurement pipeline vendors watch. Canonical schema reconciling 'Upcoming contracts to be awarded (CIP)' (tsak-vtv3, 9 columns, Capital Improvement Program) and 'Upcoming contracts to be awarded (CAP)' (6m3u-8rbh, 10 columns, Capacity Program). Also carries change-order events from the 'Contractor / Sub Contractor Change Order Report' (gzvm-na49).",
+  "type": "object",
+  "x-source": {
+    "opendata_cip": "https://data.cityofnewyork.us/d/tsak-vtv3",
+    "opendata_cap": "https://data.cityofnewyork.us/d/6m3u-8rbh",
+    "opendata_change_orders": "https://data.cityofnewyork.us/d/gzvm-na49",
+    "site": "https://www.nycsca.org/Business/Business-Opportunities"
+  },
+  "properties": {
+    "program": {
+      "type": ["string", "null"],
+      "enum": ["CIP", "CAP", null],
+      "description": "Which pipeline this row comes from — CIP (Capital Improvement Program) or CAP (Capacity Program)."
+    },
+    "projectName": { "type": ["string", "null"], "description": "'Upcoming Project Name'." },
+    "projectDescription": { "type": ["string", "null"], "description": "'Upcoming Project Description'." },
+    "category": { "type": ["string", "null"], "description": "'Upcoming Project Category'." },
+    "status": { "type": ["string", "null"], "description": "'Upcoming Project Status'." },
+    "designNumber": { "type": ["string", "null"], "description": "'Upcoming Project Design Number' (CIP)." },
+    "designCompletionDate": { "type": ["string", "null"], "format": "date", "description": "'Upcoming Project Design Completion Date'." },
+    "budgetRange": { "$ref": "_common.json#/$defs/Money", "description": "'Upcoming Project Budget Range'." },
+    "seatCount": { "type": ["integer", "null"], "description": "'Upcoming Project Seat Count' (CAP)." },
+    "squareFootage": { "type": ["number", "null"], "description": "'Upcoming Project Square Footage' (CAP)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geographicDistrict": { "$ref": "_common.json#/$defs/GeographicDistrict" },
+    "changeOrder": {
+      "type": "object",
+      "description": "Change-order event for an awarded contract ('Contractor / Sub Contractor Change Order Report').",
+      "properties": {
+        "changeManagementNumber": { "type": ["string", "null"], "description": "'Change Management Number'." },
+        "changeOrderNumber": { "type": ["string", "null"], "description": "'Change Order Number'." },
+        "documentType": { "type": ["string", "null"], "description": "'Change Order Document Type'." },
+        "documentDate": { "type": ["string", "null"], "format": "date", "description": "'Change Order Document Date'." },
+        "contractIdentifier": { "type": ["string", "null"], "description": "'Change Order Project SCA Contract Identifier'." },
+        "projectTitle": { "type": ["string", "null"], "description": "'Change Order Project Title'." },
+        "toVendor": { "type": ["string", "null"], "description": "'Change Order Project To Vendor'." },
+        "toStatus": { "type": ["string", "null"], "description": "'Change Order Project To Status Name'." },
+        "ballInCourtCode": { "type": ["string", "null"], "description": "'Change Order Project Ball In Court Code'." }
+      },
+      "additionalProperties": false
+    },
+    "dataAsOf": { "type": ["string", "null"], "format": "date", "description": "'Data as of Date'." }
+  },
+  "additionalProperties": false
+}

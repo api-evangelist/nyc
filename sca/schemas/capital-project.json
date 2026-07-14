@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sca/schemas/capital-project.json",
+  "title": "CapitalProject",
+  "description": "An SCA school-construction capital project — the core unit of the Authority's work: new schools, additions, capacity, and capital improvements at a school building. Canonical schema reconciling 'Active Projects Under Construction' (8586-3zfm, 29 columns), 'Capital Project Schedules and Budgets' (2xh6-psuq, 14 columns), and 'Capacity Projects by School' (a94k-kjys, 25 columns). Keyed on Building ID / DSF Number.",
+  "type": "object",
+  "x-source": {
+    "opendata_active": "https://data.cityofnewyork.us/d/8586-3zfm",
+    "opendata_schedules_budgets": "https://data.cityofnewyork.us/d/2xh6-psuq",
+    "opendata_capacity_by_school": "https://data.cityofnewyork.us/d/a94k-kjys",
+    "site": "https://www.nycsca.org/Community/Capital-Plan-Reports-Data"
+  },
+  "properties": {
+    "project": { "$ref": "_common.json#/$defs/ProjectReference" },
+    "projectType": { "type": ["string", "null"], "description": "Project type ('Project type' / 'Project Type') — e.g. New, Addition, Capacity, CIP." },
+    "projectDescription": { "type": ["string", "null"], "description": "'Project Description'." },
+    "status": { "type": ["string", "null"], "description": "'Project Status Name'." },
+    "phase": {
+      "type": "object",
+      "description": "Current project phase and its schedule ('Capital Project Schedules and Budgets').",
+      "properties": {
+        "phaseName": { "type": ["string", "null"], "description": "'Project Phase Name' (e.g. Design, CM, Construction)." },
+        "actualStartDate": { "type": ["string", "null"], "format": "date", "description": "'Project Phase Actual Start Date'." },
+        "plannedEndDate": { "type": ["string", "null"], "format": "date", "description": "'Project Phase Planned End Date'." },
+        "actualEndDate": { "type": ["string", "null"], "format": "date", "description": "'Project Phase Actual End Date'." }
+      },
+      "additionalProperties": false
+    },
+    "budget": {
+      "type": "object",
+      "description": "Project budget and spend ('Capital Project Schedules and Budgets').",
+      "properties": {
+        "projectBudgetAmount": { "$ref": "_common.json#/$defs/MoneyUSD", "description": "'Project Budget Amount'." },
+        "totalPhaseActualSpending": { "$ref": "_common.json#/$defs/MoneyUSD", "description": "'Total Phase Actual Spending Amount'." },
+        "finalEstimateActualCostsThroughPhase": { "$ref": "_common.json#/$defs/MoneyUSD", "description": "'Final Estimate of Actual Costs Through End of Phase Amount'." },
+        "constructionAward": { "$ref": "_common.json#/$defs/MoneyUSD", "description": "'Construction Award' (Active Projects)." }
+      },
+      "additionalProperties": false
+    },
+    "capacity": {
+      "type": "object",
+      "description": "Capacity metrics for capacity-adding projects ('Capacity Projects by School').",
+      "properties": {
+        "forecastCapacity": { "type": ["integer", "null"], "description": "'Forecast Capacity'." },
+        "d75Capacity": { "type": ["integer", "null"], "description": "'D75 Capacity'." },
+        "sited": { "type": ["boolean", "string", "null"], "description": "'Sited'." },
+        "leased": { "type": ["boolean", "string", "null"], "description": "'Leased'." },
+        "designStart": { "type": ["string", "null"], "description": "'Design Start'." },
+        "constructionStart": { "type": ["string", "null"], "description": "'Construction Start'." },
+        "estimatedCompletion": { "type": ["string", "null"], "description": "'Total Est. Comp' / 'Actual Est. Comp'." },
+        "fundingRequiredFY25_29": { "$ref": "_common.json#/$defs/MoneyUSD", "description": "\"Funding Req'D FY 25-29\"." },
+        "previousAppropriations": { "$ref": "_common.json#/$defs/MoneyUSD", "description": "'Previous Appropriations'." }
+      },
+      "additionalProperties": false
+    },
+    "buildingAddress": { "type": ["string", "null"], "description": "'Building Address' / 'Address' / 'Location 1 (address)'." },
+    "city": { "type": ["string", "null"], "description": "'City' / 'Location 1 (city)'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

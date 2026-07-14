@@ -1,0 +1,362 @@
+openapi: 3.1.0
+info:
+  title: Queens Public Library API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for Queens Public Library (QPL) — federating the branch directory,
+    catalog, events, and digital collections that today live in separate vendor SaaS platforms, and
+    adding the missing write surface locked inside the BiblioCommons account: placing a hold (book hold)
+    and applying for a library card.
+  description: >-
+    Proposed API-first surface for Queens Public Library (QPL), from the NYC Modernization
+    low-hanging-fruit assessment of queenslibrary.org and its vendor platforms.
+
+
+    QPL is an **independent nonprofit** — not a city agency — so it publishes almost nothing to NYC Open
+    Data: a single dataset, **Queens Library Branches** (`kh3d-xhq7`). Everything a patron actually uses
+    is composed from **packaged SaaS silos**, each with its own login and its own vendor API: the
+    **BiblioCommons** catalog (`queenslibrary.bibliocommons.com`), **Communico** events
+    (`queens.libnet.info`), and the **OverDrive/Libby**, **Axis 360**, and **hoopla** digital-lending
+    platforms. The public site runs on **Drupal** behind an **F5 BIG-IP** WAF. None of these surfaces is
+    an owned QPL API, and the patron transactions — placing a hold, tracking holds, applying for a card —
+    have no machine-readable contract at all.
+
+
+    This contract does two things: (1) **federates** the open branch directory and the vendor-locked
+    catalog, events, and digital collections into one clean resource model, and (2) adds the net-new
+    **write** workflows — placing a **book hold** and applying for a **library card** — that today exist
+    only behind a BiblioCommons login.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.queenslibrary.org/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Branches
+    description: Public library branches / locations — the one open, machine-readable entity.
+  - name: Catalog
+    description: Bibliographic catalog items (BiblioCommons) — read.
+  - name: Events
+    description: Library events and programs (Communico) — read.
+  - name: Digital
+    description: Digital-lending titles across OverDrive/Libby, Axis 360, and hoopla — read.
+  - name: Holds
+    description: Place and track holds on catalog items (read + write). The net-new surface, today locked in the BiblioCommons account.
+  - name: Cards
+    description: Library cards and applications (read + write). Net-new; today a login-walled workflow.
+
+paths:
+  /branches:
+    get:
+      operationId: listBranches
+      summary: List / search Queens Public Library branches
+      tags: [Branches]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - name: zipCode
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of branches.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/branch.json' } }
+  /branches/{branchId}:
+    get:
+      operationId: getBranch
+      summary: Get a branch by id
+      tags: [Branches]
+      parameters:
+        - name: branchId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The branch.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/branch.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /catalog:
+    get:
+      operationId: listCatalogItems
+      summary: Search the catalog
+      description: Search bibliographic catalog items. Today only reachable through the BiblioCommons discovery layer; no owned QPL API exists.
+      tags: [Catalog]
+      parameters:
+        - $ref: '#/components/parameters/q'
+        - name: author
+          in: query
+          schema: { type: string }
+        - name: format
+          in: query
+          schema: { type: string }
+        - name: isbn
+          in: query
+          schema: { type: string }
+        - name: availableOnly
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of catalog items.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/catalog-item.json' } }
+  /catalog/{itemId}:
+    get:
+      operationId: getCatalogItem
+      summary: Get a catalog item
+      tags: [Catalog]
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The catalog item.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/catalog-item.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /events:
+    get:
+      operationId: listEvents
+      summary: List / search library events and programs
+      tags: [Events]
+      parameters:
+        - name: branch
+          in: query
+          schema: { type: string }
+        - name: programType
+          in: query
+          schema: { type: string }
+        - name: audience
+          in: query
+          schema: { type: string, enum: [Kids, Teens, Adults, Families, Seniors, All Ages] }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of events.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/event.json' } }
+
+  /digital-collections:
+    get:
+      operationId: listDigitalCollections
+      summary: Search digital-lending titles across platforms
+      description: Search eBooks, eAudiobooks, and streaming media across OverDrive/Libby, Axis 360, and hoopla — federated into one model.
+      tags: [Digital]
+      parameters:
+        - name: platform
+          in: query
+          schema: { type: string, enum: [OverDrive, Libby, Axis 360, hoopla] }
+        - name: format
+          in: query
+          schema: { type: string }
+        - name: author
+          in: query
+          schema: { type: string }
+        - name: availableOnly
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of digital titles.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/digital-collection.json' } }
+
+  /holds:
+    get:
+      operationId: listHolds
+      summary: List the authenticated patron's holds
+      description: Reads the patron's own holds — today only visible inside the login-walled BiblioCommons account.
+      tags: [Holds]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Pending, Active, In Transit, Ready for Pickup, Fulfilled, Cancelled, Expired, Suspended] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the patron's holds.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/book-hold.json' } }
+    post:
+      operationId: placeHold
+      summary: Place a hold (book hold)
+      description: >-
+        The primary net-new write surface — an API for placing a hold/reservation on a catalog item and
+        choosing a pickup branch, replacing the BiblioCommons-only workflow. Requires an authenticated
+        patron with a valid library card.
+      tags: [Holds]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/book-hold.json' }
+      responses:
+        '201':
+          description: Hold placed.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/book-hold.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /holds/{holdId}:
+    get:
+      operationId: getHold
+      summary: Get a hold
+      tags: [Holds]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: holdId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The hold.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/book-hold.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /library-cards:
+    post:
+      operationId: applyForLibraryCard
+      summary: Apply for a library card
+      description: >-
+        The secondary net-new write surface — an API for applying for a QPL library card (Full or the
+        world-available $50/year Digital card), replacing a login-walled form. Mutates state; confirm the
+        applicant details before submitting.
+      tags: [Cards]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/library-card.json' }
+      responses:
+        '201':
+          description: Application received / card issued.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/library-card.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Branch: { $ref: '../schemas/branch.json' }
+    CatalogItem: { $ref: '../schemas/catalog-item.json' }
+    Event: { $ref: '../schemas/event.json' }
+    DigitalCollection: { $ref: '../schemas/digital-collection.json' }
+    LibraryCard: { $ref: '../schemas/library-card.json' }
+    BookHold: { $ref: '../schemas/book-hold.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

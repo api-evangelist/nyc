@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanda/schemas/program.json",
+  "title": "Program",
+  "description": "A bureau, unit, or initiative of the Manhattan District Attorney's Office — the office's 'Our Work' offering (e.g. Community Partnerships Unit, Gun Violence, Hate Crimes, White Collar Crime, Reform & Fairness, Post-Conviction Justice / conviction integrity, diversion programs). Reverse-engineered from manhattanda.org/our-work; there is NO structured data source, so this is a design-first schema that turns HTML program pages into a resource.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.manhattanda.org/our-work/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Program / bureau / unit / initiative name." },
+    "slug": { "type": ["string", "null"], "description": "URL slug under /our-work/." },
+    "type": {
+      "type": ["string", "null"],
+      "description": "Organizational kind.",
+      "enum": ["Bureau", "Unit", "Initiative", "Program", "Division", null]
+    },
+    "category": { "$ref": "_common.json#/$defs/CrimeCategory" },
+    "summary": { "type": ["string", "null"], "description": "Short description of the program's mandate." },
+    "focusAreas": {
+      "type": "array",
+      "description": "Topics the program addresses.",
+      "items": { "type": "string" }
+    },
+    "isDiversion": { "type": ["boolean", "null"], "description": "True for alternative-to-incarceration / diversion programs." },
+    "isConvictionIntegrity": { "type": ["boolean", "null"], "description": "True for post-conviction justice / conviction integrity work." },
+    "url": { "type": ["string", "null"], "format": "uri" },
+    "contact": { "$ref": "_common.json#/$defs/ContactInfo" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

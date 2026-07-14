@@ -1,0 +1,357 @@
+openapi: 3.1.0
+info:
+  title: Manhattan DA API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the Manhattan District Attorney's Office (New York County
+    District Attorney) — publishing the newsroom that is already machine-readable through WordPress
+    as clean resources, turning the Our Work / Victim Resources / office pages into structured objects,
+    and adding the missing write surface: submitting a tip to a DA bureau.
+  description: >-
+    Proposed API-first surface for the Manhattan District Attorney's Office, from the NYC Modernization
+    low-hanging-fruit assessment of manhattanda.org.
+
+
+    The Manhattan DA is **not** part of the NYC Open Data program — there is **zero** open data under any
+    Manhattan-DA agency label. The site is WordPress (custom "dany" theme) behind the Sucuri Cloudproxy
+    WAF/CDN, with site search rented to **Jetpack Search**, events on **The Events Calendar**, forms on
+    **WPForms / Contact Form 7**, newsletter on **Mailchimp**, and — notably — **FOIL records requests
+    delegated off-site to NYC OpenRecords**. The one genuinely machine-readable object is unintentional:
+    the exposed **WordPress REST API** (`/wp-json/wp/v2/posts`, ~3,029 items) that surfaces the newsroom
+    as JSON.
+
+
+    This contract does three things: (1) presents the newsroom as a clean `PressRelease` resource instead
+    of the raw WP post shape; (2) turns the office's Our Work bureaus/initiatives, Victim Resources, office
+    locations, and aggregate prosecution reporting into structured resources that today exist only as HTML
+    or prose; and (3) adds the one net-new **write** workflow — submitting a **tip** to a bureau — that
+    today has no API (only a generic reCAPTCHA-gated contact form).
+
+
+    All five NYC District Attorneys run near-identical offices; this contract is deliberately generic so it
+    can become **one shared DA API** rather than five silos. Every resource schema is an individual JSON
+    Schema file referenced by `$ref`. See `../schemas/`, `../crosswalk.md`, `../tech-stack.md`,
+    `../apis-observed.md`, and `../opendata-manhattanda.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.manhattanda.org/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Newsroom
+    description: Press releases, media coverage, op-eds, reports, testimony (from the WP REST API).
+  - name: Programs
+    description: Bureaus, units, and initiatives (Our Work), including diversion and conviction integrity.
+  - name: VictimServices
+    description: Victim and community resources by crime type.
+  - name: Prosecution
+    description: Aggregate caseload / prosecution statistics (never individual cases).
+  - name: Offices
+    description: Physical office locations and contact information.
+  - name: Tips
+    description: Submit and track a tip to a DA bureau. The net-new write surface; today only a contact form.
+
+paths:
+  /press-releases:
+    get:
+      operationId: listPressReleases
+      summary: List / search newsroom items (press releases, media coverage, op-eds, reports)
+      tags: [Newsroom]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [Press Release, Media Coverage, Op-Ed, Report, Testimony, Remarks, Video, Indictment, News] }
+        - name: topic
+          in: query
+          description: Subject-matter category.
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of newsroom items.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/press-release.json' } }
+  /press-releases/{id}:
+    get:
+      operationId: getPressRelease
+      summary: Get a newsroom item by ID
+      tags: [Newsroom]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: The newsroom item.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/press-release.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /programs:
+    get:
+      operationId: listPrograms
+      summary: List bureaus, units, and initiatives (Our Work)
+      tags: [Programs]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [Bureau, Unit, Initiative, Program, Division] }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: diversion
+          in: query
+          description: Filter to diversion / alternative-to-incarceration programs.
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of programs.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/program.json' } }
+  /programs/{slug}:
+    get:
+      operationId: getProgram
+      summary: Get a program by slug
+      tags: [Programs]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The program.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/program.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /victim-services:
+    get:
+      operationId: listVictimServices
+      summary: List victim and community resources by crime type
+      tags: [VictimServices]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: language
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of victim services.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/victim-service.json' } }
+
+  /prosecution-statistics:
+    get:
+      operationId: listProsecutionStatistics
+      summary: Aggregate caseload / prosecution statistics
+      description: >-
+        Aggregate figures only (arraignments, indictments, dispositions, convictions, declinations,
+        diversions) by period, bureau, and category. There is no NYC Open Data twin and no individual
+        case record is ever exposed — this endpoint is design-first, standing in for data that today
+        exists only as prose in the office's reports.
+      tags: [Prosecution]
+      parameters:
+        - name: reportingPeriod
+          in: query
+          schema: { type: string }
+        - name: bureau
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: chargeLevel
+          in: query
+          schema: { type: string, enum: [Felony, Misdemeanor, Violation, All] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate prosecution statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/prosecution.json' } }
+
+  /offices:
+    get:
+      operationId: listOffices
+      summary: List Manhattan DA office locations
+      tags: [Offices]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: type
+          in: query
+          schema: { type: string, enum: [Main Office, Community Office] }
+      responses:
+        '200':
+          description: The office locations.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/office.json' } }
+
+  /tips:
+    get:
+      operationId: listTips
+      summary: List the authenticated submitter's tips
+      description: Reads the submitter's own tips and their status. Anonymous tips are not retrievable.
+      tags: [Tips]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Received, Under Review, Referred, Closed] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the submitter's tips.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/tip-submission.json' } }
+    post:
+      operationId: submitTip
+      summary: Submit a tip to a DA bureau
+      description: >-
+        The net-new write surface — an API for reporting suspected wrongdoing (financial fraud, elder
+        abuse, human trafficking, hate crime, public corruption, cybercrime, and more) to the right
+        bureau, replacing the site's generic reCAPTCHA-gated contact form. Set `anonymous` to true to
+        submit without contact details (no status updates possible). Note: FOIL records requests are a
+        separate workflow delegated to NYC OpenRecords, not handled here.
+      tags: [Tips]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/tip-submission.json' }
+      responses:
+        '201':
+          description: Tip received.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/tip-submission.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /tips/{tipId}:
+    get:
+      operationId: getTip
+      summary: Get a submitted tip's status
+      tags: [Tips]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: tipId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The tip.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/tip-submission.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    PressRelease: { $ref: '../schemas/press-release.json' }
+    Program: { $ref: '../schemas/program.json' }
+    VictimService: { $ref: '../schemas/victim-service.json' }
+    Prosecution: { $ref: '../schemas/prosecution.json' }
+    Office: { $ref: '../schemas/office.json' }
+    TipSubmission: { $ref: '../schemas/tip-submission.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

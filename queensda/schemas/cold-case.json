@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensda/schemas/cold-case.json",
+  "title": "ColdCase",
+  "description": "A Queens DA cold case — chiefly the office's unidentified/identified human-remains initiative (WordPress categories cold-cases 67, unidentified 19, identified 47). This is the ONE genuinely structured dataset trapped in prose: each post encodes a NamUs case number, an age range, a sex, a date and location found. The schema recovers that structure so a family, journalist, or agent can query it — a task impossible against the current HTML.",
+  "type": "object",
+  "x-source": {
+    "wp_rest": "https://queensda.org/wp-json/wp/v2/posts?categories=6292",
+    "site": "https://queensda.org/category/cold-cases/",
+    "external": "https://www.namus.gov/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "publication": { "$ref": "_common.json#/$defs/Publication" },
+    "title": { "type": "string", "description": "Post title (e.g. 'MALE 4-12-2014 NAMUS UP13060')." },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["unidentified", "identified", null],
+      "description": "Whether the individual has since been identified (WordPress 'identified'/'unidentified' category)."
+    },
+    "namusId": { "type": ["string", "null"], "description": "NamUs case number parsed from the title (e.g. 'UP13060'). Joins to namus.gov." },
+    "caseType": {
+      "type": ["string", "null"],
+      "enum": ["unidentified-person", "missing-person", "unsolved-homicide", null],
+      "description": "Kind of cold case."
+    },
+    "sex": { "type": ["string", "null"], "enum": ["Male", "Female", "Unknown", null] },
+    "estimatedAgeRange": { "type": ["string", "null"], "description": "Age estimate as published (e.g. '20-30s', '35-45')." },
+    "dateFound": { "type": ["string", "null"], "format": "date", "description": "Date remains/person found or last seen." },
+    "locationFound": { "type": ["string", "null"], "description": "Location as published (e.g. 'Flushing, Queens')." },
+    "description": { "type": ["string", "null"], "description": "Narrative details from the post body." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "tipContact": { "$ref": "_common.json#/$defs/ContactPoint" }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

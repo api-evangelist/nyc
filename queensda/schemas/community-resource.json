@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensda/schemas/community-resource.json",
+  "title": "CommunityResource",
+  "description": "A resource the Queens DA points the public to — the items on the Resources page (Conviction Integrity Unit, Property Release information, Freedom of Information Law / FOIL requests, helpline lists) plus victim/witness and language/disability access resources. Today these are prose links on hand-built pages; this schema is the structured, agent-answerable resource directory.",
+  "type": "object",
+  "x-source": {
+    "wp_rest": "https://queensda.org/wp-json/wp/v2/pages?slug=resources",
+    "site": "https://queensda.org/resources/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Resource name (e.g. 'Freedom of Information Law Requests (FOIL)')." },
+    "category": {
+      "type": ["string", "null"],
+      "enum": ["records-request", "property-release", "conviction-integrity", "helpline", "language-access", "disability-access", "victim-service", "other", null],
+      "description": "Kind of resource."
+    },
+    "description": { "type": ["string", "null"] },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Where to access the resource." },
+    "contact": { "$ref": "_common.json#/$defs/ContactPoint" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

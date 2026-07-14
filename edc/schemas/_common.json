@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/edc/schemas/_common.json",
+  "title": "EDC — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across New York City Economic Development Corporation (EDC) object schemas. Reconciles fields common to EDC's Open Data datasets (data.cityofnewyork.us — Mapped In NY, NYC Ferry Ridership, WiredNYC), the edc.nyc / nycedc.com Drupal site, and the modeled real-estate, project, and solicitation entities that EDC does not publish today. Includes the NYC geography spine (borough, BBL/BIN, community board, council district) plus EDC's neighborhood/asset framing. EDC is a public benefit corporation, not a mayoral agency, so its operating data is only sparsely on NYC Open Data.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Open Data Latitude / Longitude).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine shared across EDC datasets — the join keys back to the rest of city government.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board ('Community Board' / 'Community Council')." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district ('Council District')." },
+        "censusTract": { "type": ["string", "null"], "description": "Census tract ('Census Tract')." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code ('NTA')." },
+        "neighborhood": { "type": ["string", "null"], "description": "Neighborhood name (EDC frames projects and assets by neighborhood)." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL' / 'BBLE')." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN' / 'Building_id')." },
+        "postcode": { "type": ["string", "null"], "description": "ZIP / postcode ('Postcode')." }
+      },
+      "additionalProperties": false
+    },
+    "Address": {
+      "type": "object",
+      "description": "Street address as carried across EDC datasets and the site.",
+      "properties": {
+        "address": { "type": ["string", "null"], "description": "Full or primary street address ('Address' / 'Street Address')." },
+        "address2": { "type": ["string", "null"], "description": "Secondary address line ('Address2')." },
+        "city": { "type": ["string", "null"], "description": "'City'." },
+        "postcode": { "type": ["string", "null"], "description": "'Postcode'." },
+        "borough": { "$ref": "#/$defs/Borough" }
+      },
+      "additionalProperties": false
+    },
+    "ProjectStatus": {
+      "type": ["string", "null"],
+      "description": "Lifecycle stage of an EDC development project or solicitation.",
+      "enum": ["Planning", "Predevelopment", "In Procurement", "Under Construction", "Completed", "On Hold", "Cancelled", null]
+    },
+    "IncentiveProgram": {
+      "type": ["string", "null"],
+      "description": "EDC-administered incentive / financing program a project or company may be tied to.",
+      "enum": ["Industrial Development Agency (IDA)", "Build NYC Resource Corporation", "Capital Program", "Tax Incentive", "Land Disposition", "Grant", "Other", null]
+    }
+  }
+}

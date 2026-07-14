@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxda/schemas/press-release.json",
+  "title": "PressRelease",
+  "description": "A Bronx District Attorney press release or newsroom item — indictments, sentencings, initiatives, and statements. Reverse-engineered from the office's /html/newsroom/press-releases-YYYY.shtml pages (2016-2025). There is no RSS feed, JSON, or API today; each release is a hand-published HTML entry.",
+  "type": "object",
+  "x-source": {
+    "site_index": "https://www.bronxda.nyc.gov/html/newsroom/press-releases.shtml",
+    "site_archive": "https://www.bronxda.nyc.gov/html/newsroom/press-releases-2025.shtml",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "id": { "type": ["string", "null"], "description": "Stable identifier or slug for the release (net-new; no canonical id exists today)." },
+    "title": { "type": "string", "description": "Headline of the release." },
+    "summary": { "type": ["string", "null"], "description": "Short teaser / dek shown on the newsroom index." },
+    "body": { "type": ["string", "null"], "description": "Full release text (HTML stripped)." },
+    "date": { "type": ["string", "null"], "format": "date", "description": "Publication date." },
+    "year": { "type": ["integer", "null"], "description": "Archive year (the site groups releases into per-year pages 2016-2025)." },
+    "category": {
+      "type": ["string", "null"],
+      "description": "Topical category of the release.",
+      "enum": ["Indictment", "Sentencing", "Arrest", "Conviction", "Initiative", "Statement", "Community", "Award", "Other", null]
+    },
+    "office": { "$ref": "_common.json#/$defs/OfficeReference" },
+    "bureau": { "$ref": "_common.json#/$defs/Bureau" },
+    "relatedCase": { "type": ["string", "null"], "description": "Free-text reference to an associated case or operation name (e.g. 'Operation Pit Crew'). No structured CaseRecord is ever published." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical page URL for the release, if any." },
+    "attachments": {
+      "type": "array",
+      "description": "Linked PDFs or documents.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": { "type": ["string", "null"] },
+          "url": { "type": "string", "format": "uri" }
+        },
+        "required": ["url"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypl/schemas/event.json",
+  "title": "Event",
+  "description": "A public program, class, or exhibition at an NYPL location. Surfaced today through the Locations API events link (refinery.nypl.org/.../locations/{id}/events) and the nypl.org/events calendar. Reconciled here as a clean resource so an agent can answer 'what's happening at my branch this week?'. Keyed on eventId; joined to a Branch by slug.",
+  "type": "object",
+  "x-source": {
+    "api": "https://refinery.nypl.org/api/nypl/locations/v1.0/locations/{id}/events",
+    "site": "https://www.nypl.org/events/calendar"
+  },
+  "properties": {
+    "eventId": { "type": "string", "description": "Event identifier — primary key." },
+    "title": { "type": "string", "description": "Event title." },
+    "eventType": { "type": ["string", "null"], "description": "Program type (e.g. Class, Author Talk, Story Time, Exhibition)." },
+    "description": { "type": ["string", "null"] },
+    "branch": { "$ref": "_common.json#/$defs/BranchReference" },
+    "start": { "type": ["string", "null"], "format": "date-time", "description": "Event start (local time)." },
+    "end": { "type": ["string", "null"], "format": "date-time", "description": "Event end (local time)." },
+    "audience": { "type": ["string", "null"], "description": "Intended audience (e.g. Adults, Children, Teens, All Ages)." },
+    "registrationRequired": { "type": ["boolean", "null"], "description": "Whether registration is required." },
+    "registrationUrl": { "type": ["string", "null"], "format": "uri" },
+    "eventLink": { "type": ["string", "null"], "format": "uri", "description": "Public nypl.org/events page for the event." }
+  },
+  "required": ["eventId", "title"],
+  "additionalProperties": false
+}

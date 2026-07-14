@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cuny/schemas/campus.json",
+  "title": "Campus",
+  "description": "A CUNY college or school — one of the ~25 institutions in the federated City University of New York system (senior colleges, community colleges, graduate/professional schools, and the Macaulay Honors College). Canonical schema reconciling the college directory on cuny.edu/about/colleges-schools and the institution (business unit) records in CUNYfirst. There is no Open Data twin; this reference data lives only in HTML on cuny.edu and inside the PeopleSoft SIS.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.cuny.edu/about/colleges-schools/",
+    "sis": "https://home.cunyfirst.cuny.edu/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "college": { "type": "string", "description": "College / school name." },
+    "institutionCode": { "type": ["string", "null"], "description": "CUNYfirst / PeopleSoft institution (business unit) code." },
+    "type": { "$ref": "_common.json#/$defs/CollegeType" },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "The college's own website." },
+    "founded": { "type": ["integer", "null"], "description": "Year founded." },
+    "president": { "type": ["string", "null"], "description": "Current president / dean." },
+    "address": { "type": ["string", "null"], "description": "Primary campus address." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "totalEnrollment": { "type": ["integer", "null"], "description": "Total headcount enrollment (from OIRA data book, latest term)." }
+  },
+  "required": ["college"],
+  "additionalProperties": false
+}

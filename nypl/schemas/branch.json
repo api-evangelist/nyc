@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypl/schemas/branch.json",
+  "title": "Branch",
+  "description": "An NYPL location — a neighborhood branch or research center — from NYPL's own public Locations API (refinery.nypl.org/api/nypl/locations/v1.0/locations and locations/{id}). This is a genuinely open, hypermedia (HAL) API that already publishes hours, amenities, access, and links to events, exhibitions, and alerts. Also reconciles the Open Data 'LIBRARY' facilities layer (feuq-due4). Keyed on the Locations API slug.",
+  "type": "object",
+  "x-source": {
+    "api": "https://refinery.nypl.org/api/nypl/locations/v1.0/locations",
+    "location": "https://refinery.nypl.org/api/nypl/locations/v1.0/locations/{id}",
+    "opendata_facilities": "https://data.cityofnewyork.us/d/feuq-due4",
+    "site": "https://www.nypl.org/locations"
+  },
+  "properties": {
+    "slug": { "type": "string", "description": "Locations API location id/slug (e.g. 'schwarzman', '115th-street') — primary key." },
+    "name": { "type": "string", "description": "Branch / research center name." },
+    "locationType": { "type": ["string", "null"], "enum": ["branch", "research", "administrative", null], "description": "Kind of location (neighborhood branch vs. research center)." },
+    "about": { "type": ["string", "null"], "description": "Short description of the location." },
+    "address": { "$ref": "_common.json#/$defs/PostalAddress" },
+    "crossStreet": { "type": ["string", "null"] },
+    "floor": { "type": ["string", "null"] },
+    "phone": { "type": ["string", "null"], "description": "contacts.phone." },
+    "manager": { "type": ["string", "null"], "description": "contacts.manager.fn — library manager." },
+    "access": { "type": ["string", "null"], "description": "Accessibility status (e.g. 'Fully Accessible', 'Partially Accessible')." },
+    "accessibilityNote": { "type": ["string", "null"] },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "hours": { "$ref": "_common.json#/$defs/RegularHours" },
+    "amenities": {
+      "type": ["array", "null"],
+      "description": "Public amenities at the location (amenities link).",
+      "items": { "type": "string" }
+    },
+    "alerts": {
+      "type": ["array", "null"],
+      "description": "Active service alerts / closures (alerts link).",
+      "items": { "type": "string" }
+    },
+    "links": {
+      "type": "object",
+      "description": "Hypermedia links surfaced by the Locations API (_links).",
+      "properties": {
+        "self": { "type": ["string", "null"], "format": "uri" },
+        "about": { "type": ["string", "null"], "format": "uri" },
+        "events": { "type": ["string", "null"], "format": "uri" },
+        "exhibitions": { "type": ["string", "null"], "format": "uri" },
+        "blogs": { "type": ["string", "null"], "format": "uri" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["slug", "name"],
+  "additionalProperties": false
+}

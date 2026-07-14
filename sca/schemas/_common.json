@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sca/schemas/_common.json",
+  "title": "SCA — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC School Construction Authority (SCA) object schemas. Reconciles fields common to the SCA Open Data datasets (data.cityofnewyork.us), nycsca.org, and the vendor-facing bidset SharePoint portal. Includes the NYC geography spine plus SCA's own project/building keys (Building ID/BIN, DSF Number, BBL) and the DOE/SCA Geographic (School) District dimension.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Open Data Latitude / Longitude).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine shared across SCA project datasets — the join keys back to the rest of city government.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "boroughCode": { "type": ["string", "integer", "null"], "description": "SCA 'BoroughCode'." },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board ('Community Board' / 'Community Districts')." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district ('Council District' / 'City Council Districts')." },
+        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract ('Census Tract (2020)')." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code ('Neighborhood Tabulation Area (NTA) (2020)')." },
+        "policePrecinct": { "type": ["string", "integer", "null"], "description": "'Police Precincts'." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL')." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." },
+        "postcode": { "type": ["string", "null"], "description": "'Postcode' / 'Zip Codes'." }
+      },
+      "additionalProperties": false
+    },
+    "GeographicDistrict": {
+      "type": ["string", "integer", "null"],
+      "description": "DOE/SCA Geographic (Community School) District — SCA's primary programmatic geography, districts 1-32 plus citywide District 75 ('Geographic District' / 'Geographical District' / 'Geo Dist')."
+    },
+    "ProjectReference": {
+      "type": "object",
+      "description": "A reference to an SCA capital project / school building by its numbering keys.",
+      "properties": {
+        "schoolName": { "type": ["string", "null"], "description": "School / project name ('School Name' / 'Project School Name')." },
+        "buildingId": { "type": ["string", "null"], "description": "SCA Building Identifier ('Building ID' / 'Project Building Identifier')." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." },
+        "dsfNumber": { "type": ["string", "null"], "description": "Design Services Firm / project number ('DSF Number(s)')." },
+        "projectNumber": { "type": ["string", "null"], "description": "SCA project number ('Project #' / 'Upcoming Project Design Number')." },
+        "geographicDistrict": { "$ref": "#/$defs/GeographicDistrict" }
+      },
+      "additionalProperties": false
+    },
+    "MoneyUSD": {
+      "type": ["number", "null"],
+      "description": "A US dollar amount."
+    },
+    "Money": {
+      "type": ["number", "string", "null"],
+      "description": "A monetary amount that may arrive as a number or a formatted/ranged string (e.g. a budget range)."
+    }
+  }
+}

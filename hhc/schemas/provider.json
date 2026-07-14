@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/schemas/provider.json",
+  "title": "Provider",
+  "description": "A clinician who practices at NYC Health + Hospitals — the 'Find a Doctor' entity. FHIR-aligned to Practitioner (the person) plus PractitionerRole (where and in what specialty they practice). The live Epic FHIR API exposes Practitioner/PractitionerRole (read + search-type) but only under SMART authorization; there is no open provider directory and no Open Data twin.",
+  "type": "object",
+  "x-fhir": { "resourceType": ["Practitioner", "PractitionerRole"] },
+  "x-source": {
+    "site": "https://www.nychealthandhospitals.org/doctors/",
+    "fhir_practitioner": "https://epicproxypda.nychhc.org/FHIRProxy/api/FHIR/R4/Practitioner",
+    "fhir_practitioner_role": "https://epicproxypda.nychhc.org/FHIRProxy/api/FHIR/R4/PractitionerRole",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "providerId": { "type": "string", "description": "H+H provider identifier (maps to FHIR Practitioner.id)." },
+    "npi": { "type": ["string", "null"], "description": "National Provider Identifier." },
+    "name": { "type": "string", "description": "Full provider name." },
+    "credentials": { "type": ["string", "null"], "description": "Post-nominal credentials (e.g. MD, DO, NP, PA)." },
+    "specialties": {
+      "type": "array",
+      "description": "Clinical specialties.",
+      "items": { "type": "string" }
+    },
+    "languages": {
+      "type": "array",
+      "description": "Languages spoken.",
+      "items": { "type": "string" }
+    },
+    "gender": { "type": ["string", "null"] },
+    "acceptingNewPatients": { "type": ["boolean", "null"] },
+    "facilities": {
+      "type": "array",
+      "description": "Facilities where this provider practices.",
+      "items": { "$ref": "_common.json#/$defs/FacilityReference" }
+    },
+    "fhir": { "$ref": "_common.json#/$defs/FhirReference" }
+  },
+  "required": ["providerId", "name"],
+  "additionalProperties": false
+}

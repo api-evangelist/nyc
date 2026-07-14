@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxda/schemas/case-statistic.json",
+  "title": "CaseStatistic",
+  "description": "An AGGREGATE prosecution metric for the Bronx District Attorney — arrests, charging decisions, case outcomes, and defendant demographics. This is the office's only quantitative public data, and it is published ONLY as rendered Microsoft Power BI (Gov) dashboards (app.powerbigov.us, report 'Public Dash Case v9a') embedded in /html/data/ pages. There is no data download, no query endpoint, and NO Open Data twin. This schema models one aggregate figure so the numbers trapped in the BI iframes could be published as data. NEVER an individual case or defendant — aggregate only.",
+  "type": "object",
+  "x-source": {
+    "dashboards_index": "https://www.bronxda.nyc.gov/html/data/dashboards.shtml",
+    "dashboard_charging": "https://www.bronxda.nyc.gov/html/data/dashboard-prosecutor-charging-decisions.shtml",
+    "dashboard_arrests": "https://www.bronxda.nyc.gov/html/data/dashboard-arrests.shtml",
+    "dashboard_demographics": "https://www.bronxda.nyc.gov/html/data/dashboard-defendant-demographics.shtml",
+    "powerbi": "https://app.powerbigov.us/view?r=eyJrIjoiYmJjNjY5YzEtNTc1Yy00ZDJkLTg4ZjUtMzE0YjJiOWJlNWI1IiwidCI6IjMyZjU2ZmM3LTVmODEtNGUyMi1hOTViLTE1ZGE2NjUxM2JlZiJ9",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "metric": {
+      "type": "string",
+      "description": "The measured quantity, e.g. 'Cases arraigned', 'Cases declined to prosecute', 'Dispositions', 'Arrests'."
+    },
+    "dashboard": {
+      "type": ["string", "null"],
+      "description": "Which published dashboard the figure comes from.",
+      "enum": ["Arrests", "Charging Decisions", "Case Outcomes", "Defendant Demographics", "Other", null]
+    },
+    "decisionPoint": {
+      "type": ["string", "null"],
+      "description": "Stage in the prosecution lifecycle the figure describes (from 'Case Decision Points').",
+      "enum": ["Arrest", "Intake / Charging", "Arraignment", "Indictment", "Disposition", "Sentencing", null]
+    },
+    "value": { "type": ["number", "null"], "description": "The numeric value of the metric." },
+    "unit": { "type": ["string", "null"], "description": "Unit of the value ('cases', 'defendants', 'percent', etc.)." },
+    "period": { "type": ["string", "null"], "description": "Reporting period label (e.g. '2024', 'Q1 2025')." },
+    "periodStart": { "type": ["string", "null"], "format": "date" },
+    "periodEnd": { "type": ["string", "null"], "format": "date" },
+    "chargeCategory": {
+      "type": ["string", "null"],
+      "description": "Charge severity/category the figure is broken out by, if any.",
+      "enum": ["Felony", "Misdemeanor", "Violation", "All", null]
+    },
+    "demographic": {
+      "type": ["object", "null"],
+      "description": "Demographic breakdown dimension for defendant-demographics figures (aggregate).",
+      "properties": {
+        "dimension": { "type": ["string", "null"], "enum": ["Age", "Race/Ethnicity", "Sex", "Borough of Residence", null] },
+        "group": { "type": ["string", "null"], "description": "The category within the dimension (e.g. an age band)." }
+      },
+      "additionalProperties": false
+    },
+    "office": { "$ref": "_common.json#/$defs/OfficeReference" },
+    "source": { "type": ["string", "null"], "description": "Provenance note — always the Power BI dashboard today, never a data file." },
+    "dataAsOf": { "type": ["string", "null"], "format": "date", "description": "As-of date the dashboard was last refreshed." }
+  },
+  "required": ["metric"],
+  "additionalProperties": false
+}

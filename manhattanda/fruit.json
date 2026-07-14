@@ -1,0 +1,141 @@
+{
+  "domain": "manhattanda",
+  "agency": "Manhattan District Attorney's Office (New York County District Attorney)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA; manhattanda.org served no robots.txt). Fingerprinted the site as WordPress (custom 'dany' theme) behind the Sucuri CloudProxy WAF/CDN, with Jetpack Search, The Events Calendar, WPForms / Contact Form 7, Mailchimp, Google reCAPTCHA, and an exposed WP REST API (/wp-json, 424 routes; wp/v2/posts reports x-wp-total: 3029). Verified via the Socrata Discovery API that NO NYC Open Data asset exists under any Manhattan-DA agency label (four exact-label queries, all zero; keyword q=district attorney / q=prosecution return only other jurisdictions and other NYC agencies). Read the Contact page FOIL section, which delegates all records requests to NYC OpenRecords.",
+  "related_domains": ["a856-cwprod.nyc.gov (NYC OpenRecords / FOIL)", "brooklynda.org", "queensda.org", "bronxda.gov", "rcda.nyc.gov", "data.cityofnewyork.us"],
+  "headline_findings": [
+    "The Manhattan DA publishes NO NYC Open Data — as an independently elected county prosecutor it sits outside the mayoral open-data program; four agency-label queries against the Socrata Discovery API return zero datasets.",
+    "The only genuinely machine-readable object is accidental: the newsroom (~3,029 posts) is JSON solely because WordPress ships a REST API (wp/v2/posts). It is undocumented, unversioned, content-only.",
+    "Nothing the office actually does has an API — prosecutions, bureaus/initiatives, victim services, and tips exist only as HTML pages or prose; reporting suspected wrongdoing means a generic reCAPTCHA contact form or a phone call.",
+    "Two core workflows are outsourced or un-built: FOIL records requests are delegated off-site to NYC OpenRecords, and tip intake has no structured surface at all.",
+    "All five NYC District Attorneys run the same functions on the same kind of stack — this is a candidate for ONE shared DA API rather than five silos. Net-new write surface: submit a tip (TipSubmission). See tech-stack.md and apis-observed.md."
+  ],
+  "meta": {
+    "short": "Manhattan District Attorney",
+    "verb": "standardize",
+    "platform": "WordPress (custom 'dany' theme) behind Sucuri CloudProxy; Jetpack Search; The Events Calendar; WPForms/Contact Form 7; Mailchimp; exposed WP REST API; FOIL delegated to NYC OpenRecords",
+    "netnew": "TipSubmission — submit a routable tip to a DA bureau (no API today; only a generic reCAPTCHA contact form). FOIL is delegated off-site to NYC OpenRecords.",
+    "accent": "#a04a5a",
+    "tagline": "A WordPress newsroom whose only API is accidental, no open data at all, FOIL delegated and tips un-built — five identical DA offices waiting on one shared contract.",
+    "headline": "The Manhattan DA has essentially no structured surface: its lone machine-readable object is an accidental WordPress feed, so the work is to define contracts once and standardize them across all five borough DAs."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 2,
+    "openData": 0,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "modern WordPress CMS, but heavily rented (Sucuri WAF, Jetpack, WordPress.com search)",
+    "siteApi": "a real but accidental WP REST API over the newsroom; undocumented, unversioned, content-only",
+    "openData": "zero NYC Open Data assets — verified across four agency-label queries",
+    "coreData": "only the newsroom is structured; prosecutions, programs, and services are HTML/prose, no case data",
+    "writeApi": "no tip-intake API; only a generic reCAPTCHA contact form, and FOIL delegated off-site",
+    "agent": "no MCP or agent-native surface exists today",
+    "ownership": "content self-hosted, but search rented (Jetpack), FOIL delegated (OpenRecords), security/CDN rented (Sucuri)"
+  },
+  "apis_observed": [
+    { "endpoint": "manhattanda.org/wp-json/wp/v2/", "type": "WordPress REST API", "owner": "Manhattan DA (self-hosted WordPress)", "public": true, "note": "The one real API. wp/v2/posts returns the newsroom as JSON, x-wp-total: 3029 (press releases, media coverage, op-eds, reports, testimony). Accidental (WP default), undocumented, content-only." },
+    { "endpoint": "manhattanda.org/wp-json/tribe/events/v1/events", "type": "events API (The Events Calendar)", "owner": "Manhattan DA (plugin)", "public": true, "note": "Community events feed via the Modern Tribe Events Calendar plugin." },
+    { "endpoint": "jetpack/v4/search (WordPress.com site 137993268)", "type": "site search API", "owner": "Automattic / Jetpack", "public": "rented", "note": "On-site search delegated to Jetpack Search; not owned by the office." },
+    { "endpoint": "contact-form-7/v1 · WPForms", "type": "form submission", "owner": "Manhattan DA (plugins)", "public": "write (reCAPTCHA)", "note": "Generic contact form is the closest thing to tip intake — no schema, no structured API." },
+    { "endpoint": "a856-cwprod.nyc.gov/openrecords (NYC OpenRecords)", "type": "FOIL records-request portal", "owner": "NYC (citywide)", "public": "external", "note": "The office delegates all FOIL requests here; its statutory intake workflow lives off its own domain. No DA-owned API." },
+    { "endpoint": "manhattanda.us9.list-manage.com", "type": "newsletter subscribe", "owner": "Mailchimp", "public": "rented", "note": "Newsletter signup posts to Mailchimp." },
+    { "endpoint": "Sucuri CloudProxy", "type": "WAF / CDN", "owner": "Sucuri", "public": "vendor", "note": "server: Sucuri/Cloudproxy fronts the whole site." },
+    { "endpoint": "Google reCAPTCHA / ExactMetrics (GA) / Wordfence", "type": "bot mitigation, analytics, security", "owner": "Google / Wordfence", "public": "vendor", "note": "reCAPTCHA gates forms; exactmetrics/v1 and wordfence/v1 REST namespaces present." }
+  ],
+  "fruit": [
+    {
+      "name": "Newsroom (press releases, media coverage, op-eds, reports)",
+      "type": "content feed",
+      "entity": "PressRelease",
+      "url": "https://www.manhattanda.org/category/news/",
+      "count": "~3,029 posts",
+      "machine_readable": "WordPress REST API",
+      "verified": true,
+      "opendata_match": [],
+      "notes": "The one genuinely machine-readable object — wp/v2/posts, x-wp-total: 3029, across categories press-release (915), media-coverage (1963), op-ed, reports, testimony, remarks, video, indictments. Accidental (WP default), undocumented, content-only."
+    },
+    {
+      "name": "Our Work — bureaus, units & initiatives",
+      "type": "directory (HTML)",
+      "entity": "Program",
+      "url": "https://www.manhattanda.org/our-work/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "CPU (Community Partnerships), gun violence, hate crimes, white-collar crime, reform & fairness, holding the system accountable, sexual & gender-based violence — plus diversion and post-conviction / conviction-integrity work. HTML pages only; no structured API."
+    },
+    {
+      "name": "Victim Resources",
+      "type": "directory (HTML)",
+      "entity": "VictimService",
+      "url": "https://www.manhattanda.org/victim-resources/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Resources by crime type: child abuse, elder abuse, financial crimes, frauds targeting immigrants, hate crimes, housing/tenant protection, human trafficking, intimate partner & sexual violence, worker protection / wage theft. HTML only."
+    },
+    {
+      "name": "Office locations & contact",
+      "type": "directory (HTML)",
+      "entity": "Office",
+      "url": "https://www.manhattanda.org/contact-us/",
+      "count": "3 offices",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Main Office (One Hogan Place, 212.335.9000), Harlem Office (163 West 125th Street), Washington Heights Office (530 West 166th Street). Published as HTML on the Contact page."
+    },
+    {
+      "name": "Prosecution / caseload statistics (aggregate)",
+      "type": "reports as prose",
+      "entity": "Prosecution",
+      "url": "https://www.manhattanda.org/category/news/reports/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Arraignments, indictments, dispositions, convictions, declinations, diversions — the office's core subject, published only as prose in press releases and periodic reports. No NYC Open Data twin; aggregate only, never an individual case."
+    },
+    {
+      "name": "Community events",
+      "type": "events feed",
+      "entity": "Program",
+      "url": "https://www.manhattanda.org/wp-json/tribe/events/v1/events",
+      "machine_readable": "The Events Calendar API",
+      "verified": true,
+      "opendata_match": [],
+      "notes": "Community events exposed by the Modern Tribe Events Calendar plugin REST API — a secondary machine-readable surface."
+    },
+    {
+      "name": "FOIL records request",
+      "type": "workflow (delegated)",
+      "entity": "TipSubmission",
+      "url": "https://www.manhattanda.org/contact-us/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Contact page states all FOIL requests must be submitted via NYC OpenRecords (select 'Manhattan District Attorney's Office'), with a U.S.-mail fallback to the Records Access Officer at One Hogan Place. Delegated off the DA's own domain; no DA-owned API. An alternative net-new write surface."
+    },
+    {
+      "name": "Report a tip to a bureau",
+      "type": "sign-up / intake workflow",
+      "entity": "TipSubmission",
+      "url": "https://www.manhattanda.org/contact-us/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Reporting suspected wrongdoing (financial fraud, elder abuse, human trafficking, hate crime, public corruption, cybercrime) has no API — only a generic reCAPTCHA-gated Contact Form 7 form or a bureau phone line. The net-new WRITE surface for this domain."
+    }
+  ]
+}

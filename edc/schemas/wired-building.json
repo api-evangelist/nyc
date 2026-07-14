@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/edc/schemas/wired-building.json",
+  "title": "WiredBuilding",
+  "description": "A building assessed under EDC's WiredNYC / WiredScore broadband-readiness program — telecom infrastructure, ISPs, fiber, and certification class. One canonical schema reconciling EDC's three parallel WiredNYC Open Data datasets: All Buildings (a6nj-cfbz), Certified Buildings (37it-gmcp), and Participating Buildings (cfzn-4iza). Keyed on BBL / BIN.",
+  "type": "object",
+  "x-source": {
+    "opendata_all": "https://data.cityofnewyork.us/d/a6nj-cfbz",
+    "opendata_certified": "https://data.cityofnewyork.us/d/37it-gmcp",
+    "opendata_participating": "https://data.cityofnewyork.us/d/cfzn-4iza"
+  },
+  "properties": {
+    "buildingName": { "type": ["string", "null"], "description": "'Building Name'." },
+    "buildingId": { "type": ["string", "null"], "description": "'Building_id' / BIN." },
+    "streetAddress": { "type": ["string", "null"], "description": "'Street Address'." },
+    "cohort": {
+      "type": ["string", "null"],
+      "enum": ["All", "Participating", "Certified", null],
+      "description": "Which WiredNYC cohort this record belongs to (derived from source dataset)."
+    },
+    "certificationClass": { "type": ["string", "null"], "description": "WiredScore certification class ('Certification Class')." },
+    "ispCount": { "type": ["integer", "null"], "description": "Number of internet service providers ('# ISPs')." },
+    "isps": { "type": ["string", "null"], "description": "Named ISPs serving the building ('ISPs')." },
+    "carrierCount": { "type": ["integer", "null"], "description": "'# of Carriers'." },
+    "fiberConnection": { "type": ["string", "boolean", "null"], "description": "'Fiber Connection'." },
+    "fiberDistribution": { "type": ["string", "null"], "description": "'Fiber Distribution'." },
+    "coaxCableConnections": { "type": ["string", "null"], "description": "'Coax/Cable Connections'." },
+    "satelliteFixedWireless": { "type": ["string", "null"], "description": "'Satellite/Fixed Wireless Connection'." },
+    "multiplePointsOfEntry": { "type": ["string", "boolean", "null"], "description": "'Multiple Points of Entry'." },
+    "signedPoes": { "type": ["string", "integer", "null"], "description": "Signed points of entry ('Signed POEs')." },
+    "newServiceProviders": { "type": ["string", "null"], "description": "'New Service Providers'." },
+    "designatedTelecomUtilitySpace": { "type": ["string", "boolean", "null"], "description": "'Designated Telecom Utility Space'." },
+    "additionalTelecomSpace": { "type": ["string", "boolean", "null"], "description": "'Additional Telecom Space'." },
+    "riserSpaceForCurrentProviders": { "type": ["string", "boolean", "null"], "description": "'Riser Space for Current Providers'." },
+    "riserSpaceForAdditionalProviders": { "type": ["string", "boolean", "null"], "description": "'Riser Space for Additional Providers'." },
+    "diverseRiserLocations": { "type": ["string", "boolean", "null"], "description": "'Diverse Riser Locations'." },
+    "agreements": { "type": ["string", "null"], "description": "'Agreements'." },
+    "bble": { "type": ["string", "null"], "description": "'BBLE'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

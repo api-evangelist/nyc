@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sca/schemas/enrollment-capacity.json",
+  "title": "EnrollmentCapacity",
+  "description": "An enrollment / capacity / utilization record for a school building or organization — the demand signal that drives SCA's capital plan. Canonical schema reconciling 'Enrollment Capacity And Utilization Reports' (gkd7-3vk7, 16 columns) and its historical by-organization (q9xk-w9iv) and by-building (hq56-zhrp) variants. Keyed on Building ID / Org ID.",
+  "type": "object",
+  "x-source": {
+    "opendata_current": "https://data.cityofnewyork.us/d/gkd7-3vk7",
+    "opendata_historical_org": "https://data.cityofnewyork.us/d/q9xk-w9iv",
+    "opendata_historical_building": "https://data.cityofnewyork.us/d/hq56-zhrp"
+  },
+  "properties": {
+    "buildingId": { "type": ["string", "null"], "description": "'Bldg ID'." },
+    "buildingName": { "type": ["string", "null"], "description": "'Bldg Name'." },
+    "orgId": { "type": ["string", "null"], "description": "'Org ID'." },
+    "organizationName": { "type": ["string", "null"], "description": "'Organization Name'." },
+    "geographicDistrict": { "$ref": "_common.json#/$defs/GeographicDistrict" },
+    "buildingEnrollment": { "type": ["integer", "null"], "description": "'Bldg Enroll'." },
+    "organizationEnrollment": { "type": ["integer", "null"], "description": "'Org Enroll'." },
+    "buildingTargetCapacity": { "type": ["integer", "null"], "description": "'Target Bldg Cap'." },
+    "organizationTargetCapacity": { "type": ["integer", "null"], "description": "'Org Target Cap'." },
+    "buildingTargetUtilization": { "type": ["number", "null"], "description": "'Target Bldg Util' — utilization percent." },
+    "organizationTargetUtilization": { "type": ["number", "null"], "description": "'Org Target Util' — utilization percent." },
+    "prekCapacity": { "type": ["integer", "null"], "description": "'PreK Cap +'." },
+    "clusterRoomsNeeded": { "type": ["integer", "null"], "description": "'No. of Cluster Rms Needed +'." },
+    "clusterRoomsReported": { "type": ["integer", "null"], "description": "'No. of Cluster / Spec Rms Reported +'." },
+    "includesClass": { "type": ["string", "null"], "description": "'Incl. Class'." },
+    "dataAsOf": { "type": ["string", "null"], "format": "date", "description": "'Data As Of'." }
+  },
+  "additionalProperties": false
+}

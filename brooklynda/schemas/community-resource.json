@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynda/schemas/community-resource.json",
+  "title": "CommunityResource",
+  "description": "A public-facing Brooklyn DA resource — a brochure, palm card, task-force listing, hotline, or guide the office publishes for residents (e.g. elder-abuse brochure, human-trafficking task-force card, tenant-protection guide, sealing-unit brochure, deed-fraud brochure). On brooklynda.org these are WordPress pages and embedded PDFs (embed-any-document plugin), most offered in multiple languages. No structured directory and no Open Data twin exist; this schema proposes the canonical record so residents and agents can find help.",
+  "type": "object",
+  "x-source": {
+    "wp_rest": "https://www.brooklynda.org/wp-json/wp/v2/pages",
+    "site": "https://www.brooklynda.org/resources/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "id": { "type": ["integer", "string", "null"], "description": "WordPress page ID." },
+    "slug": { "type": ["string", "null"], "description": "URL slug." },
+    "title": { "type": "string", "description": "Resource title." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Page permalink." },
+    "resourceType": {
+      "type": ["string", "null"],
+      "description": "Format / kind of resource.",
+      "enum": ["Brochure", "Palm Card", "Guide", "Hotline", "Task Force", "Report / Notification", "Video", "Web Page", "Other", null]
+    },
+    "topic": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Subject areas the resource covers.",
+      "examples": [["Elder Abuse"], ["Human Trafficking"], ["Tenant Protection"], ["Deed Fraud"], ["Anti-Bullying"], ["Immigrant Affairs"]]
+    },
+    "bureau": { "$ref": "_common.json#/$defs/Bureau" },
+    "description": { "type": ["string", "null"], "description": "What the resource offers." },
+    "documentUrl": { "type": ["string", "null"], "format": "uri", "description": "Direct link to the PDF / embedded document, where one exists." },
+    "phone": { "type": ["string", "null"], "description": "Associated hotline or contact number." },
+    "languages": { "type": "array", "items": { "$ref": "_common.json#/$defs/Language" }, "description": "Languages this resource is published in ('all languages' variants are common on the site)." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

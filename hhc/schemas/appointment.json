@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/schemas/appointment.json",
+  "title": "Appointment",
+  "description": "A patient's existing / booked appointment at NYC Health + Hospitals — the read side of scheduling, as surfaced in the MyChart patient portal. This maps directly to the FHIR Appointment resource, which the live Epic FHIR R4 API DOES expose (read + search-type), but only under SMART patient authorization. Note the asymmetry the assessment turns on: the standard supports reading an Appointment, but the H+H FHIR surface exposes NO create/booking, NO Slot resource, and NO $book/$find operation — so booking has no machine-readable contract. See appointment-request.json for the net-new write object.",
+  "type": "object",
+  "x-fhir": { "resourceType": "Appointment", "interactions": ["read", "search-type"], "note": "read-only on the H+H FHIR endpoint; no create, no Slot, no $book" },
+  "x-source": {
+    "portal": "https://mychart.nychhc.org/MyChart/",
+    "fhir": "https://epicproxypda.nychhc.org/FHIRProxy/api/FHIR/R4/Appointment",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "appointmentId": { "type": "string", "description": "Appointment identifier (FHIR Appointment.id).", "readOnly": true },
+    "status": {
+      "type": ["string", "null"],
+      "description": "FHIR Appointment.status.",
+      "enum": ["proposed", "pending", "booked", "arrived", "fulfilled", "cancelled", "noshow", "waitlist", null]
+    },
+    "serviceType": { "type": ["string", "null"], "description": "Reason / service type for the visit (FHIR Appointment.serviceType)." },
+    "specialty": { "type": ["string", "null"], "description": "Practice specialty (FHIR Appointment.specialty)." },
+    "start": { "type": ["string", "null"], "format": "date-time", "description": "Scheduled start (FHIR Appointment.start).", "readOnly": true },
+    "end": { "type": ["string", "null"], "format": "date-time", "description": "Scheduled end (FHIR Appointment.end).", "readOnly": true },
+    "minutesDuration": { "type": ["integer", "null"] },
+    "facility": { "$ref": "_common.json#/$defs/FacilityReference" },
+    "provider": {
+      "type": "object",
+      "description": "The practitioner for the visit (FHIR Appointment.participant → Practitioner).",
+      "properties": {
+        "providerId": { "type": ["string", "null"] },
+        "name": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "visitType": {
+      "type": ["string", "null"],
+      "enum": ["In-Person", "Telehealth (Video)", "Telephone", null]
+    },
+    "patientInstructions": { "type": ["string", "null"], "readOnly": true },
+    "fhir": { "$ref": "_common.json#/$defs/FhirReference" }
+  },
+  "required": ["appointmentId"],
+  "additionalProperties": false
+}

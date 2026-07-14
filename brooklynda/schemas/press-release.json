@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynda/schemas/press-release.json",
+  "title": "PressRelease",
+  "description": "A Brooklyn DA press release, statement, or notification — the office's primary published record and the ONLY substantial machine-readable data on brooklynda.org. Sourced from the WordPress REST API (/wp-json/wp/v2/posts), where the 'Press Releases' category (pr) alone holds ~911 posts, plus 'Notifications', 'DA Statements', and 'Newsletters'. This is an incidental content API — the WordPress default — not a designed one.",
+  "type": "object",
+  "x-source": {
+    "wp_rest": "https://www.brooklynda.org/wp-json/wp/v2/posts",
+    "category_press_releases": "https://www.brooklynda.org/wp-json/wp/v2/categories (slug=pr, ~911 posts)",
+    "site": "https://www.brooklynda.org/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "id": { "type": ["integer", "string"], "description": "WordPress post ID." },
+    "slug": { "type": ["string", "null"], "description": "URL slug." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical permalink (WordPress 'link')." },
+    "title": { "type": "string", "description": "Headline (WordPress 'title.rendered')." },
+    "date": { "type": ["string", "null"], "format": "date-time", "description": "Publication datetime." },
+    "modified": { "type": ["string", "null"], "format": "date-time" },
+    "category": {
+      "type": ["string", "null"],
+      "description": "Content category on the site.",
+      "enum": ["Press Releases", "Notifications", "DA Statements", "Newsletters", "Uncategorized", null]
+    },
+    "bureau": { "$ref": "_common.json#/$defs/Bureau" },
+    "excerpt": { "type": ["string", "null"], "description": "Summary (WordPress 'excerpt.rendered', HTML stripped)." },
+    "content": { "type": ["string", "null"], "description": "Full body text (WordPress 'content.rendered', HTML)." },
+    "tags": { "type": "array", "items": { "type": "string" }, "description": "WordPress tags." },
+    "featuredImage": { "type": ["string", "null"], "format": "uri", "description": "Featured media URL, if any." },
+    "status": { "$ref": "_common.json#/$defs/ContentStatus" }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

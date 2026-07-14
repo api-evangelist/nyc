@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypl/schemas/collection.json",
+  "title": "Collection",
+  "description": "A NYPL Digital Collections collection — a curated grouping of digitized items, from NYPL's own public Digital Collections API (api.repo.nypl.org/api/v2/collections and collections/{uuid}). Keyed on UUID. A DigitalItem belongs to one or more Collections.",
+  "type": "object",
+  "x-source": {
+    "api": "https://api.repo.nypl.org/api/v2/collections",
+    "collection": "https://api.repo.nypl.org/api/v2/collections/{uuid}",
+    "site": "https://digitalcollections.nypl.org/"
+  },
+  "properties": {
+    "uuid": { "type": "string", "description": "Collection UUID — primary key." },
+    "title": { "type": "string", "description": "Collection title." },
+    "description": { "type": ["string", "null"], "description": "Scope / abstract for the collection." },
+    "division": { "type": ["string", "null"], "description": "Owning NYPL research division (ResearchDivision)." },
+    "itemCount": { "type": ["integer", "null"], "description": "Number of digitized items in the collection." },
+    "parentUuid": { "type": ["string", "null"], "description": "Parent collection UUID, for nested collections." },
+    "collectionLink": { "type": ["string", "null"], "format": "uri", "description": "Public digitalcollections.nypl.org page for the collection." }
+  },
+  "required": ["uuid", "title"],
+  "additionalProperties": false
+}
