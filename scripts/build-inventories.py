@@ -257,6 +257,52 @@ LIC = {
 # every detected tech must be licensed
 assert set(TECH) == set(LIC), f"license map mismatch: {set(TECH) ^ set(LIC)}"
 
+# Official website / product page per technology.
+URL = {
+ "WordPress": "https://wordpress.org", "Drupal": "https://www.drupal.org",
+ "Progress Sitefinity": "https://www.progress.com/sitefinity-cms",
+ "Smarty (PHP)": "https://www.smarty.net", "Microsoft Dynamics 365": "https://www.microsoft.com/dynamics-365",
+ "Oracle WebCenter Sites": "https://www.oracle.com/webcenter/", "DotNetNuke (DNN)": "https://www.dnnsoftware.com",
+ "Adobe Experience Manager": "https://business.adobe.com/products/experience-manager/adobe-experience-manager.html",
+ "Weebly": "https://www.weebly.com", "Revize": "https://www.revize.com", "NYC.gov Livesite": "https://www.nyc.gov",
+ "ASP.NET / IIS": "https://dotnet.microsoft.com/apps/aspnet", "Java / Tomcat / WebLogic": "https://tomcat.apache.org",
+ "Spring": "https://spring.io", "Next.js": "https://nextjs.org", "React": "https://react.dev",
+ "Angular": "https://angular.dev", "nginx": "https://nginx.org", "Apache": "https://httpd.apache.org",
+ "Akamai": "https://www.akamai.com", "Cloudflare": "https://www.cloudflare.com",
+ "AWS CloudFront": "https://aws.amazon.com/cloudfront/", "AWS (ALB/S3/EC2)": "https://aws.amazon.com",
+ "Microsoft Azure": "https://azure.microsoft.com", "WP Engine": "https://wpengine.com",
+ "Pantheon": "https://pantheon.io", "Netlify": "https://www.netlify.com", "Vercel": "https://vercel.com",
+ "Kinsta": "https://kinsta.com", "SiteGround": "https://www.siteground.com", "Fastly": "https://www.fastly.com",
+ "Imperva": "https://www.imperva.com", "Varnish": "https://varnish-cache.org", "Oracle Cloud": "https://www.oracle.com/cloud/",
+ "Accela": "https://www.accela.com", "Salesforce": "https://www.salesforce.com",
+ "Oracle Siebel": "https://www.oracle.com/cx/siebel/", "Unqork": "https://www.unqork.com",
+ "Kaseware": "https://www.kaseware.com", "Epic / MyChart": "https://www.epic.com",
+ "PeopleSoft (CUNYfirst)": "https://www.oracle.com/applications/peoplesoft/", "Legistar (Granicus)": "https://granicus.com",
+ "Checkbook NYC": "https://www.checkbooknyc.com", "Everbridge": "https://www.everbridge.com",
+ "Combined Arms": "https://www.combinedarms.us", "HawkSearch": "https://www.hawksearch.com",
+ "Viebit": "https://viebit.com", "StreamText": "https://www.streamtext.net", "BiblioCommons": "https://www.bibliocommons.com",
+ "Communico": "https://communico.co", "OverDrive / hoopla": "https://company.overdrive.com",
+ "Preservica": "https://preservica.com", "LUNA Imaging": "https://www.lunaimaging.com",
+ "Microsoft SharePoint": "https://www.microsoft.com/microsoft-365/sharepoint/collaboration",
+ "Microsoft Power BI": "https://www.microsoft.com/power-platform/products/power-bi",
+ "Shopify": "https://www.shopify.com", "Constant Contact": "https://www.constantcontact.com",
+ "WSO2 API Gateway": "https://wso2.com/api-manager/", "Divi / GeneratePress / Themeco": "https://www.elegantthemes.com/gallery/divi/",
+ "Esri ArcGIS": "https://www.esri.com/en-us/arcgis/", "CARTO": "https://carto.com", "Mapbox": "https://www.mapbox.com",
+ "Google Maps": "https://developers.google.com/maps", "NYC GeoClient / GeoSearch": "https://geosearch.planninglabs.nyc",
+ "Cloudinary": "https://cloudinary.com", "Azure Blob Storage": "https://azure.microsoft.com/products/storage/blobs",
+ "Google Tag Manager": "https://marketingplatform.google.com/about/tag-manager/",
+ "Google Analytics": "https://marketingplatform.google.com/about/analytics/", "Dynatrace": "https://www.dynatrace.com",
+ "New Relic": "https://newrelic.com", "Siteimprove": "https://www.siteimprove.com", "Matomo": "https://matomo.org",
+ "Loggly": "https://www.loggly.com", "Meta / Facebook Pixel": "https://www.facebook.com/business/tools/meta-pixel",
+ "Wordfence": "https://www.wordfence.com", "Socrata / Tyler (SODA)": "https://dev.socrata.com",
+ "WordPress REST API": "https://developer.wordpress.org/rest-api/",
+ "Drupal JSON:API": "https://www.drupal.org/docs/core-modules-and-themes/core-modules/jsonapi-module",
+ "FHIR / SMART on FHIR": "https://hl7.org/fhir/", "Open311 (GeoReport v2)": "https://www.open311.org",
+ "api.nyc.gov (Azure APIM)": "https://api.nyc.gov", "Google Translate": "https://translate.google.com",
+ "Contact Form 7": "https://contactform7.com",
+}
+assert set(TECH) == set(URL), f"URL map mismatch: {set(TECH) ^ set(URL)}"
+
 def blob(did):
     # Only the structured, domain-specific fields — NOT tech-stack.md prose, which
     # often name-drops the exemplar/other agencies for comparison (false positives).
@@ -290,7 +336,7 @@ detected = [t for t in by_tech]
 lic_summary = collections.Counter(LIC[t][0] for t in detected)
 # commercial/hybrid techs (in use) that have an OSS alternative, ranked by reach
 alt_rows = sorted(
-    [{"tech": t, "category": TECH[t][0], "license": LIC[t][0], "alternative": LIC[t][1],
+    [{"tech": t, "category": TECH[t][0], "license": LIC[t][0], "alternative": LIC[t][1], "url": URL[t],
       "count": len(by_tech[t]), "domains": [{"id": x, "short": short[x]} for x in by_tech[t]]}
      for t in detected if LIC[t][0] in ("commercial", "hybrid") and LIC[t][1]],
     key=lambda r: (-r["count"], r["tech"].lower()))
@@ -306,7 +352,7 @@ tech_json = {
     },
     "categories": [{"name": c, "techs": [
         {"tech": t, "category": c, "count": len(by_tech[t]),
-         "license": LIC[t][0], "alternative": LIC[t][1],
+         "license": LIC[t][0], "alternative": LIC[t][1], "url": URL[t],
          "domains": [{"id": x, "short": short[x]} for x in by_tech[t]]}
         for t in sorted(cats[c], key=str.lower)]} for c in cats if cats[c]],
     "alternatives": alt_rows,

@@ -64,6 +64,9 @@ A standard, language-agnostic description of a REST API — its paths, operation
 ### Model Context Protocol (MCP) — Agent contract (624 in this project)
 An open protocol for exposing tools and resources to AI agents/assistants. **Why it matters:** The agent-native layer. It maps the same resources as callable tools, mapped 1:1 to the OpenAPI operations — making a government service usable by an AI agent, not just a browser. Zero of 67 domains have this today.
 
+### Agent Skills — Agent task contract (10 in this project)
+Portable, model-agnostic skill definitions that package a task's instructions, the resources it needs, and the tools it orchestrates for an AI agent. **Why it matters:** The layer above MCP tools: one skill per common government process (apply, report, request records, schedule, pay…) that resolves the right agency and drives its tools to finish a citizen task. Ten are defined across the 67 agencies — see the Programmable City experience layer.
+
 ### APIs.json — Discovery / registry
 A machine-readable index that catalogs an organization's APIs and their supporting artifacts (schemas, OpenAPI, docs). **Why it matters:** The connective tissue open data never had — a discoverable registry so humans and agents can find every agency's API. The planned citywide index (see roadmap).
 
