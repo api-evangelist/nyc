@@ -28,9 +28,11 @@ This repo doubles as an explorable, data-driven website (**[nyc.apievangelist.co
 - `index.html` — project overview: thesis, cross-domain stats, the five verb families, the method, and cards for all 67 domains.
 - `domain.html?d=<domain>` — per-domain explorer: interactive fruit index, searchable Open Data index, JSON Schema browser, OpenAPI operations, MCP tools, and rendered docs.
 - `opportunity.html` · `linkage.html` · `transactions.html` — the assessment layer: priority ranking (demand×gap×feasibility), the cross-domain join-key graph, and the citizen-transaction taxonomy.
+- `commons.html` — the **[`nyc-commons`](nyc-commons/README.md)** shared schema set: 21 canonical definitions (borough, BBL, address, place, party, dollar), the per-definition adoption report, and the cross-agency key registry.
+- `standards.html` · `qa.html` — the standards NYC agencies should adopt (and the standards this project is built on), and the verification pass (66/67 high confidence).
 - `entities.html` · `technology.html` — master cross-domain inventories.
 - `docs.html?f=…` — in-browser Markdown viewer (also serves the [CHANGELOG](CHANGELOG.md)).
-- `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain: `python3 scripts/build-manifest.py && python3 scripts/build-scorecard.py`.
+- `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain: `python3 scripts/build-manifest.py && python3 scripts/build-scorecard.py` (and `build-commons.py` after touching any `_common.json`).
 
 The site is dependency-free static HTML/CSS/JS — no build step.
 
@@ -91,7 +93,7 @@ See the **[CHANGELOG](CHANGELOG.md)** for the full project history, and the **[c
 
 ## Status
 
-**Sixty-seven domains assessed** — the full NYC government surface (2,666 Open Data assets mapped, 422 JSON Schemas, 721 API operations, 624 MCP tools). One flat truth: open data is broad, but **60 of 67 domains have no transactional write API and 64 of 67 have no agent surface.** The ~40 modernization verbs collapse into five families — Digitize · Expose · Unify/Federate · Transact · Standardize. Full analysis in the [cross-domain SYNTHESIS](SYNTHESIS.md) and the interactive [aggregate scorecard](https://nyc.apievangelist.com/synthesis.html). Every domain is explorable at [nyc.apievangelist.com](https://nyc.apievangelist.com).
+**Sixty-seven domains assessed** — the full NYC government surface (2,666 Open Data assets mapped, 422 JSON Schemas, 721 API operations, 624 MCP tools). One flat truth: open data is broad, but **65 of 67 domains have no transactional write API and all 67 have no agent surface.** The ~40 modernization verbs collapse into five families — Digitize · Expose · Unify/Federate · Transact · Standardize. Full analysis in the [cross-domain SYNTHESIS](SYNTHESIS.md) and the interactive [aggregate scorecard](https://nyc.apievangelist.com/synthesis.html). Every domain is explorable at [nyc.apievangelist.com](https://nyc.apievangelist.com).
 
 The first five, five distinct verbs:
 

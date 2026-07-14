@@ -1,64 +1,86 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dob/schemas/_common.json",
-  "title": "NYC DOB — Shared Definitions",
+  "title": "NYC DOB \u2014 Shared Definitions",
   "description": "Reusable JSON Schema definitions shared across NYC Department of Buildings (DOB) object schemas. Reconciles fields common to the DOB website (www.nyc.gov/site/buildings), the legacy application layer (BIS Web / DOB NOW / eFiling), and the DOB NYC Open Data datasets. The GeographySpine is the recurring property-location key set that stitches every DOB record together.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "description": "Borough name. In Open Data this appears as 'Borough' (job filings), 'BOROUGH' (permit issuance), or 'BORO' (violations, sometimes as a 1-5 code).",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "BoroughCode": {
-      "type": ["integer", "null"],
-      "description": "Numeric borough code as used in BIN/BBL and some violation extracts: 1=Manhattan, 2=Bronx, 3=Brooklyn, 4=Queens, 5=Staten Island.",
-      "minimum": 1,
-      "maximum": 5
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/BoroCode",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/BoroCode); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/BoroughCode still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "Point geometry. In Open Data these arrive as text (gis_latitude/gis_longitude on legacy extracts) or number (latitude/longitude on DOB NOW extracts).",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "GeographySpine": {
-      "type": "object",
-      "description": "The recurring NYC property-geography key set shared by nearly every DOB record. Column names vary by extract (e.g. community___board vs community_board vs community_board(number); gis_council_district vs council_district; gis_census_tract vs census_tract; gis_nta_name vs nta) but the concepts are constant.",
-      "properties": {
-        "communityBoard": { "type": ["string", "null"], "description": "Community District / Community Board (Open Data 'Community - Board', 'Community Board')." },
-        "councilDistrict": { "type": ["integer", "string", "null"], "description": "City Council district (Open Data 'COUNCIL DISTRICT' / 'Council District')." },
-        "censusTract": { "type": ["string", "null"], "description": "US Census tract (Open Data 'CENSUS TRACT' / 'Census Tract (2020)')." },
-        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area (Open Data 'NTA' / 'Neighborhood Tabulation Area (NTA) (2020)')." },
-        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot, the 10-digit tax-lot identifier (Open Data 'BBL')." },
-        "bin": { "type": ["string", "null"], "description": "Building Identification Number, the 7-digit DOB building key (Open Data 'Bin #', 'BIN', 'BIN_NUMBER', 'Permit BIN')." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/GeographySpine still resolve."
     },
     "Address": {
-      "type": "object",
-      "description": "A NYC street address as decomposed across DOB extracts (House #, Street Name, Zip).",
-      "properties": {
-        "houseNumber": { "type": ["string", "null"], "description": "Open Data 'House #' / 'House Number'." },
-        "streetName": { "type": ["string", "null"], "description": "Open Data 'Street Name' / 'STREET'." },
-        "borough": { "$ref": "#/$defs/Borough" },
-        "zip": { "type": ["string", "null"], "description": "Open Data 'Zip' / 'Zip Code' / 'ZIP Code'." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/address.json#/$defs/Address",
+      "$comment": "Canonical definition provided by nyc-commons (address.json#/$defs/Address); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Address still resolve."
     },
     "PartyReference": {
       "type": "object",
-      "description": "A person or business on a filing/permit — owner, applicant, permittee, or filing representative. DOB decomposes these into many first/last/business-name columns.",
+      "description": "A person or business on a filing/permit \u2014 owner, applicant, permittee, or filing representative. DOB decomposes these into many first/last/business-name columns.",
       "properties": {
-        "role": { "type": ["string", "null"], "enum": ["Owner", "Applicant", "Permittee", "FilingRepresentative", "SiteSafetyManager", "Superintendent", null] },
-        "firstName": { "type": ["string", "null"] },
-        "lastName": { "type": ["string", "null"] },
-        "businessName": { "type": ["string", "null"] },
-        "licenseType": { "type": ["string", "null"], "description": "e.g. GC (General Contractor), PE, RA, Master Plumber (Open Data 'Permittee's License Type')." },
-        "licenseNumber": { "type": ["string", "null"], "description": "Open Data 'Applicant License #' / 'Permittee's License #'." }
+        "role": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "Owner",
+            "Applicant",
+            "Permittee",
+            "FilingRepresentative",
+            "SiteSafetyManager",
+            "Superintendent",
+            null
+          ]
+        },
+        "firstName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lastName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "businessName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "licenseType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "e.g. GC (General Contractor), PE, RA, Master Plumber (Open Data 'Permittee's License Type')."
+        },
+        "licenseNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Open Data 'Applicant License #' / 'Permittee's License #'."
+        }
       },
       "additionalProperties": false
     }

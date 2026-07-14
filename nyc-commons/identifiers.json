@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/identifiers.json",
+  "title": "nyc-commons — Identifiers",
+  "description": "The cross-agency join keys of NYC government. These are the identifiers that recur across domains and, if honored consistently, let a Buildings record join a Finance record join a Housing record join a 311 request. BBL and BIN are the property spine (present in 52 of 67 domains via the linkage analysis); the agency-specific keys (gisPropNum, DBN, matterId) are the primary keys of their owning domain but travel into others. Domains should `$ref` these rather than re-declaring the format.",
+  "x-nyc-commons": {
+    "role": "canonical",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/schemas/_common.json",
+    "version": "0.1.0"
+  },
+  "$defs": {
+    "BBL": {
+      "type": ["string", "null"],
+      "description": "Borough-Block-Lot — the 10-digit citywide tax-lot key (1 borough digit + 5 block + 4 lot). DCP's PLUTO/MapPLUTO is authoritative. The primary geographic join key across NYC datasets.",
+      "pattern": "^[1-5][0-9]{9}$"
+    },
+    "BIN": {
+      "type": ["string", "null"],
+      "description": "Building Identification Number — 7-digit building key (leading digit = borocode). Assigned by DCP; joins buildings to their lot (BBL).",
+      "pattern": "^[1-5][0-9]{6}$"
+    },
+    "GISPropNum": {
+      "type": ["string", "null"],
+      "description": "NYC Parks property number (`gispropnum`, e.g. 'M010') — the authoritative key for a park, playground, or greenspace. Parks' equivalent of a BBL."
+    },
+    "DBN": {
+      "type": ["string", "null"],
+      "description": "District-Borough-Number — the NYC public-school identifier (e.g. '01M448'): 2-digit district + borough letter + 3-digit school number. DOE's primary key.",
+      "pattern": "^[0-9]{2}[MXKQR][0-9]{3}$"
+    },
+    "BoroBlockLot": {
+      "type": "object",
+      "description": "BBL decomposed into its three components, as some agencies store them separately.",
+      "properties": {
+        "borocode": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "block": { "type": ["string", "null"] },
+        "lot": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "CrossAgencyKey": {
+      "type": "object",
+      "description": "A generic typed reference to another agency's primary key carried on a record — the mechanism by which the city becomes one addressable graph. e.g. { keyType: 'BBL', value: '1000160001' } or { keyType: 'DBN', value: '01M448' }.",
+      "properties": {
+        "keyType": {
+          "type": "string",
+          "description": "Which cross-agency identifier this is.",
+          "enum": ["BBL", "BIN", "GISPropNum", "DBN", "matterId", "serviceRequestId", "electionDistrict", "vendorId", "other"]
+        },
+        "value": { "type": "string" },
+        "owningDomain": { "type": ["string", "null"], "description": "The domain slug that is authoritative for this key (e.g. 'dcp', 'nycgovparks.org', 'schools.nyc.gov')." }
+      },
+      "required": ["keyType", "value"],
+      "additionalProperties": false
+    }
+  }
+}

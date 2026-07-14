@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+  "title": "nyc-commons",
+  "description": "Root index of the nyc-commons shared schema set — the common vocabulary factored out of 67 NYC government domain assessments so that every agency schema can `$ref` one canonical definition of a borough, a BBL, an address, a place, a party, and a dollar instead of re-declaring its own. Factored from the Department of City Planning (DCP), the authoritative source of the city's geography. This root is a manifest; import the individual files directly.",
+  "x-nyc-commons": {
+    "role": "index",
+    "version": "0.1.0",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/schemas/_common.json",
+    "files": [
+      { "file": "geography.json", "title": "Geography", "defs": ["Borough", "BoroCode", "Coordinates", "CommunityDistrict", "CouncilDistrict", "CensusTract", "NTA", "AdminBoundaries", "GeographySpine"] },
+      { "file": "identifiers.json", "title": "Identifiers", "defs": ["BBL", "BIN", "GISPropNum", "DBN", "BoroBlockLot", "CrossAgencyKey"] },
+      { "file": "address.json", "title": "Address", "defs": ["Address"] },
+      { "file": "place.json", "title": "Place", "defs": ["Place"] },
+      { "file": "party.json", "title": "Party", "defs": ["PersonName", "ContactPoint", "AgencyReference", "OrganizationReference", "PartyReference"] },
+      { "file": "money.json", "title": "Money & Fiscal", "defs": ["MoneyUSD", "FiscalYear", "FiscalPeriod"] }
+    ]
+  },
+  "$defs": {
+    "Borough": { "$ref": "geography.json#/$defs/Borough" },
+    "GeographySpine": { "$ref": "geography.json#/$defs/GeographySpine" },
+    "Coordinates": { "$ref": "geography.json#/$defs/Coordinates" },
+    "BBL": { "$ref": "identifiers.json#/$defs/BBL" },
+    "BIN": { "$ref": "identifiers.json#/$defs/BIN" },
+    "Address": { "$ref": "address.json#/$defs/Address" },
+    "Place": { "$ref": "place.json#/$defs/Place" },
+    "PartyReference": { "$ref": "party.json#/$defs/PartyReference" },
+    "AgencyReference": { "$ref": "party.json#/$defs/AgencyReference" },
+    "MoneyUSD": { "$ref": "money.json#/$defs/MoneyUSD" }
+  }
+}

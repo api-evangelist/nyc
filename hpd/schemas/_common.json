@@ -1,69 +1,69 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hpd/schemas/_common.json",
-  "title": "NYC HPD — Shared Definitions",
+  "title": "NYC HPD \u2014 Shared Definitions",
   "description": "Reusable JSON Schema definitions shared across NYC Department of Housing Preservation & Development (HPD) object schemas. Reconciles the property/geography spine common to the HPD Online backend API (mspwvw-hpdleov3.nyc.gov/hpdonline.api), the Housing Connect lottery portal, and the 47 HPD NYC Open Data datasets. The join keys across every HPD dataset are buildingId, registrationId, and BBL/BIN.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "description": "Borough name as spelled across HPD datasets.",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "BoroId": {
-      "type": ["integer", "null"],
-      "description": "Numeric borough code (boroid): 1 Manhattan, 2 Bronx, 3 Brooklyn, 4 Queens, 5 Staten Island.",
-      "minimum": 1,
-      "maximum": 5
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/BoroCode",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/BoroCode); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/BoroId still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point (latitude/longitude columns present on most HPD datasets).",
-      "properties": {
-        "latitude": { "type": ["number", "null"], "minimum": -90, "maximum": 90 },
-        "longitude": { "type": ["number", "null"], "minimum": -180, "maximum": 180 }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "GeographySpine": {
-      "type": "object",
-      "description": "The location/geography identifiers repeated across HPD Open Data. BBL (Borough-Block-Lot) and BIN (Building Identification Number) are the citywide property keys; the rest are administrative geographies.",
-      "properties": {
-        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot, 10-digit property key (bbl)." },
-        "bin": { "type": ["string", "null"], "description": "Building Identification Number (bin)." },
-        "block": { "type": ["string", "null"], "description": "Tax block (block)." },
-        "lot": { "type": ["string", "null"], "description": "Tax lot (lot)." },
-        "communityBoard": { "type": ["string", "null"], "description": "Community Board / community district (communityboard / community_board)." },
-        "councilDistrict": { "type": ["integer", "null"], "description": "City Council district (councildistrict / council_district).", "minimum": 1, "maximum": 51 },
-        "censusTract": { "type": ["string", "null"], "description": "Census tract (censustract / census_tract)." },
-        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area (nta)." },
-        "zip": { "type": ["string", "null"], "description": "ZIP / postcode (zip / post_code)." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/GeographySpine still resolve."
     },
     "Address": {
-      "type": "object",
-      "description": "A street address as HPD stores it — house-number range + street.",
-      "properties": {
-        "houseNumber": { "type": ["string", "null"], "description": "Primary/display house number (housenumber / house_number)." },
-        "lowHouseNumber": { "type": ["string", "null"] },
-        "highHouseNumber": { "type": ["string", "null"] },
-        "streetName": { "type": ["string", "null"] },
-        "borough": { "$ref": "#/$defs/Borough" },
-        "zip": { "type": ["string", "null"] }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/address.json#/$defs/Address",
+      "$comment": "Canonical definition provided by nyc-commons (address.json#/$defs/Address); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Address still resolve."
     },
     "BuildingReference": {
       "type": "object",
-      "description": "A reference to an HPD building record — the spine every violation, complaint, registration, and litigation hangs off of.",
+      "description": "A reference to an HPD building record \u2014 the spine every violation, complaint, registration, and litigation hangs off of.",
       "properties": {
-        "buildingId": { "type": "string", "description": "HPD Building ID (buildingid / building_id) — the primary HPD join key." },
-        "registrationId": { "type": ["string", "null"], "description": "HPD Registration ID (registrationid) — links the building to its current owner registration." },
-        "bbl": { "type": ["string", "null"] },
-        "bin": { "type": ["string", "null"] },
-        "address": { "$ref": "#/$defs/Address" }
+        "buildingId": {
+          "type": "string",
+          "description": "HPD Building ID (buildingid / building_id) \u2014 the primary HPD join key."
+        },
+        "registrationId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "HPD Registration ID (registrationid) \u2014 links the building to its current owner registration."
+        },
+        "bbl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bin": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
       },
-      "required": ["buildingId"],
+      "required": [
+        "buildingId"
+      ],
       "additionalProperties": false
     }
   }

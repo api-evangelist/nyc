@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/money.json",
+  "title": "nyc-commons — Money & Fiscal",
+  "description": "Monetary amounts and the City fiscal calendar. Thirteen domains declare a private Money/MoneyUSD and several a FiscalYear/FiscalPeriod. NYC's fiscal year runs July 1 - June 30 and is named for the calendar year in which it ends (FY2026 = 2025-07-01 through 2026-06-30). Shared here so budget, contract, and payment amounts are comparable across agencies.",
+  "x-nyc-commons": { "role": "canonical", "version": "0.1.0" },
+  "$defs": {
+    "MoneyUSD": {
+      "type": ["number", "null"],
+      "description": "A monetary amount in US dollars. Modeled as a number to match Open Data extracts; treat as a decimal dollar value."
+    },
+    "FiscalYear": {
+      "type": ["integer", "null"],
+      "description": "NYC fiscal year, named for the calendar year in which it ends. FY2026 = 2025-07-01 through 2026-06-30.",
+      "minimum": 2000,
+      "maximum": 2100
+    },
+    "FiscalPeriod": {
+      "type": "object",
+      "description": "A fiscal reporting period within a City fiscal year.",
+      "properties": {
+        "fiscalYear": { "$ref": "#/$defs/FiscalYear" },
+        "quarter": { "type": ["integer", "null"], "minimum": 1, "maximum": 4 },
+        "startDate": { "type": ["string", "null"], "format": "date" },
+        "endDate": { "type": ["string", "null"], "format": "date" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

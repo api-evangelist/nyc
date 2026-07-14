@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/party.json",
+  "title": "nyc-commons — Party",
+  "description": "The people, organizations, and agencies that recur on NYC records. Across the corpus these appear as PartyReference, PersonName, AgencyReference, OrganizationReference, ContactInfo/ContactPoint, VendorReference — the same handful of shapes re-declared per domain. Factored here so a person/agency reference means the same thing citywide.",
+  "x-nyc-commons": { "role": "canonical", "version": "0.1.0" },
+  "$defs": {
+    "PersonName": {
+      "type": "object",
+      "description": "A person's name, decomposed the way agency systems store it.",
+      "properties": {
+        "firstName": { "type": ["string", "null"] },
+        "middleName": { "type": ["string", "null"] },
+        "lastName": { "type": ["string", "null"] },
+        "fullName": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "ContactPoint": {
+      "type": "object",
+      "description": "A way to reach a person or office — the shared shape behind the various ContactInfo/Contact/ContactPerson defs.",
+      "properties": {
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "url": { "type": ["string", "null"], "format": "uri" },
+        "address": { "$ref": "address.json#/$defs/Address" }
+      },
+      "additionalProperties": false
+    },
+    "AgencyReference": {
+      "type": "object",
+      "description": "A reference to a City agency (e.g. as it appears in Checkbook / procurement / budget data).",
+      "properties": {
+        "name": { "type": "string", "description": "Agency name, e.g. 'Department of Buildings'." },
+        "code": { "type": ["string", "null"], "description": "Agency code where present (Checkbook `agency_code`)." },
+        "domain": { "type": ["string", "null"], "description": "This project's domain slug for the agency, e.g. 'dob' — links the reference back to its assessment." }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    },
+    "OrganizationReference": {
+      "type": "object",
+      "description": "A non-agency organization — a vendor, nonprofit provider, contractor, or business on a record.",
+      "properties": {
+        "name": { "type": "string" },
+        "kind": { "type": ["string", "null"], "enum": ["Vendor", "Contractor", "Nonprofit", "Business", "Provider", "Other", null] },
+        "identifier": { "type": ["string", "null"], "description": "Vendor ID / EIN / registration number where present." },
+        "contact": { "$ref": "#/$defs/ContactPoint" }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    },
+    "PartyReference": {
+      "type": "object",
+      "description": "A person or organization playing a role on a record — owner, applicant, respondent, permittee, provider. Generalizes the per-domain PartyReference/Respondent/Filer shapes.",
+      "properties": {
+        "role": { "type": ["string", "null"], "description": "The party's role on this record (Owner, Applicant, Respondent, Permittee, Provider, ...)." },
+        "person": { "$ref": "#/$defs/PersonName" },
+        "organization": { "$ref": "#/$defs/OrganizationReference" },
+        "contact": { "$ref": "#/$defs/ContactPoint" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

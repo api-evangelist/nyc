@@ -1,26 +1,26 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc311/schemas/_common.json",
-  "title": "NYC311 — Shared Definitions",
+  "title": "NYC311 \u2014 Shared Definitions",
   "description": "Reusable definitions for the NYC311 schemas. The AdminBoundaries block is the recurring citywide 'geography spine' (see SYNTHESIS.md) and is a candidate for the planned nyc-commons shared schema set (see ROADMAP.md).",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
-    "Borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+    "Borough": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
+    },
     "Coordinates": {
-      "type": "object",
-      "properties": { "latitude": { "type": "number" }, "longitude": { "type": "number" } },
-      "required": ["latitude", "longitude"], "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "AdminBoundaries": {
-      "type": "object",
-      "description": "Recurring geography spine present across NYC domains.",
-      "properties": {
-        "borough": { "$ref": "#/$defs/Borough" },
-        "communityBoard": { "type": ["string", "integer", "null"] },
-        "councilDistrict": { "type": ["string", "integer", "null"] },
-        "policePrecinct": { "type": ["string", "integer", "null"] },
-        "bbl": { "type": ["string", "null"] }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/AdminBoundaries",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/AdminBoundaries); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/AdminBoundaries still resolve."
     }
   }
 }

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/place.json",
+  "title": "nyc-commons — Place",
+  "description": "The missing cross-domain join object. Synthesis finding: every NYC domain has its own primary key and nothing links them, yet a resident asking 'what's near me?' or 'who represents this block?' needs one addressable thing. Place is that thing — a single location resolved to its identifiers (BBL/BIN), its full geography spine (all the districts it falls in), its address, and its coordinates. Any agency record about a location can carry a Place, and two records that resolve to the same BBL are provably about the same place. This is the data spine of a programmable city.",
+  "x-nyc-commons": { "role": "canonical", "version": "0.1.0" },
+  "$defs": {
+    "Place": {
+      "type": "object",
+      "description": "A resolvable NYC location — the join target for cross-agency questions. At minimum a Place needs enough to locate it (a BBL, or an address, or coordinates); the geography spine is derivable from any of those via DCP's geocoder.",
+      "properties": {
+        "bbl": { "$ref": "identifiers.json#/$defs/BBL" },
+        "bin": { "$ref": "identifiers.json#/$defs/BIN" },
+        "name": { "type": ["string", "null"], "description": "A human label for the place (building name, park name, facility name) where one exists." },
+        "address": { "$ref": "address.json#/$defs/Address" },
+        "coordinates": { "$ref": "geography.json#/$defs/Coordinates" },
+        "geography": { "$ref": "geography.json#/$defs/GeographySpine" },
+        "keys": {
+          "type": "array",
+          "description": "Other agencies' keys that resolve to this same place (a Parks gispropnum, a school DBN, a 311 service_request location) — the explicit cross-domain links.",
+          "items": { "$ref": "identifiers.json#/$defs/CrossAgencyKey" }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

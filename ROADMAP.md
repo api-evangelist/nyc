@@ -4,19 +4,19 @@ Where the NYC — API & Agent Modernization project is headed. Derived from the 
 
 ## Now / next
 
-### ⚪ `nyc-commons` — the shared schema set (HIGH priority)
-The synthesis's clearest structural finding: writing one `_common.json` per domain surfaced the **same fields in every domain** — `Borough`, `Community Board`, `Council District`, `Census Tract / NTA`, `BBL / BIN`. Parks facilities, DOE schools, Council funding, and BOE poll sites all carry them.
+### 🟢 `nyc-commons` — the shared schema set (HIGH priority) — **shipped v0.1.0**
+The synthesis's clearest structural finding: writing one `_common.json` per domain surfaced the **same fields in every domain** — `Borough` (all 67), `Coordinates` (all 67), a geography spine (56), `Address` (15), `Money` (13). Parks facilities, DOE schools, Council funding, and BOE poll sites all carry them.
 
-**Plan:** factor these into a single, versioned, referenceable **`nyc-commons`** schema set (its own directory / eventual published `$id` base) that every domain's schemas `$ref` instead of each maintaining a private `_common.json`. Deliverables:
-- `nyc-commons/geography.json` — `Borough`, `CommunityBoard`, `CouncilDistrict`, `CensusTract`, `NTA`, `Coordinates`, `AdminBoundaries`.
-- `nyc-commons/identifiers.json` — `BBL`, `BIN`, `GISPropNum`, `DBN` and other cross-agency keys.
-- `nyc-commons/place.json`, `nyc-commons/address.json` — the missing cross-domain join objects (see identity item below).
-- Migrate the four existing domains' `_common.json` to `$ref` `nyc-commons` (keep back-compat).
+**Shipped:** a single, versioned, referenceable **[`nyc-commons/`](nyc-commons/README.md)** schema set — 21 canonical definitions across six files, factored from [DCP](dcp/) as the authoritative source, browsable at [commons.html](https://nyc.apievangelist.com/commons.html):
+- `nyc-commons/geography.json` — `Borough`, `BoroCode`, `Coordinates`, `CommunityDistrict`, `CouncilDistrict`, `CensusTract`, `NTA`, `AdminBoundaries`, `GeographySpine`. ✅
+- `nyc-commons/identifiers.json` — `BBL`, `BIN`, `GISPropNum`, `DBN`, `BoroBlockLot`, `CrossAgencyKey`. ✅
+- `nyc-commons/place.json`, `nyc-commons/address.json`, `nyc-commons/party.json`, `nyc-commons/money.json` — the join objects + recurring party/money shapes. ✅
+- Reference implementation: **dob, dof, hpd, nyc311** migrated to `$ref` the canonical set, back-compatible (unchanged `$defs` names). ✅
 
-*Why it matters:* turns four isolated APIs into an interoperable set and gives future domains a running start.
+**Next:** migrate the remaining ~62 domains' `_common.json` to `$ref` `nyc-commons` (the [adoption report](https://nyc.apievangelist.com/commons.html) tracks progress), and publish the `$id` base at a stable host.
 
-### ⚪ Cross-domain identity — `Address` / `Place` / `Person`
-Synthesis finding 8: every domain has its own join key (`gisPropNum`, `DBN`, `matterId`, election-district) and nothing links them. Define shared `Address` and `Place` objects (keyed on BBL/BIN + coordinates) so cross-domain questions — "what's near me?", "who represents this block?" — become answerable. Part of `nyc-commons`.
+### 🟢 Cross-domain identity — `Address` / `Place` / `Person` — **shipped with nyc-commons**
+Synthesis finding: every domain has its own join key (`gisPropNum`, `DBN`, `matterId`, election-district) and nothing links them. **Shipped** as [`nyc-commons/place.json`](nyc-commons/place.json) (`Place`, keyed on BBL/BIN + coordinates + the geography spine, carrying a list of other agencies' `CrossAgencyKey`s), [`address.json`](nyc-commons/address.json) (`Address`), and [`party.json`](nyc-commons/party.json) (`PersonName`/`PartyReference`) so cross-domain questions — "what's near me?", "who represents this block?" — become answerable.
 
 ### 🟡 More domains
 Continue the per-domain method to broaden coverage and stress-test the modernization-verb taxonomy.

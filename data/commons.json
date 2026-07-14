@@ -1,0 +1,1449 @@
+{
+  "version": "0.1.0",
+  "generated": "static",
+  "source": {
+    "role": "authoritative-source",
+    "domain": "dcp"
+  },
+  "totals": {
+    "canonicalDefs": 21,
+    "domains": 67,
+    "migratedDomains": [
+      "dob",
+      "dof",
+      "hpd",
+      "nyc311"
+    ],
+    "files": [
+      "address.json",
+      "geography.json",
+      "identifiers.json",
+      "money.json",
+      "party.json"
+    ]
+  },
+  "defs": [
+    {
+      "name": "Borough",
+      "file": "geography.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "declaringCount": 67,
+      "migratedCount": 4,
+      "declaring": [
+        {
+          "id": "acs",
+          "short": "acs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bic",
+          "short": "bic \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bklynlibrary",
+          "short": "bklynlibrary \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bronxbp",
+          "short": "bronxbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bronxda",
+          "short": "bronxda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "brooklynbp",
+          "short": "brooklynbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "brooklynda",
+          "short": "brooklynda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bsa",
+          "short": "bsa \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cchr",
+          "short": "cchr \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ccrb",
+          "short": "ccrb \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cfb",
+          "short": "cfb \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cityclerk",
+          "short": "cityclerk \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "coib",
+          "short": "coib \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "comptroller.nyc.gov",
+          "short": "comptroller.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "council.nyc.gov",
+          "short": "council.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cuny",
+          "short": "cuny \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcas",
+          "short": "dcas \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcla",
+          "short": "dcla \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcp",
+          "short": "dcp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcwp",
+          "short": "dcwp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ddc",
+          "short": "ddc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dep",
+          "short": "dep \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dfta",
+          "short": "dfta \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dhs",
+          "short": "dhs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dob",
+          "short": "dob \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "doc",
+          "short": "doc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dof",
+          "short": "dof \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dohmh",
+          "short": "DOHMH (nyc.gov/site/doh) \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "doi",
+          "short": "doi \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "doris",
+          "short": "doris \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dot",
+          "short": "dot \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dsny",
+          "short": "dsny (nyc.gov/site/dsny) \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dvs",
+          "short": "dvs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dycd",
+          "short": "dycd \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "edc",
+          "short": "edc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "fdny",
+          "short": "fdny \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hhc",
+          "short": "hhc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hpd",
+          "short": "hpd \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hra",
+          "short": "hra \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ibo",
+          "short": "ibo \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "law",
+          "short": "law \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "lpc",
+          "short": "lpc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "manhattanbp",
+          "short": "manhattanbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "manhattanda",
+          "short": "manhattanda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "mocj",
+          "short": "mocj \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "mome",
+          "short": "mome \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nyc311",
+          "short": "NYC311 \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nycem",
+          "short": "nycem \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nycgovparks.org",
+          "short": "nycgovparks.org \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nycha",
+          "short": "nycha \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nypd",
+          "short": "nypd \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nypl",
+          "short": "nypl \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "oath",
+          "short": "oath \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ocme",
+          "short": "ocme \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "oti",
+          "short": "oti \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "pubadvocate",
+          "short": "pubadvocate \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queensbp",
+          "short": "queensbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queensda",
+          "short": "queensda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queenslibrary",
+          "short": "queenslibrary \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "sbs",
+          "short": "sbs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "sca",
+          "short": "sca \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "schools.nyc.gov",
+          "short": "schools.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "statenislandbp",
+          "short": "statenislandbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "statenislandda",
+          "short": "statenislandda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "taxcommission",
+          "short": "taxcommission \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "tlc",
+          "short": "nyc.gov/site/tlc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "vote.nyc",
+          "short": "vote.nyc \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": [
+        "dob",
+        "dof",
+        "hpd",
+        "nyc311"
+      ]
+    },
+    {
+      "name": "BoroCode",
+      "file": "geography.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/BoroCode",
+      "declaringCount": 7,
+      "migratedCount": 3,
+      "declaring": [
+        {
+          "id": "dcp",
+          "short": "dcp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dob",
+          "short": "dob \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dof",
+          "short": "dof \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hpd",
+          "short": "hpd \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nycem",
+          "short": "nycem \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "schools.nyc.gov",
+          "short": "schools.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "taxcommission",
+          "short": "taxcommission \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": [
+        "dob",
+        "dof",
+        "hpd"
+      ]
+    },
+    {
+      "name": "Coordinates",
+      "file": "geography.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "declaringCount": 67,
+      "migratedCount": 4,
+      "declaring": [
+        {
+          "id": "acs",
+          "short": "acs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bic",
+          "short": "bic \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bklynlibrary",
+          "short": "bklynlibrary \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bronxbp",
+          "short": "bronxbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bronxda",
+          "short": "bronxda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "brooklynbp",
+          "short": "brooklynbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "brooklynda",
+          "short": "brooklynda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bsa",
+          "short": "bsa \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cchr",
+          "short": "cchr \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ccrb",
+          "short": "ccrb \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cfb",
+          "short": "cfb \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cityclerk",
+          "short": "cityclerk \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "coib",
+          "short": "coib \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "comptroller.nyc.gov",
+          "short": "comptroller.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "council.nyc.gov",
+          "short": "council.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cuny",
+          "short": "cuny \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcas",
+          "short": "dcas \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcla",
+          "short": "dcla \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcp",
+          "short": "dcp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcwp",
+          "short": "dcwp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ddc",
+          "short": "ddc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dep",
+          "short": "dep \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dfta",
+          "short": "dfta \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dhs",
+          "short": "dhs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dob",
+          "short": "dob \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "doc",
+          "short": "doc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dof",
+          "short": "dof \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dohmh",
+          "short": "DOHMH (nyc.gov/site/doh) \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "doi",
+          "short": "doi \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "doris",
+          "short": "doris \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dot",
+          "short": "dot \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dsny",
+          "short": "dsny (nyc.gov/site/dsny) \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dvs",
+          "short": "dvs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dycd",
+          "short": "dycd \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "edc",
+          "short": "edc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "fdny",
+          "short": "fdny \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hhc",
+          "short": "hhc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hpd",
+          "short": "hpd \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hra",
+          "short": "hra \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ibo",
+          "short": "ibo \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "law",
+          "short": "law \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "lpc",
+          "short": "lpc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "manhattanbp",
+          "short": "manhattanbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "manhattanda",
+          "short": "manhattanda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "mocj",
+          "short": "mocj \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "mome",
+          "short": "mome \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nyc311",
+          "short": "NYC311 \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nycem",
+          "short": "nycem \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nycgovparks.org",
+          "short": "nycgovparks.org \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nycha",
+          "short": "nycha \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nypd",
+          "short": "nypd \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nypl",
+          "short": "nypl \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "oath",
+          "short": "oath \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ocme",
+          "short": "ocme \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "oti",
+          "short": "oti \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "pubadvocate",
+          "short": "pubadvocate \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queensbp",
+          "short": "queensbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queensda",
+          "short": "queensda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queenslibrary",
+          "short": "queenslibrary \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "sbs",
+          "short": "sbs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "sca",
+          "short": "sca \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "schools.nyc.gov",
+          "short": "schools.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "statenislandbp",
+          "short": "statenislandbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "statenislandda",
+          "short": "statenislandda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "taxcommission",
+          "short": "taxcommission \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "tlc",
+          "short": "nyc.gov/site/tlc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "vote.nyc",
+          "short": "vote.nyc \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": [
+        "dob",
+        "dof",
+        "hpd",
+        "nyc311"
+      ]
+    },
+    {
+      "name": "GeographySpine",
+      "file": "geography.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "declaringCount": 56,
+      "migratedCount": 3,
+      "declaring": [
+        {
+          "id": "acs",
+          "short": "acs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bic",
+          "short": "bic \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bklynlibrary",
+          "short": "bklynlibrary \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bronxbp",
+          "short": "bronxbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bronxda",
+          "short": "bronxda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "brooklynbp",
+          "short": "brooklynbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "brooklynda",
+          "short": "brooklynda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bsa",
+          "short": "bsa \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cchr",
+          "short": "cchr \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ccrb",
+          "short": "ccrb \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cityclerk",
+          "short": "cityclerk \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "coib",
+          "short": "coib \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cuny",
+          "short": "cuny \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcas",
+          "short": "dcas \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcla",
+          "short": "dcla \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcp",
+          "short": "dcp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcwp",
+          "short": "dcwp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ddc",
+          "short": "ddc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dep",
+          "short": "dep \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dfta",
+          "short": "dfta \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dhs",
+          "short": "dhs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dob",
+          "short": "dob \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "doc",
+          "short": "doc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dof",
+          "short": "dof \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "doi",
+          "short": "doi \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "doris",
+          "short": "doris \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dot",
+          "short": "dot \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dsny",
+          "short": "dsny (nyc.gov/site/dsny) \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dvs",
+          "short": "dvs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dycd",
+          "short": "dycd \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "edc",
+          "short": "edc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "fdny",
+          "short": "fdny \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hhc",
+          "short": "hhc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hpd",
+          "short": "hpd \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hra",
+          "short": "hra \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ibo",
+          "short": "ibo \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "law",
+          "short": "law \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "lpc",
+          "short": "lpc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "manhattanbp",
+          "short": "manhattanbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "manhattanda",
+          "short": "manhattanda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "mocj",
+          "short": "mocj \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "mome",
+          "short": "mome \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nycem",
+          "short": "nycem \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nycha",
+          "short": "nycha \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nypl",
+          "short": "nypl \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ocme",
+          "short": "ocme \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "oti",
+          "short": "oti \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "pubadvocate",
+          "short": "pubadvocate \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queensbp",
+          "short": "queensbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queensda",
+          "short": "queensda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queenslibrary",
+          "short": "queenslibrary \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "sbs",
+          "short": "sbs \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "sca",
+          "short": "sca \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "statenislandbp",
+          "short": "statenislandbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "statenislandda",
+          "short": "statenislandda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "tlc",
+          "short": "nyc.gov/site/tlc \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": [
+        "dob",
+        "dof",
+        "hpd"
+      ]
+    },
+    {
+      "name": "CommunityDistrict",
+      "file": "geography.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/CommunityDistrict",
+      "declaringCount": 4,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "bronxbp",
+          "short": "bronxbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcp",
+          "short": "dcp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queensbp",
+          "short": "queensbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "statenislandbp",
+          "short": "statenislandbp \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "CouncilDistrict",
+      "file": "geography.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/CouncilDistrict",
+      "declaringCount": 1,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "dcp",
+          "short": "dcp \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "CensusTract",
+      "file": "geography.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/CensusTract",
+      "declaringCount": 1,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "dcp",
+          "short": "dcp \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "NTA",
+      "file": "geography.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/NTA",
+      "declaringCount": 1,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "dcp",
+          "short": "dcp \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "AdminBoundaries",
+      "file": "geography.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/AdminBoundaries",
+      "declaringCount": 4,
+      "migratedCount": 1,
+      "declaring": [
+        {
+          "id": "nyc311",
+          "short": "NYC311 \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nycgovparks.org",
+          "short": "nycgovparks.org \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "schools.nyc.gov",
+          "short": "schools.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "vote.nyc",
+          "short": "vote.nyc \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": [
+        "nyc311"
+      ]
+    },
+    {
+      "name": "BBL",
+      "file": "identifiers.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/identifiers.json#/$defs/BBL",
+      "declaringCount": 4,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "dcp",
+          "short": "dcp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dep",
+          "short": "dep \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "lpc",
+          "short": "lpc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "taxcommission",
+          "short": "taxcommission \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "BIN",
+      "file": "identifiers.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/identifiers.json#/$defs/BIN",
+      "declaringCount": 1,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "dcp",
+          "short": "dcp \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "GISPropNum",
+      "file": "identifiers.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/identifiers.json#/$defs/GISPropNum",
+      "declaringCount": 0,
+      "migratedCount": 0,
+      "declaring": [],
+      "migrated": []
+    },
+    {
+      "name": "DBN",
+      "file": "identifiers.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/identifiers.json#/$defs/DBN",
+      "declaringCount": 1,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "schools.nyc.gov",
+          "short": "schools.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "Address",
+      "file": "address.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/address.json#/$defs/Address",
+      "declaringCount": 15,
+      "migratedCount": 2,
+      "declaring": [
+        {
+          "id": "bic",
+          "short": "bic \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "bklynlibrary",
+          "short": "bklynlibrary \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cfb",
+          "short": "cfb \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cityclerk",
+          "short": "cityclerk \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "coib",
+          "short": "coib \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcwp",
+          "short": "dcwp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dob",
+          "short": "dob \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dohmh",
+          "short": "DOHMH (nyc.gov/site/doh) \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dsny",
+          "short": "dsny (nyc.gov/site/dsny) \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "edc",
+          "short": "edc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hhc",
+          "short": "hhc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hpd",
+          "short": "hpd \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "nypl",
+          "short": "nypl \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "oath",
+          "short": "oath \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "sbs",
+          "short": "sbs \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": [
+        "dob",
+        "hpd"
+      ]
+    },
+    {
+      "name": "PartyReference",
+      "file": "party.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/party.json#/$defs/PartyReference",
+      "declaringCount": 6,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "brooklynbp",
+          "short": "brooklynbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cityclerk",
+          "short": "cityclerk \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dob",
+          "short": "dob \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "oath",
+          "short": "oath \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ocme",
+          "short": "ocme \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queensbp",
+          "short": "queensbp \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "AgencyReference",
+      "file": "party.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/party.json#/$defs/AgencyReference",
+      "declaringCount": 6,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "coib",
+          "short": "coib \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "comptroller.nyc.gov",
+          "short": "comptroller.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcas",
+          "short": "dcas \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ibo",
+          "short": "ibo \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "oti",
+          "short": "oti \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "pubadvocate",
+          "short": "pubadvocate \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "OrganizationReference",
+      "file": "party.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/party.json#/$defs/OrganizationReference",
+      "declaringCount": 5,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "comptroller.nyc.gov",
+          "short": "comptroller.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcla",
+          "short": "dcla \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ddc",
+          "short": "ddc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "manhattanbp",
+          "short": "manhattanbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queenslibrary",
+          "short": "queenslibrary \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "ContactPoint",
+      "file": "party.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/party.json#/$defs/ContactPoint",
+      "declaringCount": 7,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "bronxda",
+          "short": "bronxda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "manhattanda",
+          "short": "manhattanda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "mome",
+          "short": "mome \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "pubadvocate",
+          "short": "pubadvocate \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queensda",
+          "short": "queensda \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "statenislandbp",
+          "short": "statenislandbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "statenislandda",
+          "short": "statenislandda \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "MoneyUSD",
+      "file": "money.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/money.json#/$defs/MoneyUSD",
+      "declaringCount": 13,
+      "migratedCount": 1,
+      "declaring": [
+        {
+          "id": "cfb",
+          "short": "cfb \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "cityclerk",
+          "short": "cityclerk \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "coib",
+          "short": "coib \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "comptroller.nyc.gov",
+          "short": "comptroller.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ddc",
+          "short": "ddc \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dof",
+          "short": "dof \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "hra",
+          "short": "hra \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ibo",
+          "short": "ibo \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "law",
+          "short": "law \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "manhattanbp",
+          "short": "manhattanbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "queensbp",
+          "short": "queensbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "sca",
+          "short": "sca \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "taxcommission",
+          "short": "taxcommission \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": [
+        "dof"
+      ]
+    },
+    {
+      "name": "FiscalYear",
+      "file": "money.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/money.json#/$defs/FiscalYear",
+      "declaringCount": 5,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "brooklynbp",
+          "short": "brooklynbp \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "comptroller.nyc.gov",
+          "short": "comptroller.nyc.gov \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "dcla",
+          "short": "dcla \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "ibo",
+          "short": "ibo \u2014 Low-Hanging Fruit Assessment"
+        },
+        {
+          "id": "manhattanbp",
+          "short": "manhattanbp \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    },
+    {
+      "name": "FiscalPeriod",
+      "file": "money.json",
+      "spec": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/money.json#/$defs/FiscalPeriod",
+      "declaringCount": 1,
+      "migratedCount": 0,
+      "declaring": [
+        {
+          "id": "cchr",
+          "short": "cchr \u2014 Low-Hanging Fruit Assessment"
+        }
+      ],
+      "migrated": []
+    }
+  ],
+  "registry": [
+    {
+      "key": "Borough",
+      "label": "Borough",
+      "category": "geography",
+      "count": 67,
+      "owningDomain": null
+    },
+    {
+      "key": "Coordinates (lat/long)",
+      "label": "Coordinates (lat/long)",
+      "category": "geography",
+      "count": 67,
+      "owningDomain": null
+    },
+    {
+      "key": "Council District",
+      "label": "Council District",
+      "category": "geography",
+      "count": 62,
+      "owningDomain": null
+    },
+    {
+      "key": "Community Board",
+      "label": "Community Board",
+      "category": "geography",
+      "count": 56,
+      "owningDomain": null
+    },
+    {
+      "key": "Census Tract",
+      "label": "Census Tract",
+      "category": "geography",
+      "count": 53,
+      "owningDomain": null
+    },
+    {
+      "key": "NTA (neighborhood)",
+      "label": "NTA (neighborhood)",
+      "category": "geography",
+      "count": 53,
+      "owningDomain": null
+    },
+    {
+      "key": "BBL",
+      "label": "BBL",
+      "category": "property",
+      "count": 52,
+      "owningDomain": "dcp"
+    },
+    {
+      "key": "BIN",
+      "label": "BIN",
+      "category": "property",
+      "count": 50,
+      "owningDomain": "dcp"
+    },
+    {
+      "key": "Police Precinct",
+      "label": "Police Precinct",
+      "category": "geography",
+      "count": 23,
+      "owningDomain": null
+    },
+    {
+      "key": "GISPropNum",
+      "label": "GISPropNum",
+      "category": "property",
+      "count": 2,
+      "owningDomain": "nycgovparks.org"
+    },
+    {
+      "key": "DBN (school)",
+      "label": "DBN (school)",
+      "category": "identity",
+      "count": 2,
+      "owningDomain": null
+    },
+    {
+      "key": "Matter ID (Legistar)",
+      "label": "Matter ID (Legistar)",
+      "category": "identity",
+      "count": 2,
+      "owningDomain": null
+    },
+    {
+      "key": "Election District",
+      "label": "Election District",
+      "category": "identity",
+      "count": 2,
+      "owningDomain": null
+    },
+    {
+      "key": "Council Member ID",
+      "label": "Council Member ID",
+      "category": "identity",
+      "count": 1,
+      "owningDomain": null
+    }
+  ]
+}

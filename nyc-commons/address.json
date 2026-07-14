@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/address.json",
+  "title": "nyc-commons — Address",
+  "description": "A NYC street address, decomposed the way city datasets actually store it (house number + street + borough + ZIP, often with a low/high house-number range). Twelve domains declare a private Address/PostalAddress; this is the shared shape. Pairs with geography.json (which locates the address in districts) and identifiers.json (BBL/BIN that the address resolves to via DCP's geocoder).",
+  "x-nyc-commons": { "role": "canonical", "version": "0.1.0" },
+  "$defs": {
+    "Address": {
+      "type": "object",
+      "description": "A NYC street address as decomposed across agency extracts.",
+      "properties": {
+        "houseNumber": { "type": ["string", "null"], "description": "Primary/display house number." },
+        "lowHouseNumber": { "type": ["string", "null"], "description": "Low end of a house-number range (HPD, DOB multi-address lots)." },
+        "highHouseNumber": { "type": ["string", "null"], "description": "High end of a house-number range." },
+        "streetName": { "type": ["string", "null"] },
+        "borough": { "$ref": "geography.json#/$defs/Borough" },
+        "city": { "type": ["string", "null"], "description": "Usually the borough or 'New York'." },
+        "state": { "type": ["string", "null"], "default": "NY" },
+        "zip": { "type": ["string", "null"], "description": "5-digit ZIP.", "pattern": "^[0-9]{5}(-[0-9]{4})?$" },
+        "bbl": { "$ref": "identifiers.json#/$defs/BBL" },
+        "bin": { "$ref": "identifiers.json#/$defs/BIN" },
+        "coordinates": { "$ref": "geography.json#/$defs/Coordinates" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

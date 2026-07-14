@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>nyc-commons — NYC Modernization</title>
+<meta name="description" content="The shared schema set of NYC government — one canonical definition of a borough, a BBL, an address, a place, a party, and a dollar, factored from City Planning and $ref'd across domains.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.def{border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;background:var(--bg-card)}
+.def h3{margin:0;font-size:1rem;font-family:ui-monospace,Menlo,monospace}
+.def .file{font-size:.72rem;color:var(--fg-soft)}
+.adopt{height:8px;border-radius:5px;background:var(--bg-soft);overflow:hidden;margin:9px 0 4px}
+.adopt span{display:block;height:100%;background:var(--brand)}
+.mig{display:inline-block;font-size:.7rem;font-weight:700;background:color-mix(in srgb,#2e9e6b 18%,transparent);color:#2e9e6b;padding:1px 8px;border-radius:20px}
+.fileschip{display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:.8rem;background:var(--bg-soft);border:1px solid var(--border);border-radius:6px;padding:4px 10px;margin:3px;text-decoration:none}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+<div class="dhead"><div class="wrap">
+  <div class="eyebrow" style="color:var(--brand-dark);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase">The shared model</div>
+  <h1>nyc-commons</h1>
+  <p class="muted" style="max-width:78ch">One canonical definition of a <strong>borough</strong>, a <strong>BBL</strong>, an <strong>address</strong>, a <strong>place</strong>, a <strong>party</strong>, and a <strong>dollar</strong> — for all of NYC government. Across 67 domains the same objects are re-declared per agency; <code>nyc-commons</code> factors them into one versioned schema set, <code>$ref</code>'d from City Planning as the authoritative source. Resolve two records to the same BBL and they're provably about the same place.</p>
+  <div class="stats" style="margin-top:14px" id="stats"></div>
+  <div class="cta" style="margin-top:16px">
+    <a class="btn" href="https://github.com/api-evangelist/nyc/tree/main/nyc-commons">Browse the schemas</a>
+    <a class="btn sec" href="docs.html?f=COMMONS.md">Read the writeup</a>
+    <a class="btn sec" href="linkage.html">Linkage</a>
+  </div>
+</div></div>
+<div class="wrap">
+  <div class="section-head"><div class="k">The set</div><h2>Six files</h2>
+  <p class="muted">Factored from <a href="domain.html?d=dcp">City Planning (DCP)</a>, the authoritative source of the city's geography. Each file is valid JSON Schema 2020-12 with a stable <code>$id</code>.</p></div>
+  <div id="files"></div>
+
+  <div class="section-head" style="margin-top:34px"><div class="k">Adoption</div><h2>Canonical definitions &amp; how many domains declare a local copy</h2>
+  <p class="muted">The bar shows how many of the 67 domains declare a local equivalent today (the fragmentation). <span class="mig">migrated</span> marks the definitions already redirected to <code>$ref</code> the canonical set in the reference-implementation domains.</p></div>
+  <div id="defs"></div>
+
+  <div class="section-head" style="margin-top:34px"><div class="k">The connective tissue</div><h2>Cross-agency key registry</h2>
+  <p class="muted">The join keys that let one agency's records link to another's, ranked by how many domains carry them. <code>BBL</code> and <code>BIN</code> are the property spine; the rest are geography overlays.</p></div>
+  <div id="registry"></div>
+</div>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const C=await getJSON("data/commons.json");
+  const N=C.totals.domains;
+  document.getElementById("stats").innerHTML=[
+    [C.totals.canonicalDefs,"canonical definitions"],
+    [C.totals.files.length,"schema files"],
+    [N,"domains covered"],
+    [C.totals.migratedDomains.length,"domains migrated"]
+  ].map(([b,x])=>`<div class="stat"><b>${b}</b><span>${x}</span></div>`).join("");
+
+  const fileMeta={
+    "geography.json":"Borough, BoroCode, Coordinates, CommunityDistrict, CouncilDistrict, CensusTract, NTA, AdminBoundaries, GeographySpine",
+    "identifiers.json":"BBL, BIN, GISPropNum, DBN, BoroBlockLot, CrossAgencyKey",
+    "address.json":"Address",
+    "place.json":"Place — the cross-domain join object",
+    "party.json":"PersonName, ContactPoint, AgencyReference, OrganizationReference, PartyReference",
+    "money.json":"MoneyUSD, FiscalYear, FiscalPeriod"
+  };
+  const base="https://github.com/api-evangelist/nyc/blob/main/nyc-commons/";
+  document.getElementById("files").innerHTML=Object.entries(fileMeta).map(([f,d])=>
+    `<div class="def"><h3><a href="${base}${f}">${f}</a></h3><p class="muted small" style="margin:.35em 0 0">${esc(d)}</p></div>`).join("");
+
+  const defs=[...C.defs].sort((a,b)=>b.declaringCount-a.declaringCount);
+  document.getElementById("defs").innerHTML=defs.map(d=>{
+    const pct=Math.round(100*d.declaringCount/N);
+    return `<div class="def">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+        <h3><a href="${esc(d.spec)}">${esc(d.name)}</a> <span class="file">· ${esc(d.file)}</span></h3>
+        <div>${d.migratedCount?`<span class="mig">${d.migratedCount} migrated</span> `:""}<span class="muted small">${d.declaringCount}/${N} declare</span></div>
+      </div>
+      <div class="adopt"><span style="width:${pct}%"></span></div>
+      <div class="muted small">${d.declaring.slice(0,6).map(x=>esc(x.id)).join(" · ")}${d.declaring.length>6?` +${d.declaring.length-6} more`:""}</div>
+    </div>`;
+  }).join("");
+
+  const rows=C.registry.filter(r=>r.count).map(r=>({key:r.label,category:r.category||"—",count:r.count,owner:r.owningDomain||"—"}));
+  makeTable(document.getElementById("registry"),[
+    {key:"key",label:"Key"},
+    {key:"category",label:"Category"},
+    {key:"count",label:"Domains",render:r=>r.count},
+    {key:"owner",label:"Authoritative owner",render:r=>r.owner==="—"?"—":`<a href="domain.html?d=${encodeURIComponent(r.owner)}">${esc(r.owner)}</a>`}
+  ],rows);
+})();
+</script>
+</body>
+</html>
