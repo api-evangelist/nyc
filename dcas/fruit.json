@@ -1,156 +1,226 @@
 {
-  "domain": "dcas",
-  "agency": "New York City Department of Citywide Administrative Services (DCAS)",
-  "assessment_date": "2026-07-13",
-  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/dcas (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace) and the aNNN application layer: the City Jobs portal (cityjobs.nyc.gov, where a127-jobs.nyc.gov now redirects; ASP.NET Core / Kestrel on Azure App Service with AspNetCore.Antiforgery), Employee Self-Service (a127-ess.nyc.gov, identified as PeopleSoft/NYCAPS via the psp/ path and page title), and the CityStore (a856-citystore.nyc.gov, identified as Shopify via _shopify_* cookies + Cloudflare). Verified the NYC Open Data agency label 'Department of Citywide Administrative Services (DCAS)' via the Socrata Discovery API and pulled all 32 assets with column schemas.",
-  "related_domains": ["cityjobs.nyc.gov", "a127-jobs.nyc.gov", "a127-ess.nyc.gov", "a856-citystore.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/mocs"],
-  "headline_findings": [
-    "DCAS is a fragmented domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a sprawl of separate aNNN vendor applications — City Jobs (cityjobs.nyc.gov, ASP.NET Core on Azure), Employee Self-Service (a127-ess.nyc.gov, PeopleSoft/NYCAPS), the exam Online Application System (OASys), and the CityStore (a856-citystore.nyc.gov, Shopify) — none sharing an API.",
-    "The civil-service REFERENCE data is broadly open: 32 NYC Open Data datasets covering job postings (Jobs NYC Postings, 30 columns), civil-service titles, active/terminated/certified eligible lists, the annual exam schedule, DCAS-managed public buildings and their energy, and the municipal fleet.",
-    "But the citizen TRANSACTION layer has no machine-readable surface: you can read the exam schedule as open data, yet there is no API to actually register for an exam or apply to a posting — those live only inside OASys and the City Jobs portal, behind a login and a fee.",
-    "The most-viewed DCAS datasets are the Civil Service List (Active) (3.5M views) and Civil Service List Certification (1.1M views) — the eligible-list machine is DCAS's signature, published as static snapshots with no query API of its own beyond Socrata.",
-    "Net-new write surface: register for a civil-service exam (ExamRegistration) — the DCAS-distinctive citizen transaction, with no API today. An alternative net-new write is JobApplication (apply to a Jobs NYC posting). See tech-stack.md and apis-observed.md."
-  ],
-  "apis_observed": [
-    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "32 DCAS datasets; SODA /resource/<id>.json endpoints. The one real, open DCAS API — civil-service reference, buildings, and fleet data only." },
-    { "endpoint": "cityjobs.nyc.gov (was a127-jobs.nyc.gov)", "type": "careers / exam application portal", "owner": "DCAS (ASP.NET Core / Azure)", "public": "login-walled UI, no API", "note": "City Jobs external portal + OASys online application; Kestrel server, x-ms-routing-name (Azure App Service), AspNetCore.Antiforgery. Job applications and exam registrations happen here; no JSON/OpenAPI." },
-    { "endpoint": "a127-ess.nyc.gov", "type": "employee self-service (HR)", "owner": "DCAS/OPA (PeopleSoft / NYCAPS)", "public": "login-walled UI, no API", "note": "NYC Automated Personnel System employee self-service; PeopleSoft (psp/ path, page title). Legacy vendor HR app, no public API." },
-    { "endpoint": "a856-citystore.nyc.gov", "type": "e-commerce store", "owner": "DCAS (Shopify)", "public": "public UI; Shopify API not city-owned", "note": "The official CityStore runs on Shopify (Cloudflare edge, _shopify_* cookies). Storefront/Admin APIs exist but are vendor-tenant, not a DCAS contract." },
-    { "endpoint": "www.nyc.gov/site/dcas", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API." }
-  ],
-  "fruit": [
-    {
-      "name": "Citywide Job Postings",
-      "type": "data table + portal",
-      "entity": "JobPosting",
-      "url": "https://cityjobs.nyc.gov/",
-      "count": "thousands of active postings",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Jobs NYC Postings kpav-sd4t (30c)"],
-      "notes": "The openings residents apply to, brokered by DCAS across all agencies. Rich 30-column dataset mirroring the City Jobs portal; keyed on Job ID + Title Code."
-    },
-    {
-      "name": "Civil Service Titles",
-      "type": "data table",
-      "entity": "CivilServiceTitle",
-      "url": "https://data.cityofnewyork.us/d/nzjr-3966",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["NYC Civil Service Titles nzjr-3966 (11c)"],
-      "notes": "The canonical job-classification catalog DCAS maintains for the whole workforce — title code, salary band, standard hours, union/bargaining unit."
-    },
-    {
-      "name": "Civil Service Eligible Lists",
-      "type": "data table",
-      "entity": "EligibleListEntry",
-      "url": "https://data.cityofnewyork.us/d/vx8i-nprf",
-      "count": "3.5M + 1.1M lifetime views (top two DCAS datasets)",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Civil Service List (Active) vx8i-nprf (20c)", "Civil Service List Certification a9md-ynri", "Civil Service List (Terminated) qu8g-sxqf", "Civil List ye3c-m4ga"],
-      "notes": "The exam-score-ordered lists DCAS certifies to agencies for hiring — active, terminated, certified. DCAS's signature function and its most-viewed data."
-    },
-    {
-      "name": "Annual Examination Schedule",
-      "type": "data table + calendar",
-      "entity": "ExamSchedule",
-      "url": "https://data.cityofnewyork.us/d/4ptz-hmtc",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Annual Examination Schedule of Each Fiscal Year 4ptz-hmtc (7c)"],
-      "notes": "Every scheduled civil-service exam with its application window — keyed on Examination Number. The read half of the registration story (the write half has no API)."
-    },
-    {
-      "name": "DCAS-Managed Public Buildings & Energy",
-      "type": "data table + map",
-      "entity": "CityBuilding",
-      "url": "https://data.cityofnewyork.us/d/xx2p-4jnq",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["DCAS Managed Public Buildings xx2p-4jnq (22c)", "DCAS Managed Building Energy Usage ubdi-jgw2", "NYC Municipal Building Energy Benchmarking Results vvj6-d5qx", "Deed Restriction Database rfu7-paqe"],
-      "notes": "City-owned and leased facilities DCAS operates, with full geography spine plus energy usage and benchmarking. Keyed on BIN/BBL."
-    },
-    {
-      "name": "Municipal Fleet",
-      "type": "data table + map",
-      "entity": "FleetVehicle",
-      "url": "https://data.cityofnewyork.us/d/5rzx-3686",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["NYC Fleet Daily Service Report 5rzx-3686", "Vehicle Auction List ynic-uz5i", "Real-World Fuel Efficiency mn2p-34if", "NYC EV Fleet Station Network fc53-9hrv"],
-      "notes": "The largest municipal fleet in the U.S. — daily in-service counts, surplus auctions, real-world fuel efficiency, and EV charging stations."
-    },
-    {
-      "name": "CityStore purchase",
-      "type": "transaction (Shopify)",
-      "entity": "JobPosting",
-      "url": "https://a856-citystore.nyc.gov/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": ["CityStore - The Official Store of the City of New York mqdy-gu73"],
-      "opendata_gap": true,
-      "notes": "The official CityStore runs on Shopify — a product catalog is published to Open Data, but ordering is a vendor-tenant transaction, not a DCAS API. Listed as a rented transaction surface."
-    },
-    {
-      "name": "Employee self-service (NYCAPS)",
-      "type": "workflow (portal)",
-      "entity": "JobPosting",
-      "url": "https://a127-ess.nyc.gov/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Pay stubs, benefits, W-2, direct deposit for city employees — PeopleSoft/NYCAPS, login-walled, no API. A locked internal transaction layer."
-    },
-    {
-      "name": "Apply to a job posting",
-      "type": "workflow (portal)",
-      "entity": "ExamRegistration",
-      "url": "https://cityjobs.nyc.gov/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Submit a job application (JobApplication) through the City Jobs portal — ASP.NET Core, login-walled, no API. An alternative net-new write surface."
-    },
-    {
-      "name": "Register for a civil-service exam",
-      "type": "sign-up / application workflow",
-      "entity": "ExamRegistration",
-      "url": "https://a127-jobs.nyc.gov/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The DCAS-signature citizen transaction — apply and pay for a civil-service exam through the OASys Online Application System. The exam SCHEDULE is open data, but registration has no API and no Open Data twin; it lives only in OASys / the City Jobs portal. The net-new WRITE surface for this domain."
-    }
-  ],
-  "meta": {
-    "short": "NYC Citywide Admin Services (DCAS)",
-    "verb": "Transact",
-    "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) content + a fragmented aNNN vendor app layer: City Jobs (ASP.NET Core/Azure), Employee Self-Service (PeopleSoft/NYCAPS), OASys, and the CityStore (Shopify)",
-    "netnew": "ExamRegistration — register for a civil-service exam (alt: JobApplication)",
-    "accent": "#6a8fb0",
-    "tagline": "DCAS publishes the civil-service machine as open data but hides every transaction behind a rented vendor portal.",
-    "headline": "The reference data — postings, titles, eligible lists, exam schedule, buildings, fleet — is wide open, but you cannot register for an exam, apply to a job, or even shop the CityStore through any owned API."
+ "domain": "dcas",
+ "agency": "New York City Department of Citywide Administrative Services (DCAS)",
+ "assessment_date": "2026-07-13",
+ "method": "Outside-in crawl (browser UA, robots-respecting \u2014 nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/dcas (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace) and the aNNN application layer: the City Jobs portal (cityjobs.nyc.gov, where a127-jobs.nyc.gov now redirects; ASP.NET Core / Kestrel on Azure App Service with AspNetCore.Antiforgery), Employee Self-Service (a127-ess.nyc.gov, identified as PeopleSoft/NYCAPS via the psp/ path and page title), and the CityStore (a856-citystore.nyc.gov, identified as Shopify via _shopify_* cookies + Cloudflare). Verified the NYC Open Data agency label 'Department of Citywide Administrative Services (DCAS)' via the Socrata Discovery API and pulled all 32 assets with column schemas.",
+ "related_domains": [
+  "cityjobs.nyc.gov",
+  "a127-jobs.nyc.gov",
+  "a127-ess.nyc.gov",
+  "a856-citystore.nyc.gov",
+  "data.cityofnewyork.us",
+  "nyc.gov/site/mocs"
+ ],
+ "headline_findings": [
+  "DCAS is a fragmented domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a sprawl of separate aNNN vendor applications \u2014 City Jobs (cityjobs.nyc.gov, ASP.NET Core on Azure), Employee Self-Service (a127-ess.nyc.gov, PeopleSoft/NYCAPS), the exam Online Application System (OASys), and the CityStore (a856-citystore.nyc.gov, Shopify) \u2014 none sharing an API.",
+  "The civil-service REFERENCE data is broadly open: 32 NYC Open Data datasets covering job postings (Jobs NYC Postings, 30 columns), civil-service titles, active/terminated/certified eligible lists, the annual exam schedule, DCAS-managed public buildings and their energy, and the municipal fleet.",
+  "But the citizen TRANSACTION layer has no machine-readable surface: you can read the exam schedule as open data, yet there is no API to actually register for an exam or apply to a posting \u2014 those live only inside OASys and the City Jobs portal, behind a login and a fee.",
+  "The most-viewed DCAS datasets are the Civil Service List (Active) (3.5M views) and Civil Service List Certification (1.1M views) \u2014 the eligible-list machine is DCAS's signature, published as static snapshots with no query API of its own beyond Socrata.",
+  "Net-new write surface: register for a civil-service exam (ExamRegistration) \u2014 the DCAS-distinctive citizen transaction, with no API today. An alternative net-new write is JobApplication (apply to a Jobs NYC posting). See tech-stack.md and apis-observed.md."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "data.cityofnewyork.us (SODA)",
+   "type": "open data API",
+   "owner": "NYC (Socrata/Tyler)",
+   "public": true,
+   "note": "32 DCAS datasets; SODA /resource/<id>.json endpoints. The one real, open DCAS API \u2014 civil-service reference, buildings, and fleet data only."
   },
-  "scorecard": {
-    "platform": 2,
-    "siteApi": 0,
-    "openData": 3,
-    "coreData": 3,
-    "writeApi": 0,
-    "agent": 0,
-    "ownership": 1
+  {
+   "endpoint": "cityjobs.nyc.gov (was a127-jobs.nyc.gov)",
+   "type": "careers / exam application portal",
+   "owner": "DCAS (ASP.NET Core / Azure)",
+   "public": "login-walled UI, no API",
+   "note": "City Jobs external portal + OASys online application; Kestrel server, x-ms-routing-name (Azure App Service), AspNetCore.Antiforgery. Job applications and exam registrations happen here; no JSON/OpenAPI."
   },
-  "scorecard_notes": {
-    "platform": "modern in places (Azure/.NET City Jobs, Shopify store) but fragmented across rented aNNN apps + legacy PeopleSoft",
-    "siteApi": "nyc.gov/site/dcas is Livesite content only — no content API",
-    "openData": "32 datasets, civil-service + buildings + fleet, some with millions of views",
-    "coreData": "titles, eligible lists, exam schedule, postings, buildings, fleet all published and richly columned",
-    "writeApi": "no write API; exam registration and job application locked in OASys / City Jobs",
-    "agent": "no MCP or agent-native surface anywhere",
-    "ownership": "data on rented Socrata; every transaction app is a vendor tenant (Azure, PeopleSoft, Shopify)"
+  {
+   "endpoint": "a127-ess.nyc.gov",
+   "type": "employee self-service (HR)",
+   "owner": "DCAS/OPA (PeopleSoft / NYCAPS)",
+   "public": "login-walled UI, no API",
+   "note": "NYC Automated Personnel System employee self-service; PeopleSoft (psp/ path, page title). Legacy vendor HR app, no public API."
+  },
+  {
+   "endpoint": "a856-citystore.nyc.gov",
+   "type": "e-commerce store",
+   "owner": "DCAS (Shopify)",
+   "public": "public UI; Shopify API not city-owned",
+   "note": "The official CityStore runs on Shopify (Cloudflare edge, _shopify_* cookies). Storefront/Admin APIs exist but are vendor-tenant, not a DCAS contract."
+  },
+  {
+   "endpoint": "www.nyc.gov/site/dcas",
+   "type": "informational site",
+   "owner": "NYC.gov shared platform (Livesite)",
+   "public": "html",
+   "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
   }
+ ],
+ "fruit": [
+  {
+   "name": "Citywide Job Postings",
+   "type": "data table + portal",
+   "entity": "JobPosting",
+   "url": "https://cityjobs.nyc.gov/",
+   "count": "thousands of active postings",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Jobs NYC Postings kpav-sd4t (30c)"
+   ],
+   "notes": "The openings residents apply to, brokered by DCAS across all agencies. Rich 30-column dataset mirroring the City Jobs portal; keyed on Job ID + Title Code."
+  },
+  {
+   "name": "Civil Service Titles",
+   "type": "data table",
+   "entity": "CivilServiceTitle",
+   "url": "https://data.cityofnewyork.us/d/nzjr-3966",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "NYC Civil Service Titles nzjr-3966 (11c)"
+   ],
+   "notes": "The canonical job-classification catalog DCAS maintains for the whole workforce \u2014 title code, salary band, standard hours, union/bargaining unit."
+  },
+  {
+   "name": "Civil Service Eligible Lists",
+   "type": "data table",
+   "entity": "EligibleListEntry",
+   "url": "https://data.cityofnewyork.us/d/vx8i-nprf",
+   "count": "3.5M + 1.1M lifetime views (top two DCAS datasets)",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Civil Service List (Active) vx8i-nprf (20c)",
+    "Civil Service List Certification a9md-ynri",
+    "Civil Service List (Terminated) qu8g-sxqf",
+    "Civil List ye3c-m4ga"
+   ],
+   "notes": "The exam-score-ordered lists DCAS certifies to agencies for hiring \u2014 active, terminated, certified. DCAS's signature function and its most-viewed data."
+  },
+  {
+   "name": "Annual Examination Schedule",
+   "type": "data table + calendar",
+   "entity": "ExamSchedule",
+   "url": "https://data.cityofnewyork.us/d/4ptz-hmtc",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Annual Examination Schedule of Each Fiscal Year 4ptz-hmtc (7c)"
+   ],
+   "notes": "Every scheduled civil-service exam with its application window \u2014 keyed on Examination Number. The read half of the registration story (the write half has no API)."
+  },
+  {
+   "name": "DCAS-Managed Public Buildings & Energy",
+   "type": "data table + map",
+   "entity": "CityBuilding",
+   "url": "https://data.cityofnewyork.us/d/xx2p-4jnq",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "DCAS Managed Public Buildings xx2p-4jnq (22c)",
+    "DCAS Managed Building Energy Usage ubdi-jgw2",
+    "NYC Municipal Building Energy Benchmarking Results vvj6-d5qx",
+    "Deed Restriction Database rfu7-paqe"
+   ],
+   "notes": "City-owned and leased facilities DCAS operates, with full geography spine plus energy usage and benchmarking. Keyed on BIN/BBL."
+  },
+  {
+   "name": "Municipal Fleet",
+   "type": "data table + map",
+   "entity": "FleetVehicle",
+   "url": "https://data.cityofnewyork.us/d/5rzx-3686",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "NYC Fleet Daily Service Report 5rzx-3686",
+    "Vehicle Auction List ynic-uz5i",
+    "Real-World Fuel Efficiency mn2p-34if",
+    "NYC EV Fleet Station Network fc53-9hrv"
+   ],
+   "notes": "The largest municipal fleet in the U.S. \u2014 daily in-service counts, surplus auctions, real-world fuel efficiency, and EV charging stations."
+  },
+  {
+   "name": "CityStore purchase",
+   "type": "transaction (Shopify)",
+   "entity": "JobPosting",
+   "url": "https://a856-citystore.nyc.gov/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [
+    "CityStore - The Official Store of the City of New York mqdy-gu73"
+   ],
+   "opendata_gap": true,
+   "notes": "The official CityStore runs on Shopify \u2014 a product catalog is published to Open Data, but ordering is a vendor-tenant transaction, not a DCAS API. Listed as a rented transaction surface."
+  },
+  {
+   "name": "Employee self-service (NYCAPS)",
+   "type": "workflow (portal)",
+   "entity": "JobPosting",
+   "url": "https://a127-ess.nyc.gov/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Pay stubs, benefits, W-2, direct deposit for city employees \u2014 PeopleSoft/NYCAPS, login-walled, no API. A locked internal transaction layer."
+  },
+  {
+   "name": "Apply to a job posting",
+   "type": "workflow (portal)",
+   "entity": "ExamRegistration",
+   "url": "https://cityjobs.nyc.gov/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Submit a job application (JobApplication) through the City Jobs portal \u2014 ASP.NET Core, login-walled, no API. An alternative net-new write surface."
+  },
+  {
+   "name": "Register for a civil-service exam",
+   "type": "sign-up / application workflow",
+   "entity": "ExamRegistration",
+   "url": "https://a127-jobs.nyc.gov/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The DCAS-signature citizen transaction \u2014 apply and pay for a civil-service exam through the OASys Online Application System. The exam SCHEDULE is open data, but registration has no API and no Open Data twin; it lives only in OASys / the City Jobs portal. The net-new WRITE surface for this domain."
+  },
+  {
+   "name": "NYC Fleet Auction Listing",
+   "type": "spreadsheet (Excel)",
+   "entity": "SurplusVehicle",
+   "url": "https://www.nyc.gov/assets/dcas/downloads/excel/business/nyc-fleet-auction-listing.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Machine-readable listing of surplus city vehicles at DCAS public auction.",
+   "source": "excel-sweep"
+  }
+ ],
+ "meta": {
+  "short": "NYC Citywide Admin Services (DCAS)",
+  "verb": "Transact",
+  "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) content + a fragmented aNNN vendor app layer: City Jobs (ASP.NET Core/Azure), Employee Self-Service (PeopleSoft/NYCAPS), OASys, and the CityStore (Shopify)",
+  "netnew": "ExamRegistration \u2014 register for a civil-service exam (alt: JobApplication)",
+  "accent": "#6a8fb0",
+  "tagline": "DCAS publishes the civil-service machine as open data but hides every transaction behind a rented vendor portal.",
+  "headline": "The reference data \u2014 postings, titles, eligible lists, exam schedule, buildings, fleet \u2014 is wide open, but you cannot register for an exam, apply to a job, or even shop the CityStore through any owned API."
+ },
+ "scorecard": {
+  "platform": 2,
+  "siteApi": 0,
+  "openData": 3,
+  "coreData": 3,
+  "writeApi": 0,
+  "agent": 0,
+  "ownership": 1
+ },
+ "scorecard_notes": {
+  "platform": "modern in places (Azure/.NET City Jobs, Shopify store) but fragmented across rented aNNN apps + legacy PeopleSoft",
+  "siteApi": "nyc.gov/site/dcas is Livesite content only \u2014 no content API",
+  "openData": "32 datasets, civil-service + buildings + fleet, some with millions of views",
+  "coreData": "titles, eligible lists, exam schedule, postings, buildings, fleet all published and richly columned",
+  "writeApi": "no write API; exam registration and job application locked in OASys / City Jobs",
+  "agent": "no MCP or agent-native surface anywhere",
+  "ownership": "data on rented Socrata; every transaction app is a vendor tenant (Azure, PeopleSoft, Shopify)"
+ }
 }
