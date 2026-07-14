@@ -83,6 +83,7 @@ function navBar(active){
     <a class="link" href="./entities.html">Entities</a>
     <a class="link" href="./technology.html">Technology</a>
     <a class="link" href="./docs.html?f=ROADMAP.md">Roadmap</a>
+    <a class="link" href="./blog.html">Blog</a>
     <span class="spacer"></span>
     <a class="link ghost" href="https://github.com/api-evangelist/nyc">GitHub</a>
   </div></div>`;

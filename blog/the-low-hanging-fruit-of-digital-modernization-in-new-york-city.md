@@ -1,0 +1,14 @@
+# The Low Hanging Fruit of Digital Modernization in New York City
+
+*By Kin Lane ([API Evangelist](https://apievangelist.com)) · July 14, 2026*
+
+In 2013 I went to work for the Obama administration. I was positioned at the Department of Veterans Affairs, but because of my work on APIs, I was used across multiple agencies, inventorying open data assets to support Obama's open data mandate. This work has continued beyond my [Presidential Innovation Fellowship](https://apievangelist.com/2013/08/11/my-first-day-in-washington-dc-as-presidential-innovation-fellow/), with a [landscape analysis at the Department of Veterans Affairs](https://skylight-hq.github.io/va-api-landscape/report/), and ongoing inventorying of federal government API efforts.
+
+I have long felt disappointed in the results that came out of the open data era of the Obama Administration, and strongly believe that APIs provide the required standards, governance, and feedback loop required for success. I feel that now, with the introduction of AI copilots and agentic solutions, we have another opportunity at delivering the standardization, interoperability, and programmability needed to define the future of government in a digital era.
+
+I am excellent at riding waves in the news, and wanted to take advantage of [Mayor Mamdani launching the "Public Interest Technology (PIT) Crew" to Rapidly Build Digital Solutions to Public Problems](https://www.nyc.gov/mayors-office/news/2026/07/mayor-mamdani-launches--public-interest-technology--pit--crew--t) to try and inject a new way to look at how city government operates. Building on existing open data efforts, but ensuring that APIs, MCP, and Agent Skills are leading the next wave of investment — helping ensure that NYC data is not just accessible, but also programmable and intelligent when it is put to work in web, mobile, and AI applications.
+
+My work focuses on public resources across existing NYC government websites and data portals. I employ the same ["Low Hanging Fruit"](https://apievangelist.com/2016/04/13/formalizing-my-approach-to-identifying-the-low-hanging-api-fruit/) approach I have employed at the Department of Veterans Affairs, and similarly internally at Bloomberg to stand up an API governance program. My goal is to find where the low hanging fruit is when it comes to publishing APIs, MCP, and Agent Skills to help make the city more programmable. This site is the result of a week's work, and I will continue adding to it, and evolving, telling the story of what is possible on the blog.
+
+---
+*Part of the [NYC — Digital Modernization](../index.html) project. Explore [all 67 agencies](https://nyc.apievangelist.com), the [cross-domain synthesis](https://nyc.apievangelist.com/synthesis.html), and the [Programmable City](https://nyc.apievangelist.com/experience.html).*
