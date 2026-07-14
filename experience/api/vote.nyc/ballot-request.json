@@ -1,0 +1,59 @@
+{
+ "agency": "NYC Board of Elections",
+ "collection": "BallotRequest",
+ "schema": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/schemas/ballot-request.json",
+ "count": 2,
+ "example": true,
+ "data": [
+  {
+   "requestId": "EX-0001-1",
+   "election": {
+    "date": "2025-06-01",
+    "type": "Primary"
+   },
+   "reason": "Absence",
+   "voter": {
+    "firstName": "Example firstName",
+    "lastName": "Example lastName",
+    "dateOfBirth": "2025-06-01",
+    "registeredAddress": "example registeredAddress",
+    "mailingAddress": "example mailingAddress",
+    "email": "info@example.nyc.gov",
+    "phone": "311"
+   },
+   "deliveryMethod": "mail",
+   "status": "draft",
+   "tracking": {
+    "mailedAt": "2025-06-01",
+    "returnedAt": "2025-06-01",
+    "countedAt": "2025-06-01"
+   },
+   "submittedAt": "2025-06-01T09:00:00-04:00"
+  },
+  {
+   "requestId": "EX-0001-2",
+   "election": {
+    "date": "2025-06-01",
+    "type": "Primary"
+   },
+   "reason": "Absence",
+   "voter": {
+    "firstName": "Example firstName",
+    "lastName": "Example lastName",
+    "dateOfBirth": "2025-06-01",
+    "registeredAddress": "example registeredAddress",
+    "mailingAddress": "example mailingAddress",
+    "email": "info@example.nyc.gov",
+    "phone": "311"
+   },
+   "deliveryMethod": "mail",
+   "status": "draft",
+   "tracking": {
+    "mailedAt": "2025-06-01",
+    "returnedAt": "2025-06-01",
+    "countedAt": "2025-06-01"
+   },
+   "submittedAt": "2025-06-01T09:00:00-04:00"
+  }
+ ]
+}

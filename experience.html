@@ -42,9 +42,9 @@
     <div class="eyebrow">The programmable city</div>
     <h1 style="font-size:2.3rem;max-width:22ch">Every NYC API, MCP tool, and Skill — in one place</h1>
     <p class="lead">Sixty-seven agencies, one chain: every <strong>REST operation</strong> has an <strong>MCP tool</strong>, and every tool serves one of ten <strong>common government processes</strong> — apply, report, request records, schedule, register, dispute, pay, look up. This is the whole agent-native surface the city could have, rendered from design-first artifacts.</p>
-    <div class="cta">
-      <a class="btn" href="experience/nyc-openapi.json">Unified OpenAPI</a>
-      <a class="btn sec" href="experience/nyc-mcp.json">NYC MCP</a>
+    <div class="cta" style="align-items:center">
+      <mcp-install-button server="https://raw.githubusercontent.com/api-evangelist/nyc/main/experience/mcp-server/server.json" label="Install the NYC MCP" color="#3098d8"></mcp-install-button>
+      <a class="btn sec" href="experience/nyc-openapi.json">Unified OpenAPI</a>
       <a class="btn sec" href="experience/nyc.apis.json">APIs.json</a>
       <a class="btn sec" href="https://experience.apicommons.org/?url=https://raw.githubusercontent.com/api-evangelist/nyc/main/experience/nyc.apis.json">Open in API Experience ↗</a>
     </div>
@@ -61,6 +61,29 @@
     <div class="step"><div class="k">MCP tool</div><p style="margin:.3em 0 0" id="c2"></p></div>
     <div class="arrow">→</div>
     <div class="step"><div class="k">Agent Skill</div><p style="margin:.3em 0 0" id="c3"></p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">It's real</div><h2>Call it. Install it.</h2>
+  <p class="muted">The reference API is <strong>example data at stable URLs</strong>, served straight off GitHub Pages — genuinely callable (reads only; writes are documented, not executed). The same data backs an installable <strong>MCP server</strong>.</p></div>
+  <div class="grid cols-2">
+    <div class="card">
+      <h3 style="margin:0 0 .4em;font-size:1.05rem">Call a reference endpoint</h3>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+        <select id="tryAgency" style="max-width:100%"></select>
+        <button class="btn sec" id="tryBtn" style="padding:6px 14px">Fetch ▶</button>
+      </div>
+      <pre id="tryCurl" style="background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:10px;overflow:auto;font-size:.78rem;margin:0 0 8px"></pre>
+      <pre id="tryOut" style="background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:10px;overflow:auto;font-size:.76rem;max-height:280px;margin:0"></pre>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 .4em;font-size:1.05rem">Install the MCP server</h3>
+      <p class="muted small" style="margin:0 0 10px">One click into any MCP client via <a href="https://install.apicommons.org">install.apicommons.org</a>, or run it directly. Design-first: reads return example data; write workflows are described, not executed.</p>
+      <mcp-install-button server="https://raw.githubusercontent.com/api-evangelist/nyc/main/experience/mcp-server/server.json" label="Install the NYC MCP" color="#3098d8"></mcp-install-button>
+      <pre style="background:var(--bg-soft);border:1px solid var(--border);border-radius:8px;padding:10px;overflow:auto;font-size:.78rem;margin:10px 0 0">npx -y @api-common/nyc-mcp</pre>
+      <p class="muted small" style="margin:.7em 0 0">Tools: <code>list_agencies</code> · <code>get_agency</code> · <code>search_city_data</code> · <code>look_up_place</code> · <code>find_agency_for_task</code>. Plus the 7 prompts and the <code>nyc://</code> resources.</p>
+    </div>
   </div>
 </div></section>
 
@@ -96,6 +119,7 @@
 </div></section>
 
 <div id="footer"></div>
+<script src="https://install.apicommons.org/button.js" async></script>
 <script src="assets/app.js"></script>
 <script>
 (async function(){
@@ -143,6 +167,32 @@
   document.getElementById("resources").innerHTML=X.resources.map(r=>`
     <div class="apirow"><div style="padding:10px 14px"><code>${esc(r.uri)}</code>${r.template?' <span class="chip" style="cursor:default">templated</span>':''}
     <p class="muted small" style="margin:.3em 0 0">${esc(r.description)}</p></div></div>`).join("");
+
+  // ---- live "Try it" against the static reference API ----
+  const API="experience/api";
+  let catalog=null;
+  try{ catalog=await getJSON(API+"/index.json"); }catch(e){ catalog=null; }
+  if(catalog){
+    const sel=document.getElementById("tryAgency");
+    sel.innerHTML=catalog.agencies.map(a=>`<option value="${a.id}">${esc(a.agency)} (${a.collections})</option>`).join("");
+    const preferred=catalog.agencies.find(a=>a.id==="dob")||catalog.agencies[0];
+    if(preferred) sel.value=preferred.id;
+    async function runTry(){
+      const id=sel.value;
+      const curlEl=document.getElementById("tryCurl"), outEl=document.getElementById("tryOut");
+      try{
+        const idx=await getJSON(`${API}/${id}/index.json`);
+        const coll=idx.collections[0];
+        const abs=coll.url;
+        curlEl.textContent="curl "+abs;
+        outEl.textContent="Loading…";
+        const data=await getJSON(`${API}/${id}/${coll.slug}.json`);
+        outEl.textContent=JSON.stringify(data,null,1);
+      }catch(e){ outEl.textContent="Could not load example: "+e.message; }
+    }
+    document.getElementById("tryBtn").onclick=runTry;
+    runTry();
+  }
 
   const wrap=document.getElementById("apis");
   const mcls=m=>`m ${m}`;

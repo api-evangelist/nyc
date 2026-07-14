@@ -14,12 +14,23 @@
   {
    "url": "https://api.nyc.gov",
    "description": "Illustrative unified gateway host (design-first)."
+  },
+  {
+   "url": "https://nyc.apievangelist.com/experience/api",
+   "description": "Static reference API \u2014 example data at stable URLs, reads only (GitHub Pages)."
   }
  ],
  "x-apis-io": {
   "mcp": {
    "definition": "https://raw.githubusercontent.com/api-evangelist/nyc/main/experience/nyc-mcp.json",
    "note": "NYC-wide MCP gateway (design-first)."
+  },
+  "mcpInstall": "https://install.apicommons.org/?server=https://raw.githubusercontent.com/api-evangelist/nyc/main/experience/mcp-server/server.json",
+  "mcpPackage": "@api-common/nyc-mcp",
+  "referenceApi": {
+   "base": "https://nyc.apievangelist.com/experience/api",
+   "catalog": "https://nyc.apievangelist.com/experience/api/index.json",
+   "note": "Example data synthesized from the agency schemas; GET-callable, reads only."
   },
   "agentSkills": {
    "index": "https://nyc.apievangelist.com/experience/skills/index.json",

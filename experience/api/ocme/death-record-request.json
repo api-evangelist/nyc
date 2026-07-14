@@ -1,0 +1,63 @@
+{
+ "agency": "NYC Medical Examiner (OCME)",
+ "collection": "DeathRecordRequest",
+ "schema": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ocme/schemas/death-record-request.json",
+ "count": 2,
+ "example": true,
+ "data": [
+  {
+   "requestId": "EX-0001-1",
+   "status": "Submitted",
+   "requesterType": "Next of Kin",
+   "relationshipToDecedent": "Spouse",
+   "case": {
+    "caseNumber": "EX-0001",
+    "decedentLastName": "Example decedentLastName",
+    "decedentFirstName": "Example decedentFirstName",
+    "dateOfDeath": "2025-06-01"
+   },
+   "recordsRequested": [
+    "Autopsy Report"
+   ],
+   "purpose": "example purpose",
+   "deliverToThirdParty": true,
+   "notarized": true,
+   "requester": {
+    "name": "Example name",
+    "organization": "example organization",
+    "phone": "311",
+    "email": "info@example.nyc.gov"
+   },
+   "submittedDate": "2025-06-01",
+   "estimatedCompletionDate": "2025-06-01",
+   "fulfilledDate": "2025-06-01"
+  },
+  {
+   "requestId": "EX-0001-2",
+   "status": "Submitted",
+   "requesterType": "Next of Kin",
+   "relationshipToDecedent": "Spouse",
+   "case": {
+    "caseNumber": "EX-0001",
+    "decedentLastName": "Example decedentLastName",
+    "decedentFirstName": "Example decedentFirstName",
+    "dateOfDeath": "2025-06-01"
+   },
+   "recordsRequested": [
+    "Autopsy Report"
+   ],
+   "purpose": "example purpose",
+   "deliverToThirdParty": true,
+   "notarized": true,
+   "requester": {
+    "name": "Example name",
+    "organization": "example organization",
+    "phone": "311",
+    "email": "info@example.nyc.gov"
+   },
+   "submittedDate": "2025-06-01",
+   "estimatedCompletionDate": "2025-06-01",
+   "fulfilledDate": "2025-06-01"
+  }
+ ]
+}

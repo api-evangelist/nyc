@@ -33,7 +33,7 @@ This repo doubles as an explorable, data-driven website (**[nyc.apievangelist.co
 - `standards.html` · `qa.html` — the standards NYC agencies should adopt (and the standards this project is built on), and the verification pass (66/67 high confidence).
 - `entities.html` · `technology.html` — master cross-domain inventories.
 - `docs.html?f=…` — in-browser Markdown viewer (also serves the [CHANGELOG](CHANGELOG.md)).
-- `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain: `python3 scripts/build-manifest.py && python3 scripts/build-scorecard.py` (and `build-commons.py` after touching any `_common.json`; `build-experience.py` rebuilds the experience layer).
+- `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain: `python3 scripts/build-manifest.py && python3 scripts/build-scorecard.py` (and `build-commons.py` after touching any `_common.json`; `build-experience.py` then `build-gateway.py` rebuild the experience layer + reference API).
 
 The site is dependency-free static HTML/CSS/JS — no build step.
 

@@ -1,0 +1,51 @@
+{
+ "agency": "NYC Board of Elections",
+ "collection": "Contest",
+ "schema": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/schemas/contest.json",
+ "count": 2,
+ "example": true,
+ "data": [
+  {
+   "contestId": "EX-0001-1",
+   "election": {
+    "date": "2025-06-01",
+    "type": "Primary"
+   },
+   "office": {
+    "office": "example office",
+    "districtType": "Council",
+    "districtNumber": 1
+   },
+   "party": "example party",
+   "rankedChoice": true,
+   "candidates": [
+    {
+     "candidateId": "EX-0001",
+     "name": "Example name",
+     "ballotPosition": 1
+    }
+   ]
+  },
+  {
+   "contestId": "EX-0001-2",
+   "election": {
+    "date": "2025-06-01",
+    "type": "Primary"
+   },
+   "office": {
+    "office": "example office",
+    "districtType": "Council",
+    "districtNumber": 1
+   },
+   "party": "example party",
+   "rankedChoice": true,
+   "candidates": [
+    {
+     "candidateId": "EX-0001",
+     "name": "Example name",
+     "ballotPosition": 1
+    }
+   ]
+  }
+ ]
+}

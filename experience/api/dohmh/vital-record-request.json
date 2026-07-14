@@ -1,0 +1,71 @@
+{
+ "agency": "NYC Health (DOHMH)",
+ "collection": "VitalRecordRequest",
+ "schema": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dohmh/schemas/vital-record-request.json",
+ "count": 2,
+ "example": true,
+ "data": [
+  {
+   "requestId": "EX-0001-1",
+   "recordType": "Birth",
+   "subject": {
+    "firstName": "Example firstName",
+    "lastName": "Example lastName",
+    "middleName": "Example middleName",
+    "eventDate": "2025-06-01",
+    "borough": "Manhattan"
+   },
+   "requester": {
+    "name": "Example name",
+    "relationship": "Self",
+    "email": "info@example.nyc.gov",
+    "phone": "311",
+    "mailingAddress": {
+     "houseNumber": "280",
+     "lowHouseNumber": "EX-0001",
+     "highHouseNumber": "EX-0001",
+     "streetName": "Broadway",
+     "city": "example city",
+     "state": "example state",
+     "zip": "10007"
+    }
+   },
+   "copies": 1,
+   "purpose": "example purpose",
+   "deliveryMethod": "Standard Mail",
+   "status": "Submitted",
+   "submittedAt": "2025-06-01T09:00:00-04:00"
+  },
+  {
+   "requestId": "EX-0001-2",
+   "recordType": "Birth",
+   "subject": {
+    "firstName": "Example firstName",
+    "lastName": "Example lastName",
+    "middleName": "Example middleName",
+    "eventDate": "2025-06-01",
+    "borough": "Manhattan"
+   },
+   "requester": {
+    "name": "Example name",
+    "relationship": "Self",
+    "email": "info@example.nyc.gov",
+    "phone": "311",
+    "mailingAddress": {
+     "houseNumber": "280",
+     "lowHouseNumber": "EX-0001",
+     "highHouseNumber": "EX-0001",
+     "streetName": "Broadway",
+     "city": "example city",
+     "state": "example state",
+     "zip": "10007"
+    }
+   },
+   "copies": 1,
+   "purpose": "example purpose",
+   "deliveryMethod": "Standard Mail",
+   "status": "Submitted",
+   "submittedAt": "2025-06-01T09:00:00-04:00"
+  }
+ ]
+}

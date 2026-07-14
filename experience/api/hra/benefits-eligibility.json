@@ -1,0 +1,83 @@
+{
+ "agency": "NYC Social Services (HRA)",
+ "collection": "BenefitsEligibility",
+ "schema": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hra/schemas/benefits-eligibility.json",
+ "count": 2,
+ "example": true,
+ "data": [
+  {
+   "household": {
+    "householdSize": 1,
+    "zipCode": "10007",
+    "monthlyIncome": 1.0,
+    "incomePeriod": "weekly",
+    "members": [
+     {
+      "age": 1,
+      "pregnant": true,
+      "disabled": true,
+      "student": true,
+      "veteran": true,
+      "employed": true
+     }
+    ],
+    "livingRenting": true,
+    "receivesBenefits": [
+     "SNAP"
+    ]
+   },
+   "results": [
+    {
+     "program": {
+      "programName": "Example programName",
+      "programCode": "example programCode",
+      "programAcronym": "example programAcronym"
+     },
+     "eligibility": "eligible",
+     "estimatedValue": 1.0,
+     "estimatedValuePeriod": "monthly",
+     "explanation": "example explanation",
+     "applyUrl": "https://www.nyc.gov"
+    }
+   ],
+   "screenedAt": "2025-06-01T09:00:00-04:00"
+  },
+  {
+   "household": {
+    "householdSize": 1,
+    "zipCode": "10007",
+    "monthlyIncome": 1.0,
+    "incomePeriod": "weekly",
+    "members": [
+     {
+      "age": 1,
+      "pregnant": true,
+      "disabled": true,
+      "student": true,
+      "veteran": true,
+      "employed": true
+     }
+    ],
+    "livingRenting": true,
+    "receivesBenefits": [
+     "SNAP"
+    ]
+   },
+   "results": [
+    {
+     "program": {
+      "programName": "Example programName",
+      "programCode": "example programCode",
+      "programAcronym": "example programAcronym"
+     },
+     "eligibility": "eligible",
+     "estimatedValue": 1.0,
+     "estimatedValuePeriod": "monthly",
+     "explanation": "example explanation",
+     "applyUrl": "https://www.nyc.gov"
+    }
+   ],
+   "screenedAt": "2025-06-01T09:00:00-04:00"
+  }
+ ]
+}

@@ -1,0 +1,83 @@
+{
+ "agency": "NYC Health + Hospitals",
+ "collection": "AppointmentRequest",
+ "schema": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/schemas/appointment-request.json",
+ "count": 2,
+ "example": true,
+ "data": [
+  {
+   "requestId": "EX-0001-1",
+   "status": "Received",
+   "service": "example service",
+   "reason": "example reason",
+   "facility": {
+    "facilityId": "EX-0001",
+    "name": "Example name"
+   },
+   "preferredProviderId": "EX-0001",
+   "visitType": "In-Person",
+   "newPatient": true,
+   "preferredDates": [
+    {
+     "from": "2025-06-01",
+     "to": "2025-06-01",
+     "partOfDay": "Morning"
+    }
+   ],
+   "urgent": true,
+   "patient": {
+    "name": "Example name",
+    "dateOfBirth": "2025-06-01",
+    "phone": "311",
+    "email": "info@example.nyc.gov",
+    "mrn": "example mrn",
+    "preferredLanguage": "example preferredLanguage"
+   },
+   "coverage": {
+    "hasInsurance": true,
+    "nycCareMember": true,
+    "needsFinancialAssistance": true
+   },
+   "notes": "example notes",
+   "createdDate": "2025-06-01",
+   "resultingAppointmentId": "EX-0001"
+  },
+  {
+   "requestId": "EX-0001-2",
+   "status": "Received",
+   "service": "example service",
+   "reason": "example reason",
+   "facility": {
+    "facilityId": "EX-0001",
+    "name": "Example name"
+   },
+   "preferredProviderId": "EX-0001",
+   "visitType": "In-Person",
+   "newPatient": true,
+   "preferredDates": [
+    {
+     "from": "2025-06-01",
+     "to": "2025-06-01",
+     "partOfDay": "Morning"
+    }
+   ],
+   "urgent": true,
+   "patient": {
+    "name": "Example name",
+    "dateOfBirth": "2025-06-01",
+    "phone": "311",
+    "email": "info@example.nyc.gov",
+    "mrn": "example mrn",
+    "preferredLanguage": "example preferredLanguage"
+   },
+   "coverage": {
+    "hasInsurance": true,
+    "nycCareMember": true,
+    "needsFinancialAssistance": true
+   },
+   "notes": "example notes",
+   "createdDate": "2025-06-01",
+   "resultingAppointmentId": "EX-0001"
+  }
+ ]
+}

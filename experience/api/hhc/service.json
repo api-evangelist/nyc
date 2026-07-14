@@ -1,0 +1,47 @@
+{
+ "agency": "NYC Health + Hospitals",
+ "collection": "Service",
+ "schema": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/schemas/service.json",
+ "count": 2,
+ "example": true,
+ "data": [
+  {
+   "serviceId": "EX-0001-1",
+   "name": "Example name",
+   "category": "Primary Care",
+   "description": "example description",
+   "specialtyCode": "example specialtyCode",
+   "facility": {
+    "facilityId": "EX-0001",
+    "name": "Example name"
+   },
+   "appointmentRequired": true,
+   "acceptsNewPatients": true,
+   "phone": "311",
+   "fhir": {
+    "resourceType": "example resourceType",
+    "id": "EX-0001",
+    "reference": "example reference"
+   }
+  },
+  {
+   "serviceId": "EX-0001-2",
+   "name": "Example name",
+   "category": "Primary Care",
+   "description": "example description",
+   "specialtyCode": "example specialtyCode",
+   "facility": {
+    "facilityId": "EX-0001",
+    "name": "Example name"
+   },
+   "appointmentRequired": true,
+   "acceptsNewPatients": true,
+   "phone": "311",
+   "fhir": {
+    "resourceType": "example resourceType",
+    "id": "EX-0001",
+    "reference": "example reference"
+   }
+  }
+ ]
+}

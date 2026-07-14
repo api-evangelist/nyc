@@ -1,0 +1,81 @@
+{
+ "agency": "NYC Conflicts of Interest Board (COIB)",
+ "collection": "FinancialDisclosureFiling",
+ "schema": "https://raw.githubusercontent.com/api-evangelist/nyc/main/coib/schemas/financial-disclosure-filing.json",
+ "count": 2,
+ "example": true,
+ "data": [
+  {
+   "filingId": "EX-0001-1",
+   "status": "Draft",
+   "filer": {
+    "name": "Example name",
+    "firstName": "Example firstName",
+    "lastName": "Example lastName",
+    "title": "Example title",
+    "agencyName": "Example agencyName"
+   },
+   "filerType": "Elected Official",
+   "reportingYear": 2025,
+   "reportType": "Annual",
+   "positionsHeld": [
+    {
+     "organization": "example organization",
+     "position": "example position",
+     "compensated": true,
+     "heldBy": "Filer"
+    }
+   ],
+   "financialInterests": [
+    {
+     "category": "Income",
+     "description": "example description",
+     "heldBy": "Filer",
+     "valueRange": "example valueRange"
+    }
+   ],
+   "attestation": {
+    "certified": true,
+    "certifiedDate": "2025-06-01"
+   },
+   "submittedDate": "2025-06-01",
+   "deadline": "2025-06-01"
+  },
+  {
+   "filingId": "EX-0001-2",
+   "status": "Draft",
+   "filer": {
+    "name": "Example name",
+    "firstName": "Example firstName",
+    "lastName": "Example lastName",
+    "title": "Example title",
+    "agencyName": "Example agencyName"
+   },
+   "filerType": "Elected Official",
+   "reportingYear": 2025,
+   "reportType": "Annual",
+   "positionsHeld": [
+    {
+     "organization": "example organization",
+     "position": "example position",
+     "compensated": true,
+     "heldBy": "Filer"
+    }
+   ],
+   "financialInterests": [
+    {
+     "category": "Income",
+     "description": "example description",
+     "heldBy": "Filer",
+     "valueRange": "example valueRange"
+    }
+   ],
+   "attestation": {
+    "certified": true,
+    "certifiedDate": "2025-06-01"
+   },
+   "submittedDate": "2025-06-01",
+   "deadline": "2025-06-01"
+  }
+ ]
+}

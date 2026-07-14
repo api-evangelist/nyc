@@ -1,0 +1,36 @@
+{
+  "name": "@api-common/nyc-mcp",
+  "version": "0.1.0",
+  "description": "The Programmable City — a design-first MCP server over New York City government: 67 agencies, ten common government-process skills, cross-agency prompts and resources, backed by the NYC Modernization reference example data.",
+  "type": "module",
+  "bin": {
+    "nyc-mcp": "index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "data.json",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "nyc",
+    "government",
+    "api-evangelist",
+    "agent-skills"
+  ],
+  "author": "API Evangelist — NYC Modernization",
+  "license": "MIT",
+  "homepage": "https://nyc.apievangelist.com/experience.html",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/api-evangelist/nyc.git",
+    "directory": "experience/mcp-server"
+  }
+}

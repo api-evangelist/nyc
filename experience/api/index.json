@@ -1,0 +1,409 @@
+{
+ "name": "NYC \u2014 Programmable City (reference API)",
+ "base": "https://nyc.apievangelist.com/experience/api",
+ "note": "Static reference API \u2014 every endpoint is example data at a stable URL, served off GitHub Pages. Reads only; write operations are documented in the OpenAPI but not executed here. Data is synthesized for demonstration.",
+ "agencies": [
+  {
+   "id": "nycgovparks.org",
+   "agency": "NYC Parks & Recreation",
+   "index": "https://nyc.apievangelist.com/experience/api/nycgovparks.org/index.json",
+   "collections": 7
+  },
+  {
+   "id": "schools.nyc.gov",
+   "agency": "NYC Public Schools (DOE)",
+   "index": "https://nyc.apievangelist.com/experience/api/schools.nyc.gov/index.json",
+   "collections": 5
+  },
+  {
+   "id": "council.nyc.gov",
+   "agency": "NYC Council",
+   "index": "https://nyc.apievangelist.com/experience/api/council.nyc.gov/index.json",
+   "collections": 7
+  },
+  {
+   "id": "vote.nyc",
+   "agency": "NYC Board of Elections",
+   "index": "https://nyc.apievangelist.com/experience/api/vote.nyc/index.json",
+   "collections": 7
+  },
+  {
+   "id": "nyc311",
+   "agency": "NYC311",
+   "index": "https://nyc.apievangelist.com/experience/api/nyc311/index.json",
+   "collections": 4
+  },
+  {
+   "id": "dob",
+   "agency": "NYC Buildings (DOB)",
+   "index": "https://nyc.apievangelist.com/experience/api/dob/index.json",
+   "collections": 7
+  },
+  {
+   "id": "hpd",
+   "agency": "NYC Housing (HPD)",
+   "index": "https://nyc.apievangelist.com/experience/api/hpd/index.json",
+   "collections": 7
+  },
+  {
+   "id": "dot",
+   "agency": "NYC Transportation (DOT)",
+   "index": "https://nyc.apievangelist.com/experience/api/dot/index.json",
+   "collections": 7
+  },
+  {
+   "id": "dohmh",
+   "agency": "NYC Health (DOHMH)",
+   "index": "https://nyc.apievangelist.com/experience/api/dohmh/index.json",
+   "collections": 7
+  },
+  {
+   "id": "dsny",
+   "agency": "NYC Sanitation (DSNY)",
+   "index": "https://nyc.apievangelist.com/experience/api/dsny/index.json",
+   "collections": 6
+  },
+  {
+   "id": "nypd",
+   "agency": "NYPD",
+   "index": "https://nyc.apievangelist.com/experience/api/nypd/index.json",
+   "collections": 6
+  },
+  {
+   "id": "tlc",
+   "agency": "NYC Taxi & Limousine (TLC)",
+   "index": "https://nyc.apievangelist.com/experience/api/tlc/index.json",
+   "collections": 7
+  },
+  {
+   "id": "dcp",
+   "agency": "NYC City Planning (DCP)",
+   "index": "https://nyc.apievangelist.com/experience/api/dcp/index.json",
+   "collections": 6
+  },
+  {
+   "id": "comptroller.nyc.gov",
+   "agency": "NYC Comptroller",
+   "index": "https://nyc.apievangelist.com/experience/api/comptroller.nyc.gov/index.json",
+   "collections": 6
+  },
+  {
+   "id": "nycha",
+   "agency": "NYC Housing Authority (NYCHA)",
+   "index": "https://nyc.apievangelist.com/experience/api/nycha/index.json",
+   "collections": 6
+  },
+  {
+   "id": "acs",
+   "agency": "NYC Children's Services (ACS)",
+   "index": "https://nyc.apievangelist.com/experience/api/acs/index.json",
+   "collections": 6
+  },
+  {
+   "id": "bic",
+   "agency": "NYC Business Integrity Commission (BIC)",
+   "index": "https://nyc.apievangelist.com/experience/api/bic/index.json",
+   "collections": 7
+  },
+  {
+   "id": "bklynlibrary",
+   "agency": "Brooklyn Public Library (BPL)",
+   "index": "https://nyc.apievangelist.com/experience/api/bklynlibrary/index.json",
+   "collections": 7
+  },
+  {
+   "id": "bronxbp",
+   "agency": "Bronx Borough President",
+   "index": "https://nyc.apievangelist.com/experience/api/bronxbp/index.json",
+   "collections": 6
+  },
+  {
+   "id": "bronxda",
+   "agency": "Bronx District Attorney",
+   "index": "https://nyc.apievangelist.com/experience/api/bronxda/index.json",
+   "collections": 6
+  },
+  {
+   "id": "brooklynbp",
+   "agency": "Brooklyn Borough President",
+   "index": "https://nyc.apievangelist.com/experience/api/brooklynbp/index.json",
+   "collections": 7
+  },
+  {
+   "id": "brooklynda",
+   "agency": "Brooklyn District Attorney",
+   "index": "https://nyc.apievangelist.com/experience/api/brooklynda/index.json",
+   "collections": 6
+  },
+  {
+   "id": "bsa",
+   "agency": "NYC Standards & Appeals (BSA)",
+   "index": "https://nyc.apievangelist.com/experience/api/bsa/index.json",
+   "collections": 6
+  },
+  {
+   "id": "cchr",
+   "agency": "NYC Human Rights (CCHR)",
+   "index": "https://nyc.apievangelist.com/experience/api/cchr/index.json",
+   "collections": 6
+  },
+  {
+   "id": "ccrb",
+   "agency": "NYC Civilian Complaint Review (CCRB)",
+   "index": "https://nyc.apievangelist.com/experience/api/ccrb/index.json",
+   "collections": 5
+  },
+  {
+   "id": "cfb",
+   "agency": "NYC Campaign Finance Board (CFB)",
+   "index": "https://nyc.apievangelist.com/experience/api/cfb/index.json",
+   "collections": 6
+  },
+  {
+   "id": "cityclerk",
+   "agency": "NYC City Clerk",
+   "index": "https://nyc.apievangelist.com/experience/api/cityclerk/index.json",
+   "collections": 6
+  },
+  {
+   "id": "coib",
+   "agency": "NYC Conflicts of Interest Board (COIB)",
+   "index": "https://nyc.apievangelist.com/experience/api/coib/index.json",
+   "collections": 6
+  },
+  {
+   "id": "cuny",
+   "agency": "City University of New York (CUNY)",
+   "index": "https://nyc.apievangelist.com/experience/api/cuny/index.json",
+   "collections": 6
+  },
+  {
+   "id": "dcas",
+   "agency": "NYC Citywide Admin Services (DCAS)",
+   "index": "https://nyc.apievangelist.com/experience/api/dcas/index.json",
+   "collections": 7
+  },
+  {
+   "id": "dcla",
+   "agency": "NYC Cultural Affairs (DCLA)",
+   "index": "https://nyc.apievangelist.com/experience/api/dcla/index.json",
+   "collections": 7
+  },
+  {
+   "id": "dcwp",
+   "agency": "NYC Consumer & Worker Protection (DCWP)",
+   "index": "https://nyc.apievangelist.com/experience/api/dcwp/index.json",
+   "collections": 6
+  },
+  {
+   "id": "ddc",
+   "agency": "NYC Design & Construction (DDC)",
+   "index": "https://nyc.apievangelist.com/experience/api/ddc/index.json",
+   "collections": 6
+  },
+  {
+   "id": "dep",
+   "agency": "NYC Environmental Protection (DEP)",
+   "index": "https://nyc.apievangelist.com/experience/api/dep/index.json",
+   "collections": 7
+  },
+  {
+   "id": "dfta",
+   "agency": "NYC Aging (DFTA)",
+   "index": "https://nyc.apievangelist.com/experience/api/dfta/index.json",
+   "collections": 6
+  },
+  {
+   "id": "dhs",
+   "agency": "NYC Homeless Services (DHS)",
+   "index": "https://nyc.apievangelist.com/experience/api/dhs/index.json",
+   "collections": 6
+  },
+  {
+   "id": "doc",
+   "agency": "NYC Correction (DOC)",
+   "index": "https://nyc.apievangelist.com/experience/api/doc/index.json",
+   "collections": 6
+  },
+  {
+   "id": "dof",
+   "agency": "NYC Finance (DOF)",
+   "index": "https://nyc.apievangelist.com/experience/api/dof/index.json",
+   "collections": 6
+  },
+  {
+   "id": "doi",
+   "agency": "NYC Investigation (DOI)",
+   "index": "https://nyc.apievangelist.com/experience/api/doi/index.json",
+   "collections": 6
+  },
+  {
+   "id": "doris",
+   "agency": "NYC Records (DORIS)",
+   "index": "https://nyc.apievangelist.com/experience/api/doris/index.json",
+   "collections": 6
+  },
+  {
+   "id": "dvs",
+   "agency": "NYC Veterans' Services (DVS)",
+   "index": "https://nyc.apievangelist.com/experience/api/dvs/index.json",
+   "collections": 6
+  },
+  {
+   "id": "dycd",
+   "agency": "NYC Youth & Community Dev (DYCD)",
+   "index": "https://nyc.apievangelist.com/experience/api/dycd/index.json",
+   "collections": 7
+  },
+  {
+   "id": "edc",
+   "agency": "NYC Economic Development (EDC)",
+   "index": "https://nyc.apievangelist.com/experience/api/edc/index.json",
+   "collections": 7
+  },
+  {
+   "id": "fdny",
+   "agency": "NYC Fire (FDNY)",
+   "index": "https://nyc.apievangelist.com/experience/api/fdny/index.json",
+   "collections": 6
+  },
+  {
+   "id": "hhc",
+   "agency": "NYC Health + Hospitals",
+   "index": "https://nyc.apievangelist.com/experience/api/hhc/index.json",
+   "collections": 7
+  },
+  {
+   "id": "hra",
+   "agency": "NYC Social Services (HRA)",
+   "index": "https://nyc.apievangelist.com/experience/api/hra/index.json",
+   "collections": 6
+  },
+  {
+   "id": "ibo",
+   "agency": "NYC Independent Budget Office (IBO)",
+   "index": "https://nyc.apievangelist.com/experience/api/ibo/index.json",
+   "collections": 6
+  },
+  {
+   "id": "law",
+   "agency": "NYC Law Department",
+   "index": "https://nyc.apievangelist.com/experience/api/law/index.json",
+   "collections": 6
+  },
+  {
+   "id": "lpc",
+   "agency": "NYC Landmarks (LPC)",
+   "index": "https://nyc.apievangelist.com/experience/api/lpc/index.json",
+   "collections": 7
+  },
+  {
+   "id": "manhattanbp",
+   "agency": "Manhattan Borough President",
+   "index": "https://nyc.apievangelist.com/experience/api/manhattanbp/index.json",
+   "collections": 7
+  },
+  {
+   "id": "manhattanda",
+   "agency": "Manhattan District Attorney",
+   "index": "https://nyc.apievangelist.com/experience/api/manhattanda/index.json",
+   "collections": 6
+  },
+  {
+   "id": "mocj",
+   "agency": "NYC Criminal Justice (MOCJ)",
+   "index": "https://nyc.apievangelist.com/experience/api/mocj/index.json",
+   "collections": 6
+  },
+  {
+   "id": "mome",
+   "agency": "NYC Media & Entertainment (MOME)",
+   "index": "https://nyc.apievangelist.com/experience/api/mome/index.json",
+   "collections": 6
+  },
+  {
+   "id": "nycem",
+   "agency": "NYC Emergency Management (NYCEM)",
+   "index": "https://nyc.apievangelist.com/experience/api/nycem/index.json",
+   "collections": 7
+  },
+  {
+   "id": "nypl",
+   "agency": "New York Public Library (NYPL)",
+   "index": "https://nyc.apievangelist.com/experience/api/nypl/index.json",
+   "collections": 6
+  },
+  {
+   "id": "oath",
+   "agency": "NYC Admin Trials & Hearings (OATH)",
+   "index": "https://nyc.apievangelist.com/experience/api/oath/index.json",
+   "collections": 5
+  },
+  {
+   "id": "ocme",
+   "agency": "NYC Medical Examiner (OCME)",
+   "index": "https://nyc.apievangelist.com/experience/api/ocme/index.json",
+   "collections": 6
+  },
+  {
+   "id": "oti",
+   "agency": "NYC Technology & Innovation (OTI)",
+   "index": "https://nyc.apievangelist.com/experience/api/oti/index.json",
+   "collections": 6
+  },
+  {
+   "id": "pubadvocate",
+   "agency": "NYC Public Advocate",
+   "index": "https://nyc.apievangelist.com/experience/api/pubadvocate/index.json",
+   "collections": 6
+  },
+  {
+   "id": "queensbp",
+   "agency": "Queens Borough President",
+   "index": "https://nyc.apievangelist.com/experience/api/queensbp/index.json",
+   "collections": 7
+  },
+  {
+   "id": "queensda",
+   "agency": "Queens District Attorney",
+   "index": "https://nyc.apievangelist.com/experience/api/queensda/index.json",
+   "collections": 7
+  },
+  {
+   "id": "queenslibrary",
+   "agency": "Queens Public Library (QPL)",
+   "index": "https://nyc.apievangelist.com/experience/api/queenslibrary/index.json",
+   "collections": 6
+  },
+  {
+   "id": "sbs",
+   "agency": "NYC Small Business Services (SBS)",
+   "index": "https://nyc.apievangelist.com/experience/api/sbs/index.json",
+   "collections": 7
+  },
+  {
+   "id": "sca",
+   "agency": "NYC School Construction Authority (SCA)",
+   "index": "https://nyc.apievangelist.com/experience/api/sca/index.json",
+   "collections": 7
+  },
+  {
+   "id": "statenislandbp",
+   "agency": "Staten Island Borough President",
+   "index": "https://nyc.apievangelist.com/experience/api/statenislandbp/index.json",
+   "collections": 7
+  },
+  {
+   "id": "statenislandda",
+   "agency": "Staten Island District Attorney",
+   "index": "https://nyc.apievangelist.com/experience/api/statenislandda/index.json",
+   "collections": 6
+  },
+  {
+   "id": "taxcommission",
+   "agency": "NYC Tax Commission",
+   "index": "https://nyc.apievangelist.com/experience/api/taxcommission/index.json",
+   "collections": 6
+  }
+ ]
+}

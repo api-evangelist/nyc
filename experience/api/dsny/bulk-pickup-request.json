@@ -1,0 +1,77 @@
+{
+ "agency": "NYC Sanitation (DSNY)",
+ "collection": "BulkPickupRequest",
+ "schema": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dsny/schemas/bulk-pickup-request.json",
+ "count": 2,
+ "example": true,
+ "data": [
+  {
+   "requestId": "EX-0001-1",
+   "requestType": "Bulk / Large Item",
+   "address": {
+    "houseNumber": "280",
+    "lowHouseNumber": "EX-0001",
+    "highHouseNumber": "EX-0001",
+    "streetName": "Broadway",
+    "city": "example city",
+    "state": "example state",
+    "zip": "10007"
+   },
+   "sanitationDistrict": {
+    "district": "example district",
+    "section": "example section",
+    "zone": "example zone"
+   },
+   "items": [
+    {
+     "description": "example description",
+     "quantity": 1,
+     "containsCFC": true
+    }
+   ],
+   "appointmentDate": "2025-06-01",
+   "appointmentTime": "example appointmentTime",
+   "contact": {
+    "name": "Example name",
+    "email": "info@example.nyc.gov",
+    "phone": "311"
+   },
+   "status": "Submitted",
+   "notes": "example notes"
+  },
+  {
+   "requestId": "EX-0001-2",
+   "requestType": "Bulk / Large Item",
+   "address": {
+    "houseNumber": "280",
+    "lowHouseNumber": "EX-0001",
+    "highHouseNumber": "EX-0001",
+    "streetName": "Broadway",
+    "city": "example city",
+    "state": "example state",
+    "zip": "10007"
+   },
+   "sanitationDistrict": {
+    "district": "example district",
+    "section": "example section",
+    "zone": "example zone"
+   },
+   "items": [
+    {
+     "description": "example description",
+     "quantity": 1,
+     "containsCFC": true
+    }
+   ],
+   "appointmentDate": "2025-06-01",
+   "appointmentTime": "example appointmentTime",
+   "contact": {
+    "name": "Example name",
+    "email": "info@example.nyc.gov",
+    "phone": "311"
+   },
+   "status": "Submitted",
+   "notes": "example notes"
+  }
+ ]
+}

@@ -18,6 +18,13 @@ Interactive: **[nyc.apievangelist.com/experience.html](https://nyc.apievangelist
 
 Built on the [API Experience](https://experience.apicommons.org) chain — **REST operation → MCP tool → Agent Skill** — minus the free/pro tiering and AI enrichment: a clean view of the whole programmable surface the city could have.
 
+## Call it. Install it.
+
+The experience layer is not just documentation — it's runnable:
+
+- **Static reference API** — example data at stable URLs, served off GitHub Pages, GET-callable: `curl https://nyc.apievangelist.com/experience/api/dob/building.json`. Catalog at [`/experience/api/index.json`](https://nyc.apievangelist.com/experience/api/index.json). Reads only; write workflows are documented in the OpenAPI, not executed. 422 example collections, 844 records synthesized from the agency JSON Schemas.
+- **Installable MCP server** — [`@api-common/nyc-mcp`](experience/mcp-server/), a working stdio server (`npx -y @api-common/nyc-mcp`) with tools (`list_agencies`, `get_agency`, `search_city_data`, `look_up_place`, `find_agency_for_task`), the 7 prompts, and `nyc://` resources — installable one-click via [install.apicommons.org](https://install.apicommons.org/?server=https://raw.githubusercontent.com/api-evangelist/nyc/main/experience/mcp-server/server.json). The install button is embedded on [experience.html](https://nyc.apievangelist.com/experience.html).
+
 ## Ten common government processes (Agent Skills)
 
 | Skill | Group | Agencies | Operations |

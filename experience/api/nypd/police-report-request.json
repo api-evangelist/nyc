@@ -1,0 +1,49 @@
+{
+ "agency": "NYPD",
+ "collection": "PoliceReportRequest",
+ "schema": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypd/schemas/police-report-request.json",
+ "count": 2,
+ "example": true,
+ "data": [
+  {
+   "requestId": "EX-0001-1",
+   "requestType": "IncidentReport",
+   "status": "Submitted",
+   "requester": {
+    "name": "Example name",
+    "email": "info@example.nyc.gov",
+    "phone": "311",
+    "relationship": "InvolvedParty"
+   },
+   "incident": {
+    "complaintNumber": "EX-0001",
+    "collisionId": "EX-0001",
+    "incidentDate": "2025-06-01",
+    "precinct": 1,
+    "location": "example location"
+   },
+   "foilDescription": "example foilDescription",
+   "submittedAt": "2025-06-01T09:00:00-04:00"
+  },
+  {
+   "requestId": "EX-0001-2",
+   "requestType": "IncidentReport",
+   "status": "Submitted",
+   "requester": {
+    "name": "Example name",
+    "email": "info@example.nyc.gov",
+    "phone": "311",
+    "relationship": "InvolvedParty"
+   },
+   "incident": {
+    "complaintNumber": "EX-0001",
+    "collisionId": "EX-0001",
+    "incidentDate": "2025-06-01",
+    "precinct": 1,
+    "location": "example location"
+   },
+   "foilDescription": "example foilDescription",
+   "submittedAt": "2025-06-01T09:00:00-04:00"
+  }
+ ]
+}
