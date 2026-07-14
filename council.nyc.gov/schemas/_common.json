@@ -1,45 +1,85 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/schemas/_common.json",
-  "title": "NYC Council — Shared Definitions",
+  "title": "NYC Council \u2014 Shared Definitions",
   "description": "Reusable JSON Schema definitions shared across NYC Council object schemas. Reconciles fields common to council.nyc.gov (WordPress), the Legistar Web API, and the NYCC NYC Open Data datasets.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Party": {
       "type": "string",
-      "enum": ["Democrat", "Republican", "Conservative", "Independent", "Working Families", "Other"]
+      "enum": [
+        "Democrat",
+        "Republican",
+        "Conservative",
+        "Independent",
+        "Working Families",
+        "Other"
+      ]
     },
     "Coordinates": {
-      "type": "object",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "MemberReference": {
       "type": "object",
       "description": "A reference to a Council Member.",
       "properties": {
-        "councilMemberId": { "type": "string", "description": "Council Member ID (Open Data council_member_id) / Legistar PersonId." },
-        "name": { "type": "string" },
-        "district": { "type": "integer", "minimum": 1, "maximum": 51 }
+        "councilMemberId": {
+          "type": "string",
+          "description": "Council Member ID (Open Data council_member_id) / Legistar PersonId."
+        },
+        "name": {
+          "type": "string"
+        },
+        "district": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 51
+        }
       },
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "additionalProperties": false
     },
     "Office": {
       "type": "object",
       "description": "A district or legislative office.",
       "properties": {
-        "type": { "type": "string", "enum": ["District", "Legislative"] },
-        "address": { "type": ["string", "null"] },
-        "phone": { "type": ["string", "null"] },
-        "fax": { "type": ["string", "null"] }
+        "type": {
+          "type": "string",
+          "enum": [
+            "District",
+            "Legislative"
+          ]
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fax": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       },
       "additionalProperties": false
     }

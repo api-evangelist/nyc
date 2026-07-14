@@ -1,25 +1,28 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oath/schemas/_common.json",
-  "title": "OATH — Shared Definitions",
-  "description": "Reusable JSON Schema definitions shared across NYC Office of Administrative Trials & Hearings (OATH) object schemas. Reconciles fields common to the OATH Open Data datasets (data.cityofnewyork.us — Hearings Division Case Status jz4z-kudi, Trials Division Case Status y3hw-z6bm), nyc.gov/site/oath, and the ECB Ticket Finder / Respond-to-a-Summons portal (a820-ecbticketfinder.nyc.gov). Includes the NYC borough/geography spine, the set of agencies that issue ECB summonses, and the Respondent, Charge, and ViolationLocation building blocks of an ECB summons.",
+  "title": "OATH \u2014 Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Office of Administrative Trials & Hearings (OATH) object schemas. Reconciles fields common to the OATH Open Data datasets (data.cityofnewyork.us \u2014 Hearings Division Case Status jz4z-kudi, Trials Division Case Status y3hw-z6bm), nyc.gov/site/oath, and the ECB Ticket Finder / Respond-to-a-Summons portal (a820-ecbticketfinder.nyc.gov). Includes the NYC borough/geography spine, the set of agencies that issue ECB summonses, and the Respondent, Charge, and ViolationLocation building blocks of an ECB summons.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": ["string", "null"],
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", null]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point derived from a violation or respondent address geocode.",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "IssuingAgency": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "The city agency that issued the ECB summons ('Issuing Agency'). OATH adjudicates; it does not issue. Common issuers below; free text allowed for others.",
       "examples": [
         "DEPARTMENT OF BUILDINGS",
@@ -37,27 +40,44 @@
       ]
     },
     "Address": {
-      "type": "object",
-      "description": "A generic street address (used for both respondent and violation locations).",
-      "properties": {
-        "houseNumber": { "type": ["string", "null"], "description": "House / building number." },
-        "streetName": { "type": ["string", "null"] },
-        "city": { "type": ["string", "null"] },
-        "state": { "type": ["string", "null"] },
-        "zipCode": { "type": ["string", "null"] },
-        "borough": { "$ref": "#/$defs/Borough" }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/address.json#/$defs/Address",
+      "$comment": "Canonical definition provided by nyc-commons (address.json#/$defs/Address); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Address still resolve."
     },
     "Respondent": {
       "type": "object",
       "description": "The party charged on the summons ('Respondent Last Name', 'Respondent Address (...)'). Business name or individual. OATH publishes limited respondent fields to Open Data.",
       "properties": {
-        "name": { "type": ["string", "null"], "description": "Business name or respondent name." },
-        "lastName": { "type": ["string", "null"], "description": "'Respondent Last Name'." },
-        "firstName": { "type": ["string", "null"], "description": "'Respondent First Name' (rarely published)." },
-        "facilityNumber": { "type": ["string", "null"], "description": "'Respondent Address or Facility Number (For FDNY and DOB Tickets)'." },
-        "address": { "$ref": "#/$defs/Address" }
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Business name or respondent name."
+        },
+        "lastName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Respondent Last Name'."
+        },
+        "firstName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Respondent First Name' (rarely published)."
+        },
+        "facilityNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Respondent Address or Facility Number (For FDNY and DOB Tickets)'."
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
       },
       "additionalProperties": false
     },
@@ -65,16 +85,68 @@
       "type": "object",
       "description": "Where the violation occurred ('Violation Location (...)'). Carries the tax-lot spine (Borough/Block/Lot) for building-issued summonses.",
       "properties": {
-        "houseNumber": { "type": ["string", "null"], "description": "'Violation Location (House #)'." },
-        "streetName": { "type": ["string", "null"], "description": "'Violation Location (Street Name)'." },
-        "city": { "type": ["string", "null"], "description": "'Violation Location (City)'." },
-        "state": { "type": ["string", "null"], "description": "'Violation Location (State Name)'." },
-        "zipCode": { "type": ["string", "null"], "description": "'Violation Location (Zip Code)'." },
-        "borough": { "$ref": "#/$defs/Borough" },
-        "floor": { "type": ["string", "null"], "description": "'Violation Location (Floor)'." },
-        "block": { "type": ["string", "null"], "description": "'Violation Location (Block No.)'." },
-        "lot": { "type": ["string", "null"], "description": "'Violation Location (Lot No.)'." },
-        "coordinates": { "$ref": "#/$defs/Coordinates" }
+        "houseNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Violation Location (House #)'."
+        },
+        "streetName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Violation Location (Street Name)'."
+        },
+        "city": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Violation Location (City)'."
+        },
+        "state": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Violation Location (State Name)'."
+        },
+        "zipCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Violation Location (Zip Code)'."
+        },
+        "borough": {
+          "$ref": "#/$defs/Borough"
+        },
+        "floor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Violation Location (Floor)'."
+        },
+        "block": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Violation Location (Block No.)'."
+        },
+        "lot": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Violation Location (Lot No.)'."
+        },
+        "coordinates": {
+          "$ref": "#/$defs/Coordinates"
+        }
       },
       "additionalProperties": false
     },
@@ -82,23 +154,79 @@
       "type": "object",
       "description": "A single charge on an ECB summons. The Hearings Division dataset carries up to ten parallel charge columns ('Charge #N: Code', 'Code Section', 'Code Description', 'Infraction Amount'); this schema normalizes one charge.",
       "properties": {
-        "sequence": { "type": ["integer", "null"], "minimum": 1, "maximum": 10, "description": "1-10, from 'Charge #N'." },
-        "code": { "type": ["string", "null"], "description": "'Charge #N: Code'." },
-        "codeSection": { "type": ["string", "null"], "description": "'Charge #N: Code Section'." },
-        "codeDescription": { "type": ["string", "null"], "description": "'Charge #N: Code Description'." },
-        "infractionAmount": { "type": ["number", "null"], "description": "'Charge #N: Infraction Amount'." }
+        "sequence": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 10,
+          "description": "1-10, from 'Charge #N'."
+        },
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Charge #N: Code'."
+        },
+        "codeSection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Charge #N: Code Section'."
+        },
+        "codeDescription": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'Charge #N: Code Description'."
+        },
+        "infractionAmount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "'Charge #N: Infraction Amount'."
+        }
       },
       "additionalProperties": false
     },
     "HearingStatus": {
-      "type": ["string", "null"],
-      "description": "'Hearing Status' — where the summons sits in the adjudication lifecycle.",
-      "enum": ["DOCKETED", "SCHEDULED", "HEARING COMPLETED", "WRITTEN OFF", "PAID IN FULL", "DEFAULTED", "DISMISSED", "ADJOURNED", "PENDING", null]
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "'Hearing Status' \u2014 where the summons sits in the adjudication lifecycle.",
+      "enum": [
+        "DOCKETED",
+        "SCHEDULED",
+        "HEARING COMPLETED",
+        "WRITTEN OFF",
+        "PAID IN FULL",
+        "DEFAULTED",
+        "DISMISSED",
+        "ADJOURNED",
+        "PENDING",
+        null
+      ]
     },
     "ComplianceStatus": {
-      "type": ["string", "null"],
-      "description": "'Compliance Status' — whether the respondent has cured/complied.",
-      "enum": ["No Compliance Required", "Compliance Requested", "In Compliance", "Not In Compliance", "Pending", null]
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "'Compliance Status' \u2014 whether the respondent has cured/complied.",
+      "enum": [
+        "No Compliance Required",
+        "Compliance Requested",
+        "In Compliance",
+        "Not In Compliance",
+        "Pending",
+        null
+      ]
     }
   }
 }

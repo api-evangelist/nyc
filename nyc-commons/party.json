@@ -31,12 +31,13 @@
       "type": "object",
       "description": "A reference to a City agency (e.g. as it appears in Checkbook / procurement / budget data).",
       "properties": {
-        "name": { "type": "string", "description": "Agency name, e.g. 'Department of Buildings'." },
-        "code": { "type": ["string", "null"], "description": "Agency code where present (Checkbook `agency_code`)." },
+        "name": { "type": ["string", "null"], "description": "Agency name, e.g. 'Department of Buildings' (some agencies label this `agencyName` / `agency`)." },
+        "code": { "type": ["string", "null"], "description": "Agency code where present (Checkbook `agency_code` / `agencyCode`)." },
+        "acronym": { "type": ["string", "null"], "description": "Agency acronym, e.g. 'DOB'." },
         "domain": { "type": ["string", "null"], "description": "This project's domain slug for the agency, e.g. 'dob' — links the reference back to its assessment." }
       },
-      "required": ["name"],
-      "additionalProperties": false
+      "$comment": "Open (additionalProperties) — some agencies carry the name under agencyName/agency; extras are permitted so adoption is lossless.",
+      "additionalProperties": true
     },
     "OrganizationReference": {
       "type": "object",

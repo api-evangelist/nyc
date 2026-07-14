@@ -1,50 +1,88 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensda/schemas/_common.json",
-  "title": "Queens DA — Shared Definitions",
+  "title": "Queens DA \u2014 Shared Definitions",
   "description": "Reusable JSON Schema definitions shared across Queens County District Attorney (queensda.org) object schemas. There is NO NYC Open Data corpus for a District Attorney; these definitions instead reconcile fields reverse-engineered from the office's WordPress content (press releases, court-case posts, cold-case posts) exposed through the accidental WordPress REST API (wp-json/wp/v2), plus the NYC geography spine so DA content can join back to the rest of city government. Because all five borough DA offices run the same functions, these definitions are drafted to be shareable across a single five-borough DA API.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point for a location referenced in DA content (incident, court, resource).",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "Geography": {
-      "type": "object",
-      "description": "The NYC geography spine — the join keys back to the rest of city government. Queens DA content rarely carries these explicitly today (it is prose); they are the spine a structured DA API would populate from the incident/neighborhood named in each release.",
-      "properties": {
-        "borough": { "$ref": "#/$defs/Borough" },
-        "neighborhood": { "type": ["string", "null"], "description": "Queens neighborhood named in the content (e.g. Flushing, Jamaica, Astoria)." },
-        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board." },
-        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district." },
-        "policePrecinct": { "type": ["string", "integer", "null"], "description": "NYPD precinct with jurisdiction over the incident." },
-        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract." },
-        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code." },
-        "zipCode": { "type": ["string", "null"] }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Geography still resolve."
     },
     "Publication": {
       "type": "object",
-      "description": "Publishing metadata carried by every WordPress-sourced object — the fields the wp-json/wp/v2 REST API actually returns.",
+      "description": "Publishing metadata carried by every WordPress-sourced object \u2014 the fields the wp-json/wp/v2 REST API actually returns.",
       "properties": {
-        "id": { "type": ["integer", "string"], "description": "WordPress post ID." },
-        "slug": { "type": ["string", "null"], "description": "URL slug." },
-        "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical permalink on queensda.org." },
-        "publishedDate": { "type": ["string", "null"], "format": "date-time", "description": "WordPress post date." },
-        "modifiedDate": { "type": ["string", "null"], "format": "date-time" },
-        "language": { "type": ["string", "null"], "description": "WPML content language code (site is multilingual)." },
-        "categories": { "type": "array", "items": { "type": "string" }, "description": "WordPress category slugs (e.g. press-releases, court-cases, indictments)." },
-        "tags": { "type": "array", "items": { "type": "string" } }
+        "id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "WordPress post ID."
+        },
+        "slug": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "URL slug."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri",
+          "description": "Canonical permalink on queensda.org."
+        },
+        "publishedDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "description": "WordPress post date."
+        },
+        "modifiedDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "WPML content language code (site is multilingual)."
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "WordPress category slugs (e.g. press-releases, court-cases, indictments)."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       },
       "additionalProperties": false
     },
@@ -52,9 +90,27 @@
       "type": "object",
       "description": "A reference to a criminal case / prosecution as named in public DA content. DA offices publish only what is on the public record; no sealed or non-public case data is implied.",
       "properties": {
-        "caption": { "type": ["string", "null"], "description": "Public case caption (People v. …) as announced." },
-        "docketOrIndictment": { "type": ["string", "null"], "description": "Docket or indictment number if published." },
-        "court": { "type": ["string", "null"], "description": "Court where the matter is pending (e.g. Queens Supreme Court, Criminal Court)." }
+        "caption": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Public case caption (People v. \u2026) as announced."
+        },
+        "docketOrIndictment": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Docket or indictment number if published."
+        },
+        "court": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Court where the matter is pending (e.g. Queens Supreme Court, Criminal Court)."
+        }
       },
       "additionalProperties": false
     },
@@ -62,11 +118,38 @@
       "type": "object",
       "description": "A public point of contact for a resource, program, or unit.",
       "properties": {
-        "phone": { "type": ["string", "null"] },
-        "email": { "type": ["string", "null"], "format": "email" },
-        "url": { "type": ["string", "null"], "format": "uri" },
-        "address": { "type": ["string", "null"] },
-        "hours": { "type": ["string", "null"] }
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "email"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hours": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       },
       "additionalProperties": false
     }

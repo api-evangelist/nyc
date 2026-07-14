@@ -1,52 +1,61 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oti/schemas/_common.json",
-  "title": "OTI — Shared Definitions",
-  "description": "Reusable JSON Schema definitions shared across NYC Office of Technology & Innovation (OTI) object schemas. OTI is the citywide platform operator — it runs NYC Open Data (data.cityofnewyork.us / Socrata), the api.nyc.gov gateway (Azure API Management; GeoClient/GeoSearch), NYC.gov, 311 data, LinkNYC, and the municipal broadband program. These defs reconcile the NYC geography spine carried across virtually every OTI-operated dataset.",
+  "title": "OTI \u2014 Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Office of Technology & Innovation (OTI) object schemas. OTI is the citywide platform operator \u2014 it runs NYC Open Data (data.cityofnewyork.us / Socrata), the api.nyc.gov gateway (Azure API Management; GeoClient/GeoSearch), NYC.gov, 311 data, LinkNYC, and the municipal broadband program. These defs reconcile the NYC geography spine carried across virtually every OTI-operated dataset.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point (Open Data LATITUDE / LONGITUDE).",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "Geography": {
-      "type": "object",
-      "description": "The NYC geography spine shared across OTI-operated datasets — the join keys back to the rest of city government.",
-      "properties": {
-        "borough": { "$ref": "#/$defs/Borough" },
-        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board ('Community Board' / 'COMMUNITY DISTRICT')." },
-        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district ('Council District' / 'CITY COUNCIL DISTRICT')." },
-        "censusTract": { "type": ["string", "null"], "description": "Census tract ('Census Tract (CT)' / 'CENSUS TRACT')." },
-        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code ('Neighborhood Tabulation Area (NTA)' / 'NTA')." },
-        "policePrecinct": { "type": ["string", "integer", "null"], "description": "NYPD precinct ('Police Precincts' / 'Police Precinct')." },
-        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL' / 'Borough-Block-Lot (BBL)')." },
-        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN' / 'Building Identification Number (BIN)')." },
-        "zipCode": { "type": ["string", "null"], "description": "'Postcode' / 'Zip Code' / 'Incident Zip'." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Geography still resolve."
     },
     "Agency": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Owning/publishing city agency ('Agency' / 'Dataset Information: Agency' / 'responsible_agency'). OTI operates the platform on which every agency publishes."
     },
     "DatasetReference": {
       "type": "object",
       "description": "A reference to a NYC Open Data asset by its Socrata four-by-four UID.",
       "properties": {
-        "uid": { "type": "string", "description": "Socrata dataset UID / four-by-four (e.g. 'erm2-nwe9')." },
-        "name": { "type": ["string", "null"], "description": "Dataset name." },
-        "url": { "type": ["string", "null"], "format": "uri", "description": "Permalink on data.cityofnewyork.us." }
+        "uid": {
+          "type": "string",
+          "description": "Socrata dataset UID / four-by-four (e.g. 'erm2-nwe9')."
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Dataset name."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri",
+          "description": "Permalink on data.cityofnewyork.us."
+        }
       },
-      "required": ["uid"],
+      "required": [
+        "uid"
+      ],
       "additionalProperties": false
     }
   }

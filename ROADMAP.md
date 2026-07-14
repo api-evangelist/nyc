@@ -11,9 +11,9 @@ The synthesis's clearest structural finding: writing one `_common.json` per doma
 - `nyc-commons/geography.json` — `Borough`, `BoroCode`, `Coordinates`, `CommunityDistrict`, `CouncilDistrict`, `CensusTract`, `NTA`, `AdminBoundaries`, `GeographySpine`. ✅
 - `nyc-commons/identifiers.json` — `BBL`, `BIN`, `GISPropNum`, `DBN`, `BoroBlockLot`, `CrossAgencyKey`. ✅
 - `nyc-commons/place.json`, `nyc-commons/address.json`, `nyc-commons/party.json`, `nyc-commons/money.json` — the join objects + recurring party/money shapes. ✅
-- Reference implementation: **dob, dof, hpd, nyc311** migrated to `$ref` the canonical set, back-compatible (unchanged `$defs` names). ✅
+- **All 66 consumer domains migrated** to `$ref` the canonical set (every domain except DCP, the source), back-compatible — unchanged `$defs` names, so every object schema still resolves. Each keeps its agency-specific definitions local. ✅
 
-**Next:** migrate the remaining ~62 domains' `_common.json` to `$ref` `nyc-commons` (the [adoption report](https://nyc.apievangelist.com/commons.html) tracks progress), and publish the `$id` base at a stable host.
+**Next:** publish the `$id` base at a stable host (versioned), and add the party/contact/organization shapes to the shared set as their per-domain variants converge.
 
 ### 🟢 Cross-domain identity — `Address` / `Place` / `Person` — **shipped with nyc-commons**
 Synthesis finding: every domain has its own join key (`gisPropNum`, `DBN`, `matterId`, election-district) and nothing links them. **Shipped** as [`nyc-commons/place.json`](nyc-commons/place.json) (`Place`, keyed on BBL/BIN + coordinates + the geography spine, carrying a list of other agencies' `CrossAgencyKey`s), [`address.json`](nyc-commons/address.json) (`Address`), and [`party.json`](nyc-commons/party.json) (`PersonName`/`PartyReference`) so cross-domain questions — "what's near me?", "who represents this block?" — become answerable.

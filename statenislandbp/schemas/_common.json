@@ -1,48 +1,50 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandbp/schemas/_common.json",
-  "title": "Staten Island Borough President — Shared Definitions",
-  "description": "Reusable JSON Schema definitions shared across Office of the Staten Island Borough President (BPSI) object schemas. There is almost no machine-readable source for this office — the public surface is a Weebly brochure site (statenislandusa.com) with two trivial NYC Open Data assets — so these definitions model the borough president's CHARTER functions (land use / ULURP review, community board appointments, discretionary budget, borough board resolutions) rather than reconcile existing columns. Includes the NYC geography spine and Staten Island's community-district keys.",
+  "title": "Staten Island Borough President \u2014 Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across Office of the Staten Island Borough President (BPSI) object schemas. There is almost no machine-readable source for this office \u2014 the public surface is a Weebly brochure site (statenislandusa.com) with two trivial NYC Open Data assets \u2014 so these definitions model the borough president's CHARTER functions (land use / ULURP review, community board appointments, discretionary budget, borough board resolutions) rather than reconcile existing columns. Includes the NYC geography spine and Staten Island's community-district keys.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "description": "NYC borough. This office is Staten Island only; the enum is kept citywide so the schema can be reused by the other four near-identical borough-president offices.",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point (latitude / longitude).",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "Geography": {
-      "type": "object",
-      "description": "The NYC geography spine — the join keys back to the rest of city government.",
-      "properties": {
-        "borough": { "$ref": "#/$defs/Borough" },
-        "communityBoard": { "$ref": "#/$defs/CommunityBoardRef" },
-        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district (Staten Island is 49, 50, 51)." },
-        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract." },
-        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code." },
-        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot." },
-        "bin": { "type": ["string", "null"], "description": "Building Identification Number." },
-        "stateAssemblyDistrict": { "type": ["string", "integer", "null"] },
-        "stateSenateDistrict": { "type": ["string", "integer", "null"] },
-        "usCongressionalDistrict": { "type": ["string", "integer", "null"] }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Geography still resolve."
     },
     "CommunityBoardRef": {
       "type": "object",
       "description": "A Staten Island community district / community board. The borough has three: CB1 (North Shore), CB2 (Mid-Island), CB3 (South Shore).",
       "properties": {
-        "borough": { "$ref": "#/$defs/Borough" },
-        "boardNumber": { "type": ["integer", "null"], "minimum": 1, "maximum": 3, "description": "Staten Island community board number (1-3)." },
-        "name": { "type": ["string", "null"], "description": "Common name, e.g. 'North Shore', 'Mid-Island', 'South Shore'." }
+        "borough": {
+          "$ref": "#/$defs/Borough"
+        },
+        "boardNumber": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 3,
+          "description": "Staten Island community board number (1-3)."
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Common name, e.g. 'North Shore', 'Mid-Island', 'South Shore'."
+        }
       },
       "additionalProperties": false
     },
@@ -50,16 +52,45 @@
       "type": "object",
       "description": "Contact details for a person, office, or applicant.",
       "properties": {
-        "name": { "type": ["string", "null"] },
-        "title": { "type": ["string", "null"] },
-        "phone": { "type": ["string", "null"] },
-        "email": { "type": ["string", "null"], "format": "email" },
-        "address": { "type": ["string", "null"] }
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "email"
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       },
       "additionalProperties": false
     },
     "OfficeUnit": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Internal unit of the Borough President's office handling the item.",
       "enum": [
         "Office of Land Use, Planning & Infrastructure",

@@ -1,55 +1,84 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/schemas/_common.json",
-  "title": "NYC Elections — Shared Definitions",
+  "title": "NYC Elections \u2014 Shared Definitions",
   "description": "Reusable JSON Schema definitions shared across NYC Board of Elections object schemas. Reconciles fields from the Voting/Poll Sites Open Data dataset and defines the machine-readable shapes that do not yet exist for results/candidates/contests.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "AdminBoundaries": {
-      "type": "object",
-      "description": "Administrative/political boundaries (present in the Voting/Poll Sites dataset).",
-      "properties": {
-        "councilDistrict": { "type": ["integer", "null"] },
-        "communityBoard": { "type": ["integer", "null"] },
-        "censusTract": { "type": ["integer", "string", "null"] },
-        "policePrecinct": { "type": ["integer", "null"] },
-        "nta": { "type": ["string", "null"] },
-        "bin": { "type": ["integer", "null"] },
-        "bbl": { "type": ["integer", "string", "null"] }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/AdminBoundaries",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/AdminBoundaries); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/AdminBoundaries still resolve."
     },
     "ElectionReference": {
       "type": "object",
       "description": "A reference to an Election by date + type.",
       "properties": {
-        "date": { "type": "string", "format": "date" },
-        "type": { "type": "string", "enum": ["Primary", "General", "Special", "Runoff"] }
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Primary",
+            "General",
+            "Special",
+            "Runoff"
+          ]
+        }
       },
-      "required": ["date"],
+      "required": [
+        "date"
+      ],
       "additionalProperties": false
     },
     "OfficeDistrict": {
       "type": "object",
       "description": "An elective office and the district it represents.",
       "properties": {
-        "office": { "type": "string", "description": "e.g. 'City Council Member', 'State Senator', 'Mayor'." },
-        "districtType": { "type": ["string", "null"], "enum": ["Council", "Assembly", "Senate", "Congressional", "Citywide", "Borough", "Judicial", null] },
-        "districtNumber": { "type": ["integer", "null"] }
+        "office": {
+          "type": "string",
+          "description": "e.g. 'City Council Member', 'State Senator', 'Mayor'."
+        },
+        "districtType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "Council",
+            "Assembly",
+            "Senate",
+            "Congressional",
+            "Citywide",
+            "Borough",
+            "Judicial",
+            null
+          ]
+        },
+        "districtNumber": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
       },
-      "required": ["office"],
+      "required": [
+        "office"
+      ],
       "additionalProperties": false
     }
   }

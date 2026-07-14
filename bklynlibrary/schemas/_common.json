@@ -1,80 +1,102 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bklynlibrary/schemas/_common.json",
-  "title": "Brooklyn Public Library — Shared Definitions",
-  "description": "Reusable JSON Schema definitions shared across Brooklyn Public Library (BPL) object schemas. Reconciles fields observed on BPL's public Drupal JSON:API (www.bklynlibrary.org/jsonapi — node--branch, node--event, node--book_profile, node--eres, node--digital_asset), the BiblioCommons catalog (bklynlibrary.bibliocommons.com), and BPL's two NYC Open Data assets. BPL is an independent nonprofit serving the borough of Brooklyn; its own numbering key is the Branch ID (field_branchid).",
+  "title": "Brooklyn Public Library \u2014 Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across Brooklyn Public Library (BPL) object schemas. Reconciles fields observed on BPL's public Drupal JSON:API (www.bklynlibrary.org/jsonapi \u2014 node--branch, node--event, node--book_profile, node--eres, node--digital_asset), the BiblioCommons catalog (bklynlibrary.bibliocommons.com), and BPL's two NYC Open Data assets. BPL is an independent nonprofit serving the borough of Brooklyn; its own numbering key is the Branch ID (field_branchid).",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "description": "NYC borough. BPL serves Brooklyn, but the enum keeps the citywide set so the model joins to the rest of city government and to the sibling systems (NYPL = Manhattan/Bronx/Staten Island, Queens Public Library = Queens).",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point (Drupal geofield field_position lat/lon).",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "Address": {
-      "type": "object",
-      "description": "Postal address, following the Drupal address field structure seen on node--branch (field_address).",
-      "properties": {
-        "addressLine1": { "type": ["string", "null"], "description": "'address_line1'." },
-        "addressLine2": { "type": ["string", "null"], "description": "'address_line2'." },
-        "locality": { "type": ["string", "null"], "description": "City ('locality') — typically Brooklyn." },
-        "administrativeArea": { "type": ["string", "null"], "description": "State ('administrative_area') — 'NY'." },
-        "postalCode": { "type": ["string", "null"], "description": "ZIP ('postal_code')." },
-        "countryCode": { "type": ["string", "null"], "default": "US", "description": "'country_code'." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/address.json#/$defs/Address",
+      "$comment": "Canonical definition provided by nyc-commons (address.json#/$defs/Address); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Address still resolve."
     },
     "DayHours": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "Open/close for a single day. BPL stores each day as seconds-from-midnight (field_hours_monday { from, to }).",
       "properties": {
-        "from": { "type": ["integer", "null"], "description": "Opening time in seconds from midnight (e.g. 32400 = 09:00)." },
-        "to": { "type": ["integer", "null"], "description": "Closing time in seconds from midnight (e.g. 72000 = 20:00)." }
+        "from": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Opening time in seconds from midnight (e.g. 32400 = 09:00)."
+        },
+        "to": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Closing time in seconds from midnight (e.g. 72000 = 20:00)."
+        }
       },
       "additionalProperties": false
     },
     "WeeklyHours": {
       "type": "object",
-      "description": "A branch's weekly service hours, one DayHours per day (Drupal field_hours_monday … field_hours_sunday).",
+      "description": "A branch's weekly service hours, one DayHours per day (Drupal field_hours_monday \u2026 field_hours_sunday).",
       "properties": {
-        "monday": { "$ref": "#/$defs/DayHours" },
-        "tuesday": { "$ref": "#/$defs/DayHours" },
-        "wednesday": { "$ref": "#/$defs/DayHours" },
-        "thursday": { "$ref": "#/$defs/DayHours" },
-        "friday": { "$ref": "#/$defs/DayHours" },
-        "saturday": { "$ref": "#/$defs/DayHours" },
-        "sunday": { "$ref": "#/$defs/DayHours" }
+        "monday": {
+          "$ref": "#/$defs/DayHours"
+        },
+        "tuesday": {
+          "$ref": "#/$defs/DayHours"
+        },
+        "wednesday": {
+          "$ref": "#/$defs/DayHours"
+        },
+        "thursday": {
+          "$ref": "#/$defs/DayHours"
+        },
+        "friday": {
+          "$ref": "#/$defs/DayHours"
+        },
+        "saturday": {
+          "$ref": "#/$defs/DayHours"
+        },
+        "sunday": {
+          "$ref": "#/$defs/DayHours"
+        }
       },
       "additionalProperties": false
     },
     "Geography": {
-      "type": "object",
-      "description": "NYC geography spine — the join keys back to the rest of city government.",
-      "properties": {
-        "borough": { "$ref": "#/$defs/Borough" },
-        "neighborhood": { "type": ["string", "null"], "description": "Neighborhood the branch serves (branch body/nickname)." },
-        "communityDistrict": { "type": ["string", "integer", "null"], "description": "Community District / Board." },
-        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district." },
-        "region": { "type": ["string", "integer", "null"], "description": "BPL internal service region ('field_region')." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Geography still resolve."
     },
     "BranchReference": {
       "type": "object",
       "description": "A reference to a BPL branch by its numbering key.",
       "properties": {
-        "branchId": { "type": ["string", "null"], "description": "BPL Branch ID ('field_branchid', e.g. '01' = Central Library) — BPL's primary branch key." },
-        "name": { "type": "string", "description": "Branch name ('title')." }
+        "branchId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "BPL Branch ID ('field_branchid', e.g. '01' = Central Library) \u2014 BPL's primary branch key."
+        },
+        "name": {
+          "type": "string",
+          "description": "Branch name ('title')."
+        }
       },
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "additionalProperties": false
     }
   }

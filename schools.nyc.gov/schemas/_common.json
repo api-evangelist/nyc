@@ -1,58 +1,69 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/schools.nyc.gov/schemas/_common.json",
-  "title": "NYC Public Schools — Shared Definitions",
+  "title": "NYC Public Schools \u2014 Shared Definitions",
   "description": "Reusable JSON Schema definitions shared across NYCPS/DOE object schemas. Reconciles fields common to schools.nyc.gov and the DOE NYC Open Data datasets. DBN (District-Borough-Number) is the primary join key across all DOE data.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "DBN": {
-      "type": "string",
-      "description": "District-Borough-Number — the canonical NYC school identifier: 2-digit district + 1-letter borough (M/X/K/Q/R) + 3-digit number.",
-      "pattern": "^[0-9]{2}[MXKQR][0-9]{3}$",
-      "examples": ["15K261", "02M260"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/identifiers.json#/$defs/DBN",
+      "$comment": "Canonical definition provided by nyc-commons (identifiers.json#/$defs/DBN); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/DBN still resolve."
     },
     "Borough": {
-      "type": "string",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "BoroughCode": {
-      "type": "string",
-      "description": "Single-letter borough code used within a DBN.",
-      "enum": ["M", "X", "K", "Q", "R"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/BoroCode",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/BoroCode); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/BoroughCode still resolve."
     },
     "GradeLevel": {
       "type": "string",
-      "enum": ["3K", "PK", "K", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+      "enum": [
+        "3K",
+        "PK",
+        "K",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ]
     },
     "Coordinates": {
-      "type": "object",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "AdminBoundaries": {
-      "type": "object",
-      "description": "Administrative/political boundaries a school falls within (present across DOE Open Data location datasets).",
-      "properties": {
-        "communityBoard": { "type": ["integer", "null"] },
-        "councilDistrict": { "type": ["integer", "null"] },
-        "censusTract": { "type": ["integer", "string", "null"] },
-        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area." },
-        "bin": { "type": ["integer", "null"], "description": "Building Identification Number." },
-        "bbl": { "type": ["integer", "string", "null"], "description": "Borough-Block-Lot." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/AdminBoundaries",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/AdminBoundaries); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/AdminBoundaries still resolve."
     },
     "SchoolReference": {
       "type": "object",
       "description": "A reference to a School by DBN.",
       "properties": {
-        "dbn": { "$ref": "#/$defs/DBN" },
-        "name": { "type": "string" }
+        "dbn": {
+          "$ref": "#/$defs/DBN"
+        },
+        "name": {
+          "type": "string"
+        }
       },
-      "required": ["dbn"],
+      "required": [
+        "dbn"
+      ],
       "additionalProperties": false
     }
   }

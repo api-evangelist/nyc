@@ -22,12 +22,13 @@
     },
     "Coordinates": {
       "type": "object",
-      "description": "A WGS84 point. Open Data delivers these as text (gis_latitude/longitude) or number (latitude/longitude) depending on the extract.",
+      "description": "A WGS84 point. Open Data delivers these as text (gis_latitude/longitude) or number (latitude/longitude) depending on the extract. Some agencies (e.g. NYPD) also carry the NY State Plane projection (xCoordinate/yCoordinate).",
       "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+        "latitude": { "type": ["number", "null"], "minimum": -90, "maximum": 90 },
+        "longitude": { "type": ["number", "null"], "minimum": -180, "maximum": 180 },
+        "xCoordinate": { "type": ["number", "string", "null"], "description": "NY State Plane (Long Island zone) X, where an agency carries it instead of / alongside WGS84." },
+        "yCoordinate": { "type": ["number", "string", "null"], "description": "NY State Plane (Long Island zone) Y." }
       },
-      "required": ["latitude", "longitude"],
       "additionalProperties": false
     },
     "CommunityDistrict": {
@@ -68,36 +69,43 @@
     },
     "AdminBoundaries": {
       "type": "object",
-      "description": "The administrative-district overlays that a NYC location falls within, beyond the core land-use geography — the service districts agencies use to route work. Any subset may be present.",
+      "description": "The administrative-district overlays that a NYC location falls within, beyond the core land-use geography — the service districts agencies use to route work. Any subset may be present; open (agencies carry additional overlays such as taxi/sanitation micro-districts).",
       "properties": {
-        "schoolDistrict": { "type": ["integer", "null"], "description": "Community school district (DOE)." },
-        "policePrecinct": { "type": ["integer", "null"], "description": "NYPD precinct." },
+        "communityBoard": { "type": ["integer", "string", "null"], "description": "Community district / community board number." },
+        "councilDistrict": { "$ref": "#/$defs/CouncilDistrict" },
+        "schoolDistrict": { "type": ["integer", "string", "null"], "description": "Community school district (DOE)." },
+        "policePrecinct": { "type": ["integer", "string", "null"], "description": "NYPD precinct." },
         "fireCompany": { "type": ["string", "null"], "description": "FDNY fire company / battalion." },
         "sanitationDistrict": { "type": ["string", "null"], "description": "DSNY sanitation district." },
-        "healthCenterDistrict": { "type": ["integer", "null"], "description": "DOHMH health center district." },
+        "healthCenterDistrict": { "type": ["integer", "string", "null"], "description": "DOHMH health center district." },
         "electionDistrict": { "type": ["string", "null"], "description": "Board of Elections election district (ED/AD)." },
-        "congressionalDistrict": { "type": ["integer", "null"] },
-        "stateSenateDistrict": { "type": ["integer", "null"] },
-        "stateAssemblyDistrict": { "type": ["integer", "null"] }
+        "congressionalDistrict": { "type": ["integer", "string", "null"] },
+        "stateSenateDistrict": { "type": ["integer", "string", "null"] },
+        "stateAssemblyDistrict": { "type": ["integer", "string", "null"] }
       },
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "GeographySpine": {
       "type": "object",
-      "description": "THE shared location block of NYC government — the recurring key set that stitches records across agencies. DCP attaches it to a place; Buildings, Finance, Housing, Planning, Parks, DOE, and 311 all implicitly carry it. Make this the base every domain `$ref`s. All fields optional so a record can carry whatever geography it knows.",
+      "description": "THE shared location block of NYC government — the recurring key set that stitches records across agencies. DCP attaches it to a place; Buildings, Finance, Housing, Planning, Parks, DOE, and 311 all implicitly carry it. Make this the base every domain `$ref`s. All fields optional (a record carries whatever geography it knows); open (`additionalProperties`) so an agency's extra overlays — taxiZone, evacuationZone, sanitation micro-district — are never rejected.",
       "properties": {
         "bbl": { "$ref": "identifiers.json#/$defs/BBL" },
         "bin": { "$ref": "identifiers.json#/$defs/BIN" },
         "borough": { "$ref": "#/$defs/Borough" },
         "borocode": { "$ref": "#/$defs/BoroCode" },
         "communityBoard": { "type": ["integer", "string", "null"], "description": "Community district / community board number (PLUTO `community board`)." },
+        "communityDistrict": { "type": ["integer", "string", "null"], "description": "Alias some agencies use for the community district / board." },
         "councilDistrict": { "$ref": "#/$defs/CouncilDistrict" },
-        "censusTract2020": { "type": ["string", "null"] },
-        "nta2020": { "type": ["string", "null"] },
+        "censusTract": { "type": ["string", "null"], "description": "US Census tract (2020 vintage), e.g. '000100'." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area code (2020 vintage), e.g. 'MN0101'." },
+        "neighborhood": { "type": ["string", "null"], "description": "Neighborhood name where an agency carries a text label rather than an NTA code." },
+        "zip": { "type": ["string", "null"], "description": "ZIP / postal code of the location." },
+        "schoolDistrict": { "type": ["integer", "string", "null"] },
+        "policePrecinct": { "type": ["integer", "string", "null"] },
         "coordinates": { "$ref": "#/$defs/Coordinates" },
         "adminBoundaries": { "$ref": "#/$defs/AdminBoundaries" }
       },
-      "additionalProperties": false
+      "additionalProperties": true
     }
   }
 }

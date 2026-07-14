@@ -1,52 +1,68 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cfb/schemas/_common.json",
-  "title": "CFB — Shared Definitions",
+  "title": "CFB \u2014 Shared Definitions",
   "description": "Reusable JSON Schema definitions shared across NYC Campaign Finance Board (CFB) object schemas. Reconciles fields common to the CFB Open Data datasets (data.cityofnewyork.us, agency 'Campaign Finance Board (CFB)'), the Follow the Money search API (nyccfb.info/FTMSearchWebAPI), the bulk Data Library CSVs, and the C-SMART disclosure application. Includes the money spine, the election/office spine, the NYC borough spine, and postal address.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": ["string", "null"],
-      "description": "Borough name. CFB raw data uses numeric BOROUGHCD / OFFICEBORO codes (1 Manhattan, 2 Bronx, 3 Brooklyn, 4 Queens, 5 Staten Island); normalized to name here.",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", null]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Money": {
-      "type": ["number", "null"],
-      "description": "A monetary amount in US dollars (CFB 'AMNT', 'MATCHAMNT', 'PRIMARYPAY', 'TOTALPAY', etc.). CFB reports campaign finance figures in USD."
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/money.json#/$defs/MoneyUSD",
+      "$comment": "Canonical definition provided by nyc-commons (money.json#/$defs/MoneyUSD); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Money still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point. CFB address data is text-only (no lat/long is published); provided for spine consistency and optional geocoding.",
-      "properties": {
-        "latitude": { "type": ["number", "null"], "minimum": -90, "maximum": 90 },
-        "longitude": { "type": ["number", "null"], "minimum": -180, "maximum": 180 }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "Address": {
-      "type": "object",
-      "description": "A postal address as carried by CFB contribution/expenditure/intermediary records (STRNO, STRNAME, APARTMENT, CITY, STATE, ZIP).",
-      "properties": {
-        "streetNumber": { "type": ["string", "null"], "description": "'STRNO'." },
-        "streetName": { "type": ["string", "null"], "description": "'STRNAME'." },
-        "apartment": { "type": ["string", "null"], "description": "'APARTMENT'." },
-        "city": { "type": ["string", "null"], "description": "'CITY'." },
-        "state": { "type": ["string", "null"], "description": "'STATE'." },
-        "zip": { "type": ["string", "null"], "description": "'ZIP'." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/address.json#/$defs/Address",
+      "$comment": "Canonical definition provided by nyc-commons (address.json#/$defs/Address); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Address still resolve."
     },
     "ElectionCycle": {
-      "type": ["string", "integer", "null"],
+      "type": [
+        "string",
+        "integer",
+        "null"
+      ],
       "description": "Election cycle year ('ELECTION' / 'el_cycle'), e.g. 2021, 2025, 2029. CFB organizes all filings by four-year citywide cycle plus off-year/special elections."
     },
     "Office": {
       "type": "object",
-      "description": "The elected office sought — reconciles CFB 'OFFICECD', 'OFFICEDIST'/'boro_dist', 'OFFICEBORO'.",
+      "description": "The elected office sought \u2014 reconciles CFB 'OFFICECD', 'OFFICEDIST'/'boro_dist', 'OFFICEBORO'.",
       "properties": {
-        "code": { "type": ["string", "null"], "description": "Office code ('OFFICECD') — Mayor, Public Advocate, Comptroller, Borough President, City Council." },
-        "title": { "type": ["string", "null"], "description": "Human-readable office title." },
-        "district": { "type": ["string", "integer", "null"], "description": "District number for City Council seats ('OFFICEDIST' / 'boro_dist')." },
-        "borough": { "$ref": "#/$defs/Borough" }
+        "code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Office code ('OFFICECD') \u2014 Mayor, Public Advocate, Comptroller, Borough President, City Council."
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Human-readable office title."
+        },
+        "district": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "description": "District number for City Council seats ('OFFICEDIST' / 'boro_dist')."
+        },
+        "borough": {
+          "$ref": "#/$defs/Borough"
+        }
       },
       "additionalProperties": false
     },
@@ -54,9 +70,27 @@
       "type": "object",
       "description": "A reference to a candidate by CFB identifiers.",
       "properties": {
-        "candidateId": { "type": ["string", "null"], "description": "CFB candidate id ('CANDID' / 'RECIPID' / 'cand_id')." },
-        "name": { "type": ["string", "null"], "description": "Candidate name ('CANDNAME' / 'cand_name', or CANDFIRST/CANDMI/CANDLAST joined)." },
-        "class": { "type": ["string", "null"], "description": "Candidate class ('CANCLASS' / 'cand_class_cd') — participating / non-participating / limited participation." }
+        "candidateId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "CFB candidate id ('CANDID' / 'RECIPID' / 'cand_id')."
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Candidate name ('CANDNAME' / 'cand_name', or CANDFIRST/CANDMI/CANDLAST joined)."
+        },
+        "class": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Candidate class ('CANCLASS' / 'cand_class_cd') \u2014 participating / non-participating / limited participation."
+        }
       },
       "additionalProperties": false
     },
@@ -64,8 +98,20 @@
       "type": "object",
       "description": "A reference to an authorized campaign committee (the filer).",
       "properties": {
-        "committee": { "type": ["string", "null"], "description": "Committee name ('COMMITTEE')." },
-        "filerId": { "type": ["string", "null"], "description": "Filer / committee id ('RECIPID')." }
+        "committee": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Committee name ('COMMITTEE')."
+        },
+        "filerId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filer / committee id ('RECIPID')."
+        }
       },
       "additionalProperties": false
     }

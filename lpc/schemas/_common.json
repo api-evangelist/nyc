@@ -1,67 +1,123 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/lpc/schemas/_common.json",
-  "title": "LPC — Shared Definitions",
+  "title": "LPC \u2014 Shared Definitions",
   "description": "Reusable JSON Schema definitions shared across NYC Landmarks Preservation Commission (LPC) object schemas. Reconciles fields common to the LPC Open Data datasets (data.cityofnewyork.us), nyc.gov/site/lpc, the Discover NYC Landmarks map (Esri ArcGIS Online), and the Portico permit portal (Salesforce Experience Cloud). Includes the NYC geography spine and LPC's own designation key (LP number / LP_NUMBER).",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point (Open Data LATITUDE / LONGITUDE, or the Portico xCoordinate/yCoordinate reprojected).",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "TaxLot": {
       "type": "object",
-      "description": "NYC Borough-Block-Lot identity carried by nearly every LPC dataset — the join key back to PLUTO and the rest of city government.",
+      "description": "NYC Borough-Block-Lot identity carried by nearly every LPC dataset \u2014 the join key back to PLUTO and the rest of city government.",
       "properties": {
-        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL')." },
-        "block": { "type": ["string", "integer", "null"], "description": "Tax block ('BLOCK' / 'Block')." },
-        "lot": { "type": ["string", "integer", "null"], "description": "Tax lot ('LOT' / 'Lot')." },
-        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." }
+        "bbl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Borough-Block-Lot ('BBL')."
+        },
+        "block": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "description": "Tax block ('BLOCK' / 'Block')."
+        },
+        "lot": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "description": "Tax lot ('LOT' / 'Lot')."
+        },
+        "bin": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Building Identification Number ('BIN')."
+        }
       },
       "additionalProperties": false
     },
     "Geography": {
-      "type": "object",
-      "description": "The NYC geography spine shared across LPC datasets.",
-      "properties": {
-        "borough": { "$ref": "#/$defs/Borough" },
-        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board ('Community Board' / 'CommunityBoard' / 'CD')." },
-        "councilDistrict": { "type": ["integer", "string", "null"], "description": "NYC Council district ('Council' / 'Council District')." },
-        "censusTract": { "type": ["string", "null"], "description": "Census tract ('Census Tract' / 'BCT2020')." },
-        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code ('NTA' / 'NTA2020')." },
-        "policePrecinct": { "type": ["string", "integer", "null"], "description": "Police precinct ('Police Precincts')." },
-        "postcode": { "type": ["string", "null"], "description": "ZIP / 'Postcode'." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Geography still resolve."
     },
     "LandmarkReference": {
       "type": "object",
-      "description": "A reference to an LPC designation by its LP number — the Commission's primary designation key.",
+      "description": "A reference to an LPC designation by its LP number \u2014 the Commission's primary designation key.",
       "properties": {
-        "lpNumber": { "type": ["string", "null"], "description": "LPC designation number ('LP_NUMBER' / 'LPC#' / 'docket') — LPC's primary designation key." },
-        "landmarkName": { "type": ["string", "null"], "description": "Designation / landmark name ('LM_NAME' / 'Landmark Name' / 'LMNameType')." },
-        "historicDistrict": { "type": ["string", "null"], "description": "Historic district this record sits within ('HIST_DISTRICT'), if any." }
+        "lpNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "LPC designation number ('LP_NUMBER' / 'LPC#' / 'docket') \u2014 LPC's primary designation key."
+        },
+        "landmarkName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Designation / landmark name ('LM_NAME' / 'Landmark Name' / 'LMNameType')."
+        },
+        "historicDistrict": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Historic district this record sits within ('HIST_DISTRICT'), if any."
+        }
       },
       "additionalProperties": false
     },
     "LandmarkType": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "LPC designation category ('LM_TYPE' / 'LANDM_TYPE').",
-      "enum": ["Individual Landmark", "Interior Landmark", "Scenic Landmark", "Historic District", "Historic District Extension", null]
+      "enum": [
+        "Individual Landmark",
+        "Interior Landmark",
+        "Scenic Landmark",
+        "Historic District",
+        "Historic District Extension",
+        null
+      ]
     },
     "SiteStatus": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Designation lifecycle status ('SITE_STATUS' / 'STATUS').",
-      "enum": ["Designated", "Calendared", "Not Designated", "Denied", "Withdrawn", "Removed/Rescinded", "Heard", null]
+      "enum": [
+        "Designated",
+        "Calendared",
+        "Not Designated",
+        "Denied",
+        "Withdrawn",
+        "Removed/Rescinded",
+        "Heard",
+        null
+      ]
     }
   }
 }

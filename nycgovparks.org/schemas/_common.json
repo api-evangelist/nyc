@@ -1,52 +1,53 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycgovparks.org/schemas/_common.json",
-  "title": "NYC Parks — Shared Definitions",
+  "title": "NYC Parks \u2014 Shared Definitions",
   "description": "Reusable JSON Schema definitions shared across NYC Parks object schemas. Reconciles fields common to the nycgovparks.org website and the DPR NYC Open Data datasets.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "description": "New York City borough.",
-      "enum": ["Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point location (EPSG:4326).",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "AdminBoundaries": {
-      "type": "object",
-      "description": "Administrative and political boundaries a feature falls within. Present, under varied column names, in most DPR Open Data datasets.",
-      "properties": {
-        "communityBoard": { "type": ["integer", "null"] },
-        "councilDistrict": { "type": ["integer", "string", "null"] },
-        "congressionalDistrict": { "type": ["integer", "null"] },
-        "stateAssemblyDistrict": { "type": ["integer", "null"] },
-        "stateSenateDistrict": { "type": ["integer", "null"] },
-        "policePrecinct": { "type": ["integer", "null"] },
-        "zipCode": { "type": ["string", "null"], "pattern": "^\\d{5}$" }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/AdminBoundaries",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/AdminBoundaries); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/AdminBoundaries still resolve."
     },
     "ParkReference": {
       "type": "object",
-      "description": "A reference to a Park by its GIS property number — the join key across DPR datasets (GISPROPNUM / OMPPROPID / gispropnum).",
+      "description": "A reference to a Park by its GIS property number \u2014 the join key across DPR datasets (GISPROPNUM / OMPPROPID / gispropnum).",
       "properties": {
-        "gisPropNum": { "type": "string", "description": "GIS property number, e.g. 'B073'." },
-        "name": { "type": "string" }
+        "gisPropNum": {
+          "type": "string",
+          "description": "GIS property number, e.g. 'B073'."
+        },
+        "name": {
+          "type": "string"
+        }
       },
-      "required": ["gisPropNum"],
+      "required": [
+        "gisPropNum"
+      ],
       "additionalProperties": false
     },
     "Accessibility": {
       "type": "string",
       "description": "ADA accessibility status as published on the facility directories.",
-      "enum": ["Accessible", "Partially Accessible", "Not Accessible", "Unknown"]
+      "enum": [
+        "Accessible",
+        "Partially Accessible",
+        "Not Accessible",
+        "Unknown"
+      ]
     }
   }
 }

@@ -1,45 +1,56 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandda/schemas/_common.json",
-  "title": "Staten Island DA — Shared Definitions",
-  "description": "Reusable JSON Schema definitions shared across Office of the District Attorney, Richmond County (Staten Island DA) object schemas. Reconciles fields common to the office's WordPress site (statenislandda.org) — press releases, programs, victim services, scam/safety resources, and the Contact Form 7 tip forms. There is NO NYC Open Data / Socrata presence for this agency, so these definitions are modeled from the public site, not from a dataset. Richmond County is coterminous with the Borough of Staten Island; the Borough enum is kept citywide for cross-domain consistency and future five-borough DA reuse.",
+  "title": "Staten Island DA \u2014 Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across Office of the District Attorney, Richmond County (Staten Island DA) object schemas. Reconciles fields common to the office's WordPress site (statenislandda.org) \u2014 press releases, programs, victim services, scam/safety resources, and the Contact Form 7 tip forms. There is NO NYC Open Data / Socrata presence for this agency, so these definitions are modeled from the public site, not from a dataset. Richmond County is coterminous with the Borough of Staten Island; the Borough enum is kept citywide for cross-domain consistency and future five-borough DA reuse.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"],
-      "description": "NYC borough. For the Richmond County DA this is effectively always 'Staten Island'; enum retained citywide so the model can be reused across all five borough DA offices."
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point (latitude / longitude) for an office, event, or resource location.",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "Geography": {
-      "type": "object",
-      "description": "The NYC geography spine — the join keys back to the rest of city government. Richmond County spans NYC Council districts 49-51 and Community Boards 1-3.",
-      "properties": {
-        "borough": { "$ref": "#/$defs/Borough" },
-        "neighborhood": { "type": ["string", "null"], "description": "Staten Island neighborhood (e.g. St. George, Stapleton, Tottenville)." },
-        "communityBoard": { "type": ["string", "integer", "null"], "description": "Staten Island Community Board (1-3)." },
-        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district (Staten Island = 49, 50, 51)." },
-        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract." },
-        "zipCode": { "type": ["string", "null"], "description": "ZIP code." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Geography still resolve."
     },
     "ContactInfo": {
       "type": "object",
       "description": "A point of contact (bureau, unit, or the person submitting a tip).",
       "properties": {
-        "name": { "type": ["string", "null"] },
-        "phone": { "type": ["string", "null"] },
-        "email": { "type": ["string", "null"], "format": "email" },
-        "address": { "type": ["string", "null"] }
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "email"
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       },
       "additionalProperties": false
     },
@@ -47,9 +58,29 @@
       "type": "object",
       "description": "Provenance back to the public statenislandda.org page a record was modeled from (there is no API or Open Data source today).",
       "properties": {
-        "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical page URL on statenislandda.org." },
-        "slug": { "type": ["string", "null"], "description": "WordPress page/post slug." },
-        "publishedDate": { "type": ["string", "null"], "format": "date", "description": "Publish date where available." }
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri",
+          "description": "Canonical page URL on statenislandda.org."
+        },
+        "slug": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "WordPress page/post slug."
+        },
+        "publishedDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date",
+          "description": "Publish date where available."
+        }
       },
       "additionalProperties": false
     }

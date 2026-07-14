@@ -1,49 +1,48 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ibo/schemas/_common.json",
-  "title": "IBO — Shared Definitions",
+  "title": "IBO \u2014 Shared Definitions",
   "description": "Reusable JSON Schema definitions shared across NYC Independent Budget Office (IBO) object schemas. Reconciles fields common to IBO's Open Data fiscal tables (data.cityofnewyork.us), the NYC.gov Content API v2 publication metadata (apps.nyc.gov/content-api/v2/custom-contents/ibo), and the IBO website (www.ibo.nyc.gov, formerly ibo.nyc.ny.us). Includes the fiscal-year spine, a Money type for dollars-in-millions figures, IBO's publication/topic controlled vocabularies, and the NYC geography spine.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", "Citywide"],
-      "description": "NYC borough, or 'Citywide' for aggregate figures (most IBO fiscal series are citywide)."
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point (used only by IBO's map-backed interactives, e.g. school/district maps on ibomap.maps.arcgis.com).",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "Money": {
-      "type": ["object", "null"],
-      "description": "A monetary figure. IBO fiscal tables are overwhelmingly reported in dollars-in-millions; capture the raw amount and its unit rather than assuming a scale.",
-      "properties": {
-        "amount": { "type": ["number", "null"], "description": "Numeric value as published." },
-        "unit": {
-          "type": "string",
-          "enum": ["dollars", "thousands", "millions", "billions"],
-          "default": "millions",
-          "description": "Scale of the amount. IBO's summary tables use 'millions'."
-        },
-        "currency": { "type": "string", "default": "USD" }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/money.json#/$defs/MoneyUSD",
+      "$comment": "Canonical definition provided by nyc-commons (money.json#/$defs/MoneyUSD); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Money still resolve."
     },
     "FiscalYear": {
-      "type": ["integer", "null"],
-      "minimum": 1929,
-      "maximum": 2100,
-      "description": "City fiscal year (ends June 30). IBO series run from FY 1980 (some tax-effort data to 1929) forward; column headers like 'FY 2020' normalize to 2020."
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/money.json#/$defs/FiscalYear",
+      "$comment": "Canonical definition provided by nyc-commons (money.json#/$defs/FiscalYear); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/FiscalYear still resolve."
     },
     "PublicationType": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "IBO publication type ('Publication Type' facet in the Content API). '[p.t.]' suffix stripped.",
-      "enum": ["Report", "Interactive", "Testimony", "Letter", "Press Release", "Budget Options", "Explainer", "Dataset", null]
+      "enum": [
+        "Report",
+        "Interactive",
+        "Testimony",
+        "Letter",
+        "Press Release",
+        "Budget Options",
+        "Explainer",
+        "Dataset",
+        null
+      ]
     },
     "Topic": {
       "type": "string",
@@ -64,28 +63,18 @@
       ]
     },
     "Geography": {
-      "type": "object",
-      "description": "NYC geography spine — the join keys back to the rest of city government. Sparsely populated for IBO's citywide fiscal series; used mainly by its school- and district-level analyses.",
-      "properties": {
-        "borough": { "$ref": "#/$defs/Borough" },
-        "communityDistrict": { "type": ["string", "integer", "null"], "description": "Community District / Board." },
-        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district." },
-        "schoolDistrict": { "type": ["string", "integer", "null"], "description": "NYC community school district (education analyses)." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Geography still resolve."
     },
     "AgencyReference": {
-      "type": "object",
-      "description": "A NYC agency referenced by an IBO fiscal series (e.g. Agency Expenditures, Full-Time Positions, COVID spending by agency).",
-      "properties": {
-        "agency": { "type": "string", "description": "Agency name as published by IBO." },
-        "agencyCode": { "type": ["string", "null"], "description": "Optional agency/unit-of-appropriation code." }
-      },
-      "required": ["agency"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/party.json#/$defs/AgencyReference",
+      "$comment": "Canonical definition provided by nyc-commons (party.json#/$defs/AgencyReference); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/AgencyReference still resolve."
     },
     "AgiRange": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Adjusted Gross Income band ('Income Group') used by IBO's distributional tax and income tables."
     }
   }

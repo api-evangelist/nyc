@@ -1,67 +1,135 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/taxcommission/schemas/_common.json",
-  "title": "NYC Tax Commission — Shared Definitions",
-  "description": "Reusable JSON Schema definitions shared across NYC Tax Commission object schemas. Reconciles fields common to the Tax Commission process on nyc.gov/site/taxcommission (the PDF application forms and the online filing system) and the two Open Data assets published under the Office of Administrative Tax Appeals (OATA): Assessment Actions (4nft-bihw) and Open Article 7 Petitions (aht6-vxai). Includes the NYC property spine — Borough / Borough Code, Block, Lot, BBL, and Tax Class.",
+  "title": "NYC Tax Commission \u2014 Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Tax Commission object schemas. Reconciles fields common to the Tax Commission process on nyc.gov/site/taxcommission (the PDF application forms and the online filing system) and the two Open Data assets published under the Office of Administrative Tax Appeals (OATA): Assessment Actions (4nft-bihw) and Open Article 7 Petitions (aht6-vxai). Includes the NYC property spine \u2014 Borough / Borough Code, Block, Lot, BBL, and Tax Class.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "BoroughCode": {
-      "type": ["integer", "null"],
-      "minimum": 1,
-      "maximum": 5,
-      "description": "NYC borough code as used across the Tax Commission datasets: 1=Manhattan, 2=Bronx, 3=Brooklyn, 4=Queens, 5=Staten Island ('Borough Code')."
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/BoroCode",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/BoroCode); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/BoroughCode still resolve."
     },
     "TaxClass": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Real-property tax class / subclass ('Tax Class Code'). Class 1 = 1-3 family homes; Class 2 = other residential (co-ops, condos, rentals); Class 3 = utility property; Class 4 = commercial/industrial.",
-      "enum": ["1", "1A", "1B", "1C", "1D", "2", "2A", "2B", "2C", "3", "4", null]
+      "enum": [
+        "1",
+        "1A",
+        "1B",
+        "1C",
+        "1D",
+        "2",
+        "2A",
+        "2B",
+        "2C",
+        "3",
+        "4",
+        null
+      ]
     },
     "Money": {
-      "type": "object",
-      "description": "A monetary amount — an assessed value, claimed value, granted reduction, or fee.",
-      "properties": {
-        "amount": { "type": ["number", "null"] },
-        "currency": { "type": "string", "default": "USD" }
-      },
-      "required": ["amount"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/money.json#/$defs/MoneyUSD",
+      "$comment": "Canonical definition provided by nyc-commons (money.json#/$defs/MoneyUSD); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Money still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 point (latitude / longitude), when a geocoded property location is available.",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "TaxLot": {
       "type": "object",
-      "description": "The NYC property spine — a Borough-Block-Lot (BBL) tax lot, the join key back to DOF's assessment roll and to the rest of city property data. This is the subject of every assessment appeal.",
+      "description": "The NYC property spine \u2014 a Borough-Block-Lot (BBL) tax lot, the join key back to DOF's assessment roll and to the rest of city property data. This is the subject of every assessment appeal.",
       "properties": {
-        "bbl": { "type": ["string", "null"], "description": "10-digit Borough-Block-Lot identifier (borough digit + 5-digit block + 4-digit lot)." },
-        "borough": { "$ref": "#/$defs/Borough" },
-        "boroughCode": { "$ref": "#/$defs/BoroughCode" },
-        "block": { "type": ["string", "integer", "null"], "description": "Tax block ('Block Number')." },
-        "lot": { "type": ["string", "integer", "null"], "description": "Tax lot ('Lot Number')." },
-        "condominiumHighLot": { "type": ["string", "integer", "null"], "description": "High lot number of a condominium's lot range ('Condominium High Lot Number')." },
-        "taxClass": { "$ref": "#/$defs/TaxClass" }
+        "bbl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "10-digit Borough-Block-Lot identifier (borough digit + 5-digit block + 4-digit lot)."
+        },
+        "borough": {
+          "$ref": "#/$defs/Borough"
+        },
+        "boroughCode": {
+          "$ref": "#/$defs/BoroughCode"
+        },
+        "block": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "description": "Tax block ('Block Number')."
+        },
+        "lot": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "description": "Tax lot ('Lot Number')."
+        },
+        "condominiumHighLot": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "description": "High lot number of a condominium's lot range ('Condominium High Lot Number')."
+        },
+        "taxClass": {
+          "$ref": "#/$defs/TaxClass"
+        }
       },
       "additionalProperties": false
     },
     "ClaimType": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "The ground on which the tentative assessment is challenged (drives which application form applies).",
-      "enum": ["Overvaluation", "Unequal Assessment", "Unlawful Assessment", "Misclassification", "Exemption", "Other", null]
+      "enum": [
+        "Overvaluation",
+        "Unequal Assessment",
+        "Unlawful Assessment",
+        "Misclassification",
+        "Exemption",
+        "Other",
+        null
+      ]
     },
     "ApplicationForm": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "The Tax Commission application/instruction form used, per nyc.gov/site/taxcommission/forms.",
-      "enum": ["TC101", "TC106", "TC108", "TC109", "TC200", "TC201", "TC203", "TC208", "TC214", "TC309", "TC600PE", null]
+      "enum": [
+        "TC101",
+        "TC106",
+        "TC108",
+        "TC109",
+        "TC200",
+        "TC201",
+        "TC203",
+        "TC208",
+        "TC214",
+        "TC309",
+        "TC600PE",
+        null
+      ]
     }
   }
 }

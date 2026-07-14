@@ -21,7 +21,8 @@
         "bin": { "$ref": "identifiers.json#/$defs/BIN" },
         "coordinates": { "$ref": "geography.json#/$defs/Coordinates" }
       },
-      "additionalProperties": false
+      "$comment": "Open (additionalProperties) — agencies decompose addresses many ways (line1/line2, street1/street2, oneLine, aptSuite, buildingNumber). The named properties are the canonical set; extras are permitted so a domain never loses a documented field by adopting this definition.",
+      "additionalProperties": true
     }
   }
 }

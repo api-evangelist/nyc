@@ -36,7 +36,9 @@ A domain's `_common.json` keeps its `#/$defs/Borough` name (so existing object s
 }
 ```
 
-This is **back-compatible**: the `$defs` names are unchanged, so no object schema breaks — the definition simply now comes from one canonical place. **DCP** is the authoritative source and is *not* redirected; the consumer anchor domains **dob, dof, hpd, nyc311** are migrated this way as the reference implementation; the [adoption report](../commons.html) tracks the rest.
+This is **back-compatible**: the `$defs` names are unchanged, so no object schema breaks — the definition simply now comes from one canonical place. **DCP** is the authoritative source and is *not* redirected; **all 66 consumer domains are migrated** (every domain except DCP). Each keeps its agency-specific definitions local and redirects only the shared geography / identifier / address / money / agency shapes. The [adoption report](../commons.html) shows the per-definition status.
+
+**Open by design.** The redirect-target objects (`GeographySpine`, `Address`, `AdminBoundaries`, `AgencyReference`) allow additional properties, so adopting a canonical definition never forces a domain to drop a documented field — agencies extend the shared shape with their own overlays (taxi zones, evacuation zones, State Plane coordinates). Tight value objects (`Coordinates`, identifiers) stay closed.
 
 ## Versioning
 

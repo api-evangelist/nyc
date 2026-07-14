@@ -1,58 +1,103 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/schemas/_common.json",
-  "title": "NYC DOT — Shared Definitions",
-  "description": "Reusable JSON Schema definitions shared across NYC Department of Transportation object schemas. Reconciles fields common to nyc.gov/dot, nycstreetdesign.info (Drupal), and the DOT NYC Open Data (Socrata) datasets — most importantly the LION street SegmentReference that DOT uses to key almost every street asset.",
+  "title": "NYC DOT \u2014 Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Department of Transportation object schemas. Reconciles fields common to nyc.gov/dot, nycstreetdesign.info (Drupal), and the DOT NYC Open Data (Socrata) datasets \u2014 most importantly the LION street SegmentReference that DOT uses to key almost every street asset.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
   "$defs": {
     "Borough": {
-      "type": "string",
-      "description": "NYC borough. Open Data variously stores this as a name (BoroName), a 1-char code (BoroCode: 1=Manhattan, 2=Bronx, 3=Brooklyn, 4=Queens, 5=Staten Island), or an abbreviation (Boro).",
-      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
     },
     "Coordinates": {
-      "type": "object",
-      "description": "WGS84 latitude/longitude. Many DOT datasets also carry POINT_X/POINT_Y or WktGeom in NY State Plane (EPSG:2263); those should be reprojected to WGS84 here.",
-      "properties": {
-        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
-        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
-      },
-      "required": ["latitude", "longitude"],
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
     },
     "Geography": {
-      "type": "object",
-      "description": "The NYC geographic spine — the administrative areas a street asset falls within. In Open Data these arrive as Socrata computed_region columns (Community Districts, City Council Districts, Police Precincts, NTA) and as native fields (BoroCD, CounDist, NTAname, BIN, BBL).",
-      "properties": {
-        "borough": { "$ref": "#/$defs/Borough" },
-        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board (Open Data BoroCD / borocd)." },
-        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district (Open Data CounDist)." },
-        "censusTract": { "type": ["string", "null"], "description": "US Census tract (2020)." },
-        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name (Open Data NTAname)." },
-        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot parcel identifier, when a location resolves to a tax lot." },
-        "bin": { "type": ["string", "null"], "description": "Building Identification Number, when a structure applies (e.g. a bridge BIN)." }
-      },
-      "additionalProperties": false
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Geography still resolve."
     },
     "SegmentReference": {
       "type": "object",
-      "description": "A reference to a LION street segment — the DOT join key. Open Data carries this as SegmentID / segmentid on nearly every street asset (bike routes, traffic counts, closures), plus the on/from/to street naming used to describe a blockface.",
+      "description": "A reference to a LION street segment \u2014 the DOT join key. Open Data carries this as SegmentID / segmentid on nearly every street asset (bike routes, traffic counts, closures), plus the on/from/to street naming used to describe a blockface.",
       "properties": {
-        "segmentId": { "type": ["string", "integer", "null"], "description": "LION SegmentID (Open Data SegmentID / segmentid) — the citywide street-centerline key." },
-        "onStreet": { "type": ["string", "null"], "description": "The street the asset is on (Open Data OnStreetName / on_street / street)." },
-        "fromStreet": { "type": ["string", "null"], "description": "Cross street the segment runs from (FromStreetName / from_street)." },
-        "toStreet": { "type": ["string", "null"], "description": "Cross street the segment runs to (ToStreetName / to_street)." },
-        "sideOfStreet": { "type": ["string", "null"], "enum": ["N", "S", "E", "W", "NE", "NW", "SE", "SW", null], "description": "Side of street (Open Data side_of_street) where relevant." }
+        "segmentId": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "description": "LION SegmentID (Open Data SegmentID / segmentid) \u2014 the citywide street-centerline key."
+        },
+        "onStreet": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The street the asset is on (Open Data OnStreetName / on_street / street)."
+        },
+        "fromStreet": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Cross street the segment runs from (FromStreetName / from_street)."
+        },
+        "toStreet": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Cross street the segment runs to (ToStreetName / to_street)."
+        },
+        "sideOfStreet": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "N",
+            "S",
+            "E",
+            "W",
+            "NE",
+            "NW",
+            "SE",
+            "SW",
+            null
+          ],
+          "description": "Side of street (Open Data side_of_street) where relevant."
+        }
       },
       "additionalProperties": false
     },
     "GeoJSONGeometry": {
       "type": "object",
-      "description": "A GeoJSON geometry. DOT street assets are overwhelmingly geospatial; Open Data stores them as the_geom (Point / MultiLineString / MultiPolygon) or WKT — normalized to GeoJSON here.",
+      "description": "A GeoJSON geometry. DOT street assets are overwhelmingly geospatial; Open Data stores them as the_geom (Point / MultiLineString / MultiPolygon) or WKT \u2014 normalized to GeoJSON here.",
       "properties": {
-        "type": { "type": "string", "enum": ["Point", "LineString", "MultiLineString", "Polygon", "MultiPolygon"] },
-        "coordinates": { "type": "array" }
+        "type": {
+          "type": "string",
+          "enum": [
+            "Point",
+            "LineString",
+            "MultiLineString",
+            "Polygon",
+            "MultiPolygon"
+          ]
+        },
+        "coordinates": {
+          "type": "array"
+        }
       },
-      "required": ["type", "coordinates"],
+      "required": [
+        "type",
+        "coordinates"
+      ],
       "additionalProperties": false
     }
   }
