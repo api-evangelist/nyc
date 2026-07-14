@@ -1,127 +1,219 @@
 {
-  "domain": "ddc",
-  "agency": "New York City Department of Design and Construction (DDC)",
-  "assessment_date": "2026-07-13",
-  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/ddc (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace + Akamai mPulse + AWS ALB) and read the 'Work With DDC' procurement page, which names the citywide systems DDC solicits through (PASSPort/MOCS, City Record, Checkbook NYC, DDC Anywhere). Verified the NYC Open Data agency label 'Department of Design and Construction (DDC)' via the Socrata Discovery API and pulled all 4 assets with column schemas.",
-  "related_domains": ["nyc.gov/site/mocs", "a856-cityrecord.nyc.gov", "checkbooknyc.com", "ddcanywhere.nyc", "data.cityofnewyork.us"],
-  "headline_findings": [
-    "DDC is a vendor-facing, business-to-government agency — the City's primary capital construction project manager (550+ active projects, $34B+ portfolio) that builds for other agencies. There is no citizen and no citizen transaction anywhere in the domain.",
-    "DDC exposes NO API of its own. Its only machine-readable data is 4 NYC Open Data datasets (Socrata SODA), three of them frozen '(Historical)' snapshots of active projects, plus a 4-column directory of awarded contracts.",
-    "Every transaction is outsourced to citywide systems DDC does not own: solicitations and vendor prequalification run in PASSPort (managed by MOCS), notices go to the City Record, and contract records live on Checkbook NYC (Comptroller). The one DDC-owned vendor portal (DDC Anywhere) has no API.",
-    "The richer live capital data (Capital Commitment Plan / Capital Project Detail Data) is published under OMB/Comptroller labels, not DDC — so even DDC's own portfolio is not fully DDC-published.",
-    "Net-new write surface: submit a vendor prequalification / expression of interest (VendorPrequalification) — a B2G transaction that today lives only inside citywide PASSPort. NOTE: there is no citizen write for this agency. See tech-stack.md and apis-observed.md."
-  ],
-  "apis_observed": [
-    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Only 4 DDC datasets: Active Projects + two '(Historical)' variants and the awarded-contracts directory. SODA /resource/<id>.json endpoints. The one real, open DDC data surface — thin and mostly historical." },
-    { "endpoint": "nyc.gov/site/mocs/passport (PASSPort)", "type": "procurement platform", "owner": "NYC MOCS (citywide)", "public": "login-walled UI, no API", "note": "Where ALL DDC solicitations are released and responded to; vendor registration + prequalification. Not DDC-owned; no OpenAPI/JSON." },
-    { "endpoint": "a856-cityrecord.nyc.gov", "type": "notices / alerts", "owner": "NYC (DCAS/citywide)", "public": "html + email", "note": "Solicitation and award notices; vendors register for email alerts." },
-    { "endpoint": "checkbooknyc.com", "type": "contract transparency", "owner": "NYC Comptroller", "public": "public; has its own API", "note": "Public record of DDC/City contracts — but the API belongs to the Comptroller, not DDC." },
-    { "endpoint": "ddcanywhere.nyc", "type": "vendor process portal", "owner": "DDC", "public": "login-walled, no API", "note": "The one DDC-owned vendor system — design/construction process for contract holders. No machine-readable surface observed." },
-    { "endpoint": "www.nyc.gov/site/ddc", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "Content only; Akamai edge, nginx, Dynatrace + mPulse RUM, AWS ALB. No content API." }
-  ],
-  "fruit": [
-    {
-      "name": "Active Capital Projects",
-      "type": "data table",
-      "entity": "CapitalProject",
-      "url": "https://www.nyc.gov/site/ddc/projects/projects.page",
-      "count": "550+ active projects ($34B+)",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Active Projects 3ss8-m844 (8c)", "Active Projects - Infrastructure (Historical) rukc-mmqu (9c)", "Active Projects - Public Buildings (Historical) g9ub-hrve (9c)"],
-      "notes": "Core unit of DDC. Keyed on Project ID; carries Division, Client Agency, Phase, Scope, Dollar Amount, Projected Construction Completion. Two of the three datasets are frozen '(Historical)' snapshots — no live status API."
-    },
-    {
-      "name": "Awarded Construction Contracts",
-      "type": "directory",
-      "entity": "AwardedContract",
-      "url": "https://data.cityofnewyork.us/d/j7gw-gcxi",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Directory Of Awarded Construction Contracts j7gw-gcxi (4c)"],
-      "notes": "Description, Selected Firm, PIN, $Value. The only vendor-facing dataset, just 4 columns. Public contract records also on Checkbook NYC (Comptroller)."
-    },
-    {
-      "name": "Vendors / Firms (designers, engineers, CMs, contractors, consultants)",
-      "type": "derived directory",
-      "entity": "Vendor",
-      "url": "https://www.nyc.gov/site/ddc/contracts/work-with-ddc.page",
-      "machine_readable": "derived",
-      "verified": true,
-      "opendata_match": ["derived from j7gw-gcxi SELECTED FIRM"],
-      "opendata_gap": true,
-      "notes": "DDC has no structured vendor dataset; firm identity is derivable only from the SELECTED FIRM field of awarded contracts. Vendor onboarding/prequalification lives in citywide PASSPort (MOCS)."
-    },
-    {
-      "name": "DDC Divisions (Infrastructure, Public Buildings)",
-      "type": "reference",
-      "entity": "Division",
-      "url": "https://www.nyc.gov/site/ddc/about/about-ddc.page",
-      "machine_readable": "derived",
-      "verified": true,
-      "opendata_match": ["derived from 'Division' column on the Active Projects datasets"],
-      "opendata_gap": true,
-      "notes": "The organizational lens over the portfolio; useful for rolling project counts and dollar totals up by line of business."
-    },
-    {
-      "name": "Open Solicitations (professional service, construction, not-for-profit)",
-      "type": "workflow (citywide system)",
-      "entity": "Solicitation",
-      "url": "https://www.nyc.gov/site/mocs/passport/about-passport.page",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "All DDC solicitations are released and responded to only through citywide PASSPort (MOCS) and noticed in the City Record. No DDC-owned API or Open Data twin."
-    },
-    {
-      "name": "Register with the City Record for notices",
-      "type": "subscription (citywide system)",
-      "entity": "VendorPrequalification",
-      "url": "https://a856-cityrecord.nyc.gov/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Vendors register with the City Record for email notification of matching solicitations — a citywide, non-DDC subscription. Folded into the net-new write as an optional City Record notification opt-in."
-    },
-    {
-      "name": "Submit a vendor prequalification / expression of interest",
-      "type": "sign-up / prequalify workflow (B2G)",
-      "entity": "VendorPrequalification",
-      "url": "https://www.nyc.gov/site/mocs/passport/about-passport.page",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The single most common act for a firm seeking DDC work — register/prequalify and express interest in a solicitation. Today only in citywide PASSPort (MOCS); no DDC-owned API. The net-new WRITE surface for this domain. NOTE: DDC is agency-facing — there is NO citizen write anywhere in the domain; the honest write is B2G vendor onboarding."
-    }
-  ],
-  "meta": {
-    "short": "NYC Design & Construction (DDC)",
-    "verb": "surface",
-    "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace + mPulse + AWS ALB) for the informational site; the transaction layer is entirely citywide systems DDC does not own — PASSPort (MOCS), City Record, Checkbook NYC (Comptroller), plus DDC's own API-less DDC Anywhere portal.",
-    "netnew": "VendorPrequalification — a firm submits a prequalification / expression of interest (optionally against a solicitation, with an optional City Record notice opt-in). A B2G write; DDC is vendor-facing, so there is no citizen write in this domain.",
-    "accent": "#7a8a5a",
-    "tagline": "A vendor-facing agency whose own data is thin and historical and whose transactions all run on citywide systems it doesn't own.",
-    "headline": "DDC manages a $34B+ capital portfolio but exposes no API of its own — just four mostly-historical Open Data datasets — and outsources every vendor transaction to citywide PASSPort, City Record, and Checkbook."
+ "domain": "ddc",
+ "agency": "New York City Department of Design and Construction (DDC)",
+ "assessment_date": "2026-07-13",
+ "method": "Outside-in crawl (browser UA, robots-respecting \u2014 nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/ddc (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace + Akamai mPulse + AWS ALB) and read the 'Work With DDC' procurement page, which names the citywide systems DDC solicits through (PASSPort/MOCS, City Record, Checkbook NYC, DDC Anywhere). Verified the NYC Open Data agency label 'Department of Design and Construction (DDC)' via the Socrata Discovery API and pulled all 4 assets with column schemas.",
+ "related_domains": [
+  "nyc.gov/site/mocs",
+  "a856-cityrecord.nyc.gov",
+  "checkbooknyc.com",
+  "ddcanywhere.nyc",
+  "data.cityofnewyork.us"
+ ],
+ "headline_findings": [
+  "DDC is a vendor-facing, business-to-government agency \u2014 the City's primary capital construction project manager (550+ active projects, $34B+ portfolio) that builds for other agencies. There is no citizen and no citizen transaction anywhere in the domain.",
+  "DDC exposes NO API of its own. Its only machine-readable data is 4 NYC Open Data datasets (Socrata SODA), three of them frozen '(Historical)' snapshots of active projects, plus a 4-column directory of awarded contracts.",
+  "Every transaction is outsourced to citywide systems DDC does not own: solicitations and vendor prequalification run in PASSPort (managed by MOCS), notices go to the City Record, and contract records live on Checkbook NYC (Comptroller). The one DDC-owned vendor portal (DDC Anywhere) has no API.",
+  "The richer live capital data (Capital Commitment Plan / Capital Project Detail Data) is published under OMB/Comptroller labels, not DDC \u2014 so even DDC's own portfolio is not fully DDC-published.",
+  "Net-new write surface: submit a vendor prequalification / expression of interest (VendorPrequalification) \u2014 a B2G transaction that today lives only inside citywide PASSPort. NOTE: there is no citizen write for this agency. See tech-stack.md and apis-observed.md."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "data.cityofnewyork.us (SODA)",
+   "type": "open data API",
+   "owner": "NYC (Socrata/Tyler)",
+   "public": true,
+   "note": "Only 4 DDC datasets: Active Projects + two '(Historical)' variants and the awarded-contracts directory. SODA /resource/<id>.json endpoints. The one real, open DDC data surface \u2014 thin and mostly historical."
   },
-  "scorecard": {
-    "platform": 1,
-    "siteApi": 0,
-    "openData": 1,
-    "coreData": 1,
-    "writeApi": 0,
-    "agent": 0,
-    "ownership": 1
+  {
+   "endpoint": "nyc.gov/site/mocs/passport (PASSPort)",
+   "type": "procurement platform",
+   "owner": "NYC MOCS (citywide)",
+   "public": "login-walled UI, no API",
+   "note": "Where ALL DDC solicitations are released and responded to; vendor registration + prequalification. Not DDC-owned; no OpenAPI/JSON."
   },
-  "scorecard_notes": {
-    "platform": "Shared NYC.gov Livesite chassis; no DDC-owned application platform with an API, and the transaction layer is citywide systems (PASSPort/MOCS, City Record, Checkbook).",
-    "siteApi": "No site or content API; nothing machine-readable on nyc.gov/site/ddc.",
-    "openData": "Only 4 Socrata datasets, three of them frozen '(Historical)' snapshots and one a 4-column contract directory — present but thin and stale.",
-    "coreData": "CapitalProject and AwardedContract are modeled and open but only as snapshots; vendor and division are derived; no live status.",
-    "writeApi": "No write surface at all — solicitation, prequalification, and onboarding are citywide PASSPort/MOCS; no citizen write exists.",
-    "agent": "No agent-native surface; no MCP, no structured intake an agent could call.",
-    "ownership": "DDC owns almost none of its surface — reference data is thin and partly published under OMB/Comptroller, and the transaction systems belong to MOCS and the Comptroller."
+  {
+   "endpoint": "a856-cityrecord.nyc.gov",
+   "type": "notices / alerts",
+   "owner": "NYC (DCAS/citywide)",
+   "public": "html + email",
+   "note": "Solicitation and award notices; vendors register for email alerts."
+  },
+  {
+   "endpoint": "checkbooknyc.com",
+   "type": "contract transparency",
+   "owner": "NYC Comptroller",
+   "public": "public; has its own API",
+   "note": "Public record of DDC/City contracts \u2014 but the API belongs to the Comptroller, not DDC."
+  },
+  {
+   "endpoint": "ddcanywhere.nyc",
+   "type": "vendor process portal",
+   "owner": "DDC",
+   "public": "login-walled, no API",
+   "note": "The one DDC-owned vendor system \u2014 design/construction process for contract holders. No machine-readable surface observed."
+  },
+  {
+   "endpoint": "www.nyc.gov/site/ddc",
+   "type": "informational site",
+   "owner": "NYC.gov shared platform (Livesite)",
+   "public": "html",
+   "note": "Content only; Akamai edge, nginx, Dynatrace + mPulse RUM, AWS ALB. No content API."
   }
+ ],
+ "fruit": [
+  {
+   "name": "Active Capital Projects",
+   "type": "data table",
+   "entity": "CapitalProject",
+   "url": "https://www.nyc.gov/site/ddc/projects/projects.page",
+   "count": "550+ active projects ($34B+)",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Active Projects 3ss8-m844 (8c)",
+    "Active Projects - Infrastructure (Historical) rukc-mmqu (9c)",
+    "Active Projects - Public Buildings (Historical) g9ub-hrve (9c)"
+   ],
+   "notes": "Core unit of DDC. Keyed on Project ID; carries Division, Client Agency, Phase, Scope, Dollar Amount, Projected Construction Completion. Two of the three datasets are frozen '(Historical)' snapshots \u2014 no live status API."
+  },
+  {
+   "name": "Awarded Construction Contracts",
+   "type": "directory",
+   "entity": "AwardedContract",
+   "url": "https://data.cityofnewyork.us/d/j7gw-gcxi",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Directory Of Awarded Construction Contracts j7gw-gcxi (4c)"
+   ],
+   "notes": "Description, Selected Firm, PIN, $Value. The only vendor-facing dataset, just 4 columns. Public contract records also on Checkbook NYC (Comptroller)."
+  },
+  {
+   "name": "Vendors / Firms (designers, engineers, CMs, contractors, consultants)",
+   "type": "derived directory",
+   "entity": "Vendor",
+   "url": "https://www.nyc.gov/site/ddc/contracts/work-with-ddc.page",
+   "machine_readable": "derived",
+   "verified": true,
+   "opendata_match": [
+    "derived from j7gw-gcxi SELECTED FIRM"
+   ],
+   "opendata_gap": true,
+   "notes": "DDC has no structured vendor dataset; firm identity is derivable only from the SELECTED FIRM field of awarded contracts. Vendor onboarding/prequalification lives in citywide PASSPort (MOCS)."
+  },
+  {
+   "name": "DDC Divisions (Infrastructure, Public Buildings)",
+   "type": "reference",
+   "entity": "Division",
+   "url": "https://www.nyc.gov/site/ddc/about/about-ddc.page",
+   "machine_readable": "derived",
+   "verified": true,
+   "opendata_match": [
+    "derived from 'Division' column on the Active Projects datasets"
+   ],
+   "opendata_gap": true,
+   "notes": "The organizational lens over the portfolio; useful for rolling project counts and dollar totals up by line of business."
+  },
+  {
+   "name": "Open Solicitations (professional service, construction, not-for-profit)",
+   "type": "workflow (citywide system)",
+   "entity": "Solicitation",
+   "url": "https://www.nyc.gov/site/mocs/passport/about-passport.page",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "All DDC solicitations are released and responded to only through citywide PASSPort (MOCS) and noticed in the City Record. No DDC-owned API or Open Data twin."
+  },
+  {
+   "name": "Register with the City Record for notices",
+   "type": "subscription (citywide system)",
+   "entity": "VendorPrequalification",
+   "url": "https://a856-cityrecord.nyc.gov/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Vendors register with the City Record for email notification of matching solicitations \u2014 a citywide, non-DDC subscription. Folded into the net-new write as an optional City Record notification opt-in."
+  },
+  {
+   "name": "Submit a vendor prequalification / expression of interest",
+   "type": "sign-up / prequalify workflow (B2G)",
+   "entity": "VendorPrequalification",
+   "url": "https://www.nyc.gov/site/mocs/passport/about-passport.page",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The single most common act for a firm seeking DDC work \u2014 register/prequalify and express interest in a solicitation. Today only in citywide PASSPort (MOCS); no DDC-owned API. The net-new WRITE surface for this domain. NOTE: DDC is agency-facing \u2014 there is NO citizen write anywhere in the domain; the honest write is B2G vendor onboarding."
+  },
+  {
+   "name": "DDC Current On-Call Contracts (Q3 2025)",
+   "type": "spreadsheet (Excel)",
+   "entity": "Contract",
+   "url": "https://www.nyc.gov/assets/ddc/downloads/contracts/DDCurrentOn-CallContracts_Q3_2025.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Roster of DDC's current on-call professional-service contracts; live contract data, quarterly .xlsx, no Open Data twin.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "DDC Cost Estimating Template - Design (Uniformat REV22)",
+   "type": "spreadsheet (Excel)",
+   "entity": "CostEstimateTemplate",
+   "url": "https://www.nyc.gov/assets/ddc/downloads/public-building-resources/CostEstimatingTemplate_DESIGN_Uniformat_REV22.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Standardized Uniformat cost-estimating workbook for design consultants.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "DDC Cost Estimating Template - Design (MasterFormat REV22)",
+   "type": "spreadsheet (Excel)",
+   "entity": "CostEstimateTemplate",
+   "url": "https://www.nyc.gov/assets/ddc/downloads/public-building-resources/CostEstimatingTemplate_DESIGN_MasterFormat_REV22.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Standardized MasterFormat cost-estimating workbook.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "MOEC Local Law 51 Reporting Form (2025)",
+   "type": "spreadsheet (Excel)",
+   "entity": "ComplianceReport",
+   "url": "https://www.nyc.gov/assets/ddc/downloads/contracts/MOEC%20LL%2051%20Reporting%20Form_2025.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "DDC vendor Local Law 51 (M/WBE/environmental compliance) reporting workbook.",
+   "source": "excel-sweep"
+  }
+ ],
+ "meta": {
+  "short": "NYC Design & Construction (DDC)",
+  "verb": "surface",
+  "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace + mPulse + AWS ALB) for the informational site; the transaction layer is entirely citywide systems DDC does not own \u2014 PASSPort (MOCS), City Record, Checkbook NYC (Comptroller), plus DDC's own API-less DDC Anywhere portal.",
+  "netnew": "VendorPrequalification \u2014 a firm submits a prequalification / expression of interest (optionally against a solicitation, with an optional City Record notice opt-in). A B2G write; DDC is vendor-facing, so there is no citizen write in this domain.",
+  "accent": "#7a8a5a",
+  "tagline": "A vendor-facing agency whose own data is thin and historical and whose transactions all run on citywide systems it doesn't own.",
+  "headline": "DDC manages a $34B+ capital portfolio but exposes no API of its own \u2014 just four mostly-historical Open Data datasets \u2014 and outsources every vendor transaction to citywide PASSPort, City Record, and Checkbook."
+ },
+ "scorecard": {
+  "platform": 1,
+  "siteApi": 0,
+  "openData": 1,
+  "coreData": 1,
+  "writeApi": 0,
+  "agent": 0,
+  "ownership": 1
+ },
+ "scorecard_notes": {
+  "platform": "Shared NYC.gov Livesite chassis; no DDC-owned application platform with an API, and the transaction layer is citywide systems (PASSPort/MOCS, City Record, Checkbook).",
+  "siteApi": "No site or content API; nothing machine-readable on nyc.gov/site/ddc.",
+  "openData": "Only 4 Socrata datasets, three of them frozen '(Historical)' snapshots and one a 4-column contract directory \u2014 present but thin and stale.",
+  "coreData": "CapitalProject and AwardedContract are modeled and open but only as snapshots; vendor and division are derived; no live status.",
+  "writeApi": "No write surface at all \u2014 solicitation, prequalification, and onboarding are citywide PASSPort/MOCS; no citizen write exists.",
+  "agent": "No agent-native surface; no MCP, no structured intake an agent could call.",
+  "ownership": "DDC owns almost none of its surface \u2014 reference data is thin and partly published under OMB/Comptroller, and the transaction systems belong to MOCS and the Comptroller."
+ }
 }

@@ -1,138 +1,219 @@
 {
-  "domain": "acs",
-  "agency": "NYC Administration for Children's Services (ACS)",
-  "assessment_date": "2026-07-13",
-  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/acs (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace + embedded Google Maps JS) and traced its public actions to their real homes: reporting child abuse links out to the NY State OCFS Statewide Central Register (ocfs.ny.gov, 1-800-342-3720) and service/provider complaints to NYC 311 (portal.311.nyc.gov). Verified the NYC Open Data agency label 'Administration for Children's Services (ACS)' via the Socrata Discovery API and pulled all 21 assets with column schemas (16 are non-tabular file attachments, only 5 tabular, 1 address-level).",
-  "meta": {
-    "short": "NYC Children's Services (ACS)",
-    "verb": "insource",
-    "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace + Google Maps JS); no ACS-owned application — public actions delegated to NY State OCFS (Central Register) and NYC 311",
-    "netnew": "ChildCareComplaint — submit a complaint about a child care provider (models the provider concern, never case data; abuse routed to the State Central Register)",
-    "accent": "#d98a3a",
-    "tagline": "A confidentiality-bound agency whose only machine-readable asset is a provider directory and whose two public actions are delegated to the State and to 311.",
-    "headline": "ACS has no hidden backend to unlock — its data is confidential or dumped as static files, and its abuse and provider-complaint intakes belong to the NY State Central Register and NYC 311, so the fruit is to insource an owned contract for what ACS can publish and should own."
+ "domain": "acs",
+ "agency": "NYC Administration for Children's Services (ACS)",
+ "assessment_date": "2026-07-13",
+ "method": "Outside-in crawl (browser UA, robots-respecting \u2014 nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/acs (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace + embedded Google Maps JS) and traced its public actions to their real homes: reporting child abuse links out to the NY State OCFS Statewide Central Register (ocfs.ny.gov, 1-800-342-3720) and service/provider complaints to NYC 311 (portal.311.nyc.gov). Verified the NYC Open Data agency label 'Administration for Children's Services (ACS)' via the Socrata Discovery API and pulled all 21 assets with column schemas (16 are non-tabular file attachments, only 5 tabular, 1 address-level).",
+ "meta": {
+  "short": "NYC Children's Services (ACS)",
+  "verb": "insource",
+  "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace + Google Maps JS); no ACS-owned application \u2014 public actions delegated to NY State OCFS (Central Register) and NYC 311",
+  "netnew": "ChildCareComplaint \u2014 submit a complaint about a child care provider (models the provider concern, never case data; abuse routed to the State Central Register)",
+  "accent": "#d98a3a",
+  "tagline": "A confidentiality-bound agency whose only machine-readable asset is a provider directory and whose two public actions are delegated to the State and to 311.",
+  "headline": "ACS has no hidden backend to unlock \u2014 its data is confidential or dumped as static files, and its abuse and provider-complaint intakes belong to the NY State Central Register and NYC 311, so the fruit is to insource an owned contract for what ACS can publish and should own."
+ },
+ "scorecard": {
+  "platform": 1,
+  "siteApi": 0,
+  "openData": 1,
+  "coreData": 1,
+  "writeApi": 0,
+  "agent": 0,
+  "ownership": 1
+ },
+ "scorecard_notes": {
+  "platform": "Shared NYC.gov Livesite chassis (Akamai/nginx/Dynatrace); no ACS-specific application at all.",
+  "siteApi": "No ACS content or site API; informational HTML only.",
+  "openData": "21 assets but 16 are non-tabular file attachments; only 5 tabular and just 1 address-level.",
+  "coreData": "Operational data confidential by statute \u2014 published only as aggregate reports, mostly as files, never per case.",
+  "writeApi": "No ACS-owned write surface; abuse reports go to the NY State Central Register, provider complaints to NYC 311.",
+  "agent": "No agent-native surface; no MCP, no structured intake, only downloadable spreadsheets and delegated web forms.",
+  "ownership": "ACS owns the Community Partners directory but delegates both public intakes; ownership of the transaction layer is absent."
+ },
+ "related_domains": [
+  "ocfs.ny.gov",
+  "portal.311.nyc.gov",
+  "data.cityofnewyork.us",
+  "nyc.gov/site/doh"
+ ],
+ "headline_findings": [
+  "ACS is a confidentiality-bound agency: abuse/neglect investigations, foster care, and juvenile detention are confidential by statute and published only in aggregate \u2014 never as individual cases.",
+  "Its Open Data footprint is thin and mostly non-tabular: of 21 ACS assets, 16 are 'file' attachments (uploaded Excel/PDF reports you cannot query) and only 5 are tabular datasets.",
+  "Exactly one ACS dataset is address-level and machine-readable \u2014 ACS Community Partners (9hyh-zkx9, 39 columns), the provider directory. Everything else is aggregate accountability reporting.",
+  "Its two public actions are delegated, not owned: reporting child abuse goes to the NY State OCFS Statewide Central Register (1-800-342-3720), and complaining about a child care provider goes to NYC 311 (portal.311.nyc.gov).",
+  "Net-new write surface: submit a child-care-provider complaint (ChildCareComplaint) as an owned ACS contract instead of deferring to 311 \u2014 modeling the provider concern, never case data, and redirecting any suspected abuse to the State Central Register. See tech-stack.md and apis-observed.md."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "data.cityofnewyork.us (SODA)",
+   "type": "open data API",
+   "owner": "NYC (Socrata/Tyler)",
+   "public": true,
+   "note": "21 ACS assets, but only 5 tabular and 1 address-level (Community Partners 9hyh-zkx9); the rest are non-queryable file attachments. The one useful open ACS API."
   },
-  "scorecard": {
-    "platform": 1,
-    "siteApi": 0,
-    "openData": 1,
-    "coreData": 1,
-    "writeApi": 0,
-    "agent": 0,
-    "ownership": 1
+  {
+   "endpoint": "ocfs.ny.gov \u2014 Statewide Central Register (SCR)",
+   "type": "statutory hotline / State case system (CONNECTIONS)",
+   "owner": "NY State OCFS",
+   "public": "phone (1-800-342-3720), no API",
+   "note": "Where reporting child abuse/neglect actually goes; not an ACS system and deliberately human-mediated, not machine-readable."
   },
-  "scorecard_notes": {
-    "platform": "Shared NYC.gov Livesite chassis (Akamai/nginx/Dynatrace); no ACS-specific application at all.",
-    "siteApi": "No ACS content or site API; informational HTML only.",
-    "openData": "21 assets but 16 are non-tabular file attachments; only 5 tabular and just 1 address-level.",
-    "coreData": "Operational data confidential by statute — published only as aggregate reports, mostly as files, never per case.",
-    "writeApi": "No ACS-owned write surface; abuse reports go to the NY State Central Register, provider complaints to NYC 311.",
-    "agent": "No agent-native surface; no MCP, no structured intake, only downloadable spreadsheets and delegated web forms.",
-    "ownership": "ACS owns the Community Partners directory but delegates both public intakes; ownership of the transaction layer is absent."
+  {
+   "endpoint": "portal.311.nyc.gov",
+   "type": "citywide service-request intake",
+   "owner": "NYC 311",
+   "public": "UI, no ACS-owned API",
+   "note": "Where child care / provider complaints and other ACS-adjacent requests are filed; ACS defers to 311 rather than owning an intake."
   },
-  "related_domains": ["ocfs.ny.gov", "portal.311.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/doh"],
-  "headline_findings": [
-    "ACS is a confidentiality-bound agency: abuse/neglect investigations, foster care, and juvenile detention are confidential by statute and published only in aggregate — never as individual cases.",
-    "Its Open Data footprint is thin and mostly non-tabular: of 21 ACS assets, 16 are 'file' attachments (uploaded Excel/PDF reports you cannot query) and only 5 are tabular datasets.",
-    "Exactly one ACS dataset is address-level and machine-readable — ACS Community Partners (9hyh-zkx9, 39 columns), the provider directory. Everything else is aggregate accountability reporting.",
-    "Its two public actions are delegated, not owned: reporting child abuse goes to the NY State OCFS Statewide Central Register (1-800-342-3720), and complaining about a child care provider goes to NYC 311 (portal.311.nyc.gov).",
-    "Net-new write surface: submit a child-care-provider complaint (ChildCareComplaint) as an owned ACS contract instead of deferring to 311 — modeling the provider concern, never case data, and redirecting any suspected abuse to the State Central Register. See tech-stack.md and apis-observed.md."
-  ],
-  "apis_observed": [
-    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "21 ACS assets, but only 5 tabular and 1 address-level (Community Partners 9hyh-zkx9); the rest are non-queryable file attachments. The one useful open ACS API." },
-    { "endpoint": "ocfs.ny.gov — Statewide Central Register (SCR)", "type": "statutory hotline / State case system (CONNECTIONS)", "owner": "NY State OCFS", "public": "phone (1-800-342-3720), no API", "note": "Where reporting child abuse/neglect actually goes; not an ACS system and deliberately human-mediated, not machine-readable." },
-    { "endpoint": "portal.311.nyc.gov", "type": "citywide service-request intake", "owner": "NYC 311", "public": "UI, no ACS-owned API", "note": "Where child care / provider complaints and other ACS-adjacent requests are filed; ACS defers to 311 rather than owning an intake." },
-    { "endpoint": "www.nyc.gov/site/acs", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM, embedded Google Maps JS. No content API." },
-    { "endpoint": "maps.googleapis.com", "type": "maps JS API", "owner": "Google", "public": "vendor", "note": "Client-side program/locator maps on child-care and child-welfare pages." }
-  ],
-  "fruit": [
-    {
-      "name": "ACS Community Partners (provider directory)",
-      "type": "data table + map",
-      "entity": "Provider",
-      "url": "https://www.nyc.gov/site/acs/early-care/childcare.page",
-      "count": "hundreds of programs",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["ACS Community Partners 9hyh-zkx9 (39c)"],
-      "notes": "The single address-level, machine-readable ACS entity: program name, operating agency, address, weekly office hours, contact, and full NYC geography spine (BBL/BIN, council district, community board, NTA, lat/long)."
-    },
-    {
-      "name": "Child Welfare Indicators",
-      "type": "aggregate report",
-      "entity": "ChildWelfareIndicator",
-      "url": "https://data.cityofnewyork.us/d/3m2q-9maw",
-      "machine_readable": "Open Data (mostly file attachments)",
-      "verified": true,
-      "opendata_match": ["Child Welfare Indicators 3m2q-9maw (file)", "Monthly Flash Report 2ubh-v9er (file)", "Report to City Council on Demographics uhvm-6sct (13c)", "Abuse/Neglect by CD rnjn-x48k (file)"],
-      "opendata_gap": false,
-      "notes": "Aggregate counts of SCR intakes, investigations (indicated/unsubstantiated), emergency removals, Article X filings, and referrals to prevention — by period and geography. No individual case, ever."
-    },
-    {
-      "name": "Preventive Services",
-      "type": "aggregate report",
-      "entity": "PreventionService",
-      "url": "https://data.cityofnewyork.us/d/ding-39n6",
-      "machine_readable": "Open Data (file attachments)",
-      "verified": true,
-      "opendata_match": ["Children Served in Preventive Services ding-39n6 (file)", "Preventive New Cases a2ju-qb9a (file)", "Preventive Services Utilization LL11 x48i-xnrz (file)", "Outcome of Cases Closed q663-gvx6 (file)"],
-      "opendata_gap": false,
-      "notes": "Children/families served, new cases, utilization, and case-closure outcomes rolled up by borough and community district. Aggregate only; never a per-family record."
-    },
-    {
-      "name": "Foster Care statistics",
-      "type": "aggregate report",
-      "entity": "FosterCareStatistics",
-      "url": "https://data.cityofnewyork.us/d/hfa5-7rzg",
-      "machine_readable": "Open Data (file attachments)",
-      "verified": true,
-      "opendata_match": ["Children In 24-hour Foster Care hfa5-7rzg (file)", "Foster Care Placements by CD xg3x-h3g7 (file)", "Adolescents/permanency gx5n-2nma (file)", "HS Graduation Rates abgy-h8ag (file)", "Educational Continuity j4t9-dyts (file)", "Government-Issued ID n5e5-z493 (file)", "Psychiatric Medication qw7r-btyb (15c)"],
-      "opendata_gap": false,
-      "notes": "Children in 24-hour care, placements, permanency outcomes, graduation rates, educational continuity, government ID, and psychiatric-medication use — aggregate by period/geography. No individual child."
-    },
-    {
-      "name": "Youth & Family Justice statistics",
-      "type": "aggregate report",
-      "entity": "JuvenileJusticeStatistics",
-      "url": "https://data.cityofnewyork.us/d/2hrw-qfsu",
-      "machine_readable": "Open Data (some tabular, some files)",
-      "verified": true,
-      "opendata_match": ["Detention Admissions by CD 2hrw-qfsu (4c)", "Detention & Placement Demographics bhs9-p657 (file)", "Detention & Placement Incident Reports 2jnq-tef6 (file)", "Annual Abuse-Allegation Detention/Placement kkjw-ny95 (file)", "Report to City Council on Preplacement iwat-y983 (9c)"],
-      "opendata_gap": false,
-      "notes": "Detention admissions, placement demographics, incident reports, and pre-placement figures — aggregate by period and geography. No individual youth."
-    },
-    {
-      "name": "Report child abuse or neglect",
-      "type": "transaction (delegated)",
-      "entity": "ChildCareComplaint",
-      "url": "https://ocfs.ny.gov/main/cps/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Delegated to the NY State OCFS Statewide Central Register (1-800-342-3720) — a staffed, phone-based system, not an ACS API and deliberately not an anonymous machine surface. Listed as a delegated action, by design; NOT the net-new write surface."
-    },
-    {
-      "name": "Complain about a child care provider",
-      "type": "sign-up / ticket workflow (delegated)",
-      "entity": "ChildCareComplaint",
-      "url": "https://portal.311.nyc.gov/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "A complaint about a child care PROVIDER (health/safety/staffing/licensing/quality) is filed through NYC 311, not an ACS-owned intake. The net-new WRITE surface for this domain: an owned ChildCareComplaint contract that models the provider concern, never case data, and redirects suspected abuse to the State Central Register."
-    },
-    {
-      "name": "Individual case / child record",
-      "type": "confidential record",
-      "entity": "ChildWelfareIndicator",
-      "url": "https://www.nyc.gov/site/acs/about/about.page",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Individual investigations, foster children, and youth are never published — confidential by statute (Social Services Law) and held in internal ACS/CCWIS systems. Correctly no public surface; the API must preserve this."
-    }
-  ]
+  {
+   "endpoint": "www.nyc.gov/site/acs",
+   "type": "informational site",
+   "owner": "NYC.gov shared platform (Livesite)",
+   "public": "html",
+   "note": "content only; Akamai edge, nginx, Dynatrace RUM, embedded Google Maps JS. No content API."
+  },
+  {
+   "endpoint": "maps.googleapis.com",
+   "type": "maps JS API",
+   "owner": "Google",
+   "public": "vendor",
+   "note": "Client-side program/locator maps on child-care and child-welfare pages."
+  }
+ ],
+ "fruit": [
+  {
+   "name": "ACS Community Partners (provider directory)",
+   "type": "data table + map",
+   "entity": "Provider",
+   "url": "https://www.nyc.gov/site/acs/early-care/childcare.page",
+   "count": "hundreds of programs",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "ACS Community Partners 9hyh-zkx9 (39c)"
+   ],
+   "notes": "The single address-level, machine-readable ACS entity: program name, operating agency, address, weekly office hours, contact, and full NYC geography spine (BBL/BIN, council district, community board, NTA, lat/long)."
+  },
+  {
+   "name": "Child Welfare Indicators",
+   "type": "aggregate report",
+   "entity": "ChildWelfareIndicator",
+   "url": "https://data.cityofnewyork.us/d/3m2q-9maw",
+   "machine_readable": "Open Data (mostly file attachments)",
+   "verified": true,
+   "opendata_match": [
+    "Child Welfare Indicators 3m2q-9maw (file)",
+    "Monthly Flash Report 2ubh-v9er (file)",
+    "Report to City Council on Demographics uhvm-6sct (13c)",
+    "Abuse/Neglect by CD rnjn-x48k (file)"
+   ],
+   "opendata_gap": false,
+   "notes": "Aggregate counts of SCR intakes, investigations (indicated/unsubstantiated), emergency removals, Article X filings, and referrals to prevention \u2014 by period and geography. No individual case, ever."
+  },
+  {
+   "name": "Preventive Services",
+   "type": "aggregate report",
+   "entity": "PreventionService",
+   "url": "https://data.cityofnewyork.us/d/ding-39n6",
+   "machine_readable": "Open Data (file attachments)",
+   "verified": true,
+   "opendata_match": [
+    "Children Served in Preventive Services ding-39n6 (file)",
+    "Preventive New Cases a2ju-qb9a (file)",
+    "Preventive Services Utilization LL11 x48i-xnrz (file)",
+    "Outcome of Cases Closed q663-gvx6 (file)"
+   ],
+   "opendata_gap": false,
+   "notes": "Children/families served, new cases, utilization, and case-closure outcomes rolled up by borough and community district. Aggregate only; never a per-family record."
+  },
+  {
+   "name": "Foster Care statistics",
+   "type": "aggregate report",
+   "entity": "FosterCareStatistics",
+   "url": "https://data.cityofnewyork.us/d/hfa5-7rzg",
+   "machine_readable": "Open Data (file attachments)",
+   "verified": true,
+   "opendata_match": [
+    "Children In 24-hour Foster Care hfa5-7rzg (file)",
+    "Foster Care Placements by CD xg3x-h3g7 (file)",
+    "Adolescents/permanency gx5n-2nma (file)",
+    "HS Graduation Rates abgy-h8ag (file)",
+    "Educational Continuity j4t9-dyts (file)",
+    "Government-Issued ID n5e5-z493 (file)",
+    "Psychiatric Medication qw7r-btyb (15c)"
+   ],
+   "opendata_gap": false,
+   "notes": "Children in 24-hour care, placements, permanency outcomes, graduation rates, educational continuity, government ID, and psychiatric-medication use \u2014 aggregate by period/geography. No individual child."
+  },
+  {
+   "name": "Youth & Family Justice statistics",
+   "type": "aggregate report",
+   "entity": "JuvenileJusticeStatistics",
+   "url": "https://data.cityofnewyork.us/d/2hrw-qfsu",
+   "machine_readable": "Open Data (some tabular, some files)",
+   "verified": true,
+   "opendata_match": [
+    "Detention Admissions by CD 2hrw-qfsu (4c)",
+    "Detention & Placement Demographics bhs9-p657 (file)",
+    "Detention & Placement Incident Reports 2jnq-tef6 (file)",
+    "Annual Abuse-Allegation Detention/Placement kkjw-ny95 (file)",
+    "Report to City Council on Preplacement iwat-y983 (9c)"
+   ],
+   "opendata_gap": false,
+   "notes": "Detention admissions, placement demographics, incident reports, and pre-placement figures \u2014 aggregate by period and geography. No individual youth."
+  },
+  {
+   "name": "Report child abuse or neglect",
+   "type": "transaction (delegated)",
+   "entity": "ChildCareComplaint",
+   "url": "https://ocfs.ny.gov/main/cps/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Delegated to the NY State OCFS Statewide Central Register (1-800-342-3720) \u2014 a staffed, phone-based system, not an ACS API and deliberately not an anonymous machine surface. Listed as a delegated action, by design; NOT the net-new write surface."
+  },
+  {
+   "name": "Complain about a child care provider",
+   "type": "sign-up / ticket workflow (delegated)",
+   "entity": "ChildCareComplaint",
+   "url": "https://portal.311.nyc.gov/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "A complaint about a child care PROVIDER (health/safety/staffing/licensing/quality) is filed through NYC 311, not an ACS-owned intake. The net-new WRITE surface for this domain: an owned ChildCareComplaint contract that models the provider concern, never case data, and redirects suspected abuse to the State Central Register."
+  },
+  {
+   "name": "Individual case / child record",
+   "type": "confidential record",
+   "entity": "ChildWelfareIndicator",
+   "url": "https://www.nyc.gov/site/acs/about/about.page",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Individual investigations, foster children, and youth are never published \u2014 confidential by statute (Social Services Law) and held in internal ACS/CCWIS systems. Correctly no public surface; the API must preserve this."
+  },
+  {
+   "name": "Monthly Flash Report indicators (Jan 2015 - Dec 2025)",
+   "type": "spreadsheet (Excel)",
+   "entity": "ChildWelfareIndicator",
+   "url": "https://data.cityofnewyork.us/api/views/2ubh-v9er/files/e2228446-4c16-4c71-914b-6ccdd3f034fa?download=true&filename=Open%20Data%20FLASH%20Jan%202015%20-%20December%202025.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "ACS Monthly Flash Report child-welfare indicators as a single .xlsx (11 years); the website serves these only as monthly PDFs.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Outcome of Preventive Cases Closed CY2014 by Borough and CD",
+   "type": "spreadsheet (Excel)",
+   "entity": "PreventionService",
+   "url": "https://data.cityofnewyork.us/api/views/q663-gvx6/files/42624a76-d9ec-41db-a39a-1617d0ea1b41?download=true&filename=Outcome%20of%20Preventive%20Cases%20Closed%20CY2014%20by%20Borough%20and%20CD.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Preventive-services case-closure outcomes by borough and community district (CY2014).",
+   "source": "excel-sweep"
+  }
+ ]
 }

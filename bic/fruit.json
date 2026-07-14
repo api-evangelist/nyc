@@ -1,157 +1,224 @@
 {
-  "domain": "bic",
-  "agency": "New York City Business Integrity Commission (BIC)",
-  "assessment_date": "2026-07-13",
-  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/bic (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace) and the transactional portal at bicportal.nyc.gov (identified as Salesforce Experience Cloud via server: sfdcedge + x-sfdc-request-id + the Lightning community /s/ path scheme, e.g. /s/viopay). Verified the NYC Open Data agency label 'Business Integrity Commission (BIC)' via the Socrata Discovery API and pulled all 9 assets with column schemas.",
-  "related_domains": ["bicportal.nyc.gov", "portal.311.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/dsny"],
-  "headline_findings": [
-    "BIC is a split domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a licensing/enforcement portal that is a Salesforce Experience Cloud app (bicportal.nyc.gov, server: sfdcedge) with no API.",
-    "The regulatory registry is unusually OPEN: 9 NYC Open Data datasets covering trade waste hauler licensees (867j-5pgi, 78k views, BIC's most-viewed asset), broker/self-hauler/construction-and-demolition registrants, public wholesale-market businesses (Hunts Point, Fulton Fish), the licensee/registrant vehicle fleet, issued violations, complaints, and denied companies.",
-    "But the business SERVICE layer has no machine-readable surface: applying for or renewing a license/registration and paying a violation fine (/s/viopay) live only inside the login-walled Salesforce portal or on paper.",
-    "The open data publishes the OUTPUTS of the licensing lifecycle (who is licensed, who was denied, what violations issued) but offers no way to TRANSACT it — a public registry with a private front counter.",
-    "Net-new write surface: apply for a trade waste license/registration (TradeWasteLicenseApplication) — no API today. See tech-stack.md and apis-observed.md."
-  ],
-  "apis_observed": [
-    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "9 BIC datasets; SODA /resource/<id>.json endpoints. The one real, open BIC API — regulatory registry, violations, complaints, and fleet data." },
-    { "endpoint": "bicportal.nyc.gov", "type": "licensing / payment portal (SaaS)", "owner": "BIC (Salesforce Experience Cloud)", "public": "login-walled UI, no API", "note": "apply/renew a license or registration; pay a violation fine (/s/viopay). Salesforce Lightning community — server: sfdcedge, x-sfdc-request-id; JavaScript-only, no JSON/OpenAPI." },
-    { "endpoint": "www.nyc.gov/site/bic", "type": "informational site", "owner": "NYC.gov shared platform (Livesite v22)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API." },
-    { "endpoint": "portal.311.nyc.gov", "type": "complaint intake", "owner": "NYC (311)", "public": "web form", "note": "BIC complaints about trade waste hauling / wholesale markets route through 311; only closed records reach Open Data." },
-    { "endpoint": "Akamai edge", "type": "CDN API", "owner": "Akamai", "public": "vendor", "note": "x-akamai-transformed on the informational site." },
-    { "endpoint": "Dynatrace RUM", "type": "monitoring beacon", "owner": "Dynatrace", "public": "vendor", "note": "x-oneagent-js-injection real-user monitoring." }
-  ],
-  "fruit": [
-    {
-      "name": "Trade Waste Hauler Licensees",
-      "type": "data table",
-      "entity": "Licensee",
-      "url": "https://data.cityofnewyork.us/d/867j-5pgi",
-      "count": "~78k lifetime views (most-viewed BIC dataset)",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Trade Waste Hauler Licensees 867j-5pgi (27c)"],
-      "notes": "BIC's core licensed account — companies licensed to collect/remove/dispose of trade waste. Keyed on BIC NUMBER; carries recycling/organics authorizations, effective/expiration dates, full geography spine."
-    },
-    {
-      "name": "Registrants (Broker, Self-Hauler, C&D)",
-      "type": "data table",
-      "entity": "Registrant",
-      "url": "https://data.cityofnewyork.us/d/krx7-u82t",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Trade Waste Broker Registrants krx7-u82t (25c)", "Self Hauler Registrants a8wp-rerh (25c)", "Construction Demolition Registrants cspg-yi7g (25c)"],
-      "notes": "Three parallel registration streams (the lighter-touch credential vs. a full license). Same shape; distinguished by industry. Keyed on BIC NUMBER."
-    },
-    {
-      "name": "Public Wholesale Market Businesses",
-      "type": "data table",
-      "entity": "MarketBusiness",
-      "url": "https://data.cityofnewyork.us/d/87fx-28ei",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Wholesale Markets 87fx-28ei (26c)"],
-      "notes": "Businesses registered to operate in the public wholesale markets — Hunts Point Produce, Hunts Point Meat, Fulton Fish. Keyed on BIC NUMBER; MARKET names the market."
-    },
-    {
-      "name": "Licensee / Registrant Fleet (Vehicles)",
-      "type": "data table",
-      "entity": "Vehicle",
-      "url": "https://data.cityofnewyork.us/d/n84m-kx4j",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Licensees and Registrants Fleet Information n84m-kx4j (18c)"],
-      "notes": "BIC-plated hauler trucks — make/model/year, fuel, GVWR, and side-guard safety compliance. Joined to operator by BIC NUMBER; identified by BIC PLATE NUMBER."
-    },
-    {
-      "name": "BIC Issued Violations",
-      "type": "data table",
-      "entity": "Violation",
-      "url": "https://data.cityofnewyork.us/d/upii-frjc",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["BIC Issued Violations upii-frjc (31c)"],
-      "notes": "Enforcement actions — rule code, counts, fine amount/maximum, OATH/settlement disposition and dates. Joined to the cited account by BIC NUMBER; keyed on VIOLATION NUMBER."
-    },
-    {
-      "name": "Complaints & Inquiries",
-      "type": "data table",
-      "entity": "Complaint",
-      "url": "https://data.cityofnewyork.us/d/p2d7-vcsb",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["BIC Complaints Inquiries p2d7-vcsb (42c)"],
-      "opendata_gap": false,
-      "notes": "Complaints/inquiries about regulated accounts, including vehicle detail. INTAKE runs through 311 and the BIC complaints form; only closed/aggregate records reach Open Data (partial coverage of a live workflow)."
-    },
-    {
-      "name": "Denied Companies (application decisions)",
-      "type": "data table",
-      "entity": "TradeWasteLicenseApplication",
-      "url": "https://data.cityofnewyork.us/d/exsg-kpya",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Denied TW and Wholesale Market Companies exsg-kpya (22c)"],
-      "opendata_gap": true,
-      "notes": "The only public trace of the application lifecycle — companies DENIED a license/registration, with application status and date. The upstream apply/review/approve steps have no Open Data twin and no API."
-    },
-    {
-      "name": "Pay a violation fine",
-      "type": "transaction (portal)",
-      "entity": "Violation",
-      "url": "https://bicportal.nyc.gov/s/viopay",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Fine payment lives only in the Salesforce portal (/s/viopay); no API. A locked service-layer transaction."
-    },
-    {
-      "name": "Renew a license / registration",
-      "type": "workflow (portal)",
-      "entity": "TradeWasteLicenseApplication",
-      "url": "https://bicportal.nyc.gov/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Renewals are handled in the Salesforce portal; no API. Renewal status only becomes public if the account appears (or is denied) in the registry snapshots."
-    },
-    {
-      "name": "Apply for a trade waste license/registration",
-      "type": "sign-up / application workflow",
-      "entity": "TradeWasteLicenseApplication",
-      "url": "https://bicportal.nyc.gov/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The core BIC business transaction — apply for a license, registration, or exemption. No API and no full Open Data twin (only denials surface, via exsg-kpya); lives only in the Salesforce Experience Cloud portal or on paper. The net-new WRITE surface for this domain."
-    }
-  ],
-  "meta": {
-    "short": "NYC Business Integrity Commission (BIC)",
-    "verb": "transact",
-    "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) + Salesforce Experience Cloud portal (bicportal.nyc.gov)",
-    "netnew": "TradeWasteLicenseApplication — apply for a trade waste license/registration",
-    "accent": "#6a5a7a",
-    "tagline": "BIC's regulatory registry is the most open of any domain yet, but every business transaction is locked inside a Salesforce portal.",
-    "headline": "A public registry with a private front counter: the licensee, violation, and complaint data is wide open, yet applying, renewing, and paying have no API."
+ "domain": "bic",
+ "agency": "New York City Business Integrity Commission (BIC)",
+ "assessment_date": "2026-07-13",
+ "method": "Outside-in crawl (browser UA, robots-respecting \u2014 nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/bic (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace) and the transactional portal at bicportal.nyc.gov (identified as Salesforce Experience Cloud via server: sfdcedge + x-sfdc-request-id + the Lightning community /s/ path scheme, e.g. /s/viopay). Verified the NYC Open Data agency label 'Business Integrity Commission (BIC)' via the Socrata Discovery API and pulled all 9 assets with column schemas.",
+ "related_domains": [
+  "bicportal.nyc.gov",
+  "portal.311.nyc.gov",
+  "data.cityofnewyork.us",
+  "nyc.gov/site/dsny"
+ ],
+ "headline_findings": [
+  "BIC is a split domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a licensing/enforcement portal that is a Salesforce Experience Cloud app (bicportal.nyc.gov, server: sfdcedge) with no API.",
+  "The regulatory registry is unusually OPEN: 9 NYC Open Data datasets covering trade waste hauler licensees (867j-5pgi, 78k views, BIC's most-viewed asset), broker/self-hauler/construction-and-demolition registrants, public wholesale-market businesses (Hunts Point, Fulton Fish), the licensee/registrant vehicle fleet, issued violations, complaints, and denied companies.",
+  "But the business SERVICE layer has no machine-readable surface: applying for or renewing a license/registration and paying a violation fine (/s/viopay) live only inside the login-walled Salesforce portal or on paper.",
+  "The open data publishes the OUTPUTS of the licensing lifecycle (who is licensed, who was denied, what violations issued) but offers no way to TRANSACT it \u2014 a public registry with a private front counter.",
+  "Net-new write surface: apply for a trade waste license/registration (TradeWasteLicenseApplication) \u2014 no API today. See tech-stack.md and apis-observed.md."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "data.cityofnewyork.us (SODA)",
+   "type": "open data API",
+   "owner": "NYC (Socrata/Tyler)",
+   "public": true,
+   "note": "9 BIC datasets; SODA /resource/<id>.json endpoints. The one real, open BIC API \u2014 regulatory registry, violations, complaints, and fleet data."
   },
-  "scorecard": {
-    "platform": 2,
-    "siteApi": 0,
-    "openData": 3,
-    "coreData": 3,
-    "writeApi": 0,
-    "agent": 0,
-    "ownership": 1
+  {
+   "endpoint": "bicportal.nyc.gov",
+   "type": "licensing / payment portal (SaaS)",
+   "owner": "BIC (Salesforce Experience Cloud)",
+   "public": "login-walled UI, no API",
+   "note": "apply/renew a license or registration; pay a violation fine (/s/viopay). Salesforce Lightning community \u2014 server: sfdcedge, x-sfdc-request-id; JavaScript-only, no JSON/OpenAPI."
   },
-  "scorecard_notes": {
-    "platform": "Two managed platforms — NYC.gov Livesite + Salesforce Experience Cloud — modern but the transaction layer is a rented SaaS.",
-    "siteApi": "No content or portal API; the informational site and Salesforce portal expose no machine-readable surface.",
-    "openData": "9 rich datasets — licensees, three registrant streams, markets, fleet, violations, complaints, denials — high traffic.",
-    "coreData": "The core object (licensee/registration) is fully published as an open registry keyed on BIC NUMBER.",
-    "writeApi": "No write API — apply, renew, and pay-a-fine all locked in the Salesforce portal or on paper.",
-    "agent": "No agent-native surface; the OpenAPI + MCP artifact here are the proposal.",
-    "ownership": "Open data is city-owned, but the licensing system-of-record and its transactions are locked in a vendor SaaS with no export/API."
+  {
+   "endpoint": "www.nyc.gov/site/bic",
+   "type": "informational site",
+   "owner": "NYC.gov shared platform (Livesite v22)",
+   "public": "html",
+   "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+  },
+  {
+   "endpoint": "portal.311.nyc.gov",
+   "type": "complaint intake",
+   "owner": "NYC (311)",
+   "public": "web form",
+   "note": "BIC complaints about trade waste hauling / wholesale markets route through 311; only closed records reach Open Data."
+  },
+  {
+   "endpoint": "Akamai edge",
+   "type": "CDN API",
+   "owner": "Akamai",
+   "public": "vendor",
+   "note": "x-akamai-transformed on the informational site."
+  },
+  {
+   "endpoint": "Dynatrace RUM",
+   "type": "monitoring beacon",
+   "owner": "Dynatrace",
+   "public": "vendor",
+   "note": "x-oneagent-js-injection real-user monitoring."
   }
+ ],
+ "fruit": [
+  {
+   "name": "Trade Waste Hauler Licensees",
+   "type": "data table",
+   "entity": "Licensee",
+   "url": "https://data.cityofnewyork.us/d/867j-5pgi",
+   "count": "~78k lifetime views (most-viewed BIC dataset)",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Trade Waste Hauler Licensees 867j-5pgi (27c)"
+   ],
+   "notes": "BIC's core licensed account \u2014 companies licensed to collect/remove/dispose of trade waste. Keyed on BIC NUMBER; carries recycling/organics authorizations, effective/expiration dates, full geography spine."
+  },
+  {
+   "name": "Registrants (Broker, Self-Hauler, C&D)",
+   "type": "data table",
+   "entity": "Registrant",
+   "url": "https://data.cityofnewyork.us/d/krx7-u82t",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Trade Waste Broker Registrants krx7-u82t (25c)",
+    "Self Hauler Registrants a8wp-rerh (25c)",
+    "Construction Demolition Registrants cspg-yi7g (25c)"
+   ],
+   "notes": "Three parallel registration streams (the lighter-touch credential vs. a full license). Same shape; distinguished by industry. Keyed on BIC NUMBER."
+  },
+  {
+   "name": "Public Wholesale Market Businesses",
+   "type": "data table",
+   "entity": "MarketBusiness",
+   "url": "https://data.cityofnewyork.us/d/87fx-28ei",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Wholesale Markets 87fx-28ei (26c)"
+   ],
+   "notes": "Businesses registered to operate in the public wholesale markets \u2014 Hunts Point Produce, Hunts Point Meat, Fulton Fish. Keyed on BIC NUMBER; MARKET names the market."
+  },
+  {
+   "name": "Licensee / Registrant Fleet (Vehicles)",
+   "type": "data table",
+   "entity": "Vehicle",
+   "url": "https://data.cityofnewyork.us/d/n84m-kx4j",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Licensees and Registrants Fleet Information n84m-kx4j (18c)"
+   ],
+   "notes": "BIC-plated hauler trucks \u2014 make/model/year, fuel, GVWR, and side-guard safety compliance. Joined to operator by BIC NUMBER; identified by BIC PLATE NUMBER."
+  },
+  {
+   "name": "BIC Issued Violations",
+   "type": "data table",
+   "entity": "Violation",
+   "url": "https://data.cityofnewyork.us/d/upii-frjc",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "BIC Issued Violations upii-frjc (31c)"
+   ],
+   "notes": "Enforcement actions \u2014 rule code, counts, fine amount/maximum, OATH/settlement disposition and dates. Joined to the cited account by BIC NUMBER; keyed on VIOLATION NUMBER."
+  },
+  {
+   "name": "Complaints & Inquiries",
+   "type": "data table",
+   "entity": "Complaint",
+   "url": "https://data.cityofnewyork.us/d/p2d7-vcsb",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "BIC Complaints Inquiries p2d7-vcsb (42c)"
+   ],
+   "opendata_gap": false,
+   "notes": "Complaints/inquiries about regulated accounts, including vehicle detail. INTAKE runs through 311 and the BIC complaints form; only closed/aggregate records reach Open Data (partial coverage of a live workflow)."
+  },
+  {
+   "name": "Denied Companies (application decisions)",
+   "type": "data table",
+   "entity": "TradeWasteLicenseApplication",
+   "url": "https://data.cityofnewyork.us/d/exsg-kpya",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Denied TW and Wholesale Market Companies exsg-kpya (22c)"
+   ],
+   "opendata_gap": true,
+   "notes": "The only public trace of the application lifecycle \u2014 companies DENIED a license/registration, with application status and date. The upstream apply/review/approve steps have no Open Data twin and no API."
+  },
+  {
+   "name": "Pay a violation fine",
+   "type": "transaction (portal)",
+   "entity": "Violation",
+   "url": "https://bicportal.nyc.gov/s/viopay",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Fine payment lives only in the Salesforce portal (/s/viopay); no API. A locked service-layer transaction."
+  },
+  {
+   "name": "Renew a license / registration",
+   "type": "workflow (portal)",
+   "entity": "TradeWasteLicenseApplication",
+   "url": "https://bicportal.nyc.gov/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Renewals are handled in the Salesforce portal; no API. Renewal status only becomes public if the account appears (or is denied) in the registry snapshots."
+  },
+  {
+   "name": "Apply for a trade waste license/registration",
+   "type": "sign-up / application workflow",
+   "entity": "TradeWasteLicenseApplication",
+   "url": "https://bicportal.nyc.gov/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The core BIC business transaction \u2014 apply for a license, registration, or exemption. No API and no full Open Data twin (only denials surface, via exsg-kpya); lives only in the Salesforce Experience Cloud portal or on paper. The net-new WRITE surface for this domain."
+  },
+  {
+   "name": "Broker Customer Register Worksheet",
+   "type": "spreadsheet (Excel)",
+   "entity": "Registrant",
+   "url": "https://www.nyc.gov/assets/bic/downloads/pdf/applications/broker_customer_register_worksheet.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Trade waste broker customer register worksheet; structured data that maps to the Registrant/Broker entity.",
+   "source": "excel-sweep"
+  }
+ ],
+ "meta": {
+  "short": "NYC Business Integrity Commission (BIC)",
+  "verb": "transact",
+  "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) + Salesforce Experience Cloud portal (bicportal.nyc.gov)",
+  "netnew": "TradeWasteLicenseApplication \u2014 apply for a trade waste license/registration",
+  "accent": "#6a5a7a",
+  "tagline": "BIC's regulatory registry is the most open of any domain yet, but every business transaction is locked inside a Salesforce portal.",
+  "headline": "A public registry with a private front counter: the licensee, violation, and complaint data is wide open, yet applying, renewing, and paying have no API."
+ },
+ "scorecard": {
+  "platform": 2,
+  "siteApi": 0,
+  "openData": 3,
+  "coreData": 3,
+  "writeApi": 0,
+  "agent": 0,
+  "ownership": 1
+ },
+ "scorecard_notes": {
+  "platform": "Two managed platforms \u2014 NYC.gov Livesite + Salesforce Experience Cloud \u2014 modern but the transaction layer is a rented SaaS.",
+  "siteApi": "No content or portal API; the informational site and Salesforce portal expose no machine-readable surface.",
+  "openData": "9 rich datasets \u2014 licensees, three registrant streams, markets, fleet, violations, complaints, denials \u2014 high traffic.",
+  "coreData": "The core object (licensee/registration) is fully published as an open registry keyed on BIC NUMBER.",
+  "writeApi": "No write API \u2014 apply, renew, and pay-a-fine all locked in the Salesforce portal or on paper.",
+  "agent": "No agent-native surface; the OpenAPI + MCP artifact here are the proposal.",
+  "ownership": "Open data is city-owned, but the licensing system-of-record and its transactions are locked in a vendor SaaS with no export/API."
+ }
 }

@@ -1,156 +1,251 @@
 {
-  "domain": "dfta",
-  "agency": "NYC Department for the Aging (DFTA / NYC Aging)",
-  "assessment_date": "2026-07-13",
-  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov/robots.txt only disallows /html/misc/). Fingerprinted www.nyc.gov/site/dfta (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace) and the resident-facing 'Find Help' / Aging Connect intake at nyc.gov/site/dfta/services/find-help.page (Aging Connect information-and-referral contact center, 212-AGING-NYC / 212-244-6469 — phone/web, no API). Verified the NYC Open Data agency label 'Department for the Aging (NYC Aging)' via the Socrata Discovery API and pulled all 11 assets with column schemas.",
-  "related_domains": ["data.cityofnewyork.us", "nyc.gov/311", "nyc.gov/site/hra", "access.nyc.gov"],
-  "headline_findings": [
-    "DFTA (NYC Aging) is a connective, network-funding agency: it rarely delivers services itself, it funds ~1,000 community providers — so its reference data is a directory of providers, sites, senior-center operations, activities, and contract service units.",
-    "The provider/program reference data is well OPEN: 11 NYC Open Data datasets covering all contracted providers (38 columns), publicly open sites, older adult center (senior center) Local Law 140 operations, activities, budgeted/reported service units, expenditures, and aggregate participation.",
-    "But the resident SERVICE layer — connecting an older adult to case management, home-delivered meals, benefits, caregiver support, elder-abuse help, or senior center enrollment — has no machine-readable surface at all: intake happens only by calling Aging Connect (212-AGING-NYC), calling 311, or walking into a center.",
-    "Client/participant data is published only in aggregate (Number of Participants, unduplicated clients); DFTA never exposes an individual older adult record to Open Data.",
-    "Net-new write surface: make a service referral (ServiceReferral) — connect an older adult to services — the core resident transaction, with no API today. See tech-stack.md and apis-observed.md."
-  ],
-  "apis_observed": [
-    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "11 DFTA datasets; SODA /resource/<id>.json endpoints. The one real, open DFTA API — provider/program reference data only." },
-    { "endpoint": "Aging Connect (212-AGING-NYC / 212-244-6469)", "type": "information & referral intake", "owner": "NYC Aging (DFTA)", "public": "phone / walk-in / web form, no API", "note": "The intake and referral layer — case management, home-delivered meals, benefits, caregiver, elder abuse, center enrollment. No JSON/OpenAPI; a contact center, not a system with a machine-readable surface." },
-    { "endpoint": "www.nyc.gov/site/dfta", "type": "informational site", "owner": "NYC.gov shared platform (Livesite v22)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API." },
-    { "endpoint": "nyc.gov/311 / access.nyc.gov", "type": "citywide intake / benefits", "owner": "NYC (OTI / HRA)", "public": "html/app", "note": "alternate front doors New Yorkers use to reach aging services and screen for benefits." }
-  ],
-  "fruit": [
-    {
-      "name": "Contracted Service Providers",
-      "type": "directory + map",
-      "entity": "ServiceProvider",
-      "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
-      "count": "~1,000 providers",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["All Contracted Providers cqc8-am9x (38c)", "List of Providers with Sites Open to the Public u7wp-np5k (21c)", "Social Adult Day Care Services 32cj-z7va (33c)"],
-      "notes": "Core unit of the DFTA network. Keyed on DFTA ID; provider types include Older Adult Center, Case Management, Home-Delivered Meal, Caregiver, Homecare, NORC, Elder Abuse, Geriatric Mental Health, Legal, Transportation, New York Connects. Sponsor, hours, address, full geography spine."
-    },
-    {
-      "name": "Older Adult Centers (senior centers)",
-      "type": "data table",
-      "entity": "OlderAdultCenter",
-      "url": "https://data.cityofnewyork.us/d/ygfr-ij6t",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Senior Center Local Law 140 Provider Data ygfr-ij6t (49c)", "Senior Center Local Law 140 Client Data hm83-bdp7 (12c)"],
-      "notes": "Senior-center operating profile under Local Law 140 — utilization, meals served, staffing, budget/expenditures, days open. An OlderAdultCenter is a ServiceProvider of type 'Older Adult Center', enriched with center operations."
-    },
-    {
-      "name": "Older Adult Center Activities",
-      "type": "data table",
-      "entity": "ProgramActivity",
-      "url": "https://data.cityofnewyork.us/d/fzy4-e84j",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Older Adult Center (OAC) Activities fzy4-e84j (26c)"],
-      "notes": "Scheduled classes, meals, recreation, and health-promotion events at older adult centers; virtual/in-person, recurring, accessibility, topics, geography. The browse surface an older adult uses to find something to do near them."
-    },
-    {
-      "name": "Contract Service Units & Budgets",
-      "type": "data table",
-      "entity": "ServiceUnit",
-      "url": "https://data.cityofnewyork.us/d/exaw-9qnu",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Reported Service Units exaw-9qnu (10c)", "Budgeted Services nxrs-2ci5 (8c)", "Reported Expenditures tt8e-a9vn (9c)", "Bottom Line Budget u845-acue (7c)"],
-      "notes": "Budgeted-vs-reported service units and amounts per provider/service/contract year — the contract-performance line behind the network."
-    },
-    {
-      "name": "Program Participation (aggregate)",
-      "type": "data table",
-      "entity": "Participation",
-      "url": "https://data.cityofnewyork.us/d/2td3-mfek",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Number of Participants in NYC Aging funded Programs 2td3-mfek (18c)"],
-      "opendata_gap": false,
-      "notes": "Unduplicated client counts per program/site/fiscal year — AGGREGATE ONLY. No individual older adult record is ever published (privacy by design)."
-    },
-    {
-      "name": "Find help / get connected to services",
-      "type": "workflow (contact center)",
-      "entity": "ServiceReferral",
-      "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The general 'find help' front door — routes to Aging Connect (212-AGING-NYC). Phone/walk-in only; no API."
-    },
-    {
-      "name": "Apply for home-delivered meals",
-      "type": "workflow (contact center)",
-      "entity": "ServiceReferral",
-      "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Request home-delivered meals for a homebound older adult — assessed and arranged via Aging Connect / a case-management agency. No API. An alternative net-new write surface."
-    },
-    {
-      "name": "Request case management",
-      "type": "workflow (contact center)",
-      "entity": "ServiceReferral",
-      "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Connect an older adult to a Case Management Agency for benefits, entitlements, and care planning — Aging Connect intake only; no API."
-    },
-    {
-      "name": "Report suspected elder abuse",
-      "type": "workflow (contact center)",
-      "entity": "ServiceReferral",
-      "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Urgent elder-abuse / unsafe-at-home referral — routed to Aging Connect / Adult Protective Services. Phone only; the urgent path of the net-new write surface."
-    },
-    {
-      "name": "Make a service referral",
-      "type": "sign-up / referral workflow",
-      "entity": "ServiceReferral",
-      "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The single most common resident interaction — connect an older adult (self, family, or caseworker) to DFTA services and track the referral. No API and no Open Data twin; lives only in the phone-based Aging Connect intake or a 311 call. The net-new WRITE surface for this domain."
-    }
-  ],
-  "meta": {
-    "short": "NYC Aging (DFTA)",
-    "verb": "connect",
-    "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace) — no separate vendor system; the service layer is a phone-based Aging Connect information-and-referral contact center.",
-    "netnew": "ServiceReferral — connect an older adult to DFTA services (case management, meals, benefits, caregiver, elder abuse, center enrollment) with an urgent path to Aging Connect / Adult Protective Services.",
-    "accent": "#3a9a8a",
-    "tagline": "The provider network is open data; the act of connecting an older adult to a service is a phone call.",
-    "headline": "DFTA publishes its ~1,000-provider network generously on Open Data, but the resident's core transaction — getting connected to a service — has no API, only the Aging Connect phone line."
+ "domain": "dfta",
+ "agency": "NYC Department for the Aging (DFTA / NYC Aging)",
+ "assessment_date": "2026-07-13",
+ "method": "Outside-in crawl (browser UA, robots-respecting \u2014 nyc.gov/robots.txt only disallows /html/misc/). Fingerprinted www.nyc.gov/site/dfta (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace) and the resident-facing 'Find Help' / Aging Connect intake at nyc.gov/site/dfta/services/find-help.page (Aging Connect information-and-referral contact center, 212-AGING-NYC / 212-244-6469 \u2014 phone/web, no API). Verified the NYC Open Data agency label 'Department for the Aging (NYC Aging)' via the Socrata Discovery API and pulled all 11 assets with column schemas.",
+ "related_domains": [
+  "data.cityofnewyork.us",
+  "nyc.gov/311",
+  "nyc.gov/site/hra",
+  "access.nyc.gov"
+ ],
+ "headline_findings": [
+  "DFTA (NYC Aging) is a connective, network-funding agency: it rarely delivers services itself, it funds ~1,000 community providers \u2014 so its reference data is a directory of providers, sites, senior-center operations, activities, and contract service units.",
+  "The provider/program reference data is well OPEN: 11 NYC Open Data datasets covering all contracted providers (38 columns), publicly open sites, older adult center (senior center) Local Law 140 operations, activities, budgeted/reported service units, expenditures, and aggregate participation.",
+  "But the resident SERVICE layer \u2014 connecting an older adult to case management, home-delivered meals, benefits, caregiver support, elder-abuse help, or senior center enrollment \u2014 has no machine-readable surface at all: intake happens only by calling Aging Connect (212-AGING-NYC), calling 311, or walking into a center.",
+  "Client/participant data is published only in aggregate (Number of Participants, unduplicated clients); DFTA never exposes an individual older adult record to Open Data.",
+  "Net-new write surface: make a service referral (ServiceReferral) \u2014 connect an older adult to services \u2014 the core resident transaction, with no API today. See tech-stack.md and apis-observed.md."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "data.cityofnewyork.us (SODA)",
+   "type": "open data API",
+   "owner": "NYC (Socrata/Tyler)",
+   "public": true,
+   "note": "11 DFTA datasets; SODA /resource/<id>.json endpoints. The one real, open DFTA API \u2014 provider/program reference data only."
   },
-  "scorecard": {
-    "platform": 1,
-    "siteApi": 0,
-    "openData": 2,
-    "coreData": 2,
-    "writeApi": 0,
-    "agent": 0,
-    "ownership": 1
+  {
+   "endpoint": "Aging Connect (212-AGING-NYC / 212-244-6469)",
+   "type": "information & referral intake",
+   "owner": "NYC Aging (DFTA)",
+   "public": "phone / walk-in / web form, no API",
+   "note": "The intake and referral layer \u2014 case management, home-delivered meals, benefits, caregiver, elder abuse, center enrollment. No JSON/OpenAPI; a contact center, not a system with a machine-readable surface."
   },
-  "scorecard_notes": {
-    "platform": "Shared NYC.gov Livesite chassis; no DFTA-owned application platform, service layer is a phone contact center.",
-    "siteApi": "No site or content API; nothing machine-readable on nyc.gov/site/dfta.",
-    "openData": "11 open Socrata datasets covering the provider network well, but no service-layer data.",
-    "coreData": "Core provider/center/activity/service-unit entities are modeled and open; participation is aggregate-only.",
-    "writeApi": "No write surface at all — every referral/intake is a phone call to Aging Connect.",
-    "agent": "No agent-native surface; no MCP, no structured intake an agent could call.",
-    "ownership": "Reference data is DFTA-labeled on Open Data, but the transaction layer is an unowned contact-center process."
+  {
+   "endpoint": "www.nyc.gov/site/dfta",
+   "type": "informational site",
+   "owner": "NYC.gov shared platform (Livesite v22)",
+   "public": "html",
+   "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+  },
+  {
+   "endpoint": "nyc.gov/311 / access.nyc.gov",
+   "type": "citywide intake / benefits",
+   "owner": "NYC (OTI / HRA)",
+   "public": "html/app",
+   "note": "alternate front doors New Yorkers use to reach aging services and screen for benefits."
   }
+ ],
+ "fruit": [
+  {
+   "name": "Contracted Service Providers",
+   "type": "directory + map",
+   "entity": "ServiceProvider",
+   "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
+   "count": "~1,000 providers",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "All Contracted Providers cqc8-am9x (38c)",
+    "List of Providers with Sites Open to the Public u7wp-np5k (21c)",
+    "Social Adult Day Care Services 32cj-z7va (33c)"
+   ],
+   "notes": "Core unit of the DFTA network. Keyed on DFTA ID; provider types include Older Adult Center, Case Management, Home-Delivered Meal, Caregiver, Homecare, NORC, Elder Abuse, Geriatric Mental Health, Legal, Transportation, New York Connects. Sponsor, hours, address, full geography spine."
+  },
+  {
+   "name": "Older Adult Centers (senior centers)",
+   "type": "data table",
+   "entity": "OlderAdultCenter",
+   "url": "https://data.cityofnewyork.us/d/ygfr-ij6t",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Senior Center Local Law 140 Provider Data ygfr-ij6t (49c)",
+    "Senior Center Local Law 140 Client Data hm83-bdp7 (12c)"
+   ],
+   "notes": "Senior-center operating profile under Local Law 140 \u2014 utilization, meals served, staffing, budget/expenditures, days open. An OlderAdultCenter is a ServiceProvider of type 'Older Adult Center', enriched with center operations."
+  },
+  {
+   "name": "Older Adult Center Activities",
+   "type": "data table",
+   "entity": "ProgramActivity",
+   "url": "https://data.cityofnewyork.us/d/fzy4-e84j",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Older Adult Center (OAC) Activities fzy4-e84j (26c)"
+   ],
+   "notes": "Scheduled classes, meals, recreation, and health-promotion events at older adult centers; virtual/in-person, recurring, accessibility, topics, geography. The browse surface an older adult uses to find something to do near them."
+  },
+  {
+   "name": "Contract Service Units & Budgets",
+   "type": "data table",
+   "entity": "ServiceUnit",
+   "url": "https://data.cityofnewyork.us/d/exaw-9qnu",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Reported Service Units exaw-9qnu (10c)",
+    "Budgeted Services nxrs-2ci5 (8c)",
+    "Reported Expenditures tt8e-a9vn (9c)",
+    "Bottom Line Budget u845-acue (7c)"
+   ],
+   "notes": "Budgeted-vs-reported service units and amounts per provider/service/contract year \u2014 the contract-performance line behind the network."
+  },
+  {
+   "name": "Program Participation (aggregate)",
+   "type": "data table",
+   "entity": "Participation",
+   "url": "https://data.cityofnewyork.us/d/2td3-mfek",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Number of Participants in NYC Aging funded Programs 2td3-mfek (18c)"
+   ],
+   "opendata_gap": false,
+   "notes": "Unduplicated client counts per program/site/fiscal year \u2014 AGGREGATE ONLY. No individual older adult record is ever published (privacy by design)."
+  },
+  {
+   "name": "Find help / get connected to services",
+   "type": "workflow (contact center)",
+   "entity": "ServiceReferral",
+   "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The general 'find help' front door \u2014 routes to Aging Connect (212-AGING-NYC). Phone/walk-in only; no API."
+  },
+  {
+   "name": "Apply for home-delivered meals",
+   "type": "workflow (contact center)",
+   "entity": "ServiceReferral",
+   "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Request home-delivered meals for a homebound older adult \u2014 assessed and arranged via Aging Connect / a case-management agency. No API. An alternative net-new write surface."
+  },
+  {
+   "name": "Request case management",
+   "type": "workflow (contact center)",
+   "entity": "ServiceReferral",
+   "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Connect an older adult to a Case Management Agency for benefits, entitlements, and care planning \u2014 Aging Connect intake only; no API."
+  },
+  {
+   "name": "Report suspected elder abuse",
+   "type": "workflow (contact center)",
+   "entity": "ServiceReferral",
+   "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Urgent elder-abuse / unsafe-at-home referral \u2014 routed to Aging Connect / Adult Protective Services. Phone only; the urgent path of the net-new write surface."
+  },
+  {
+   "name": "Make a service referral",
+   "type": "sign-up / referral workflow",
+   "entity": "ServiceReferral",
+   "url": "https://www.nyc.gov/site/dfta/services/find-help.page",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The single most common resident interaction \u2014 connect an older adult (self, family, or caseworker) to DFTA services and track the referral. No API and no Open Data twin; lives only in the phone-based Aging Connect intake or a 311 call. The net-new WRITE surface for this domain."
+  },
+  {
+   "name": "Local Law 140 OAC Metrics FY2022",
+   "type": "spreadsheet (Excel)",
+   "entity": "OlderAdultCenter",
+   "url": "https://www.nyc.gov/assets/dfta/downloads/excel/DFTA_Local_Law_140_OAC_Metrics_FY2022%20_Final.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "LL140 Older Adult Center operating metrics FY2022 (utilization, meals, staffing, budget).",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Local Law 140 Senior Center Metrics FY2021",
+   "type": "spreadsheet (Excel)",
+   "entity": "OlderAdultCenter",
+   "url": "https://www.nyc.gov/assets/dfta/downloads/excel/DFTA_Local_Law_140_Senior_Center_Metrics_FY_2021_FINAL.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "LL140 senior center metrics FY2021.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Local Law 140 Metrics FY2023",
+   "type": "spreadsheet (Excel)",
+   "entity": "OlderAdultCenter",
+   "url": "https://www.nyc.gov/assets/dfta/downloads/excel/Local-Law-140-FY-2023-Final-12-28-23.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "LL140 older adult/senior center metrics FY2023.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Local Law 140 Metrics FY2024",
+   "type": "spreadsheet (Excel)",
+   "entity": "OlderAdultCenter",
+   "url": "https://www.nyc.gov/assets/dfta/downloads/excel/Local-Law-140-FY-2024-Final-123124.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "LL140 older adult/senior center metrics FY2024.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Local Law 140 Metrics FY2025",
+   "type": "spreadsheet (Excel)",
+   "entity": "OlderAdultCenter",
+   "url": "https://www.nyc.gov/assets/dfta/downloads/excel/Local-Law-140-FY-2025-Final-921-2025-12-30.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "LL140 older adult/senior center metrics FY2025 (latest).",
+   "source": "excel-sweep"
+  }
+ ],
+ "meta": {
+  "short": "NYC Aging (DFTA)",
+  "verb": "connect",
+  "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace) \u2014 no separate vendor system; the service layer is a phone-based Aging Connect information-and-referral contact center.",
+  "netnew": "ServiceReferral \u2014 connect an older adult to DFTA services (case management, meals, benefits, caregiver, elder abuse, center enrollment) with an urgent path to Aging Connect / Adult Protective Services.",
+  "accent": "#3a9a8a",
+  "tagline": "The provider network is open data; the act of connecting an older adult to a service is a phone call.",
+  "headline": "DFTA publishes its ~1,000-provider network generously on Open Data, but the resident's core transaction \u2014 getting connected to a service \u2014 has no API, only the Aging Connect phone line."
+ },
+ "scorecard": {
+  "platform": 1,
+  "siteApi": 0,
+  "openData": 2,
+  "coreData": 2,
+  "writeApi": 0,
+  "agent": 0,
+  "ownership": 1
+ },
+ "scorecard_notes": {
+  "platform": "Shared NYC.gov Livesite chassis; no DFTA-owned application platform, service layer is a phone contact center.",
+  "siteApi": "No site or content API; nothing machine-readable on nyc.gov/site/dfta.",
+  "openData": "11 open Socrata datasets covering the provider network well, but no service-layer data.",
+  "coreData": "Core provider/center/activity/service-unit entities are modeled and open; participation is aggregate-only.",
+  "writeApi": "No write surface at all \u2014 every referral/intake is a phone call to Aging Connect.",
+  "agent": "No agent-native surface; no MCP, no structured intake an agent could call.",
+  "ownership": "Reference data is DFTA-labeled on Open Data, but the transaction layer is an unowned contact-center process."
+ }
 }

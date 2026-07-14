@@ -1,136 +1,216 @@
 {
-  "domain": "hra",
-  "agency": "NYC Human Resources Administration / Department of Social Services (HRA/DSS)",
-  "assessment_date": "2026-07-13",
-  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/hra (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace), the ACCESS NYC eligibility screener at access.nyc.gov (Cloudflare + WP Engine / WordPress, theme 'access'), and the ACCESS HRA application portal at a069-access.nyc.gov/accesshra (React SPA behind Akamai bot protection). Confirmed via GitHub that ACCESS NYC's eligibility logic is OPEN SOURCE — the Drools business rules in github.com/NYCOpportunity/ACCESS-NYC-Rules plus a benefits-screening-api. Verified the NYC Open Data agency label 'Human Resources Administration (HRA)' via the Socrata Discovery API (the alternate 'Department of Social Services (DSS)' returns 0) and pulled all 49 assets with column schemas.",
-  "related_domains": ["access.nyc.gov", "a069-access.nyc.gov", "data.cityofnewyork.us", "github.com/NYCOpportunity", "nyc.gov/site/hra"],
-  "meta": {
-    "short": "NYC Social Services (HRA)",
-    "verb": "connect",
-    "platform": "NYC.gov Livesite (informational) + ACCESS NYC (WordPress/WP Engine, open-source Drools eligibility rules) + ACCESS HRA (React SPA behind Akamai) application portal",
-    "netnew": "BenefitsApplication — apply for and track SNAP / Cash Assistance / Medicaid, today locked in the ACCESS HRA portal",
-    "accent": "#4a8f5a",
-    "tagline": "HRA has open caseload data and an open-source eligibility engine, but nothing binds screening, eligibility, and application into one API a resident or agent can call.",
-    "headline": "The eligibility logic is already open source (ACCESS NYC's Drools rules) — the low-hanging fruit is connecting screen -> eligibility -> apply into one owned benefits API."
+ "domain": "hra",
+ "agency": "NYC Human Resources Administration / Department of Social Services (HRA/DSS)",
+ "assessment_date": "2026-07-13",
+ "method": "Outside-in crawl (browser UA, robots-respecting \u2014 nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/hra (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace), the ACCESS NYC eligibility screener at access.nyc.gov (Cloudflare + WP Engine / WordPress, theme 'access'), and the ACCESS HRA application portal at a069-access.nyc.gov/accesshra (React SPA behind Akamai bot protection). Confirmed via GitHub that ACCESS NYC's eligibility logic is OPEN SOURCE \u2014 the Drools business rules in github.com/NYCOpportunity/ACCESS-NYC-Rules plus a benefits-screening-api. Verified the NYC Open Data agency label 'Human Resources Administration (HRA)' via the Socrata Discovery API (the alternate 'Department of Social Services (DSS)' returns 0) and pulled all 49 assets with column schemas.",
+ "related_domains": [
+  "access.nyc.gov",
+  "a069-access.nyc.gov",
+  "data.cityofnewyork.us",
+  "github.com/NYCOpportunity",
+  "nyc.gov/site/hra"
+ ],
+ "meta": {
+  "short": "NYC Social Services (HRA)",
+  "verb": "connect",
+  "platform": "NYC.gov Livesite (informational) + ACCESS NYC (WordPress/WP Engine, open-source Drools eligibility rules) + ACCESS HRA (React SPA behind Akamai) application portal",
+  "netnew": "BenefitsApplication \u2014 apply for and track SNAP / Cash Assistance / Medicaid, today locked in the ACCESS HRA portal",
+  "accent": "#4a8f5a",
+  "tagline": "HRA has open caseload data and an open-source eligibility engine, but nothing binds screening, eligibility, and application into one API a resident or agent can call.",
+  "headline": "The eligibility logic is already open source (ACCESS NYC's Drools rules) \u2014 the low-hanging fruit is connecting screen -> eligibility -> apply into one owned benefits API."
+ },
+ "scorecard": {
+  "platform": 2,
+  "siteApi": 1,
+  "openData": 3,
+  "coreData": 2,
+  "writeApi": 0,
+  "agent": 0,
+  "ownership": 2
+ },
+ "scorecard_notes": {
+  "platform": "Informational site on shared NYC.gov Livesite; ACCESS NYC is a modern open-source WordPress app and ACCESS HRA a React SPA \u2014 modern but split across three stacks.",
+  "siteApi": "No content/site API; the ACCESS NYC screener returns HTML and the benefits catalog is reachable only as an Open Data export.",
+  "openData": "49 datasets \u2014 SNAP/Cash Assistance/Medicaid caseloads, application-center directories, and 75-column case-action reports.",
+  "coreData": "Rich aggregates and directories, but no individual application/case entity is ever published (aggregate case actions are the closest twin).",
+  "writeApi": "No public API for the core transaction \u2014 applying for benefits lives only in the ACCESS HRA React portal or an in-person visit.",
+  "agent": "No agent-native surface; neither the screener nor the application portal exposes tools or a machine-readable contract.",
+  "ownership": "Eligibility rules are open-sourced and city-owned (rare) and the application portal is a city-built React app, but there is no owned API binding them."
+ },
+ "headline_findings": [
+  "HRA is a three-surface benefits domain: an informational NYC.gov/Livesite site, the ACCESS NYC eligibility screener (access.nyc.gov, WordPress/WP Engine), and the ACCESS HRA application portal (a069-access.nyc.gov, a React SPA behind Akamai).",
+  "The standout finding: ACCESS NYC's eligibility LOGIC is OPEN SOURCE \u2014 github.com/NYCOpportunity/ACCESS-NYC-Rules is a public Drools business rules engine driving the screener, alongside a benefits-screening-api. The rules are public; there is still no API that returns a screening result to a caller.",
+  "The reference and caseload data is unusually open: 49 NYC Open Data datasets covering SNAP/Cash Assistance/Medicaid recipient and case counts, application-center directories (Benefits Access Centers, SNAP Centers, Medicaid Offices, Homebase), wait times, and 75-column case-action reports.",
+  "But the resident TRANSACTION layer has no machine-readable surface: applying for and tracking a benefits case lives only inside the ACCESS HRA React portal or an in-person visit. No dataset and no API exposes an individual application/case (aggregate case-action counts are the closest twin \u2014 and never per-resident).",
+  "Net-new write surface: apply for benefits (BenefitsApplication) \u2014 the core resident transaction, with no API today. The modernization move is to CONNECT the open screener, the open rules, and the closed application step into one owned benefits API + MCP. See tech-stack.md and apis-observed.md."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "data.cityofnewyork.us (SODA)",
+   "type": "open data API",
+   "owner": "NYC (Socrata/Tyler)",
+   "public": true,
+   "note": "49 HRA datasets; SODA /resource/<id>.json endpoints. The one real, open HRA API \u2014 caseload, directory, and case-action reference data only."
   },
-  "scorecard": {
-    "platform": 2,
-    "siteApi": 1,
-    "openData": 3,
-    "coreData": 2,
-    "writeApi": 0,
-    "agent": 0,
-    "ownership": 2
+  {
+   "endpoint": "github.com/NYCOpportunity/ACCESS-NYC-Rules",
+   "type": "open-source eligibility rules engine",
+   "owner": "NYC Opportunity (Mayor's Office for Economic Opportunity)",
+   "public": "open source (Drools)",
+   "note": "The Drools business rules governing the ACCESS NYC eligibility screener at access.nyc.gov/eligibility. Logic is public; no hosted eligibility API returns results to callers. A companion benefits-screening-api repo (2025 replatform) exists."
   },
-  "scorecard_notes": {
-    "platform": "Informational site on shared NYC.gov Livesite; ACCESS NYC is a modern open-source WordPress app and ACCESS HRA a React SPA — modern but split across three stacks.",
-    "siteApi": "No content/site API; the ACCESS NYC screener returns HTML and the benefits catalog is reachable only as an Open Data export.",
-    "openData": "49 datasets — SNAP/Cash Assistance/Medicaid caseloads, application-center directories, and 75-column case-action reports.",
-    "coreData": "Rich aggregates and directories, but no individual application/case entity is ever published (aggregate case actions are the closest twin).",
-    "writeApi": "No public API for the core transaction — applying for benefits lives only in the ACCESS HRA React portal or an in-person visit.",
-    "agent": "No agent-native surface; neither the screener nor the application portal exposes tools or a machine-readable contract.",
-    "ownership": "Eligibility rules are open-sourced and city-owned (rare) and the application portal is a city-built React app, but there is no owned API binding them."
+  {
+   "endpoint": "access.nyc.gov",
+   "type": "benefits screening + catalog site",
+   "owner": "NYC Opportunity (WordPress / WP Engine)",
+   "public": "html",
+   "note": "The open-source ACCESS NYC screener and program catalog (theme 'access'; Cloudflare edge). Program metadata is published as the 'NYC Benefits Platform: Benefits and Programs Dataset' (kvhd-5fmu). Screener returns HTML, not JSON."
   },
-  "headline_findings": [
-    "HRA is a three-surface benefits domain: an informational NYC.gov/Livesite site, the ACCESS NYC eligibility screener (access.nyc.gov, WordPress/WP Engine), and the ACCESS HRA application portal (a069-access.nyc.gov, a React SPA behind Akamai).",
-    "The standout finding: ACCESS NYC's eligibility LOGIC is OPEN SOURCE — github.com/NYCOpportunity/ACCESS-NYC-Rules is a public Drools business rules engine driving the screener, alongside a benefits-screening-api. The rules are public; there is still no API that returns a screening result to a caller.",
-    "The reference and caseload data is unusually open: 49 NYC Open Data datasets covering SNAP/Cash Assistance/Medicaid recipient and case counts, application-center directories (Benefits Access Centers, SNAP Centers, Medicaid Offices, Homebase), wait times, and 75-column case-action reports.",
-    "But the resident TRANSACTION layer has no machine-readable surface: applying for and tracking a benefits case lives only inside the ACCESS HRA React portal or an in-person visit. No dataset and no API exposes an individual application/case (aggregate case-action counts are the closest twin — and never per-resident).",
-    "Net-new write surface: apply for benefits (BenefitsApplication) — the core resident transaction, with no API today. The modernization move is to CONNECT the open screener, the open rules, and the closed application step into one owned benefits API + MCP. See tech-stack.md and apis-observed.md."
-  ],
-  "apis_observed": [
-    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "49 HRA datasets; SODA /resource/<id>.json endpoints. The one real, open HRA API — caseload, directory, and case-action reference data only." },
-    { "endpoint": "github.com/NYCOpportunity/ACCESS-NYC-Rules", "type": "open-source eligibility rules engine", "owner": "NYC Opportunity (Mayor's Office for Economic Opportunity)", "public": "open source (Drools)", "note": "The Drools business rules governing the ACCESS NYC eligibility screener at access.nyc.gov/eligibility. Logic is public; no hosted eligibility API returns results to callers. A companion benefits-screening-api repo (2025 replatform) exists." },
-    { "endpoint": "access.nyc.gov", "type": "benefits screening + catalog site", "owner": "NYC Opportunity (WordPress / WP Engine)", "public": "html", "note": "The open-source ACCESS NYC screener and program catalog (theme 'access'; Cloudflare edge). Program metadata is published as the 'NYC Benefits Platform: Benefits and Programs Dataset' (kvhd-5fmu). Screener returns HTML, not JSON." },
-    { "endpoint": "a069-access.nyc.gov/accesshra", "type": "benefits application portal (SPA)", "owner": "HRA (React app behind Akamai)", "public": "login-walled UI, no API", "note": "ACCESS HRA — apply for SNAP/Cash Assistance/Medicaid, upload documents, view case status. React SPA; Akamai bot protection (_abck/bm_sz); no JSON/OpenAPI surface." },
-    { "endpoint": "www.nyc.gov/site/hra", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "Content only; Akamai edge, nginx, Dynatrace RUM (livesite-version 22). No content API." }
-  ],
-  "fruit": [
-    {
-      "name": "Benefit Programs & Services",
-      "type": "catalog + screener",
-      "entity": "Program",
-      "url": "https://access.nyc.gov/programs/",
-      "count": "~30+ programs",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["HRA Facts, Programs and Services np6w-pies (8c)", "NYC Benefits Platform: Benefits and Programs Dataset kvhd-5fmu (Mayor's Office for Economic Opportunity)"],
-      "notes": "SNAP, Cash Assistance, Medicaid, HEAP, Fair Fares, HASA and more. Program metadata (eligibility, how-to-apply, required documents) is the machine-readable data behind the ACCESS NYC screener."
-    },
-    {
-      "name": "Benefits Access & SNAP Centers, Medicaid Offices, Homebase",
-      "type": "directory + map + wait times",
-      "entity": "Center",
-      "url": "https://www.nyc.gov/site/hra/locations/snap-locations.page",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Directory of Benefits Access Centers 9d9t-bmk7 (16c)", "Directory of SNAP Centers tc6u-8rnp (15c)", "Medicaid Offices ibs4-k445 (16c)", "Directory Of Homebase Locations ntcm-2w4k (14c)", "Benefits Access Center Wait Times fq4m-vjs9", "SNAP Center Wait Time gqk4-hny9"],
-      "notes": "Where residents apply and get help; full geography spine (BIN/BBL/NTA/council) plus live wait-time feeds keyed on center number."
-    },
-    {
-      "name": "Caseload & Enrollment Statistics",
-      "type": "data tables (aggregate)",
-      "entity": "CaseloadStatistic",
-      "url": "https://data.cityofnewyork.us/d/5awp-wfkt",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Total SNAP Recipients 5c4s-jwtq", "Cash Assistance Recipients qtrj-g3nm", "Citywide HRA-Administered Medicaid Enrollees 33db-aeds", "Cash Assistance, Medicaid, and SNAP - Borough/Community District 5awp-wfkt (9c)", "District Resource Statement au2c-rs69 (10c)", "Fair Fares Enrollees 3tw8-6si8"],
-      "notes": "Monthly recipient/enrollee/case counts for the three big programs, citywide and by borough/community district. AGGREGATE ONLY."
-    },
-    {
-      "name": "Cash Assistance / SNAP Case Actions",
-      "type": "data tables (aggregate)",
-      "entity": "CaseAction",
-      "url": "https://data.cityofnewyork.us/d/g6pg-qint",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Cases Rejections g6pg-qint (75c)", "Cases Closed 5fs5-yi3e (75c)", "Cases Reopenings 5uf6-jjmy (75c)", "Reopenings with a Missed Benefit 28gm-7ump (75c)"],
-      "opendata_gap": false,
-      "notes": "Rejections/closings/reopenings by reason code, council district, race, age band, and sex. The closest published twin to an individual application/case — but counts only, never per-resident."
-    },
-    {
-      "name": "Eligibility screening (ACCESS NYC rules)",
-      "type": "open-source rules engine",
-      "entity": "BenefitsEligibility",
-      "url": "https://access.nyc.gov/eligibility/",
-      "machine_readable": "open source (Drools), no hosted API",
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "ACCESS NYC's eligibility LOGIC is open source (github.com/NYCOpportunity/ACCESS-NYC-Rules, a Drools engine) but the screener returns HTML, not a machine-readable determination. Exposing it as POST /eligibility is low-hanging: the rules are already public."
-    },
-    {
-      "name": "Apply for SNAP / Cash Assistance / Medicaid",
-      "type": "application workflow (portal)",
-      "entity": "BenefitsApplication",
-      "url": "https://a069-access.nyc.gov/accesshra/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The single most important resident transaction — submit an application, upload documents, track case status. Lives only in the ACCESS HRA React portal or an in-person visit. No API and no Open Data twin. The net-new WRITE surface for this domain."
-    },
-    {
-      "name": "Check case status",
-      "type": "transaction (portal)",
-      "entity": "BenefitsApplication",
-      "url": "https://a069-access.nyc.gov/accesshra/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "View determination, interview date, and documents-needed status for an existing case — ACCESS HRA-only; no API. Read side of the net-new application surface."
-    },
-    {
-      "name": "Emergency assistance requests",
-      "type": "workflow (portal)",
-      "entity": "BenefitsApplication",
-      "url": "https://data.cityofnewyork.us/d/5vgr-4tp3",
-      "machine_readable": "aggregate only (SODA)",
-      "verified": true,
-      "opendata_match": ["Cash Assistance Emergency Assistance Requests 5vgr-4tp3 (23c)"],
-      "opendata_gap": true,
-      "notes": "Rent arrears, utilities, storage, disaster one-time assistance. Aggregate request counts are published; the individual request lives only in the portal. Modeled as an emergency BenefitsApplication."
-    }
-  ]
+  {
+   "endpoint": "a069-access.nyc.gov/accesshra",
+   "type": "benefits application portal (SPA)",
+   "owner": "HRA (React app behind Akamai)",
+   "public": "login-walled UI, no API",
+   "note": "ACCESS HRA \u2014 apply for SNAP/Cash Assistance/Medicaid, upload documents, view case status. React SPA; Akamai bot protection (_abck/bm_sz); no JSON/OpenAPI surface."
+  },
+  {
+   "endpoint": "www.nyc.gov/site/hra",
+   "type": "informational site",
+   "owner": "NYC.gov shared platform (Livesite)",
+   "public": "html",
+   "note": "Content only; Akamai edge, nginx, Dynatrace RUM (livesite-version 22). No content API."
+  }
+ ],
+ "fruit": [
+  {
+   "name": "Benefit Programs & Services",
+   "type": "catalog + screener",
+   "entity": "Program",
+   "url": "https://access.nyc.gov/programs/",
+   "count": "~30+ programs",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "HRA Facts, Programs and Services np6w-pies (8c)",
+    "NYC Benefits Platform: Benefits and Programs Dataset kvhd-5fmu (Mayor's Office for Economic Opportunity)"
+   ],
+   "notes": "SNAP, Cash Assistance, Medicaid, HEAP, Fair Fares, HASA and more. Program metadata (eligibility, how-to-apply, required documents) is the machine-readable data behind the ACCESS NYC screener."
+  },
+  {
+   "name": "Benefits Access & SNAP Centers, Medicaid Offices, Homebase",
+   "type": "directory + map + wait times",
+   "entity": "Center",
+   "url": "https://www.nyc.gov/site/hra/locations/snap-locations.page",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Directory of Benefits Access Centers 9d9t-bmk7 (16c)",
+    "Directory of SNAP Centers tc6u-8rnp (15c)",
+    "Medicaid Offices ibs4-k445 (16c)",
+    "Directory Of Homebase Locations ntcm-2w4k (14c)",
+    "Benefits Access Center Wait Times fq4m-vjs9",
+    "SNAP Center Wait Time gqk4-hny9"
+   ],
+   "notes": "Where residents apply and get help; full geography spine (BIN/BBL/NTA/council) plus live wait-time feeds keyed on center number."
+  },
+  {
+   "name": "Caseload & Enrollment Statistics",
+   "type": "data tables (aggregate)",
+   "entity": "CaseloadStatistic",
+   "url": "https://data.cityofnewyork.us/d/5awp-wfkt",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Total SNAP Recipients 5c4s-jwtq",
+    "Cash Assistance Recipients qtrj-g3nm",
+    "Citywide HRA-Administered Medicaid Enrollees 33db-aeds",
+    "Cash Assistance, Medicaid, and SNAP - Borough/Community District 5awp-wfkt (9c)",
+    "District Resource Statement au2c-rs69 (10c)",
+    "Fair Fares Enrollees 3tw8-6si8"
+   ],
+   "notes": "Monthly recipient/enrollee/case counts for the three big programs, citywide and by borough/community district. AGGREGATE ONLY."
+  },
+  {
+   "name": "Cash Assistance / SNAP Case Actions",
+   "type": "data tables (aggregate)",
+   "entity": "CaseAction",
+   "url": "https://data.cityofnewyork.us/d/g6pg-qint",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Cases Rejections g6pg-qint (75c)",
+    "Cases Closed 5fs5-yi3e (75c)",
+    "Cases Reopenings 5uf6-jjmy (75c)",
+    "Reopenings with a Missed Benefit 28gm-7ump (75c)"
+   ],
+   "opendata_gap": false,
+   "notes": "Rejections/closings/reopenings by reason code, council district, race, age band, and sex. The closest published twin to an individual application/case \u2014 but counts only, never per-resident."
+  },
+  {
+   "name": "Eligibility screening (ACCESS NYC rules)",
+   "type": "open-source rules engine",
+   "entity": "BenefitsEligibility",
+   "url": "https://access.nyc.gov/eligibility/",
+   "machine_readable": "open source (Drools), no hosted API",
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "ACCESS NYC's eligibility LOGIC is open source (github.com/NYCOpportunity/ACCESS-NYC-Rules, a Drools engine) but the screener returns HTML, not a machine-readable determination. Exposing it as POST /eligibility is low-hanging: the rules are already public."
+  },
+  {
+   "name": "Apply for SNAP / Cash Assistance / Medicaid",
+   "type": "application workflow (portal)",
+   "entity": "BenefitsApplication",
+   "url": "https://a069-access.nyc.gov/accesshra/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The single most important resident transaction \u2014 submit an application, upload documents, track case status. Lives only in the ACCESS HRA React portal or an in-person visit. No API and no Open Data twin. The net-new WRITE surface for this domain."
+  },
+  {
+   "name": "Check case status",
+   "type": "transaction (portal)",
+   "entity": "BenefitsApplication",
+   "url": "https://a069-access.nyc.gov/accesshra/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "View determination, interview date, and documents-needed status for an existing case \u2014 ACCESS HRA-only; no API. Read side of the net-new application surface."
+  },
+  {
+   "name": "Emergency assistance requests",
+   "type": "workflow (portal)",
+   "entity": "BenefitsApplication",
+   "url": "https://data.cityofnewyork.us/d/5vgr-4tp3",
+   "machine_readable": "aggregate only (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Cash Assistance Emergency Assistance Requests 5vgr-4tp3 (23c)"
+   ],
+   "opendata_gap": true,
+   "notes": "Rent arrears, utilities, storage, disaster one-time assistance. Aggregate request counts are published; the individual request lives only in the portal. Modeled as an emergency BenefitsApplication."
+  },
+  {
+   "name": "DSS Subcontractor Log 2023",
+   "type": "spreadsheet (Excel)",
+   "entity": "Subcontractor",
+   "url": "https://www.nyc.gov/assets/hra/downloads/xls/business/DSS_Subcontractor_Log_2023.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Tabular log of DSS/HRA prime-contract subcontractors; procurement data that should be a queryable API.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "HRA FY27 Master Workbook",
+   "type": "spreadsheet (Excel)",
+   "entity": "ProcurementPlan",
+   "url": "https://www.nyc.gov/assets/hra/downloads/xls/business/HRA-FY27-Master-Workbook.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "FY27 contracting/procurement master workbook for vendors.",
+   "source": "excel-sweep"
+  }
+ ]
 }

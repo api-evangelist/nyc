@@ -1,136 +1,221 @@
 {
-  "domain": "queensda",
-  "agency": "Queens County District Attorney",
-  "assessment_date": "2026-07-13",
-  "method": "Outside-in crawl (browser UA, robots-respecting — queensda.org/robots.txt disallows nothing). Fingerprinted queensda.org: WordPress 7.0.1 on Kinsta managed hosting behind Cloudflare, Divi theme with a 'queensdistrictattorney' child theme, Beaver Builder page builder (bb-plugin / bb-theme / bbpowerpack), WPML multilingual, Yoast SEO, Google Site Kit, FacetWP faceted search, and self-hosted Matomo analytics. Confirmed ZERO NYC Open Data assets via the Socrata Discovery API across four agency-label spellings (all resultSetSize 0). Enumerated the site's content through the fully-exposed WordPress REST API (wp-json/wp/v2): 1,557 posts, 60 pages, and the full category taxonomy with counts.",
-  "related_domains": ["manhattanda.org", "brooklynda.org", "bronxda.gov", "statenislandusa.com/district-attorney", "namus.gov", "criminaljustice.cityofnewyork.us"],
-  "headline_findings": [
-    "Queens DA is a new distinct pattern: it publishes prolifically (1,557 WordPress posts, 1,216 press releases) and that content is ALREADY machine-readable — but through an ACCIDENTAL API (the fully-exposed WordPress REST API, wp-json/wp/v2), not a designed one.",
-    "There is NO NYC Open Data corpus for a District Attorney — verified zero Socrata datasets across four agency labels. DAs are county/state prosecutorial agencies and do not publish to NYC Open Data.",
-    "The prosecution lifecycle (arraignment 131 → charges 127 → indictment 119 → court-case 378 → conviction) exists only as press-release prose tagged by WordPress category; there is no structured Case resource.",
-    "The one genuinely structured dataset is trapped in prose: the cold-case / unidentified-persons initiative encodes NamUs case numbers, sex, age range, and date/location found inside post TITLES (e.g. 'MALE 4-12-2014 NAMUS UP13060').",
-    "There is NO inbound write channel at all — tips, cold-case leads, and FOIL records requests go by phone or a static contact page. That is the net-new WRITE surface.",
-    "All five NYC borough DA offices run the same functions on similar WordPress stacks — this is the strongest candidate yet for ONE shared, five-borough DA API rather than five accidental REST APIs."
-  ],
-  "apis_observed": [
-    { "endpoint": "queensda.org/wp-json/wp/v2", "type": "content API (accidental)", "owner": "Queens DA (WordPress core)", "public": true, "note": "The WordPress REST API is fully exposed: 1,557 posts, 60 pages, categories, tags, media. Machine-readable but undesigned, uncontracted, and unofficial — press releases, court-case posts, and cold-case posts all readable as JSON. The de facto Queens DA API." },
-    { "endpoint": "queensda.org/wp-json/facetwp/v1/fetch", "type": "faceted search API", "owner": "Queens DA (FacetWP plugin)", "public": true, "note": "FacetWP powers on-site faceted search; its /refresh and /fetch endpoints are exposed under wp-json." },
-    { "endpoint": "queensda.org/wp-json/matomo/v1", "type": "analytics API namespace", "owner": "Queens DA (self-hosted Matomo)", "public": "namespace present", "note": "Self-hosted Matomo (first-party analytics) integrated into WordPress — notable choice for a public agency over pure third-party tracking." },
-    { "endpoint": "queensda.org/wp-json/wpml/v1", "type": "translation/multilingual API", "owner": "Queens DA (WPML)", "public": "namespace present", "note": "WPML drives the multilingual site (translation state for 15+ strings); explains per-language content." },
-    { "endpoint": "google-site-kit / yoast namespaces", "type": "SEO + analytics connectors", "owner": "Google / Yoast", "public": "namespace present", "note": "Google Site Kit and Yoast SEO REST namespaces present — third-party analytics/SEO tooling." },
-    { "endpoint": "Cloudflare edge + Kinsta hosting", "type": "CDN + managed WordPress host", "owner": "Cloudflare / Kinsta", "public": "infra", "note": "server: cloudflare; x-kinsta-cache / ki-edge headers; x-redirect-by: WordPress. Managed WordPress on Kinsta behind Cloudflare." },
-    { "endpoint": "NYC Open Data (Socrata)", "type": "open data API", "owner": "NYC / Socrata", "public": "N/A", "note": "NO Queens DA presence — zero datasets across four agency-label queries. DAs do not publish to NYC Open Data." },
-    { "endpoint": "FOIL records request", "type": "manual records channel", "owner": "Queens DA", "public": "manual, no API", "note": "Freedom of Information Law requests are the formal data-access path; handled manually via the Resources page. No API." }
-  ],
-  "fruit": [
-    {
-      "name": "Press Releases",
-      "type": "content stream (WordPress posts)",
-      "entity": "PressRelease",
-      "url": "https://queensda.org/category/press-releases/",
-      "count": "1,216 posts (+256 weekly newsletters, 15 statements, 120 announcements)",
-      "machine_readable": "WordPress REST API (accidental)",
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The office's dominant output. Readable as JSON via wp-json/wp/v2/posts?categories=16 but with no designed contract — HTML narrative only. The core content object."
-    },
-    {
-      "name": "Prosecution activity (public record)",
-      "type": "lifecycle categories over prose",
-      "entity": "Case",
-      "url": "https://queensda.org/upcoming-cases/",
-      "count": "court-cases 378, arraignments 131, charges 127, indictments 119",
-      "machine_readable": "partial (category tags only)",
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The arraignment→charges→indictment→court-case→conviction lifecycle exists ONLY as press-release prose tagged by WordPress category. No structured Case resource; charges, dispositions, and sentences are unstructured text. Public record only."
-    },
-    {
-      "name": "Cold Cases / Unidentified Persons (NamUs)",
-      "type": "structured data trapped in post titles",
-      "entity": "ColdCase",
-      "url": "https://queensda.org/category/cold-cases/",
-      "count": "cold-cases 67 (unidentified 19, identified 47)",
-      "machine_readable": "recoverable (NamUs ID, sex, age, date in titles)",
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The one genuinely structured dataset: each post title encodes a NamUs case number, sex, estimated age range, and date/location found (e.g. 'MALE 4-12-2014 NAMUS UP13060'). Highest-value read; a family or agent cannot query it today."
-    },
-    {
-      "name": "Community Programs & Initiatives",
-      "type": "hand-built WordPress pages",
-      "entity": "Program",
-      "url": "https://queensda.org/special-initiatives/",
-      "count": "~dozen (A Bridge to Change, Brave Justice, Blazing the Trail, youth development, violence prevention, some archived RFPs)",
-      "machine_readable": "WordPress REST API (pages)",
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Diversion, youth, and community-partnership programs, each a bespoke page with no common shape. Some are archived RFPs."
-    },
-    {
-      "name": "Resources (FOIL, Property Release, CIU, helplines)",
-      "type": "resource directory (page)",
-      "entity": "CommunityResource",
-      "url": "https://queensda.org/resources/",
-      "count": "Conviction Integrity Unit, Property Release, FOIL, helpline lists, language/disability access plans",
-      "machine_readable": "WordPress REST API (page prose)",
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Public resources as prose links on one page. FOIL is the formal records-request path — manual, no API."
-    },
-    {
-      "name": "Victim / Witness Services",
-      "type": "service directory (prose)",
-      "entity": "VictimService",
-      "url": "https://queensda.org/resources/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Survivor support (advocacy, safety planning, compensation, court accompaniment, interpreters) scattered across pages with no directory. Describes services, not people."
-    },
-    {
-      "name": "Submit a tip / cold-case lead / FOIL request",
-      "type": "inbound write workflow",
-      "entity": "TipSubmission",
-      "url": "https://queensda.org/contact-us/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "There is NO inbound write channel — tips, leads, and FOIL requests go by phone or a static contact page. The net-new WRITE surface; tips may be anonymous, FOIL requests generally are not."
-    }
-  ],
-  "meta": {
-    "short": "Queens District Attorney",
-    "verb": "structure",
-    "platform": "WordPress 7.0.1 (Divi + Beaver Builder + WPML) on Kinsta behind Cloudflare; FacetWP search; self-hosted Matomo",
-    "netnew": "TipSubmission — submit a tip, cold-case lead, or FOIL request (no inbound channel today)",
-    "accent": "#d9922a",
-    "tagline": "A prosecutor's office that publishes 1,200+ press releases and, by accident, already has an API — WordPress REST — but no designed contract, no open data, and no way in.",
-    "headline": "Queens DA already exposes a machine-readable API by accident (WordPress REST); the work is to STRUCTURE its press-release prose into real resources and share one contract across all five borough DAs."
+ "domain": "queensda",
+ "agency": "Queens County District Attorney",
+ "assessment_date": "2026-07-13",
+ "method": "Outside-in crawl (browser UA, robots-respecting \u2014 queensda.org/robots.txt disallows nothing). Fingerprinted queensda.org: WordPress 7.0.1 on Kinsta managed hosting behind Cloudflare, Divi theme with a 'queensdistrictattorney' child theme, Beaver Builder page builder (bb-plugin / bb-theme / bbpowerpack), WPML multilingual, Yoast SEO, Google Site Kit, FacetWP faceted search, and self-hosted Matomo analytics. Confirmed ZERO NYC Open Data assets via the Socrata Discovery API across four agency-label spellings (all resultSetSize 0). Enumerated the site's content through the fully-exposed WordPress REST API (wp-json/wp/v2): 1,557 posts, 60 pages, and the full category taxonomy with counts.",
+ "related_domains": [
+  "manhattanda.org",
+  "brooklynda.org",
+  "bronxda.gov",
+  "statenislandusa.com/district-attorney",
+  "namus.gov",
+  "criminaljustice.cityofnewyork.us"
+ ],
+ "headline_findings": [
+  "Queens DA is a new distinct pattern: it publishes prolifically (1,557 WordPress posts, 1,216 press releases) and that content is ALREADY machine-readable \u2014 but through an ACCIDENTAL API (the fully-exposed WordPress REST API, wp-json/wp/v2), not a designed one.",
+  "There is NO NYC Open Data corpus for a District Attorney \u2014 verified zero Socrata datasets across four agency labels. DAs are county/state prosecutorial agencies and do not publish to NYC Open Data.",
+  "The prosecution lifecycle (arraignment 131 \u2192 charges 127 \u2192 indictment 119 \u2192 court-case 378 \u2192 conviction) exists only as press-release prose tagged by WordPress category; there is no structured Case resource.",
+  "The one genuinely structured dataset is trapped in prose: the cold-case / unidentified-persons initiative encodes NamUs case numbers, sex, age range, and date/location found inside post TITLES (e.g. 'MALE 4-12-2014 NAMUS UP13060').",
+  "There is NO inbound write channel at all \u2014 tips, cold-case leads, and FOIL records requests go by phone or a static contact page. That is the net-new WRITE surface.",
+  "All five NYC borough DA offices run the same functions on similar WordPress stacks \u2014 this is the strongest candidate yet for ONE shared, five-borough DA API rather than five accidental REST APIs."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "queensda.org/wp-json/wp/v2",
+   "type": "content API (accidental)",
+   "owner": "Queens DA (WordPress core)",
+   "public": true,
+   "note": "The WordPress REST API is fully exposed: 1,557 posts, 60 pages, categories, tags, media. Machine-readable but undesigned, uncontracted, and unofficial \u2014 press releases, court-case posts, and cold-case posts all readable as JSON. The de facto Queens DA API."
   },
-  "scorecard": {
-    "platform": 2,
-    "siteApi": 2,
-    "openData": 0,
-    "coreData": 1,
-    "writeApi": 0,
-    "agent": 0,
-    "ownership": 1
+  {
+   "endpoint": "queensda.org/wp-json/facetwp/v1/fetch",
+   "type": "faceted search API",
+   "owner": "Queens DA (FacetWP plugin)",
+   "public": true,
+   "note": "FacetWP powers on-site faceted search; its /refresh and /fetch endpoints are exposed under wp-json."
   },
-  "scorecard_notes": {
-    "platform": "Modern managed WordPress (Divi/Beaver/WPML) on Kinsta behind Cloudflare — capable, current, but a CMS not a data platform.",
-    "siteApi": "A live, fully-exposed WordPress REST API — real and machine-readable, but accidental, undesigned, and uncontracted; plus FacetWP fetch.",
-    "openData": "Zero — no NYC Open Data / Socrata presence at all; verified across four agency labels.",
-    "coreData": "Prosecution lifecycle is only prose tagged by category; the one structured dataset (cold cases / NamUs) is trapped in post titles.",
-    "writeApi": "None — no inbound tip, lead, or FOIL channel beyond phone and a static contact page.",
-    "agent": "No agent-native surface; nothing designed for tools/MCP despite the content being JSON-readable.",
-    "ownership": "Content and infra are owned (self-hosted Matomo is a plus), but the 'API' is an unmanaged side effect of WordPress, and analytics/SEO lean on Google."
+  {
+   "endpoint": "queensda.org/wp-json/matomo/v1",
+   "type": "analytics API namespace",
+   "owner": "Queens DA (self-hosted Matomo)",
+   "public": "namespace present",
+   "note": "Self-hosted Matomo (first-party analytics) integrated into WordPress \u2014 notable choice for a public agency over pure third-party tracking."
+  },
+  {
+   "endpoint": "queensda.org/wp-json/wpml/v1",
+   "type": "translation/multilingual API",
+   "owner": "Queens DA (WPML)",
+   "public": "namespace present",
+   "note": "WPML drives the multilingual site (translation state for 15+ strings); explains per-language content."
+  },
+  {
+   "endpoint": "google-site-kit / yoast namespaces",
+   "type": "SEO + analytics connectors",
+   "owner": "Google / Yoast",
+   "public": "namespace present",
+   "note": "Google Site Kit and Yoast SEO REST namespaces present \u2014 third-party analytics/SEO tooling."
+  },
+  {
+   "endpoint": "Cloudflare edge + Kinsta hosting",
+   "type": "CDN + managed WordPress host",
+   "owner": "Cloudflare / Kinsta",
+   "public": "infra",
+   "note": "server: cloudflare; x-kinsta-cache / ki-edge headers; x-redirect-by: WordPress. Managed WordPress on Kinsta behind Cloudflare."
+  },
+  {
+   "endpoint": "NYC Open Data (Socrata)",
+   "type": "open data API",
+   "owner": "NYC / Socrata",
+   "public": "N/A",
+   "note": "NO Queens DA presence \u2014 zero datasets across four agency-label queries. DAs do not publish to NYC Open Data."
+  },
+  {
+   "endpoint": "FOIL records request",
+   "type": "manual records channel",
+   "owner": "Queens DA",
+   "public": "manual, no API",
+   "note": "Freedom of Information Law requests are the formal data-access path; handled manually via the Resources page. No API."
   }
+ ],
+ "fruit": [
+  {
+   "name": "Press Releases",
+   "type": "content stream (WordPress posts)",
+   "entity": "PressRelease",
+   "url": "https://queensda.org/category/press-releases/",
+   "count": "1,216 posts (+256 weekly newsletters, 15 statements, 120 announcements)",
+   "machine_readable": "WordPress REST API (accidental)",
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The office's dominant output. Readable as JSON via wp-json/wp/v2/posts?categories=16 but with no designed contract \u2014 HTML narrative only. The core content object."
+  },
+  {
+   "name": "Prosecution activity (public record)",
+   "type": "lifecycle categories over prose",
+   "entity": "Case",
+   "url": "https://queensda.org/upcoming-cases/",
+   "count": "court-cases 378, arraignments 131, charges 127, indictments 119",
+   "machine_readable": "partial (category tags only)",
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The arraignment\u2192charges\u2192indictment\u2192court-case\u2192conviction lifecycle exists ONLY as press-release prose tagged by WordPress category. No structured Case resource; charges, dispositions, and sentences are unstructured text. Public record only."
+  },
+  {
+   "name": "Cold Cases / Unidentified Persons (NamUs)",
+   "type": "structured data trapped in post titles",
+   "entity": "ColdCase",
+   "url": "https://queensda.org/category/cold-cases/",
+   "count": "cold-cases 67 (unidentified 19, identified 47)",
+   "machine_readable": "recoverable (NamUs ID, sex, age, date in titles)",
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The one genuinely structured dataset: each post title encodes a NamUs case number, sex, estimated age range, and date/location found (e.g. 'MALE 4-12-2014 NAMUS UP13060'). Highest-value read; a family or agent cannot query it today."
+  },
+  {
+   "name": "Community Programs & Initiatives",
+   "type": "hand-built WordPress pages",
+   "entity": "Program",
+   "url": "https://queensda.org/special-initiatives/",
+   "count": "~dozen (A Bridge to Change, Brave Justice, Blazing the Trail, youth development, violence prevention, some archived RFPs)",
+   "machine_readable": "WordPress REST API (pages)",
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Diversion, youth, and community-partnership programs, each a bespoke page with no common shape. Some are archived RFPs."
+  },
+  {
+   "name": "Resources (FOIL, Property Release, CIU, helplines)",
+   "type": "resource directory (page)",
+   "entity": "CommunityResource",
+   "url": "https://queensda.org/resources/",
+   "count": "Conviction Integrity Unit, Property Release, FOIL, helpline lists, language/disability access plans",
+   "machine_readable": "WordPress REST API (page prose)",
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Public resources as prose links on one page. FOIL is the formal records-request path \u2014 manual, no API."
+  },
+  {
+   "name": "Victim / Witness Services",
+   "type": "service directory (prose)",
+   "entity": "VictimService",
+   "url": "https://queensda.org/resources/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Survivor support (advocacy, safety planning, compensation, court accompaniment, interpreters) scattered across pages with no directory. Describes services, not people."
+  },
+  {
+   "name": "Submit a tip / cold-case lead / FOIL request",
+   "type": "inbound write workflow",
+   "entity": "TipSubmission",
+   "url": "https://queensda.org/contact-us/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "There is NO inbound write channel \u2014 tips, leads, and FOIL requests go by phone or a static contact page. The net-new WRITE surface; tips may be anonymous, FOIL requests generally are not."
+  },
+  {
+   "name": "Queens Violence Prevention (QVP) Budget Template (2025)",
+   "type": "spreadsheet (Excel)",
+   "entity": "GrantBudgetTemplate",
+   "url": "https://queensda.org/wp-content/uploads/2025/05/FINAL-Queens-Violence-Prevention-QVP-Budget-Template-5-7-25.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Budget template for the Queens Violence Prevention Program RFP.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "QCVPP Budget Template (2024)",
+   "type": "spreadsheet (Excel)",
+   "entity": "GrantBudgetTemplate",
+   "url": "https://queensda.org/wp-content/uploads/2024/10/FINAL-QCVPP-Budget-Template-10-10-24.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Queens Community Violence Prevention Program grant budget template.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "CYDCPP Budget Template (2024)",
+   "type": "spreadsheet (Excel)",
+   "entity": "GrantBudgetTemplate",
+   "url": "https://queensda.org/wp-content/uploads/2024/01/FINAL-CYDCPP2024-Budget-Template-1-19-24.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Comprehensive Youth Development & Crime Prevention Program 2024 budget template.",
+   "source": "excel-sweep"
+  }
+ ],
+ "meta": {
+  "short": "Queens District Attorney",
+  "verb": "structure",
+  "platform": "WordPress 7.0.1 (Divi + Beaver Builder + WPML) on Kinsta behind Cloudflare; FacetWP search; self-hosted Matomo",
+  "netnew": "TipSubmission \u2014 submit a tip, cold-case lead, or FOIL request (no inbound channel today)",
+  "accent": "#d9922a",
+  "tagline": "A prosecutor's office that publishes 1,200+ press releases and, by accident, already has an API \u2014 WordPress REST \u2014 but no designed contract, no open data, and no way in.",
+  "headline": "Queens DA already exposes a machine-readable API by accident (WordPress REST); the work is to STRUCTURE its press-release prose into real resources and share one contract across all five borough DAs."
+ },
+ "scorecard": {
+  "platform": 2,
+  "siteApi": 2,
+  "openData": 0,
+  "coreData": 1,
+  "writeApi": 0,
+  "agent": 0,
+  "ownership": 1
+ },
+ "scorecard_notes": {
+  "platform": "Modern managed WordPress (Divi/Beaver/WPML) on Kinsta behind Cloudflare \u2014 capable, current, but a CMS not a data platform.",
+  "siteApi": "A live, fully-exposed WordPress REST API \u2014 real and machine-readable, but accidental, undesigned, and uncontracted; plus FacetWP fetch.",
+  "openData": "Zero \u2014 no NYC Open Data / Socrata presence at all; verified across four agency labels.",
+  "coreData": "Prosecution lifecycle is only prose tagged by category; the one structured dataset (cold cases / NamUs) is trapped in post titles.",
+  "writeApi": "None \u2014 no inbound tip, lead, or FOIL channel beyond phone and a static contact page.",
+  "agent": "No agent-native surface; nothing designed for tools/MCP despite the content being JSON-readable.",
+  "ownership": "Content and infra are owned (self-hosted Matomo is a plus), but the 'API' is an unmanaged side effect of WordPress, and analytics/SEO lean on Google."
+ }
 }
