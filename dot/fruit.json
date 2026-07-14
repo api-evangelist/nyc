@@ -1,130 +1,324 @@
 {
-  "domain": "nyc.gov/dot",
-  "agency": "New York City Department of Transportation (DOT)",
-  "assessment_date": "2026-07-13",
-  "method": "Outside-in crawl (browser UA, respecting robots.txt — nyc.gov disallows only /html/misc/). Fingerprinted the legacy .shtml main site (Akamai/AWS/Dynatrace) and the nycstreetdesign.info Drupal 9 microsite (Pantheon). Enumerated the full DOT Open Data inventory via the Socrata Discovery API using the VERIFIED agency label 'Department of Transportation (DOT)' (267 assets). Pulled column schemas for the top entity datasets.",
-  "related_domains": ["nycstreetdesign.info", "nycstreets.net", "data.cityofnewyork.us", "vzv.nyc"],
-  "headline_findings": [
-    "DOT is the most open-data-rich domain in the project: 267 verified Open Data assets under agency label 'Department of Transportation (DOT)'.",
-    "But it is 178 flat datasets + 64 MAP-ONLY visualizations (zero queryable columns) + 18 external links — scattered snapshots, no owned or unified DOT API.",
-    "Nearly every street asset carries a LION SegmentID (bike routes, traffic counts, closures), yet DOT exposes no queryable street-network API keyed on it.",
-    "The one transaction — applying for a street-work permit — runs through the NYCSTREET portal (nycstreets.net) with NO public API; only the issued-permit snapshot (tqtj-sjs8) reaches Open Data.",
-    "Two disconnected web stacks: legacy .shtml main site (Akamai/AWS/Dynatrace) and a modern Drupal 9 street-design microsite on Pantheon.",
-    "Motor Vehicle Collisions datasets are NYPD, not DOT; DOT's safety layer is Vision Zero View (v7f4-yzyg). See apis-observed.md and tech-stack.md."
-  ],
-  "apis_observed": [
-    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC / Socrata (Tyler)", "public": true, "note": "Per-dataset SODA/GeoJSON for all 267 DOT assets; flat snapshots + map-only visualizations; no cross-dataset resource model or SegmentID-joined network." },
-    { "endpoint": "api.us.socrata.com/api/catalog/v1", "type": "discovery/catalog API", "owner": "Socrata", "public": true, "note": "Used to enumerate DOT inventory by Dataset-Information_Agency." },
-    { "endpoint": "nycstreets.net (NYCSTREET)", "type": "permitting portal", "owner": "NYC DOT", "public": "html", "note": "Street-opening/construction permit applications; NO public API. The net-new write surface." },
-    { "endpoint": "nycstreetdesign.info", "type": "Drupal 9 CMS", "owner": "NYC DOT / Pantheon", "public": "html", "note": "Street Design Guidelines; JSON:API-capable but serves manual content, not street assets." },
-    { "endpoint": "vzv.nyc (Vision Zero View)", "type": "crash/safety map app", "owner": "NYC DOT", "public": "web app", "note": "Linked from Open Data v7f4-yzyg." },
-    { "endpoint": "Akamai edge", "type": "CDN", "owner": "Akamai", "public": "vendor", "note": "server-timing ak_p on nyc.gov." },
-    { "endpoint": "Dynatrace RUM", "type": "analytics/monitoring", "owner": "Dynatrace", "public": "vendor", "note": "x-oneagent-js-injection, dtCookie." }
-  ],
-  "fruit": [
-    {
-      "name": "Bike Routes / cycling network",
-      "type": "geospatial dataset + map",
-      "entity": "BikeRoute",
-      "url": "https://www.nyc.gov/html/dot/html/bicyclists/bikemaps.shtml",
-      "machine_readable": "Open Data (SODA/GeoJSON)",
-      "verified": true,
-      "opendata_match": ["New York City Bike Routes mzxg-pwib (25c)", "New York City Bike Routes (Map) 9e2b-mctv"],
-      "notes": "Lanes, paths, greenways, signed routes; keyed on bikeId + LION SegmentID. Also a map-only twin."
-    },
-    {
-      "name": "Traffic & pedestrian signals",
-      "type": "geospatial datasets",
-      "entity": "TrafficSignal",
-      "url": "https://www.nyc.gov/html/dot/html/infrastructure/signals.shtml",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Accessible Pedestrian Signal Locations de3m-c5p4 (22c)", "Exclusive Pedestrian (Barnes Dance) Locations 8kuj-2n3u (25c)", "Traffic Signal and All-Way Stop Study Requests w76s-c5u4 (57c)"],
-      "opendata_gap": true,
-      "notes": "No single 'all traffic signals' dataset — only accessible/APS, Barnes Dance, LPI location sets and a study-request intake. Signal inventory is a gap."
-    },
-    {
-      "name": "Curbside parking regulations & signs",
-      "type": "geospatial dataset",
-      "entity": "ParkingRegulation",
-      "url": "https://www.nyc.gov/html/dot/html/motorist/parking.shtml",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Parking Regulation Locations and Signs nfid-uabd (25c)", "Parking Meters Locations and Status 693u-uax6 (22c)"],
-      "notes": "Every posted curbside sign + regulation text, positioned along a blockface."
-    },
-    {
-      "name": "Speed humps (Vision Zero)",
-      "type": "geospatial dataset + map",
-      "entity": "SpeedHump",
-      "url": "https://www.nyc.gov/content/visionzero/pages/",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["VZV Speed Humps jknp-skuy (8c)", "VZV Speed Humps (Map) eqxx-j5y8"],
-      "notes": "Traffic-calming installations by blockface."
-    },
-    {
-      "name": "Pedestrian plazas",
-      "type": "geospatial dataset + map",
-      "entity": "PedestrianPlaza",
-      "url": "https://www.nyc.gov/html/dot/html/pedestrians/nyc-plaza-program.shtml",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["NYC DOT Pedestrian Plazas - Polygon k5k6-6jex (19c)", "NYC DOT Pedestrian Plazas - Point Feature 5dck-9m6g (24c)"],
-      "notes": "Reclaimed street space maintained with community partners; area/perimeter + partner."
-    },
-    {
-      "name": "Bridges & condition ratings",
-      "type": "data table + coords",
-      "entity": "Bridge",
-      "url": "https://www.nyc.gov/html/dot/html/infrastructure/bridges.shtml",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Bridge Ratings 4yue-vjfc (20c)", "NYC Bridge Strike Data jdn9-td9w (12c)"],
-      "notes": "DOT-inventoried structures keyed on BIN, with latest numeric + verbal condition rating."
-    },
-    {
-      "name": "Street-work / street-opening permits",
-      "type": "transaction (permit application)",
-      "entity": "StreetWorkPermit",
-      "url": "https://nycstreets.net/",
-      "machine_readable": "Open Data snapshot only (read); no write API",
-      "verified": true,
-      "opendata_match": ["Street Construction Permits (2022 - Present) tqtj-sjs8 (39c)", "Street Closures due to Construction Activities by Block i6b5-j7bu (11c)"],
-      "opendata_gap": true,
-      "notes": "Applications go through the NYCSTREET portal with NO public API; only issued permits are re-published to Open Data. The one net-new write surface for this domain."
-    },
-    {
-      "name": "Truck routes",
-      "type": "map-only visualization",
-      "entity": "BikeRoute",
-      "url": "https://www.nyc.gov/html/dot/html/motorist/trucks.shtml",
-      "machine_readable": "map-only (0 columns)",
-      "verified": true,
-      "opendata_match": ["New York City Truck Routes (Map) wnu3-egq7"],
-      "opendata_gap": true,
-      "notes": "The single most-viewed DOT asset (86k views) is a MAP-ONLY visualization with zero queryable columns — emblematic of the 64 map assets whose geometry has no query surface. Modeled loosely as a street-network segment resource."
-    },
-    {
-      "name": "Automated traffic volume counts",
-      "type": "geospatial dataset",
-      "entity": "BikeRoute",
-      "url": "https://www.nyc.gov/html/dot/html/about/datafeeds.shtml",
-      "machine_readable": "Open Data (SODA)",
-      "verified": true,
-      "opendata_match": ["Automated Traffic Volume Counts 7ym2-wayt (14c)", "Traffic Volume Counts (Historical) btm5-ppia (31c)"],
-      "notes": "Segment-level volume counts keyed on SegmentID — a strong example of the LION join spine (mapped to the network, not a dedicated entity schema here)."
-    },
-    {
-      "name": "Street Design Guidelines",
-      "type": "document/CMS content",
-      "entity": "PedestrianPlaza",
-      "url": "https://www.nycstreetdesign.info/",
-      "machine_readable": "Drupal 9 (JSON:API-capable)",
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The design manual lives in a separate modern Drupal 9 microsite on Pantheon — content, not street assets; disconnected from the data."
-    }
-  ]
+ "domain": "nyc.gov/dot",
+ "agency": "New York City Department of Transportation (DOT)",
+ "assessment_date": "2026-07-13",
+ "method": "Outside-in crawl (browser UA, respecting robots.txt \u2014 nyc.gov disallows only /html/misc/). Fingerprinted the legacy .shtml main site (Akamai/AWS/Dynatrace) and the nycstreetdesign.info Drupal 9 microsite (Pantheon). Enumerated the full DOT Open Data inventory via the Socrata Discovery API using the VERIFIED agency label 'Department of Transportation (DOT)' (267 assets). Pulled column schemas for the top entity datasets.",
+ "related_domains": [
+  "nycstreetdesign.info",
+  "nycstreets.net",
+  "data.cityofnewyork.us",
+  "vzv.nyc"
+ ],
+ "headline_findings": [
+  "DOT is the most open-data-rich domain in the project: 267 verified Open Data assets under agency label 'Department of Transportation (DOT)'.",
+  "But it is 178 flat datasets + 64 MAP-ONLY visualizations (zero queryable columns) + 18 external links \u2014 scattered snapshots, no owned or unified DOT API.",
+  "Nearly every street asset carries a LION SegmentID (bike routes, traffic counts, closures), yet DOT exposes no queryable street-network API keyed on it.",
+  "The one transaction \u2014 applying for a street-work permit \u2014 runs through the NYCSTREET portal (nycstreets.net) with NO public API; only the issued-permit snapshot (tqtj-sjs8) reaches Open Data.",
+  "Two disconnected web stacks: legacy .shtml main site (Akamai/AWS/Dynatrace) and a modern Drupal 9 street-design microsite on Pantheon.",
+  "Motor Vehicle Collisions datasets are NYPD, not DOT; DOT's safety layer is Vision Zero View (v7f4-yzyg). See apis-observed.md and tech-stack.md."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "data.cityofnewyork.us (SODA)",
+   "type": "open data API",
+   "owner": "NYC / Socrata (Tyler)",
+   "public": true,
+   "note": "Per-dataset SODA/GeoJSON for all 267 DOT assets; flat snapshots + map-only visualizations; no cross-dataset resource model or SegmentID-joined network."
+  },
+  {
+   "endpoint": "api.us.socrata.com/api/catalog/v1",
+   "type": "discovery/catalog API",
+   "owner": "Socrata",
+   "public": true,
+   "note": "Used to enumerate DOT inventory by Dataset-Information_Agency."
+  },
+  {
+   "endpoint": "nycstreets.net (NYCSTREET)",
+   "type": "permitting portal",
+   "owner": "NYC DOT",
+   "public": "html",
+   "note": "Street-opening/construction permit applications; NO public API. The net-new write surface."
+  },
+  {
+   "endpoint": "nycstreetdesign.info",
+   "type": "Drupal 9 CMS",
+   "owner": "NYC DOT / Pantheon",
+   "public": "html",
+   "note": "Street Design Guidelines; JSON:API-capable but serves manual content, not street assets."
+  },
+  {
+   "endpoint": "vzv.nyc (Vision Zero View)",
+   "type": "crash/safety map app",
+   "owner": "NYC DOT",
+   "public": "web app",
+   "note": "Linked from Open Data v7f4-yzyg."
+  },
+  {
+   "endpoint": "Akamai edge",
+   "type": "CDN",
+   "owner": "Akamai",
+   "public": "vendor",
+   "note": "server-timing ak_p on nyc.gov."
+  },
+  {
+   "endpoint": "Dynatrace RUM",
+   "type": "analytics/monitoring",
+   "owner": "Dynatrace",
+   "public": "vendor",
+   "note": "x-oneagent-js-injection, dtCookie."
+  }
+ ],
+ "fruit": [
+  {
+   "name": "Bike Routes / cycling network",
+   "type": "geospatial dataset + map",
+   "entity": "BikeRoute",
+   "url": "https://www.nyc.gov/html/dot/html/bicyclists/bikemaps.shtml",
+   "machine_readable": "Open Data (SODA/GeoJSON)",
+   "verified": true,
+   "opendata_match": [
+    "New York City Bike Routes mzxg-pwib (25c)",
+    "New York City Bike Routes (Map) 9e2b-mctv"
+   ],
+   "notes": "Lanes, paths, greenways, signed routes; keyed on bikeId + LION SegmentID. Also a map-only twin."
+  },
+  {
+   "name": "Traffic & pedestrian signals",
+   "type": "geospatial datasets",
+   "entity": "TrafficSignal",
+   "url": "https://www.nyc.gov/html/dot/html/infrastructure/signals.shtml",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Accessible Pedestrian Signal Locations de3m-c5p4 (22c)",
+    "Exclusive Pedestrian (Barnes Dance) Locations 8kuj-2n3u (25c)",
+    "Traffic Signal and All-Way Stop Study Requests w76s-c5u4 (57c)"
+   ],
+   "opendata_gap": true,
+   "notes": "No single 'all traffic signals' dataset \u2014 only accessible/APS, Barnes Dance, LPI location sets and a study-request intake. Signal inventory is a gap."
+  },
+  {
+   "name": "Curbside parking regulations & signs",
+   "type": "geospatial dataset",
+   "entity": "ParkingRegulation",
+   "url": "https://www.nyc.gov/html/dot/html/motorist/parking.shtml",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Parking Regulation Locations and Signs nfid-uabd (25c)",
+    "Parking Meters Locations and Status 693u-uax6 (22c)"
+   ],
+   "notes": "Every posted curbside sign + regulation text, positioned along a blockface."
+  },
+  {
+   "name": "Speed humps (Vision Zero)",
+   "type": "geospatial dataset + map",
+   "entity": "SpeedHump",
+   "url": "https://www.nyc.gov/content/visionzero/pages/",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "VZV Speed Humps jknp-skuy (8c)",
+    "VZV Speed Humps (Map) eqxx-j5y8"
+   ],
+   "notes": "Traffic-calming installations by blockface."
+  },
+  {
+   "name": "Pedestrian plazas",
+   "type": "geospatial dataset + map",
+   "entity": "PedestrianPlaza",
+   "url": "https://www.nyc.gov/html/dot/html/pedestrians/nyc-plaza-program.shtml",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "NYC DOT Pedestrian Plazas - Polygon k5k6-6jex (19c)",
+    "NYC DOT Pedestrian Plazas - Point Feature 5dck-9m6g (24c)"
+   ],
+   "notes": "Reclaimed street space maintained with community partners; area/perimeter + partner."
+  },
+  {
+   "name": "Bridges & condition ratings",
+   "type": "data table + coords",
+   "entity": "Bridge",
+   "url": "https://www.nyc.gov/html/dot/html/infrastructure/bridges.shtml",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Bridge Ratings 4yue-vjfc (20c)",
+    "NYC Bridge Strike Data jdn9-td9w (12c)"
+   ],
+   "notes": "DOT-inventoried structures keyed on BIN, with latest numeric + verbal condition rating."
+  },
+  {
+   "name": "Street-work / street-opening permits",
+   "type": "transaction (permit application)",
+   "entity": "StreetWorkPermit",
+   "url": "https://nycstreets.net/",
+   "machine_readable": "Open Data snapshot only (read); no write API",
+   "verified": true,
+   "opendata_match": [
+    "Street Construction Permits (2022 - Present) tqtj-sjs8 (39c)",
+    "Street Closures due to Construction Activities by Block i6b5-j7bu (11c)"
+   ],
+   "opendata_gap": true,
+   "notes": "Applications go through the NYCSTREET portal with NO public API; only issued permits are re-published to Open Data. The one net-new write surface for this domain."
+  },
+  {
+   "name": "Truck routes",
+   "type": "map-only visualization",
+   "entity": "BikeRoute",
+   "url": "https://www.nyc.gov/html/dot/html/motorist/trucks.shtml",
+   "machine_readable": "map-only (0 columns)",
+   "verified": true,
+   "opendata_match": [
+    "New York City Truck Routes (Map) wnu3-egq7"
+   ],
+   "opendata_gap": true,
+   "notes": "The single most-viewed DOT asset (86k views) is a MAP-ONLY visualization with zero queryable columns \u2014 emblematic of the 64 map assets whose geometry has no query surface. Modeled loosely as a street-network segment resource."
+  },
+  {
+   "name": "Automated traffic volume counts",
+   "type": "geospatial dataset",
+   "entity": "BikeRoute",
+   "url": "https://www.nyc.gov/html/dot/html/about/datafeeds.shtml",
+   "machine_readable": "Open Data (SODA)",
+   "verified": true,
+   "opendata_match": [
+    "Automated Traffic Volume Counts 7ym2-wayt (14c)",
+    "Traffic Volume Counts (Historical) btm5-ppia (31c)"
+   ],
+   "notes": "Segment-level volume counts keyed on SegmentID \u2014 a strong example of the LION join spine (mapped to the network, not a dedicated entity schema here)."
+  },
+  {
+   "name": "Street Design Guidelines",
+   "type": "document/CMS content",
+   "entity": "PedestrianPlaza",
+   "url": "https://www.nycstreetdesign.info/",
+   "machine_readable": "Drupal 9 (JSON:API-capable)",
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The design manual lives in a separate modern Drupal 9 microsite on Pantheon \u2014 content, not street assets; disconnected from the data."
+  },
+  {
+   "name": "Street Network Changes",
+   "type": "spreadsheet (Excel)",
+   "entity": "StreetNetworkChange",
+   "url": "https://www1.nyc.gov/html/dot/downloads/excel/street-network-changes.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "DOT street-network change log keyed to the LION spine; from the DOT datafeeds page.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Street Network Changes - Metadata",
+   "type": "spreadsheet (Excel)",
+   "entity": "StreetNetworkChange",
+   "url": "https://www1.nyc.gov/html/dot/downloads/excel/street-network-changes-meta.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Column/field metadata dictionary for the Street Network Changes feed.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "NYC DOT Bi-Annual Pedestrian Index",
+   "type": "spreadsheet (Excel)",
+   "entity": "PedestrianCount",
+   "url": "https://www1.nyc.gov/html/dot/downloads/misc/nycdot-bi-annual-pedestrian-index.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Twice-yearly pedestrian volume index at benchmark locations citywide.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Transportation Data Collection Calendar",
+   "type": "spreadsheet (Excel)",
+   "entity": "DataCollectionSchedule",
+   "url": "https://www.nyc.gov/html/dot/downloads/misc/transportation-data-collection-calendar.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Schedule of DOT traffic/pedestrian/bike data-collection activities.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Local Law 9 Data (2024-2025)",
+   "type": "spreadsheet (Excel)",
+   "entity": "LocalLaw9Report",
+   "url": "https://www.nyc.gov/html/dot/downloads/excel/local-law-9-data-2024-2025.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Local Law 9 mandated reporting dataset.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Bike Share Usage Data Report - Q1 2026",
+   "type": "spreadsheet (Excel)",
+   "entity": "BikeShareUsage",
+   "url": "https://www.nyc.gov/html/dot/downloads/excel/bike-share-usage-data-report-q1-2026.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Quarterly bike-share ridership usage metrics reported to DOT.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Bike Share Usage Data Report - Q4 2025",
+   "type": "spreadsheet (Excel)",
+   "entity": "BikeShareUsage",
+   "url": "https://www.nyc.gov/html/dot/downloads/excel/bike-share-usage-data-report-q4-2025.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Quarterly bike-share ridership usage report.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Bike Share Usage Data Report - Q3 2025",
+   "type": "spreadsheet (Excel)",
+   "entity": "BikeShareUsage",
+   "url": "https://www.nyc.gov/html/dot/downloads/excel/bike-share-usage-data-report-q3-2025.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Quarterly bike-share ridership usage report.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Quarterly Unreadable License Plate Report - Q1 2026",
+   "type": "spreadsheet (Excel)",
+   "entity": "UnreadablePlateReport",
+   "url": "https://www.nyc.gov/html/dot/downloads/excel/quarterly-unreadable-license-plate-report-q1-2026.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Quarterly report on unreadable/obscured license plates.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Quarterly Unreadable License Plate Report - Q4 2025",
+   "type": "spreadsheet (Excel)",
+   "entity": "UnreadablePlateReport",
+   "url": "https://www.nyc.gov/html/dot/downloads/excel/quarterly-unreadable-license-plate-report-q4-2025.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Quarterly unreadable license plate report.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Quarterly Unreadable License Plate Report - Q3 2025",
+   "type": "spreadsheet (Excel)",
+   "entity": "UnreadablePlateReport",
+   "url": "https://www.nyc.gov/html/dot/downloads/excel/quarterly-unreadable-license-plate-report-q3-2025.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Quarterly unreadable license plate report.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Quarterly Unreadable License Plate Report - Q2 2025",
+   "type": "spreadsheet (Excel)",
+   "entity": "UnreadablePlateReport",
+   "url": "https://www.nyc.gov/html/dot/downloads/excel/quarterly-unreadable-license-plate-report-q2-2025.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Quarterly unreadable license plate report.",
+   "source": "excel-sweep"
+  }
+ ]
 }

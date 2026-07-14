@@ -1,109 +1,260 @@
 {
-  "domain": "comptroller.nyc.gov",
-  "agency": "New York City Office of the Comptroller",
-  "assessment_date": "2026-07-13",
-  "method": "Outside-in crawl (browser UA, robots-respecting). Two properties: comptroller.nyc.gov (WordPress — wp-json, wp-sitemap custom types report/rfp/event/nyc_bonds/job; 67 /services/ pages) and checkbooknyc.com (Drupal). The existing Checkbook NYC API (POST /api, XML) was probed LIVE across its type_of_data domains. Open Data reconciled via the Socrata Discovery API using verified agency label 'Office of the Comptroller (COMPTROLLER)' (15 assets).",
-  "related_domains": ["www.checkbooknyc.com", "data.cityofnewyork.us"],
-  "headline_findings": [
-    "The Comptroller ALREADY runs a public API — Checkbook NYC (POST checkbooknyc.com/api) — covering Spending, Contracts, Budget, Revenue, and Payroll; probed live at 3.2M spending / 10.2M payroll / 1.2M revenue FY2024 records, no key required.",
-    "But it is XML request/response, POST-only, with a bespoke search_criteria/response_columns envelope — no OpenAPI, no JSON Schema, no MCP, not resource-oriented, not agent-native.",
-    "The office's data is split across THREE surfaces: Checkbook (spending/contracts), NYC Open Data (15 assets — pension holdings x5, claims report, published audits, bonds, debt service), and the WordPress site (audits/RFPs/eClaim).",
-    "checkbooknyc.com is a Drupal app; comptroller.nyc.gov is WordPress; both sit behind Imperva. Comptroller Mark Levine per site metadata.",
-    "The one citizen write-workflow with no API is filing a claim against the City (eClaim / file-a-claim) — the net-new write object ClaimFiling.",
-    "See tech-stack.md and apis-observed.md for the API + vendor inventory."
-  ],
-  "apis_observed": [
-    { "endpoint": "POST checkbooknyc.com/api", "type": "financial-data API (XML in/out)", "owner": "NYC Comptroller (Checkbook NYC)", "public": true, "note": "EXISTING public spending API. type_of_data = Spending/Contracts/Budget/Revenue/Payroll. Probed live (Spending 3.2M FY24). XML envelope, POST-only, no OpenAPI/JSON/MCP, vendor Drupal — not agent-native." },
-    { "endpoint": "comptroller.nyc.gov/wp-json (wp/v2)", "type": "WordPress REST API", "owner": "NYC Comptroller", "public": true, "note": "open; content (reports, RFPs, events, nyc_bonds), not financial resources; FacetWP search." },
-    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC/Socrata", "public": true, "note": "15 Comptroller assets — pension holdings (5 systems), claims report, published audits, bonds, debt service; flattened snapshots; top asset is an href to Checkbook." },
-    { "endpoint": "facetwp/v1 (comptroller.nyc.gov)", "type": "faceted-search REST", "owner": "FacetWP (plugin)", "public": "internal", "note": "site search/filtering; not a data API." },
-    { "endpoint": "*.nr-data.net", "type": "monitoring API", "owner": "New Relic (vendor)", "public": "vendor", "note": "RUM on checkbooknyc.com." }
-  ],
-  "fruit": [
-    {
-      "name": "City Spending (payments)",
-      "type": "financial transactions (Checkbook API)",
-      "entity": "SpendingTransaction",
-      "url": "https://www.checkbooknyc.com/spending_landing/yeartype/B/year/125",
-      "machine_readable": "Checkbook API (XML)",
-      "verified": true,
-      "opendata_match": ["Checkbook NYC 2.0 mxwn-eh3b (href)"],
-      "notes": "3,227,575 FY2024 records via POST /api type_of_data=Spending. Real API, XML envelope — not resource-oriented/JSON/agent-native."
-    },
-    {
-      "name": "City Contracts",
-      "type": "financial records (Checkbook API)",
-      "entity": "Contract",
-      "url": "https://www.checkbooknyc.com/contracts_landing/status/all/yeartype/B/year/125",
-      "machine_readable": "Checkbook API (XML)",
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "type_of_data=Contracts (requires status + category). The Comptroller registers all City contracts; a late-contracts dashboard exists on the site. No Socrata twin."
-    },
-    {
-      "name": "Budget / Revenue / Payroll",
-      "type": "financial records (Checkbook API)",
-      "entity": "SpendingTransaction",
-      "url": "https://www.checkbooknyc.com/",
-      "machine_readable": "Checkbook API (XML)",
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "type_of_data Budget/Revenue/Payroll all reachable; Payroll 10.2M, Revenue 1.2M FY24 records. API-only, XML."
-    },
-    {
-      "name": "Published Audits",
-      "type": "document listing",
-      "entity": "Audit",
-      "url": "https://comptroller.nyc.gov/reports/",
-      "count": "site report posts + OD list",
-      "machine_readable": "Open Data + WP REST (partial)",
-      "verified": true,
-      "opendata_match": ["Published Audit List nekg-b6tw (6c)"],
-      "notes": "Bureau of Audit reports; published-audit list on Open Data, reports as WordPress custom posts."
-    },
-    {
-      "name": "Claims Against the City (reported)",
-      "type": "data table + dashboard",
-      "entity": "ClaimAgainstCity",
-      "url": "https://comptroller.nyc.gov/services/for-the-public/claims-dashboard/",
-      "machine_readable": "Open Data",
-      "verified": true,
-      "opendata_match": ["Claims Report - Underlying Settlements and Claims Filed Data ex6k-ym48 (10c)"],
-      "notes": "Reported claim dispositions by agency/borough/fiscal year. Read/report view; the filing view has no API."
-    },
-    {
-      "name": "Pension Fund Holdings",
-      "type": "data tables (5 systems)",
-      "entity": "PensionHolding",
-      "url": "https://comptroller.nyc.gov/services/financial-matters/pension/",
-      "count": "5 systems x 25 cols",
-      "machine_readable": "Open Data",
-      "verified": true,
-      "opendata_match": ["NYCERS p3e6-t4zv (25c)", "TRS 5u2d-n46s (25c)", "BERS fypi-ruxh (25c)", "Police dy3p-ay2d (25c)", "Fire 95aa-k2ka (25c)", "Five-System Asset Allocation rh3d-kgz3 (9c)", "Proxy Voting Records fpxc-zjtm (16c)"],
-      "notes": "Comptroller is investment adviser/custodian for the five NYC pension systems; per-security holdings on Open Data."
-    },
-    {
-      "name": "Bonds & Debt Service",
-      "type": "data tables + posts",
-      "entity": "Audit",
-      "url": "https://comptroller.nyc.gov/services/financial-matters/nyc-bonds/",
-      "machine_readable": "Open Data + WP REST",
-      "verified": true,
-      "opendata_match": ["General Obligation Debt Service by Fiscal Year dfr8-nudu (4c)", "NYC Quarterly Bond Update d334-62hi (8c)", "GO Variable Rate Bonds Credit and Liquidity Agreements xprg-trsi (7c)"],
-      "notes": "Bond program tracked as nyc_bonds WordPress posts plus debt-service datasets. (Modeled loosely under Audit/reporting.)"
-    },
-    {
-      "name": "File a Claim Against the City",
-      "type": "transactional workflow (eClaim)",
-      "entity": "ClaimFiling",
-      "url": "https://comptroller.nyc.gov/services/for-the-public/claims/file-a-claim/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The Comptroller's eClaim system lets residents file a claim (injury/property/vehicle) against the City. A real citizen transaction with no API. The one net-new write surface for this domain."
-    }
-  ]
+ "domain": "comptroller.nyc.gov",
+ "agency": "New York City Office of the Comptroller",
+ "assessment_date": "2026-07-13",
+ "method": "Outside-in crawl (browser UA, robots-respecting). Two properties: comptroller.nyc.gov (WordPress \u2014 wp-json, wp-sitemap custom types report/rfp/event/nyc_bonds/job; 67 /services/ pages) and checkbooknyc.com (Drupal). The existing Checkbook NYC API (POST /api, XML) was probed LIVE across its type_of_data domains. Open Data reconciled via the Socrata Discovery API using verified agency label 'Office of the Comptroller (COMPTROLLER)' (15 assets).",
+ "related_domains": [
+  "www.checkbooknyc.com",
+  "data.cityofnewyork.us"
+ ],
+ "headline_findings": [
+  "The Comptroller ALREADY runs a public API \u2014 Checkbook NYC (POST checkbooknyc.com/api) \u2014 covering Spending, Contracts, Budget, Revenue, and Payroll; probed live at 3.2M spending / 10.2M payroll / 1.2M revenue FY2024 records, no key required.",
+  "But it is XML request/response, POST-only, with a bespoke search_criteria/response_columns envelope \u2014 no OpenAPI, no JSON Schema, no MCP, not resource-oriented, not agent-native.",
+  "The office's data is split across THREE surfaces: Checkbook (spending/contracts), NYC Open Data (15 assets \u2014 pension holdings x5, claims report, published audits, bonds, debt service), and the WordPress site (audits/RFPs/eClaim).",
+  "checkbooknyc.com is a Drupal app; comptroller.nyc.gov is WordPress; both sit behind Imperva. Comptroller Mark Levine per site metadata.",
+  "The one citizen write-workflow with no API is filing a claim against the City (eClaim / file-a-claim) \u2014 the net-new write object ClaimFiling.",
+  "See tech-stack.md and apis-observed.md for the API + vendor inventory."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "POST checkbooknyc.com/api",
+   "type": "financial-data API (XML in/out)",
+   "owner": "NYC Comptroller (Checkbook NYC)",
+   "public": true,
+   "note": "EXISTING public spending API. type_of_data = Spending/Contracts/Budget/Revenue/Payroll. Probed live (Spending 3.2M FY24). XML envelope, POST-only, no OpenAPI/JSON/MCP, vendor Drupal \u2014 not agent-native."
+  },
+  {
+   "endpoint": "comptroller.nyc.gov/wp-json (wp/v2)",
+   "type": "WordPress REST API",
+   "owner": "NYC Comptroller",
+   "public": true,
+   "note": "open; content (reports, RFPs, events, nyc_bonds), not financial resources; FacetWP search."
+  },
+  {
+   "endpoint": "data.cityofnewyork.us (SODA)",
+   "type": "open data API",
+   "owner": "NYC/Socrata",
+   "public": true,
+   "note": "15 Comptroller assets \u2014 pension holdings (5 systems), claims report, published audits, bonds, debt service; flattened snapshots; top asset is an href to Checkbook."
+  },
+  {
+   "endpoint": "facetwp/v1 (comptroller.nyc.gov)",
+   "type": "faceted-search REST",
+   "owner": "FacetWP (plugin)",
+   "public": "internal",
+   "note": "site search/filtering; not a data API."
+  },
+  {
+   "endpoint": "*.nr-data.net",
+   "type": "monitoring API",
+   "owner": "New Relic (vendor)",
+   "public": "vendor",
+   "note": "RUM on checkbooknyc.com."
+  }
+ ],
+ "fruit": [
+  {
+   "name": "City Spending (payments)",
+   "type": "financial transactions (Checkbook API)",
+   "entity": "SpendingTransaction",
+   "url": "https://www.checkbooknyc.com/spending_landing/yeartype/B/year/125",
+   "machine_readable": "Checkbook API (XML)",
+   "verified": true,
+   "opendata_match": [
+    "Checkbook NYC 2.0 mxwn-eh3b (href)"
+   ],
+   "notes": "3,227,575 FY2024 records via POST /api type_of_data=Spending. Real API, XML envelope \u2014 not resource-oriented/JSON/agent-native."
+  },
+  {
+   "name": "City Contracts",
+   "type": "financial records (Checkbook API)",
+   "entity": "Contract",
+   "url": "https://www.checkbooknyc.com/contracts_landing/status/all/yeartype/B/year/125",
+   "machine_readable": "Checkbook API (XML)",
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "type_of_data=Contracts (requires status + category). The Comptroller registers all City contracts; a late-contracts dashboard exists on the site. No Socrata twin."
+  },
+  {
+   "name": "Budget / Revenue / Payroll",
+   "type": "financial records (Checkbook API)",
+   "entity": "SpendingTransaction",
+   "url": "https://www.checkbooknyc.com/",
+   "machine_readable": "Checkbook API (XML)",
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "type_of_data Budget/Revenue/Payroll all reachable; Payroll 10.2M, Revenue 1.2M FY24 records. API-only, XML."
+  },
+  {
+   "name": "Published Audits",
+   "type": "document listing",
+   "entity": "Audit",
+   "url": "https://comptroller.nyc.gov/reports/",
+   "count": "site report posts + OD list",
+   "machine_readable": "Open Data + WP REST (partial)",
+   "verified": true,
+   "opendata_match": [
+    "Published Audit List nekg-b6tw (6c)"
+   ],
+   "notes": "Bureau of Audit reports; published-audit list on Open Data, reports as WordPress custom posts."
+  },
+  {
+   "name": "Claims Against the City (reported)",
+   "type": "data table + dashboard",
+   "entity": "ClaimAgainstCity",
+   "url": "https://comptroller.nyc.gov/services/for-the-public/claims-dashboard/",
+   "machine_readable": "Open Data",
+   "verified": true,
+   "opendata_match": [
+    "Claims Report - Underlying Settlements and Claims Filed Data ex6k-ym48 (10c)"
+   ],
+   "notes": "Reported claim dispositions by agency/borough/fiscal year. Read/report view; the filing view has no API."
+  },
+  {
+   "name": "Pension Fund Holdings",
+   "type": "data tables (5 systems)",
+   "entity": "PensionHolding",
+   "url": "https://comptroller.nyc.gov/services/financial-matters/pension/",
+   "count": "5 systems x 25 cols",
+   "machine_readable": "Open Data",
+   "verified": true,
+   "opendata_match": [
+    "NYCERS p3e6-t4zv (25c)",
+    "TRS 5u2d-n46s (25c)",
+    "BERS fypi-ruxh (25c)",
+    "Police dy3p-ay2d (25c)",
+    "Fire 95aa-k2ka (25c)",
+    "Five-System Asset Allocation rh3d-kgz3 (9c)",
+    "Proxy Voting Records fpxc-zjtm (16c)"
+   ],
+   "notes": "Comptroller is investment adviser/custodian for the five NYC pension systems; per-security holdings on Open Data."
+  },
+  {
+   "name": "Bonds & Debt Service",
+   "type": "data tables + posts",
+   "entity": "Audit",
+   "url": "https://comptroller.nyc.gov/services/financial-matters/nyc-bonds/",
+   "machine_readable": "Open Data + WP REST",
+   "verified": true,
+   "opendata_match": [
+    "General Obligation Debt Service by Fiscal Year dfr8-nudu (4c)",
+    "NYC Quarterly Bond Update d334-62hi (8c)",
+    "GO Variable Rate Bonds Credit and Liquidity Agreements xprg-trsi (7c)"
+   ],
+   "notes": "Bond program tracked as nyc_bonds WordPress posts plus debt-service datasets. (Modeled loosely under Audit/reporting.)"
+  },
+  {
+   "name": "File a Claim Against the City",
+   "type": "transactional workflow (eClaim)",
+   "entity": "ClaimFiling",
+   "url": "https://comptroller.nyc.gov/services/for-the-public/claims/file-a-claim/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The Comptroller's eClaim system lets residents file a claim (injury/property/vehicle) against the City. A real citizen transaction with no API. The one net-new write surface for this domain."
+  },
+  {
+   "name": "FY 2024 Existing Capital Projects",
+   "type": "spreadsheet (Excel)",
+   "entity": "CapitalProject",
+   "url": "https://comptroller.nyc.gov/wp-content/uploads/2023/11/FY-2024-Existing-Capital-Projects.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "City capital project inventory workbook (90+ Excel files available via WP media).",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "School Budget Allocations Mastersheet (Aug 2023)",
+   "type": "spreadsheet (Excel)",
+   "entity": "BudgetAllocation",
+   "url": "https://comptroller.nyc.gov/wp-content/uploads/2023/09/School-Budget-Allocations-Mastersheet-8-29-2023.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Per-school DOE budget allocations mastersheet.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Asylum Seeker Contract Directory (Sep 2023)",
+   "type": "spreadsheet (Excel)",
+   "entity": "Contract",
+   "url": "https://comptroller.nyc.gov/wp-content/uploads/2023/09/Asylum-Contract-Directory-9.1.2023.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Directory of asylum-seeker response contracts by agency/vendor.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Annual Contracts Report Appendix 1 - Registered Contracts",
+   "type": "spreadsheet (Excel)",
+   "entity": "Contract",
+   "url": "https://comptroller.nyc.gov/wp-content/uploads/2024/01/Appendix-1-Registered-Contracts-by-Group-Industry-Agency-Type-and-Retroactivity-Category.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Registered contracts by group/industry/agency-type/retroactivity.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Annual Contracts Report Appendix 5 - Purchase Orders",
+   "type": "spreadsheet (Excel)",
+   "entity": "PurchaseOrder",
+   "url": "https://comptroller.nyc.gov/wp-content/uploads/2024/01/Appendix-5_Purchase-Orders.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Registered purchase orders appendix table.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "NYC Agency Report Card Grades",
+   "type": "spreadsheet (Excel)",
+   "entity": "AgencyScore",
+   "url": "https://comptroller.nyc.gov/wp-content/uploads/2025/08/report-card-grades.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Comptroller agency report-card letter grades dataset.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Federal Funding to Human Service Agencies - Feb 2026 Plan",
+   "type": "spreadsheet (Excel)",
+   "entity": "BudgetLine",
+   "url": "https://comptroller.nyc.gov/wp-content/uploads/2026/04/FederalFunding-HumanServiceAgencies-NYCBudget-Feb2026Plan-FY2026.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Federal funding exposure by human-service agency.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "MWBE Report Appendix J - Spend Data Subject to LL174 Goals",
+   "type": "spreadsheet (Excel)",
+   "entity": "MWBESpend",
+   "url": "https://comptroller.nyc.gov/wp-content/uploads/2026/01/Appendix-J-Summary-of-Spend-Data-Subject-to-LL-174-Participation-Goals.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Local Law 174 M/WBE participation spend summary.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Human Services Downloadable Contracts List",
+   "type": "spreadsheet (Excel)",
+   "entity": "Contract",
+   "url": "https://comptroller.nyc.gov/wp-content/uploads/2024/09/HH-Downloadable-Contracts-Draft-from-Admin.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Downloadable human-services (HHS) contract list.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Directive 1 Section B - Accountability Workbook FY2025",
+   "type": "spreadsheet (Excel)",
+   "entity": "AccountabilityReport",
+   "url": "https://comptroller.nyc.gov/wp-content/uploads/2025/06/Section-B-Accountability-Workbook-FY-2025.xls",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Legacy .xls accountability workbook.",
+   "source": "excel-sweep"
+  }
+ ]
 }

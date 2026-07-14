@@ -586,12 +586,12 @@
     }
    ],
    "counts": {
-    "fruit": 7,
+    "fruit": 22,
     "opendata": 638,
     "schemas": 5,
     "openapiOps": 11,
     "mcpTools": 9,
-    "entities": 6
+    "entities": 9
    },
    "entities": [
     "School",
@@ -599,7 +599,10 @@
     "EnrollmentApplication",
     "SchoolQualityReport",
     "SchoolDemographics",
-    "TestResult"
+    "TestResult",
+    "GraduationResult",
+    "AttendanceResult",
+    "SchoolSurveyResult"
    ],
    "files": {
     "fruit": "schools.nyc.gov/fruit.json",
@@ -891,12 +894,12 @@
     }
    ],
    "counts": {
-    "fruit": 10,
+    "fruit": 16,
     "opendata": 11,
     "schemas": 7,
     "openapiOps": 15,
     "mcpTools": 10,
-    "entities": 8
+    "entities": 9
    },
    "entities": [
     "CouncilMember",
@@ -906,7 +909,8 @@
     "Meeting",
     "DiscretionaryFunding",
     "Report",
-    "TestimonyRegistration"
+    "TestimonyRegistration",
+    "BudgetMandateReport"
    ],
    "files": {
     "fruit": "council.nyc.gov/fruit.json",
@@ -1756,12 +1760,12 @@
     }
    ],
    "counts": {
-    "fruit": 11,
+    "fruit": 20,
     "opendata": 44,
     "schemas": 7,
     "openapiOps": 17,
     "mcpTools": 10,
-    "entities": 8
+    "entities": 12
    },
    "entities": [
     "JobFiling",
@@ -1771,7 +1775,11 @@
     "CertificateOfOccupancy",
     "Building",
     "PermitApplication",
-    "PartyReference"
+    "PartyReference",
+    "BuildingWatchlistEntry",
+    "CoveredBuilding",
+    "IncentiveProgram",
+    "ComplianceWorksheet"
    ],
    "files": {
     "fruit": "dob/fruit.json",
@@ -2147,12 +2155,12 @@
     }
    ],
    "counts": {
-    "fruit": 10,
+    "fruit": 13,
     "opendata": 47,
     "schemas": 7,
     "openapiOps": 18,
     "mcpTools": 11,
-    "entities": 7
+    "entities": 8
    },
    "entities": [
     "Building",
@@ -2161,7 +2169,8 @@
     "Registration",
     "LitigationCase",
     "AffordableHousingProject",
-    "HousingLotteryApplication"
+    "HousingLotteryApplication",
+    "HousingSurvey"
    ],
    "files": {
     "fruit": "hpd/fruit.json",
@@ -2548,12 +2557,12 @@
     }
    ],
    "counts": {
-    "fruit": 10,
+    "fruit": 22,
     "opendata": 267,
     "schemas": 7,
     "openapiOps": 13,
     "mcpTools": 10,
-    "entities": 7
+    "entities": 13
    },
    "entities": [
     "BikeRoute",
@@ -2562,7 +2571,13 @@
     "SpeedHump",
     "PedestrianPlaza",
     "Bridge",
-    "StreetWorkPermit"
+    "StreetWorkPermit",
+    "StreetNetworkChange",
+    "PedestrianCount",
+    "DataCollectionSchedule",
+    "LocalLaw9Report",
+    "BikeShareUsage",
+    "UnreadablePlateReport"
    ],
    "files": {
     "fruit": "dot/fruit.json",
@@ -2904,12 +2919,12 @@
     }
    ],
    "counts": {
-    "fruit": 8,
+    "fruit": 20,
     "opendata": 81,
     "schemas": 7,
     "openapiOps": 12,
     "mcpTools": 10,
-    "entities": 7
+    "entities": 13
    },
    "entities": [
     "FoodEstablishment",
@@ -2918,7 +2933,13 @@
     "ChildcareCenter",
     "HealthFacility",
     "EnvironmentalComplaint",
-    "VitalRecordRequest"
+    "VitalRecordRequest",
+    "CommunityHealthProfile",
+    "SurveyCodebook",
+    "PopulationEstimate",
+    "HIVSurveillance",
+    "BirthStatistics",
+    "DeathStatistics"
    ],
    "files": {
     "fruit": "dohmh/fruit.json",
@@ -3250,12 +3271,12 @@
     }
    ],
    "counts": {
-    "fruit": 10,
+    "fruit": 23,
     "opendata": 51,
     "schemas": 6,
     "openapiOps": 11,
     "mcpTools": 7,
-    "entities": 8
+    "entities": 10
    },
    "entities": [
     "CollectionSchedule",
@@ -3265,7 +3286,9 @@
     "Tonnage",
     "BulkPickupRequest",
     "Complaint",
-    "Violation"
+    "Violation",
+    "FacilityOperations",
+    "WasteCharacterization"
    ],
    "files": {
     "fruit": "dsny/fruit.json",
@@ -3549,12 +3572,12 @@
     }
    ],
    "counts": {
-    "fruit": 11,
+    "fruit": 25,
     "opendata": 42,
     "schemas": 6,
     "openapiOps": 13,
     "mcpTools": 9,
-    "entities": 7
+    "entities": 10
    },
    "entities": [
     "ComplaintReport",
@@ -3563,7 +3586,10 @@
     "Precinct",
     "Officer",
     "CollisionCrash",
-    "PoliceReportRequest"
+    "PoliceReportRequest",
+    "CrimeStatistic",
+    "TrafficCollision",
+    "StopQuestionFrisk"
    ],
    "files": {
     "fruit": "nypd/fruit.json",
@@ -3880,12 +3906,12 @@
     }
    ],
    "counts": {
-    "fruit": 7,
+    "fruit": 10,
     "opendata": 80,
     "schemas": 7,
     "openapiOps": 13,
     "mcpTools": 10,
-    "entities": 7
+    "entities": 9
    },
    "entities": [
     "TripRecord",
@@ -3894,7 +3920,9 @@
     "DriverLicense",
     "Base",
     "Inspection",
-    "LicenseApplication"
+    "LicenseApplication",
+    "IndustryReport",
+    "EnforcementStat"
    ],
    "files": {
     "fruit": "tlc/fruit.json",
@@ -4223,12 +4251,12 @@
     }
    ],
    "counts": {
-    "fruit": 9,
+    "fruit": 21,
     "opendata": 188,
     "schemas": 6,
     "openapiOps": 12,
     "mcpTools": 10,
-    "entities": 6
+    "entities": 12
    },
    "entities": [
     "TaxLot",
@@ -4236,7 +4264,13 @@
     "CommunityDistrict",
     "NTA",
     "CensusGeography",
-    "LandUseApplication"
+    "LandUseApplication",
+    "HousingDatabaseRecord",
+    "CapitalProject",
+    "Facility",
+    "POPS",
+    "GeographyCrosswalk",
+    "DemographicProfile"
    ],
    "files": {
     "fruit": "dcp/fruit.json",
@@ -4535,12 +4569,12 @@
     }
    ],
    "counts": {
-    "fruit": 8,
+    "fruit": 18,
     "opendata": 15,
     "schemas": 6,
     "openapiOps": 11,
     "mcpTools": 9,
-    "entities": 6
+    "entities": 13
    },
    "entities": [
     "SpendingTransaction",
@@ -4548,7 +4582,14 @@
     "Audit",
     "ClaimAgainstCity",
     "PensionHolding",
-    "ClaimFiling"
+    "ClaimFiling",
+    "CapitalProject",
+    "BudgetAllocation",
+    "PurchaseOrder",
+    "AgencyScore",
+    "BudgetLine",
+    "MWBESpend",
+    "AccountabilityReport"
    ],
    "files": {
     "fruit": "comptroller.nyc.gov/fruit.json",
@@ -4823,7 +4864,7 @@
     }
    ],
    "counts": {
-    "fruit": 10,
+    "fruit": 13,
     "opendata": 24,
     "schemas": 6,
     "openapiOps": 10,
@@ -11489,7 +11530,7 @@
     }
    ],
    "counts": {
-    "fruit": 9,
+    "fruit": 16,
     "opendata": 145,
     "schemas": 6,
     "openapiOps": 12,
@@ -12936,12 +12977,12 @@
     }
    ],
    "counts": {
-    "fruit": 7,
+    "fruit": 16,
     "opendata": 5,
     "schemas": 7,
     "openapiOps": 12,
     "mcpTools": 11,
-    "entities": 7
+    "entities": 9
    },
    "entities": [
     "DevelopmentProject",
@@ -12950,7 +12991,9 @@
     "MappedCompany",
     "FerryRidership",
     "WiredBuilding",
-    "RFPResponse"
+    "RFPResponse",
+    "Lease",
+    "InvestmentProject"
    ],
    "files": {
     "fruit": "edc/fruit.json",

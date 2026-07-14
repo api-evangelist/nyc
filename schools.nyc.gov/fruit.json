@@ -1,100 +1,309 @@
 {
-  "domain": "schools.nyc.gov",
-  "agency": "New York City Public Schools (NYCPS / Department of Education, DOE)",
-  "assessment_date": "2026-07-13",
-  "method": "Outside-in crawl (browser UA, robots-respecting; /CustomApi, /Sitefinity, /System disallowed and avoided). Sitemap decompressed (gzip) → 4,617 URLs. Section landing pages + representative school/calendar/search pages analyzed. Page data is largely JS-rendered from an internal /CustomApi backend, so on-page row/table counts understate the underlying records.",
-  "related_domains": ["myschools.nyc", "infohub.nyced.org", "teachhub.schools.nyc", "supporthub.schools.nyc", "parentu.schools.nyc", "schoolsaccount.nyc", "nycenet.edu"],
-  "headline_findings": [
-    "3,343 individual school pages (per the sitemap) form the school directory — each a structured School record rendered client-side.",
-    "On-domain the data is NOT machine-readable; but NYC Open Data has 638 DOE assets including 462-column High School Directories, School Locations, and Demographic Snapshots.",
-    "Site search / 'Find a School' is outsourced to a vendor (HawkSearch) — DOE does not own a public school-search API.",
-    "School pages are driven by an internal /CustomApi/* backend that is robots-disallowed, undocumented, and not public.",
-    "The enrollment/application workflow (MySchools) is transactional and has no Open Data twin — the net-new API opportunity, analogous to Parks permits.",
-    "See tech-stack.md and apis-observed.md for the vendor and backend-API inventory."
-  ],
-  "apis_observed": [
-    { "endpoint": "lusearchapi-na.hawksearch.com/sites/nycdoe", "type": "vendor search API", "owner": "HawkSearch", "public": false, "note": "Powers Find-a-School and site search." },
-    { "endpoint": "/CustomApi/* (www.schools.nyc.gov)", "type": "internal REST", "owner": "DOE (Sitefinity)", "public": false, "note": "robots-disallowed; drives page/school data." },
-    { "endpoint": "pwsblobprd.schools.nyc/prd-pws/*", "type": "blob storage REST", "owner": "DOE (Azure)", "public": "assets", "note": "images/docs." },
-    { "endpoint": "js.arcgis.com + Esri", "type": "mapping API", "owner": "Esri", "public": false, "note": "school locator maps." },
-    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC/Socrata", "public": true, "note": "per-dataset; disconnected from site." },
-    { "endpoint": "pwsauth.nycenet.edu", "type": "auth/OAuth", "owner": "DOE (NYC Schools Account)", "public": "login", "note": "identity." }
-  ],
-  "fruit": [
-    {
-      "name": "School Directory",
-      "type": "record-listing (JS-rendered)",
-      "entity": "School",
-      "url": "https://www.schools.nyc.gov/find-a-school",
-      "count": "3,343 school pages (sitemap); ~1,600 active schools",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": ["School Locations (various years, e.g. 9ck8-h43e class)", "DOE High School Directory (462 cols)", "DOE Middle School Directory (251 cols)", "Demographic Snapshot (c7ru-d68s)"],
-      "notes": "Each /schools/<LocationCode> page is a structured School profile (DBN, name, address, phone, principal, grades, district, enrollment). Rendered client-side from /CustomApi."
-    },
-    {
-      "name": "Find a School (search)",
-      "type": "search-form (vendor)",
-      "entity": "School",
-      "url": "https://www.schools.nyc.gov/find-a-school",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Powered by HawkSearch vendor API — not a DOE-owned or public search API."
-    },
-    {
-      "name": "School Year Calendar",
-      "type": "filterable event listing",
-      "entity": "CalendarEvent",
-      "url": "https://www.schools.nyc.gov/calendar",
-      "count": "full school-year of dates/events; faceted ('Narrow Results')",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "Holidays, breaks, no-school days, PD days. No Open Data twin — small but real gap; high everyday value."
-    },
-    {
-      "name": "Enrollment / MySchools application",
-      "type": "transactional workflow (off-domain app)",
-      "entity": "EnrollmentApplication",
-      "url": "https://www.myschools.nyc/",
-      "machine_readable": false,
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "3K–12 admissions & application (3K/PreK/K/MS/HS/Specialized). Transactional; no Open Data twin. NET-NEW API opportunity, analogous to Parks permit applications."
-    },
-    {
-      "name": "School Quality Reports / Snapshots",
-      "type": "per-school reports (from InfoHub Excel)",
-      "entity": "SchoolQualityReport",
-      "url": "https://www.schools.nyc.gov/about-us/reports/school-quality",
-      "machine_readable": "off-domain (Excel on InfoHub)",
-      "verified": false,
-      "opendata_match": ["School Quality Reports / Framework datasets (on Open Data + InfoHub)"],
-      "notes": "Framework scores, survey results, student achievement per school."
-    },
-    {
-      "name": "Demographics (per school)",
-      "type": "reports",
-      "entity": "SchoolDemographics",
-      "url": "https://infohub.nyced.org/reports/school-quality/information-and-data-overview",
-      "machine_readable": "off-domain (Excel/Open Data)",
-      "verified": true,
-      "opendata_match": ["2017-18–2021-22 Demographic Snapshot (c7ru-d68s, 44 cols)", "2013-2018 Demographic Snapshot School"],
-      "notes": "Enrollment by grade, race/ethnicity, gender, poverty, ELL, SWD, Economic Need Index — DBN-keyed."
-    },
-    {
-      "name": "Test results (SAT / AP / Regents / Specialized HS)",
-      "type": "reports",
-      "entity": "TestResult",
-      "url": "https://infohub.nyced.org/reports/academics/test-results",
-      "machine_readable": "Open Data",
-      "verified": true,
-      "opendata_match": ["2012 SAT Results", "SAT (College Board) School Level Results", "AP School Level Results", "Specialized High Schools Admissions Tests Results"],
-      "notes": "School-level assessment outcomes; multiple datasets on Open Data."
-    }
-  ]
+ "domain": "schools.nyc.gov",
+ "agency": "New York City Public Schools (NYCPS / Department of Education, DOE)",
+ "assessment_date": "2026-07-13",
+ "method": "Outside-in crawl (browser UA, robots-respecting; /CustomApi, /Sitefinity, /System disallowed and avoided). Sitemap decompressed (gzip) \u2192 4,617 URLs. Section landing pages + representative school/calendar/search pages analyzed. Page data is largely JS-rendered from an internal /CustomApi backend, so on-page row/table counts understate the underlying records.",
+ "related_domains": [
+  "myschools.nyc",
+  "infohub.nyced.org",
+  "teachhub.schools.nyc",
+  "supporthub.schools.nyc",
+  "parentu.schools.nyc",
+  "schoolsaccount.nyc",
+  "nycenet.edu"
+ ],
+ "headline_findings": [
+  "3,343 individual school pages (per the sitemap) form the school directory \u2014 each a structured School record rendered client-side.",
+  "On-domain the data is NOT machine-readable; but NYC Open Data has 638 DOE assets including 462-column High School Directories, School Locations, and Demographic Snapshots.",
+  "Site search / 'Find a School' is outsourced to a vendor (HawkSearch) \u2014 DOE does not own a public school-search API.",
+  "School pages are driven by an internal /CustomApi/* backend that is robots-disallowed, undocumented, and not public.",
+  "The enrollment/application workflow (MySchools) is transactional and has no Open Data twin \u2014 the net-new API opportunity, analogous to Parks permits.",
+  "See tech-stack.md and apis-observed.md for the vendor and backend-API inventory."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "lusearchapi-na.hawksearch.com/sites/nycdoe",
+   "type": "vendor search API",
+   "owner": "HawkSearch",
+   "public": false,
+   "note": "Powers Find-a-School and site search."
+  },
+  {
+   "endpoint": "/CustomApi/* (www.schools.nyc.gov)",
+   "type": "internal REST",
+   "owner": "DOE (Sitefinity)",
+   "public": false,
+   "note": "robots-disallowed; drives page/school data."
+  },
+  {
+   "endpoint": "pwsblobprd.schools.nyc/prd-pws/*",
+   "type": "blob storage REST",
+   "owner": "DOE (Azure)",
+   "public": "assets",
+   "note": "images/docs."
+  },
+  {
+   "endpoint": "js.arcgis.com + Esri",
+   "type": "mapping API",
+   "owner": "Esri",
+   "public": false,
+   "note": "school locator maps."
+  },
+  {
+   "endpoint": "data.cityofnewyork.us (SODA)",
+   "type": "open data API",
+   "owner": "NYC/Socrata",
+   "public": true,
+   "note": "per-dataset; disconnected from site."
+  },
+  {
+   "endpoint": "pwsauth.nycenet.edu",
+   "type": "auth/OAuth",
+   "owner": "DOE (NYC Schools Account)",
+   "public": "login",
+   "note": "identity."
+  }
+ ],
+ "fruit": [
+  {
+   "name": "School Directory",
+   "type": "record-listing (JS-rendered)",
+   "entity": "School",
+   "url": "https://www.schools.nyc.gov/find-a-school",
+   "count": "3,343 school pages (sitemap); ~1,600 active schools",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [
+    "School Locations (various years, e.g. 9ck8-h43e class)",
+    "DOE High School Directory (462 cols)",
+    "DOE Middle School Directory (251 cols)",
+    "Demographic Snapshot (c7ru-d68s)"
+   ],
+   "notes": "Each /schools/<LocationCode> page is a structured School profile (DBN, name, address, phone, principal, grades, district, enrollment). Rendered client-side from /CustomApi."
+  },
+  {
+   "name": "Find a School (search)",
+   "type": "search-form (vendor)",
+   "entity": "School",
+   "url": "https://www.schools.nyc.gov/find-a-school",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Powered by HawkSearch vendor API \u2014 not a DOE-owned or public search API."
+  },
+  {
+   "name": "School Year Calendar",
+   "type": "filterable event listing",
+   "entity": "CalendarEvent",
+   "url": "https://www.schools.nyc.gov/calendar",
+   "count": "full school-year of dates/events; faceted ('Narrow Results')",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Holidays, breaks, no-school days, PD days. No Open Data twin \u2014 small but real gap; high everyday value."
+  },
+  {
+   "name": "Enrollment / MySchools application",
+   "type": "transactional workflow (off-domain app)",
+   "entity": "EnrollmentApplication",
+   "url": "https://www.myschools.nyc/",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "3K\u201312 admissions & application (3K/PreK/K/MS/HS/Specialized). Transactional; no Open Data twin. NET-NEW API opportunity, analogous to Parks permit applications."
+  },
+  {
+   "name": "School Quality Reports / Snapshots",
+   "type": "per-school reports (from InfoHub Excel)",
+   "entity": "SchoolQualityReport",
+   "url": "https://www.schools.nyc.gov/about-us/reports/school-quality",
+   "machine_readable": "off-domain (Excel on InfoHub)",
+   "verified": false,
+   "opendata_match": [
+    "School Quality Reports / Framework datasets (on Open Data + InfoHub)"
+   ],
+   "notes": "Framework scores, survey results, student achievement per school."
+  },
+  {
+   "name": "Demographics (per school)",
+   "type": "reports",
+   "entity": "SchoolDemographics",
+   "url": "https://infohub.nyced.org/reports/school-quality/information-and-data-overview",
+   "machine_readable": "off-domain (Excel/Open Data)",
+   "verified": true,
+   "opendata_match": [
+    "2017-18\u20132021-22 Demographic Snapshot (c7ru-d68s, 44 cols)",
+    "2013-2018 Demographic Snapshot School"
+   ],
+   "notes": "Enrollment by grade, race/ethnicity, gender, poverty, ELL, SWD, Economic Need Index \u2014 DBN-keyed."
+  },
+  {
+   "name": "Test results (SAT / AP / Regents / Specialized HS)",
+   "type": "reports",
+   "entity": "TestResult",
+   "url": "https://infohub.nyced.org/reports/academics/test-results",
+   "machine_readable": "Open Data",
+   "verified": true,
+   "opendata_match": [
+    "2012 SAT Results",
+    "SAT (College Board) School Level Results",
+    "AP School Level Results",
+    "Specialized High Schools Admissions Tests Results"
+   ],
+   "notes": "School-level assessment outcomes; multiple datasets on Open Data."
+  },
+  {
+   "name": "Demographic Snapshot 2020-21 to 2024-25 (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "SchoolDemographics",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/demographic-snapshot-2020-21-to-2024-25-public.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Citywide/district/school enrollment by grade, race/ethnicity, gender, poverty, ELL, SWD, ENI across five years; DBN-keyed.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "School-Level ELA Results 2018-2025 (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "TestResult",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/school-ela-results-2018-2025-public08ab7e5e-26b6-4ffb-aeb7-976f96c96a80.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Per-school NY State ELA test results 2018-2025 by demographic categories.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "School-Level Math Results 2018-2025 (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "TestResult",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/school-math-results-2018-2025-public2ab94267-56ef-48e1-aa0c-e02ea6d80bbb.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Per-school NY State Math test results 2018-2025 by demographic categories.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "School-Level Science Results 2024-2025 (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "TestResult",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/school-science-results-2024-2025-public.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Per-school NY State Science test results 2024-2025.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "NYC Regents Results 2014-15 to 2022-23 (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "TestResult",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/2014-15-to-2022-23-nyc-regents-overall-and-by-category---public.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Regents exam outcomes over nine years, overall and by category.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "Citywide ELA Results 2018-2025 (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "TestResult",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/citywide-ela-results-2018-2025-public9b6da2b8-7759-454f-9100-5e5845a67bc9.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Citywide ELA test results 2018-2025 by demographic category.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "2025 Graduation Rates - School Level (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "GraduationResult",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/2025-graduation-rates-public-school.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Per-school 2025 graduation/dropout rates by cohort and demographic.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "District Attendance Results 2019-2025 (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "AttendanceResult",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/public-district-attendance-results-2019-2025.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "District-level attendance and chronic absenteeism 2019-2025.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "School Attendance Results 2019-2025 (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "AttendanceResult",
+   "url": "https://saintrafileprod01.blob.core.windows.net/prd-intra/docs/default-source/large-files/public-school-attendance-results-2019-2025.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Per-school attendance and chronic absenteeism 2019-2025 (large-file Azure blob).",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "2024-25 School Quality Report Results - High Schools",
+   "type": "spreadsheet (Excel)",
+   "entity": "SchoolQualityReport",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/202425-hs-sqr-results.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "2024-25 School Quality Report framework scores/metrics for high schools.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "2024-25 School Quality Report Results - Elementary/Middle",
+   "type": "spreadsheet (Excel)",
+   "entity": "SchoolQualityReport",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/202425-ems-sqr-results.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "2024-25 School Quality Report results for elementary/middle schools.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "2024-25 School Quality Report Results - District 75",
+   "type": "spreadsheet (Excel)",
+   "entity": "SchoolQualityReport",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/202425-d75-sqr-results.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "2024-25 School Quality Report results for District 75 schools.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "NYC School Survey 2025 - Student Data File (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "SchoolSurveyResult",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/nycdoe-2025-public-data-file-student-final.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "2025 NYC School Survey student responses by school.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "NYC School Survey 2025 - Teacher Data File (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "SchoolSurveyResult",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/nycdoe-2025-public-data-file-teacher-final-3.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "2025 NYC School Survey teacher responses by school.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "NYC School Survey 2025 - Parent/Guardian Data File (public)",
+   "type": "spreadsheet (Excel)",
+   "entity": "SchoolSurveyResult",
+   "url": "https://infohub.nyced.org/docs/default-source/default-document-library/nycdoe-2025-public-data-file-guardian-final.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "2025 NYC School Survey parent/guardian responses by school.",
+   "source": "excel-sweep"
+  }
+ ]
 }

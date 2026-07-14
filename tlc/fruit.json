@@ -1,100 +1,197 @@
 {
-  "domain": "nyc.gov/site/tlc",
-  "agency": "NYC Taxi & Limousine Commission (TLC)",
-  "assessment_date": "2026-07-13",
-  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted the nyc.gov Livesite CMS from response headers; confirmed the TLC Trip Record Data parquet host (d37ci6vzurychx.cloudfront.net/trip-data, HEAD 200, ~50MB, AmazonS3) as a bulk file host, not an API. Enumerated NYC Open Data via the Socrata catalog API and verified the agency label 'Taxi and Limousine Commission (TLC)' → 80 datasets pulled with columns.",
-  "related_domains": ["data.cityofnewyork.us", "d37ci6vzurychx.cloudfront.net", "www.nyc.gov/site/tlc"],
-  "headline_findings": [
-    "TLC is the most DATA-rich domain in the project and the least API-native: a world-famous open-data producer whose data ships as batch, not as a queryable API.",
-    "The flagship TLC Trip Record Data (yellow/green/FHV/FHVHV) is monthly PARQUET files on CloudFront/S3 (d37ci6vzurychx.cloudfront.net/trip-data) — a bulk download host, NOT an API. Only a subset of yearly trip snapshots is mirrored on Socrata.",
-    "80 TLC datasets on NYC Open Data (agency 'Taxi and Limousine Commission (TLC)', verified) cover licensed drivers, vehicles, medallion/SHL permits, FHV bases, inspection schedules, and application status — but as flat daily snapshots, one dataset per license class.",
-    "The Taxi Zones behind every trip's PULocationID/DOLocationID are a static CSV + shapefile (/misc/taxi_zone_lookup.csv, taxi_zones.zip), not a resource.",
-    "Licensing exposes only READ-ONLY status (TLC New Driver Application Status dpec-ucu7); there is no API to APPLY for a TLC license. That is the one net-new write surface.",
-    "Website runs on the shared NYC.gov Livesite CMS (nginx + Akamai + AWS ALB + Dynatrace) — a brochure; none of TLC's operational data is served from it. See tech-stack.md and apis-observed.md."
-  ],
-  "apis_observed": [
-    { "endpoint": "d37ci6vzurychx.cloudfront.net/trip-data/", "type": "bulk file host (parquet)", "owner": "NYC TLC (CloudFront/S3)", "public": true, "note": "TLC Trip Record Data — monthly parquet per service class; download host, not an API. Verified 200, ~50MB, AmazonS3." },
-    { "endpoint": "d37ci6vzurychx.cloudfront.net/misc/", "type": "bulk file host (CSV + shapefile)", "owner": "NYC TLC", "public": true, "note": "taxi_zone_lookup.csv + taxi_zones.zip — the ~263 zones behind trip LocationIDs." },
-    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC/Socrata", "public": true, "note": "80 TLC datasets; flat daily snapshots; no unified TLC resource model." },
-    { "endpoint": "api.us.socrata.com/api/catalog/v1", "type": "catalog/discovery API", "owner": "Socrata", "public": true, "note": "used to verify the agency label + enumerate datasets." },
-    { "endpoint": "TLC licensing back-office", "type": "internal system", "owner": "NYC TLC", "public": false, "note": "issues licenses; only read-only status leaks to Open Data." },
-    { "endpoint": "www.nyc.gov/site/tlc", "type": "web CMS (Livesite)", "owner": "NYC.gov/DoITT", "public": "html", "note": "brochure content; no content API; Dynatrace RUM." },
-    { "endpoint": "translate.google.com", "type": "translation API", "owner": "Google", "public": "vendor", "note": "page translation widget." }
-  ],
-  "fruit": [
-    {
-      "name": "TLC Trip Record Data (yellow/green/FHV/FHVHV)",
-      "type": "bulk parquet files",
-      "entity": "TripRecord",
-      "url": "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page",
-      "machine_readable": "parquet (bulk) + yearly Socrata snapshots",
-      "verified": true,
-      "opendata_match": ["2023 Yellow Taxi Trip Data 4b4i-vvec (19c)", "2016 Green Taxi Trip Data hvrh-b6nb (23c)", "2018 Yellow Taxi Trip Data t29m-gskq (17c)"],
-      "notes": "The flagship dataset — monthly parquet on CloudFront/S3, not queryable. Pickup/drop-off are TaxiZone LocationIDs."
-    },
-    {
-      "name": "TLC Taxi Zones",
-      "type": "lookup CSV + shapefile",
-      "entity": "TaxiZone",
-      "url": "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv",
-      "count": "~263 zones",
-      "machine_readable": "CSV + shapefile",
-      "verified": true,
-      "opendata_match": [],
-      "opendata_gap": true,
-      "notes": "The join key behind trip-record PULocationID/DOLocationID — published only as static files, not a resource."
-    },
-    {
-      "name": "For-Hire Vehicles (FHV) - Active",
-      "type": "record-listing (Open Data)",
-      "entity": "Vehicle",
-      "url": "https://data.cityofnewyork.us/d/8wbx-tsch",
-      "count": "tens of thousands",
-      "machine_readable": "Open Data",
-      "verified": true,
-      "opendata_match": ["For Hire Vehicles (FHV) - Active 8wbx-tsch (23c)", "Medallion Vehicles - Authorized rhe8-mgbb (16c)", "Street Hail Livery (SHL) Permits yhuu-4pt3 (20c)"],
-      "notes": "Most-viewed TLC dataset (3.8M views). Licensed vehicles across FHV, medallion, SHL — one dataset per class."
-    },
-    {
-      "name": "Licensed Drivers (Medallion / FHV / SHL)",
-      "type": "record-listing (Open Data)",
-      "entity": "DriverLicense",
-      "url": "https://data.cityofnewyork.us/d/jb3k-j3gp",
-      "machine_readable": "Open Data",
-      "verified": true,
-      "opendata_match": ["Medallion Drivers - Active jb3k-j3gp (6c)", "FHV - Active Drivers xjfq-wh2d (7c)", "SHL Drivers - Active 5tub-eh45 (7c)", "Medallion Drivers – Passenger Assistance Trained td5q-ry6d (7c)"],
-      "notes": "Licensed drivers as flat daily snapshots, one dataset per license class."
-    },
-    {
-      "name": "FHV / SHL Bases",
-      "type": "record-listing + geo (Open Data)",
-      "entity": "Base",
-      "url": "https://data.cityofnewyork.us/d/eccv-9dzr",
-      "machine_readable": "Open Data",
-      "verified": true,
-      "opendata_match": ["CURRENT BASES eccv-9dzr (24c)", "FHV Base Aggregate Report 2v9c-2k7f (9c)"],
-      "notes": "Dispatch bases with geocoded address + geography spine; monthly dispatched-trip aggregates in a separate dataset."
-    },
-    {
-      "name": "Medallion Inspection Schedule",
-      "type": "data table (Open Data)",
-      "entity": "Inspection",
-      "url": "https://data.cityofnewyork.us/d/sp7n-275u",
-      "machine_readable": "Open Data",
-      "verified": true,
-      "opendata_match": ["Medallion Taxi Initial Inspection Schedule sp7n-275u (9c)"],
-      "notes": "Up to three scheduled inspection appointments per medallion at a DMV facility."
-    },
-    {
-      "name": "Apply for a TLC driver / vehicle license",
-      "type": "application workflow",
-      "entity": "LicenseApplication",
-      "url": "https://www.nyc.gov/site/tlc/drivers/get-a-tlc-drivers-license.page",
-      "machine_readable": "read-only status only",
-      "verified": true,
-      "opendata_match": ["TLC New Driver Application Status dpec-ucu7 (12c)", "Historical Driver Application Status p32s-yqxq (12c)"],
-      "opendata_gap": true,
-      "notes": "Open Data exposes only read-only application STATUS + a requirement checklist (drug test, defensive driving, exam, WAV, medical). There is no API to submit an application — the one net-new write surface for this domain."
-    }
-  ]
+ "domain": "nyc.gov/site/tlc",
+ "agency": "NYC Taxi & Limousine Commission (TLC)",
+ "assessment_date": "2026-07-13",
+ "method": "Outside-in crawl (browser UA, robots-respecting \u2014 nyc.gov robots.txt only disallows /html/misc/). Fingerprinted the nyc.gov Livesite CMS from response headers; confirmed the TLC Trip Record Data parquet host (d37ci6vzurychx.cloudfront.net/trip-data, HEAD 200, ~50MB, AmazonS3) as a bulk file host, not an API. Enumerated NYC Open Data via the Socrata catalog API and verified the agency label 'Taxi and Limousine Commission (TLC)' \u2192 80 datasets pulled with columns.",
+ "related_domains": [
+  "data.cityofnewyork.us",
+  "d37ci6vzurychx.cloudfront.net",
+  "www.nyc.gov/site/tlc"
+ ],
+ "headline_findings": [
+  "TLC is the most DATA-rich domain in the project and the least API-native: a world-famous open-data producer whose data ships as batch, not as a queryable API.",
+  "The flagship TLC Trip Record Data (yellow/green/FHV/FHVHV) is monthly PARQUET files on CloudFront/S3 (d37ci6vzurychx.cloudfront.net/trip-data) \u2014 a bulk download host, NOT an API. Only a subset of yearly trip snapshots is mirrored on Socrata.",
+  "80 TLC datasets on NYC Open Data (agency 'Taxi and Limousine Commission (TLC)', verified) cover licensed drivers, vehicles, medallion/SHL permits, FHV bases, inspection schedules, and application status \u2014 but as flat daily snapshots, one dataset per license class.",
+  "The Taxi Zones behind every trip's PULocationID/DOLocationID are a static CSV + shapefile (/misc/taxi_zone_lookup.csv, taxi_zones.zip), not a resource.",
+  "Licensing exposes only READ-ONLY status (TLC New Driver Application Status dpec-ucu7); there is no API to APPLY for a TLC license. That is the one net-new write surface.",
+  "Website runs on the shared NYC.gov Livesite CMS (nginx + Akamai + AWS ALB + Dynatrace) \u2014 a brochure; none of TLC's operational data is served from it. See tech-stack.md and apis-observed.md."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "d37ci6vzurychx.cloudfront.net/trip-data/",
+   "type": "bulk file host (parquet)",
+   "owner": "NYC TLC (CloudFront/S3)",
+   "public": true,
+   "note": "TLC Trip Record Data \u2014 monthly parquet per service class; download host, not an API. Verified 200, ~50MB, AmazonS3."
+  },
+  {
+   "endpoint": "d37ci6vzurychx.cloudfront.net/misc/",
+   "type": "bulk file host (CSV + shapefile)",
+   "owner": "NYC TLC",
+   "public": true,
+   "note": "taxi_zone_lookup.csv + taxi_zones.zip \u2014 the ~263 zones behind trip LocationIDs."
+  },
+  {
+   "endpoint": "data.cityofnewyork.us (SODA)",
+   "type": "open data API",
+   "owner": "NYC/Socrata",
+   "public": true,
+   "note": "80 TLC datasets; flat daily snapshots; no unified TLC resource model."
+  },
+  {
+   "endpoint": "api.us.socrata.com/api/catalog/v1",
+   "type": "catalog/discovery API",
+   "owner": "Socrata",
+   "public": true,
+   "note": "used to verify the agency label + enumerate datasets."
+  },
+  {
+   "endpoint": "TLC licensing back-office",
+   "type": "internal system",
+   "owner": "NYC TLC",
+   "public": false,
+   "note": "issues licenses; only read-only status leaks to Open Data."
+  },
+  {
+   "endpoint": "www.nyc.gov/site/tlc",
+   "type": "web CMS (Livesite)",
+   "owner": "NYC.gov/DoITT",
+   "public": "html",
+   "note": "brochure content; no content API; Dynatrace RUM."
+  },
+  {
+   "endpoint": "translate.google.com",
+   "type": "translation API",
+   "owner": "Google",
+   "public": "vendor",
+   "note": "page translation widget."
+  }
+ ],
+ "fruit": [
+  {
+   "name": "TLC Trip Record Data (yellow/green/FHV/FHVHV)",
+   "type": "bulk parquet files",
+   "entity": "TripRecord",
+   "url": "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page",
+   "machine_readable": "parquet (bulk) + yearly Socrata snapshots",
+   "verified": true,
+   "opendata_match": [
+    "2023 Yellow Taxi Trip Data 4b4i-vvec (19c)",
+    "2016 Green Taxi Trip Data hvrh-b6nb (23c)",
+    "2018 Yellow Taxi Trip Data t29m-gskq (17c)"
+   ],
+   "notes": "The flagship dataset \u2014 monthly parquet on CloudFront/S3, not queryable. Pickup/drop-off are TaxiZone LocationIDs."
+  },
+  {
+   "name": "TLC Taxi Zones",
+   "type": "lookup CSV + shapefile",
+   "entity": "TaxiZone",
+   "url": "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv",
+   "count": "~263 zones",
+   "machine_readable": "CSV + shapefile",
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The join key behind trip-record PULocationID/DOLocationID \u2014 published only as static files, not a resource."
+  },
+  {
+   "name": "For-Hire Vehicles (FHV) - Active",
+   "type": "record-listing (Open Data)",
+   "entity": "Vehicle",
+   "url": "https://data.cityofnewyork.us/d/8wbx-tsch",
+   "count": "tens of thousands",
+   "machine_readable": "Open Data",
+   "verified": true,
+   "opendata_match": [
+    "For Hire Vehicles (FHV) - Active 8wbx-tsch (23c)",
+    "Medallion Vehicles - Authorized rhe8-mgbb (16c)",
+    "Street Hail Livery (SHL) Permits yhuu-4pt3 (20c)"
+   ],
+   "notes": "Most-viewed TLC dataset (3.8M views). Licensed vehicles across FHV, medallion, SHL \u2014 one dataset per class."
+  },
+  {
+   "name": "Licensed Drivers (Medallion / FHV / SHL)",
+   "type": "record-listing (Open Data)",
+   "entity": "DriverLicense",
+   "url": "https://data.cityofnewyork.us/d/jb3k-j3gp",
+   "machine_readable": "Open Data",
+   "verified": true,
+   "opendata_match": [
+    "Medallion Drivers - Active jb3k-j3gp (6c)",
+    "FHV - Active Drivers xjfq-wh2d (7c)",
+    "SHL Drivers - Active 5tub-eh45 (7c)",
+    "Medallion Drivers \u2013 Passenger Assistance Trained td5q-ry6d (7c)"
+   ],
+   "notes": "Licensed drivers as flat daily snapshots, one dataset per license class."
+  },
+  {
+   "name": "FHV / SHL Bases",
+   "type": "record-listing + geo (Open Data)",
+   "entity": "Base",
+   "url": "https://data.cityofnewyork.us/d/eccv-9dzr",
+   "machine_readable": "Open Data",
+   "verified": true,
+   "opendata_match": [
+    "CURRENT BASES eccv-9dzr (24c)",
+    "FHV Base Aggregate Report 2v9c-2k7f (9c)"
+   ],
+   "notes": "Dispatch bases with geocoded address + geography spine; monthly dispatched-trip aggregates in a separate dataset."
+  },
+  {
+   "name": "Medallion Inspection Schedule",
+   "type": "data table (Open Data)",
+   "entity": "Inspection",
+   "url": "https://data.cityofnewyork.us/d/sp7n-275u",
+   "machine_readable": "Open Data",
+   "verified": true,
+   "opendata_match": [
+    "Medallion Taxi Initial Inspection Schedule sp7n-275u (9c)"
+   ],
+   "notes": "Up to three scheduled inspection appointments per medallion at a DMV facility."
+  },
+  {
+   "name": "Apply for a TLC driver / vehicle license",
+   "type": "application workflow",
+   "entity": "LicenseApplication",
+   "url": "https://www.nyc.gov/site/tlc/drivers/get-a-tlc-drivers-license.page",
+   "machine_readable": "read-only status only",
+   "verified": true,
+   "opendata_match": [
+    "TLC New Driver Application Status dpec-ucu7 (12c)",
+    "Historical Driver Application Status p32s-yqxq (12c)"
+   ],
+   "opendata_gap": true,
+   "notes": "Open Data exposes only read-only application STATUS + a requirement checklist (drug test, defensive driving, exam, WAV, medical). There is no API to submit an application \u2014 the one net-new write surface for this domain."
+  },
+  {
+   "name": "TLC Local Law 28 Report",
+   "type": "spreadsheet (Excel)",
+   "entity": "IndustryReport",
+   "url": "https://www.nyc.gov/assets/tlc/downloads/excel/local_law_28.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Aggregated Local Law 28 statutory reporting data.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "TLC Local Law 31 Report",
+   "type": "spreadsheet (Excel)",
+   "entity": "IndustryReport",
+   "url": "https://www.nyc.gov/assets/tlc/downloads/excel/local_law_31.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Aggregated Local Law 31 statutory reporting data.",
+   "source": "excel-sweep"
+  },
+  {
+   "name": "TLC Enforcement and Complaint Statistics",
+   "type": "spreadsheet (Excel)",
+   "entity": "EnforcementStat",
+   "url": "https://www.nyc.gov/assets/tlc/downloads/excel/tlc_enforcement_and_complaint_stats.xlsx",
+   "machine_readable": true,
+   "verified": true,
+   "notes": "Enforcement and complaint statistics workbook.",
+   "source": "excel-sweep"
+  }
+ ]
 }
