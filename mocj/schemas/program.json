@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mocj/schemas/program.json",
+  "title": "Program",
+  "description": "A MOCJ program — a community-based initiative the Mayor's Office of Criminal Justice funds, convenes, or operates (e.g. Supervised Release, alternatives to incarceration, reentry, mental-health diversion). Canonical schema reconciling the WordPress 'programs' custom post type on criminaljustice.cityofnewyork.us (26 programs, with program_type / program_tag taxonomies and ACF fields). There is NO Open Data twin for the program directory; it exists only as WordPress content and the accidental wp/v2 REST API.",
+  "type": "object",
+  "x-source": {
+    "site": "https://criminaljustice.cityofnewyork.us/programs/",
+    "wp_rest": "https://criminaljustice.cityofnewyork.us/wp-json/wp/v2/programs",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "programId": { "type": ["string", "integer", "null"], "description": "WordPress post ID." },
+    "slug": { "type": ["string", "null"], "description": "URL slug (/programs/<slug>/)." },
+    "name": { "type": "string", "description": "Program title." },
+    "summary": { "type": ["string", "null"], "description": "Short description / excerpt." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical program page." },
+    "issueAreas": {
+      "type": "array",
+      "description": "'Programs by Issue' categories (WordPress program_tag).",
+      "items": { "$ref": "_common.json#/$defs/IssueArea" }
+    },
+    "sequentialIntercept": { "$ref": "_common.json#/$defs/SequentialIntercept" },
+    "programType": { "type": ["string", "null"], "description": "WordPress 'program_type' taxonomy term." },
+    "provider": { "$ref": "_common.json#/$defs/Provider" },
+    "boroughs": {
+      "type": "array",
+      "description": "Boroughs served.",
+      "items": { "$ref": "_common.json#/$defs/Borough" }
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "eligibility": { "type": ["string", "null"], "description": "Who is eligible / how a case reaches this program." },
+    "active": { "type": ["boolean", "null"], "description": "Whether the program is currently operating." }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

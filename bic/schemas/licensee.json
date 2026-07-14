@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bic/schemas/licensee.json",
+  "title": "Licensee",
+  "description": "A BIC-licensed trade waste hauler — a company holding a license to collect, remove, or dispose of trade waste in New York City. Canonical schema reconciling the 'Trade Waste Hauler Licensees' dataset (867j-5pgi, 27 columns), BIC's most-viewed asset. Keyed on BIC NUMBER.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/867j-5pgi",
+    "site": "https://www.nyc.gov/site/bic/industries/trade-waste-industry.page"
+  },
+  "properties": {
+    "bicNumber": { "type": "string", "description": "'BIC NUMBER' — primary key." },
+    "accountName": { "type": ["string", "null"], "description": "'ACCOUNT NAME'." },
+    "tradeName": { "type": ["string", "null"], "description": "'TRADE NAME' (doing-business-as)." },
+    "applicationType": { "$ref": "_common.json#/$defs/ApplicationType" },
+    "renewal": { "type": ["boolean", "string", "null"], "description": "'RENEWAL' — whether this record is a renewal." },
+    "authorizedRecyclingCollectionType": { "type": ["string", "null"], "description": "'AUTHORIZED RECYCLING COLLECTION TYPE'." },
+    "organicWasteServicesProvided": { "type": ["string", "null"], "description": "'ORGANIC WASTE SERVICES PROVIDED'." },
+    "phone": { "type": ["string", "null"], "description": "'PHONE'." },
+    "email": { "type": ["string", "null"], "format": "email", "description": "'EMAIL'." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "effectiveDate": { "type": ["string", "null"], "format": "date", "description": "'EFFECTIVE DATE'." },
+    "expirationDate": { "type": ["string", "null"], "format": "date", "description": "'EXPIRATION DATE'." },
+    "dispositionDate": { "type": ["string", "null"], "format": "date", "description": "'DISPOSITION DATE'." },
+    "created": { "type": ["string", "null"], "format": "date-time", "description": "'CREATED'." },
+    "exportDate": { "type": ["string", "null"], "format": "date-time", "description": "'EXPORT DATE' — snapshot timestamp.", "readOnly": true }
+  },
+  "required": ["bicNumber"],
+  "additionalProperties": false
+}

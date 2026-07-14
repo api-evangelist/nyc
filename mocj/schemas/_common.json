@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mocj/schemas/_common.json",
+  "title": "MOCJ — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Mayor's Office of Criminal Justice (MOCJ) object schemas. Reconciles fields common to the MOCJ WordPress site (criminaljustice.cityofnewyork.us), the single NYC Open Data dataset (Supervised Release Dockets, atne-2dki), and MOCJ's Sequential Intercept Model coordination framework. Includes the NYC geography spine, MOCJ's program/issue vocabularies, and the Sequential Intercept enum.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island", "Citywide"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (used for program/provider sites when published).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine — the join keys back to the rest of city government.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district." },
+        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number." }
+      },
+      "additionalProperties": false
+    },
+    "SequentialIntercept": {
+      "type": ["string", "null"],
+      "description": "MOCJ's Sequential Intercept Model stage (0-5) — how a program sits along the path from community to reentry. Mirrors the site's 'Programs by Intercept' navigation.",
+      "enum": [
+        "Intercept 0: Community Services",
+        "Intercept 1: Law Enforcement",
+        "Intercept 2: Initial Court Hearings & Detention",
+        "Intercept 3: Jails/Courts",
+        "Intercept 4: Incarceration & Transition",
+        "Intercept 5: Community Transition & Re-Entry",
+        null
+      ]
+    },
+    "IssueArea": {
+      "type": "string",
+      "description": "MOCJ 'Programs by Issue' category.",
+      "enum": [
+        "Employment & Small Businesses",
+        "Education",
+        "Housing",
+        "Community Building",
+        "Arts & Culture",
+        "Crime & Safety",
+        "Mental Health Services",
+        "Legal Support",
+        "Policy Initiatives"
+      ]
+    },
+    "ProgramReference": {
+      "type": "object",
+      "description": "A reference to a MOCJ program by name/slug.",
+      "properties": {
+        "programName": { "type": "string", "description": "Program title (WordPress 'programs' post title)." },
+        "slug": { "type": ["string", "null"], "description": "URL slug on criminaljustice.cityofnewyork.us/programs/<slug>/." },
+        "programId": { "type": ["string", "integer", "null"], "description": "WordPress post ID for the program." }
+      },
+      "required": ["programName"],
+      "additionalProperties": false
+    },
+    "Provider": {
+      "type": "object",
+      "description": "A community-based organization (CBO) or provider that operates a MOCJ-funded program.",
+      "properties": {
+        "name": { "type": ["string", "null"], "description": "Provider / CBO name." },
+        "url": { "type": ["string", "null"], "format": "uri" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

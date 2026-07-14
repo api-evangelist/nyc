@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oath/schemas/summons.json",
+  "title": "Summons",
+  "description": "An ECB summons (a.k.a. ticket / notice of violation) adjudicated by the OATH Hearings Division. The core object of the domain. Canonical schema reconciling the 'OATH Hearings Division Case Status' dataset (jz4z-kudi, 74 columns, ~daily) and the ECB Ticket Finder portal (a820-ecbticketfinder.nyc.gov). Keyed on Ticket Number. Issued by other city agencies (DOB, DSNY, FDNY, DOHMH, DEP, DCWP, ...); OATH hears and decides it.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/jz4z-kudi",
+    "portal": "http://a820-ecbticketfinder.nyc.gov/searchHome.action",
+    "site": "https://www.nyc.gov/site/oath/hearings/hearings.page"
+  },
+  "properties": {
+    "ticketNumber": { "type": "string", "description": "'Ticket Number' — the ECB summons number; primary key." },
+    "issuingAgency": { "$ref": "_common.json#/$defs/IssuingAgency" },
+    "respondent": { "$ref": "_common.json#/$defs/Respondent" },
+    "violationLocation": { "$ref": "_common.json#/$defs/ViolationLocation" },
+    "violationDate": { "type": ["string", "null"], "format": "date", "description": "'Violation Date'." },
+    "violationTime": { "type": ["string", "null"], "description": "'Violation Time'." },
+    "violationDescription": { "type": ["string", "null"], "description": "'Violation Description'." },
+    "violationDetails": { "type": ["string", "null"], "description": "'Violation Details'." },
+    "charges": {
+      "type": "array",
+      "description": "Up to ten normalized charges ('Charge #1'..'Charge #10').",
+      "items": { "$ref": "_common.json#/$defs/Charge" }
+    },
+    "hearingStatus": { "$ref": "_common.json#/$defs/HearingStatus" },
+    "complianceStatus": { "$ref": "_common.json#/$defs/ComplianceStatus" },
+    "penalty": {
+      "type": "object",
+      "description": "Monetary state of the summons.",
+      "properties": {
+        "totalViolationAmount": { "type": ["number", "null"], "description": "'Total Violation Amount'." },
+        "penaltyImposed": { "type": ["number", "null"], "description": "'Penalty Imposed' at the hearing." },
+        "additionalPenaltiesOrLateFees": { "type": ["number", "null"], "description": "'Additional Penalties or Late Fees'." },
+        "paidAmount": { "type": ["number", "null"], "description": "'Paid Amount'." },
+        "balanceDue": { "type": ["number", "null"], "description": "'Balance Due'." }
+      },
+      "additionalProperties": false
+    },
+    "hearingDate": { "type": ["string", "null"], "format": "date", "description": "'Hearing Date' (see hearing.json for the full hearing record)." },
+    "decisionDate": { "type": ["string", "null"], "format": "date", "description": "'Decision Date' (see decision.json)." }
+  },
+  "required": ["ticketNumber"],
+  "additionalProperties": false
+}

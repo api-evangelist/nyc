@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mocj/schemas/program-referral.json",
+  "title": "ProgramReferral",
+  "description": "A referral connecting a person or court case to a MOCJ-coordinated program (e.g. Supervised Release, an alternative-to-incarceration, reentry, or mental-health diversion program). NET-NEW: MOCJ is a coordination office whose whole purpose is to route people between courts, agencies, and community providers along the Sequential Intercept Model — yet there is NO public API and NO Open Data twin for a referral. Today referrals happen offline (court mandate, case manager, phone) or via generic Contact Form 7 web forms. This schema serves both the read surface (list/get a referral's status) and the ProgramReferralRequest write surface (make a referral). NOTE: a real deployment must treat referral data as sensitive (justice-involved individuals) and gate it behind authentication and consent.",
+  "type": "object",
+  "x-source": {
+    "site": "https://criminaljustice.cityofnewyork.us/programs/",
+    "existing_write": "https://criminaljustice.cityofnewyork.us/wp-json/contact-form-7/v1 (generic web forms only)",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "referralId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned referral identifier. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Received", "Accepted", "Enrolled", "Declined", "Closed", null],
+      "description": "Referral lifecycle status. Set by MOCJ / the provider, not the referrer.",
+      "readOnly": true
+    },
+    "program": { "$ref": "_common.json#/$defs/ProgramReference" },
+    "sequentialIntercept": { "$ref": "_common.json#/$defs/SequentialIntercept" },
+    "issueArea": { "$ref": "_common.json#/$defs/IssueArea" },
+    "referralSource": {
+      "type": "string",
+      "description": "Who is making the referral.",
+      "enum": ["Court", "Defense Attorney", "Case Manager", "Community Organization", "Self", "Agency Partner", "Other"]
+    },
+    "docketId": { "type": ["string", "integer", "null"], "description": "Associated court docket, if the referral stems from a case (ties to SupervisedReleaseDocket)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "needsSummary": { "type": "string", "description": "Free-text summary of the need / reason for referral (avoid unnecessary personal identifiers)." },
+    "urgent": { "type": "boolean", "default": false, "description": "Flag time-sensitive referrals (e.g. imminent court date, safety concern)." },
+    "consentGiven": { "type": "boolean", "default": false, "description": "Whether the individual consented to the referral and to sharing their information with the provider." },
+    "contact": {
+      "type": "object",
+      "description": "How the provider or MOCJ can follow up with the referrer or, with consent, the individual.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["referralSource", "needsSummary"],
+  "additionalProperties": false
+}

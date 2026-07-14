@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cfb/schemas/candidate.json",
+  "title": "Candidate",
+  "description": "A candidate for NYC elected office as tracked by the Campaign Finance Board — the core entity of the Follow the Money database. Canonical schema reconciling the 'Campaign Financial Analysis' dataset (m3tj-a2pb, 26 columns) and 'Campaign Public Funds Payments' (u69g-mvrb). Keyed on CFB candidate id (CANDID / cand_id).",
+  "type": "object",
+  "x-source": {
+    "opendata_financial_analysis": "https://data.cityofnewyork.us/d/m3tj-a2pb",
+    "opendata_public_funds": "https://data.cityofnewyork.us/d/u69g-mvrb",
+    "ftm_search": "https://www.nyccfb.info/follow-the-money/candidates/",
+    "ftm_api": "https://www.nyccfb.info/FTMSearchWebAPI/api/AutoComplete/GetCandidates"
+  },
+  "properties": {
+    "candidateId": { "type": "string", "description": "CFB candidate id ('cand_id' / 'CANDID')." },
+    "name": { "type": ["string", "null"], "description": "Candidate name ('cand_name' / 'CANDNAME')." },
+    "firstName": { "type": ["string", "null"], "description": "'CANDFIRST'." },
+    "middleInitial": { "type": ["string", "null"], "description": "'CANDMI'." },
+    "lastName": { "type": ["string", "null"], "description": "'CANDLAST'." },
+    "class": { "type": ["string", "null"], "description": "Candidate class ('cand_class_cd' / 'CANCLASS') — participating, non-participating, or limited participation in the matching funds program." },
+    "incumbent": { "type": ["boolean", "string", "null"], "description": "'incumbent' flag." },
+    "office": { "$ref": "_common.json#/$defs/Office" },
+    "electionCycle": { "$ref": "_common.json#/$defs/ElectionCycle" },
+    "committee": { "$ref": "_common.json#/$defs/CommitteeReference" },
+    "financialSummary": {
+      "type": "object",
+      "description": "Aggregate financial-analysis figures for the candidate in the cycle (from Campaign Financial Analysis, m3tj-a2pb).",
+      "properties": {
+        "totalContributions": { "$ref": "_common.json#/$defs/Money" },
+        "netContributions": { "$ref": "_common.json#/$defs/Money" },
+        "contributorCount": { "type": ["integer", "null"], "description": "'cntrs_no' / 'cntns_no' — number of contributions/contributors." },
+        "matchableAmount": { "$ref": "_common.json#/$defs/Money" },
+        "matchClaimed": { "$ref": "_common.json#/$defs/Money" },
+        "publicFundsPaid": { "$ref": "_common.json#/$defs/Money" },
+        "totalExpenditures": { "$ref": "_common.json#/$defs/Money" },
+        "netExpenditures": { "$ref": "_common.json#/$defs/Money" },
+        "outstandingBills": { "$ref": "_common.json#/$defs/Money" },
+        "contributionLimit": { "$ref": "_common.json#/$defs/Money" },
+        "expenditureLimit": { "$ref": "_common.json#/$defs/Money" },
+        "terminated": { "type": ["boolean", "string", "null"], "description": "'termnd' — campaign terminated flag." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["candidateId"],
+  "additionalProperties": false
+}

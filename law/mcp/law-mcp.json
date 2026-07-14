@@ -1,0 +1,144 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the NYC Law Department's thin open reference data (civil-litigation index, legal divisions, publications, M/WBE statistics, pro bono Public Service Program) and adds submit_internship_application — the one net-new write workflow, the single transaction a member of the public actually initiates with this agency-facing legal office.",
+    "openapi": "../openapi/law.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.law",
+    "title": "NYC Law Department (Corporation Counsel)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the New York City Law Department — the City's in-house law firm. Exposes its seven Open Data sets (a civil-litigation case index, legal divisions, press releases / speeches / columns, M/WBE contracting statistics, and the pro bono Public Service Program) as clean resources, plus the net-new ability to submit a legal internship / fellowship application, the one transaction a member of the public actually performs with this agency.",
+    "instructions": "This is an AGENCY-FACING legal office with almost no citizen transactions and thin, stale (annual, manually-updated) Open Data. Use find_cases / get_case to browse the Law Department's own civil-litigation index by division, court, disposition, or date. IMPORTANT: this index is the litigation-side view; the authoritative ledger of claims filed against the City and settlement dollars paid is published separately by the Office of the Comptroller (dataset ex6k-ym48) — direct users there for claims/settlement totals. find_divisions lists practice divisions; find_publications covers press releases, speeches, and columns; find_mwbe_statistics and find_public_service_program cover contracting/pro bono. submit_internship_application (net-new) creates a legal internship/fellowship application; it requires an authenticated applicant and mutates state — confirm program, contact, and materials with the user before submitting."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_cases",
+      "title": "Find Litigation Cases",
+      "description": "Search the NYC Law Department's civil-litigation case index by division, court, disposition, date range, or free text. Note: for claims filed and settlement dollars, use the Comptroller's claims dataset instead.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "division": { "type": "string" },
+          "court": { "type": "string" },
+          "disposition": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/legal-case.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCases"
+    },
+    {
+      "name": "get_case",
+      "title": "Get Litigation Case",
+      "description": "Fetch a single civil-litigation matter by its docket/index number.",
+      "inputSchema": { "type": "object", "properties": { "docketIndex": { "type": "string" } }, "required": ["docketIndex"] },
+      "outputSchema": { "$ref": "../schemas/legal-case.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCase"
+    },
+    {
+      "name": "find_divisions",
+      "title": "Find Legal Divisions",
+      "description": "List the practice divisions of the Law Department (e.g. Tax & Bankruptcy, Tort, Labor & Employment).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/legal-division.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listDivisions"
+    },
+    {
+      "name": "find_publications",
+      "title": "Find Publications",
+      "description": "List Law Department press releases, speeches, and published columns by type, date range, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "publicationType": { "type": "string", "enum": ["Press Release", "Speech", "Published Column"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/publication.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPublications"
+    },
+    {
+      "name": "find_mwbe_statistics",
+      "title": "Find M/WBE Statistics",
+      "description": "List the Law Department's Minority- and Women-Owned Business Enterprise participation statistics by category.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mwbeType": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/mwbe-statistic.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listMwbeStatistics"
+    },
+    {
+      "name": "find_public_service_program",
+      "title": "Find Public Service Program",
+      "description": "List the private law firms donating pro bono legal services to the City through the Law Department's Public Service Program.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/public-service-program.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPublicServiceProgram"
+    },
+    {
+      "name": "list_my_internship_applications",
+      "title": "List My Internship Applications",
+      "description": "List the authenticated applicant's own legal internship / fellowship applications and their status — no API exists today.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Under Review", "Interview", "Offer", "Declined", "Withdrawn"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/law-internship-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listInternshipApplications",
+      "x-auth": "user"
+    },
+    {
+      "name": "submit_internship_application",
+      "title": "Submit Internship Application",
+      "description": "Submit a legal internship / fellowship application to the NYC Law Department. NET-NEW workflow with no public API today — the Careers page points applicants to email/PDF. Requires an authenticated applicant. Mutates state — confirm program, contact details, and materials before submitting.",
+      "inputSchema": { "$ref": "../schemas/law-internship-application.json" },
+      "outputSchema": { "$ref": "../schemas/law-internship-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createInternshipApplication",
+      "x-auth": "user"
+    }
+  ]
+}

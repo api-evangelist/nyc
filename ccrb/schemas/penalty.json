@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ccrb/schemas/penalty.json",
+  "title": "Penalty",
+  "description": "The discipline / penalty outcome for a substantiated complaint — including the Administrative Prosecution Unit (APU) trial track and the NYPD's final penalty decision. Canonical schema reconciling the 'Civilian Complaint Review Board: Penalties' dataset (keep-pkmh, 13 columns). Joins to Complaint on Complaint Id and to PoliceOfficer on Tax ID.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/keep-pkmh",
+    "site": "https://www.nyc.gov/site/ccrb/complaints/complaint-process/police-discipline.page"
+  },
+  "properties": {
+    "complaintId": { "type": "string", "description": "Complaint identifier ('Complaint Id') — primary key together with Tax ID." },
+    "taxId": { "type": ["string", "null"], "description": "NYPD Tax ID of the disciplined officer ('Tax ID')." },
+    "ccrbSubstantiatedOfficerDisposition": { "type": ["string", "null"], "description": "CCRB substantiated officer disposition ('CCRB Substantiated Officer Disposition')." },
+    "boardDisciplineRecommendation": { "type": ["string", "null"], "description": "The CCRB Board's discipline recommendation ('Board Discipline Recommendation')." },
+    "isApu": { "type": ["boolean", "string", "null"], "description": "Whether the case went through the Administrative Prosecution Unit ('Officer is_APU')." },
+    "apuCaseStatus": { "type": ["string", "null"], "description": "APU case status ('APU Case Status')." },
+    "apuTrialRecommendedPenalty": { "type": ["string", "null"], "description": "APU CCRB trial recommended penalty ('APU CCRB Trial Recommended Penalty')." },
+    "apuTrialCommissionerRecommendedPenalty": { "type": ["string", "null"], "description": "APU trial commissioner recommended penalty ('APU Trial Commissioner Recommended Penalty')." },
+    "apuPleaAgreedPenalty": { "type": ["string", "null"], "description": "APU plea agreed penalty ('APU Plea Agreed Penalty')." },
+    "apuClosingDate": { "type": ["string", "null"], "format": "date", "description": "APU closing date ('APU Closing Date')." },
+    "nypdOfficerPenalty": { "type": ["string", "null"], "description": "The NYPD's final penalty imposed on the officer ('NYPD Officer Penalty')." },
+    "nonApuNypdPenaltyReportDate": { "type": ["string", "null"], "format": "date", "description": "Non-APU NYPD penalty report date ('Non-APU NYPD Penalty Report Date')." },
+    "asOfDate": { "type": ["string", "null"], "format": "date", "description": "Data snapshot date ('As Of Date')." }
+  },
+  "required": ["complaintId"],
+  "additionalProperties": false
+}

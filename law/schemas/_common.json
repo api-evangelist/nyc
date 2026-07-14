@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/law/schemas/_common.json",
+  "title": "NYC Law Department — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Law Department (Office of the Corporation Counsel) object schemas. Reconciles fields common to the seven Law Department Open Data datasets (data.cityofnewyork.us, agency label 'Law Department (LAW)') and nyc.gov/site/law. The Law Department is an agency-facing legal office, so the NYC geography spine is largely vestigial here — only the civil-litigation index carries a property key (Lead BBL) — but it is kept for consistency with the rest of the NYC Modernization project.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Open Data LATITUDE / LONGITUDE). Rarely present in Law Department data.",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine — the join keys back to the rest of city government. Largely vestigial in Law Department data; the civil-litigation index carries only the property key (Lead BBL).",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district." },
+        "censusTract": { "type": ["string", "null"], "description": "Census tract." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('Lead BBL' on the litigation index)." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number." }
+      },
+      "additionalProperties": false
+    },
+    "LegalDivisionRef": {
+      "type": "object",
+      "description": "A reference to a Law Department legal division / practice area ('LD Division' / 'Division Name').",
+      "properties": {
+        "division": { "type": "string", "description": "Division / practice-area name ('LD Division' / 'Division Name')." },
+        "department": { "type": ["string", "null"], "description": "Parent department ('Department Name')." }
+      },
+      "required": ["division"],
+      "additionalProperties": false
+    },
+    "Money": {
+      "type": ["number", "null"],
+      "description": "A US-dollar amount. Litigation payout/received/disposition/expense figures are reported by the Law Department; the authoritative claims-and-settlements ledger is published separately by the Office of the Comptroller (ex6k-ym48)."
+    }
+  }
+}

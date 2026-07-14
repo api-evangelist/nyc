@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ibo/schemas/tax-distribution.json",
+  "title": "TaxDistribution",
+  "description": "A distributional tax / income observation for a single Adjusted Gross Income (AGI) band — how income, tax liability, and credits are spread across NYC income groups. Canonical schema reconciling IBO's AGI-keyed Open Data tables: Personal Income by AGI Range (ipc3-2nbm), Income by Type and AGI Range (gffu-ps8j), Tax Liability by AGI Range (3vvi-fwjs), and Tax Credits/EITC by AGI Range (nwet-nc6h). Also carries the by-tax-type revenue lines from Tax Revenue since FY1980 (hdnu-nbrh).",
+  "type": "object",
+  "x-source": {
+    "opendata_personal_income": "https://data.cityofnewyork.us/d/ipc3-2nbm",
+    "opendata_income_by_type": "https://data.cityofnewyork.us/d/gffu-ps8j",
+    "opendata_tax_liability": "https://data.cityofnewyork.us/d/3vvi-fwjs",
+    "opendata_tax_credits": "https://data.cityofnewyork.us/d/nwet-nc6h",
+    "opendata_tax_revenue": "https://data.cityofnewyork.us/d/hdnu-nbrh"
+  },
+  "properties": {
+    "agiRange": { "$ref": "_common.json#/$defs/AgiRange" },
+    "minimumIncome": { "$ref": "_common.json#/$defs/Money" },
+    "numberOfFilers": { "type": ["integer", "null"], "description": "Filers / taxpayers / recipients in the band ('Number of Filers' / 'Number of tax Payers' / 'Number of EITC Recipients')." },
+    "totalIncome": { "$ref": "_common.json#/$defs/Money" },
+    "averageIncomePerFiler": { "$ref": "_common.json#/$defs/Money" },
+    "wagesAndSalaries": { "$ref": "_common.json#/$defs/Money" },
+    "businessIncome": { "$ref": "_common.json#/$defs/Money" },
+    "dividendsAndInterest": { "$ref": "_common.json#/$defs/Money" },
+    "totalPitLiability": { "$ref": "_common.json#/$defs/Money" },
+    "averagePitLiability": { "$ref": "_common.json#/$defs/Money" },
+    "totalEitc": { "$ref": "_common.json#/$defs/Money" },
+    "percentOfTotal": { "type": ["number", "null"], "description": "Share of the citywide total this band represents ('Percentage' / '%')." },
+    "taxType": {
+      "type": ["string", "null"],
+      "description": "For the Tax Revenue series (hdnu-nbrh), the tax line reported.",
+      "enum": ["Property", "Personal Income Total", "General Sales", "General Corporation", "Unincorporated Business Income", "Financial Corporation", "Commercial Rent", "Mortgage Recording", "Conveyance of Real Property", "Other Taxes", "Total Taxes", null]
+    },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doi/schemas/policy-recommendation.json",
+  "title": "PolicyRecommendation",
+  "description": "A DOI Policy and Procedure Recommendation (PPR) — a reform recommendation DOI issues to a City agency, tracked through acceptance and implementation. Canonical schema reconciling the 'Policy and Procedure Recommendations (PPR) Portal' dataset (jstn-jaut). This is DOI's one genuinely structured investigative-output twin on Open Data.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/jstn-jaut",
+    "site": "https://www.nyc.gov/site/doi/about/policy-and-procedure-recommendations-portal.page"
+  },
+  "properties": {
+    "recommendation": { "type": "string", "description": "The recommendation text ('Recommendation')." },
+    "agency": { "type": ["string", "null"], "description": "City agency the recommendation was directed to ('Agency')." },
+    "dateIssued": { "type": ["string", "null"], "format": "date", "description": "'Date Issued'." },
+    "acceptanceStatus": { "$ref": "_common.json#/$defs/AcceptanceStatus" },
+    "agencyReportedStatus": { "type": ["string", "null"], "description": "Status as reported by the receiving agency ('Agency Reported Status')." },
+    "implementationStatus": { "$ref": "_common.json#/$defs/ImplementationStatus" },
+    "dateImplemented": { "type": ["string", "null"], "format": "date", "description": "'Date Implemented'." }
+  },
+  "required": ["recommendation"],
+  "additionalProperties": false
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/law/schemas/mwbe-statistic.json",
+  "title": "MwbeStatistic",
+  "description": "A Minority- and Women-Owned Business Enterprise (M/WBE) participation statistic for the NYC Law Department — the share of the Department's contracting activity, by M/WBE category, across contract families. Canonical schema reconciling 'Minority and Women-Owned Business Enterprise Statistics' (svyi-maaj). Percentage values are stored as reported (strings like '9.23%').",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/svyi-maaj",
+    "site": "https://www.nyc.gov/site/law/public-resources/minority-and-women-owned-business-enterprise-opportunity.page"
+  },
+  "properties": {
+    "mwbeType": { "type": "string", "description": "M/WBE category ('MWBE Type', e.g. Black American, Hispanic American, Asian American, Women)." },
+    "primeContractsGoods": { "type": ["string", "null"], "description": "Prime contracts — goods ('Prime Contracts - Goods')." },
+    "primeContractsStandardServices": { "type": ["string", "null"], "description": "Prime contracts — standard services ('Prime Contracts - Standard Services')." },
+    "primeContractsProfessionalServices": { "type": ["string", "null"], "description": "Prime contracts — professional services ('Prime Contracts - Professional Services')." },
+    "primeContractsConstruction": { "type": ["string", "null"], "description": "Prime contracts — construction ('Prime Contracts - Construction')." },
+    "subcontractsProfessionalServices": { "type": ["string", "null"], "description": "Subcontracts — professional services ('Subcontracts - Professional Services')." },
+    "subcontractsConstruction": { "type": ["string", "null"], "description": "Subcontracts — construction ('Subcontracts - Construction')." }
+  },
+  "required": ["mwbeType"],
+  "additionalProperties": false
+}

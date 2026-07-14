@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bsa/schemas/zoning-lot.json",
+  "title": "ZoningLot",
+  "description": "A property / zoning lot that is (or has been) the subject of one or more BSA cases — the physical spine that ties a case to the tax lot, building, and zoning district. Canonical schema reconciling the 'BSA Action Portal' legacy calendar index (f72e-3i4c, 18 columns), which reaches back to 1916, with the premise fields carried by the Applications Status dataset. Keyed on BBL.",
+  "type": "object",
+  "x-source": {
+    "opendata_action_portal": "https://data.cityofnewyork.us/d/f72e-3i4c",
+    "opendata_status": "https://data.cityofnewyork.us/d/yvxd-uipr",
+    "zola": "https://zola.planning.nyc.gov/"
+  },
+  "properties": {
+    "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL') — primary key." },
+    "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." },
+    "property": { "$ref": "_common.json#/$defs/PropertyReference" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "calendars": {
+      "type": ["array", "null"],
+      "description": "Calendar numbers of BSA cases at this lot ('CalendarNumber'), including legacy cases back to 1916.",
+      "items": { "$ref": "_common.json#/$defs/CalendarReference" }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,160 @@
+{
+  "domain": "bsa",
+  "agency": "NYC Board of Standards & Appeals (BSA)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/bsa (Akamai + nginx + AWS ALB + NYC.gov 'Livesite' platform v22 + Dynatrace). Confirmed there is NO online application portal: intake is downloadable PDF forms (bz_form.pdf, appeal_form.pdf, bzy_form.pdf, soc_form.pdf) filed on paper, and the resolutions/records search is a server-rendered Livesite widget (searchRecords(), submit=true&componentID=…) with no JSON/OpenAPI. Verified the NYC Open Data agency label 'Board of Standards and Appeals (BSA)' via the Socrata Discovery API and pulled all 4 assets with column schemas; sampled live SODA data to enumerate application types (BZ/BZY/SOC/Appeal) and statuses (Granted/Denied/Withdrawn/Dismissed).",
+  "related_domains": ["data.cityofnewyork.us", "zola.planning.nyc.gov", "nyc.gov/site/buildings", "nyc.gov/site/planning", "a856-cityrecord.nyc.gov"],
+  "meta": {
+    "short": "NYC Standards & Appeals (BSA)",
+    "verb": "digitize",
+    "platform": "NYC.gov 'Livesite' (Akamai + nginx + AWS ALB + Dynatrace); records/decisions search is a server-rendered Livesite widget; intake is paper PDF forms — no online application portal",
+    "netnew": "VarianceApplication — file a zoning variance / special permit / extension / appeal (today a paper PDF-form process)",
+    "accent": "#6a7a8a",
+    "tagline": "BSA publishes what it decided but offers no way to file — the intake is still paper PDF forms.",
+    "headline": "Case outcomes are open on NYC Open Data (4 datasets), but filing a variance or appeal has no online portal and no API — digitize the intake."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 2,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov Livesite chassis; no BSA-specific platform; intake is paper PDF forms.",
+    "siteApi": "No site/records API — resolutions search is a server-rendered Livesite widget, no JSON/OpenAPI.",
+    "openData": "4 Socrata datasets covering case status, decisions map, legacy index, pre-app meetings; no filing/hearing data.",
+    "coreData": "Core Application/case object well modeled in Open Data; resolutions only as PDF links; no hearing calendar.",
+    "writeApi": "No write surface at all — filing a variance/appeal is a download-a-PDF-and-file-on-paper process.",
+    "agent": "No agent-native surface; no MCP; search is not machine-callable.",
+    "ownership": "Case data on Socrata/Tyler; site on shared Livesite; only the PDF forms are BSA's own — mixed, vendor-hosted."
+  },
+  "headline_findings": [
+    "BSA is a records-forward agency on the shared NYC.gov 'Livesite' chassis (Akamai/nginx/AWS ALB/Dynatrace) with NO online application portal.",
+    "Case OUTCOMES are open: 4 NYC Open Data datasets cover every application filed 1998–present with type (BZ variance/special-permit, BZY extension, SOC amendment, Appeal), premises, zoning district, status (Granted/Denied/Withdrawn/Dismissed), and a link to the decision PDF, plus a legacy calendar index back to 1916 and a pre-application-meetings log.",
+    "But the INTAKE has no machine-readable surface: filing a variance/appeal is a paper PDF-form process (bz_form.pdf, appeal_form.pdf, bzy_form.pdf, soc_form.pdf) with no online portal and no API.",
+    "The records/decisions search is a server-rendered Livesite widget (searchRecords()), not an API; resolutions are unstructured PDFs; the public hearing calendar exists only as HTML/PDF with Zoom links, with no Open Data twin.",
+    "Net-new write surface: file a zoning variance/appeal (VarianceApplication) — the core BSA transaction, with no API today. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "4 BSA datasets; SODA /resource/<id>.json endpoints. The one real, open BSA API — case outcomes/index only." },
+    { "endpoint": "/site/bsa/resolutions/search-for-resolutions.page", "type": "records/decisions search", "owner": "NYC.gov Livesite", "public": "html, no API", "note": "server-rendered search widget over decided cases 1998–present (searchRecords(), submit=true&componentID=…); no JSON/OpenAPI." },
+    { "endpoint": "/assets/bsa/downloads/pdf/forms_instructions/*.pdf", "type": "application intake (paper forms)", "owner": "BSA", "public": "pdf forms, no API", "note": "bz_form.pdf, appeal_form.pdf, bzy_form.pdf, soc_form.pdf + checklists — the filing workflow, on paper. No online portal." },
+    { "endpoint": "/assets/bsa/downloads/pdf/decisions/<calendar>.pdf", "type": "decision documents", "owner": "BSA", "public": "pdf", "note": "the written resolution per case — a PDF, not structured data." },
+    { "endpoint": "www.nyc.gov/site/bsa", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "content only; Akamai edge, nginx, AWS ALB, Dynatrace RUM. No content API." },
+    { "endpoint": "zola.planning.nyc.gov / gis.nyc.gov ZOLA", "type": "zoning map viewer", "owner": "NYC (DCP)", "public": "web app", "note": "referenced applications/zoning-lot map; a DCP surface, not a BSA API." }
+  ],
+  "fruit": [
+    {
+      "name": "Applications (cases) status",
+      "type": "data table + search",
+      "entity": "Application",
+      "url": "https://www.nyc.gov/site/bsa/resolutions/search-for-resolutions.page",
+      "count": "~10,700 decided cases (1998–present)",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["BSA Applications Status yvxd-uipr (34c)", "BSA Decisions Map 99rv-74dm"],
+      "notes": "Core case object. Keyed on calendar number; type (BZ/BZY/SOC/Appeal), ZR/GCL section, premises, block/lot, BBL/BIN, zoning district, project description, status, decision date, decision PDF link."
+    },
+    {
+      "name": "Zoning lot / property BSA history",
+      "type": "data table + map",
+      "entity": "ZoningLot",
+      "url": "https://data.cityofnewyork.us/d/f72e-3i4c",
+      "count": "legacy index back to 1916",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["BSA Action Portal f72e-3i4c (18c)", "BSA Applications Status yvxd-uipr (premise fields)"],
+      "notes": "Property/zoning-lot spine keyed on BBL; legacy calendar index (C1-C2-C3 = number-year-type) reaching back to 1916, with premises and geography."
+    },
+    {
+      "name": "Pre-application meetings",
+      "type": "data table",
+      "entity": "PreApplicationMeeting",
+      "url": "https://data.cityofnewyork.us/d/855v-w7mc",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Pre-Application Meetings 855v-w7mc (17c)"],
+      "notes": "Pre-filing consultation log — applicant, meeting date, application type, premises, geography."
+    },
+    {
+      "name": "Resolutions (decisions)",
+      "type": "documents (PDF)",
+      "entity": "Resolution",
+      "url": "https://www.nyc.gov/site/bsa/resolutions/search-for-resolutions.page",
+      "machine_readable": "PDF link only",
+      "verified": true,
+      "opendata_match": ["decisions_url in yvxd-uipr → /assets/bsa/downloads/pdf/decisions/<calendar>.pdf"],
+      "opendata_gap": true,
+      "notes": "Each decision is a linked PDF; reasoning, conditions, and vote are unstructured. No structured resolution resource today."
+    },
+    {
+      "name": "Public hearing calendar",
+      "type": "schedule (HTML/PDF)",
+      "entity": "Hearing",
+      "url": "https://www.nyc.gov/site/bsa/public-hearings/upcoming-hearing-info.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Upcoming hearings published only as HTML/PDF with Zoom webinar links; no Open Data twin. A core read surface with no dataset."
+    },
+    {
+      "name": "File a variance / special permit",
+      "type": "workflow (paper forms)",
+      "entity": "VarianceApplication",
+      "url": "https://www.nyc.gov/site/bsa/applications/application-guidelines-forms.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Filing a BZ variance / special permit — download bz_form.pdf + checklist and file on paper. No online portal, no API. The net-new WRITE surface for this domain."
+    },
+    {
+      "name": "File an extension of time / vested rights (BZY)",
+      "type": "workflow (paper forms)",
+      "entity": "VarianceApplication",
+      "url": "https://www.nyc.gov/site/bsa/applications/application-guidelines-forms.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "BZY extension — bzy_form.pdf, paper filing. An alternative net-new write case type."
+    },
+    {
+      "name": "File an appeal of a DOB determination",
+      "type": "workflow (paper forms)",
+      "entity": "VarianceApplication",
+      "url": "https://www.nyc.gov/site/bsa/applications/application-guidelines-forms.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Appeal — appeal_form.pdf, paper filing. The same net-new write surface, appeal case type."
+    },
+    {
+      "name": "File a Special Order Calendar (SOC) amendment",
+      "type": "workflow (paper forms)",
+      "entity": "VarianceApplication",
+      "url": "https://www.nyc.gov/site/bsa/applications/application-guidelines-forms.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "SOC amendment/extension of a prior grant — soc_form.pdf, paper filing. Same net-new write surface, SOC case type."
+    },
+    {
+      "name": "Track a pending filing",
+      "type": "status lookup",
+      "entity": "VarianceApplication",
+      "url": "https://www.nyc.gov/site/bsa/applications/application-guidelines-forms.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "There is no way to track a filing before decision — no online portal exists. Only decided cases appear in Open Data. Read side of the net-new surface."
+    }
+  ]
+}

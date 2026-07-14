@@ -1,0 +1,115 @@
+{
+  "domain": "cchr",
+  "agency": "NYC Commission on Human Rights (CCHR)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/cchr (Akamai + nginx + AWS ALB + NYC.gov 'Livesite' platform + Dynatrace + Akamai mPulse) and read the 'Report Discrimination' intake form (/about/report-discrimination.page), identified as a native server-rendered Livesite HTML form with no machine-readable contract — its category choices map one-to-one to the Inquiries Received dataset columns. Verified the NYC Open Data agency label 'Commission on Human Rights (CCHR)' via the Socrata Discovery API and pulled all 3 assets with column schemas.",
+  "related_domains": ["data.cityofnewyork.us", "apps.nyc.gov", "portal.311.nyc.gov", "www1.nyc.gov"],
+  "meta": {
+    "short": "NYC Human Rights (CCHR)",
+    "verb": "structure",
+    "platform": "NYC.gov shared 'Livesite' platform (Akamai edge, nginx, AWS ALB, Dynatrace + mPulse RUM) — no CCHR-specific application platform and, unlike NYCHA, no vendor CRM.",
+    "netnew": "A typed DiscriminationComplaint intake API (report discrimination) — replacing the untyped Report Discrimination HTML form.",
+    "accent": "#b06f5a",
+    "tagline": "CCHR's core transaction — reporting discrimination — is an untyped web form with no API, backed by only three aggregate datasets and a Human Rights Law published as prose and PDF.",
+    "headline": "The fix is to give the discrimination complaint, the protected classes, and the legal guidance a structured, agent-native contract."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 0,
+    "openData": 1,
+    "coreData": 0,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Modern managed NYC.gov 'Livesite' chassis (Akamai/nginx/AWS ALB/Dynatrace) but shared and content-only.",
+    "siteApi": "No machine-readable site/content API; the intake is an HTML form, not an application.",
+    "openData": "Only 3 thin, aggregate operational datasets on Socrata SODA; no law, guidance, or case data.",
+    "coreData": "Core entities (complaints, cases, protected classes, guidance) exist as none-structured — form fields, prose, and PDF.",
+    "writeApi": "Report Discrimination is an untyped HTML form posting to an opaque backend; no write API.",
+    "agent": "No agent-native surface of any kind; nothing an agent can call.",
+    "ownership": "Runs on the city's own platform with no vendor CRM lock-in; but the case backend is opaque and the intake is untyped."
+  },
+  "headline_findings": [
+    "CCHR is the thinnest domain yet: NYC Open Data carries only 3 CCHR datasets — Inquiries Received, Office of Mediation cases, and Pre-Complaint Resolutions — and all three are aggregate operational counts, not case data.",
+    "The core citizen transaction, reporting discrimination, is a plain server-rendered HTML form on the shared NYC.gov 'Livesite' platform that posts into an opaque Law Enforcement Bureau backend — no API, no OpenAPI, no JSON, no documented POST schema.",
+    "The NYC Human Rights Law itself — protected classes and legal enforcement guidance — is published only as prose and PDF; 'is X protected in housing?' has no machine-readable answer.",
+    "Individual complaint/respondent/case data is never published (privacy by design); the intake form's typed structure is discarded and re-surfaces only as an annual tally whose columns match the form's own category choices.",
+    "Net-new write surface: report discrimination (DiscriminationComplaint) — typing the untyped intake form. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Only 3 CCHR datasets (395v-hkhg, tmha-56pf, 6ayi-8khd); SODA /resource/<id>.json endpoints. The one open API — aggregate operational counts only." },
+    { "endpoint": "www.nyc.gov/site/cchr/about/report-discrimination.page", "type": "intake form", "owner": "CCHR on NYC.gov 'Livesite'", "public": "html form, no API", "note": "The core transaction. Server-rendered HTML <form> (name, category, respondent, incident date, description, up to 3 attachments). No OpenAPI/JSON; posts to an opaque Law Enforcement Bureau backend." },
+    { "endpoint": "apps.nyc.gov/nyc-mailform/validation", "type": "generic form validation", "owner": "NYC (OTI)", "public": "referenced", "note": "Shared NYC.gov mail/contact-form validation service referenced by the page — not a CCHR complaint API." },
+    { "endpoint": "www.nyc.gov/site/cchr", "type": "informational site", "owner": "NYC.gov shared platform ('Livesite')", "public": "html", "note": "The law, legal library, complaint process, trainings/workshops — content only. Akamai edge, nginx, AWS ALB, Dynatrace + mPulse RUM. No content API." }
+  ],
+  "fruit": [
+    {
+      "name": "Report Discrimination",
+      "type": "intake form (net-new write)",
+      "entity": "DiscriminationComplaint",
+      "url": "https://www.nyc.gov/site/cchr/about/report-discrimination.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most important resident transaction — report discrimination and (optionally) file a complaint. A native NYC.gov 'Livesite' HTML form with typed-looking fields (your name/pronouns/address/email/phone; category of discrimination; respondent name/location/phone; date of most recent incident; prior-complaint Yes/No; free-text problem; up to 3 attachments; how you heard about the Commission) but NO API and NO Open Data twin. Its data is discarded as structure and re-surfaces only as annual inquiry counts. The net-new WRITE surface for this domain."
+    },
+    {
+      "name": "Protected classes (NYC Human Rights Law)",
+      "type": "reference / legal vocabulary",
+      "entity": "ProtectedClass",
+      "url": "https://www.nyc.gov/site/cchr/law/the-law.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The categories protected under Title 8 (age, race, gender identity, disability, source of income, etc.) and the protected areas (employment, housing, public accommodations, lending, discriminatory harassment, bias-based profiling). Published only as prose; no list, no API, no dataset."
+    },
+    {
+      "name": "Legal enforcement guidance & publications",
+      "type": "reference / document catalog",
+      "entity": "LegalGuidance",
+      "url": "https://www.nyc.gov/site/cchr/law/legal-library.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "CCHR legal enforcement guidance, fact sheets, and Legal Library publications (gender identity/expression, race/hairstyle, source of income, Fair Chance Act, disability). Published only as HTML pages and PDFs; no catalog API and no Open Data twin."
+    },
+    {
+      "name": "Trainings, workshops & outreach",
+      "type": "events / education",
+      "entity": "TrainingEvent",
+      "url": "https://www.nyc.gov/site/cchr/community/events-workshops.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Know-your-rights workshops, the Stop Sexual Harassment Act training, TGNC/Fair Chance campaigns, and Community Relations Bureau outreach — the Commission's education mission. HTML pages only; no events API, no dataset. Also the home of bias-testing/education programs."
+    },
+    {
+      "name": "Inquiries received",
+      "type": "data table",
+      "entity": "InquiryStatistic",
+      "url": "https://data.cityofnewyork.us/d/395v-hkhg",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Inquiries Received 395v-hkhg (9c)"],
+      "opendata_gap": false,
+      "notes": "AGGREGATE annual counts of inquiries about discrimination by protected area (Employment, Housing, Public Accommodations, Lending Practices, Discriminatory Harassment, Bias-Based Profiling) with a Grand Total. The columns match the intake form's category choices — internal structure exists but only tallies are published."
+    },
+    {
+      "name": "Mediation & pre-complaint resolutions",
+      "type": "data table",
+      "entity": "ResolutionStatistic",
+      "url": "https://data.cityofnewyork.us/d/tmha-56pf",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Office of Mediation and Conflict Resolution Cases tmha-56pf (3c)", "Pre-Complaint Resolutions 6ayi-8khd (3c)"],
+      "opendata_gap": false,
+      "notes": "Two parallel AGGREGATE monthly-count datasets — settlements closed by the Office of Mediation, and pre-complaint resolutions. No individual case is published."
+    }
+  ]
+}

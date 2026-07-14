@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cchr/schemas/_common.json",
+  "title": "CCHR — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Commission on Human Rights (CCHR) object schemas. Reconciles fields common to the CCHR Open Data datasets (data.cityofnewyork.us), nyc.gov/site/cchr, and the 'Report Discrimination' intake form. Includes the NYC geography spine plus the enforcement vocabularies of the NYC Human Rights Law — protected classes and protected areas.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Open Data LATITUDE / LONGITUDE).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine — the join keys back to the rest of city government. Carried where an incident location or facility can be geocoded.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district." },
+        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number." },
+        "zipCode": { "type": ["string", "null"], "description": "ZIP code." }
+      },
+      "additionalProperties": false
+    },
+    "ProtectedArea": {
+      "type": "string",
+      "description": "The area of city life in which the NYC Human Rights Law prohibits discrimination — mirrors the 'Category of Discrimination' choices on the Report Discrimination form and the columns of the Inquiries Received dataset.",
+      "enum": [
+        "Employment",
+        "Housing",
+        "Public Accommodations",
+        "Lending Practices",
+        "Discriminatory Harassment",
+        "Bias-Based Profiling",
+        "Not Sure"
+      ]
+    },
+    "ProtectedClass": {
+      "type": "string",
+      "description": "A category protected from discrimination under the NYC Human Rights Law (Title 8 of the Administrative Code). The basis of a complaint. Coverage varies by protected area (e.g. source of income and lawful source of income apply to housing).",
+      "enum": [
+        "Age",
+        "Alienage or Citizenship Status",
+        "Color",
+        "Disability",
+        "Gender",
+        "Gender Identity or Expression",
+        "Marital or Partnership Status",
+        "National Origin",
+        "Pregnancy or Lactation",
+        "Race",
+        "Religion or Creed",
+        "Sexual Orientation",
+        "Sexual and Reproductive Health Decisions",
+        "Status as a Victim of Domestic Violence, Stalking, or Sex Offenses",
+        "Arrest or Conviction Record",
+        "Credit History",
+        "Source of Income",
+        "Caregiver Status",
+        "Military Status",
+        "Unemployment Status",
+        "Height or Weight",
+        "Other"
+      ]
+    },
+    "FiscalPeriod": {
+      "type": "object",
+      "description": "The reporting period carried by CCHR's aggregate operational datasets (fiscal year, or calendar year + month).",
+      "properties": {
+        "fiscalYear": { "type": ["string", "integer", "null"], "description": "'Fiscal Year'." },
+        "year": { "type": ["string", "integer", "null"], "description": "'Year'." },
+        "month": { "type": ["string", "integer", "null"], "description": "'Month'." }
+      },
+      "additionalProperties": false
+    }
+  }
+}

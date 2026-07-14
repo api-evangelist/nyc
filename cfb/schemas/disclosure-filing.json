@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cfb/schemas/disclosure-filing.json",
+  "title": "DisclosureFiling",
+  "description": "A campaign-finance disclosure statement submitted by a filer (committee) to the CFB — the periodic report bundling contributions, expenditures, and balances for a filing period. NET-NEW WRITE: today a disclosure is submitted only through the login-walled C-SMART application (the CFB's web-based disclosure software); there is NO public submission API. The READ surface exists partially as the 'Late/Missing Disclosure Statements' dataset (2ujk-6z7u) and the statements listing on nyccfb.info. This schema serves both the read surface (list/get filings and their status) and the write surface (submit a disclosure statement).",
+  "type": "object",
+  "x-source": {
+    "opendata_late_missing": "https://data.cityofnewyork.us/d/2ujk-6z7u",
+    "statements_listing": "https://www.nyccfb.info/follow-the-money/statements-of-active-candidacy/",
+    "csmart": "https://www.nyccfb.info/candidate-services/c-smart-help/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "filingId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned filing / statement id. Omit on create; returned on the submitted resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Draft", "Submitted", "Accepted", "In Review", "Amended", "Late", "Missing", null],
+      "description": "Filing lifecycle status ('Status'). Set by CFB, not the filer.",
+      "readOnly": true
+    },
+    "filer": { "$ref": "_common.json#/$defs/CommitteeReference" },
+    "candidate": { "$ref": "_common.json#/$defs/CandidateReference" },
+    "office": { "$ref": "_common.json#/$defs/Office" },
+    "electionCycle": { "$ref": "_common.json#/$defs/ElectionCycle" },
+    "statementNumber": { "type": ["string", "integer", "null"], "description": "Disclosure statement number in the cycle ('Statement')." },
+    "classification": { "type": ["string", "null"], "description": "Filing classification ('Classification')." },
+    "periodStart": { "type": ["string", "null"], "format": "date", "description": "Start of the coverage period." },
+    "periodEnd": { "type": ["string", "null"], "format": "date", "description": "End of the coverage period." },
+    "dueDate": { "type": ["string", "null"], "format": "date", "description": "Statutory due date ('Due Date')." },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "description": "When the statement was submitted.", "readOnly": true },
+    "daysLate": { "type": ["integer", "null"], "description": "Days past the due date if late ('Days Late').", "readOnly": true },
+    "amendment": { "type": "boolean", "default": false, "description": "Whether this filing amends a previously submitted statement." },
+    "amendsFilingId": { "type": ["string", "null"], "description": "The filingId this statement amends, if any." },
+    "summary": {
+      "type": "object",
+      "description": "Period totals reported in the statement.",
+      "properties": {
+        "totalContributions": { "$ref": "_common.json#/$defs/Money" },
+        "totalExpenditures": { "$ref": "_common.json#/$defs/Money" },
+        "closingBalance": { "$ref": "_common.json#/$defs/Money" },
+        "contributionCount": { "type": ["integer", "null"] },
+        "expenditureCount": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "contributions": {
+      "type": ["array", "null"],
+      "description": "Contribution transactions reported in this statement.",
+      "items": { "$ref": "contribution.json" }
+    },
+    "expenditures": {
+      "type": ["array", "null"],
+      "description": "Expenditure transactions reported in this statement.",
+      "items": { "$ref": "expenditure.json" }
+    },
+    "certifiedBy": { "type": ["string", "null"], "description": "Name of the treasurer/candidate certifying the statement." }
+  },
+  "required": ["filer", "electionCycle", "statementNumber"],
+  "additionalProperties": false
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mocj/schemas/supervised-release-docket.json",
+  "title": "SupervisedReleaseDocket",
+  "description": "One court docket released into MOCJ's Supervised Release program — a pretrial alternative to bail/detention. Canonical schema for the single MOCJ NYC Open Data dataset 'Supervised Release Dockets' (atne-2dki, 6 columns). One row per released docket; the CourtCase-adjacent grain. This is the only machine-readable trace of a MOCJ program on Open Data (last updated 2023-06-12).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/atne-2dki",
+    "site": "https://criminaljustice.cityofnewyork.us/programs/supervised-release/"
+  },
+  "properties": {
+    "docketId": { "type": ["integer", "null"], "description": "'docket_id' — numeric identifier representing a single court case." },
+    "programEntryDate": { "type": ["string", "null"], "format": "date", "description": "'program_entry_date' — date the docket was mandated to Supervised Release by the judge." },
+    "programName": { "type": ["string", "null"], "description": "'program_name' — the organization (CBO) supervising the docket." },
+    "supervisionLevel": { "type": ["string", "null"], "description": "'supervision_level' — supervision level mandated by the judge at release." },
+    "intakeMaxSeverity": { "type": ["string", "null"], "description": "'intake_max_severity' — severity of the top charge on the docket." },
+    "gender": { "type": ["string", "null"], "description": "'gender' — gender of the participant in supervised release." }
+  },
+  "additionalProperties": false
+}

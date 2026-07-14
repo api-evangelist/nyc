@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ccrb/schemas/police-officer.json",
+  "title": "PoliceOfficer",
+  "description": "An NYPD member of service (the accused/subject officer) as tracked in CCRB's complaint database. Canonical schema reconciling the 'Civilian Complaint Review Board: Police Officers' dataset (2fir-qns4, 14 columns). Keyed on Tax ID; aggregates complaint counts per officer. CCRB publishes officer-level complaint histories — its distinguishing act of transparency.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/2fir-qns4",
+    "dashboard": "https://www.nyc.gov/site/ccrb/policy/data-transparency-initiative-mos.page"
+  },
+  "properties": {
+    "taxId": { "type": "string", "description": "NYPD Tax ID number ('Tax ID') — primary key." },
+    "shieldNo": { "type": ["string", "null"], "description": "Shield (badge) number ('Shield No')." },
+    "lastName": { "type": ["string", "null"], "description": "Officer last name ('Officer Last Name')." },
+    "firstName": { "type": ["string", "null"], "description": "Officer first name ('Officer First Name')." },
+    "currentRank": { "type": ["string", "null"], "description": "Current rank ('Current Rank')." },
+    "currentRankAbbreviation": { "type": ["string", "null"], "description": "Current rank abbreviation ('Current Rank Abbreviation')." },
+    "currentCommand": { "type": ["string", "null"], "description": "Current command ('Current Command')." },
+    "demographics": { "$ref": "_common.json#/$defs/DemographicProfile" },
+    "activePerLastReportedStatus": { "type": ["boolean", "string", "null"], "description": "Whether the officer is active per last reported status ('Active Per Last Reported Status')." },
+    "lastReportedActiveDate": { "type": ["string", "null"], "format": "date", "description": "Last reported active date ('Last Reported Active Date')." },
+    "totalComplaints": { "type": ["integer", "null"], "description": "Total complaints against the officer ('Total Complaints')." },
+    "totalSubstantiatedComplaints": { "type": ["integer", "null"], "description": "Total substantiated complaints ('Total Substantiated Complaints')." },
+    "asOfDate": { "type": ["string", "null"], "format": "date", "description": "Data snapshot date ('As Of Date')." }
+  },
+  "required": ["taxId"],
+  "additionalProperties": false
+}

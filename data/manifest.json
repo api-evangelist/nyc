@@ -5330,6 +5330,1448 @@
    ]
   },
   {
+   "id": "bic",
+   "agency": "New York City Business Integrity Commission (BIC)",
+   "short": "NYC Business Integrity Commission (BIC)",
+   "verb": "transact",
+   "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) + Salesforce Experience Cloud portal (bicportal.nyc.gov)",
+   "tagline": "BIC's regulatory registry is the most open of any domain yet, but every business transaction is locked inside a Salesforce portal.",
+   "accent": "#6a5a7a",
+   "netnew": "TradeWasteLicenseApplication \u2014 apply for a trade waste license/registration",
+   "findings": [
+    "BIC is a split domain: an informational NYC.gov site (Akamai/nginx/Livesite/Dynatrace) plus a licensing/enforcement portal that is a Salesforce Experience Cloud app (bicportal.nyc.gov, server: sfdcedge) with no API.",
+    "The regulatory registry is unusually OPEN: 9 NYC Open Data datasets covering trade waste hauler licensees (867j-5pgi, 78k views, BIC's most-viewed asset), broker/self-hauler/construction-and-demolition registrants, public wholesale-market businesses (Hunts Point, Fulton Fish), the licensee/registrant vehicle fleet, issued violations, complaints, and denied companies.",
+    "But the business SERVICE layer has no machine-readable surface: applying for or renewing a license/registration and paying a violation fine (/s/viopay) live only inside the login-walled Salesforce portal or on paper.",
+    "The open data publishes the OUTPUTS of the licensing lifecycle (who is licensed, who was denied, what violations issued) but offers no way to TRANSACT it \u2014 a public registry with a private front counter.",
+    "Net-new write surface: apply for a trade waste license/registration (TradeWasteLicenseApplication) \u2014 no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "9 BIC datasets; SODA /resource/<id>.json endpoints. The one real, open BIC API \u2014 regulatory registry, violations, complaints, and fleet data."
+    },
+    {
+     "endpoint": "bicportal.nyc.gov",
+     "type": "licensing / payment portal (SaaS)",
+     "owner": "BIC (Salesforce Experience Cloud)",
+     "public": "login-walled UI, no API",
+     "note": "apply/renew a license or registration; pay a violation fine (/s/viopay). Salesforce Lightning community \u2014 server: sfdcedge, x-sfdc-request-id; JavaScript-only, no JSON/OpenAPI."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/bic",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite v22)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "type": "complaint intake",
+     "owner": "NYC (311)",
+     "public": "web form",
+     "note": "BIC complaints about trade waste hauling / wholesale markets route through 311; only closed records reach Open Data."
+    },
+    {
+     "endpoint": "Akamai edge",
+     "type": "CDN API",
+     "owner": "Akamai",
+     "public": "vendor",
+     "note": "x-akamai-transformed on the informational site."
+    },
+    {
+     "endpoint": "Dynatrace RUM",
+     "type": "monitoring beacon",
+     "owner": "Dynatrace",
+     "public": "vendor",
+     "note": "x-oneagent-js-injection real-user monitoring."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 9,
+    "schemas": 7,
+    "openapiOps": 12,
+    "mcpTools": 10,
+    "entities": 7
+   },
+   "entities": [
+    "Licensee",
+    "Registrant",
+    "MarketBusiness",
+    "Vehicle",
+    "Violation",
+    "Complaint",
+    "TradeWasteLicenseApplication"
+   ],
+   "files": {
+    "fruit": "bic/fruit.json",
+    "opendata": "bic/opendata-bic.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-bic.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/bic.yaml",
+    "mcp": "mcp/bic-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "BIC \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Business Integrity Commission (BIC) object schemas. Reconciles fields common to the BIC O"
+    },
+    {
+     "file": "schemas/complaint.json",
+     "title": "Complaint",
+     "shared": false,
+     "desc": "A complaint or inquiry received by BIC about a regulated industry account (trade waste hauling or a public wholesale market). Canonical sche"
+    },
+    {
+     "file": "schemas/licensee.json",
+     "title": "Licensee",
+     "shared": false,
+     "desc": "A BIC-licensed trade waste hauler \u2014 a company holding a license to collect, remove, or dispose of trade waste in New York City. Canonical sc"
+    },
+    {
+     "file": "schemas/market-business.json",
+     "title": "MarketBusiness",
+     "shared": false,
+     "desc": "A business registered to operate in one of New York City's public wholesale markets (e.g. Hunts Point Produce Market, Hunts Point Meat Marke"
+    },
+    {
+     "file": "schemas/registrant.json",
+     "title": "Registrant",
+     "shared": false,
+     "desc": "A BIC-registered business \u2014 one canonical schema for BIC's three parallel registration datasets: 'Trade Waste Broker Registrants' (krx7-u82t"
+    },
+    {
+     "file": "schemas/trade-waste-license-application.json",
+     "title": "TradeWasteLicenseApplication",
+     "shared": false,
+     "desc": "An application to BIC for a trade waste license, registration, or exemption \u2014 the everyday business transaction. NET-NEW: there is NO public"
+    },
+    {
+     "file": "schemas/vehicle.json",
+     "title": "Vehicle",
+     "shared": false,
+     "desc": "A collection vehicle in a BIC licensee's or registrant's fleet \u2014 a hauler truck plated by BIC. Canonical schema reconciling the 'Licensees a"
+    },
+    {
+     "file": "schemas/violation.json",
+     "title": "Violation",
+     "shared": false,
+     "desc": "A violation issued by BIC against a regulated account \u2014 an enforcement action carrying a fine and an OATH/settlement disposition. Canonical "
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/licensees",
+     "op": "listLicensees",
+     "summary": "List / search trade waste hauler licensees",
+     "tags": [
+      "Licensees"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/licensees/{bicNumber}",
+     "op": "getLicensee",
+     "summary": "Get a licensee by BIC number",
+     "tags": [
+      "Licensees"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/licensees/{bicNumber}/vehicles",
+     "op": "getLicenseeVehicles",
+     "summary": "List the fleet vehicles operated under a BIC account",
+     "tags": [
+      "Fleet"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/registrants",
+     "op": "listRegistrants",
+     "summary": "List / search BIC registrants (broker, self-hauler, C&D)",
+     "tags": [
+      "Registrants"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/market-businesses",
+     "op": "listMarketBusinesses",
+     "summary": "List businesses in the public wholesale markets",
+     "tags": [
+      "Markets"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/vehicles",
+     "op": "listVehicles",
+     "summary": "Search the licensee/registrant vehicle fleet",
+     "tags": [
+      "Fleet"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/violations",
+     "op": "listViolations",
+     "summary": "Search BIC-issued violations",
+     "tags": [
+      "Violations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/violations/{violationNumber}",
+     "op": "getViolation",
+     "summary": "Get a violation by number",
+     "tags": [
+      "Violations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/complaints",
+     "op": "listComplaints",
+     "summary": "Search complaints and inquiries about regulated accounts",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/applications",
+     "op": "listApplications",
+     "summary": "List the authenticated applicant's trade waste license applications",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/applications",
+     "op": "createApplication",
+     "summary": "Apply for a trade waste license/registration (create an application)",
+     "tags": [
+      "Applications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/applications/{applicationId}",
+     "op": "getApplication",
+     "summary": "Get a trade waste license application",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_licensees",
+     "title": "Find Licensees",
+     "desc": "Search BIC trade waste hauler licensees by borough, application type, renewal, council district, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_licensee",
+     "title": "Get Licensee",
+     "desc": "Fetch a trade waste hauler licensee (names, services, dates, geography) by BIC number.",
+     "write": false
+    },
+    {
+     "name": "get_licensee_vehicles",
+     "title": "Get Licensee Vehicles",
+     "desc": "List the BIC-plated fleet vehicles operated under a BIC account.",
+     "write": false
+    },
+    {
+     "name": "find_registrants",
+     "title": "Find Registrants",
+     "desc": "Search BIC registrants (trade waste broker, self-hauler, construction & demolition) by industry, borough, renewal, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_market_businesses",
+     "title": "Find Wholesale Market Businesses",
+     "desc": "List businesses operating in NYC's public wholesale markets (Hunts Point Produce/Meat, Fulton Fish) by market, borough, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_vehicles",
+     "title": "Find Fleet Vehicles",
+     "desc": "Search the licensee/registrant hauler fleet by BIC number, active status, side-guard compliance, or fuel type.",
+     "write": false
+    },
+    {
+     "name": "find_violations",
+     "title": "Find Violations",
+     "desc": "Search BIC-issued violations by BIC number, violation type, disposition, or date range \u2014 fines, rule codes, and OATH/settlement outcomes.",
+     "write": false
+    },
+    {
+     "name": "find_complaints",
+     "title": "Find Complaints & Inquiries",
+     "desc": "Search complaints and inquiries about BIC-regulated accounts by BIC number, industry type, status, or borough.",
+     "write": false
+    },
+    {
+     "name": "list_my_applications",
+     "title": "List My Applications",
+     "desc": "List the authenticated applicant's own trade waste license applications and their decisions \u2014 today visible only inside the Salesforce Experience Cloud portal.",
+     "write": false
+    },
+    {
+     "name": "apply_for_license",
+     "title": "Apply for a Trade Waste License",
+     "desc": "Submit a BIC trade waste license, registration, or exemption application (apply). NET-NEW workflow with no public API today \u2014 it lives only in the Salesforce Ex",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "bsa",
+   "agency": "NYC Board of Standards & Appeals (BSA)",
+   "short": "NYC Standards & Appeals (BSA)",
+   "verb": "digitize",
+   "platform": "NYC.gov 'Livesite' (Akamai + nginx + AWS ALB + Dynatrace); records/decisions search is a server-rendered Livesite widget; intake is paper PDF forms \u2014 no online application portal",
+   "tagline": "BSA publishes what it decided but offers no way to file \u2014 the intake is still paper PDF forms.",
+   "accent": "#6a7a8a",
+   "netnew": "VarianceApplication \u2014 file a zoning variance / special permit / extension / appeal (today a paper PDF-form process)",
+   "findings": [
+    "BSA is a records-forward agency on the shared NYC.gov 'Livesite' chassis (Akamai/nginx/AWS ALB/Dynatrace) with NO online application portal.",
+    "Case OUTCOMES are open: 4 NYC Open Data datasets cover every application filed 1998\u2013present with type (BZ variance/special-permit, BZY extension, SOC amendment, Appeal), premises, zoning district, status (Granted/Denied/Withdrawn/Dismissed), and a link to the decision PDF, plus a legacy calendar index back to 1916 and a pre-application-meetings log.",
+    "But the INTAKE has no machine-readable surface: filing a variance/appeal is a paper PDF-form process (bz_form.pdf, appeal_form.pdf, bzy_form.pdf, soc_form.pdf) with no online portal and no API.",
+    "The records/decisions search is a server-rendered Livesite widget (searchRecords()), not an API; resolutions are unstructured PDFs; the public hearing calendar exists only as HTML/PDF with Zoom links, with no Open Data twin.",
+    "Net-new write surface: file a zoning variance/appeal (VarianceApplication) \u2014 the core BSA transaction, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "4 BSA datasets; SODA /resource/<id>.json endpoints. The one real, open BSA API \u2014 case outcomes/index only."
+    },
+    {
+     "endpoint": "/site/bsa/resolutions/search-for-resolutions.page",
+     "type": "records/decisions search",
+     "owner": "NYC.gov Livesite",
+     "public": "html, no API",
+     "note": "server-rendered search widget over decided cases 1998\u2013present (searchRecords(), submit=true&componentID=\u2026); no JSON/OpenAPI."
+    },
+    {
+     "endpoint": "/assets/bsa/downloads/pdf/forms_instructions/*.pdf",
+     "type": "application intake (paper forms)",
+     "owner": "BSA",
+     "public": "pdf forms, no API",
+     "note": "bz_form.pdf, appeal_form.pdf, bzy_form.pdf, soc_form.pdf + checklists \u2014 the filing workflow, on paper. No online portal."
+    },
+    {
+     "endpoint": "/assets/bsa/downloads/pdf/decisions/<calendar>.pdf",
+     "type": "decision documents",
+     "owner": "BSA",
+     "public": "pdf",
+     "note": "the written resolution per case \u2014 a PDF, not structured data."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/bsa",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, AWS ALB, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "zola.planning.nyc.gov / gis.nyc.gov ZOLA",
+     "type": "zoning map viewer",
+     "owner": "NYC (DCP)",
+     "public": "web app",
+     "note": "referenced applications/zoning-lot map; a DCP surface, not a BSA API."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 4,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "Application",
+    "ZoningLot",
+    "PreApplicationMeeting",
+    "Resolution",
+    "Hearing",
+    "VarianceApplication"
+   ],
+   "files": {
+    "fruit": "bsa/fruit.json",
+    "opendata": "bsa/opendata-bsa.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-bsa.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/bsa.yaml",
+    "mcp": "mcp/bsa-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "BSA \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Board of Standards & Appeals (BSA) object schemas. Reconciles fields common to the BSA Op"
+    },
+    {
+     "file": "schemas/application.json",
+     "title": "Application",
+     "shared": false,
+     "desc": "A BSA application / case \u2014 the core unit of the Board of Standards & Appeals. Canonical schema reconciling the 'BSA Applications Status' dat"
+    },
+    {
+     "file": "schemas/hearing.json",
+     "title": "Hearing",
+     "shared": false,
+     "desc": "A BSA public hearing / calendar item \u2014 a scheduled appearance of a case before the Board. NO Open Data twin: the hearing calendar is publish"
+    },
+    {
+     "file": "schemas/pre-application-meeting.json",
+     "title": "PreApplicationMeeting",
+     "shared": false,
+     "desc": "A BSA pre-application meeting \u2014 the pre-filing consultation between a prospective applicant and Board staff, before a case is formally filed"
+    },
+    {
+     "file": "schemas/resolution.json",
+     "title": "Resolution",
+     "shared": false,
+     "desc": "A BSA decision / written resolution \u2014 the Board's disposition of a case, issued as a written resolution. Today each resolution is published "
+    },
+    {
+     "file": "schemas/variance-application.json",
+     "title": "VarianceApplication",
+     "shared": false,
+     "desc": "A filing of a new BSA case \u2014 a zoning variance, special permit, extension of time, or appeal of a DOB determination. NET-NEW: there is NO on"
+    },
+    {
+     "file": "schemas/zoning-lot.json",
+     "title": "ZoningLot",
+     "shared": false,
+     "desc": "A property / zoning lot that is (or has been) the subject of one or more BSA cases \u2014 the physical spine that ties a case to the tax lot, bui"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/applications",
+     "op": "listApplications",
+     "summary": "List / search BSA applications (cases)",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/applications/{calendar}",
+     "op": "getApplication",
+     "summary": "Get an application by calendar number",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/applications/{calendar}/resolution",
+     "op": "getApplicationResolution",
+     "summary": "Get the resolution (decision) for an application",
+     "tags": [
+      "Resolutions"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/resolutions",
+     "op": "listResolutions",
+     "summary": "Search BSA resolutions (decisions)",
+     "tags": [
+      "Resolutions"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/hearings",
+     "op": "listHearings",
+     "summary": "List the public hearing calendar",
+     "tags": [
+      "Hearings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/pre-application-meetings",
+     "op": "listPreApplicationMeetings",
+     "summary": "List pre-application meetings",
+     "tags": [
+      "PreApplication"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/zoning-lots",
+     "op": "listZoningLots",
+     "summary": "Search properties / zoning lots with BSA cases (incl. legacy index back to 1916)",
+     "tags": [
+      "ZoningLots"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/variance-applications",
+     "op": "listVarianceApplications",
+     "summary": "List the authenticated filer's variance / appeal applications",
+     "tags": [
+      "VarianceApplications"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/variance-applications",
+     "op": "createVarianceApplication",
+     "summary": "File a variance / special permit / extension / appeal",
+     "tags": [
+      "VarianceApplications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/variance-applications/{applicationId}",
+     "op": "getVarianceApplication",
+     "summary": "Get a filed variance / appeal application",
+     "tags": [
+      "VarianceApplications"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_applications",
+     "title": "Find Applications",
+     "desc": "Search BSA applications / cases by borough, application type, status, zoning district, council district, BBL, date range, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_application",
+     "title": "Get Application",
+     "desc": "Fetch a single BSA application / case (type, section, premises, status, decision) by its calendar number.",
+     "write": false
+    },
+    {
+     "name": "get_application_resolution",
+     "title": "Get Application Resolution",
+     "desc": "Fetch the written resolution / decision for a BSA case by its calendar number (today a linked PDF).",
+     "write": false
+    },
+    {
+     "name": "find_resolutions",
+     "title": "Find Resolutions",
+     "desc": "Search BSA resolutions (decisions) by status, application type, borough, or date range.",
+     "write": false
+    },
+    {
+     "name": "find_hearings",
+     "title": "Find Hearings",
+     "desc": "List the BSA public hearing calendar (date, session type, virtual/in-person, webinar link) \u2014 data that today exists only as HTML/PDF on nyc.gov.",
+     "write": false
+    },
+    {
+     "name": "find_pre_application_meetings",
+     "title": "Find Pre-Application Meetings",
+     "desc": "List BSA pre-application meetings (applicant, date, application type, premises) \u2014 the pre-filing consultation log.",
+     "write": false
+    },
+    {
+     "name": "find_zoning_lots",
+     "title": "Find Zoning Lots",
+     "desc": "Look up a property / zoning lot and its BSA case history by BBL, BIN, or block/lot \u2014 including legacy cases back to 1916.",
+     "write": false
+    },
+    {
+     "name": "list_my_variance_applications",
+     "title": "List My Variance Applications",
+     "desc": "List the authenticated filer's own submitted BSA applications and their status \u2014 today only trackable by contacting BSA, since there is no online portal.",
+     "write": false
+    },
+    {
+     "name": "file_variance_application",
+     "title": "File a Variance Application",
+     "desc": "File a new BSA case \u2014 a zoning variance, special permit, extension of time, or appeal of a DOB determination. NET-NEW workflow with no online portal today \u2014 fil",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "cchr",
+   "agency": "NYC Commission on Human Rights (CCHR)",
+   "short": "NYC Human Rights (CCHR)",
+   "verb": "structure",
+   "platform": "NYC.gov shared 'Livesite' platform (Akamai edge, nginx, AWS ALB, Dynatrace + mPulse RUM) \u2014 no CCHR-specific application platform and, unlike NYCHA, no vendor CRM.",
+   "tagline": "CCHR's core transaction \u2014 reporting discrimination \u2014 is an untyped web form with no API, backed by only three aggregate datasets and a Human Rights Law published as prose and PDF.",
+   "accent": "#b06f5a",
+   "netnew": "A typed DiscriminationComplaint intake API (report discrimination) \u2014 replacing the untyped Report Discrimination HTML form.",
+   "findings": [
+    "CCHR is the thinnest domain yet: NYC Open Data carries only 3 CCHR datasets \u2014 Inquiries Received, Office of Mediation cases, and Pre-Complaint Resolutions \u2014 and all three are aggregate operational counts, not case data.",
+    "The core citizen transaction, reporting discrimination, is a plain server-rendered HTML form on the shared NYC.gov 'Livesite' platform that posts into an opaque Law Enforcement Bureau backend \u2014 no API, no OpenAPI, no JSON, no documented POST schema.",
+    "The NYC Human Rights Law itself \u2014 protected classes and legal enforcement guidance \u2014 is published only as prose and PDF; 'is X protected in housing?' has no machine-readable answer.",
+    "Individual complaint/respondent/case data is never published (privacy by design); the intake form's typed structure is discarded and re-surfaces only as an annual tally whose columns match the form's own category choices.",
+    "Net-new write surface: report discrimination (DiscriminationComplaint) \u2014 typing the untyped intake form. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Only 3 CCHR datasets (395v-hkhg, tmha-56pf, 6ayi-8khd); SODA /resource/<id>.json endpoints. The one open API \u2014 aggregate operational counts only."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/cchr/about/report-discrimination.page",
+     "type": "intake form",
+     "owner": "CCHR on NYC.gov 'Livesite'",
+     "public": "html form, no API",
+     "note": "The core transaction. Server-rendered HTML <form> (name, category, respondent, incident date, description, up to 3 attachments). No OpenAPI/JSON; posts to an opaque Law Enforcement Bureau backend."
+    },
+    {
+     "endpoint": "apps.nyc.gov/nyc-mailform/validation",
+     "type": "generic form validation",
+     "owner": "NYC (OTI)",
+     "public": "referenced",
+     "note": "Shared NYC.gov mail/contact-form validation service referenced by the page \u2014 not a CCHR complaint API."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/cchr",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform ('Livesite')",
+     "public": "html",
+     "note": "The law, legal library, complaint process, trainings/workshops \u2014 content only. Akamai edge, nginx, AWS ALB, Dynatrace + mPulse RUM. No content API."
+    }
+   ],
+   "counts": {
+    "fruit": 6,
+    "opendata": 3,
+    "schemas": 6,
+    "openapiOps": 8,
+    "mcpTools": 8,
+    "entities": 6
+   },
+   "entities": [
+    "DiscriminationComplaint",
+    "ProtectedClass",
+    "LegalGuidance",
+    "TrainingEvent",
+    "InquiryStatistic",
+    "ResolutionStatistic"
+   ],
+   "files": {
+    "fruit": "cchr/fruit.json",
+    "opendata": "cchr/opendata-cchr.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-cchr.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/cchr.yaml",
+    "mcp": "mcp/cchr-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "CCHR \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Commission on Human Rights (CCHR) object schemas. Reconciles fields common to the CCHR Op"
+    },
+    {
+     "file": "schemas/discrimination-complaint.json",
+     "title": "DiscriminationComplaint",
+     "shared": false,
+     "desc": "A report of discrimination made to the NYC Commission on Human Rights \u2014 the everyday citizen transaction. NET-NEW: there is NO public API an"
+    },
+    {
+     "file": "schemas/inquiry-statistic.json",
+     "title": "InquiryStatistic",
+     "shared": false,
+     "desc": "An aggregate count of inquiries received by the Commission from the public about incidents of discrimination and alleged violations of the C"
+    },
+    {
+     "file": "schemas/legal-guidance.json",
+     "title": "LegalGuidance",
+     "shared": false,
+     "desc": "A CCHR legal enforcement guidance, fact sheet, or Legal Library publication interpreting the NYC Human Rights Law (e.g. guidance on gender i"
+    },
+    {
+     "file": "schemas/protected-class.json",
+     "title": "ProtectedClass",
+     "shared": false,
+     "desc": "A category protected from discrimination under the NYC Human Rights Law (Title 8 of the NYC Administrative Code), with the protected areas i"
+    },
+    {
+     "file": "schemas/resolution-statistic.json",
+     "title": "ResolutionStatistic",
+     "shared": false,
+     "desc": "A monthly aggregate count of matters resolved short of formal litigation by the Commission. One canonical schema reconciling CCHR's two para"
+    },
+    {
+     "file": "schemas/training-event.json",
+     "title": "TrainingEvent",
+     "shared": false,
+     "desc": "A CCHR training, workshop, or community-outreach event \u2014 the Commission's education mission (know-your-rights workshops, the Stop Sexual Har"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/complaints",
+     "op": "listComplaints",
+     "summary": "List the authenticated filer's discrimination complaints",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/complaints",
+     "op": "createComplaint",
+     "summary": "Report discrimination (file a complaint)",
+     "tags": [
+      "Complaints"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/complaints/{complaintId}",
+     "op": "getComplaint",
+     "summary": "Get a discrimination complaint and its status",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/protected-classes",
+     "op": "listProtectedClasses",
+     "summary": "List protected classes under the NYC Human Rights Law",
+     "tags": [
+      "Law"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/legal-guidance",
+     "op": "listLegalGuidance",
+     "summary": "Search CCHR legal enforcement guidance and publications",
+     "tags": [
+      "Law"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/training-events",
+     "op": "listTrainingEvents",
+     "summary": "List trainings, workshops, and outreach events",
+     "tags": [
+      "Outreach"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/statistics/inquiries",
+     "op": "listInquiryStatistics",
+     "summary": "Aggregate inquiries received, by fiscal year and protected area",
+     "tags": [
+      "Statistics"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/statistics/resolutions",
+     "op": "listResolutionStatistics",
+     "summary": "Aggregate monthly resolutions (mediation and pre-complaint)",
+     "tags": [
+      "Statistics"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_protected_classes",
+     "title": "Find Protected Classes",
+     "desc": "List the categories protected from discrimination under the NYC Human Rights Law, optionally filtered by protected area (employment, housing, public accommodati",
+     "write": false
+    },
+    {
+     "name": "find_legal_guidance",
+     "title": "Find Legal Guidance",
+     "desc": "Search CCHR legal enforcement guidance, fact sheets, and Legal Library publications by protected class, protected area, type, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_training_events",
+     "title": "Find Training & Outreach Events",
+     "desc": "List CCHR trainings, workshops, and community-outreach events (including the Stop Sexual Harassment Act training) by type, borough, date range, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_inquiry_statistics",
+     "title": "Find Inquiry Statistics",
+     "desc": "Return AGGREGATE counts of inquiries received by the Commission by fiscal year and protected area (employment, housing, public accommodations, lending, discrimi",
+     "write": false
+    },
+    {
+     "name": "find_resolution_statistics",
+     "title": "Find Resolution Statistics",
+     "desc": "Return AGGREGATE monthly counts of matters resolved short of litigation \u2014 Office of Mediation settlements closed, and pre-complaint resolutions \u2014 by type and ye",
+     "write": false
+    },
+    {
+     "name": "list_my_complaints",
+     "title": "List My Complaints",
+     "desc": "List the authenticated filer's own discrimination complaints and their case status \u2014 today not visible on the public web at all.",
+     "write": false
+    },
+    {
+     "name": "get_complaint",
+     "title": "Get Complaint",
+     "desc": "Fetch a single discrimination complaint and its case status by complaint/report number.",
+     "write": false
+    },
+    {
+     "name": "report_discrimination",
+     "title": "Report Discrimination",
+     "desc": "File a discrimination complaint with the NYC Commission on Human Rights (report discrimination). NET-NEW workflow with no public API today \u2014 it lives only in th",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "ccrb",
+   "agency": "NYC Civilian Complaint Review Board (CCRB)",
+   "short": "NYC Civilian Complaint Review (CCRB)",
+   "verb": "expose",
+   "platform": "NYC.gov 'Livesite' shared platform (Akamai/nginx/AWS ALB/Dynatrace) + a Complaint Status Lookup app on apps.nyc.gov; data via NYC Open Data (Socrata) and in-house Data Transparency Initiative dashboards",
+   "tagline": "CCRB's accountability data is a national transparency model, but it ships as dashboards and CSV with no API, and the complaint it exists to intake is a web form.",
+   "accent": "#c25b6b",
+   "netnew": "MisconductComplaint \u2014 file a police-misconduct complaint against an officer via API (today an online web form only)",
+   "findings": [
+    "CCRB is a police-oversight transparency model whose data is generously open but delivered ONLY as Data Transparency Initiative dashboards and four daily-updated Socrata datasets (complaints, allegations, officers, penalties) \u2014 there is no API.",
+    "The corpus is a tightly-normalized accountability model keyed on Complaint Id and Tax ID: officer-level Total/Substantiated complaint counts, per-allegation FADO records with CCRB-vs-NYPD dispositions, and the APU-vs-NYPD penalty gap.",
+    "The two acts a member of the public performs \u2014 filing a misconduct complaint (.../file-online) and checking its status (apps.nyc.gov/ccrb-status-lookup) \u2014 are disconnected JavaScript screens with no machine-readable contract.",
+    "Net-new write surface: file a MisconductComplaint against an officer \u2014 the reason the agency exists \u2014 has no API and no Open Data twin. See tech-stack.md and apis-observed.md.",
+    "The gap is delivery, not openness: the record is model-grade, but it is not a queryable, agent-native API, and intake is not connected to it."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "4 CCRB datasets (2fir-qns4, 6xgr-kwjq, 2mby-ccnw, keep-pkmh); SODA /resource/<id>.json endpoints, updated daily and automated. The read side of the CCRB Complaints Database \u2014 the one real, open CCRB API."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/ccrb/complaints/file-a-complaint/file-online.page",
+     "type": "complaint intake form",
+     "owner": "CCRB (on NYC.gov Livesite)",
+     "public": "html form, no API",
+     "note": "File a misconduct complaint online; server-rendered JavaScript page, no JSON/OpenAPI. The net-new write gap."
+    },
+    {
+     "endpoint": "apps.nyc.gov/ccrb-status-lookup/",
+     "type": "complaint status lookup app",
+     "owner": "CCRB (citywide apps.nyc.gov)",
+     "public": "html UI, no API",
+     "note": "Check the status of a filed complaint; standalone screen disconnected from intake, no machine-readable contract."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/ccrb",
+     "type": "informational site + DTI dashboards",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "About, complaint process, policy, and the Data Transparency Initiative dashboards (complaints/allegations/members-of-service/victims/feedback). Akamai edge, nginx, AWS ALB, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "type": "citywide 311 intake",
+     "owner": "NYC (OTI)",
+     "public": "public",
+     "note": "Alternate complaint channel referenced from CCRB's file-a-complaint pages."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 4,
+    "schemas": 5,
+    "openapiOps": 9,
+    "mcpTools": 9,
+    "entities": 5
+   },
+   "entities": [
+    "Complaint",
+    "Allegation",
+    "PoliceOfficer",
+    "Penalty",
+    "MisconductComplaint"
+   ],
+   "files": {
+    "fruit": "ccrb/fruit.json",
+    "opendata": "ccrb/opendata-ccrb.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-ccrb.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/ccrb.yaml",
+    "mcp": "mcp/ccrb-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "CCRB \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Civilian Complaint Review Board (CCRB) object schemas. Reconciles fields common to the fo"
+    },
+    {
+     "file": "schemas/allegation.json",
+     "title": "Allegation",
+     "shared": false,
+     "desc": "A single allegation of misconduct made against one officer within a complaint \u2014 the finest-grain CCRB accountability record. Canonical schem"
+    },
+    {
+     "file": "schemas/complaint.json",
+     "title": "Complaint",
+     "shared": false,
+     "desc": "A closed complaint of NYPD misconduct within CCRB jurisdiction \u2014 the core incident record. Canonical schema reconciling the 'Civilian Compla"
+    },
+    {
+     "file": "schemas/misconduct-complaint.json",
+     "title": "MisconductComplaint",
+     "shared": false,
+     "desc": "A newly filed complaint of NYPD misconduct against an officer \u2014 the intake (write) surface. NET-NEW: today a member of the public can file o"
+    },
+    {
+     "file": "schemas/penalty.json",
+     "title": "Penalty",
+     "shared": false,
+     "desc": "The discipline / penalty outcome for a substantiated complaint \u2014 including the Administrative Prosecution Unit (APU) trial track and the NYP"
+    },
+    {
+     "file": "schemas/police-officer.json",
+     "title": "PoliceOfficer",
+     "shared": false,
+     "desc": "An NYPD member of service (the accused/subject officer) as tracked in CCRB's complaint database. Canonical schema reconciling the 'Civilian "
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/complaints",
+     "op": "listComplaints",
+     "summary": "List / search closed misconduct complaints",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/complaints/{complaintId}",
+     "op": "getComplaint",
+     "summary": "Get a complaint by Complaint Id",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/complaints/{complaintId}/allegations",
+     "op": "getComplaintAllegations",
+     "summary": "List the allegations within a complaint",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/allegations",
+     "op": "listAllegations",
+     "summary": "Search allegations against officers",
+     "tags": [
+      "Allegations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/officers",
+     "op": "listOfficers",
+     "summary": "Search accused NYPD officers",
+     "tags": [
+      "Officers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/officers/{taxId}",
+     "op": "getOfficer",
+     "summary": "Get an officer's complaint profile by Tax ID",
+     "tags": [
+      "Officers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/penalties",
+     "op": "listPenalties",
+     "summary": "Search discipline / penalty outcomes for substantiated complaints",
+     "tags": [
+      "Penalties"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/complaints/file",
+     "op": "fileMisconductComplaint",
+     "summary": "File a misconduct complaint against an officer",
+     "tags": [
+      "Intake"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/complaints/file/{trackingNumber}",
+     "op": "getMisconductComplaintStatus",
+     "summary": "Check the status of a filed complaint",
+     "tags": [
+      "Intake"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_complaints",
+     "title": "Find Complaints",
+     "desc": "Search closed complaints of NYPD misconduct by borough, precinct, CCRB disposition, received-date range, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_complaint",
+     "title": "Get Complaint",
+     "desc": "Fetch a single misconduct complaint (incident, disposition, evidence flags, geography) by Complaint Id.",
+     "write": false
+    },
+    {
+     "name": "get_complaint_allegations",
+     "title": "Get Complaint Allegations",
+     "desc": "List the individual FADO allegations recorded within a complaint.",
+     "write": false
+    },
+    {
+     "name": "find_allegations",
+     "title": "Find Allegations",
+     "desc": "Search allegations against officers by FADO type, specific allegation, CCRB disposition, officer Tax ID, or complaint.",
+     "write": false
+    },
+    {
+     "name": "find_officers",
+     "title": "Find Officers",
+     "desc": "Search accused NYPD officers and their complaint counts by command, rank, minimum total complaints, minimum substantiated complaints, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_officer",
+     "title": "Get Officer",
+     "desc": "Fetch an accused officer's complaint profile (rank, command, total and substantiated complaints) by NYPD Tax ID.",
+     "write": false
+    },
+    {
+     "name": "find_penalties",
+     "title": "Find Penalties",
+     "desc": "Search discipline / penalty outcomes for substantiated complaints (APU trial track and NYPD final penalty) by officer Tax ID, complaint, APU status, or APU flag",
+     "write": false
+    },
+    {
+     "name": "file_misconduct_complaint",
+     "title": "File a Misconduct Complaint",
+     "desc": "File a complaint of NYPD misconduct against an officer (report an incident). NET-NEW workflow with no public API today \u2014 it lives only in the online web form, a",
+     "write": true
+    },
+    {
+     "name": "check_complaint_status",
+     "title": "Check Complaint Status",
+     "desc": "Read the processing status of a filed complaint by its tracking number \u2014 today checked only through the Complaint Status Lookup app.",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "cfb",
+   "agency": "NYC Campaign Finance Board (CFB)",
+   "short": "NYC Campaign Finance Board (CFB)",
+   "verb": "document",
+   "platform": "Microsoft IIS 8.5 / ASP.NET MVC 5.2 + AngularJS 1.5 (nyccfb.info + FTMSearchWebAPI); Umbraco CMS / ASP.NET on Azure (nycvotes.org); C-SMART / IEDS / C-Access ASP.NET applications",
+   "tagline": "CFB already publishes its campaign-finance data every way except as a documented, owned, agent-native API.",
+   "accent": "#3a8a9a",
+   "netnew": "DisclosureFiling \u2014 a filer submits a disclosure statement (today only via the login-walled C-SMART disclosure application)",
+   "findings": [
+    "CFB is the transparency leader among NYC agencies and is *almost* API-first already: it runs on its own domain (nyccfb.info, not nyc.gov), publishes 16 NYC Open Data datasets, ships a bulk Data Library of per-cycle CSVs back to 2001, and its Follow the Money search is a single-page app backed by a REAL, working JSON Web API (nyccfb.info/FTMSearchWebAPI).",
+    "But that API is undocumented, backend-only, and unowned as a product \u2014 no OpenAPI, no developer docs, no stable public contract, no agent-native surface. It is a de-facto API, not a published one.",
+    "The reference/analysis data is exceptionally rich: contributions with full intermediary/bundler detail (rjkp-yttg, 54 columns), expenditures (qxzj-vkn2), public matching-funds payments (u69g-mvrb), and per-candidate financial analysis (m3tj-a2pb) \u2014 in parallel citywide and off-year/special-election streams.",
+    "The write layer is locked. Filing a disclosure statement happens only inside C-SMART, the CFB's login-walled web-based disclosure application; there is no submission API and no Open Data twin (only Late/Missing Disclosure Statements, 2ujk-6z7u, exposes filing status).",
+    "Net-new write surface: submit a disclosure statement (DisclosureFiling) \u2014 the one campaign-finance transaction with no machine-readable contract today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "www.nyccfb.info/FTMSearchWebAPI",
+     "type": "backend JSON Web API (ASP.NET Web API)",
+     "owner": "CFB",
+     "public": "reachable but undocumented",
+     "note": "Powers the Follow the Money AngularJS search. Confirmed live JSON from /api/Common/GetElectionCycle, plus /api/Common/* reference lists and /api/AutoComplete/* typeaheads for candidates, contributors, payees, intermediaries, and independent spenders. Real API, no OpenAPI/docs \u2014 the core finding."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "16 CFB datasets; SODA /resource/<id>.json endpoints. Contributions, expenditures, intermediaries, public funds, financial analysis, enforcement, voter analysis."
+    },
+    {
+     "endpoint": "www.nyccfb.info/DataLibrary/*.csv",
+     "type": "bulk file downloads",
+     "owner": "CFB",
+     "public": true,
+     "note": "56 flat CSV files (contribution, expenditure, payment, intermediary, analysis) per election cycle from 2001 through 2025. Bulk twin of the Open Data / FTM data."
+    },
+    {
+     "endpoint": "www.nyccfb.info/candidate-services/c-smart-help (C-SMART)",
+     "type": "disclosure filing application",
+     "owner": "CFB",
+     "public": "login-walled, no API",
+     "note": "Web-based application campaigns use to disclose (submit) contributions/expenditures \u2014 i.e. file. The net-new write surface; no JSON/OpenAPI. Was showing an 'unavailable' maintenance notice at crawl time."
+    },
+    {
+     "endpoint": "ieds.nyccfb.info/Public/Login.aspx (IEDS)",
+     "type": "independent-expenditure disclosure",
+     "owner": "CFB",
+     "public": "login (ASP.NET WebForms)",
+     "note": "Independent Expenditure Disclosure System \u2014 a separate login-walled filing app for outside spenders."
+    },
+    {
+     "endpoint": "caccess.nyccfb.info (C-Access)",
+     "type": "candidate/public access portal",
+     "owner": "CFB",
+     "public": "login",
+     "note": "Access portal referenced from the FTM search header."
+    },
+    {
+     "endpoint": "www.nycvotes.org",
+     "type": "voter-engagement site",
+     "owner": "CFB / NYC Votes (Umbraco on Azure)",
+     "public": "html",
+     "note": "The public voter-engagement brand; Umbraco CMS / ASP.NET on Azure App Service. contribute.nycvotes.org and nycvotes.turbovote.org are separate services. No public content API observed."
+    },
+    {
+     "endpoint": "Azure Application Insights",
+     "type": "monitoring beacon",
+     "owner": "Microsoft Azure",
+     "public": "vendor",
+     "note": "appInsights telemetry injected on the FTM search page."
+    }
+   ],
+   "counts": {
+    "fruit": 10,
+    "opendata": 16,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 5
+   },
+   "entities": [
+    "Contribution",
+    "Expenditure",
+    "PublicMatchingFundsPayment",
+    "Candidate",
+    "DisclosureFiling"
+   ],
+   "files": {
+    "fruit": "cfb/fruit.json",
+    "opendata": "cfb/opendata-cfb.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-cfb.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/cfb.yaml",
+    "mcp": "mcp/cfb-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "CFB \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Campaign Finance Board (CFB) object schemas. Reconciles fields common to the CFB Open Dat"
+    },
+    {
+     "file": "schemas/candidate.json",
+     "title": "Candidate",
+     "shared": false,
+     "desc": "A candidate for NYC elected office as tracked by the Campaign Finance Board \u2014 the core entity of the Follow the Money database. Canonical sc"
+    },
+    {
+     "file": "schemas/committee.json",
+     "title": "Committee",
+     "shared": false,
+     "desc": "An authorized campaign committee \u2014 the filer that submits disclosure statements and receives contributions on behalf of a candidate. Reconci"
+    },
+    {
+     "file": "schemas/contribution.json",
+     "title": "Contribution",
+     "shared": false,
+     "desc": "A single campaign contribution to a candidate/committee \u2014 the most-searched CFB record. Canonical schema reconciling 'Campaign Contributions"
+    },
+    {
+     "file": "schemas/disclosure-filing.json",
+     "title": "DisclosureFiling",
+     "shared": false,
+     "desc": "A campaign-finance disclosure statement submitted by a filer (committee) to the CFB \u2014 the periodic report bundling contributions, expenditur"
+    },
+    {
+     "file": "schemas/expenditure.json",
+     "title": "Expenditure",
+     "shared": false,
+     "desc": "A single campaign expenditure (spending) by a candidate/committee. Canonical schema reconciling 'Campaign Expenditures' (qxzj-vkn2, 32 colum"
+    },
+    {
+     "file": "schemas/public-funds-payment.json",
+     "title": "PublicMatchingFundsPayment",
+     "shared": false,
+     "desc": "A public matching-funds payment made by the CFB to a participating candidate \u2014 the heart of NYC's small-dollar matching program (up to 8-to-"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/candidates",
+     "op": "listCandidates",
+     "summary": "List / search candidates",
+     "tags": [
+      "Candidates"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/candidates/{candidateId}",
+     "op": "getCandidate",
+     "summary": "Get a candidate by CFB candidate id",
+     "tags": [
+      "Candidates"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/committees",
+     "op": "listCommittees",
+     "summary": "List / search campaign committees (filers)",
+     "tags": [
+      "Committees"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/committees/{filerId}",
+     "op": "getCommittee",
+     "summary": "Get a committee by filer id",
+     "tags": [
+      "Committees"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/contributions",
+     "op": "listContributions",
+     "summary": "Search campaign contributions",
+     "tags": [
+      "Contributions"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/expenditures",
+     "op": "listExpenditures",
+     "summary": "Search campaign expenditures",
+     "tags": [
+      "Expenditures"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/public-funds-payments",
+     "op": "listPublicFundsPayments",
+     "summary": "List public matching-funds payments",
+     "tags": [
+      "PublicFunds"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/disclosure-filings",
+     "op": "listDisclosureFilings",
+     "summary": "List / search disclosure statements (incl. late/missing)",
+     "tags": [
+      "Disclosures"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/disclosure-filings",
+     "op": "createDisclosureFiling",
+     "summary": "Submit a disclosure statement (file)",
+     "tags": [
+      "Disclosures"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/disclosure-filings/{filingId}",
+     "op": "getDisclosureFiling",
+     "summary": "Get a disclosure statement",
+     "tags": [
+      "Disclosures"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_candidates",
+     "title": "Find Candidates",
+     "desc": "Search NYC candidates tracked by the CFB by election cycle, office, candidate class, incumbency, borough, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_candidate",
+     "title": "Get Candidate",
+     "desc": "Fetch a candidate (office, class, incumbency, and financial summary) by CFB candidate id.",
+     "write": false
+    },
+    {
+     "name": "find_committees",
+     "title": "Find Committees",
+     "desc": "List authorized campaign committees (filers) by election cycle, candidate, or status.",
+     "write": false
+    },
+    {
+     "name": "find_contributions",
+     "title": "Find Contributions",
+     "desc": "Search campaign contributions by candidate, contributor name/type, intermediary (bundler), borough, date range, or matchable status.",
+     "write": false
+    },
+    {
+     "name": "find_expenditures",
+     "title": "Find Expenditures",
+     "desc": "Search campaign expenditures (spending) by candidate, payee name, purpose code, or date range.",
+     "write": false
+    },
+    {
+     "name": "find_public_funds_payments",
+     "title": "Find Public Funds Payments",
+     "desc": "List public matching-funds payments to participating candidates under NYC's small-dollar matching program, by election cycle, candidate, office, or borough.",
+     "write": false
+    },
+    {
+     "name": "find_disclosure_filings",
+     "title": "Find Disclosure Filings",
+     "desc": "List disclosure statements and their status (including late/missing) by election cycle, filer, candidate, or status.",
+     "write": false
+    },
+    {
+     "name": "get_disclosure_filing",
+     "title": "Get Disclosure Filing",
+     "desc": "Fetch a single disclosure statement, including its period totals and reported transactions, by filing id.",
+     "write": false
+    },
+    {
+     "name": "file_disclosure",
+     "title": "File a Disclosure Statement",
+     "desc": "Submit a NYC campaign-finance disclosure statement (file). NET-NEW workflow with no public API today \u2014 it lives only in the login-walled C-SMART disclosure appl",
+     "write": true
+    }
+   ]
+  },
+  {
    "id": "dcas",
    "agency": "New York City Department of Citywide Administrative Services (DCAS)",
    "short": "NYC Citywide Admin Services (DCAS)",
@@ -7993,6 +9435,268 @@
    ]
   },
   {
+   "id": "doi",
+   "agency": "New York City Department of Investigation (DOI)",
+   "short": "NYC Investigation (DOI)",
+   "verb": "Digitize",
+   "platform": "NYC.gov 'Livesite' shared chassis (Akamai + nginx + Livesite v22 + Dynatrace) for the informational site; public reports are static PDFs under /assets/doi/reports/pdf/. The complaint-intake service layer is Kaseware, a third-party case-management SaaS (app.kaseware.us, Cloudflare-fronted) \u2014 a public web form with no API.",
+   "tagline": "The city's Inspector General publishes its investigations only as PDFs and takes its complaints through a third-party vendor form.",
+   "accent": "#7a5a4a",
+   "netnew": "CorruptionComplaint \u2014 file and track a fraud/waste/corruption tip (with anonymous filing and Whistleblower-Law protection), the transaction that starts every DOI investigation and today lives only in a vendor Kaseware form.",
+   "findings": [
+    "DOI is New York City's Inspector General, but its core work product \u2014 public investigation reports and reform recommendations \u2014 is published ONLY as PDFs (nyc.gov/assets/doi/reports/pdf/<year>/), with no structured Open Data twin and no content API.",
+    "DOI's four Open Data datasets are not its investigations: they are dominated by City Marshal oversight \u2014 executed Evictions (6z8x-wfk4, ~237k views, DOI's most-viewed asset) and City Marshals Revenue \u2014 plus the Policy & Procedure Recommendations tracker and monthly performance indicators.",
+    "The single most important inbound transaction \u2014 reporting fraud, waste, or corruption \u2014 runs through a THIRD-PARTY vendor form: Kaseware (app.kaseware.us), a case-management SaaS, with phone/fax/mail as fallbacks. There is no API.",
+    "The one genuinely structured investigative-output twin is the PPR Portal (jstn-jaut): DOI's recommendations to agencies plus acceptance and implementation status.",
+    "Net-new write surface: file a corruption complaint (CorruptionComplaint) \u2014 the tip that starts every investigation, today locked in the Kaseware portal. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "4 DOI datasets; SODA /resource/<id>.json endpoints. Mostly City Marshal oversight (evictions, revenue) plus PPR recommendations and performance indicators \u2014 not the investigations themselves."
+    },
+    {
+     "endpoint": "app.kaseware.us/public/#NYCDOI/...",
+     "type": "complaint intake portal (case-management SaaS)",
+     "owner": "DOI (on Kaseware, Cloudflare-fronted)",
+     "public": "public web form, no API",
+     "note": "The 'Submit Report Online' corruption-complaint form. Third-party Kaseware Portal SPA; no JSON/OpenAPI surface. This is the net-new write gap."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/doi",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Livesite v22, Dynatrace RUM. Public reports served as static PDFs under /assets/doi/reports/pdf/. No content API."
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "type": "citywide service request",
+     "owner": "NYC (OTI/311)",
+     "public": "web/app",
+     "note": "referenced as an alternate reporting channel for some complaint types."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 4,
+    "schemas": 6,
+    "openapiOps": 9,
+    "mcpTools": 8,
+    "entities": 6
+   },
+   "entities": [
+    "PublicReport",
+    "PolicyRecommendation",
+    "Eviction",
+    "MarshalRevenue",
+    "PerformanceIndicator",
+    "CorruptionComplaint"
+   ],
+   "files": {
+    "fruit": "doi/fruit.json",
+    "opendata": "doi/opendata-doi.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-doi.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/doi.yaml",
+    "mcp": "mcp/doi-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "DOI \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Department of Investigation (DOI) object schemas. Reconciles fields common to the DOI Ope"
+    },
+    {
+     "file": "schemas/corruption-complaint.json",
+     "title": "CorruptionComplaint",
+     "shared": false,
+     "desc": "A complaint / tip reporting fraud, waste, corruption, or misconduct to the NYC Department of Investigation \u2014 DOI's single most important inb"
+    },
+    {
+     "file": "schemas/eviction.json",
+     "title": "Eviction",
+     "shared": false,
+     "desc": "A residential or commercial eviction executed by a NYC City Marshal \u2014 the officials DOI appoints and oversees. Canonical schema reconciling "
+    },
+    {
+     "file": "schemas/marshal-revenue.json",
+     "title": "MarshalRevenue",
+     "shared": false,
+     "desc": "Annual fee, poundage, and net-income figures for a NYC City Marshal \u2014 the financial-oversight record DOI publishes for the marshals it appoi"
+    },
+    {
+     "file": "schemas/performance-indicator.json",
+     "title": "PerformanceIndicator",
+     "shared": false,
+     "desc": "A monthly DOI performance-management indicator value \u2014 the operational metrics DOI reports to the Mayor's Office of Operations (including co"
+    },
+    {
+     "file": "schemas/policy-recommendation.json",
+     "title": "PolicyRecommendation",
+     "shared": false,
+     "desc": "A DOI Policy and Procedure Recommendation (PPR) \u2014 a reform recommendation DOI issues to a City agency, tracked through acceptance and implem"
+    },
+    {
+     "file": "schemas/public-report.json",
+     "title": "PublicReport",
+     "shared": false,
+     "desc": "A DOI public investigation report \u2014 the agency's core work product. As New York City's Inspector General, DOI issues public reports of its i"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/reports",
+     "op": "listReports",
+     "summary": "List / search DOI public reports",
+     "tags": [
+      "Reports"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/reports/{reportId}",
+     "op": "getReport",
+     "summary": "Get a public report by id",
+     "tags": [
+      "Reports"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/recommendations",
+     "op": "listRecommendations",
+     "summary": "List / search Policy & Procedure Recommendations",
+     "tags": [
+      "Recommendations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/evictions",
+     "op": "listEvictions",
+     "summary": "Search executed City Marshal evictions",
+     "tags": [
+      "Marshals"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/marshal-revenue",
+     "op": "listMarshalRevenue",
+     "summary": "List City Marshal annual revenue figures",
+     "tags": [
+      "Marshals"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/performance-indicators",
+     "op": "listPerformanceIndicators",
+     "summary": "List monthly DOI performance-management indicators",
+     "tags": [
+      "Performance"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/complaints",
+     "op": "listComplaints",
+     "summary": "List the authenticated reporter's own complaints",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/complaints",
+     "op": "createComplaint",
+     "summary": "File a corruption complaint",
+     "tags": [
+      "Complaints"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/complaints/{complaintId}",
+     "op": "getComplaint",
+     "summary": "Get a complaint by id",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_reports",
+     "title": "Find Reports",
+     "desc": "Search DOI public investigation reports by year, type, subject agency, and/or free text. Reports are published as PDFs; results carry metadata and a pdfUrl.",
+     "write": false
+    },
+    {
+     "name": "get_report",
+     "title": "Get Report",
+     "desc": "Fetch a single DOI public report (title, release date, subject agency, unit, pdfUrl) by id.",
+     "write": false
+    },
+    {
+     "name": "find_recommendations",
+     "title": "Find Recommendations",
+     "desc": "Search DOI Policy & Procedure Recommendations by agency, acceptance status, implementation status, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_evictions",
+     "title": "Find Evictions",
+     "desc": "Search executed City Marshal evictions by borough, residential/commercial, marshal, council district, or date range. DOI's most-viewed dataset.",
+     "write": false
+    },
+    {
+     "name": "find_marshal_revenue",
+     "title": "Find Marshal Revenue",
+     "desc": "List City Marshal annual fee, poundage, and net-income figures by marshal or year \u2014 DOI's financial oversight of the marshals it appoints.",
+     "write": false
+    },
+    {
+     "name": "find_performance_indicators",
+     "title": "Find Performance Indicators",
+     "desc": "List monthly DOI performance-management indicators (e.g. corruption lectures, customer-service measures) by indicator name or report month.",
+     "write": false
+    },
+    {
+     "name": "list_my_complaints",
+     "title": "List My Complaints",
+     "desc": "List the authenticated reporter's own fraud/waste/corruption complaints and their status \u2014 today visible only inside the Kaseware intake portal.",
+     "write": false
+    },
+    {
+     "name": "file_complaint",
+     "title": "File a Corruption Complaint",
+     "desc": "File a fraud/waste/corruption complaint with DOI. NET-NEW workflow with no public API today \u2014 it lives only in the third-party Kaseware intake portal or a phone",
+     "write": true
+    }
+   ]
+  },
+  {
    "id": "doris",
    "agency": "NYC Department of Records & Information Services (DORIS)",
    "short": "NYC Records (DORIS)",
@@ -9449,6 +11153,574 @@
    ]
   },
   {
+   "id": "ibo",
+   "agency": "New York City Independent Budget Office (IBO)",
+   "short": "NYC Independent Budget Office (IBO)",
+   "verb": "formalize",
+   "platform": "NYC.gov Content API v2 SPA (Akamai/nginx/Dynatrace/WebTrends); off legacy ibo.nyc.ny.us; 20 Socrata datasets; Airtable/ArcGIS/Infogram embeds",
+   "tagline": "NYC's nonpartisan budget watchdog already runs a real content API and 20 open datasets, but neither has a documented, agent-native contract.",
+   "accent": "#7a8a4a",
+   "netnew": "DataRequest \u2014 an API for the 'Ask IBO' data/analysis request, today a web form / email only",
+   "findings": [
+    "IBO gave up its own domain: the legacy ibo.nyc.ny.us now 301-redirects to www.ibo.nyc.gov \u2014 the 'Independent' Budget Office moved its public identity onto the shared NYC.gov chassis.",
+    "The site is a client-side SPA on the NYC.gov 'Content API v2' platform (Akamai/nginx/Dynatrace/WebTrends). Every path returns the same shell; content is fetched by jQuery from a real but UNDOCUMENTED JSON API at apps.nyc.gov/content-api/v2 \u2014 a third distinct NYC.gov platform after NYCHA's Livesite.",
+    "IBO's product is analysis, and ~1,145 publications (reports, testimony, letters, budget options, explainers, interactives) already flow through that content API with structured metadata (title, date, topic, publication type, fiscal year, author) \u2014 but there is no documented, versioned, agent-native contract over it.",
+    "The 20 IBO Open Data datasets are WIDE and pivoted: one row per line-item, one column per fiscal year ('FY 1980' \u2026 'FY 2020'). It is Excel-on-Socrata; a modern API would pivot to long-form (series, lineItem, fiscalYear, value).",
+    "As a reference/analysis agency, IBO has NO citizen transaction \u2014 no payments, permits, or applications. Its single interactive input is 'Ask IBO' (a data/analysis request), today a web form / email to info@ibo.nyc.gov with no API. That is the net-new WRITE surface (DataRequest).",
+    "Data-viz is outsourced: interactives embed Airtable, ArcGIS Online (ibomap.maps.arcgis.com), and Infogram; site search is a Google Custom Search. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "apps.nyc.gov/content-api/v2/custom-contents/ibo",
+     "type": "content CMS API",
+     "owner": "NYC (OTI) \u2014 NYC.gov Content API v2",
+     "public": "public JSON, undocumented",
+     "note": "Backs the SPA. Returns ~1,145 IBO publications with structured metadata (Title, Publication Date, Topics, Publication Type, Fiscal Year, Author) plus a /nav/ibo tree. Real machine-readable API but no OpenAPI, no versioned consumer contract."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "20 IBO datasets under label 'NYC Independent Budget Office (IBO)'. SODA /resource/<id>.json endpoints. Fiscal time-series, mostly WIDE (one column per fiscal year)."
+    },
+    {
+     "endpoint": "www.ibo.nyc.gov",
+     "type": "informational SPA",
+     "owner": "NYC.gov Content API v2 platform",
+     "public": "html shell",
+     "note": "Client-side jQuery/Bootstrap SPA; every route returns the same 36 KB shell. Formerly ibo.nyc.ny.us (301-redirect)."
+    },
+    {
+     "endpoint": "ibomap.maps.arcgis.com",
+     "type": "mapping (ArcGIS Online)",
+     "owner": "Esri (vendor)",
+     "public": "embed",
+     "note": "Map interactives embedded via CSP frame-src."
+    },
+    {
+     "endpoint": "airtable.com",
+     "type": "interactive data tables",
+     "owner": "Airtable (vendor)",
+     "public": "embed",
+     "note": "Some IBO interactives are Airtable embeds \u2014 data outside IBO's own contract."
+    },
+    {
+     "endpoint": "e.infogram.com",
+     "type": "chart embeds",
+     "owner": "Infogram (vendor)",
+     "public": "embed",
+     "note": "Chart/infographic embeds."
+    },
+    {
+     "endpoint": "cse.google.com / adsensecustomsearchads.com",
+     "type": "site search",
+     "owner": "Google (vendor)",
+     "public": "embed",
+     "note": "On-site search is a Google Custom Search Engine \u2014 search rented, not owned."
+    },
+    {
+     "endpoint": "Dynatrace (ruxit) + WebTrends",
+     "type": "RUM / analytics beacons",
+     "owner": "Dynatrace / WebTrends (vendors)",
+     "public": "vendor",
+     "note": "ruxitagentjs injection + webtrends_v10.js on every page."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 20,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 10,
+    "entities": 6
+   },
+   "entities": [
+    "Publication",
+    "FiscalDataTable",
+    "FiscalSeries",
+    "SchoolSpending",
+    "TaxDistribution",
+    "DataRequest"
+   ],
+   "files": {
+    "fruit": "ibo/fruit.json",
+    "opendata": "ibo/opendata-ibo.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-ibo.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/ibo.yaml",
+    "mcp": "mcp/ibo-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "IBO \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Independent Budget Office (IBO) object schemas. Reconciles fields common to IBO's Open Da"
+    },
+    {
+     "file": "schemas/data-request.json",
+     "title": "DataRequest",
+     "shared": false,
+     "desc": "An 'Ask IBO' data / analysis request \u2014 the one citizen-facing transaction IBO offers, and the NET-NEW write surface. IBO is a reference/anal"
+    },
+    {
+     "file": "schemas/fiscal-data-table.json",
+     "title": "FiscalDataTable",
+     "shared": false,
+     "desc": "A catalog entry for one IBO fiscal data table published on NYC Open Data \u2014 the DataTable entity (IBO's Excel-shaped time-series exported to "
+    },
+    {
+     "file": "schemas/fiscal-series.json",
+     "title": "FiscalSeries",
+     "shared": false,
+     "desc": "A single long-form fiscal observation \u2014 one value for one line-item, in one fiscal year, from one IBO series. This is the normalized (pivote"
+    },
+    {
+     "file": "schemas/publication.json",
+     "title": "Publication",
+     "shared": false,
+     "desc": "An IBO publication \u2014 the core reference object and IBO's actual product: a Report, Testimony, Letter, Budget Options analysis, Explainer, In"
+    },
+    {
+     "file": "schemas/school-spending.json",
+     "title": "SchoolSpending",
+     "shared": false,
+     "desc": "A long-form NYC public-school spending / education-indicator observation \u2014 one value for one category in one year. The normalized form of IB"
+    },
+    {
+     "file": "schemas/tax-distribution.json",
+     "title": "TaxDistribution",
+     "shared": false,
+     "desc": "A distributional tax / income observation for a single Adjusted Gross Income (AGI) band \u2014 how income, tax liability, and credits are spread "
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/publications",
+     "op": "listPublications",
+     "summary": "List / search IBO publications",
+     "tags": [
+      "Publications"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/publications/{slug}",
+     "op": "getPublication",
+     "summary": "Get an IBO publication by URL slug",
+     "tags": [
+      "Publications"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/data-tables",
+     "op": "listDataTables",
+     "summary": "List IBO's Open Data fiscal tables (catalog)",
+     "tags": [
+      "DataTables"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/data-tables/{id}",
+     "op": "getDataTable",
+     "summary": "Get a data-table catalog entry by Socrata ID",
+     "tags": [
+      "DataTables"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/fiscal-series",
+     "op": "listFiscalSeries",
+     "summary": "Query long-form fiscal observations (revenue, spending, capital, debt, positions)",
+     "tags": [
+      "FiscalData"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/school-spending",
+     "op": "listSchoolSpending",
+     "summary": "Query NYC public-school spending and education indicators",
+     "tags": [
+      "Education"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/tax-distribution",
+     "op": "listTaxDistribution",
+     "summary": "Query distributional tax / income data by AGI band",
+     "tags": [
+      "Taxes"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/data-requests",
+     "op": "listDataRequests",
+     "summary": "List the authenticated requester's own Ask IBO requests",
+     "tags": [
+      "AskIBO"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/data-requests",
+     "op": "createDataRequest",
+     "summary": "Submit an Ask IBO data / analysis request",
+     "tags": [
+      "AskIBO"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/data-requests/{requestId}",
+     "op": "getDataRequest",
+     "summary": "Get an Ask IBO request",
+     "tags": [
+      "AskIBO"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_publications",
+     "title": "Find Publications",
+     "desc": "Search IBO publications (reports, testimony, letters, budget options, explainers, interactives) by publication type, topic, fiscal year, date range, and/or free",
+     "write": false
+    },
+    {
+     "name": "get_publication",
+     "title": "Get Publication",
+     "desc": "Fetch a single IBO publication by its URL slug.",
+     "write": false
+    },
+    {
+     "name": "find_data_tables",
+     "title": "Find Data Tables",
+     "desc": "List IBO's Open Data fiscal tables (catalog) by asset type, table shape (wide-fiscal-year / distribution-by-agi), or free text.",
+     "write": false
+    },
+    {
+     "name": "get_data_table",
+     "title": "Get Data Table",
+     "desc": "Fetch one IBO Open Data table catalog entry (columns, shape, update cadence) by Socrata ID.",
+     "write": false
+    },
+    {
+     "name": "find_fiscal_series",
+     "title": "Find Fiscal Series",
+     "desc": "Query long-form fiscal observations \u2014 the pivoted view of IBO's wide tables: revenue & spending, non-tax revenue, categorical aid, agency expenditures, full-tim",
+     "write": false
+    },
+    {
+     "name": "find_school_spending",
+     "title": "Find School Spending",
+     "desc": "Query NYC public-school spending and education indicators (School Spending Since 1990 + Education Indicators) by category or year range.",
+     "write": false
+    },
+    {
+     "name": "find_tax_distribution",
+     "title": "Find Tax Distribution",
+     "desc": "Query distributional tax and income data by AGI band \u2014 personal income, income by type, tax liability, EITC/credits, and tax-revenue lines by type.",
+     "write": false
+    },
+    {
+     "name": "list_my_data_requests",
+     "title": "List My Ask IBO Requests",
+     "desc": "List the authenticated requester's own Ask IBO data requests and their status \u2014 a surface that does not exist today (Ask IBO is a one-way form/email).",
+     "write": false
+    },
+    {
+     "name": "get_data_request",
+     "title": "Get Ask IBO Request",
+     "desc": "Fetch a single Ask IBO data request and its status/answer by request ID.",
+     "write": false
+    },
+    {
+     "name": "ask_ibo",
+     "title": "Ask IBO (Submit a Data Request)",
+     "desc": "Submit an 'Ask IBO' data / analysis question \u2014 IBO's single citizen transaction and the NET-NEW write workflow with no public API today (currently a web form or",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "law",
+   "agency": "New York City Law Department (Office of the Corporation Counsel)",
+   "short": "NYC Law Department",
+   "verb": "catalog",
+   "platform": "NYC.gov shared 'Livesite' CMS (Akamai + nginx + Dynatrace) \u2014 no Law-specific platform, portal, or application system",
+   "tagline": "The City's in-house law firm publishes seven stale annual snapshots \u2014 and the claims dollars that matter belong to the Comptroller.",
+   "accent": "#4a4a6a",
+   "netnew": "LawInternshipApplication \u2014 submit a legal internship / fellowship application (the one citizen-initiated transaction with this agency)",
+   "findings": [
+    "The Law Department is an AGENCY-FACING legal office \u2014 the City's in-house law firm \u2014 with almost no citizen-facing transactions. Its public site runs the same shared NYC.gov 'Livesite' chassis (Akamai/nginx/Dynatrace) as every other agency; there is no Law-specific portal or application system.",
+    "Its Open Data footprint is thin and stale: only 7 datasets under 'Law Department (LAW)', every one flagged 'No' automation and 'Annually' updated \u2014 a civil-litigation case index, a list of legal divisions, three parallel publication feeds (press releases / speeches / columns), M/WBE contracting statistics, and a pro bono Public Service Program firm list.",
+    "The data that matters most is not the Law Department's to publish: the ledger of claims filed against the City and settlement dollars paid lives with the Office of the Comptroller (ex6k-ym48). The Law Department's own litigation dataset (pjgc-h7uv) is a case INDEX, not the citywide claims record.",
+    "There is no service layer and no write surface at all \u2014 no API, no OpenAPI, no JSON beyond the SODA endpoints on the seven annual datasets.",
+    "Net-new write surface: submit a legal internship / fellowship application (LawInternshipApplication) \u2014 the single transaction a member of the public actually initiates with this agency, today handled only via email/PDF instructions on the Careers page. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "7 Law Department datasets; SODA /resource/<id>.json endpoints. The only real, open Law API \u2014 thin, annual, manually-updated reference data."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/law",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite v22)",
+     "public": "html",
+     "note": "content only \u2014 About, Divisions, Careers, Public Resources, News. Akamai edge, nginx, Dynatrace RUM. No content API, no application system."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us/d/ex6k-ym48",
+     "type": "open data API (other agency)",
+     "owner": "Office of the Comptroller (COMPTROLLER)",
+     "public": true,
+     "note": "Claims Report \u2014 Underlying Settlements and Claims Filed. The authoritative claims/settlement ledger for City litigation; published by the Comptroller, NOT the Law Department."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 7,
+    "schemas": 6,
+    "openapiOps": 9,
+    "mcpTools": 8,
+    "entities": 6
+   },
+   "entities": [
+    "LegalCase",
+    "LegalDivision",
+    "Publication",
+    "MwbeStatistic",
+    "PublicServiceProgram",
+    "LawInternshipApplication"
+   ],
+   "files": {
+    "fruit": "law/fruit.json",
+    "opendata": "law/opendata-law.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-law.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/law.yaml",
+    "mcp": "mcp/law-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Law Department \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Law Department (Office of the Corporation Counsel) object schemas. Reconciles fields comm"
+    },
+    {
+     "file": "schemas/law-internship-application.json",
+     "title": "LawInternshipApplication",
+     "shared": false,
+     "desc": "An application to the NYC Law Department's legal internship / fellowship / law-student program \u2014 the net-new WRITE surface for this domain. "
+    },
+    {
+     "file": "schemas/legal-case.json",
+     "title": "LegalCase",
+     "shared": false,
+     "desc": "A civil litigation matter the NYC Law Department handled on behalf of the City. Canonical schema reconciling 'Case-Related Information About"
+    },
+    {
+     "file": "schemas/legal-division.json",
+     "title": "LegalDivision",
+     "shared": false,
+     "desc": "A practice division of the NYC Law Department (Office of the Corporation Counsel) \u2014 the unit that handles a body of the City's legal work (e"
+    },
+    {
+     "file": "schemas/mwbe-statistic.json",
+     "title": "MwbeStatistic",
+     "shared": false,
+     "desc": "A Minority- and Women-Owned Business Enterprise (M/WBE) participation statistic for the NYC Law Department \u2014 the share of the Department's c"
+    },
+    {
+     "file": "schemas/public-service-program.json",
+     "title": "PublicServiceProgram",
+     "shared": false,
+     "desc": "A record in the NYC Law Department's Public Service Program \u2014 the pro bono program under which private law firms donate legal services to th"
+    },
+    {
+     "file": "schemas/publication.json",
+     "title": "Publication",
+     "shared": false,
+     "desc": "A public communication published by the NYC Law Department \u2014 a press release, a speech, or a published column. One canonical schema reconcil"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/cases",
+     "op": "listCases",
+     "summary": "List / search civil-litigation matters",
+     "tags": [
+      "Litigation"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/cases/{docketIndex}",
+     "op": "getCase",
+     "summary": "Get a civil-litigation matter by docket/index number",
+     "tags": [
+      "Litigation"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/divisions",
+     "op": "listDivisions",
+     "summary": "List the Law Department's legal divisions",
+     "tags": [
+      "Divisions"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/publications",
+     "op": "listPublications",
+     "summary": "List press releases, speeches, and published columns",
+     "tags": [
+      "Publications"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/mwbe-statistics",
+     "op": "listMwbeStatistics",
+     "summary": "List M/WBE participation statistics",
+     "tags": [
+      "Contracting"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/public-service-program",
+     "op": "listPublicServiceProgram",
+     "summary": "List firms in the pro bono Public Service Program",
+     "tags": [
+      "Contracting"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/internship-applications",
+     "op": "listInternshipApplications",
+     "summary": "List the authenticated applicant's internship applications",
+     "tags": [
+      "Careers"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/internship-applications",
+     "op": "createInternshipApplication",
+     "summary": "Submit a legal internship / fellowship application",
+     "tags": [
+      "Careers"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/internship-applications/{applicationId}",
+     "op": "getInternshipApplication",
+     "summary": "Get an internship application",
+     "tags": [
+      "Careers"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_cases",
+     "title": "Find Litigation Cases",
+     "desc": "Search the NYC Law Department's civil-litigation case index by division, court, disposition, date range, or free text. Note: for claims filed and settlement dol",
+     "write": false
+    },
+    {
+     "name": "get_case",
+     "title": "Get Litigation Case",
+     "desc": "Fetch a single civil-litigation matter by its docket/index number.",
+     "write": false
+    },
+    {
+     "name": "find_divisions",
+     "title": "Find Legal Divisions",
+     "desc": "List the practice divisions of the Law Department (e.g. Tax & Bankruptcy, Tort, Labor & Employment).",
+     "write": false
+    },
+    {
+     "name": "find_publications",
+     "title": "Find Publications",
+     "desc": "List Law Department press releases, speeches, and published columns by type, date range, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_mwbe_statistics",
+     "title": "Find M/WBE Statistics",
+     "desc": "List the Law Department's Minority- and Women-Owned Business Enterprise participation statistics by category.",
+     "write": false
+    },
+    {
+     "name": "find_public_service_program",
+     "title": "Find Public Service Program",
+     "desc": "List the private law firms donating pro bono legal services to the City through the Law Department's Public Service Program.",
+     "write": false
+    },
+    {
+     "name": "list_my_internship_applications",
+     "title": "List My Internship Applications",
+     "desc": "List the authenticated applicant's own legal internship / fellowship applications and their status \u2014 no API exists today.",
+     "write": false
+    },
+    {
+     "name": "submit_internship_application",
+     "title": "Submit Internship Application",
+     "desc": "Submit a legal internship / fellowship application to the NYC Law Department. NET-NEW workflow with no public API today \u2014 the Careers page points applicants to ",
+     "write": true
+    }
+   ]
+  },
+  {
    "id": "lpc",
    "agency": "NYC Landmarks Preservation Commission (LPC)",
    "short": "NYC Landmarks (LPC)",
@@ -9750,6 +12022,288 @@
    ]
   },
   {
+   "id": "mocj",
+   "agency": "NYC Mayor's Office of Criminal Justice (MOCJ)",
+   "short": "NYC Criminal Justice (MOCJ)",
+   "verb": "route",
+   "platform": "WordPress (WP Engine) behind Cloudflare; Kadence/ACF/Contact Form 7 + accidental wp/v2 REST API",
+   "tagline": "A coordination office that owns almost no data and routes people between courts, agencies, and community programs with PDFs and outbound links \u2014 the fix is to give that routing a machine-readable contract.",
+   "accent": "#8a5a5a",
+   "netnew": "ProgramReferral \u2014 route a person or court case to a MOCJ-coordinated program",
+   "findings": [
+    "MOCJ is a split domain: a thin nyc.gov/site/criminaljustice stub (NYC.gov Livesite) whose subpages 404, and the real office site at criminaljustice.cityofnewyork.us \u2014 WordPress on WP Engine behind Cloudflare, a fifth distinct platform after Parks' Smarty/PHP, DOE's Sitefinity/.NET, Council's WordPress, and NYCHA's Livesite+Siebel.",
+    "It is a policy/convening/grant-making office that OWNS almost no data: NYC Open Data carries exactly ONE MOCJ dataset \u2014 Supervised Release Dockets (atne-2dki, 6 columns, last updated 2023, ~1,074 views).",
+    "The jail-population numbers MOCJ is best known for are not MOCJ's. Its System Data page publishes PDF 'explainers' (jail-population increase, re-arrest rates) and links OUT to DOC (Daily Population in Custody), NYPD (CompStat), NYS DCJS, and the Board of Correction. MOCJ convenes and analyzes; it does not own the metrics.",
+    "The only machine-readable surface MOCJ has is ACCIDENTAL: the WordPress wp/v2 REST API, which exposes programs, solicitations, notices, reports, briefs, and data stories as JSON \u2014 undocumented, unintended, and not a product. A Contact Form 7 REST endpoint is the only write path, and it is a generic web form.",
+    "Net-new write surface: a ProgramReferral \u2014 routing a person or court case to a MOCJ-coordinated program along the Sequential Intercept Model. This is the office's core function, yet it has no API; referrals happen offline or via a generic web form. Referral data is sensitive and must be gated. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "criminaljustice.cityofnewyork.us/wp-json/wp/v2",
+     "type": "accidental content API (WordPress REST)",
+     "owner": "MOCJ (WordPress on WP Engine)",
+     "public": true,
+     "note": "Undocumented but fully functional \u2014 returns programs (26), solicitation (25), notice (26), reports (26), data_reports (109), briefs (54), data_stories (6), team (92) as JSON. Not designed or published as an API."
+    },
+    {
+     "endpoint": "criminaljustice.cityofnewyork.us/wp-json/contact-form-7/v1",
+     "type": "web-form submission API",
+     "owner": "MOCJ (Contact Form 7 plugin)",
+     "public": "form feedback endpoint",
+     "note": "The only write path \u2014 generic form-to-email (vendor enrollment, contact). Not a transactional/data API."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Exactly ONE MOCJ dataset: Supervised Release Dockets (atne-2dki). SODA /resource/atne-2dki.json."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/criminaljustice",
+     "type": "informational stub",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "Thin stub on the NYC.gov chassis (Akamai, nginx, Dynatrace/mPulse); most subpages 404 \u2014 the real site moved to criminaljustice.cityofnewyork.us."
+    },
+    {
+     "endpoint": "DOC / NYPD / DCJS / BOC dashboards",
+     "type": "external data (linked, not owned)",
+     "owner": "other agencies",
+     "public": "varies",
+     "note": "MOCJ's System Data page links OUT to DOC Daily Population in Custody, NYPD CompStat 2.0, NYS DCJS, and Board of Correction for the jail/crime numbers it analyzes."
+    },
+    {
+     "endpoint": "Cloudflare edge",
+     "type": "CDN",
+     "owner": "Cloudflare",
+     "public": "vendor",
+     "note": "cf-ray, __cf_bm; fronts the WP Engine origin."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 1,
+    "schemas": 6,
+    "openapiOps": 9,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "Program",
+    "SupervisedReleaseDocket",
+    "JailPopulationMetric",
+    "DataReport",
+    "Solicitation",
+    "ProgramReferral"
+   ],
+   "files": {
+    "fruit": "mocj/fruit.json",
+    "opendata": "mocj/opendata-mocj.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-mocj.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/mocj.yaml",
+    "mcp": "mcp/mocj-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "MOCJ \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Mayor's Office of Criminal Justice (MOCJ) object schemas. Reconciles fields common to the"
+    },
+    {
+     "file": "schemas/data-report.json",
+     "title": "DataReport",
+     "shared": false,
+     "desc": "A MOCJ publication \u2014 a report, brief, fact sheet, scorecard, data report, or data story. Canonical schema reconciling several WordPress cust"
+    },
+    {
+     "file": "schemas/jail-population-metric.json",
+     "title": "JailPopulationMetric",
+     "shared": false,
+     "desc": "An aggregate criminal-justice-system indicator MOCJ analyzes and reports \u2014 jail population (daily census, admissions, discharges), arraignme"
+    },
+    {
+     "file": "schemas/program-referral.json",
+     "title": "ProgramReferral",
+     "shared": false,
+     "desc": "A referral connecting a person or court case to a MOCJ-coordinated program (e.g. Supervised Release, an alternative-to-incarceration, reentr"
+    },
+    {
+     "file": "schemas/program.json",
+     "title": "Program",
+     "shared": false,
+     "desc": "A MOCJ program \u2014 a community-based initiative the Mayor's Office of Criminal Justice funds, convenes, or operates (e.g. Supervised Release, "
+    },
+    {
+     "file": "schemas/solicitation.json",
+     "title": "Solicitation",
+     "shared": false,
+     "desc": "A MOCJ procurement solicitation or notice \u2014 how the office contracts with the community-based organizations (grantees) that run its programs"
+    },
+    {
+     "file": "schemas/supervised-release-docket.json",
+     "title": "SupervisedReleaseDocket",
+     "shared": false,
+     "desc": "One court docket released into MOCJ's Supervised Release program \u2014 a pretrial alternative to bail/detention. Canonical schema for the single"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/programs",
+     "op": "listPrograms",
+     "summary": "List / search MOCJ programs",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs/{programId}",
+     "op": "getProgram",
+     "summary": "Get a program by id",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/supervised-release-dockets",
+     "op": "listSupervisedReleaseDockets",
+     "summary": "Search Supervised Release dockets (the one MOCJ dataset)",
+     "tags": [
+      "SupervisedRelease"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/jail-population-metrics",
+     "op": "listJailPopulationMetrics",
+     "summary": "Aggregate jail-population and system indicators MOCJ analyzes",
+     "tags": [
+      "SystemData"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/publications",
+     "op": "listDataReports",
+     "summary": "List MOCJ publications (reports, briefs, data reports, data stories)",
+     "tags": [
+      "Publications"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/solicitations",
+     "op": "listSolicitations",
+     "summary": "List procurement solicitations and notices",
+     "tags": [
+      "Procurement"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/solicitations/{solicitationId}",
+     "op": "getSolicitation",
+     "summary": "Get a solicitation or notice by id",
+     "tags": [
+      "Procurement"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/program-referrals",
+     "op": "createProgramReferral",
+     "summary": "Make a program referral",
+     "tags": [
+      "Referrals"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/program-referrals/{referralId}",
+     "op": "getProgramReferral",
+     "summary": "Get a program referral and its status",
+     "tags": [
+      "Referrals"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_programs",
+     "title": "Find Programs",
+     "desc": "Search MOCJ-coordinated community programs by borough, issue area, Sequential Intercept stage, program type, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_program",
+     "title": "Get Program",
+     "desc": "Fetch a MOCJ program (provider, issue areas, Sequential Intercept stage, eligibility) by id.",
+     "write": false
+    },
+    {
+     "name": "find_supervised_release_dockets",
+     "title": "Find Supervised Release Dockets",
+     "desc": "Search the single MOCJ Open Data dataset \u2014 court dockets released into the Supervised Release program \u2014 by supervising organization, supervision level, or entry",
+     "write": false
+    },
+    {
+     "name": "find_jail_population_metrics",
+     "title": "Find Jail Population Metrics",
+     "desc": "Return AGGREGATE jail-population and system indicators MOCJ analyzes (daily population, admissions, discharges, arrests, re-arrest rate). Note MOCJ mostly links",
+     "write": false
+    },
+    {
+     "name": "find_data_reports",
+     "title": "Find Data Reports & Publications",
+     "desc": "Search MOCJ publications \u2014 reports, briefs, fact sheets, scorecards, data reports, and data stories (mostly PDF explainers, e.g. jail-population increase and re",
+     "write": false
+    },
+    {
+     "name": "find_solicitations",
+     "title": "Find Solicitations",
+     "desc": "List MOCJ procurement solicitations and notices \u2014 how the office contracts with grantee providers \u2014 by status, kind, or issue area.",
+     "write": false
+    },
+    {
+     "name": "get_solicitation",
+     "title": "Get Solicitation",
+     "desc": "Fetch a MOCJ procurement solicitation or notice by id.",
+     "write": false
+    },
+    {
+     "name": "refer_to_program",
+     "title": "Refer to a Program",
+     "desc": "Make a MOCJ program referral \u2014 route a person or court case to a coordinated program. NET-NEW workflow with no public API today; referrals happen offline or via",
+     "write": true
+    },
+    {
+     "name": "get_referral",
+     "title": "Get Referral",
+     "desc": "Fetch a program referral and its status. Requires an authenticated referrer; returns sensitive data.",
+     "write": false
+    }
+   ]
+  },
+  {
    "id": "nycem",
    "agency": "NYC Emergency Management (NYCEM)",
    "short": "NYC Emergency Management (NYCEM)",
@@ -10028,6 +12582,267 @@
      "title": "Get My Subscription",
      "desc": "Read the authenticated subscriber's own Notify NYC subscription (channels, locations, categories, status) \u2014 today visible only inside the Everbridge Member Port",
      "write": false
+    }
+   ]
+  },
+  {
+   "id": "oath",
+   "agency": "NYC Office of Administrative Trials & Hearings (OATH)",
+   "short": "NYC Admin Trials & Hearings (OATH)",
+   "verb": "respond",
+   "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) informational site + a legacy Apache Struts / Oracle WebLogic ECB Ticket Finder portal",
+   "tagline": "OATH publishes every ECB summons, hearing, and decision as open data, but the one thing a respondent needs to do \u2014 respond to a summons \u2014 is trapped in a legacy Struts portal with no API.",
+   "accent": "#5a7a5a",
+   "netnew": "SummonsDispute \u2014 respond to / dispute a summons (request a hearing) via an owned API",
+   "findings": [
+    "OATH is a split domain: an informational NYC.gov site (Akamai/nginx/Livesite v22/Dynatrace) plus the ECB Ticket Finder / Respond-to-a-Summons portal (a820-ecbticketfinder.nyc.gov), a legacy Apache Struts 2 app on Oracle WebLogic (.action, X-ORACLE-DMS-ECID, WebLogic JSESSIONID) with no API.",
+    "The adjudication data is exceptionally OPEN: the 'OATH Hearings Division Case Status' dataset (jz4z-kudi, 74 columns, updated DAILY, ~400k lifetime views) publishes every ECB summons \u2014 charges, respondent, violation location, hearing, decision, penalty, and balance \u2014 plus 'OATH Trials Division Case Status' (y3hw-z6bm) for the tribunal side.",
+    "But the respondent SERVICE layer has no machine-readable surface: looking up and RESPONDING to a summons \u2014 dispute it, request or reschedule a hearing, submit a defense, reopen a default \u2014 is only possible through the legacy Struts portal, by mail, or in person.",
+    "OATH adjudicates but does not issue: the summonses come from DOB, DSNY, FDNY, DOHMH, DEP, DCWP and others; unpaid decisions become docketed judgments collected by the Department of Finance.",
+    "Net-new write surface: SummonsDispute \u2014 respond to / dispute a summons (request a hearing) \u2014 the single most common respondent transaction, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "2 OATH datasets \u2014 Hearings Division Case Status (jz4z-kudi, 74c, daily) and Trials Division Case Status (y3hw-z6bm). SODA /resource/<id>.json endpoints. The one real, open OATH API \u2014 case-status data only."
+    },
+    {
+     "endpoint": "a820-ecbticketfinder.nyc.gov/searchHome.action",
+     "type": "summons lookup / respond portal",
+     "owner": "OATH (Apache Struts on Oracle WebLogic)",
+     "public": "public UI, no API",
+     "note": "Look up a summons by ticket number or respondent and respond/dispute it. Server-rendered Struts 2 (.action), Oracle WebLogic (X-ORACLE-DMS-ECID, JSESSIONID '!'), ISO-8859-1; no JSON/OpenAPI. search.action + getViolationbyID.action; form fields searchViolationObject.violationNo / respondentName / borough."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/oath",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite v22)",
+     "public": "html",
+     "note": "content only \u2014 hearings, defaults, payments/penalties, reopen-a-default. Akamai edge, nginx, Dynatrace RUM. No content API."
+    },
+    {
+     "endpoint": "on1.nyc.gov",
+     "type": "citywide account / SSO",
+     "owner": "NYC (OTI)",
+     "public": "login",
+     "note": "NYC.gov ID / self-service sign-in umbrella."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 2,
+    "schemas": 5,
+    "openapiOps": 9,
+    "mcpTools": 9,
+    "entities": 5
+   },
+   "entities": [
+    "Summons",
+    "Hearing",
+    "Decision",
+    "TrialCase",
+    "SummonsDispute"
+   ],
+   "files": {
+    "fruit": "oath/fruit.json",
+    "opendata": "oath/opendata-oath.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-oath.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/oath.yaml",
+    "mcp": "mcp/oath-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "OATH \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Office of Administrative Trials & Hearings (OATH) object schemas. Reconciles fields commo"
+    },
+    {
+     "file": "schemas/decision.json",
+     "title": "Decision",
+     "shared": false,
+     "desc": "The disposition of an ECB summons after its OATH hearing \u2014 the Hearing Officer's finding, the penalty imposed, and any docketed judgment. Ca"
+    },
+    {
+     "file": "schemas/hearing.json",
+     "title": "Hearing",
+     "shared": false,
+     "desc": "A scheduled OATH hearing on an ECB summons \u2014 when and where the respondent may appear (in person, by phone, or online) to contest the charge"
+    },
+    {
+     "file": "schemas/summons-dispute.json",
+     "title": "SummonsDispute",
+     "shared": false,
+     "desc": "A respondent's request to contest an ECB summons \u2014 dispute it, request a hearing, submit a defense, or ask to adjourn/reschedule. NET-NEW: t"
+    },
+    {
+     "file": "schemas/summons.json",
+     "title": "Summons",
+     "shared": false,
+     "desc": "An ECB summons (a.k.a. ticket / notice of violation) adjudicated by the OATH Hearings Division. The core object of the domain. Canonical sch"
+    },
+    {
+     "file": "schemas/trial-case.json",
+     "title": "TrialCase",
+     "shared": false,
+     "desc": "A case before the OATH Trials Division \u2014 the tribunal's formal adjudications (agency disciplinary matters, license/contract disputes, etc.),"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/summonses",
+     "op": "listSummonses",
+     "summary": "Search ECB summonses",
+     "tags": [
+      "Summonses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/summonses/{ticketNumber}",
+     "op": "getSummons",
+     "summary": "Get a summons by ticket number",
+     "tags": [
+      "Summonses"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/summonses/{ticketNumber}/hearing",
+     "op": "getSummonsHearing",
+     "summary": "Get the hearing for a summons",
+     "tags": [
+      "Hearings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/summonses/{ticketNumber}/decision",
+     "op": "getSummonsDecision",
+     "summary": "Get the decision / disposition for a summons",
+     "tags": [
+      "Decisions"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/trial-cases",
+     "op": "listTrialCases",
+     "summary": "Search OATH Trials Division cases",
+     "tags": [
+      "Trials"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/trial-cases/{caseNumber}",
+     "op": "getTrialCase",
+     "summary": "Get a trial case by case number",
+     "tags": [
+      "Trials"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/summons-disputes",
+     "op": "createSummonsDispute",
+     "summary": "Respond to / dispute a summons",
+     "tags": [
+      "Disputes"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/summons-disputes",
+     "op": "listSummonsDisputes",
+     "summary": "List the authenticated user's summons disputes",
+     "tags": [
+      "Disputes"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/summons-disputes/{disputeId}",
+     "op": "getSummonsDispute",
+     "summary": "Get the status of a summons dispute",
+     "tags": [
+      "Disputes"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_summonses",
+     "title": "Find Summonses",
+     "desc": "Search ECB summonses (tickets) adjudicated by OATH by ticket number, issuing agency, respondent, borough, hearing status, and/or date range.",
+     "write": false
+    },
+    {
+     "name": "get_summons",
+     "title": "Get Summons",
+     "desc": "Fetch a single ECB summons (charges, respondent, violation location, penalty, balance) by ticket number.",
+     "write": false
+    },
+    {
+     "name": "get_summons_hearing",
+     "title": "Get Summons Hearing",
+     "desc": "Get the scheduled hearing (date, time, location, result) for a summons.",
+     "write": false
+    },
+    {
+     "name": "get_summons_decision",
+     "title": "Get Summons Decision",
+     "desc": "Get the decision / disposition (hearing result, penalty imposed, docketed judgment, balance due) for a summons.",
+     "write": false
+    },
+    {
+     "name": "find_trial_cases",
+     "title": "Find Trial Cases",
+     "desc": "Search OATH Trials Division cases by type, category, filing agency case ID, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_trial_case",
+     "title": "Get Trial Case",
+     "desc": "Fetch a single OATH Trials Division case by case number.",
+     "write": false
+    },
+    {
+     "name": "list_my_disputes",
+     "title": "List My Disputes",
+     "desc": "List the authenticated respondent's own summons disputes / hearing requests and their status \u2014 today visible only inside the ECB Ticket Finder portal.",
+     "write": false
+    },
+    {
+     "name": "get_dispute_status",
+     "title": "Get Dispute Status",
+     "desc": "Get the status of a submitted summons dispute by dispute/confirmation number.",
+     "write": false
+    },
+    {
+     "name": "dispute_summons",
+     "title": "Dispute a Summons",
+     "desc": "Respond to an ECB summons \u2014 dispute it, request or reschedule a hearing, submit a written defense, or reopen a default. NET-NEW workflow with no public API toda",
+     "write": true
     }
    ]
   },

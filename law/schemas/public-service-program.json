@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/law/schemas/public-service-program.json",
+  "title": "PublicServiceProgram",
+  "description": "A record in the NYC Law Department's Public Service Program — the pro bono program under which private law firms donate legal services to the City. Canonical schema reconciling 'LAW Public Service Program' (yk6f-pa7p), which lists firms donating services since 2007.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/yk6f-pa7p"
+  },
+  "properties": {
+    "firm": { "type": "string", "description": "Firm donating services ('Firms Donating Services Since 2007')." },
+    "sinceYear": { "type": ["integer", "null"], "description": "Year the firm began donating services (program runs since 2007)." }
+  },
+  "required": ["firm"],
+  "additionalProperties": false
+}

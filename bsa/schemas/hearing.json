@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bsa/schemas/hearing.json",
+  "title": "Hearing",
+  "description": "A BSA public hearing / calendar item — a scheduled appearance of a case before the Board. NO Open Data twin: the hearing calendar is published only as HTML/PDF on nyc.gov (with Zoom webinar links), not as a structured dataset. This schema models an upcoming or historical calendar item, keyed on the calendar number, so the hearing schedule can be published as a resource.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/bsa/public-hearings/upcoming-hearing-info.page",
+    "videos": "https://www.nyc.gov/site/bsa/public-hearings/public-hearing-videos.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "calendar": { "type": "string", "description": "BSA calendar number of the case being heard." },
+    "application": { "$ref": "_common.json#/$defs/ApplicationType" },
+    "hearingDate": { "type": ["string", "null"], "format": "date", "description": "Date of the public hearing." },
+    "hearingTime": { "type": ["string", "null"], "description": "Scheduled time of the hearing." },
+    "session": {
+      "type": ["string", "null"],
+      "enum": ["Public Hearing", "Continued Hearing", "Decision", "Special Order Calendar", null],
+      "description": "Type of calendar session."
+    },
+    "format": {
+      "type": ["string", "null"],
+      "enum": ["In Person", "Virtual", "Hybrid", null],
+      "description": "How the hearing is conducted."
+    },
+    "webinarUrl": { "type": ["string", "null"], "format": "uri", "description": "Zoom / webinar registration link for a virtual or hybrid hearing." },
+    "property": { "$ref": "_common.json#/$defs/PropertyReference" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "required": ["calendar"],
+  "additionalProperties": false
+}

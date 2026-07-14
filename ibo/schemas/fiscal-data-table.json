@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ibo/schemas/fiscal-data-table.json",
+  "title": "FiscalDataTable",
+  "description": "A catalog entry for one IBO fiscal data table published on NYC Open Data — the DataTable entity (IBO's Excel-shaped time-series exported to Socrata). Canonical schema describing the 20 IBO Socrata assets (e.g. Revenue And Spending Summary 7zhs-43jt, Capital Expenditures hukm-snmq, School Spending p26e-k6k9) as a uniform, queryable catalog rather than 20 opaque IDs.",
+  "type": "object",
+  "x-source": {
+    "opendata_agency_label": "NYC Independent Budget Office (IBO)",
+    "opendata_catalog": "https://data.cityofnewyork.us/browse?Dataset-Information_Agency=NYC+Independent+Budget+Office+%28IBO%29"
+  },
+  "properties": {
+    "id": { "type": "string", "description": "Socrata dataset four-by-four ID (e.g. '7zhs-43jt')." },
+    "name": { "type": "string", "description": "Dataset name/title." },
+    "type": {
+      "type": "string",
+      "enum": ["dataset", "file", "map", "chart", "filter", "href", "story", "link"],
+      "description": "Socrata asset type."
+    },
+    "permalink": { "type": ["string", "null"], "format": "uri", "description": "Public Open Data permalink." },
+    "category": { "type": ["string", "null"], "description": "Open Data domain category (e.g. 'City Government')." },
+    "pageViews": { "type": ["integer", "null"], "description": "Lifetime page views." },
+    "updateFrequency": { "type": ["string", "null"], "description": "Publisher update cadence ('Update-Frequency', e.g. Annually, As needed, Historical data)." },
+    "columns": {
+      "type": "array",
+      "description": "Column names as published. IBO tables are typically WIDE — one column per fiscal year ('FY 1980' … 'FY 2020') plus a category/line-item column.",
+      "items": { "type": "string" }
+    },
+    "columnCount": { "type": ["integer", "null"], "description": "Number of columns." },
+    "shape": {
+      "type": ["string", "null"],
+      "enum": ["wide-fiscal-year", "distribution-by-agi", "long", "other", null],
+      "description": "Derived shape of the table: 'wide-fiscal-year' = one column per FY (the dominant IBO pattern); 'distribution-by-agi' = keyed on income group; 'long' = normalized observations."
+    }
+  },
+  "required": ["id", "name", "type"],
+  "additionalProperties": false
+}

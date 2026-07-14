@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cchr/schemas/training-event.json",
+  "title": "TrainingEvent",
+  "description": "A CCHR training, workshop, or community-outreach event — the Commission's education mission (know-your-rights workshops, the Stop Sexual Harassment Act training, TGNC/Fair Chance campaigns, Community Relations Bureau events). NET-NEW / reference: these are published only as HTML pages on nyc.gov/site/cchr/community/events-workshops.page, /law/sexual-harassment-training.page, and /community/commission-workshops.page — there is NO events API and NO Open Data twin. This schema turns outreach into a structured, referenceable resource.",
+  "type": "object",
+  "x-source": {
+    "events": "https://www.nyc.gov/site/cchr/community/events-workshops.page",
+    "workshops": "https://www.nyc.gov/site/cchr/community/commission-workshops.page",
+    "sexual_harassment_training": "https://www.nyc.gov/site/cchr/law/sexual-harassment-training.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "eventId": { "type": ["string", "null"], "description": "Stable identifier / slug for the event or workshop." },
+    "title": { "type": "string", "description": "Name of the training, workshop, or event." },
+    "type": {
+      "type": ["string", "null"],
+      "enum": ["Workshop", "Training", "Community Event", "Campaign", "Webinar", "Other", null],
+      "description": "Kind of engagement."
+    },
+    "summary": { "type": ["string", "null"], "description": "Short description of the session." },
+    "protectedClasses": {
+      "type": "array",
+      "description": "Protected classes the session focuses on, if topical.",
+      "items": { "$ref": "_common.json#/$defs/ProtectedClass" }
+    },
+    "audience": { "type": ["string", "null"], "description": "Intended audience (e.g. employers, tenants, community members)." },
+    "onlineTraining": { "type": ["boolean", "null"], "description": "Whether an on-demand online training is available (e.g. the Stop Sexual Harassment Act training)." },
+    "startDateTime": { "type": ["string", "null"], "format": "date-time", "description": "Scheduled start, for a dated event." },
+    "endDateTime": { "type": ["string", "null"], "format": "date-time" },
+    "location": { "type": ["string", "null"], "description": "Venue or 'Virtual'." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "registrationUrl": { "type": ["string", "null"], "format": "uri", "description": "Where to register or learn more." },
+    "languages": {
+      "type": "array",
+      "description": "Languages the session is offered in.",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

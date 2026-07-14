@@ -1,0 +1,318 @@
+openapi: 3.1.0
+info:
+  title: OATH API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Office of Administrative Trials & Hearings (OATH) —
+    publishing its already-open adjudication data (ECB summonses, hearings, decisions, and Trials
+    Division cases) as coherent resources, and adding the missing write surface locked inside the legacy
+    ECB Ticket Finder portal — responding to / disputing a summons (request a hearing).
+  description: >-
+    Proposed API-first surface for the NYC Office of Administrative Trials & Hearings (OATH), from the
+    NYC Modernization low-hanging-fruit assessment of nyc.gov/site/oath and the ECB Ticket Finder /
+    Respond-to-a-Summons portal.
+
+
+    OATH is the city's central independent tribunal. It does not issue summonses — DOB, DSNY, FDNY,
+    DOHMH, DEP, DCWP and other agencies do — but it **hears and decides** them. Its **adjudication data
+    is unusually open**: the flagship 'OATH Hearings Division Case Status' dataset (`jz4z-kudi`, 74
+    columns, updated daily, ~400k lifetime views) publishes every ECB summons, its charges, hearing,
+    decision, penalty, and balance, and the 'OATH Trials Division Case Status' dataset (`y3hw-z6bm`)
+    covers the tribunal side.
+
+
+    But the respondent **service layer is locked**: the only way to look up and **respond to** a summons
+    — dispute it, request or reschedule a hearing, submit a defense, or reopen a default — is the legacy
+    **Apache Struts / Oracle WebLogic** ECB Ticket Finder (`a820-ecbticketfinder.nyc.gov`), a
+    server-rendered `.action` app with no API, or by mail/in person. There is no machine-readable, agent-
+    native way for a respondent (or their attorney/agent) to contest a summons.
+
+
+    This contract does two things: (1) presents the open case-status data as one clean resource model —
+    summonses, hearings, decisions, trial cases — and (2) adds the one net-new **write** workflow:
+    creating a **summons dispute** (request a hearing / dispute a summons) that today exists only behind
+    the Struts portal.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.oath.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Summonses
+    description: ECB summonses (tickets / notices of violation) adjudicated by the OATH Hearings Division.
+  - name: Hearings
+    description: Scheduled hearings and their results.
+  - name: Decisions
+    description: Dispositions, penalties, and docketed judgments.
+  - name: Trials
+    description: OATH Trials Division cases (the tribunal side).
+  - name: Disputes
+    description: Respond to / dispute a summons (read + write). The net-new surface, today locked in the ECB Ticket Finder portal.
+
+paths:
+  /summonses:
+    get:
+      operationId: listSummonses
+      summary: Search ECB summonses
+      description: Search the OATH Hearings Division case corpus by ticket number, issuing agency, respondent, location, status, or date range.
+      tags: [Summonses]
+      parameters:
+        - name: ticketNumber
+          in: query
+          schema: { type: string }
+        - name: issuingAgency
+          in: query
+          schema: { type: string }
+        - name: respondentName
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: hearingStatus
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          description: Violation date lower bound.
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          description: Violation date upper bound.
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of summonses.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/summons.json' } }
+  /summonses/{ticketNumber}:
+    get:
+      operationId: getSummons
+      summary: Get a summons by ticket number
+      tags: [Summonses]
+      parameters:
+        - name: ticketNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The summons.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/summons.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /summonses/{ticketNumber}/hearing:
+    get:
+      operationId: getSummonsHearing
+      summary: Get the hearing for a summons
+      tags: [Hearings]
+      parameters:
+        - name: ticketNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The hearing record.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/hearing.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /summonses/{ticketNumber}/decision:
+    get:
+      operationId: getSummonsDecision
+      summary: Get the decision / disposition for a summons
+      tags: [Decisions]
+      parameters:
+        - name: ticketNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The decision record.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/decision.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /trial-cases:
+    get:
+      operationId: listTrialCases
+      summary: Search OATH Trials Division cases
+      tags: [Trials]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: filingAgencyCaseId
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of trial cases.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/trial-case.json' } }
+  /trial-cases/{caseNumber}:
+    get:
+      operationId: getTrialCase
+      summary: Get a trial case by case number
+      tags: [Trials]
+      parameters:
+        - name: caseNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The trial case.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/trial-case.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /summons-disputes:
+    post:
+      operationId: createSummonsDispute
+      summary: Respond to / dispute a summons
+      description: >-
+        The net-new write surface — an API for responding to an ECB summons: dispute it, request or
+        reschedule a hearing, submit a written defense, or reopen a default. Replaces the legacy Struts
+        ECB Ticket Finder workflow. Requires an authenticated respondent or authorized representative.
+      tags: [Disputes]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/summons-dispute.json' }
+      responses:
+        '201':
+          description: Dispute submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/summons-dispute.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+    get:
+      operationId: listSummonsDisputes
+      summary: List the authenticated user's summons disputes
+      description: Reads the respondent's own dispute/hearing requests and their status.
+      tags: [Disputes]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the user's disputes.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/summons-dispute.json' } }
+  /summons-disputes/{disputeId}:
+    get:
+      operationId: getSummonsDispute
+      summary: Get the status of a summons dispute
+      tags: [Disputes]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: disputeId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The dispute.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/summons-dispute.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Summons: { $ref: '../schemas/summons.json' }
+    Hearing: { $ref: '../schemas/hearing.json' }
+    Decision: { $ref: '../schemas/decision.json' }
+    TrialCase: { $ref: '../schemas/trial-case.json' }
+    SummonsDispute: { $ref: '../schemas/summons-dispute.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

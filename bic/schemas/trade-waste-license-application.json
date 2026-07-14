@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bic/schemas/trade-waste-license-application.json",
+  "title": "TradeWasteLicenseApplication",
+  "description": "An application to BIC for a trade waste license, registration, or exemption — the everyday business transaction. NET-NEW: there is NO public API for applying; today applicants file and track applications only inside the Salesforce Experience Cloud portal (bicportal.nyc.gov) or on paper. This schema serves both the read surface (list/get an applicant's own applications and their decision) and the ApplicationRequest write surface (submit a new application). BIC application decisions that end in denial surface publicly as the 'Denied TW and Wholesale Market Companies' dataset (exsg-kpya).",
+  "type": "object",
+  "x-source": {
+    "portal": "https://bicportal.nyc.gov/",
+    "opendata_denials": "https://data.cityofnewyork.us/d/exsg-kpya",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "bicNumber": {
+      "type": ["string", "null"],
+      "description": "Existing BIC account number, for renewals/amendments. Omitted for a brand-new applicant.",
+      "readOnly": false
+    },
+    "applicationStatus": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Under Review", "Additional Info Requested", "Approved", "Denied", "Withdrawn", null],
+      "description": "Lifecycle status ('APPLICATION STATUS'). Set by BIC, not the applicant.",
+      "readOnly": true
+    },
+    "applicationStatusDate": { "type": ["string", "null"], "format": "date", "description": "'APPLICATION STATUS DATE'.", "readOnly": true },
+    "industry": { "$ref": "_common.json#/$defs/Industry" },
+    "applicationType": { "$ref": "_common.json#/$defs/ApplicationType" },
+    "market": { "type": ["string", "null"], "description": "For wholesale-market applications, the public wholesale market applied to (e.g. Hunts Point Produce)." },
+    "accountName": { "type": "string", "description": "Legal name of the applicant business ('ACCOUNT NAME')." },
+    "tradeName": { "type": ["string", "null"], "description": "Doing-business-as / trade name ('TRADE NAME')." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "contact": {
+      "type": "object",
+      "description": "Applicant contact details.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "renewal": { "type": "boolean", "default": false, "description": "Whether this is a renewal of an existing credential." },
+    "attestation": { "type": ["boolean", "null"], "description": "Applicant attests the information is true and complete." },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "decisionDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "required": ["industry", "applicationType", "accountName"],
+  "additionalProperties": false
+}

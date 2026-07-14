@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cchr/schemas/legal-guidance.json",
+  "title": "LegalGuidance",
+  "description": "A CCHR legal enforcement guidance, fact sheet, or Legal Library publication interpreting the NYC Human Rights Law (e.g. guidance on gender identity/expression, race/hairstyle, source of income, disability, the Fair Chance Act). NET-NEW / reference: these are published only as HTML pages and PDFs on nyc.gov/site/cchr/law/legal-library.page and /media/publications.page — there is NO catalog API and NO Open Data twin. This schema turns the guidance corpus into a structured, referenceable resource.",
+  "type": "object",
+  "x-source": {
+    "legal_library": "https://www.nyc.gov/site/cchr/law/legal-library.page",
+    "publications": "https://www.nyc.gov/site/cchr/media/publications.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "guidanceId": { "type": ["string", "null"], "description": "Stable identifier / slug for the guidance document." },
+    "title": { "type": "string", "description": "Title of the guidance or publication." },
+    "type": {
+      "type": ["string", "null"],
+      "enum": ["Legal Enforcement Guidance", "Fact Sheet", "Brochure", "Report", "FAQ", "Notice of Rights", "Other", null],
+      "description": "Kind of publication."
+    },
+    "summary": { "type": ["string", "null"], "description": "Short description of what the guidance covers." },
+    "protectedClasses": {
+      "type": "array",
+      "description": "Protected classes the guidance addresses.",
+      "items": { "$ref": "_common.json#/$defs/ProtectedClass" }
+    },
+    "protectedAreas": {
+      "type": "array",
+      "description": "Protected areas the guidance addresses.",
+      "items": { "$ref": "_common.json#/$defs/ProtectedArea" }
+    },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical page URL." },
+    "documentUrl": { "type": ["string", "null"], "format": "uri", "description": "Direct link to the PDF, where published." },
+    "languages": {
+      "type": "array",
+      "description": "Languages the document is available in (CCHR publishes many materials in multiple languages).",
+      "items": { "type": "string" }
+    },
+    "publishedDate": { "type": ["string", "null"], "format": "date", "description": "Publication or last-revised date." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

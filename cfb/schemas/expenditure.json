@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cfb/schemas/expenditure.json",
+  "title": "Expenditure",
+  "description": "A single campaign expenditure (spending) by a candidate/committee. Canonical schema reconciling 'Campaign Expenditures' (qxzj-vkn2, 32 columns) and its off-year twin (cgcg-w2ys). Also surfaced live through the Follow the Money search API (payees). Keyed on REFNO within a filing.",
+  "type": "object",
+  "x-source": {
+    "opendata_expenditures": "https://data.cityofnewyork.us/d/qxzj-vkn2",
+    "opendata_offyear": "https://data.cityofnewyork.us/d/cgcg-w2ys",
+    "data_library": "https://www.nyccfb.info/follow-the-money/data-library/",
+    "ftm_api": "https://www.nyccfb.info/FTMSearchWebAPI/api/AutoComplete/GetPayees"
+  },
+  "properties": {
+    "refNo": { "type": ["string", "null"], "description": "Transaction reference number ('REFNO')." },
+    "sequenceNo": { "type": ["string", "integer", "null"], "description": "'SEQUENCENO'." },
+    "candidate": { "$ref": "_common.json#/$defs/CandidateReference" },
+    "committee": { "$ref": "_common.json#/$defs/CommitteeReference" },
+    "candidateId": { "type": ["string", "null"], "description": "'CANDID'." },
+    "office": { "$ref": "_common.json#/$defs/Office" },
+    "electionCycle": { "$ref": "_common.json#/$defs/ElectionCycle" },
+    "payeeName": { "type": ["string", "null"], "description": "Payee / vendor name ('NAME')." },
+    "payeeType": { "type": ["string", "null"], "description": "Payee type code ('C_CODE'); 'ORG_IND' organization indicator." },
+    "payeeAddress": { "$ref": "_common.json#/$defs/Address" },
+    "city": { "type": ["string", "null"], "description": "'CITY'." },
+    "state": { "type": ["string", "null"], "description": "'STATE'." },
+    "zip": { "type": ["string", "null"], "description": "'ZIP'." },
+    "amount": { "$ref": "_common.json#/$defs/Money" },
+    "date": { "type": ["string", "null"], "format": "date", "description": "Expenditure date ('DATE')." },
+    "invoiceDate": { "type": ["string", "null"], "format": "date", "description": "'INV_DATE'." },
+    "purpose": { "type": ["string", "null"], "description": "Purpose description ('PURPOSE')." },
+    "purposeCode": { "type": ["string", "null"], "description": "'PURPOSECD'." },
+    "explanation": { "type": ["string", "null"], "description": "'EXPLAIN'." },
+    "paymentMethod": { "type": ["string", "null"], "description": "'PAY_METHOD'." },
+    "exemptCode": { "type": ["string", "null"], "description": "'EXEMPTCD'." },
+    "schedule": { "type": ["string", "null"], "description": "Disclosure schedule ('SCHEDULE')." },
+    "filing": { "type": ["string", "integer", "null"], "description": "'FILING'." },
+    "pageNo": { "type": ["string", "integer", "null"], "description": "'PAGENO'." }
+  },
+  "additionalProperties": false
+}

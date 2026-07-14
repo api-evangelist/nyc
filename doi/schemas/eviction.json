@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doi/schemas/eviction.json",
+  "title": "Eviction",
+  "description": "A residential or commercial eviction executed by a NYC City Marshal — the officials DOI appoints and oversees. Canonical schema reconciling the 'Evictions' dataset (6z8x-wfk4, 20 columns), DOI's most-viewed Open Data asset. Keyed on Court Index Number + Docket Number.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/6z8x-wfk4",
+    "site": "https://www.nyc.gov/site/doi/offices/marshals-list.page"
+  },
+  "properties": {
+    "courtIndexNumber": { "type": ["string", "null"], "description": "'Court Index Number'." },
+    "docketNumber": { "type": ["string", "null"], "description": "'Docket Number'." },
+    "marshal": { "$ref": "_common.json#/$defs/MarshalReference" },
+    "executedDate": { "type": ["string", "null"], "format": "date", "description": "'Executed Date'." },
+    "evictionAddress": { "type": ["string", "null"], "description": "'Eviction Address'." },
+    "evictionApartmentNumber": { "type": ["string", "null"], "description": "'Eviction Apartment Number'." },
+    "evictionPostcode": { "type": ["string", "null"], "description": "'Eviction Postcode'." },
+    "residentialCommercial": {
+      "type": ["string", "null"],
+      "description": "'Residential/Commercial' indicator.",
+      "enum": ["Residential", "Commercial", null]
+    },
+    "evictionLegalPossession": { "type": ["string", "null"], "description": "'Eviction/Legal Possession'." },
+    "ejectment": { "type": ["string", "null"], "description": "'Ejectment'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

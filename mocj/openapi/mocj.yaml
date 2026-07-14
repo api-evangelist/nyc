@@ -1,0 +1,344 @@
+openapi: 3.1.0
+info:
+  title: MOCJ API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Mayor's Office of Criminal Justice — publishing its
+    programs, publications/data reports, procurement solicitations, the single Supervised Release
+    Dockets dataset, and the system indicators it analyzes (jail population, re-arrest) as coherent
+    resources, and adding the missing write surface a coordination office needs — making a program
+    referral.
+  description: >-
+    Proposed API-first surface for the NYC Mayor's Office of Criminal Justice (MOCJ), from the NYC
+    Modernization low-hanging-fruit assessment of criminaljustice.cityofnewyork.us and
+    nyc.gov/site/criminaljustice.
+
+
+    MOCJ is a **policy, convening, and grant-making office**, and its data posture reflects that: it
+    owns almost nothing. NYC Open Data carries exactly **one** MOCJ dataset — Supervised Release
+    Dockets (`atne-2dki`, 6 columns, last updated 2023). Everything else the office produces lives as
+    **WordPress content** — programs, publications, jail-population *explainers*, and procurement
+    notices — reachable only through the site's **accidental `wp/v2` REST API**, or as **outbound links
+    to other agencies' data** (DOC, NYPD, DCJS, Board of Correction). The jail-population numbers MOCJ
+    is best known for are DOC's; MOCJ convenes and analyzes, it does not own them.
+
+
+    This contract does two things: (1) presents MOCJ's scattered content (programs, publications, the
+    Supervised Release dataset, and the system indicators it reports) as one clean resource model, and
+    (2) adds the one net-new **write** workflow a coordination office actually needs — creating a
+    **program referral** (routing a person or case to a MOCJ-coordinated program) — which today exists
+    only offline or behind a generic Contact Form 7 web form. Referral data is sensitive and is gated
+    behind authentication.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.criminaljustice.nyc/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Programs
+    description: MOCJ-coordinated community programs, by issue and Sequential Intercept stage.
+  - name: SupervisedRelease
+    description: Supervised Release Dockets — the single MOCJ Open Data dataset.
+  - name: SystemData
+    description: Aggregate jail-population and system indicators MOCJ analyzes (owned mostly by other agencies).
+  - name: Publications
+    description: Reports, briefs, fact sheets, data reports, and data stories.
+  - name: Procurement
+    description: Solicitations and notices — how MOCJ contracts with grantee providers.
+  - name: Referrals
+    description: Make and track program referrals (read + write). The net-new surface a coordination office needs.
+
+paths:
+  /programs:
+    get:
+      operationId: listPrograms
+      summary: List / search MOCJ programs
+      tags: [Programs]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: issueArea
+          in: query
+          schema: { type: string }
+        - name: sequentialIntercept
+          in: query
+          schema: { type: string }
+        - name: programType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of programs.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/program.json' } }
+  /programs/{programId}:
+    get:
+      operationId: getProgram
+      summary: Get a program by id
+      tags: [Programs]
+      parameters:
+        - name: programId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The program.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/program.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /supervised-release-dockets:
+    get:
+      operationId: listSupervisedReleaseDockets
+      summary: Search Supervised Release dockets (the one MOCJ dataset)
+      tags: [SupervisedRelease]
+      parameters:
+        - name: programName
+          in: query
+          schema: { type: string }
+        - name: supervisionLevel
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of supervised release dockets.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/supervised-release-docket.json' } }
+
+  /jail-population-metrics:
+    get:
+      operationId: listJailPopulationMetrics
+      summary: Aggregate jail-population and system indicators MOCJ analyzes
+      description: >-
+        Proposed machine-readable shape for the metrics that today live only inside MOCJ PDF explainers
+        and other agencies' dashboards (DOC, NYPD, DCJS, BOC). Aggregate only.
+      tags: [SystemData]
+      parameters:
+        - name: metric
+          in: query
+          schema: { type: string, enum: [Jail Daily Population, Jail Admissions, Jail Discharges, Arrests, Arraignments, Pretrial Detention, Re-Arrest Rate, Supervised Release Enrollment] }
+        - $ref: '#/components/parameters/borough'
+        - name: sourceAgency
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate system indicators.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/jail-population-metric.json' } }
+
+  /publications:
+    get:
+      operationId: listDataReports
+      summary: List MOCJ publications (reports, briefs, data reports, data stories)
+      tags: [Publications]
+      parameters:
+        - name: kind
+          in: query
+          schema: { type: string, enum: [Data Report, Data Story, Report, Brief, Fact Sheet, Scorecard] }
+        - name: topic
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of publications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/data-report.json' } }
+
+  /solicitations:
+    get:
+      operationId: listSolicitations
+      summary: List procurement solicitations and notices
+      tags: [Procurement]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Open, Closed, Awarded, Cancelled] }
+        - name: kind
+          in: query
+          schema: { type: string }
+        - name: issueArea
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of solicitations / notices.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/solicitation.json' } }
+  /solicitations/{solicitationId}:
+    get:
+      operationId: getSolicitation
+      summary: Get a solicitation or notice by id
+      tags: [Procurement]
+      parameters:
+        - name: solicitationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The solicitation.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/solicitation.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /program-referrals:
+    post:
+      operationId: createProgramReferral
+      summary: Make a program referral
+      description: >-
+        The net-new write surface — an API for routing a person or court case to a MOCJ-coordinated
+        program, replacing offline referrals and generic web forms. Referral data is sensitive
+        (justice-involved individuals): requires an authenticated referrer and explicit consent. Set
+        `urgent` for time-sensitive referrals (imminent court date, safety concern).
+      tags: [Referrals]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/program-referral.json' }
+      responses:
+        '201':
+          description: Referral created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/program-referral.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /program-referrals/{referralId}:
+    get:
+      operationId: getProgramReferral
+      summary: Get a program referral and its status
+      tags: [Referrals]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: referralId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The referral.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/program-referral.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Program: { $ref: '../schemas/program.json' }
+    SupervisedReleaseDocket: { $ref: '../schemas/supervised-release-docket.json' }
+    JailPopulationMetric: { $ref: '../schemas/jail-population-metric.json' }
+    DataReport: { $ref: '../schemas/data-report.json' }
+    Solicitation: { $ref: '../schemas/solicitation.json' }
+    ProgramReferral: { $ref: '../schemas/program-referral.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island, Citywide] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

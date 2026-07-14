@@ -1,0 +1,407 @@
+openapi: 3.1.0
+info:
+  title: NYC BIC API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the New York City Business Integrity Commission — publishing its
+    already-open regulatory registry (trade waste licensees, registrants, wholesale-market businesses,
+    fleet vehicles, issued violations, complaints) as coherent resources, and adding the missing write
+    surface locked inside the Salesforce Experience Cloud licensing portal — applying for a trade waste
+    license (application).
+  description: >-
+    Proposed API-first surface for the New York City Business Integrity Commission (BIC), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/bic and the bicportal.nyc.gov portal.
+
+
+    BIC is a split domain. Its **regulatory registry is unusually well published** on NYC Open Data — 9
+    datasets covering trade waste hauler licensees, broker/self-hauler/construction-and-demolition
+    registrants, public wholesale-market businesses (Hunts Point, Fulton Fish), the licensee/registrant
+    vehicle fleet, issued violations, complaints and inquiries, and denied companies. But its
+    **transaction layer is locked inside a vendor SaaS**: the BIC portal (`bicportal.nyc.gov`) is a
+    Salesforce Experience Cloud application with no API, where businesses apply for and renew licenses and
+    registrations and pay violation fines (`/s/viopay`). None of that transactional surface has a
+    machine-readable contract or an Open Data twin.
+
+
+    This contract does two things: (1) presents the open registry datasets as one clean resource model,
+    and (2) adds the one net-new **write** workflow — submitting a **trade waste license application** —
+    that today exists only behind the Salesforce portal or on paper.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.bic.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Licensees
+    description: Trade waste hauler licensees — BIC's core licensed accounts.
+  - name: Registrants
+    description: Broker, self-hauler, and construction-and-demolition registrants.
+  - name: Markets
+    description: Businesses operating in the public wholesale markets (Hunts Point, Fulton Fish).
+  - name: Fleet
+    description: Licensee/registrant collection vehicles (BIC-plated haulers).
+  - name: Violations
+    description: Violations issued by BIC and their fines and dispositions.
+  - name: Complaints
+    description: Complaints and inquiries received about regulated accounts.
+  - name: Applications
+    description: Apply for and track a trade waste license/registration (read + write). The net-new surface, today locked in the Salesforce portal.
+
+paths:
+  /licensees:
+    get:
+      operationId: listLicensees
+      summary: List / search trade waste hauler licensees
+      tags: [Licensees]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: applicationType
+          in: query
+          schema: { type: string }
+        - name: renewal
+          in: query
+          schema: { type: boolean }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of licensees.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/licensee.json' } }
+  /licensees/{bicNumber}:
+    get:
+      operationId: getLicensee
+      summary: Get a licensee by BIC number
+      tags: [Licensees]
+      parameters:
+        - $ref: '#/components/parameters/bicNumber'
+      responses:
+        '200':
+          description: The licensee.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/licensee.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /licensees/{bicNumber}/vehicles:
+    get:
+      operationId: getLicenseeVehicles
+      summary: List the fleet vehicles operated under a BIC account
+      tags: [Fleet]
+      parameters:
+        - $ref: '#/components/parameters/bicNumber'
+      responses:
+        '200':
+          description: Fleet vehicles.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/vehicle.json' } }
+
+  /registrants:
+    get:
+      operationId: listRegistrants
+      summary: List / search BIC registrants (broker, self-hauler, C&D)
+      tags: [Registrants]
+      parameters:
+        - name: industry
+          in: query
+          schema: { type: string, enum: [Trade Waste Broker, Self Hauler, Construction & Demolition] }
+        - $ref: '#/components/parameters/borough'
+        - name: renewal
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of registrants.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/registrant.json' } }
+
+  /market-businesses:
+    get:
+      operationId: listMarketBusinesses
+      summary: List businesses in the public wholesale markets
+      tags: [Markets]
+      parameters:
+        - name: market
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of wholesale-market businesses.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/market-business.json' } }
+
+  /vehicles:
+    get:
+      operationId: listVehicles
+      summary: Search the licensee/registrant vehicle fleet
+      tags: [Fleet]
+      parameters:
+        - name: bicNumber
+          in: query
+          schema: { type: string }
+        - name: active
+          in: query
+          schema: { type: boolean }
+        - name: hasSideGuard
+          in: query
+          schema: { type: boolean }
+        - name: fuelType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of fleet vehicles.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/vehicle.json' } }
+
+  /violations:
+    get:
+      operationId: listViolations
+      summary: Search BIC-issued violations
+      tags: [Violations]
+      parameters:
+        - name: bicNumber
+          in: query
+          schema: { type: string }
+        - name: typeOfViolation
+          in: query
+          schema: { type: string }
+        - name: violationDisposition
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of issued violations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/violation.json' } }
+  /violations/{violationNumber}:
+    get:
+      operationId: getViolation
+      summary: Get a violation by number
+      tags: [Violations]
+      parameters:
+        - name: violationNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The violation.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/violation.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /complaints:
+    get:
+      operationId: listComplaints
+      summary: Search complaints and inquiries about regulated accounts
+      tags: [Complaints]
+      parameters:
+        - name: bicNumber
+          in: query
+          schema: { type: string }
+        - name: industryType
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of complaints and inquiries.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/complaint.json' } }
+
+  /applications:
+    get:
+      operationId: listApplications
+      summary: List the authenticated applicant's trade waste license applications
+      description: Reads the applicant's own applications and their decisions — today only visible inside the Salesforce Experience Cloud portal.
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationStatus
+          in: query
+          schema: { type: string, enum: [Submitted, Under Review, Additional Info Requested, Approved, Denied, Withdrawn] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the applicant's applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/trade-waste-license-application.json' } }
+    post:
+      operationId: createApplication
+      summary: Apply for a trade waste license/registration (create an application)
+      description: >-
+        The net-new write surface — an API for submitting a trade waste license, registration, or
+        exemption application, replacing the Salesforce-only workflow. Confirm the industry, application
+        type, and applicant identity with the user before submitting.
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/trade-waste-license-application.json' }
+      responses:
+        '201':
+          description: Application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/trade-waste-license-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /applications/{applicationId}:
+    get:
+      operationId: getApplication
+      summary: Get a trade waste license application
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/trade-waste-license-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Licensee: { $ref: '../schemas/licensee.json' }
+    Registrant: { $ref: '../schemas/registrant.json' }
+    MarketBusiness: { $ref: '../schemas/market-business.json' }
+    Vehicle: { $ref: '../schemas/vehicle.json' }
+    Violation: { $ref: '../schemas/violation.json' }
+    Complaint: { $ref: '../schemas/complaint.json' }
+    TradeWasteLicenseApplication: { $ref: '../schemas/trade-waste-license-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    bicNumber:
+      name: bicNumber
+      in: path
+      required: true
+      schema: { type: string }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

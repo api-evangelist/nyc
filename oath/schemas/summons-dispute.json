@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oath/schemas/summons-dispute.json",
+  "title": "SummonsDispute",
+  "description": "A respondent's request to contest an ECB summons — dispute it, request a hearing, submit a defense, or ask to adjourn/reschedule. NET-NEW: there is NO public API for responding to a summons today; a respondent (or their agent) can only do this through the legacy Apache Struts ECB Ticket Finder / Respond-to-a-Summons portal (a820-ecbticketfinder.nyc.gov), by mail, or in person. This schema serves both the write surface (submit a dispute) and the read surface (its status). Contesting a summons is the single most common OATH respondent transaction.",
+  "type": "object",
+  "x-source": {
+    "portal": "http://a820-ecbticketfinder.nyc.gov/searchHome.action",
+    "reopen_default": "https://www.nyc.gov/site/oath/hearings/reopen-a-missed-hearing-default-online.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "disputeId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned dispute / request confirmation number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "ticketNumber": { "type": "string", "description": "The ECB summons ('Ticket Number') being disputed." },
+    "requestType": {
+      "type": "string",
+      "description": "What the respondent is asking for.",
+      "enum": ["Dispute / Request Hearing", "Submit Written Defense", "Request Adjournment", "Reschedule Hearing", "Reopen Default", "Admit and Pay"]
+    },
+    "hearingChannel": {
+      "type": ["string", "null"],
+      "enum": ["Online", "By Phone", "In Person", "By Mail", null],
+      "description": "How the respondent wishes to be heard."
+    },
+    "defense": { "type": ["string", "null"], "description": "Free-text statement of defense / grounds for contesting the charges." },
+    "requestedHearingDate": { "type": ["string", "null"], "format": "date", "description": "Preferred hearing/adjournment date (subject to OATH availability)." },
+    "adjournmentReason": { "type": ["string", "null"], "description": "Reason for an adjournment or reschedule request." },
+    "evidence": {
+      "type": "array",
+      "description": "References to uploaded supporting documents/photos.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "filename": { "type": "string" },
+          "url": { "type": ["string", "null"], "format": "uri" },
+          "description": { "type": ["string", "null"] }
+        },
+        "required": ["filename"],
+        "additionalProperties": false
+      }
+    },
+    "respondent": { "$ref": "_common.json#/$defs/Respondent" },
+    "representative": {
+      "type": "object",
+      "description": "Attorney or authorized agent responding on the respondent's behalf.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "relationship": { "type": ["string", "null"], "enum": ["Self", "Attorney", "Managing Agent", "Authorized Representative", null] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Received", "Hearing Scheduled", "Under Review", "Granted", "Denied", "Closed", null],
+      "description": "Lifecycle status. Set by OATH, not the requester.",
+      "readOnly": true
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "scheduledHearingDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "required": ["ticketNumber", "requestType"],
+  "additionalProperties": false
+}

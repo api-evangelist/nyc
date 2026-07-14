@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bic/schemas/complaint.json",
+  "title": "Complaint",
+  "description": "A complaint or inquiry received by BIC about a regulated industry account (trade waste hauling or a public wholesale market). Canonical schema reconciling the 'BIC Complaints Inquiries' dataset (p2d7-vcsb, 42 columns). Identified by COMPLAINT/INQUIRY NUMBER; may reference a regulated account by BIC NUMBER. The intake side of this workflow runs through 311 and the BIC complaints form; only aggregate/closed records reach Open Data.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/p2d7-vcsb",
+    "site": "https://www.nyc.gov/site/bic/complaints/complaints.page",
+    "intake_311": "https://portal.311.nyc.gov/"
+  },
+  "properties": {
+    "complaintNumber": { "type": "string", "description": "'COMPLAINT/INQUIRY NUMBER' — primary key." },
+    "complaintOrInquiry": { "type": ["string", "null"], "description": "'COMPLAINT OR INQUIRY' — which of the two this record is." },
+    "natureOfComplaint": { "type": ["string", "null"], "description": "'NATURE OF COMPLAINT/INQUIRY'." },
+    "sourceOfComplaint": { "type": ["string", "null"], "description": "'SOURCE OF COMPLAINT/INQUIRY'." },
+    "industryType": { "type": ["string", "null"], "description": "'INDUSTRY TYPE'." },
+    "licenseType": { "type": ["string", "null"], "description": "'LICENSE TYPE'." },
+    "status": { "type": ["string", "null"], "description": "'COMPLAINT/INQUIRY STATUS'." },
+    "disposition": { "type": ["string", "null"], "description": "'COMPLAINT/INQUIRY DISPOSITION'." },
+    "totalResponseTime": { "type": ["string", "number", "null"], "description": "'TOTAL RESPONSE TIME'." },
+    "reportedOn": { "type": ["string", "null"], "format": "date", "description": "'DATE COMPLAINT/INQUIRY REPORTED ON'." },
+    "account": {
+      "type": "object",
+      "description": "The account the complaint/inquiry focuses on.",
+      "properties": {
+        "bicNumber": { "type": ["string", "null"], "description": "'BIC NUMBER'." },
+        "accountName": { "type": ["string", "null"], "description": "'ACCOUNT NAME'." },
+        "accountStatus": { "type": ["string", "null"], "description": "'ACCOUNT STATUS'." },
+        "focus": { "type": ["string", "null"], "description": "'ACCOUNT FOCUS OF COMPLAINT/INQUIRY'." },
+        "address": { "type": ["string", "null"], "description": "'ACCOUNT ADDRESS'." },
+        "phone": { "type": ["string", "null"], "description": "'ACCOUNT PHONE'." }
+      },
+      "additionalProperties": false
+    },
+    "vehicle": {
+      "type": "object",
+      "description": "Vehicle details when a complaint concerns a hauler truck.",
+      "properties": {
+        "make": { "type": ["string", "null"], "description": "'VEHICLE MAKE'." },
+        "model": { "type": ["string", "null"], "description": "'VEHICLE MODEL'." },
+        "year": { "type": ["integer", "null"], "description": "'VEHICLE YEAR'." },
+        "color": { "type": ["string", "null"], "description": "'VEHICLE COLOR'." },
+        "type": { "type": ["string", "null"], "description": "'VEHICLE TYPE'." }
+      },
+      "additionalProperties": false
+    },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "exportDate": { "type": ["string", "null"], "format": "date-time", "description": "'EXPORT DATE' — snapshot timestamp.", "readOnly": true }
+  },
+  "required": ["complaintNumber"],
+  "additionalProperties": false
+}

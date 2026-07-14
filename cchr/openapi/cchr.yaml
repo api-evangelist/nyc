@@ -1,0 +1,303 @@
+openapi: 3.1.0
+info:
+  title: CCHR API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Commission on Human Rights — giving the untyped
+    "Report Discrimination" intake a real write contract (filing a discrimination complaint), and
+    turning the NYC Human Rights Law's protected classes, legal guidance, training/outreach, and the
+    Commission's three aggregate operational datasets into clean, machine-readable resources.
+  description: >-
+    Proposed API-first surface for the NYC Commission on Human Rights (CCHR), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/cchr and the Report Discrimination
+    intake form.
+
+
+    CCHR is a **thin-data, unstructured-intake** domain. Its public value is (1) the ability to
+    **report discrimination** and (2) the **NYC Human Rights Law** it enforces — and neither has a
+    machine-readable contract. The intake is a plain server-rendered HTML form on the shared NYC.gov
+    "Livesite" platform that posts to an opaque Law Enforcement Bureau backend; the law, protected
+    classes, and legal guidance are published only as prose and PDF. NYC Open Data carries just
+    **three** CCHR datasets, all aggregate operational counts (inquiries received, mediation cases,
+    pre-complaint resolutions) — there is no case-level data and, by design, no individual complaint.
+
+
+    This contract does two things: (1) adds the net-new **write** workflow — filing a
+    **DiscriminationComplaint** (report discrimination) — that today exists only behind an untyped
+    web form or a phone call; and (2) publishes the enforcement vocabulary (protected classes),
+    legal guidance, training/outreach, and the three aggregate datasets as one clean resource model.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.cchr.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Complaints
+    description: Report and track discrimination complaints (read + write). The net-new surface, today an untyped HTML intake form.
+  - name: Law
+    description: The NYC Human Rights Law — protected classes and legal enforcement guidance.
+  - name: Outreach
+    description: Trainings, workshops, and community-outreach events.
+  - name: Statistics
+    description: Aggregate operational statistics from NYC Open Data (never individual complaints).
+
+paths:
+  /complaints:
+    get:
+      operationId: listComplaints
+      summary: List the authenticated filer's discrimination complaints
+      description: Reads the filer's own reports and their case status — today visible only inside CCHR's opaque case-management backend, not on the public web.
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Received, Under Review, Pre-Complaint Inquiry, Mediation, Complaint Filed, Investigation, Resolved, Closed, Referred] }
+        - name: category
+          in: query
+          schema: { type: string, enum: [Employment, Housing, Public Accommodations, Lending Practices, Discriminatory Harassment, Bias-Based Profiling, Not Sure] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the filer's complaints.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/discrimination-complaint.json' } }
+    post:
+      operationId: createComplaint
+      summary: Report discrimination (file a complaint)
+      description: >-
+        The net-new write surface — a typed API for reporting discrimination, replacing the untyped
+        "Report Discrimination" HTML form. A report may be filed whether or not the person wishes to
+        pursue a formal complaint (`involvementRequested`). Anonymous reports are accepted.
+      tags: [Complaints]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/discrimination-complaint.json' }
+      responses:
+        '201':
+          description: Complaint received.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/discrimination-complaint.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /complaints/{complaintId}:
+    get:
+      operationId: getComplaint
+      summary: Get a discrimination complaint and its status
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: complaintId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The complaint.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/discrimination-complaint.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /protected-classes:
+    get:
+      operationId: listProtectedClasses
+      summary: List protected classes under the NYC Human Rights Law
+      tags: [Law]
+      parameters:
+        - name: protectedArea
+          in: query
+          schema: { type: string, enum: [Employment, Housing, Public Accommodations, Lending Practices, Discriminatory Harassment, Bias-Based Profiling] }
+      responses:
+        '200':
+          description: A page of protected classes.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/protected-class.json' } }
+
+  /legal-guidance:
+    get:
+      operationId: listLegalGuidance
+      summary: Search CCHR legal enforcement guidance and publications
+      tags: [Law]
+      parameters:
+        - name: protectedClass
+          in: query
+          schema: { type: string }
+        - name: protectedArea
+          in: query
+          schema: { type: string, enum: [Employment, Housing, Public Accommodations, Lending Practices, Discriminatory Harassment, Bias-Based Profiling] }
+        - name: type
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of guidance documents.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/legal-guidance.json' } }
+
+  /training-events:
+    get:
+      operationId: listTrainingEvents
+      summary: List trainings, workshops, and outreach events
+      tags: [Outreach]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of training/outreach events.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/training-event.json' } }
+
+  /statistics/inquiries:
+    get:
+      operationId: listInquiryStatistics
+      summary: Aggregate inquiries received, by fiscal year and protected area
+      tags: [Statistics]
+      parameters:
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate inquiry statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/inquiry-statistic.json' } }
+
+  /statistics/resolutions:
+    get:
+      operationId: listResolutionStatistics
+      summary: Aggregate monthly resolutions (mediation and pre-complaint)
+      tags: [Statistics]
+      parameters:
+        - name: resolutionType
+          in: query
+          schema: { type: string, enum: [Mediation, Pre-Complaint Resolution] }
+        - name: year
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of aggregate resolution statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/resolution-statistic.json' } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    DiscriminationComplaint: { $ref: '../schemas/discrimination-complaint.json' }
+    ProtectedClass: { $ref: '../schemas/protected-class.json' }
+    LegalGuidance: { $ref: '../schemas/legal-guidance.json' }
+    TrainingEvent: { $ref: '../schemas/training-event.json' }
+    InquiryStatistic: { $ref: '../schemas/inquiry-statistic.json' }
+    ResolutionStatistic: { $ref: '../schemas/resolution-statistic.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/law/schemas/law-internship-application.json",
+  "title": "LawInternshipApplication",
+  "description": "An application to the NYC Law Department's legal internship / fellowship / law-student program — the net-new WRITE surface for this domain. The Law Department is an agency-facing legal office with almost no citizen-facing transactions; the one thing a member of the public actually initiates is applying to work there (careers/lawyers-law-students). There is NO public API and NO Open Data twin for applications today; the 'Careers' page points applicants to email/PDF instructions. This schema serves both the write surface (submit an application) and the read surface (list/get an applicant's own submissions).",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/law/careers/lawyers-law-students.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application reference number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Under Review", "Interview", "Offer", "Declined", "Withdrawn", null],
+      "description": "Lifecycle status. Set by the Law Department, not the applicant.",
+      "readOnly": true
+    },
+    "program": {
+      "type": "string",
+      "enum": ["Summer Law Intern", "Law Graduate / Fellow", "Volunteer Law Student", "Attorney (Lateral)", "Other"],
+      "description": "Which recruitment track the application targets."
+    },
+    "division": { "$ref": "_common.json#/$defs/LegalDivisionRef" },
+    "applicant": {
+      "type": "object",
+      "description": "Applicant contact details.",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": ["string", "null"] }
+      },
+      "required": ["name", "email"],
+      "additionalProperties": false
+    },
+    "lawSchool": { "type": ["string", "null"], "description": "Applicant's law school." },
+    "graduationYear": { "type": ["integer", "null"], "description": "Expected or actual graduation year." },
+    "barAdmitted": { "type": ["boolean", "null"], "description": "Whether the applicant is admitted to a bar." },
+    "coverLetter": { "type": ["string", "null"], "description": "Free-text cover letter / statement of interest." },
+    "resumeUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to an uploaded resume/CV." },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["program", "applicant"],
+  "additionalProperties": false
+}

@@ -1,0 +1,330 @@
+openapi: 3.1.0
+info:
+  title: CCRB API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Civilian Complaint Review Board — turning its
+    model-grade transparency data (complaints, allegations, accused officers, penalties) from
+    dashboards-and-CSV into a queryable contract, and adding the missing write surface: filing a
+    misconduct complaint against an officer.
+  description: >-
+    Proposed API-first surface for the NYC Civilian Complaint Review Board (CCRB), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/ccrb and the Data Transparency
+    Initiative.
+
+
+    CCRB is a national model for police-oversight transparency. Its **Data Transparency Initiative**
+    publishes disaggregated, officer-level misconduct records, and four NYC Open Data datasets carry the
+    same corpus: complaints (`2mby-ccnw`), allegations (`6xgr-kwjq`), police officers (`2fir-qns4`), and
+    penalties (`keep-pkmh`). But all of it is delivered as **interactive dashboards and CSV downloads —
+    there is no API**. And the core civic act the agency exists for — **filing a complaint of NYPD
+    misconduct** — is a JavaScript web form (`.../file-online`), a 311 call, or a mail-in; it too has no
+    machine-readable contract, and a submission's status is checked only through a separate lookup app.
+
+
+    This contract does two things: (1) presents the open accountability datasets as one clean, queryable
+    resource model, and (2) adds the one net-new **write** workflow — filing a **MisconductComplaint**
+    against an officer — that today exists only behind the online form or a phone call.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.ccrb.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Complaints
+    description: Closed complaints of NYPD misconduct within CCRB jurisdiction.
+  - name: Allegations
+    description: Individual allegations against officers within complaints.
+  - name: Officers
+    description: NYPD members of service (accused officers) and their complaint histories.
+  - name: Penalties
+    description: Discipline / penalty outcomes for substantiated complaints (APU + NYPD).
+  - name: Intake
+    description: File a misconduct complaint and track its status (read + write). The net-new surface, today only an online web form.
+
+paths:
+  /complaints:
+    get:
+      operationId: listComplaints
+      summary: List / search closed misconduct complaints
+      tags: [Complaints]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: precinct
+          in: query
+          schema: { type: string }
+        - name: disposition
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          description: CCRB received date on or after (YYYY-MM-DD).
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          description: CCRB received date on or before (YYYY-MM-DD).
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of complaints.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/complaint.json' } }
+  /complaints/{complaintId}:
+    get:
+      operationId: getComplaint
+      summary: Get a complaint by Complaint Id
+      tags: [Complaints]
+      parameters:
+        - name: complaintId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The complaint.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/complaint.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /complaints/{complaintId}/allegations:
+    get:
+      operationId: getComplaintAllegations
+      summary: List the allegations within a complaint
+      tags: [Complaints]
+      parameters:
+        - name: complaintId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Allegations in the complaint.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/allegation.json' } }
+
+  /allegations:
+    get:
+      operationId: listAllegations
+      summary: Search allegations against officers
+      tags: [Allegations]
+      parameters:
+        - name: fadoType
+          in: query
+          schema: { type: string, enum: [Force, Abuse of Authority, Discourtesy, Offensive Language] }
+        - name: allegation
+          in: query
+          schema: { type: string }
+        - name: ccrbAllegationDisposition
+          in: query
+          schema: { type: string }
+        - name: taxId
+          in: query
+          schema: { type: string }
+        - name: complaintId
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of allegations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/allegation.json' } }
+
+  /officers:
+    get:
+      operationId: listOfficers
+      summary: Search accused NYPD officers
+      tags: [Officers]
+      parameters:
+        - name: command
+          in: query
+          schema: { type: string }
+        - name: rank
+          in: query
+          schema: { type: string }
+        - name: minComplaints
+          in: query
+          description: Minimum total complaints.
+          schema: { type: integer, minimum: 0 }
+        - name: minSubstantiated
+          in: query
+          description: Minimum total substantiated complaints.
+          schema: { type: integer, minimum: 0 }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of officers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/police-officer.json' } }
+  /officers/{taxId}:
+    get:
+      operationId: getOfficer
+      summary: Get an officer's complaint profile by Tax ID
+      tags: [Officers]
+      parameters:
+        - name: taxId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The officer.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/police-officer.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /penalties:
+    get:
+      operationId: listPenalties
+      summary: Search discipline / penalty outcomes for substantiated complaints
+      tags: [Penalties]
+      parameters:
+        - name: taxId
+          in: query
+          schema: { type: string }
+        - name: complaintId
+          in: query
+          schema: { type: string }
+        - name: apuCaseStatus
+          in: query
+          schema: { type: string }
+        - name: isApu
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of penalty outcomes.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/penalty.json' } }
+
+  /complaints/file:
+    post:
+      operationId: fileMisconductComplaint
+      summary: File a misconduct complaint against an officer
+      description: >-
+        The net-new write surface — an API for filing a complaint of NYPD misconduct, replacing the
+        online-form-only intake. Describe the incident, the FADO category, where it happened, and any
+        accused officers (identified or described). Complaints may be filed anonymously, but CCRB
+        cannot follow up without contact information.
+      tags: [Intake]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/misconduct-complaint.json' }
+      responses:
+        '201':
+          description: Complaint filed; a tracking number is returned.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/misconduct-complaint.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /complaints/file/{trackingNumber}:
+    get:
+      operationId: getMisconductComplaintStatus
+      summary: Check the status of a filed complaint
+      description: Reads a filed complaint's processing status — today checked only through the Complaint Status Lookup app.
+      tags: [Intake]
+      parameters:
+        - name: trackingNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The filed complaint and its status.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/misconduct-complaint.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  schemas:
+    Complaint: { $ref: '../schemas/complaint.json' }
+    Allegation: { $ref: '../schemas/allegation.json' }
+    PoliceOfficer: { $ref: '../schemas/police-officer.json' }
+    Penalty: { $ref: '../schemas/penalty.json' }
+    MisconductComplaint: { $ref: '../schemas/misconduct-complaint.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

@@ -1,0 +1,121 @@
+{
+  "domain": "law",
+  "agency": "New York City Law Department (Office of the Corporation Counsel)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/law (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace) — the same shared citywide chassis, with no Law-specific portal or application system exposed. Verified the NYC Open Data agency label 'Law Department (LAW)' via the Socrata Discovery API and pulled all 7 assets with column schemas. Separately confirmed that the claims-and-settlements ledger is published NOT by Law but by the Office of the Comptroller (dataset ex6k-ym48).",
+  "related_domains": ["comptroller.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/mocs", "nyc.gov/site/dcas"],
+  "headline_findings": [
+    "The Law Department is an AGENCY-FACING legal office — the City's in-house law firm — with almost no citizen-facing transactions. Its public site runs the same shared NYC.gov 'Livesite' chassis (Akamai/nginx/Dynatrace) as every other agency; there is no Law-specific portal or application system.",
+    "Its Open Data footprint is thin and stale: only 7 datasets under 'Law Department (LAW)', every one flagged 'No' automation and 'Annually' updated — a civil-litigation case index, a list of legal divisions, three parallel publication feeds (press releases / speeches / columns), M/WBE contracting statistics, and a pro bono Public Service Program firm list.",
+    "The data that matters most is not the Law Department's to publish: the ledger of claims filed against the City and settlement dollars paid lives with the Office of the Comptroller (ex6k-ym48). The Law Department's own litigation dataset (pjgc-h7uv) is a case INDEX, not the citywide claims record.",
+    "There is no service layer and no write surface at all — no API, no OpenAPI, no JSON beyond the SODA endpoints on the seven annual datasets.",
+    "Net-new write surface: submit a legal internship / fellowship application (LawInternshipApplication) — the single transaction a member of the public actually initiates with this agency, today handled only via email/PDF instructions on the Careers page. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "7 Law Department datasets; SODA /resource/<id>.json endpoints. The only real, open Law API — thin, annual, manually-updated reference data." },
+    { "endpoint": "www.nyc.gov/site/law", "type": "informational site", "owner": "NYC.gov shared platform (Livesite v22)", "public": "html", "note": "content only — About, Divisions, Careers, Public Resources, News. Akamai edge, nginx, Dynatrace RUM. No content API, no application system." },
+    { "endpoint": "data.cityofnewyork.us/d/ex6k-ym48", "type": "open data API (other agency)", "owner": "Office of the Comptroller (COMPTROLLER)", "public": true, "note": "Claims Report — Underlying Settlements and Claims Filed. The authoritative claims/settlement ledger for City litigation; published by the Comptroller, NOT the Law Department." }
+  ],
+  "fruit": [
+    {
+      "name": "Civil Litigation Case Index",
+      "type": "data table",
+      "entity": "LegalCase",
+      "url": "https://data.cityofnewyork.us/d/pjgc-h7uv",
+      "count": "case-level records",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Case-Related Information About Civil Litigation pjgc-h7uv (17c)"],
+      "notes": "The Law Department's own index of civil-litigation matters — matter name, docket/index, court, judge, handling division, disposition, dates, Lead BBL, and payout/received/expense totals. Keyed on docket/index. NOTE: the authoritative claims/settlement ledger is the Comptroller's (ex6k-ym48), not this dataset."
+    },
+    {
+      "name": "Legal Divisions",
+      "type": "directory",
+      "entity": "LegalDivision",
+      "url": "https://data.cityofnewyork.us/d/4se9-mk53",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["LAW Divisions 4se9-mk53 (2c)"],
+      "notes": "The practice divisions of the Department (division name + parent department). Cross-references the 'Legal Divisions' page on nyc.gov/site/law."
+    },
+    {
+      "name": "Publications (Press Releases / Speeches / Columns)",
+      "type": "document feed",
+      "entity": "Publication",
+      "url": "https://data.cityofnewyork.us/d/kewa-q4dq",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["LAW Press Releases kewa-q4dq (3c)", "LAW Speeches g7ir-4pf8 (4c)", "LAW Published Columns d84z-5kap (3c)"],
+      "notes": "Three parallel datasets sharing one shape (title, date, linked PDF). Unified into a single Publication resource with a publicationType discriminator."
+    },
+    {
+      "name": "M/WBE Participation Statistics",
+      "type": "data table",
+      "entity": "MwbeStatistic",
+      "url": "https://data.cityofnewyork.us/d/svyi-maaj",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Minority and Women-Owned Business Enterprise Statistics svyi-maaj (7c)"],
+      "notes": "The Department's M/WBE contracting shares by category across prime/sub contract families. Most-viewed of the seven Law datasets. Percentages stored as reported strings."
+    },
+    {
+      "name": "Public Service Program (pro bono)",
+      "type": "directory",
+      "entity": "PublicServiceProgram",
+      "url": "https://data.cityofnewyork.us/d/yk6f-pa7p",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["LAW Public Service Program yk6f-pa7p (1c)"],
+      "notes": "Private law firms donating pro bono legal services to the City since 2007. A single-column list."
+    },
+    {
+      "name": "Claims & Settlements (Comptroller, not Law)",
+      "type": "data table",
+      "entity": "LegalCase",
+      "url": "https://data.cityofnewyork.us/d/ex6k-ym48",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Claims Report - Underlying Settlements and Claims Filed ex6k-ym48 (Office of the Comptroller)"],
+      "opendata_gap": false,
+      "notes": "The data users most often want from 'the City's lawyers' — claims filed and settlement dollars — is published by the COMPTROLLER, not the Law Department. Documented here so the crosswalk routes claims questions to the right agency."
+    },
+    {
+      "name": "Apply for a legal internship / fellowship",
+      "type": "sign-up / application workflow",
+      "entity": "LawInternshipApplication",
+      "url": "https://www.nyc.gov/site/law/careers/lawyers-law-students.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single transaction a member of the public actually initiates with the Law Department. No API and no Open Data twin — the Careers page directs applicants to email/PDF instructions. The net-new WRITE surface for this agency-facing domain."
+    }
+  ],
+  "meta": {
+    "short": "NYC Law Department",
+    "verb": "catalog",
+    "platform": "NYC.gov shared 'Livesite' CMS (Akamai + nginx + Dynatrace) — no Law-specific platform, portal, or application system",
+    "netnew": "LawInternshipApplication — submit a legal internship / fellowship application (the one citizen-initiated transaction with this agency)",
+    "accent": "#4a4a6a",
+    "tagline": "The City's in-house law firm publishes seven stale annual snapshots — and the claims dollars that matter belong to the Comptroller.",
+    "headline": "An agency-facing legal office with almost no citizen transactions: thin, annual Open Data, no service layer, and the one thing worth exposing is where the public applies to work there."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 1,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov Livesite chassis; nothing Law-specific to point at.",
+    "siteApi": "No content or site API of any kind.",
+    "openData": "7 datasets, all 'No' automation / annual — present but thin and stale.",
+    "coreData": "Only a case index is Law's; the core claims/settlement ledger belongs to the Comptroller.",
+    "writeApi": "No write surface at all; applications handled by email/PDF.",
+    "agent": "No agent-native surface exists today.",
+    "ownership": "Data on Socrata, litigation money data owned by another agency, site on a shared chassis."
+  }
+}

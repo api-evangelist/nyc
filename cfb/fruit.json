@@ -1,0 +1,156 @@
+{
+  "domain": "cfb",
+  "agency": "NYC Campaign Finance Board (CFB)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA; nyccfb.info returns no robots.txt — 404). Fingerprinted nyccfb.info (Microsoft IIS 8.5 + ASP.NET MVC 5.2, X-AspNetMvc-Version 5.2 / X-AspNet-Version 4.0.30319), the Follow the Money search app (AngularJS 1.5 SPA over an ASP.NET Web API at nyccfb.info/FTMSearchWebAPI, confirmed returning live JSON from /api/Common/GetElectionCycle), the bulk CSV Data Library (/DataLibrary/*.csv, 56 files, 2001-2025), nycvotes.org (Umbraco CMS on ASP.NET / Azure App Service — UMB_SESSION cookie, ARRAffinity, Application Insights), and the login-walled C-SMART, IEDS, and C-Access ASP.NET applications. Verified the NYC Open Data agency label 'Campaign Finance Board (CFB)' via the Socrata Discovery API and pulled all 16 assets with column schemas.",
+  "related_domains": ["nycvotes.org", "contribute.nycvotes.org", "caccess.nyccfb.info", "ieds.nyccfb.info", "data.cityofnewyork.us"],
+  "headline_findings": [
+    "CFB is the transparency leader among NYC agencies and is *almost* API-first already: it runs on its own domain (nyccfb.info, not nyc.gov), publishes 16 NYC Open Data datasets, ships a bulk Data Library of per-cycle CSVs back to 2001, and its Follow the Money search is a single-page app backed by a REAL, working JSON Web API (nyccfb.info/FTMSearchWebAPI).",
+    "But that API is undocumented, backend-only, and unowned as a product — no OpenAPI, no developer docs, no stable public contract, no agent-native surface. It is a de-facto API, not a published one.",
+    "The reference/analysis data is exceptionally rich: contributions with full intermediary/bundler detail (rjkp-yttg, 54 columns), expenditures (qxzj-vkn2), public matching-funds payments (u69g-mvrb), and per-candidate financial analysis (m3tj-a2pb) — in parallel citywide and off-year/special-election streams.",
+    "The write layer is locked. Filing a disclosure statement happens only inside C-SMART, the CFB's login-walled web-based disclosure application; there is no submission API and no Open Data twin (only Late/Missing Disclosure Statements, 2ujk-6z7u, exposes filing status).",
+    "Net-new write surface: submit a disclosure statement (DisclosureFiling) — the one campaign-finance transaction with no machine-readable contract today. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "www.nyccfb.info/FTMSearchWebAPI", "type": "backend JSON Web API (ASP.NET Web API)", "owner": "CFB", "public": "reachable but undocumented", "note": "Powers the Follow the Money AngularJS search. Confirmed live JSON from /api/Common/GetElectionCycle, plus /api/Common/* reference lists and /api/AutoComplete/* typeaheads for candidates, contributors, payees, intermediaries, and independent spenders. Real API, no OpenAPI/docs — the core finding." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "16 CFB datasets; SODA /resource/<id>.json endpoints. Contributions, expenditures, intermediaries, public funds, financial analysis, enforcement, voter analysis." },
+    { "endpoint": "www.nyccfb.info/DataLibrary/*.csv", "type": "bulk file downloads", "owner": "CFB", "public": true, "note": "56 flat CSV files (contribution, expenditure, payment, intermediary, analysis) per election cycle from 2001 through 2025. Bulk twin of the Open Data / FTM data." },
+    { "endpoint": "www.nyccfb.info/candidate-services/c-smart-help (C-SMART)", "type": "disclosure filing application", "owner": "CFB", "public": "login-walled, no API", "note": "Web-based application campaigns use to disclose (submit) contributions/expenditures — i.e. file. The net-new write surface; no JSON/OpenAPI. Was showing an 'unavailable' maintenance notice at crawl time." },
+    { "endpoint": "ieds.nyccfb.info/Public/Login.aspx (IEDS)", "type": "independent-expenditure disclosure", "owner": "CFB", "public": "login (ASP.NET WebForms)", "note": "Independent Expenditure Disclosure System — a separate login-walled filing app for outside spenders." },
+    { "endpoint": "caccess.nyccfb.info (C-Access)", "type": "candidate/public access portal", "owner": "CFB", "public": "login", "note": "Access portal referenced from the FTM search header." },
+    { "endpoint": "www.nycvotes.org", "type": "voter-engagement site", "owner": "CFB / NYC Votes (Umbraco on Azure)", "public": "html", "note": "The public voter-engagement brand; Umbraco CMS / ASP.NET on Azure App Service. contribute.nycvotes.org and nycvotes.turbovote.org are separate services. No public content API observed." },
+    { "endpoint": "Azure Application Insights", "type": "monitoring beacon", "owner": "Microsoft Azure", "public": "vendor", "note": "appInsights telemetry injected on the FTM search page." }
+  ],
+  "meta": {
+    "short": "NYC Campaign Finance Board (CFB)",
+    "verb": "document",
+    "platform": "Microsoft IIS 8.5 / ASP.NET MVC 5.2 + AngularJS 1.5 (nyccfb.info + FTMSearchWebAPI); Umbraco CMS / ASP.NET on Azure (nycvotes.org); C-SMART / IEDS / C-Access ASP.NET applications",
+    "netnew": "DisclosureFiling — a filer submits a disclosure statement (today only via the login-walled C-SMART disclosure application)",
+    "accent": "#3a8a9a",
+    "tagline": "CFB already publishes its campaign-finance data every way except as a documented, owned, agent-native API.",
+    "headline": "The city's transparency leader runs a real but undocumented search API and locks the one write it owns — filing a disclosure — inside C-SMART."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 2,
+    "openData": 3,
+    "coreData": 3,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 3
+  },
+  "scorecard_notes": {
+    "platform": "Own domain, coherent stack, but legacy IIS 8.5 / ASP.NET MVC 5.2 / AngularJS 1.5 and ASP.NET WebForms filing apps.",
+    "siteApi": "A real, working JSON Web API (FTMSearchWebAPI) exists — but undocumented, backend-only, no OpenAPI or contract.",
+    "openData": "16 Socrata datasets + bulk per-cycle CSV Data Library (2001-2025) + public dashboards; among the most open in NYC.",
+    "coreData": "Contributions (with bundler detail), expenditures, public funds, and per-candidate financial analysis all richly published.",
+    "writeApi": "Filing a disclosure statement is only possible inside the login-walled C-SMART app; no submission API, no Open Data twin.",
+    "agent": "No MCP, no agent-native surface, no documented API for an agent to call.",
+    "ownership": "CFB owns its domain, its search app, its data library, and its API — very high self-ownership, unlike rented or hidden stacks."
+  },
+  "fruit": [
+    {
+      "name": "Campaign Contributions",
+      "type": "data table + search",
+      "entity": "Contribution",
+      "url": "https://www.nyccfb.info/follow-the-money/",
+      "machine_readable": "Open Data (SODA) + FTM Web API + bulk CSV",
+      "verified": true,
+      "opendata_match": ["Campaign Contributions rjkp-yttg (54c)", "Off-Year and Special Elections Contribution kgzj-pjna (52c)", "Doing Business Contributions Summary fbkk-n4e3 (52c)"],
+      "notes": "The most-searched CFB record. Full donor detail plus intermediary/bundler fields (INTERMNAME, INT* columns) and matchable amounts (MATCHAMNT). Served three ways: Socrata, the FTM Web API, and per-cycle CSV."
+    },
+    {
+      "name": "Campaign Expenditures",
+      "type": "data table + search",
+      "entity": "Expenditure",
+      "url": "https://www.nyccfb.info/follow-the-money/",
+      "machine_readable": "Open Data (SODA) + FTM Web API + bulk CSV",
+      "verified": true,
+      "opendata_match": ["Campaign Expenditures qxzj-vkn2 (32c)", "Off-Year and Special Elections Campaign Expenditure cgcg-w2ys (32c)"],
+      "notes": "Campaign spending by payee, purpose code, and date. Payee typeahead is exposed by the FTM Web API (/api/AutoComplete/GetPayees)."
+    },
+    {
+      "name": "Campaign Intermediaries (bundlers)",
+      "type": "data table",
+      "entity": "Contribution",
+      "url": "https://data.cityofnewyork.us/d/tcwb-nry3",
+      "machine_readable": "Open Data (SODA) + FTM Web API",
+      "verified": true,
+      "opendata_match": ["Campaign Intermediaries tcwb-nry3 (24c)", "Off-Year and Special Elections Intermediary yqhh-93zq (24c)"],
+      "notes": "Bundlers who deliver contributions; folded into the Contribution schema's intermediary object. Intermediary typeahead in the FTM Web API."
+    },
+    {
+      "name": "Campaign Public Funds Payments",
+      "type": "data table",
+      "entity": "PublicMatchingFundsPayment",
+      "url": "https://data.cityofnewyork.us/d/u69g-mvrb",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Campaign Public Funds Payments u69g-mvrb (12c)", "Off-Year and Special Elections Public Matching Fund Payments 7f4s-uwi7 (12c)"],
+      "notes": "Matching-funds payments (early/primary/runoff/general/total) under NYC's up-to-8-to-1 small-dollar program — the flagship CFB output."
+    },
+    {
+      "name": "Campaign Financial Analysis (candidates)",
+      "type": "data table",
+      "entity": "Candidate",
+      "url": "https://data.cityofnewyork.us/d/m3tj-a2pb",
+      "machine_readable": "Open Data (SODA) + FTM Web API",
+      "verified": true,
+      "opendata_match": ["Campaign Financial Analysis m3tj-a2pb (26c)", "Off-Year and Special Elections Financial Analysis ups9-zwkm (26c)"],
+      "notes": "Per-candidate rollup: contributions, matchable amounts, public funds, expenditures, limits, outstanding bills. The Candidate entity's financial summary. Candidate typeahead in the FTM Web API."
+    },
+    {
+      "name": "Follow the Money search API",
+      "type": "backend JSON Web API",
+      "entity": "Contribution",
+      "url": "https://www.nyccfb.info/FTMSearchWebAPI/api/Common/GetElectionCycle",
+      "machine_readable": "JSON (undocumented)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": false,
+      "notes": "The real-but-undocumented ASP.NET Web API behind the Follow the Money AngularJS app. Confirmed live JSON. Reference lists (offices, cycles, statement types) and autocomplete for candidates/contributors/payees/intermediaries/independent spenders. Needs documenting + owning as a product, not building from scratch."
+    },
+    {
+      "name": "Late/Missing Disclosure Statements",
+      "type": "data table",
+      "entity": "DisclosureFiling",
+      "url": "https://data.cityofnewyork.us/d/2ujk-6z7u",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Late/Missing Disclosure Statements 2ujk-6z7u (6c)"],
+      "opendata_gap": true,
+      "notes": "The only machine-readable window onto disclosure FILING status (Statement, Due Date, Days Late, Status). Read-only and partial; the filing content and submission itself have no API."
+    },
+    {
+      "name": "Enforcement & audit determinations",
+      "type": "data table",
+      "entity": "DisclosureFiling",
+      "url": "https://data.cityofnewyork.us/d/xrxs-qn95",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Enforcement Actions Board Determinations and Penalties xrxs-qn95 (6c)", "Enforcement Audit Determinations x4w5-m7uh (16c)"],
+      "notes": "Post-election penalties and audit findings — the compliance backend to disclosure filing."
+    },
+    {
+      "name": "Voter analysis & turnout (NYC Votes)",
+      "type": "data table",
+      "entity": "Candidate",
+      "url": "https://www.nycvotes.org/",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Voter Analysis 2008-2018 psx2-aqx3 (175c)", "Historical Voter Turnout rixx-fc37 (9c)"],
+      "notes": "The voter-engagement side of the CFB (NYC Votes brand). Rich but tangential to the campaign-finance core; the nycvotes.org site itself exposes no public content API."
+    },
+    {
+      "name": "File a disclosure statement (C-SMART)",
+      "type": "submission workflow (application)",
+      "entity": "DisclosureFiling",
+      "url": "https://www.nyccfb.info/candidate-services/c-smart-help/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The net-new WRITE surface — a filer submits a periodic disclosure statement. Today only through the login-walled C-SMART web application (IEDS for independent spenders); no submission API, no OpenAPI, no JSON. The one campaign-finance transaction with no machine-readable contract."
+    }
+  ]
+}

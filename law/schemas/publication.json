@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/law/schemas/publication.json",
+  "title": "Publication",
+  "description": "A public communication published by the NYC Law Department — a press release, a speech, or a published column. One canonical schema reconciling three parallel Open Data datasets that share the same shape (a title, a date, a linked PDF): 'LAW Press Releases' (kewa-q4dq), 'LAW Speeches' (g7ir-4pf8), and 'LAW Published Columns' (d84z-5kap).",
+  "type": "object",
+  "x-source": {
+    "opendata_press_releases": "https://data.cityofnewyork.us/d/kewa-q4dq",
+    "opendata_speeches": "https://data.cityofnewyork.us/d/g7ir-4pf8",
+    "opendata_columns": "https://data.cityofnewyork.us/d/d84z-5kap"
+  },
+  "properties": {
+    "publicationType": {
+      "type": "string",
+      "enum": ["Press Release", "Speech", "Published Column"],
+      "description": "Which of the three parallel Law Department publication datasets this row comes from."
+    },
+    "title": { "type": "string", "description": "Title ('Press Release Title' / 'Law Speech Title' / 'Columns Title')." },
+    "date": { "type": ["string", "null"], "format": "date", "description": "Publication / delivery date ('Press Release Date' / 'Date of Speech' / 'Column Date')." },
+    "speaker": { "type": ["string", "null"], "description": "Speaker — speeches only ('Speaker')." },
+    "pdfUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the PDF ('Link to PDF File')." }
+  },
+  "required": ["publicationType", "title"],
+  "additionalProperties": false
+}

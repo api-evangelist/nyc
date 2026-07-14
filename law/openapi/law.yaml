@@ -1,0 +1,324 @@
+openapi: 3.1.0
+info:
+  title: NYC Law Department API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the New York City Law Department (Office of the Corporation
+    Counsel) — publishing its thin, scattered Open Data (civil-litigation index, legal divisions,
+    press releases / speeches / columns, M/WBE statistics, and the pro bono Public Service Program)
+    as coherent resources, and adding the one net-new write surface a member of the public actually
+    initiates with the Department: applying to its legal internship / fellowship program.
+  description: >-
+    Proposed API-first surface for the NYC Law Department, from the NYC Modernization
+    low-hanging-fruit assessment of nyc.gov/site/law.
+
+
+    The Law Department is an **agency-facing legal office** — the City's in-house law firm. Unlike the
+    citizen-service agencies elsewhere in this project, it has almost **no citizen-facing
+    transactions**. Its public Open Data is **seven small, manually-updated ('No' automation),
+    annual snapshots** under the label `Law Department (LAW)`: a civil-litigation case index, a list
+    of legal divisions, three parallel publication feeds (press releases, speeches, columns), M/WBE
+    contracting statistics, and the pro bono Public Service Program.
+
+
+    Crucially, the data that would matter most — the ledger of **claims filed against the City and the
+    settlement dollars paid** — is **not** published by the Law Department. It is published separately
+    by the **Office of the Comptroller** (`ex6k-ym48`). The Law Department's own litigation dataset is
+    a case index, not the citywide claims record.
+
+
+    This contract does two things: (1) presents the seven open datasets as one clean resource model,
+    and (2) adds the single net-new **write** workflow that a citizen actually performs with the
+    Department — submitting a **legal internship / fellowship application** — which today has no API
+    and no Open Data twin (the Careers page points applicants to email/PDF instructions).
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.law.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Litigation
+    description: The Law Department's civil-litigation case index.
+  - name: Divisions
+    description: Legal practice divisions of the Department.
+  - name: Publications
+    description: Press releases, speeches, and published columns.
+  - name: Contracting
+    description: M/WBE participation statistics and the pro bono Public Service Program.
+  - name: Careers
+    description: Legal internship / fellowship applications (read + write). The net-new surface, with no API today.
+
+paths:
+  /cases:
+    get:
+      operationId: listCases
+      summary: List / search civil-litigation matters
+      tags: [Litigation]
+      parameters:
+        - name: division
+          in: query
+          schema: { type: string }
+        - name: court
+          in: query
+          schema: { type: string }
+        - name: disposition
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          description: Litigation start on or after this date.
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          description: Closed on or before this date.
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of litigation matters.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/legal-case.json' } }
+  /cases/{docketIndex}:
+    get:
+      operationId: getCase
+      summary: Get a civil-litigation matter by docket/index number
+      tags: [Litigation]
+      parameters:
+        - name: docketIndex
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The litigation matter.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/legal-case.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /divisions:
+    get:
+      operationId: listDivisions
+      summary: List the Law Department's legal divisions
+      tags: [Divisions]
+      parameters:
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of legal divisions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/legal-division.json' } }
+
+  /publications:
+    get:
+      operationId: listPublications
+      summary: List press releases, speeches, and published columns
+      tags: [Publications]
+      parameters:
+        - name: publicationType
+          in: query
+          schema: { type: string, enum: [Press Release, Speech, Published Column] }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of publications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/publication.json' } }
+
+  /mwbe-statistics:
+    get:
+      operationId: listMwbeStatistics
+      summary: List M/WBE participation statistics
+      tags: [Contracting]
+      parameters:
+        - name: mwbeType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of M/WBE statistics.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/mwbe-statistic.json' } }
+
+  /public-service-program:
+    get:
+      operationId: listPublicServiceProgram
+      summary: List firms in the pro bono Public Service Program
+      tags: [Contracting]
+      parameters:
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of Public Service Program firms.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/public-service-program.json' } }
+
+  /internship-applications:
+    get:
+      operationId: listInternshipApplications
+      summary: List the authenticated applicant's internship applications
+      description: Reads the applicant's own submissions — no API exists today; the Careers page points to email/PDF.
+      tags: [Careers]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Under Review, Interview, Offer, Declined, Withdrawn] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the applicant's applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/law-internship-application.json' } }
+    post:
+      operationId: createInternshipApplication
+      summary: Submit a legal internship / fellowship application
+      description: >-
+        The net-new write surface — an API for applying to the Law Department's internship / fellowship
+        program, the one transaction a member of the public actually initiates with this agency. Today
+        there is no API and no Open Data twin; applicants are directed to email/PDF instructions on the
+        Careers page.
+      tags: [Careers]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/law-internship-application.json' }
+      responses:
+        '201':
+          description: Application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/law-internship-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /internship-applications/{applicationId}:
+    get:
+      operationId: getInternshipApplication
+      summary: Get an internship application
+      tags: [Careers]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/law-internship-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LegalCase: { $ref: '../schemas/legal-case.json' }
+    LegalDivision: { $ref: '../schemas/legal-division.json' }
+    Publication: { $ref: '../schemas/publication.json' }
+    MwbeStatistic: { $ref: '../schemas/mwbe-statistic.json' }
+    PublicServiceProgram: { $ref: '../schemas/public-service-program.json' }
+    LawInternshipApplication: { $ref: '../schemas/law-internship-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

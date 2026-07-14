@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ibo/schemas/fiscal-series.json",
+  "title": "FiscalSeries",
+  "description": "A single long-form fiscal observation — one value for one line-item, in one fiscal year, from one IBO series. This is the normalized (pivoted) form of IBO's WIDE Open Data tables, which publish one column per fiscal year. Reconciles Revenue And Spending Summary (7zhs-43jt), Non-Tax Revenues (ypbd-r4kg), State & Federal Categorical Aid (fu34-wamz), Agency Expenditures (cwjy-rrh3), Full-Time Positions (uaj7-9szf), Capital Expenditures by purpose (hukm-snmq), Debt Outstanding (5i9t-mvdt), and Debt Service (6ggx-itps). Covers the entity hints RevenueForecast and CapitalBudget.",
+  "type": "object",
+  "x-source": {
+    "opendata_revenue_spending": "https://data.cityofnewyork.us/d/7zhs-43jt",
+    "opendata_non_tax_revenue": "https://data.cityofnewyork.us/d/ypbd-r4kg",
+    "opendata_categorical_aid": "https://data.cityofnewyork.us/d/fu34-wamz",
+    "opendata_agency_expenditures": "https://data.cityofnewyork.us/d/cwjy-rrh3",
+    "opendata_full_time_positions": "https://data.cityofnewyork.us/d/uaj7-9szf",
+    "opendata_capital_expenditures": "https://data.cityofnewyork.us/d/hukm-snmq",
+    "opendata_debt_outstanding": "https://data.cityofnewyork.us/d/5i9t-mvdt",
+    "opendata_debt_service": "https://data.cityofnewyork.us/d/6ggx-itps"
+  },
+  "properties": {
+    "series": {
+      "type": "string",
+      "description": "Which IBO fiscal series this observation comes from.",
+      "enum": [
+        "Revenue and Spending Summary",
+        "Non-Tax Revenues",
+        "State and Federal Categorical Aid",
+        "Agency Expenditures",
+        "Full-Time Positions",
+        "Capital Expenditures",
+        "Debt Outstanding",
+        "Debt Service"
+      ]
+    },
+    "lineItem": { "type": "string", "description": "Row label — the revenue/expenditure/capital category, agency, or debt line (the non-FY column in the source table)." },
+    "agency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "value": { "$ref": "_common.json#/$defs/Money" },
+    "count": { "type": ["number", "null"], "description": "For non-monetary series (e.g. Full-Time Positions), the headcount value instead of Money." },
+    "measure": {
+      "type": ["string", "null"],
+      "enum": ["dollars", "positions", null],
+      "description": "What 'value'/'count' measures: dollar amounts (most series) or budgeted/actual positions (Full-Time Positions)."
+    }
+  },
+  "required": ["series", "lineItem", "fiscalYear"],
+  "additionalProperties": false
+}

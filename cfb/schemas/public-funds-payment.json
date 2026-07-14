@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cfb/schemas/public-funds-payment.json",
+  "title": "PublicMatchingFundsPayment",
+  "description": "A public matching-funds payment made by the CFB to a participating candidate — the heart of NYC's small-dollar matching program (up to 8-to-1 match). Canonical schema reconciling 'Campaign Public Funds Payments' (u69g-mvrb, 12 columns) and its off-year twin (7f4s-uwi7). Keyed on candidate id + election cycle.",
+  "type": "object",
+  "x-source": {
+    "opendata_public_funds": "https://data.cityofnewyork.us/d/u69g-mvrb",
+    "opendata_offyear": "https://data.cityofnewyork.us/d/7f4s-uwi7",
+    "program": "https://www.nyccfb.info/program/"
+  },
+  "properties": {
+    "candidateId": { "type": "string", "description": "'CANDID'." },
+    "candidateName": { "type": ["string", "null"], "description": "'CANDNAME'." },
+    "class": { "type": ["string", "null"], "description": "Candidate class ('CANCLASS')." },
+    "office": { "$ref": "_common.json#/$defs/Office" },
+    "officeDistrict": { "type": ["string", "integer", "null"], "description": "'OFFICEDIST'." },
+    "officeBorough": { "$ref": "_common.json#/$defs/Borough" },
+    "electionCycle": { "$ref": "_common.json#/$defs/ElectionCycle" },
+    "payments": {
+      "type": "object",
+      "description": "Payments by election milestone (dollars paid).",
+      "properties": {
+        "earlyPayment": { "$ref": "_common.json#/$defs/Money" },
+        "primaryPayment": { "$ref": "_common.json#/$defs/Money" },
+        "runoffPayment": { "$ref": "_common.json#/$defs/Money" },
+        "generalPayment": { "$ref": "_common.json#/$defs/Money" },
+        "totalPayment": { "$ref": "_common.json#/$defs/Money" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["candidateId"],
+  "additionalProperties": false
+}

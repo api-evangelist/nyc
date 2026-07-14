@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bic/schemas/vehicle.json",
+  "title": "Vehicle",
+  "description": "A collection vehicle in a BIC licensee's or registrant's fleet — a hauler truck plated by BIC. Canonical schema reconciling the 'Licensees and Registrants Fleet Information' dataset (n84m-kx4j, 18 columns). Joined to its operator by BIC NUMBER; identified by BIC PLATE NUMBER.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/n84m-kx4j",
+    "site": "https://www.nyc.gov/site/bic/industries/side-guard-requirement.page"
+  },
+  "properties": {
+    "bicNumber": { "type": "string", "description": "'BIC NUMBER' — operating licensee/registrant account." },
+    "accountName": { "type": ["string", "null"], "description": "'ACCOUNT NAME'." },
+    "bicPlateNumber": { "type": ["string", "null"], "description": "'BIC PLATE NUMBER' — BIC-issued plate identifying the vehicle." },
+    "active": { "type": ["boolean", "string", "null"], "description": "'ACTIVE' — whether the vehicle is currently in service." },
+    "vehicleOwnershipType": { "type": ["string", "null"], "description": "'VEHICLE OWNERSHIP TYPE'." },
+    "make": { "type": ["string", "null"], "description": "'VEHICLE MAKE'." },
+    "model": { "type": ["string", "null"], "description": "'VEHICLE MODEL'." },
+    "year": { "type": ["integer", "null"], "description": "'VEHICLE YEAR'." },
+    "bodyType": { "type": ["string", "null"], "description": "'VEHICLE BODY TYPE'." },
+    "fuelType": { "type": ["string", "null"], "description": "'VEHICLE FUEL TYPE'." },
+    "engineMake": { "type": ["string", "null"], "description": "'VEHICLE ENGINE MAKE'." },
+    "engineHorsepower": { "type": ["number", "null"], "description": "'VEHICLE ENGINE HORSEPOWER'." },
+    "grossVehicleWeight": { "type": ["number", "null"], "description": "'VEHICLE GROSS VEHICLE WEIGHT'." },
+    "grossVehicleWeightRating": { "type": ["number", "null"], "description": "'VEHICLE GROSS VEHICLE WEIGHT RATING (GVWR)'." },
+    "annualMilesTraveledLastYear": { "type": ["number", "null"], "description": "'VEHICLE ANNUAL MILES TRAVELED IN LAST YEAR'." },
+    "hasSideGuard": { "type": ["boolean", "string", "null"], "description": "'VEHICLE HAS SIDE GUARD' — Local Law side-guard safety compliance." },
+    "informationComplete": { "type": ["boolean", "string", "null"], "description": "'VEHICLE INFORMATION COMPLETE'." },
+    "exportDate": { "type": ["string", "null"], "format": "date-time", "description": "'EXPORT DATE' — snapshot timestamp.", "readOnly": true }
+  },
+  "required": ["bicNumber"],
+  "additionalProperties": false
+}

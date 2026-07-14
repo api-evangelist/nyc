@@ -1,0 +1,174 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the CFB's already-open campaign-finance data (candidates, committees, contributions, expenditures, public matching-funds payments, disclosure statements) — most of which already answers live from the undocumented Follow the Money Web API (nyccfb.info/FTMSearchWebAPI) — and adds file_disclosure, the net-new write workflow locked today inside the C-SMART disclosure application.",
+    "openapi": "../openapi/cfb.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.cfb",
+    "title": "NYC Campaign Finance Board (CFB)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the New York City Campaign Finance Board — candidates for city office, campaign committees (filers), contributions (with intermediary/bundler detail), expenditures, public matching-funds payments, and disclosure statements from NYC Open Data and the Follow the Money database, plus the net-new ability to submit a disclosure statement (filing) that today lives only in the C-SMART application.",
+    "instructions": "Use find_candidates / get_candidate to locate candidates for NYC office by election cycle, office, class, or borough and read their financial summaries. find_committees / get_committee cover authorized campaign committees (filers). find_contributions searches donations (including who bundled them as an intermediary); find_expenditures searches campaign spending by payee and purpose. find_public_funds_payments returns matching-funds payments under NYC's small-dollar program. find_disclosure_filings lists disclosure statements and their status (including late/missing). file_disclosure (net-new) submits a disclosure statement; it requires an authenticated filer and mutates state — confirm the filer, election cycle, statement number, and totals with the user before submitting, and set amendment=true with amendsFilingId to correct a prior statement."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_candidates",
+      "title": "Find Candidates",
+      "description": "Search NYC candidates tracked by the CFB by election cycle, office, candidate class, incumbency, borough, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "electionCycle": { "type": "string" },
+          "office": { "type": "string" },
+          "class": { "type": "string" },
+          "incumbent": { "type": "boolean" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/candidate.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCandidates"
+    },
+    {
+      "name": "get_candidate",
+      "title": "Get Candidate",
+      "description": "Fetch a candidate (office, class, incumbency, and financial summary) by CFB candidate id.",
+      "inputSchema": { "type": "object", "properties": { "candidateId": { "type": "string" } }, "required": ["candidateId"] },
+      "outputSchema": { "$ref": "../schemas/candidate.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCandidate"
+    },
+    {
+      "name": "find_committees",
+      "title": "Find Committees",
+      "description": "List authorized campaign committees (filers) by election cycle, candidate, or status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "electionCycle": { "type": "string" },
+          "candidateId": { "type": "string" },
+          "status": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/committee.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCommittees"
+    },
+    {
+      "name": "find_contributions",
+      "title": "Find Contributions",
+      "description": "Search campaign contributions by candidate, contributor name/type, intermediary (bundler), borough, date range, or matchable status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "electionCycle": { "type": "string" },
+          "candidateId": { "type": "string" },
+          "recipientId": { "type": "string" },
+          "contributorName": { "type": "string" },
+          "contributorType": { "type": "string" },
+          "intermediaryName": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "matchableOnly": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/contribution.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listContributions"
+    },
+    {
+      "name": "find_expenditures",
+      "title": "Find Expenditures",
+      "description": "Search campaign expenditures (spending) by candidate, payee name, purpose code, or date range.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "electionCycle": { "type": "string" },
+          "candidateId": { "type": "string" },
+          "payeeName": { "type": "string" },
+          "purposeCode": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/expenditure.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listExpenditures"
+    },
+    {
+      "name": "find_public_funds_payments",
+      "title": "Find Public Funds Payments",
+      "description": "List public matching-funds payments to participating candidates under NYC's small-dollar matching program, by election cycle, candidate, office, or borough.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "electionCycle": { "type": "string" },
+          "candidateId": { "type": "string" },
+          "office": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/public-funds-payment.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPublicFundsPayments"
+    },
+    {
+      "name": "find_disclosure_filings",
+      "title": "Find Disclosure Filings",
+      "description": "List disclosure statements and their status (including late/missing) by election cycle, filer, candidate, or status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "electionCycle": { "type": "string" },
+          "filerId": { "type": "string" },
+          "candidateId": { "type": "string" },
+          "status": { "type": "string", "enum": ["Draft", "Submitted", "Accepted", "In Review", "Amended", "Late", "Missing"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/disclosure-filing.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listDisclosureFilings"
+    },
+    {
+      "name": "get_disclosure_filing",
+      "title": "Get Disclosure Filing",
+      "description": "Fetch a single disclosure statement, including its period totals and reported transactions, by filing id.",
+      "inputSchema": { "type": "object", "properties": { "filingId": { "type": "string" } }, "required": ["filingId"] },
+      "outputSchema": { "$ref": "../schemas/disclosure-filing.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getDisclosureFiling"
+    },
+    {
+      "name": "file_disclosure",
+      "title": "File a Disclosure Statement",
+      "description": "Submit a NYC campaign-finance disclosure statement (file). NET-NEW workflow with no public API today — it lives only in the login-walled C-SMART disclosure application. Requires an authenticated filer. Mutates state — confirm filer, election cycle, statement number, and totals first; set amendment=true with amendsFilingId to correct a prior statement.",
+      "inputSchema": { "$ref": "../schemas/disclosure-filing.json" },
+      "outputSchema": { "$ref": "../schemas/disclosure-filing.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createDisclosureFiling",
+      "x-auth": "user"
+    }
+  ]
+}

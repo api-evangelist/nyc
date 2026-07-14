@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oath/schemas/decision.json",
+  "title": "Decision",
+  "description": "The disposition of an ECB summons after its OATH hearing — the Hearing Officer's finding, the penalty imposed, and any docketed judgment. Canonical schema reconciling the decision/penalty columns of 'OATH Hearings Division Case Status' (jz4z-kudi): Hearing Result, Decision Date, Decision Location (Borough), Penalty Imposed, Additional Penalties or Late Fees, Date Judgment Docketed, Balance Due, Paid Amount. Keyed back to the summons by Ticket Number.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/jz4z-kudi",
+    "site": "https://www.nyc.gov/site/oath/hearings/payments-penalties.page"
+  },
+  "properties": {
+    "ticketNumber": { "type": "string", "description": "'Ticket Number' — the summons this decision resolves." },
+    "hearingResult": {
+      "type": ["string", "null"],
+      "description": "'Hearing Result' — the finding.",
+      "enum": ["IN VIOLATION", "NOT IN VIOLATION", "DISMISSED", "DEFAULTED", "ADJOURNED", "STIPULATION", "WRITTEN OFF", "PENDING", null]
+    },
+    "decisionDate": { "type": ["string", "null"], "format": "date", "description": "'Decision Date'." },
+    "decisionLocationBorough": { "$ref": "_common.json#/$defs/Borough" },
+    "penaltyImposed": { "type": ["number", "null"], "description": "'Penalty Imposed'." },
+    "additionalPenaltiesOrLateFees": { "type": ["number", "null"], "description": "'Additional Penalties or Late Fees'." },
+    "totalViolationAmount": { "type": ["number", "null"], "description": "'Total Violation Amount'." },
+    "paidAmount": { "type": ["number", "null"], "description": "'Paid Amount'." },
+    "balanceDue": { "type": ["number", "null"], "description": "'Balance Due'." },
+    "dateJudgmentDocketed": { "type": ["string", "null"], "format": "date", "description": "'Date Judgment Docketed' — when an unpaid default became an enforceable judgment (collected by DOF)." },
+    "complianceStatus": { "$ref": "_common.json#/$defs/ComplianceStatus" }
+  },
+  "required": ["ticketNumber"],
+  "additionalProperties": false
+}

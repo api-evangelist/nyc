@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cfb/schemas/contribution.json",
+  "title": "Contribution",
+  "description": "A single campaign contribution to a candidate/committee — the most-searched CFB record. Canonical schema reconciling 'Campaign Contributions' (rjkp-yttg, 54 columns), the parallel off-year dataset (kgzj-pjna), and 'Campaign Intermediaries' (tcwb-nry3, bundling). Also surfaced live through the Follow the Money search API. Keyed on REFNO within a filing.",
+  "type": "object",
+  "x-source": {
+    "opendata_contributions": "https://data.cityofnewyork.us/d/rjkp-yttg",
+    "opendata_offyear": "https://data.cityofnewyork.us/d/kgzj-pjna",
+    "opendata_intermediaries": "https://data.cityofnewyork.us/d/tcwb-nry3",
+    "data_library": "https://www.nyccfb.info/follow-the-money/data-library/",
+    "ftm_api": "https://www.nyccfb.info/FTMSearchWebAPI/api/AutoComplete/GetContributors"
+  },
+  "properties": {
+    "refNo": { "type": ["string", "null"], "description": "Transaction reference number ('REFNO')." },
+    "sequenceNo": { "type": ["string", "integer", "null"], "description": "'SEQUENCENO'." },
+    "recipient": { "$ref": "_common.json#/$defs/CandidateReference" },
+    "committee": { "$ref": "_common.json#/$defs/CommitteeReference" },
+    "recipientId": { "type": ["string", "null"], "description": "'RECIPID' — filer receiving the contribution." },
+    "recipientName": { "type": ["string", "null"], "description": "'RECIPNAME'." },
+    "office": { "$ref": "_common.json#/$defs/Office" },
+    "electionCycle": { "$ref": "_common.json#/$defs/ElectionCycle" },
+    "contributorName": { "type": ["string", "null"], "description": "Contributor name ('NAME')." },
+    "contributorType": { "type": ["string", "null"], "description": "Contributor type code ('C_CODE') — individual, corporation, PAC, partnership, etc." },
+    "contributorAddress": { "$ref": "_common.json#/$defs/Address" },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "occupation": { "type": ["string", "null"], "description": "'OCCUPATION'." },
+    "employerName": { "type": ["string", "null"], "description": "'EMPNAME'." },
+    "employerCity": { "type": ["string", "null"], "description": "'EMPCITY'." },
+    "employerState": { "type": ["string", "null"], "description": "'EMPSTATE'." },
+    "amount": { "$ref": "_common.json#/$defs/Money" },
+    "previousAmount": { "$ref": "_common.json#/$defs/Money" },
+    "matchAmount": { "$ref": "_common.json#/$defs/Money" },
+    "matchable": { "type": ["boolean", "string", "null"], "description": "Whether the contribution is matchable ('SEG_IND' / match indicators)." },
+    "date": { "type": ["string", "null"], "format": "date", "description": "Contribution date ('DATE')." },
+    "refundDate": { "type": ["string", "null"], "format": "date", "description": "'REFUNDDATE'." },
+    "paymentMethod": { "type": ["string", "null"], "description": "'PAY_METHOD' — check, credit card, cash, etc." },
+    "schedule": { "type": ["string", "null"], "description": "Disclosure schedule ('SCHEDULE')." },
+    "filing": { "type": ["string", "integer", "null"], "description": "Filing number the contribution was reported in ('FILING')." },
+    "pageNo": { "type": ["string", "integer", "null"], "description": "'PAGENO'." },
+    "intermediary": {
+      "type": "object",
+      "description": "Bundler / intermediary who delivered the contribution ('INTERMNAME', INT* fields).",
+      "properties": {
+        "intermediaryNo": { "type": ["string", "null"], "description": "'INTERMNO'." },
+        "intermediaryName": { "type": ["string", "null"], "description": "'INTERMNAME'." },
+        "occupation": { "type": ["string", "null"], "description": "'INTOCCUPA'." },
+        "employerName": { "type": ["string", "null"], "description": "'INTEMPNAME'." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

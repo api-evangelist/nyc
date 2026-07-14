@@ -1,0 +1,370 @@
+openapi: 3.1.0
+info:
+  title: NYC Independent Budget Office (IBO) API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, documented, resource-oriented API for the New York City Independent Budget Office —
+    formalizing IBO's already-live but undocumented NYC.gov Content API (1,145 publications) and its 20
+    wide, Excel-shaped Open Data fiscal tables into clean resources, and adding the one missing citizen
+    write surface: submitting an "Ask IBO" data / analysis request.
+  description: >-
+    Proposed API-first surface for the New York City Independent Budget Office (IBO), from the NYC
+    Modernization low-hanging-fruit assessment of www.ibo.nyc.gov (which now 301-redirects from IBO's
+    legacy own domain ibo.nyc.ny.us onto the shared NYC.gov chassis) and its Open Data footprint.
+
+
+    IBO is a **reference / analysis agency** — NYC's nonpartisan budget watchdog. It has no permits,
+    payments, or applications; its "product" is analysis. That analysis is already published two ways,
+    but neither has a documented, agent-native contract: (1) **~1,145 publications** (reports,
+    testimony, letters, budget options, explainers, interactives) served through the **NYC.gov Content
+    API v2** (`apps.nyc.gov/content-api/v2/custom-contents/ibo`), a real public JSON API that backs the
+    client-side site but is undocumented and unversioned for consumers; and (2) **20 fiscal data tables**
+    on NYC Open Data that are **wide and pivoted** — one column per fiscal year (`FY 1980` … `FY 2020`).
+
+
+    This contract does three things: (1) presents the publications as one clean, filterable resource;
+    (2) republishes the wide fiscal tables as long-form `(series, lineItem, fiscalYear, value)`
+    observations plus a table catalog; and (3) adds the one net-new **write** workflow — creating an
+    **Ask IBO** data request — that today exists only as a web form or an email to info@ibo.nyc.gov.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.ibo.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Publications
+    description: IBO reports, testimony, letters, budget options, explainers, and interactives.
+  - name: DataTables
+    description: Catalog of IBO's Open Data fiscal tables.
+  - name: FiscalData
+    description: Long-form fiscal observations — revenue, spending, capital, debt, positions.
+  - name: Education
+    description: School spending and education indicators.
+  - name: Taxes
+    description: Distributional tax, income, liability, and credit data by AGI band.
+  - name: AskIBO
+    description: Submit and track "Ask IBO" data / analysis requests (read + write). The net-new citizen surface, today a form/email only.
+
+paths:
+  /publications:
+    get:
+      operationId: listPublications
+      summary: List / search IBO publications
+      tags: [Publications]
+      parameters:
+        - name: publicationType
+          in: query
+          schema: { type: string, enum: [Report, Interactive, Testimony, Letter, Press Release, Budget Options, Explainer, Dataset] }
+        - name: topic
+          in: query
+          schema: { type: string }
+        - name: fiscalYear
+          in: query
+          schema: { type: integer }
+        - name: from
+          in: query
+          description: Earliest publication date (inclusive).
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of publications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/publication.json' } }
+  /publications/{slug}:
+    get:
+      operationId: getPublication
+      summary: Get an IBO publication by URL slug
+      tags: [Publications]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: Publication URL slug (e.g. 'education-indicators').
+          schema: { type: string }
+      responses:
+        '200':
+          description: The publication.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/publication.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /data-tables:
+    get:
+      operationId: listDataTables
+      summary: List IBO's Open Data fiscal tables (catalog)
+      tags: [DataTables]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [dataset, file, map, chart] }
+        - name: shape
+          in: query
+          schema: { type: string, enum: [wide-fiscal-year, distribution-by-agi, long, other] }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of data-table catalog entries.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/fiscal-data-table.json' } }
+  /data-tables/{id}:
+    get:
+      operationId: getDataTable
+      summary: Get a data-table catalog entry by Socrata ID
+      tags: [DataTables]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The data-table catalog entry.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/fiscal-data-table.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /fiscal-series:
+    get:
+      operationId: listFiscalSeries
+      summary: Query long-form fiscal observations (revenue, spending, capital, debt, positions)
+      description: The pivoted, long-form view of IBO's wide fiscal tables — one row per (series, lineItem, fiscalYear).
+      tags: [FiscalData]
+      parameters:
+        - name: series
+          in: query
+          schema:
+            type: string
+            enum: [Revenue and Spending Summary, Non-Tax Revenues, State and Federal Categorical Aid, Agency Expenditures, Full-Time Positions, Capital Expenditures, Debt Outstanding, Debt Service]
+        - name: lineItem
+          in: query
+          schema: { type: string }
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: fiscalYear
+          in: query
+          schema: { type: integer }
+        - name: fromFiscalYear
+          in: query
+          schema: { type: integer }
+        - name: toFiscalYear
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of fiscal observations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/fiscal-series.json' } }
+
+  /school-spending:
+    get:
+      operationId: listSchoolSpending
+      summary: Query NYC public-school spending and education indicators
+      tags: [Education]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: year
+          in: query
+          schema: { type: integer }
+        - name: fromYear
+          in: query
+          schema: { type: integer }
+        - name: toYear
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of school-spending / indicator observations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/school-spending.json' } }
+
+  /tax-distribution:
+    get:
+      operationId: listTaxDistribution
+      summary: Query distributional tax / income data by AGI band
+      tags: [Taxes]
+      parameters:
+        - name: agiRange
+          in: query
+          schema: { type: string }
+        - name: taxType
+          in: query
+          schema: { type: string }
+        - name: fiscalYear
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of tax-distribution observations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/tax-distribution.json' } }
+
+  /data-requests:
+    get:
+      operationId: listDataRequests
+      summary: List the authenticated requester's own Ask IBO requests
+      description: Reads the requester's own submitted questions — today there is no such surface at all; Ask IBO is a one-way web form / email.
+      tags: [AskIBO]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Acknowledged, In Research, Answered, Referred, Closed] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the requester's Ask IBO requests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/data-request.json' } }
+    post:
+      operationId: createDataRequest
+      summary: Submit an Ask IBO data / analysis request
+      description: >-
+        The net-new write surface — an API for IBO's single citizen transaction, replacing the web-form /
+        email-only "Ask IBO". IBO has no payments, permits, or applications; this is the one place a
+        resident, journalist, or Council staffer puts something INTO IBO.
+      tags: [AskIBO]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/data-request.json' }
+      responses:
+        '201':
+          description: Request submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/data-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /data-requests/{requestId}:
+    get:
+      operationId: getDataRequest
+      summary: Get an Ask IBO request
+      tags: [AskIBO]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The Ask IBO request.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/data-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Publication: { $ref: '../schemas/publication.json' }
+    FiscalDataTable: { $ref: '../schemas/fiscal-data-table.json' }
+    FiscalSeries: { $ref: '../schemas/fiscal-series.json' }
+    SchoolSpending: { $ref: '../schemas/school-spending.json' }
+    TaxDistribution: { $ref: '../schemas/tax-distribution.json' }
+    DataRequest: { $ref: '../schemas/data-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

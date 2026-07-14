@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ibo/schemas/publication.json",
+  "title": "Publication",
+  "description": "An IBO publication — the core reference object and IBO's actual product: a Report, Testimony, Letter, Budget Options analysis, Explainer, Interactive, or Dataset. Canonical schema reconciling the NYC.gov Content API v2 record (apps.nyc.gov/content-api/v2/custom-contents/ibo/IBO-Publications), which today exposes ~1,145 publications with structured metadata but no documented contract. Covers the entity hints BudgetReport / Analysis / FiscalBrief.",
+  "type": "object",
+  "x-source": {
+    "content_api": "https://apps.nyc.gov/content-api/v2/custom-contents/ibo/IBO-Publications/1",
+    "site": "https://www.ibo.nyc.gov/content/publications",
+    "opendata": null
+  },
+  "properties": {
+    "id": { "type": ["string", "null"], "description": "Content API record UUID ('id')." },
+    "url": { "type": "string", "description": "URL slug ('url' / 'Content Link URL', e.g. 'publications/education-indicators')." },
+    "title": { "type": "string", "description": "Publication title ('Title')." },
+    "description": { "type": ["string", "null"], "description": "Abstract / summary ('Description')." },
+    "publicationDate": { "type": ["string", "null"], "format": "date", "description": "'Publication Date'." },
+    "publicationType": { "$ref": "_common.json#/$defs/PublicationType" },
+    "topics": {
+      "type": "array",
+      "description": "Subject topics ('Topics').",
+      "items": { "$ref": "_common.json#/$defs/Topic" }
+    },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "author": { "type": ["string", "null"], "description": "Authoring IBO team ('Author', e.g. 'IBO Education Team')." },
+    "format": { "type": ["string", "null"], "description": "Delivery format ('Format') — PDF, interactive, dataset link." },
+    "contentLink": { "type": ["string", "null"], "description": "Content API link/attachment reference ('Content Link')." },
+    "webUrl": { "type": ["string", "null"], "format": "uri", "description": "Fully qualified public URL on www.ibo.nyc.gov." }
+  },
+  "required": ["title", "url"],
+  "additionalProperties": false
+}

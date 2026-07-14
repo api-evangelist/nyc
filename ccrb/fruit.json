@@ -1,0 +1,123 @@
+{
+  "domain": "ccrb",
+  "agency": "NYC Civilian Complaint Review Board (CCRB)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/ccrb (Akamai + nginx + AWS ALB + NYC.gov 'Livesite' platform + Dynatrace), the online complaint intake (.../file-a-complaint/file-online.page), and the Complaint Status Lookup app (apps.nyc.gov/ccrb-status-lookup). Verified the NYC Open Data agency label 'Civilian Complaint Review Board (CCRB)' via the Socrata Discovery API and pulled all 4 assets with column schemas; noted they are daily-updated, automated mirrors of the CCRB Complaints Database behind the Data Transparency Initiative dashboards.",
+  "meta": {
+    "short": "NYC Civilian Complaint Review (CCRB)",
+    "verb": "expose",
+    "platform": "NYC.gov 'Livesite' shared platform (Akamai/nginx/AWS ALB/Dynatrace) + a Complaint Status Lookup app on apps.nyc.gov; data via NYC Open Data (Socrata) and in-house Data Transparency Initiative dashboards",
+    "netnew": "MisconductComplaint — file a police-misconduct complaint against an officer via API (today an online web form only)",
+    "accent": "#c25b6b",
+    "tagline": "CCRB's accountability data is a national transparency model, but it ships as dashboards and CSV with no API, and the complaint it exists to intake is a web form.",
+    "headline": "Expose CCRB's model-grade, daily-updated misconduct data as one queryable, agent-native contract — and give the act of filing a complaint the API it has never had."
+  },
+  "related_domains": ["apps.nyc.gov", "data.cityofnewyork.us", "portal.311.nyc.gov", "nyc.gov/site/nypd"],
+  "headline_findings": [
+    "CCRB is a police-oversight transparency model whose data is generously open but delivered ONLY as Data Transparency Initiative dashboards and four daily-updated Socrata datasets (complaints, allegations, officers, penalties) — there is no API.",
+    "The corpus is a tightly-normalized accountability model keyed on Complaint Id and Tax ID: officer-level Total/Substantiated complaint counts, per-allegation FADO records with CCRB-vs-NYPD dispositions, and the APU-vs-NYPD penalty gap.",
+    "The two acts a member of the public performs — filing a misconduct complaint (.../file-online) and checking its status (apps.nyc.gov/ccrb-status-lookup) — are disconnected JavaScript screens with no machine-readable contract.",
+    "Net-new write surface: file a MisconductComplaint against an officer — the reason the agency exists — has no API and no Open Data twin. See tech-stack.md and apis-observed.md.",
+    "The gap is delivery, not openness: the record is model-grade, but it is not a queryable, agent-native API, and intake is not connected to it."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "4 CCRB datasets (2fir-qns4, 6xgr-kwjq, 2mby-ccnw, keep-pkmh); SODA /resource/<id>.json endpoints, updated daily and automated. The read side of the CCRB Complaints Database — the one real, open CCRB API." },
+    { "endpoint": "www.nyc.gov/site/ccrb/complaints/file-a-complaint/file-online.page", "type": "complaint intake form", "owner": "CCRB (on NYC.gov Livesite)", "public": "html form, no API", "note": "File a misconduct complaint online; server-rendered JavaScript page, no JSON/OpenAPI. The net-new write gap." },
+    { "endpoint": "apps.nyc.gov/ccrb-status-lookup/", "type": "complaint status lookup app", "owner": "CCRB (citywide apps.nyc.gov)", "public": "html UI, no API", "note": "Check the status of a filed complaint; standalone screen disconnected from intake, no machine-readable contract." },
+    { "endpoint": "www.nyc.gov/site/ccrb", "type": "informational site + DTI dashboards", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "About, complaint process, policy, and the Data Transparency Initiative dashboards (complaints/allegations/members-of-service/victims/feedback). Akamai edge, nginx, AWS ALB, Dynatrace RUM. No content API." },
+    { "endpoint": "portal.311.nyc.gov", "type": "citywide 311 intake", "owner": "NYC (OTI)", "public": "public", "note": "Alternate complaint channel referenced from CCRB's file-a-complaint pages." }
+  ],
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 0,
+    "openData": 3,
+    "coreData": 3,
+    "writeApi": 1,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov Livesite (Akamai/nginx/AWS ALB/Dynatrace) + a standalone status-lookup app; modern managed hosting but generic and API-less.",
+    "siteApi": "No content or site API; the informational site and DTI dashboards expose HTML/JS only.",
+    "openData": "National model — 4 daily-updated, automated, disaggregated Socrata datasets plus interactive DTI dashboards.",
+    "coreData": "Core objects (Complaint, Allegation, PoliceOfficer, Penalty) richly modeled and officer-level; CCRB-vs-NYPD disposition and penalty gaps preserved.",
+    "writeApi": "Filing a complaint exists as an online web form + 311 + mail, but there is no intake API and status is a disconnected screen.",
+    "agent": "No MCP, no agent-native surface, no queryable API over the open data.",
+    "ownership": "CCRB owns and actively drives its own transparency (DTI) and the intake/status apps, but rides a citywide shared platform and exposes no API of its own."
+  },
+  "fruit": [
+    {
+      "name": "Complaints Against Police Officers",
+      "type": "data table + dashboard",
+      "entity": "Complaint",
+      "url": "https://www.nyc.gov/site/ccrb/policy/data-transparency-initiative-complaints.page",
+      "count": "daily-updated",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["CCRB: Complaints Against Police Officers 2mby-ccnw (14c)"],
+      "notes": "The incident record. Keyed on Complaint Id; carries CCRB Complaint Disposition, reason for contact, outcome of encounter, borough/precinct/location type, and Video/BWC evidence flags."
+    },
+    {
+      "name": "Allegations Against Police Officers",
+      "type": "data table + dashboard",
+      "entity": "Allegation",
+      "url": "https://www.nyc.gov/site/ccrb/policy/data-transparency-initiative-allegations.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["CCRB: Allegations Against Police Officers 6xgr-kwjq (18c)"],
+      "notes": "Finest grain — one row per allegation per officer. FADO Type, specific allegation, CCRB vs NYPD disposition, officer tenure/rank/command, victim race/gender/age range. Joins on Complaint Id and Tax ID."
+    },
+    {
+      "name": "Police Officers (accused / members of service)",
+      "type": "data table + dashboard",
+      "entity": "PoliceOfficer",
+      "url": "https://www.nyc.gov/site/ccrb/policy/data-transparency-initiative-mos.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["CCRB: Police Officers 2fir-qns4 (14c)"],
+      "notes": "The accused-officer roll keyed on Tax ID: rank, command, race/gender, active status, and the distinctive Total Complaints / Total Substantiated Complaints counts per officer."
+    },
+    {
+      "name": "Penalties (discipline outcomes)",
+      "type": "data table",
+      "entity": "Penalty",
+      "url": "https://www.nyc.gov/site/ccrb/complaints/complaint-process/police-discipline.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["CCRB: Penalties keep-pkmh (13c)"],
+      "notes": "The APU (Administrative Prosecution Unit) trial track and the NYPD's final penalty — Board recommendation vs APU trial/plea vs NYPD Officer Penalty. Joins on Complaint Id and Tax ID."
+    },
+    {
+      "name": "Data Transparency Initiative dashboards",
+      "type": "interactive dashboard",
+      "entity": "Complaint",
+      "url": "https://www.nyc.gov/site/ccrb/policy/data-transparency-initiative.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["2mby-ccnw", "6xgr-kwjq", "2fir-qns4", "keep-pkmh"],
+      "notes": "Model-grade transparency rendered as HTML/JS dashboards (complaints, allegations, members of service, victims/alleged, feedback) over the CCRB Complaints Database. Same corpus as Open Data, but not itself an API."
+    },
+    {
+      "name": "Check complaint status",
+      "type": "lookup app",
+      "entity": "MisconductComplaint",
+      "url": "https://apps.nyc.gov/ccrb-status-lookup/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Standalone status-lookup screen on apps.nyc.gov; read-only UI, no API, not joined back to the record. The read half of the intake gap."
+    },
+    {
+      "name": "File a misconduct complaint online",
+      "type": "intake form workflow",
+      "entity": "MisconductComplaint",
+      "url": "https://www.nyc.gov/site/ccrb/complaints/file-a-complaint/file-online.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most important civic act CCRB exists for — file a complaint of NYPD misconduct against an officer. A JavaScript web form (or 311 / mail / in person); no API and no Open Data twin. The net-new WRITE surface for this domain."
+    }
+  ]
+}

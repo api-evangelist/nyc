@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ccrb/schemas/allegation.json",
+  "title": "Allegation",
+  "description": "A single allegation of misconduct made against one officer within a complaint — the finest-grain CCRB accountability record. Canonical schema reconciling the 'Civilian Complaint Review Board: Allegations Against Police Officers' dataset (6xgr-kwjq, 18 columns) and the Data Transparency Initiative allegations dashboard. Joins to Complaint on Complaint Id and to PoliceOfficer on Tax ID.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/6xgr-kwjq",
+    "dashboard": "https://www.nyc.gov/site/ccrb/policy/data-transparency-initiative-allegations.page"
+  },
+  "properties": {
+    "allegationRecordIdentity": { "type": "string", "description": "Unique allegation record identifier ('Allegation Record Identity') — primary key." },
+    "complaintId": { "type": ["string", "null"], "description": "Parent complaint identifier ('Complaint Id')." },
+    "complaintOfficerNumber": { "type": ["string", "null"], "description": "Officer sequence number within the complaint ('Complaint Officer Number')." },
+    "fadoType": { "$ref": "_common.json#/$defs/FADOType" },
+    "allegation": { "type": ["string", "null"], "description": "Specific allegation ('Allegation') — e.g. Physical force, Stop, Frisk, Threat of arrest." },
+    "ccrbInvestigationRecommendation": { "type": ["string", "null"], "description": "CCRB Investigations Division recommendation ('CCRB Investigations Division Recommendation')." },
+    "ccrbAllegationDisposition": { "$ref": "_common.json#/$defs/AllegationDisposition" },
+    "nypdAllegationDisposition": { "type": ["string", "null"], "description": "NYPD's disposition of the allegation ('NYPD Allegation Disposition')." },
+    "officer": { "$ref": "_common.json#/$defs/OfficerReference" },
+    "officerRankAtIncident": { "type": ["string", "null"], "description": "Officer rank at incident ('Officer Rank At Incident')." },
+    "officerRankAbbreviationAtIncident": { "type": ["string", "null"], "description": "Rank abbreviation at incident ('Officer Rank Abbreviation At Incident')." },
+    "officerCommandAtIncident": { "type": ["string", "null"], "description": "Officer command at incident ('Officer Command At Incident')." },
+    "officerDaysOnForceAtIncident": { "type": ["integer", "string", "null"], "description": "Officer tenure in days at time of incident ('Officer Days On Force At Incident')." },
+    "victim": { "$ref": "_common.json#/$defs/DemographicProfile" },
+    "victimRaceLegacy": { "type": ["string", "null"], "description": "Legacy victim race coding ('Victim / Alleged Victim Race (Legacy)')." },
+    "asOfDate": { "type": ["string", "null"], "format": "date", "description": "Data snapshot date ('As Of Date')." }
+  },
+  "required": ["allegationRecordIdentity"],
+  "additionalProperties": false
+}

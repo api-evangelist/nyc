@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ibo/schemas/data-request.json",
+  "title": "DataRequest",
+  "description": "An 'Ask IBO' data / analysis request — the one citizen-facing transaction IBO offers, and the NET-NEW write surface. IBO is a reference/analysis agency: unlike operational agencies it has no payment, permit, or application transaction. Its single interactive citizen input is 'Ask IBO' (www.ibo.nyc.gov/content/ask-ibo), where residents, journalists, and Council staff submit questions and data requests. Today that is a web form / email (info@ibo.nyc.gov) only — there is NO API and NO Open Data twin. This schema serves both the write surface (submit a request) and the read surface (list/get one's own requests).",
+  "type": "object",
+  "x-source": {
+    "form": "https://www.ibo.nyc.gov/content/ask-ibo",
+    "email": "mailto:info@ibo.nyc.gov",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "requestId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned request/ticket number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Acknowledged", "In Research", "Answered", "Referred", "Closed", null],
+      "description": "Lifecycle status. Set by IBO, not the requester.",
+      "readOnly": true
+    },
+    "question": { "type": "string", "description": "The data or analysis question being asked of IBO." },
+    "topic": { "$ref": "_common.json#/$defs/Topic" },
+    "requesterType": {
+      "type": ["string", "null"],
+      "enum": ["Resident", "Journalist", "Council Member or Staff", "Researcher", "Nonprofit or Advocate", "Other", null],
+      "description": "Who is asking (helps IBO triage; reflects its statutory audiences)."
+    },
+    "relatedFiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "relatedAgency": { "type": ["string", "null"], "description": "City agency or program the question concerns, if any." },
+    "preferredFormat": {
+      "type": ["string", "null"],
+      "enum": ["Written answer", "Data table", "Referral to a publication", "Briefing", null],
+      "description": "How the requester would like the answer delivered."
+    },
+    "contact": {
+      "type": "object",
+      "description": "Requester contact details.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "organization": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "answeredDate": { "type": ["string", "null"], "format": "date", "readOnly": true },
+    "responseUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to a published answer or referenced IBO publication, when answered.", "readOnly": true }
+  },
+  "required": ["question"],
+  "additionalProperties": false
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bsa/schemas/application.json",
+  "title": "Application",
+  "description": "A BSA application / case — the core unit of the Board of Standards & Appeals. Canonical schema reconciling the 'BSA Applications Status' dataset (yvxd-uipr, 34 columns) and the Decisions Map (99rv-74dm). Keyed on the calendar number. Covers variances (BZ), extensions of time / vested rights (BZY), Special Order Calendar amendments (SOC), and appeals of DOB determinations (Appeal), filed 1998 to present.",
+  "type": "object",
+  "x-source": {
+    "opendata_status": "https://data.cityofnewyork.us/d/yvxd-uipr",
+    "opendata_map": "https://data.cityofnewyork.us/d/99rv-74dm",
+    "site": "https://www.nyc.gov/site/bsa/resolutions/search-for-resolutions.page"
+  },
+  "properties": {
+    "calendar": { "type": "string", "description": "BSA calendar number ('calendar') — primary key, e.g. '2024-26-BZ'." },
+    "application": { "$ref": "_common.json#/$defs/ApplicationType" },
+    "section": { "type": ["string", "null"], "description": "Zoning Resolution / General City Law section invoked ('section'), e.g. '72-21', 'GCL 36'." },
+    "projectDescription": { "type": ["string", "null"], "description": "Narrative of the relief sought ('project_description')." },
+    "property": { "$ref": "_common.json#/$defs/PropertyReference" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "status": { "$ref": "_common.json#/$defs/CaseStatus" },
+    "filedDate": { "type": ["string", "null"], "format": "date", "description": "Date the application was filed ('filed')." },
+    "decisionDate": { "type": ["string", "null"], "format": "date", "description": "Date the Board voted / decided ('date')." },
+    "decisionsUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the resolution PDF ('decisions_url')." }
+  },
+  "required": ["calendar"],
+  "additionalProperties": false
+}

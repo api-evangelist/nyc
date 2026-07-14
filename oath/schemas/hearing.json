@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oath/schemas/hearing.json",
+  "title": "Hearing",
+  "description": "A scheduled OATH hearing on an ECB summons — when and where the respondent may appear (in person, by phone, or online) to contest the charges. Canonical schema reconciling the hearing columns of 'OATH Hearings Division Case Status' (jz4z-kudi): Hearing Date/Time, Hearing Status, Scheduled Hearing Location, Hearing Result. Keyed back to the summons by Ticket Number.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/jz4z-kudi",
+    "site": "https://www.nyc.gov/site/oath/hearings/hearings-and-defaults.page"
+  },
+  "properties": {
+    "ticketNumber": { "type": "string", "description": "'Ticket Number' — the summons this hearing belongs to." },
+    "hearingDate": { "type": ["string", "null"], "format": "date", "description": "'Hearing Date'." },
+    "hearingTime": { "type": ["string", "null"], "description": "'Hearing Time'." },
+    "hearingStatus": { "$ref": "_common.json#/$defs/HearingStatus" },
+    "scheduledHearingLocation": { "type": ["string", "null"], "description": "'Scheduled Hearing Location' — the OATH hearing office / borough, or a remote channel." },
+    "hearingResult": {
+      "type": ["string", "null"],
+      "description": "'Hearing Result' — the outcome once the hearing concludes.",
+      "enum": ["IN VIOLATION", "NOT IN VIOLATION", "DISMISSED", "DEFAULTED", "ADJOURNED", "STIPULATION", "WRITTEN OFF", "PENDING", null]
+    }
+  },
+  "required": ["ticketNumber"],
+  "additionalProperties": false
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ccrb/schemas/misconduct-complaint.json",
+  "title": "MisconductComplaint",
+  "description": "A newly filed complaint of NYPD misconduct against an officer — the intake (write) surface. NET-NEW: today a member of the public can file only through the online web form (nyc.gov/site/ccrb .../file-online), by phone (311), by mail, or in person; there is NO machine-readable intake API. This schema serves the write path (file a complaint) and the resulting read of a submission's status, which today is checked through the Complaint Status Lookup app (apps.nyc.gov/ccrb-status-lookup). It is the intake counterpart to the closed-case Complaint object.",
+  "type": "object",
+  "x-source": {
+    "file_online": "https://www.nyc.gov/site/ccrb/complaints/file-a-complaint/file-online.page",
+    "status_lookup": "https://apps.nyc.gov/ccrb-status-lookup/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "trackingNumber": {
+      "type": ["string", "null"],
+      "description": "Server-assigned complaint tracking number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Received", "Under Investigation", "Mediation", "Referred", "Closed", null],
+      "description": "Intake/processing status. Set by CCRB, not the filer.",
+      "readOnly": true
+    },
+    "fadoType": { "$ref": "_common.json#/$defs/FADOType" },
+    "allegationSummary": { "type": "string", "description": "Free-text description of what the officer did — the substance of the misconduct allegation." },
+    "incidentDate": { "type": ["string", "null"], "format": "date", "description": "Date the incident occurred." },
+    "incidentTime": { "type": ["string", "null"], "description": "Approximate time of the incident." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "incidentAddress": { "type": ["string", "null"], "description": "Street address or intersection where the incident occurred." },
+    "accusedOfficers": {
+      "type": "array",
+      "description": "One or more accused officers, as much as the complainant can identify (shield/name/command/description). CCRB identifies officers where possible; unidentified officers are allowed.",
+      "items": { "$ref": "_common.json#/$defs/OfficerReference" }
+    },
+    "officerDescription": { "type": ["string", "null"], "description": "Physical or other description of the officer(s) when shield/name is unknown." },
+    "videoAvailable": { "type": "boolean", "default": false, "description": "Whether the complainant has video (e.g. phone footage) of the incident." },
+    "witnesses": { "type": ["string", "null"], "description": "Names or descriptions of any witnesses." },
+    "complainant": {
+      "type": "object",
+      "description": "Filer contact details. A complaint may be filed anonymously, but CCRB cannot follow up without contact information.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "preferredLanguage": { "type": ["string", "null"] },
+        "anonymous": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["allegationSummary"],
+  "additionalProperties": false
+}

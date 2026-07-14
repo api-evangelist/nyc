@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bsa/schemas/pre-application-meeting.json",
+  "title": "PreApplicationMeeting",
+  "description": "A BSA pre-application meeting — the pre-filing consultation between a prospective applicant and Board staff, before a case is formally filed. Canonical schema reconciling the 'Pre-Application Meetings' dataset (855v-w7mc, 17 columns).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/855v-w7mc"
+  },
+  "properties": {
+    "applicant": { "type": ["string", "null"], "description": "Name of the applicant / representative ('applicant')." },
+    "applicationType": { "type": ["string", "null"], "description": "Type of meeting or anticipated application ('application_type'), e.g. 'Pre-application meeting'." },
+    "meetingDate": { "type": ["string", "null"], "format": "date", "description": "Date of the pre-application meeting ('date_of_meeting')." },
+    "calendar": { "type": ["string", "null"], "description": "Calendar number if one has been assigned ('calendar'); often 'N/A' at this stage." },
+    "property": { "$ref": "_common.json#/$defs/PropertyReference" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

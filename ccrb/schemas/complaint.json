@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ccrb/schemas/complaint.json",
+  "title": "Complaint",
+  "description": "A closed complaint of NYPD misconduct within CCRB jurisdiction — the core incident record. Canonical schema reconciling the 'Civilian Complaint Review Board: Complaints Against Police Officers' dataset (2mby-ccnw, 14 columns) and the Data Transparency Initiative complaints dashboard. Keyed on Complaint Id. A complaint carries one or more Allegations.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/2mby-ccnw",
+    "dashboard": "https://www.nyc.gov/site/ccrb/policy/data-transparency-initiative-complaints.page"
+  },
+  "properties": {
+    "complaintId": { "type": "string", "description": "CCRB complaint identifier ('Complaint Id') — primary key." },
+    "receivedDate": { "type": ["string", "null"], "format": "date", "description": "Date CCRB received the complaint ('CCRB Received Date')." },
+    "closeDate": { "type": ["string", "null"], "format": "date", "description": "Date the complaint was closed ('Close Date')." },
+    "incidentDate": { "type": ["string", "null"], "format": "date", "description": "Date of the underlying incident ('Incident Date')." },
+    "incidentHour": { "type": ["integer", "string", "null"], "description": "Hour of day of the incident ('Incident Hour')." },
+    "disposition": { "$ref": "_common.json#/$defs/ComplaintDisposition" },
+    "reasonForPoliceContact": { "type": ["string", "null"], "description": "Reason for the police contact ('Reason for Police Contact')." },
+    "outcomeOfPoliceEncounter": { "type": ["string", "null"], "description": "Outcome of the police encounter ('Outcome Of Police Encounter') — e.g. arrest, summons, no action." },
+    "videoEvidence": { "type": ["boolean", "string", "null"], "description": "Whether video evidence was present ('Video Evidence')." },
+    "bwcEvidence": { "type": ["boolean", "string", "null"], "description": "Whether NYPD body-worn camera evidence was present ('BWC Evidence')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "asOfDate": { "type": ["string", "null"], "format": "date", "description": "Data snapshot date ('As Of Date')." }
+  },
+  "required": ["complaintId"],
+  "additionalProperties": false
+}

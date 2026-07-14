@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/law/schemas/legal-case.json",
+  "title": "LegalCase",
+  "description": "A civil litigation matter the NYC Law Department handled on behalf of the City. Canonical schema reconciling 'Case-Related Information About Civil Litigation' (pjgc-h7uv). Keyed on docket/index number. NOTE: this is the Law Department's own case index; the authoritative ledger of claims filed and settlement dollars is published separately by the Office of the Comptroller (ex6k-ym48), so payout figures here are the litigation-side view, not the citywide claims record.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/pjgc-h7uv",
+    "related_comptroller_claims": "https://data.cityofnewyork.us/d/ex6k-ym48",
+    "site": "https://www.nyc.gov/site/law/index.page"
+  },
+  "properties": {
+    "matterName": { "type": "string", "description": "Caption of the matter ('Matter Name')." },
+    "docketIndex": { "type": ["string", "null"], "description": "Trial-court docket / index number ('Docket/Index.')." },
+    "appDocket": { "type": ["string", "null"], "description": "Appellate docket number ('App Docket')." },
+    "courtName": { "type": ["string", "null"], "description": "Court of record ('Court Name')." },
+    "appCourt": { "type": ["string", "null"], "description": "Appellate court ('App Court')." },
+    "judge": { "type": ["string", "null"], "description": "Presiding judge ('Judge')." },
+    "division": { "type": ["string", "null"], "description": "Handling Law Department division ('LD Division')." },
+    "plaintiffsPetitionersFirms": { "type": ["string", "null"], "description": "Plaintiffs / petitioners and their firms ('Plaintiffs/Petitioners Firms')." },
+    "defendantsRespondentsFirms": { "type": ["string", "null"], "description": "Defendants / respondents and their firms ('Defendants/Respondents & Firms')." },
+    "disposition": { "type": ["string", "null"], "description": "How the matter closed ('Disposition')." },
+    "litStart": { "type": ["string", "null"], "format": "date", "description": "Litigation start date ('Lit Start')." },
+    "closedDate": { "type": ["string", "null"], "format": "date", "description": "Close date ('Closed Date')." },
+    "leadBbl": { "type": ["string", "null"], "description": "Lead property Borough-Block-Lot, where the matter concerns a property ('Lead BBL')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "totalCityPayout": { "$ref": "_common.json#/$defs/Money", "description": "Total the City paid out on the matter ('Total City Payout AMT')." },
+    "totalCityReceived": { "$ref": "_common.json#/$defs/Money", "description": "Total the City received ('Total City Received AMT')." },
+    "totalDisposition": { "$ref": "_common.json#/$defs/Money", "description": "Total disposition amount ('Total Disposition AMT')." },
+    "totalExpenses": { "$ref": "_common.json#/$defs/Money", "description": "Total litigation expenses ('Total Expenses')." }
+  },
+  "required": ["matterName"],
+  "additionalProperties": false
+}

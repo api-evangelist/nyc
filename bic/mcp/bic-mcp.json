@@ -1,0 +1,180 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces BIC's open regulatory registry (licensees, registrants, wholesale-market businesses, fleet vehicles, violations, complaints) and adds apply_for_license — the net-new write workflow locked today inside the Salesforce Experience Cloud portal.",
+    "openapi": "../openapi/bic.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.bic",
+    "title": "NYC Business Integrity Commission (BIC)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the New York City Business Integrity Commission — trade waste hauler licensees, broker/self-hauler/construction-and-demolition registrants, public wholesale-market businesses (Hunts Point, Fulton Fish), the licensee/registrant vehicle fleet, issued violations, and complaints from NYC Open Data, plus the net-new ability to apply for and track a trade waste license/registration that today lives only in the Salesforce Experience Cloud portal.",
+    "instructions": "Use find_licensees / get_licensee to locate trade waste hauler licensees by borough, council district, or free text, and find_registrants for broker, self-hauler, and construction-and-demolition registrations. find_market_businesses covers the public wholesale markets. find_vehicles (and get_licensee_vehicles) returns BIC-plated hauler fleet detail including side-guard compliance. find_violations and find_complaints answer enforcement and integrity questions about a given BIC NUMBER. apply_for_license (net-new) submits a trade waste license/registration/exemption application; it requires an authenticated applicant and mutates state — confirm the industry, application type, and applicant identity with the user before submitting. All registry results are point-in-time Open Data snapshots (see EXPORT DATE)."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_licensees",
+      "title": "Find Licensees",
+      "description": "Search BIC trade waste hauler licensees by borough, application type, renewal, council district, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "applicationType": { "type": "string" },
+          "renewal": { "type": "boolean" },
+          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/licensee.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLicensees"
+    },
+    {
+      "name": "get_licensee",
+      "title": "Get Licensee",
+      "description": "Fetch a trade waste hauler licensee (names, services, dates, geography) by BIC number.",
+      "inputSchema": { "type": "object", "properties": { "bicNumber": { "type": "string" } }, "required": ["bicNumber"] },
+      "outputSchema": { "$ref": "../schemas/licensee.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getLicensee"
+    },
+    {
+      "name": "get_licensee_vehicles",
+      "title": "Get Licensee Vehicles",
+      "description": "List the BIC-plated fleet vehicles operated under a BIC account.",
+      "inputSchema": { "type": "object", "properties": { "bicNumber": { "type": "string" } }, "required": ["bicNumber"] },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/vehicle.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getLicenseeVehicles"
+    },
+    {
+      "name": "find_registrants",
+      "title": "Find Registrants",
+      "description": "Search BIC registrants (trade waste broker, self-hauler, construction & demolition) by industry, borough, renewal, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "industry": { "type": "string", "enum": ["Trade Waste Broker", "Self Hauler", "Construction & Demolition"] },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "renewal": { "type": "boolean" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/registrant.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listRegistrants"
+    },
+    {
+      "name": "find_market_businesses",
+      "title": "Find Wholesale Market Businesses",
+      "description": "List businesses operating in NYC's public wholesale markets (Hunts Point Produce/Meat, Fulton Fish) by market, borough, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "market": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/market-business.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listMarketBusinesses"
+    },
+    {
+      "name": "find_vehicles",
+      "title": "Find Fleet Vehicles",
+      "description": "Search the licensee/registrant hauler fleet by BIC number, active status, side-guard compliance, or fuel type.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bicNumber": { "type": "string" },
+          "active": { "type": "boolean" },
+          "hasSideGuard": { "type": "boolean" },
+          "fuelType": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/vehicle.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listVehicles"
+    },
+    {
+      "name": "find_violations",
+      "title": "Find Violations",
+      "description": "Search BIC-issued violations by BIC number, violation type, disposition, or date range — fines, rule codes, and OATH/settlement outcomes.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bicNumber": { "type": "string" },
+          "typeOfViolation": { "type": "string" },
+          "violationDisposition": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/violation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listViolations"
+    },
+    {
+      "name": "find_complaints",
+      "title": "Find Complaints & Inquiries",
+      "description": "Search complaints and inquiries about BIC-regulated accounts by BIC number, industry type, status, or borough.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bicNumber": { "type": "string" },
+          "industryType": { "type": "string" },
+          "status": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/complaint.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listComplaints"
+    },
+    {
+      "name": "list_my_applications",
+      "title": "List My Applications",
+      "description": "List the authenticated applicant's own trade waste license applications and their decisions — today visible only inside the Salesforce Experience Cloud portal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "applicationStatus": { "type": "string", "enum": ["Submitted", "Under Review", "Additional Info Requested", "Approved", "Denied", "Withdrawn"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/trade-waste-license-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listApplications",
+      "x-auth": "user"
+    },
+    {
+      "name": "apply_for_license",
+      "title": "Apply for a Trade Waste License",
+      "description": "Submit a BIC trade waste license, registration, or exemption application (apply). NET-NEW workflow with no public API today — it lives only in the Salesforce Experience Cloud portal (bicportal.nyc.gov) or on paper. Requires an authenticated applicant. Mutates state — confirm industry, application type, and applicant identity first.",
+      "inputSchema": { "$ref": "../schemas/trade-waste-license-application.json" },
+      "outputSchema": { "$ref": "../schemas/trade-waste-license-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createApplication",
+      "x-auth": "user"
+    }
+  ]
+}

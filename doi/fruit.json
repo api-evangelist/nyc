@@ -1,0 +1,135 @@
+{
+  "domain": "doi",
+  "agency": "New York City Department of Investigation (DOI)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/doi (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace). Followed the 'Report Corruption' → 'Submit Report Online' path to its host — a third-party Kaseware intake portal (app.kaseware.us/public/#NYCDOI/..., Cloudflare-fronted, title 'Kaseware Portal'). Confirmed DOI's public reports are PDFs served from nyc.gov/assets/doi/reports/pdf/<year>/. Verified the NYC Open Data agency label 'Department of Investigation (DOI)' via the Socrata Discovery API and pulled all 4 assets with column schemas.",
+  "related_domains": ["app.kaseware.us", "data.cityofnewyork.us", "portal.311.nyc.gov", "nyc.gov/site/nypd"],
+  "headline_findings": [
+    "DOI is New York City's Inspector General, but its core work product — public investigation reports and reform recommendations — is published ONLY as PDFs (nyc.gov/assets/doi/reports/pdf/<year>/), with no structured Open Data twin and no content API.",
+    "DOI's four Open Data datasets are not its investigations: they are dominated by City Marshal oversight — executed Evictions (6z8x-wfk4, ~237k views, DOI's most-viewed asset) and City Marshals Revenue — plus the Policy & Procedure Recommendations tracker and monthly performance indicators.",
+    "The single most important inbound transaction — reporting fraud, waste, or corruption — runs through a THIRD-PARTY vendor form: Kaseware (app.kaseware.us), a case-management SaaS, with phone/fax/mail as fallbacks. There is no API.",
+    "The one genuinely structured investigative-output twin is the PPR Portal (jstn-jaut): DOI's recommendations to agencies plus acceptance and implementation status.",
+    "Net-new write surface: file a corruption complaint (CorruptionComplaint) — the tip that starts every investigation, today locked in the Kaseware portal. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "4 DOI datasets; SODA /resource/<id>.json endpoints. Mostly City Marshal oversight (evictions, revenue) plus PPR recommendations and performance indicators — not the investigations themselves." },
+    { "endpoint": "app.kaseware.us/public/#NYCDOI/...", "type": "complaint intake portal (case-management SaaS)", "owner": "DOI (on Kaseware, Cloudflare-fronted)", "public": "public web form, no API", "note": "The 'Submit Report Online' corruption-complaint form. Third-party Kaseware Portal SPA; no JSON/OpenAPI surface. This is the net-new write gap." },
+    { "endpoint": "www.nyc.gov/site/doi", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "content only; Akamai edge, nginx, Livesite v22, Dynatrace RUM. Public reports served as static PDFs under /assets/doi/reports/pdf/. No content API." },
+    { "endpoint": "portal.311.nyc.gov", "type": "citywide service request", "owner": "NYC (OTI/311)", "public": "web/app", "note": "referenced as an alternate reporting channel for some complaint types." }
+  ],
+  "fruit": [
+    {
+      "name": "Public Investigation Reports",
+      "type": "PDF report library",
+      "entity": "PublicReport",
+      "url": "https://www.nyc.gov/site/doi/newsroom/public-reports-current.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "DOI's core work product — investigative findings and reform recommendations. Published only as PDFs under /assets/doi/reports/pdf/<year>/ (e.g. 2025 Annual Anti-Corruption Report, the NYCHA vacant-apartment reclamation report, OIG-NYPD annual reports). No structured data, no API — the central finding."
+    },
+    {
+      "name": "Policy & Procedure Recommendations (PPR)",
+      "type": "data table",
+      "entity": "PolicyRecommendation",
+      "url": "https://data.cityofnewyork.us/d/jstn-jaut",
+      "count": "PPR Portal",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Policy and Procedure Recommendations (PPR) Portal jstn-jaut (7c)"],
+      "notes": "The one genuinely structured investigative-output twin: recommendations DOI issues to agencies, with acceptance status, agency-reported status, and implementation status/date."
+    },
+    {
+      "name": "Evictions (City Marshal oversight)",
+      "type": "data table + geography",
+      "entity": "Eviction",
+      "url": "https://data.cityofnewyork.us/d/6z8x-wfk4",
+      "count": "~237k views",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Evictions 6z8x-wfk4 (20c)"],
+      "notes": "DOI's most-viewed dataset by far. Executed residential/commercial evictions by City Marshals (the officials DOI appoints and oversees). Full NYC geography spine (BBL, BIN, census tract, council district, NTA, lat/long)."
+    },
+    {
+      "name": "City Marshals Revenue",
+      "type": "data table",
+      "entity": "MarshalRevenue",
+      "url": "https://data.cityofnewyork.us/d/7ewi-9cdf",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["City Marshals Revenue 7ewi-9cdf (5c)"],
+      "notes": "Annual fee, poundage, assessment fee, and net income per marshal — DOI's financial oversight of the City Marshals it regulates."
+    },
+    {
+      "name": "Monthly Performance Management Reports",
+      "type": "data table",
+      "entity": "PerformanceIndicator",
+      "url": "https://data.cityofnewyork.us/d/i8ua-bnkj",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Monthly Performance Management Reports i8ua-bnkj (3c)"],
+      "notes": "DOI operational metrics reported to the Mayor's Office of Operations — includes corruption-lecture counts and customer-service indicators."
+    },
+    {
+      "name": "Report Corruption (online complaint)",
+      "type": "intake form (vendor SaaS)",
+      "entity": "CorruptionComplaint",
+      "url": "https://app.kaseware.us/public/#NYCDOI/eab8c602-12d6-440f-9146-1fa002ad8e05",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The 'Submit Report Online' path from nyc.gov/site/doi/report/report-corruption. Runs on Kaseware, a third-party case-management SaaS; no API. The net-new WRITE surface for this domain — the tip that starts every investigation."
+    },
+    {
+      "name": "Whistleblower / EO-16 reporting obligation",
+      "type": "workflow (vendor/phone)",
+      "entity": "CorruptionComplaint",
+      "url": "https://www.nyc.gov/site/doi/report/report-corruption.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "City employees must report allegations of corruption to DOI (Executive Order 16); the City's Whistleblower Law protects against retaliation. Same Kaseware/phone/fax/mail channels — no machine-readable path."
+    },
+    {
+      "name": "OIG-NYPD complaint",
+      "type": "intake (vendor/phone)",
+      "entity": "CorruptionComplaint",
+      "url": "https://www.nyc.gov/site/doi/oignypd/web/oignypd.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Office of the Inspector General for the NYPD routes complaints through the same Report-Corruption channels — a specialized flavor of the net-new CorruptionComplaint write surface."
+    }
+  ],
+  "meta": {
+    "short": "NYC Investigation (DOI)",
+    "verb": "Digitize",
+    "platform": "NYC.gov 'Livesite' shared chassis (Akamai + nginx + Livesite v22 + Dynatrace) for the informational site; public reports are static PDFs under /assets/doi/reports/pdf/. The complaint-intake service layer is Kaseware, a third-party case-management SaaS (app.kaseware.us, Cloudflare-fronted) — a public web form with no API.",
+    "netnew": "CorruptionComplaint — file and track a fraud/waste/corruption tip (with anonymous filing and Whistleblower-Law protection), the transaction that starts every DOI investigation and today lives only in a vendor Kaseware form.",
+    "accent": "#7a5a4a",
+    "tagline": "The city's Inspector General publishes its investigations only as PDFs and takes its complaints through a third-party vendor form.",
+    "headline": "DOI's core outputs — public investigation reports and the corruption complaints that start them — have no structured, owned, or agent-native surface: the reports are PDFs and the intake is a Kaseware vendor form, so the work is to digitize both."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 2,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Modern shared NYC.gov Livesite chassis for the info site, but no DOI-owned application; the complaint service layer is a third-party vendor SaaS (Kaseware).",
+    "siteApi": "No content API; the site is HTML and the reports are static PDFs.",
+    "openData": "4 datasets — genuinely useful (Evictions is a ~237k-view asset) but mostly City Marshal oversight, not DOI's investigations.",
+    "coreData": "The core object — a public investigation report — is published only as PDF, never structured; PPR gives a partial structured recommendation twin.",
+    "writeApi": "None — filing a corruption complaint is a Kaseware vendor form plus phone/fax/mail.",
+    "agent": "No agent-native surface; no MCP, no clean OpenAPI, no structured report or complaint contract.",
+    "ownership": "DOI owns the marshal/eviction and PPR data (open), but its investigative reports are PDFs and its complaint intake is leased to a third-party vendor."
+  }
+}

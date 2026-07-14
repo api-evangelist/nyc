@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cchr/schemas/inquiry-statistic.json",
+  "title": "InquiryStatistic",
+  "description": "An aggregate count of inquiries received by the Commission from the public about incidents of discrimination and alleged violations of the City Human Rights Law, for a completed fiscal year, broken out by protected area. Canonical schema reconciling the 'Inquiries Received' Open Data dataset (395v-hkhg, 9 columns). AGGREGATE ONLY — no individual inquiry or complainant is ever published.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/395v-hkhg"
+  },
+  "properties": {
+    "period": { "$ref": "_common.json#/$defs/FiscalPeriod" },
+    "category": { "type": ["string", "null"], "description": "'Category' — grouping/segment within the fiscal-year report." },
+    "employment": { "type": ["integer", "null"], "description": "'Employment' inquiries." },
+    "housing": { "type": ["integer", "null"], "description": "'Housing' inquiries." },
+    "publicAccommodations": { "type": ["integer", "null"], "description": "'Public Accommodations' inquiries." },
+    "lendingPractices": { "type": ["integer", "null"], "description": "'Lending Practices' inquiries." },
+    "discriminatoryHarassment": { "type": ["integer", "null"], "description": "'Discriminatory Harassment' inquiries." },
+    "biasBasedProfiling": { "type": ["integer", "null"], "description": "'Bias-Based Profiling' inquiries." },
+    "grandTotal": { "type": ["integer", "null"], "description": "'Grand Total' inquiries for the row." }
+  },
+  "additionalProperties": false
+}

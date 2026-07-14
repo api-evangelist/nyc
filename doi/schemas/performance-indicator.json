@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doi/schemas/performance-indicator.json",
+  "title": "PerformanceIndicator",
+  "description": "A monthly DOI performance-management indicator value — the operational metrics DOI reports to the Mayor's Office of Operations (including corruption-lecture counts and customer-service measures). Canonical schema reconciling the 'Monthly Performance Management Reports' dataset (i8ua-bnkj).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/i8ua-bnkj"
+  },
+  "properties": {
+    "indicatorName": { "type": "string", "description": "'Indicator Name' (e.g. corruption lectures given, complaints received)." },
+    "value": { "type": ["number", "string", "null"], "description": "'Month' — the indicator value for the report period (published under a column named 'Month')." },
+    "reportMonth": { "type": ["string", "null"], "description": "'Report Month' — the period the value covers." }
+  },
+  "required": ["indicatorName"],
+  "additionalProperties": false
+}

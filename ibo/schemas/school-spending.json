@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ibo/schemas/school-spending.json",
+  "title": "SchoolSpending",
+  "description": "A long-form NYC public-school spending / education-indicator observation — one value for one category in one year. The normalized form of IBO's WIDE 'School Spending Since 1990' table (p26e-k6k9, one column per calendar year 1990–2017) and the 'NYC Public School Indicators' file (29nk-6u2k) / 'Education Indicators' interactive. Covers the SchoolBudgetData entity hint.",
+  "type": "object",
+  "x-source": {
+    "opendata_school_spending": "https://data.cityofnewyork.us/d/p26e-k6k9",
+    "opendata_school_indicators": "https://data.cityofnewyork.us/d/29nk-6u2k",
+    "interactive": "https://www.ibo.nyc.gov/content/publications/education-indicators"
+  },
+  "properties": {
+    "category": { "type": "string", "description": "Spending or indicator category ('Category' row label, e.g. per-pupil spending, enrollment)." },
+    "year": { "type": ["integer", "null"], "minimum": 1980, "maximum": 2100, "description": "Year (School Spending columns are calendar/school years 1990–2017)." },
+    "value": { "$ref": "_common.json#/$defs/Money" },
+    "indicatorValue": { "type": ["number", "null"], "description": "For non-monetary education indicators (enrollment, counts, rates), the raw numeric value." },
+    "unit": { "type": ["string", "null"], "description": "Unit of the indicator value when not monetary (e.g. students, ratio, percent)." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "required": ["category"],
+  "additionalProperties": false
+}

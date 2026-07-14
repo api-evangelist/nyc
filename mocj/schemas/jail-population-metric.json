@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mocj/schemas/jail-population-metric.json",
+  "title": "JailPopulationMetric",
+  "description": "An aggregate criminal-justice-system indicator MOCJ analyzes and reports — jail population (daily census, admissions, discharges), arraignments, arrests, or re-arrest rates. AGGREGATE ONLY; never an individual. MOCJ does NOT own or publish these numbers as data: it produces PDF 'explainers' (WordPress data_reports / data_stories) and links out to the source agencies (DOC Daily Population in Custody, NYPD CompStat, NYS DCJS, Board of Correction). This schema is a proposed machine-readable shape for the metrics that today exist only inside those explainers and other agencies' dashboards.",
+  "type": "object",
+  "x-source": {
+    "site": "https://criminaljustice.cityofnewyork.us/system-data/",
+    "external_doc": "https://www.nyc.gov/site/doc/about/statistics.page",
+    "external_nypd": "https://compstat.nypd.gov/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "metric": {
+      "type": "string",
+      "description": "Which system indicator this row measures.",
+      "enum": [
+        "Jail Daily Population",
+        "Jail Admissions",
+        "Jail Discharges",
+        "Arrests",
+        "Arraignments",
+        "Pretrial Detention",
+        "Re-Arrest Rate",
+        "Supervised Release Enrollment"
+      ]
+    },
+    "value": { "type": ["number", "null"], "description": "The measured value (count or rate)." },
+    "unit": { "type": ["string", "null"], "description": "Unit of the value (persons, admissions, percent)." },
+    "periodStart": { "type": ["string", "null"], "format": "date", "description": "Start of the reporting period." },
+    "periodEnd": { "type": ["string", "null"], "format": "date", "description": "End of the reporting period." },
+    "periodType": { "type": ["string", "null"], "enum": ["Daily", "Monthly", "Quarterly", "Annual", "Point-in-time", null], "description": "Cadence of the metric." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "sourceAgency": {
+      "type": ["string", "null"],
+      "description": "The agency that actually owns the number — MOCJ convenes and analyzes but rarely owns it.",
+      "enum": ["DOC", "NYPD", "DCJS", "OCA/Courts", "BOC", "MOCJ", null]
+    },
+    "sourceReport": { "type": ["string", "null"], "description": "The MOCJ explainer / data report this metric was drawn from, if any." },
+    "notes": { "type": ["string", "null"], "description": "Methodology or caveat." }
+  },
+  "required": ["metric"],
+  "additionalProperties": false
+}

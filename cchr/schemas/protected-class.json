@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cchr/schemas/protected-class.json",
+  "title": "ProtectedClass",
+  "description": "A category protected from discrimination under the NYC Human Rights Law (Title 8 of the NYC Administrative Code), with the protected areas in which it applies. NET-NEW / reference: CCHR publishes the law and its protected classes only as prose and PDF on nyc.gov/site/cchr/law/the-law.page and the Legal Library — there is NO machine-readable list and NO Open Data twin. This schema turns that legal vocabulary into a structured, referenceable resource.",
+  "type": "object",
+  "x-source": {
+    "law": "https://www.nyc.gov/site/cchr/law/the-law.page",
+    "legal_library": "https://www.nyc.gov/site/cchr/law/legal-library.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "class": { "$ref": "_common.json#/$defs/ProtectedClass" },
+    "label": { "type": "string", "description": "Human-readable name of the protected class." },
+    "description": { "type": ["string", "null"], "description": "Plain-language description of what the class covers." },
+    "appliesTo": {
+      "type": "array",
+      "description": "The protected areas in which this class is covered (coverage varies — e.g. Source of Income applies to Housing).",
+      "items": { "$ref": "_common.json#/$defs/ProtectedArea" }
+    },
+    "statutoryCitation": {
+      "type": ["string", "null"],
+      "description": "Citation in the NYC Administrative Code (e.g. '§ 8-107')."
+    },
+    "guidanceUrl": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Link to CCHR legal enforcement guidance for this class, where published."
+    }
+  },
+  "required": ["class"],
+  "additionalProperties": false
+}

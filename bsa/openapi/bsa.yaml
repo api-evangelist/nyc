@@ -1,0 +1,378 @@
+openapi: 3.1.0
+info:
+  title: BSA API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Board of Standards & Appeals — publishing its
+    already-open case data (applications, resolutions, the legacy calendar index, pre-application
+    meetings) as coherent resources, adding the hearing calendar that has no dataset today, and
+    adding the missing write surface: filing a zoning variance / appeal, which today is a paper
+    PDF-form process with no online portal.
+  description: >-
+    Proposed API-first surface for the NYC Board of Standards & Appeals (BSA), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/bsa and its records/search surfaces.
+
+
+    BSA publishes the STATUS and disposition of zoning cases generously — 4 NYC Open Data assets
+    cover every application filed 1998 to present with its type (BZ variance/special-permit, BZY
+    extension, SOC amendment, Appeal), premise, zoning district, status (Granted / Denied /
+    Withdrawn / Dismissed), and a link to the decision PDF; a legacy calendar index reaches back
+    to 1916; and pre-application meetings are logged. But the two things a property owner actually
+    DOES have no machine-readable surface at all: **filing** a case (there is no online application
+    portal — applicants download PDF forms and file on paper) and **tracking the hearing calendar**
+    (published only as HTML/PDF).
+
+
+    This contract does three things: (1) presents the open case datasets as one clean resource
+    model, (2) publishes the hearing calendar as a resource, and (3) adds the one net-new **write**
+    workflow — filing a **variance application** (or special permit / extension / appeal) — that
+    today exists only as a paper PDF-form intake.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.bsa.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Applications
+    description: BSA applications / cases and their status.
+  - name: Resolutions
+    description: Written decisions / resolutions of the Board.
+  - name: Hearings
+    description: The public hearing calendar (no Open Data twin today).
+  - name: PreApplication
+    description: Pre-application meetings with Board staff.
+  - name: ZoningLots
+    description: Properties / zoning lots that are the subject of BSA cases, including the legacy calendar index back to 1916.
+  - name: VarianceApplications
+    description: File and track a variance / special permit / extension / appeal (read + write). The net-new surface, today a paper PDF-form process with no online portal.
+
+paths:
+  /applications:
+    get:
+      operationId: listApplications
+      summary: List / search BSA applications (cases)
+      tags: [Applications]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: application
+          in: query
+          description: Application/case type.
+          schema: { type: string, enum: [BZ, BZY, SOC, Appeal, S, Compliance, Other] }
+        - name: status
+          in: query
+          schema: { type: string, enum: [Granted, Denied, Withdrawn, Dismissed, Pending] }
+        - name: zoningDistrict
+          in: query
+          schema: { type: string }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/application.json' } }
+  /applications/{calendar}:
+    get:
+      operationId: getApplication
+      summary: Get an application by calendar number
+      tags: [Applications]
+      parameters:
+        - name: calendar
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /applications/{calendar}/resolution:
+    get:
+      operationId: getApplicationResolution
+      summary: Get the resolution (decision) for an application
+      tags: [Resolutions]
+      parameters:
+        - name: calendar
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The resolution.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/resolution.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /resolutions:
+    get:
+      operationId: listResolutions
+      summary: Search BSA resolutions (decisions)
+      tags: [Resolutions]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Granted, Denied, Withdrawn, Dismissed] }
+        - name: application
+          in: query
+          schema: { type: string, enum: [BZ, BZY, SOC, Appeal, S] }
+        - $ref: '#/components/parameters/borough'
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of resolutions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/resolution.json' } }
+
+  /hearings:
+    get:
+      operationId: listHearings
+      summary: List the public hearing calendar
+      description: Publishes the hearing calendar that today exists only as HTML/PDF on nyc.gov.
+      tags: [Hearings]
+      parameters:
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - name: session
+          in: query
+          schema: { type: string, enum: [Public Hearing, Continued Hearing, Decision, Special Order Calendar] }
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of hearing calendar items.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/hearing.json' } }
+
+  /pre-application-meetings:
+    get:
+      operationId: listPreApplicationMeetings
+      summary: List pre-application meetings
+      tags: [PreApplication]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of pre-application meetings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/pre-application-meeting.json' } }
+
+  /zoning-lots:
+    get:
+      operationId: listZoningLots
+      summary: Search properties / zoning lots with BSA cases (incl. legacy index back to 1916)
+      tags: [ZoningLots]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: block
+          in: query
+          schema: { type: string }
+        - name: lot
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of zoning lots.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/zoning-lot.json' } }
+
+  /variance-applications:
+    get:
+      operationId: listVarianceApplications
+      summary: List the authenticated filer's variance / appeal applications
+      description: Reads the filer's own submitted BSA applications and their status — today only trackable by contacting BSA, since there is no online portal.
+      tags: [VarianceApplications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Under Review, Deficient, Accepted, Calendared, Granted, Denied, Withdrawn, Dismissed] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the filer's applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/variance-application.json' } }
+    post:
+      operationId: createVarianceApplication
+      summary: File a variance / special permit / extension / appeal
+      description: >-
+        The net-new write surface — an API for filing a BSA case, replacing the paper PDF-form
+        intake. Provide the relief sought, the ZR/GCL section, the premises, the applicant, and the
+        required exhibits. BSA assigns the calendar number and dockets the case.
+      tags: [VarianceApplications]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/variance-application.json' }
+      responses:
+        '201':
+          description: Application filed.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/variance-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /variance-applications/{applicationId}:
+    get:
+      operationId: getVarianceApplication
+      summary: Get a filed variance / appeal application
+      tags: [VarianceApplications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/variance-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Application: { $ref: '../schemas/application.json' }
+    Resolution: { $ref: '../schemas/resolution.json' }
+    Hearing: { $ref: '../schemas/hearing.json' }
+    PreApplicationMeeting: { $ref: '../schemas/pre-application-meeting.json' }
+    ZoningLot: { $ref: '../schemas/zoning-lot.json' }
+    VarianceApplication: { $ref: '../schemas/variance-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

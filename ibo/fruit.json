@@ -1,0 +1,138 @@
+{
+  "domain": "ibo",
+  "agency": "New York City Independent Budget Office (IBO)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting). IBO's own legacy domain ibo.nyc.ny.us 301-redirects to www.ibo.nyc.gov, a client-side SPA on the NYC.gov 'Content API v2' chassis (Akamai edge, nginx origin, Dynatrace/ruxit RUM, WebTrends analytics). Every route serves the same 36 KB shell; content is loaded by jQuery from apps.nyc.gov/content-api/v2 (custom-contents + nav). Confirmed that undocumented content API returns ~1,145 structured publications. Verified the NYC Open Data agency label 'NYC Independent Budget Office (IBO)' via the Socrata Discovery API and pulled all 20 assets with columns; the task-suggested label 'Independent Budget Office (IBO)' returns zero — the real label is prefixed 'NYC'.",
+  "related_domains": ["apps.nyc.gov", "data.cityofnewyork.us", "www.nyc.gov", "ibomap.maps.arcgis.com", "airtable.com", "e.infogram.com"],
+  "headline_findings": [
+    "IBO gave up its own domain: the legacy ibo.nyc.ny.us now 301-redirects to www.ibo.nyc.gov — the 'Independent' Budget Office moved its public identity onto the shared NYC.gov chassis.",
+    "The site is a client-side SPA on the NYC.gov 'Content API v2' platform (Akamai/nginx/Dynatrace/WebTrends). Every path returns the same shell; content is fetched by jQuery from a real but UNDOCUMENTED JSON API at apps.nyc.gov/content-api/v2 — a third distinct NYC.gov platform after NYCHA's Livesite.",
+    "IBO's product is analysis, and ~1,145 publications (reports, testimony, letters, budget options, explainers, interactives) already flow through that content API with structured metadata (title, date, topic, publication type, fiscal year, author) — but there is no documented, versioned, agent-native contract over it.",
+    "The 20 IBO Open Data datasets are WIDE and pivoted: one row per line-item, one column per fiscal year ('FY 1980' … 'FY 2020'). It is Excel-on-Socrata; a modern API would pivot to long-form (series, lineItem, fiscalYear, value).",
+    "As a reference/analysis agency, IBO has NO citizen transaction — no payments, permits, or applications. Its single interactive input is 'Ask IBO' (a data/analysis request), today a web form / email to info@ibo.nyc.gov with no API. That is the net-new WRITE surface (DataRequest).",
+    "Data-viz is outsourced: interactives embed Airtable, ArcGIS Online (ibomap.maps.arcgis.com), and Infogram; site search is a Google Custom Search. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "apps.nyc.gov/content-api/v2/custom-contents/ibo", "type": "content CMS API", "owner": "NYC (OTI) — NYC.gov Content API v2", "public": "public JSON, undocumented", "note": "Backs the SPA. Returns ~1,145 IBO publications with structured metadata (Title, Publication Date, Topics, Publication Type, Fiscal Year, Author) plus a /nav/ibo tree. Real machine-readable API but no OpenAPI, no versioned consumer contract." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "20 IBO datasets under label 'NYC Independent Budget Office (IBO)'. SODA /resource/<id>.json endpoints. Fiscal time-series, mostly WIDE (one column per fiscal year)." },
+    { "endpoint": "www.ibo.nyc.gov", "type": "informational SPA", "owner": "NYC.gov Content API v2 platform", "public": "html shell", "note": "Client-side jQuery/Bootstrap SPA; every route returns the same 36 KB shell. Formerly ibo.nyc.ny.us (301-redirect)." },
+    { "endpoint": "ibomap.maps.arcgis.com", "type": "mapping (ArcGIS Online)", "owner": "Esri (vendor)", "public": "embed", "note": "Map interactives embedded via CSP frame-src." },
+    { "endpoint": "airtable.com", "type": "interactive data tables", "owner": "Airtable (vendor)", "public": "embed", "note": "Some IBO interactives are Airtable embeds — data outside IBO's own contract." },
+    { "endpoint": "e.infogram.com", "type": "chart embeds", "owner": "Infogram (vendor)", "public": "embed", "note": "Chart/infographic embeds." },
+    { "endpoint": "cse.google.com / adsensecustomsearchads.com", "type": "site search", "owner": "Google (vendor)", "public": "embed", "note": "On-site search is a Google Custom Search Engine — search rented, not owned." },
+    { "endpoint": "Dynatrace (ruxit) + WebTrends", "type": "RUM / analytics beacons", "owner": "Dynatrace / WebTrends (vendors)", "public": "vendor", "note": "ruxitagentjs injection + webtrends_v10.js on every page." }
+  ],
+  "fruit": [
+    {
+      "name": "IBO Publications (reports, testimony, letters, budget options, explainers, interactives)",
+      "type": "document library",
+      "entity": "Publication",
+      "url": "https://www.ibo.nyc.gov/content/publications",
+      "count": "~1,145 publications",
+      "machine_readable": "NYC.gov Content API v2 (undocumented)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "IBO's actual product. Already served with structured metadata by apps.nyc.gov/content-api/v2/custom-contents/ibo/IBO-Publications, but no documented/versioned/agent-native contract and no Open Data twin. Types: Report (688), Interactive (201), Testimony (158), Letter (79), Press Release (7), Budget Options (5), Explainer (4), Dataset (3)."
+    },
+    {
+      "name": "Fiscal data tables (catalog)",
+      "type": "data catalog",
+      "entity": "FiscalDataTable",
+      "url": "https://data.cityofnewyork.us/browse?Dataset-Information_Agency=NYC+Independent+Budget+Office+%28IBO%29",
+      "count": "20 datasets",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["All 20 IBO datasets — see opendata-ibo.json"],
+      "notes": "The 20 IBO Socrata assets as one uniform catalog rather than 20 opaque four-by-fours. Most are WIDE (one column per fiscal year)."
+    },
+    {
+      "name": "Revenue & spending, capital, debt, positions (fiscal series)",
+      "type": "fiscal time-series",
+      "entity": "FiscalSeries",
+      "url": "https://data.cityofnewyork.us/d/7zhs-43jt",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Revenue And Spending Summary 7zhs-43jt (42c)", "Non-Tax Revenues ypbd-r4kg (42c)", "State & Federal Categorical Aid fu34-wamz (43c)", "Agency Expenditures cwjy-rrh3 (40c)", "Full Time Positions uaj7-9szf (42c)", "Capital Expenditures hukm-snmq (38c)", "Debt Outstanding 5i9t-mvdt (22c)", "Debt Service 6ggx-itps (22c)"],
+      "notes": "Eight parallel WIDE tables (one column per FY 1980–2020). Modeled as long-form (series, lineItem, fiscalYear, value). Covers the RevenueForecast and CapitalBudget entity hints."
+    },
+    {
+      "name": "School spending & education indicators",
+      "type": "fiscal time-series + interactive",
+      "entity": "SchoolSpending",
+      "url": "https://data.cityofnewyork.us/d/p26e-k6k9",
+      "machine_readable": "Open Data (SODA) + interactive",
+      "verified": true,
+      "opendata_match": ["School Spending Since 1990 p26e-k6k9 (29c)", "NYC Public School Indicators 29nk-6u2k (file)"],
+      "notes": "Per-category school spending by year (WIDE, one column per year 1990–2017) plus the Education Indicators interactive. The SchoolBudgetData entity hint."
+    },
+    {
+      "name": "Tax & income distribution by AGI band",
+      "type": "distributional data table",
+      "entity": "TaxDistribution",
+      "url": "https://data.cityofnewyork.us/d/ipc3-2nbm",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Personal Income by AGI Range ipc3-2nbm", "Income by Type and AGI Range gffu-ps8j", "Tax Liability by AGI Range 3vvi-fwjs", "Tax Credits/EITC by AGI Range nwet-nc6h", "Tax Revenue since FY1980 hdnu-nbrh (14c)"],
+      "notes": "Income, liability, and credits keyed on income group; plus tax-revenue lines by tax type. IBO's most-viewed datasets (Income by Type, ~12k views)."
+    },
+    {
+      "name": "COVID-19 / federal stimulus spending trackers",
+      "type": "spending tracker",
+      "entity": "FiscalDataTable",
+      "url": "https://data.cityofnewyork.us/d/sg72-pis5",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Federal Stimulus (ARPA/CRRSAA) Tracker sg72-pis5", "COVID-19 Spending by Date ke6f-vhnd (48c)", "COVID-19 Cumulative Spending khqt-g67n", "COVID-19 Spending by Agency by Expense duk5-k5fk"],
+      "notes": "IBO's stimulus/COVID budget-and-spending trackers — the closest thing to live, current data in the corpus."
+    },
+    {
+      "name": "Budget 101 / NYC Budget Resources",
+      "type": "explainer content",
+      "entity": "Publication",
+      "url": "https://www.ibo.nyc.gov/content/budget-101",
+      "machine_readable": "NYC.gov Content API v2 (undocumented)",
+      "verified": true,
+      "opendata_match": [],
+      "notes": "The 'NYC Budget Resources' nav section (Budget 101 and explainers) — reference content served through the same content API."
+    },
+    {
+      "name": "Ask IBO (submit a data / analysis request)",
+      "type": "sign-up / request workflow",
+      "entity": "DataRequest",
+      "url": "https://www.ibo.nyc.gov/content/ask-ibo",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "IBO's ONE citizen transaction — a resident, journalist, or Council staffer asks a fiscal question. Today a web form / email to info@ibo.nyc.gov with no API and no Open Data twin. The net-new WRITE surface for this domain (there is no payment/permit/application to model)."
+    }
+  ],
+  "meta": {
+    "short": "NYC Independent Budget Office (IBO)",
+    "verb": "formalize",
+    "platform": "NYC.gov Content API v2 SPA (Akamai/nginx/Dynatrace/WebTrends); off legacy ibo.nyc.ny.us; 20 Socrata datasets; Airtable/ArcGIS/Infogram embeds",
+    "netnew": "DataRequest — an API for the 'Ask IBO' data/analysis request, today a web form / email only",
+    "accent": "#7a8a4a",
+    "tagline": "NYC's nonpartisan budget watchdog already runs a real content API and 20 open datasets, but neither has a documented, agent-native contract.",
+    "headline": "IBO's analysis flows through an undocumented NYC.gov content API and wide, Excel-shaped fiscal tables; the fruit is formalizing both into one owned contract plus the missing 'Ask IBO' write surface."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 2,
+    "openData": 2,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Modern-ish NYC.gov Content API v2 SPA, but client-side jQuery/Bootstrap; migrated off its own legacy .ny.us domain.",
+    "siteApi": "A real public JSON content API exists (apps.nyc.gov/content-api/v2) but is undocumented, unversioned, and not offered as a consumer contract.",
+    "openData": "20 machine-readable Socrata datasets, but WIDE/pivoted, historical, and awkward to consume; agency label is 'NYC ...(IBO)'.",
+    "coreData": "IBO's core product (~1,145 publications) is well-published via the content API, but the underlying analytical data (forecasts, models) stays in PDFs/interactives.",
+    "writeApi": "None — Ask IBO is a form/email; IBO has no transactional API surface at all.",
+    "agent": "No agent-native surface: no MCP, no OpenAPI, undocumented content API, search rented to Google.",
+    "ownership": "First-party over its publications and datasets on shared NYC.gov infra, but data-viz and search outsourced to Airtable/ArcGIS/Infogram/Google."
+  }
+}

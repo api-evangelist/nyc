@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oath/schemas/trial-case.json",
+  "title": "TrialCase",
+  "description": "A case before the OATH Trials Division — the tribunal's formal adjudications (agency disciplinary matters, license/contract disputes, etc.), distinct from the high-volume ECB summons hearings. Canonical schema reconciling the 'OATH Trials Division Case Status' dataset (y3hw-z6bm, 16 columns, monthly). Keyed on Case Number.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/y3hw-z6bm",
+    "site": "https://www.nyc.gov/site/oath/index.page"
+  },
+  "properties": {
+    "caseNumber": { "type": "string", "description": "'Case Number' — primary key." },
+    "name": { "type": ["string", "null"], "description": "'Name' — case caption / respondent." },
+    "filingAgencyCaseId": { "type": ["string", "null"], "description": "'Filing Agency Case ID'." },
+    "type": { "type": ["string", "null"], "description": "'Type' of proceeding." },
+    "category": { "type": ["string", "null"], "description": "'Category'." },
+    "subcategory": { "type": ["string", "null"], "description": "'Subcategory'." },
+    "premises": { "type": ["string", "null"], "description": "'Premises' — location at issue." },
+    "opened": { "type": ["string", "null"], "format": "date", "description": "'Opened'." },
+    "originalConference": { "type": ["string", "null"], "format": "date", "description": "'Original Conference'." },
+    "originalTrialDate": { "type": ["string", "null"], "format": "date", "description": "'Original Trial Date'." },
+    "trialConcluded": { "type": ["string", "null"], "format": "date", "description": "'Trial Concluded'." },
+    "reportIssued": { "type": ["string", "null"], "format": "date", "description": "'Report Issued' — Hearing Officer's report & recommendation." },
+    "dispoCode": { "type": ["string", "null"], "description": "'Dispo Code' — disposition." },
+    "agencyHeadDecision": { "type": ["string", "null"], "description": "'Agency Head Decision' — the final decision by the referring agency's head." },
+    "appealActionDate": { "type": ["string", "null"], "format": "date", "description": "'Appeal Action Date'." },
+    "recordClosed": { "type": ["string", "null"], "format": "date", "description": "'Record Closed'." }
+  },
+  "required": ["caseNumber"],
+  "additionalProperties": false
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bsa/schemas/resolution.json",
+  "title": "Resolution",
+  "description": "A BSA decision / written resolution — the Board's disposition of a case, issued as a written resolution. Today each resolution is published only as a linked PDF (/assets/bsa/downloads/pdf/decisions/<calendar>.pdf) reachable from the 'BSA Applications Status' dataset (yvxd-uipr) 'decisions_url'; the reasoning, conditions, and vote are locked in the document. This schema models the decision as a structured resource keyed on the calendar number.",
+  "type": "object",
+  "x-source": {
+    "opendata_status": "https://data.cityofnewyork.us/d/yvxd-uipr",
+    "decision_pdf_pattern": "https://www.nyc.gov/assets/bsa/downloads/pdf/decisions/<calendar>.pdf",
+    "site": "https://www.nyc.gov/site/bsa/resolutions/search-for-resolutions.page",
+    "structured": false
+  },
+  "properties": {
+    "calendar": { "type": "string", "description": "BSA calendar number of the decided case ('calendar')." },
+    "application": { "$ref": "_common.json#/$defs/ApplicationType" },
+    "status": { "$ref": "_common.json#/$defs/CaseStatus" },
+    "decisionDate": { "type": ["string", "null"], "format": "date", "description": "Date the Board voted ('date')." },
+    "resolutionUrl": { "type": ["string", "null"], "format": "uri", "description": "URL of the resolution PDF ('decisions_url')." },
+    "section": { "type": ["string", "null"], "description": "ZR / GCL section on which the Board acted ('section')." },
+    "conditions": {
+      "type": ["array", "null"],
+      "description": "Conditions imposed on a grant (parsed from the resolution text; not in Open Data today).",
+      "items": { "type": "string" }
+    },
+    "term": { "type": ["string", "null"], "description": "Term of the grant, where applicable (e.g. a time-limited variance)." },
+    "property": { "$ref": "_common.json#/$defs/PropertyReference" }
+  },
+  "required": ["calendar"],
+  "additionalProperties": false
+}

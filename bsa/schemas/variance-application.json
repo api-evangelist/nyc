@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bsa/schemas/variance-application.json",
+  "title": "VarianceApplication",
+  "description": "A filing of a new BSA case — a zoning variance, special permit, extension of time, or appeal of a DOB determination. NET-NEW: there is NO online application portal and NO Open Data twin for filing. Today applicants download PDF forms (bz_form.pdf, appeal_form.pdf, bzy_form.pdf, soc_form.pdf, etc.), assemble checklists and drawings, and file on paper; only the resulting case STATUS later appears in Open Data. This schema serves both the read surface (list/get a filer's own submitted applications) and the write surface (file a variance/appeal).",
+  "type": "object",
+  "x-source": {
+    "forms": "https://www.nyc.gov/site/bsa/applications/application-guidelines-forms.page",
+    "filing_instructions": "https://www.nyc.gov/assets/bsa/downloads/pdf/forms_instructions/bsa_filing_instructions.pdf",
+    "opendata": null,
+    "opendata_gap": true,
+    "online_portal": false
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned filing / intake identifier. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "calendar": {
+      "type": ["string", "null"],
+      "description": "BSA calendar number assigned once the case is docketed. Assigned by BSA, not the filer.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Under Review", "Deficient", "Accepted", "Calendared", "Granted", "Denied", "Withdrawn", "Dismissed", null],
+      "description": "Filing / case lifecycle status. Set by BSA, not the filer.",
+      "readOnly": true
+    },
+    "application": { "$ref": "_common.json#/$defs/ApplicationType" },
+    "section": { "type": ["string", "null"], "description": "Zoning Resolution / General City Law section relied upon, e.g. '72-21' (variance), '73-XX' (special permit), 'GCL 36' (appeal)." },
+    "reliefSought": { "type": "string", "description": "Narrative of the relief requested — the project and the waivers/permits sought." },
+    "property": { "$ref": "_common.json#/$defs/PropertyReference" },
+    "applicant": {
+      "type": "object",
+      "description": "The applicant / owner filing the case.",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": ["string", "null"], "enum": ["Owner", "Lessee", "Architect", "Attorney", "Expediter", "Other", null] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    },
+    "attachments": {
+      "type": ["array", "null"],
+      "description": "Required exhibits (application form, checklist, zoning analysis, drawings, radius map, CEQR/EAS, photographs).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string", "enum": ["ApplicationForm", "Checklist", "ZoningAnalysis", "Drawings", "RadiusMap", "CEQR", "Photographs", "AffidavitOfOwnership", "Other"] },
+          "url": { "type": ["string", "null"], "format": "uri" },
+          "filename": { "type": ["string", "null"] }
+        },
+        "required": ["kind"],
+        "additionalProperties": false
+      }
+    },
+    "preApplicationMeetingDate": { "type": ["string", "null"], "format": "date", "description": "Date of any prior pre-application meeting with Board staff." },
+    "filedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["application", "reliefSought", "property", "applicant"],
+  "additionalProperties": false
+}

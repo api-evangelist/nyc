@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bic/schemas/violation.json",
+  "title": "Violation",
+  "description": "A violation issued by BIC against a regulated account — an enforcement action carrying a fine and an OATH/settlement disposition. Canonical schema reconciling the 'BIC Issued Violations' dataset (upii-frjc, 31 columns). Joined to the cited account by BIC NUMBER; identified by VIOLATION NUMBER.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/upii-frjc",
+    "site": "https://www.nyc.gov/site/bic/complaints/violations.page"
+  },
+  "properties": {
+    "violationNumber": { "type": "string", "description": "'VIOLATION NUMBER' — primary key." },
+    "bicNumber": { "type": ["string", "null"], "description": "'BIC NUMBER' — cited account." },
+    "accountName": { "type": ["string", "null"], "description": "'ACCOUNT NAME'." },
+    "accountType": { "type": ["string", "null"], "description": "'ACCOUNT TYPE'." },
+    "typeOfViolation": { "type": ["string", "null"], "description": "'TYPE OF VIOLATION'." },
+    "ruleCode": { "type": ["string", "null"], "description": "'RULE CODE'." },
+    "descriptionOfRule": { "type": ["string", "null"], "description": "'DESCRIPTION OF RULE'." },
+    "numberOfCounts": { "type": ["integer", "null"], "description": "'NUMBER OF COUNTS'." },
+    "violationPhase": { "type": ["string", "null"], "description": "'VIOLATION PHASE'." },
+    "violationDisposition": { "type": ["string", "null"], "description": "'VIOLATION DISPOSITION'." },
+    "earlySettlement": { "type": ["boolean", "string", "null"], "description": "'EARLY SETTLEMENT VIOLATION'." },
+    "fineAmount": { "type": ["number", "null"], "description": "'FINE AMOUNT'." },
+    "maximumFine": { "type": ["number", "null"], "description": "'MAXIMUM FINE'." },
+    "dateOfViolation": { "type": ["string", "null"], "format": "date", "description": "'DATE OF VIOLATION'." },
+    "dateViolationIssued": { "type": ["string", "null"], "format": "date", "description": "'DATE VIOLATION ISSUED'." },
+    "settlementDate": { "type": ["string", "null"], "format": "date", "description": "'SETTLEMENT DATE'." },
+    "dateFinePaid": { "type": ["string", "null"], "format": "date", "description": "'DATE FINE PAID'." },
+    "boroughOfViolation": { "$ref": "_common.json#/$defs/Borough" },
+    "account": {
+      "type": "object",
+      "description": "Address of the cited account at time of violation.",
+      "properties": {
+        "address": { "type": ["string", "null"], "description": "'VIOLATION ACCOUNT ADDRESS'." },
+        "city": { "type": ["string", "null"], "description": "'VIOLATION ACCOUNT CITY'." },
+        "state": { "type": ["string", "null"], "description": "'VIOLATION ACCOUNT STATE'." },
+        "postcode": { "type": ["string", "null"], "description": "'VIOLATION ACCOUNT POSTCODE'." }
+      },
+      "additionalProperties": false
+    },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "exportDate": { "type": ["string", "null"], "format": "date-time", "description": "'EXPORT DATE' — snapshot timestamp.", "readOnly": true }
+  },
+  "required": ["violationNumber"],
+  "additionalProperties": false
+}

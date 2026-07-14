@@ -1,0 +1,123 @@
+{
+  "domain": "oath",
+  "agency": "NYC Office of Administrative Trials & Hearings (OATH)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted the informational site nyc.gov/site/oath (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace) and the ECB Ticket Finder / Respond-to-a-Summons portal at a820-ecbticketfinder.nyc.gov/searchHome.action, identified as an Apache Struts 2 application on Oracle WebLogic (.action routing, X-ORACLE-DMS-ECID header, WebLogic '!' JSESSIONID, ISO-8859-1). Verified the NYC Open Data agency label 'Office of Administrative Trials and Hearings (OATH)' via the Socrata Discovery API and pulled both assets with column schemas.",
+  "related_domains": ["a820-ecbticketfinder.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/finance", "nyc.gov/site/buildings", "on1.nyc.gov"],
+  "meta": {
+    "short": "NYC Admin Trials & Hearings (OATH)",
+    "verb": "respond",
+    "platform": "NYC.gov Livesite (Akamai/nginx/Dynatrace) informational site + a legacy Apache Struts / Oracle WebLogic ECB Ticket Finder portal",
+    "netnew": "SummonsDispute — respond to / dispute a summons (request a hearing) via an owned API",
+    "accent": "#5a7a5a",
+    "tagline": "OATH publishes every ECB summons, hearing, and decision as open data, but the one thing a respondent needs to do — respond to a summons — is trapped in a legacy Struts portal with no API.",
+    "headline": "The adjudication data is wide open; the act of responding to a summons is locked in an Apache Struts / WebLogic portal."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 2,
+    "coreData": 3,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "shared NYC.gov Livesite CMS + a dated Apache Struts / Oracle WebLogic transaction portal",
+    "siteApi": "no content or site API; HTML only",
+    "openData": "only 2 datasets, but the flagship Hearings Division Case Status is huge and updated daily",
+    "coreData": "case-status data is exceptionally rich and machine-readable — every summons, charge, hearing, decision, penalty, and balance",
+    "writeApi": "responding to / disputing a summons has no API — Struts portal, mail, or in person only",
+    "agent": "no agent-native surface of any kind",
+    "ownership": "data on Tyler/Socrata; the respond-to-summons transaction on a vendor Struts/WebLogic stack"
+  },
+  "headline_findings": [
+    "OATH is a split domain: an informational NYC.gov site (Akamai/nginx/Livesite v22/Dynatrace) plus the ECB Ticket Finder / Respond-to-a-Summons portal (a820-ecbticketfinder.nyc.gov), a legacy Apache Struts 2 app on Oracle WebLogic (.action, X-ORACLE-DMS-ECID, WebLogic JSESSIONID) with no API.",
+    "The adjudication data is exceptionally OPEN: the 'OATH Hearings Division Case Status' dataset (jz4z-kudi, 74 columns, updated DAILY, ~400k lifetime views) publishes every ECB summons — charges, respondent, violation location, hearing, decision, penalty, and balance — plus 'OATH Trials Division Case Status' (y3hw-z6bm) for the tribunal side.",
+    "But the respondent SERVICE layer has no machine-readable surface: looking up and RESPONDING to a summons — dispute it, request or reschedule a hearing, submit a defense, reopen a default — is only possible through the legacy Struts portal, by mail, or in person.",
+    "OATH adjudicates but does not issue: the summonses come from DOB, DSNY, FDNY, DOHMH, DEP, DCWP and others; unpaid decisions become docketed judgments collected by the Department of Finance.",
+    "Net-new write surface: SummonsDispute — respond to / dispute a summons (request a hearing) — the single most common respondent transaction, with no API today. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "2 OATH datasets — Hearings Division Case Status (jz4z-kudi, 74c, daily) and Trials Division Case Status (y3hw-z6bm). SODA /resource/<id>.json endpoints. The one real, open OATH API — case-status data only." },
+    { "endpoint": "a820-ecbticketfinder.nyc.gov/searchHome.action", "type": "summons lookup / respond portal", "owner": "OATH (Apache Struts on Oracle WebLogic)", "public": "public UI, no API", "note": "Look up a summons by ticket number or respondent and respond/dispute it. Server-rendered Struts 2 (.action), Oracle WebLogic (X-ORACLE-DMS-ECID, JSESSIONID '!'), ISO-8859-1; no JSON/OpenAPI. search.action + getViolationbyID.action; form fields searchViolationObject.violationNo / respondentName / borough." },
+    { "endpoint": "www.nyc.gov/site/oath", "type": "informational site", "owner": "NYC.gov shared platform (Livesite v22)", "public": "html", "note": "content only — hearings, defaults, payments/penalties, reopen-a-default. Akamai edge, nginx, Dynatrace RUM. No content API." },
+    { "endpoint": "on1.nyc.gov", "type": "citywide account / SSO", "owner": "NYC (OTI)", "public": "login", "note": "NYC.gov ID / self-service sign-in umbrella." }
+  ],
+  "fruit": [
+    {
+      "name": "ECB Summonses (Hearings Division Case Status)",
+      "type": "data table",
+      "entity": "Summons",
+      "url": "https://data.cityofnewyork.us/d/jz4z-kudi",
+      "count": "millions of summonses",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["OATH Hearings Division Case Status jz4z-kudi (74c, daily)"],
+      "notes": "The core object. Every ECB summons with up to ten charges (code/section/description/amount), respondent, violation location (with Borough/Block/Lot), issuing agency, hearing, decision, penalty, and balance. Keyed on Ticket Number. OATH's most-viewed dataset (~400k)."
+    },
+    {
+      "name": "Hearings & Defaults",
+      "type": "workflow + data",
+      "entity": "Hearing",
+      "url": "https://www.nyc.gov/site/oath/hearings/hearings-and-defaults.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["OATH Hearings Division Case Status jz4z-kudi (Hearing Date/Time, Hearing Status, Scheduled Hearing Location, Hearing Result)"],
+      "notes": "Hearing schedule, status, and result carried inside the Hearings Division dataset; the informational page explains in-person/phone/online hearings and what a default means."
+    },
+    {
+      "name": "Decisions, Penalties & Payments",
+      "type": "data + transaction",
+      "entity": "Decision",
+      "url": "https://www.nyc.gov/site/oath/hearings/payments-penalties.page",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["OATH Hearings Division Case Status jz4z-kudi (Hearing Result, Decision Date, Penalty Imposed, Additional Penalties or Late Fees, Date Judgment Docketed, Balance Due, Paid Amount)"],
+      "notes": "The disposition, penalty, and docketed-judgment fields are open; actual payment is handed off to the Department of Finance and has no OATH API."
+    },
+    {
+      "name": "OATH Trials Division Cases",
+      "type": "data table",
+      "entity": "TrialCase",
+      "url": "https://data.cityofnewyork.us/d/y3hw-z6bm",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["OATH Trials Division Case Status y3hw-z6bm (16c, monthly)"],
+      "notes": "The tribunal side — agency disciplinary/licensing matters: Case Number, Type, Category, Filing Agency Case ID, conference/trial/report dates, dispo code, agency head decision, appeal."
+    },
+    {
+      "name": "Look up a summons (ECB Ticket Finder)",
+      "type": "lookup (portal)",
+      "entity": "Summons",
+      "url": "http://a820-ecbticketfinder.nyc.gov/searchHome.action",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Search a summons by ticket number or respondent name/address. Legacy Apache Struts / Oracle WebLogic UI; no API (the case-status data exists on Open Data, but this respondent-facing lookup does not)."
+    },
+    {
+      "name": "Respond to / dispute a summons (request a hearing)",
+      "type": "sign-up / dispute workflow",
+      "entity": "SummonsDispute",
+      "url": "http://a820-ecbticketfinder.nyc.gov/searchHome.action",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common respondent transaction — dispute a summons, request or reschedule a hearing, submit a written defense. No API and no Open Data twin; lives only in the Struts portal, by mail, or in person. The net-new WRITE surface for this domain."
+    },
+    {
+      "name": "Reopen a missed hearing (default) online",
+      "type": "workflow (portal)",
+      "entity": "SummonsDispute",
+      "url": "https://www.nyc.gov/site/oath/hearings/reopen-a-missed-hearing-default-online.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Ask OATH to reopen a defaulted summons and grant a new hearing — a variant of the SummonsDispute write surface (requestType = Reopen Default). Portal-only; no API."
+    }
+  ]
+}

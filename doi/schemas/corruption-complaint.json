@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doi/schemas/corruption-complaint.json",
+  "title": "CorruptionComplaint",
+  "description": "A complaint / tip reporting fraud, waste, corruption, or misconduct to the NYC Department of Investigation — DOI's single most important inbound transaction. NET-NEW: there is NO public API. Today the 'Submit Report Online' path is a third-party vendor intake form on Kaseware (app.kaseware.us/public/#NYCDOI/...), with phone, fax, and mail as fallbacks. This schema serves both the read surface (look up a complaint the reporter filed) and the write surface (file a complaint).",
+  "type": "object",
+  "x-source": {
+    "portal": "https://app.kaseware.us/public/#NYCDOI/eab8c602-12d6-440f-9146-1fa002ad8e05",
+    "site": "https://www.nyc.gov/site/doi/report/report-corruption.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "complaintId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned complaint / case-intake number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Received", "Under Review", "Referred", "Investigation Opened", "Closed - No Action", "Closed - Resolved", null],
+      "description": "Intake/triage status. Set by DOI, not the reporter.",
+      "readOnly": true
+    },
+    "allegationType": {
+      "type": "string",
+      "description": "Nature of the alleged wrongdoing.",
+      "enum": ["Corruption/Bribery", "Fraud", "Waste", "Conflict of Interest", "Abuse of Authority", "Theft/Embezzlement", "Nepotism/Favoritism", "Falsification of Records", "Time and Leave Abuse", "Other"]
+    },
+    "subjectAgency": { "type": ["string", "null"], "description": "City agency, vendor, or entity the allegation concerns." },
+    "subjects": {
+      "type": "array",
+      "description": "Individuals or entities alleged to be involved.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": ["string", "null"] },
+          "title": { "type": ["string", "null"] },
+          "agency": { "type": ["string", "null"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "description": { "type": "string", "description": "Free-text narrative of what happened, when, where, and who was involved." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "location": { "type": ["string", "null"], "description": "Where the alleged conduct took place." },
+    "occurredDate": { "type": ["string", "null"], "format": "date", "description": "Approximate date the conduct occurred or was observed." },
+    "isCityEmployee": { "type": ["boolean", "null"], "description": "Whether the reporter is a City employee (Executive Order 16 reporting obligation)." },
+    "whistleblowerProtectionRequested": { "type": "boolean", "default": false, "description": "Reporter invokes protection under the City's Whistleblower Law against retaliation." },
+    "anonymous": { "type": "boolean", "default": false, "description": "File without providing identifying contact details." },
+    "contact": {
+      "type": "object",
+      "description": "Reporter contact details (omit if anonymous).",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "attachments": {
+      "type": "array",
+      "description": "Supporting document/evidence references.",
+      "items": { "type": "string", "format": "uri" }
+    },
+    "receivedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["allegationType", "description"],
+  "additionalProperties": false
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doi/schemas/marshal-revenue.json",
+  "title": "MarshalRevenue",
+  "description": "Annual fee, poundage, and net-income figures for a NYC City Marshal — the financial-oversight record DOI publishes for the marshals it appoints and regulates. Canonical schema reconciling the 'City Marshals Revenue' dataset (7ewi-9cdf). Keyed on Marshal Last Name + Year.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/7ewi-9cdf",
+    "site": "https://www.nyc.gov/site/doi/offices/marshals-list.page"
+  },
+  "properties": {
+    "marshal": { "$ref": "_common.json#/$defs/MarshalReference" },
+    "year": { "type": ["integer", "null"], "description": "'Year'." },
+    "adjustedGrossFeeAndPoundage": { "type": ["number", "null"], "description": "'Adjusted Gross Fee & Poundage'." },
+    "assessmentFee": { "type": ["number", "null"], "description": "'Assessment Fee' paid to the City." },
+    "netIncomeMarshalOffice": { "type": ["number", "null"], "description": "'Net Income - Marshal's Office'." }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,131 @@
+{
+  "domain": "mocj",
+  "agency": "NYC Mayor's Office of Criminal Justice (MOCJ)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). MOCJ is a split domain: a thin informational stub on nyc.gov/site/criminaljustice (Akamai + nginx + NYC.gov 'Livesite' + Dynatrace/mPulse, most subpages 404) and the real office site at criminaljustice.cityofnewyork.us, fingerprinted as WordPress on WP Engine behind Cloudflare (x-powered-by: WP Engine; Kadence blocks; ACF; Contact Form 7; The Events Calendar; Yoast; Site Kit by Google). Enumerated the site's custom post types via its accidental wp/v2 REST API (programs 26, solicitation 25, notice 26, reports 26, data_reports 109, briefs 54, data_stories 6, team 92). Verified the NYC Open Data agency label 'Mayor's Office of Criminal Justice (MOCJ)' via the Socrata Discovery API — it returns exactly ONE dataset (Supervised Release Dockets, atne-2dki). Read the System Data page: MOCJ analyzes jail-population/re-arrest as PDF explainers and links out to DOC/NYPD/DCJS/BOC for the underlying numbers.",
+  "related_domains": ["data.cityofnewyork.us", "nyc.gov/site/doc", "compstat.nypd.gov", "nyc.gov/site/probation", "criminaljustice.ny.gov"],
+  "headline_findings": [
+    "MOCJ is a split domain: a thin nyc.gov/site/criminaljustice stub (NYC.gov Livesite) whose subpages 404, and the real office site at criminaljustice.cityofnewyork.us — WordPress on WP Engine behind Cloudflare, a fifth distinct platform after Parks' Smarty/PHP, DOE's Sitefinity/.NET, Council's WordPress, and NYCHA's Livesite+Siebel.",
+    "It is a policy/convening/grant-making office that OWNS almost no data: NYC Open Data carries exactly ONE MOCJ dataset — Supervised Release Dockets (atne-2dki, 6 columns, last updated 2023, ~1,074 views).",
+    "The jail-population numbers MOCJ is best known for are not MOCJ's. Its System Data page publishes PDF 'explainers' (jail-population increase, re-arrest rates) and links OUT to DOC (Daily Population in Custody), NYPD (CompStat), NYS DCJS, and the Board of Correction. MOCJ convenes and analyzes; it does not own the metrics.",
+    "The only machine-readable surface MOCJ has is ACCIDENTAL: the WordPress wp/v2 REST API, which exposes programs, solicitations, notices, reports, briefs, and data stories as JSON — undocumented, unintended, and not a product. A Contact Form 7 REST endpoint is the only write path, and it is a generic web form.",
+    "Net-new write surface: a ProgramReferral — routing a person or court case to a MOCJ-coordinated program along the Sequential Intercept Model. This is the office's core function, yet it has no API; referrals happen offline or via a generic web form. Referral data is sensitive and must be gated. See tech-stack.md and apis-observed.md."
+  ],
+  "meta": {
+    "short": "NYC Criminal Justice (MOCJ)",
+    "verb": "route",
+    "platform": "WordPress (WP Engine) behind Cloudflare; Kadence/ACF/Contact Form 7 + accidental wp/v2 REST API",
+    "netnew": "ProgramReferral — route a person or court case to a MOCJ-coordinated program",
+    "accent": "#8a5a5a",
+    "tagline": "A coordination office that owns almost no data and routes people between courts, agencies, and community programs with PDFs and outbound links — the fix is to give that routing a machine-readable contract.",
+    "headline": "MOCJ convenes and analyzes but owns almost nothing — one stale dataset, an accidental WordPress API, and jail numbers that belong to other agencies — so the modernization move is to route its programs, publications, and referrals through one owned API."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 2,
+    "openData": 1,
+    "coreData": 1,
+    "writeApi": 1,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Managed WordPress (WP Engine) + Cloudflare + Kadence/ACF — a competent marketing CMS, wrong tool for a data/coordination mission.",
+    "siteApi": "Accidental but functional WordPress wp/v2 REST API exposes programs/reports/solicitations as JSON; undocumented, unintended, not a product.",
+    "openData": "Exactly one dataset (Supervised Release Dockets, 6 cols), unchanged since 2023; near-absence.",
+    "coreData": "Core criminal-justice metrics live in PDF explainers and other agencies' dashboards, not as data.",
+    "writeApi": "Only generic Contact Form 7 web forms (vendor enrollment, contact); referrals and procurement responses happen offline.",
+    "agent": "No agent-native surface; the MCP artifact here is entirely net-new.",
+    "ownership": "A convening office: depends on DOC/NYPD/DCJS data and a vendor CMS host; owns little of its own data."
+  },
+  "apis_observed": [
+    { "endpoint": "criminaljustice.cityofnewyork.us/wp-json/wp/v2", "type": "accidental content API (WordPress REST)", "owner": "MOCJ (WordPress on WP Engine)", "public": true, "note": "Undocumented but fully functional — returns programs (26), solicitation (25), notice (26), reports (26), data_reports (109), briefs (54), data_stories (6), team (92) as JSON. Not designed or published as an API." },
+    { "endpoint": "criminaljustice.cityofnewyork.us/wp-json/contact-form-7/v1", "type": "web-form submission API", "owner": "MOCJ (Contact Form 7 plugin)", "public": "form feedback endpoint", "note": "The only write path — generic form-to-email (vendor enrollment, contact). Not a transactional/data API." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Exactly ONE MOCJ dataset: Supervised Release Dockets (atne-2dki). SODA /resource/atne-2dki.json." },
+    { "endpoint": "www.nyc.gov/site/criminaljustice", "type": "informational stub", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "Thin stub on the NYC.gov chassis (Akamai, nginx, Dynatrace/mPulse); most subpages 404 — the real site moved to criminaljustice.cityofnewyork.us." },
+    { "endpoint": "DOC / NYPD / DCJS / BOC dashboards", "type": "external data (linked, not owned)", "owner": "other agencies", "public": "varies", "note": "MOCJ's System Data page links OUT to DOC Daily Population in Custody, NYPD CompStat 2.0, NYS DCJS, and Board of Correction for the jail/crime numbers it analyzes." },
+    { "endpoint": "Cloudflare edge", "type": "CDN", "owner": "Cloudflare", "public": "vendor", "note": "cf-ray, __cf_bm; fronts the WP Engine origin." }
+  ],
+  "fruit": [
+    {
+      "name": "MOCJ Programs",
+      "type": "directory (WordPress CPT)",
+      "entity": "Program",
+      "url": "https://criminaljustice.cityofnewyork.us/programs/",
+      "count": "26 programs",
+      "machine_readable": "accidental WordPress REST (wp/v2/programs)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Community programs MOCJ funds/convenes, tagged by Issue and by Sequential Intercept stage (0-5). Reachable only as WordPress content + the accidental wp/v2 REST API. No Open Data twin."
+    },
+    {
+      "name": "Supervised Release Dockets",
+      "type": "data table",
+      "entity": "SupervisedReleaseDocket",
+      "url": "https://data.cityofnewyork.us/d/atne-2dki",
+      "count": "1 dataset, 6 columns",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Supervised Release Dockets atne-2dki (6c)"],
+      "notes": "The ONE MOCJ dataset on Open Data. One row per court docket released to Supervised Release; CourtCase-adjacent grain. Last updated 2023-06-12."
+    },
+    {
+      "name": "Jail population & system indicators",
+      "type": "analysis (PDF explainers + external links)",
+      "entity": "JailPopulationMetric",
+      "url": "https://criminaljustice.cityofnewyork.us/system-data/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "MOCJ's System Data page: jail-population-increase and re-arrest explainers as PDFs, plus outbound links to DOC (Daily Population in Custody, Monthly Admissions/Discharges, Flash Indicators), NYPD CompStat, NYS DCJS, and BOC. MOCJ analyzes but does not OWN these numbers — aggregate only."
+    },
+    {
+      "name": "Publications, reports & briefs",
+      "type": "document library (WordPress CPTs)",
+      "entity": "DataReport",
+      "url": "https://criminaljustice.cityofnewyork.us/publications/",
+      "count": "reports 26 + briefs 54 + data_reports 109 + data_stories 6",
+      "machine_readable": "accidental WordPress REST",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Reports, briefs, fact sheets, scorecards, data reports, and data stories — mostly PDF/narrative. Enumerable via wp/v2 but no Open Data twin and no structured data behind most of them."
+    },
+    {
+      "name": "Procurement — solicitations & notices",
+      "type": "procurement listings (WordPress CPTs)",
+      "entity": "Solicitation",
+      "url": "https://criminaljustice.cityofnewyork.us/notices-solicitations/",
+      "count": "solicitation 25 + notice 26",
+      "machine_readable": "accidental WordPress REST",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "How MOCJ contracts with the grantee CBOs that run its programs. Web pages + wp/v2 JSON; responses go through Vendor Enrollment / Contact Form 7. No procurement API or Open Data twin."
+    },
+    {
+      "name": "Vendor enrollment / contact",
+      "type": "web form (Contact Form 7)",
+      "entity": "ProgramReferral",
+      "url": "https://criminaljustice.cityofnewyork.us/vendor-enrollment/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The only existing write path is a generic Contact Form 7 form (feedback endpoint). Stands in for the missing transactional layer."
+    },
+    {
+      "name": "Refer to a program (make a referral)",
+      "type": "referral workflow (net-new)",
+      "entity": "ProgramReferral",
+      "url": "https://criminaljustice.cityofnewyork.us/programs/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The office's core function — routing a person or court case to a coordinated program along the Sequential Intercept Model — has no API. Today it happens offline (court mandate, case manager, phone) or via a generic web form. The net-new WRITE surface; referral data is sensitive and must be gated."
+    }
+  ]
+}

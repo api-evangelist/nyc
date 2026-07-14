@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mocj/schemas/data-report.json",
+  "title": "DataReport",
+  "description": "A MOCJ publication — a report, brief, fact sheet, scorecard, data report, or data story. Canonical schema reconciling several WordPress custom post types on criminaljustice.cityofnewyork.us: 'data_reports' (109), 'briefs' (54), 'reports' (26), and 'data_stories' (6). These are the office's real 'data' product: mostly PDF/narrative explainers (e.g. jail-population increase, re-arrest rates), sometimes with a downloadable source-data file. There is no Open Data twin; the only structured access is the accidental wp/v2 REST API.",
+  "type": "object",
+  "x-source": {
+    "site": "https://criminaljustice.cityofnewyork.us/publications/",
+    "wp_rest_data_reports": "https://criminaljustice.cityofnewyork.us/wp-json/wp/v2/data_reports",
+    "wp_rest_reports": "https://criminaljustice.cityofnewyork.us/wp-json/wp/v2/reports",
+    "wp_rest_briefs": "https://criminaljustice.cityofnewyork.us/wp-json/wp/v2/briefs",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "reportId": { "type": ["string", "integer", "null"], "description": "WordPress post ID." },
+    "slug": { "type": ["string", "null"] },
+    "title": { "type": "string", "description": "Publication title." },
+    "kind": {
+      "type": ["string", "null"],
+      "description": "Which MOCJ publication family this is.",
+      "enum": ["Data Report", "Data Story", "Report", "Brief", "Fact Sheet", "Scorecard", null]
+    },
+    "summary": { "type": ["string", "null"], "description": "Abstract / excerpt." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical publication page." },
+    "documentUrl": { "type": ["string", "null"], "format": "uri", "description": "Downloadable PDF, if any." },
+    "sourceDataUrl": { "type": ["string", "null"], "format": "uri", "description": "Downloadable source-data file backing an explainer, if published." },
+    "topics": { "type": "array", "items": { "type": "string" }, "description": "Subject tags." },
+    "publishedDate": { "type": ["string", "null"], "format": "date" }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

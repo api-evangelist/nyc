@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/law/schemas/legal-division.json",
+  "title": "LegalDivision",
+  "description": "A practice division of the NYC Law Department (Office of the Corporation Counsel) — the unit that handles a body of the City's legal work (e.g. Tax & Bankruptcy, Tort, Labor & Employment, Affirmative Litigation). Canonical schema reconciling 'LAW Divisions' (4se9-mk53) and the 'Legal Divisions' page on nyc.gov/site/law.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/4se9-mk53",
+    "site": "https://www.nyc.gov/site/law/divisions/legal-divisions.page"
+  },
+  "properties": {
+    "division": { "type": "string", "description": "Division name ('Division Name')." },
+    "department": { "type": ["string", "null"], "description": "Parent department or grouping ('Department Name')." },
+    "description": { "type": ["string", "null"], "description": "What the division does (from nyc.gov/site/law)." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Division page on the Law Department site." }
+  },
+  "required": ["division"],
+  "additionalProperties": false
+}

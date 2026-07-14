@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doi/schemas/public-report.json",
+  "title": "PublicReport",
+  "description": "A DOI public investigation report — the agency's core work product. As New York City's Inspector General, DOI issues public reports of its investigative findings and reform recommendations. NO structured Open Data twin exists: these reports are published only as PDFs under nyc.gov/assets/doi/reports/pdf/<year>/. This schema models the metadata DOI already exposes on its Reports pages so the corpus can be indexed, searched, and referenced.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/doi/newsroom/public-reports-current.page",
+    "pdf_pattern": "https://www.nyc.gov/assets/doi/reports/pdf/<year>/<file>.pdf",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "reportId": { "type": ["string", "null"], "description": "Stable identifier (e.g. derived from the PDF filename)." },
+    "title": { "type": "string", "description": "Report title as shown on the DOI Reports page." },
+    "releaseDate": { "type": ["string", "null"], "format": "date", "description": "Public release date." },
+    "year": { "type": ["integer", "null"], "description": "Report year (matches the PDF path segment)." },
+    "reportType": {
+      "type": ["string", "null"],
+      "description": "Kind of report.",
+      "enum": ["Investigation", "Annual Report", "OIG-NYPD Report", "Policy/Systemic", "Press Release", "Other", null]
+    },
+    "unit": { "type": ["string", "null"], "description": "Issuing DOI unit or Office of the Inspector General (e.g. OIG-NYPD, OIG-DOE)." },
+    "subjectAgency": { "type": ["string", "null"], "description": "City agency or entity investigated (e.g. NYCHA, ACS, DOE)." },
+    "summary": { "type": ["string", "null"], "description": "Short abstract of the findings." },
+    "pdfUrl": { "type": ["string", "null"], "format": "uri", "description": "Direct link to the report PDF under /assets/doi/reports/pdf/." },
+    "recommendationCount": { "type": ["integer", "null"], "description": "Number of reform recommendations issued in the report." },
+    "arrestsReferenced": { "type": ["integer", "null"], "description": "Arrests referenced in the report, where stated." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

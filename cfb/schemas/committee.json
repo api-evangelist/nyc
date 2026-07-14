@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cfb/schemas/committee.json",
+  "title": "Committee",
+  "description": "An authorized campaign committee — the filer that submits disclosure statements and receives contributions on behalf of a candidate. Reconciled from the 'COMMITTEE' / 'RECIPID' fields carried across the CFB Campaign Contributions (rjkp-yttg), Expenditures (qxzj-vkn2), and Intermediaries (tcwb-nry3) datasets. CFB does not publish a standalone committee registry dataset; this entity is derived from the transaction records and the registered-political-committees list on nyccfb.info.",
+  "type": "object",
+  "x-source": {
+    "opendata_contributions": "https://data.cityofnewyork.us/d/rjkp-yttg",
+    "registered_committees": "https://www.nyccfb.info/follow-the-money/registered-political-committees/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "filerId": { "type": "string", "description": "Filer / committee id ('RECIPID')." },
+    "committee": { "type": ["string", "null"], "description": "Committee name ('COMMITTEE')." },
+    "candidate": { "$ref": "_common.json#/$defs/CandidateReference" },
+    "office": { "$ref": "_common.json#/$defs/Office" },
+    "electionCycle": { "$ref": "_common.json#/$defs/ElectionCycle" },
+    "committeeType": { "type": ["string", "null"], "description": "Principal / authorized / political committee type." },
+    "status": { "type": ["string", "null"], "description": "Registration status (e.g. Active, Terminated)." }
+  },
+  "required": ["filerId"],
+  "additionalProperties": false
+}

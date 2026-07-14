@@ -1,0 +1,338 @@
+openapi: 3.1.0
+info:
+  title: NYC DOI API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Department of Investigation — publishing its
+    structured Open Data (evictions and City Marshal oversight, policy recommendations, performance
+    indicators) and an index of its PDF-only public reports as coherent resources, and adding the
+    missing write surface locked inside the third-party Kaseware intake portal — filing a corruption
+    complaint.
+  description: >-
+    Proposed API-first surface for the New York City Department of Investigation (DOI), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/doi and the Kaseware public complaint
+    portal.
+
+
+    DOI is New York City's Inspector General. Its **core work product — public investigation reports
+    and reform recommendations — is published only as PDFs** under nyc.gov/assets/doi/reports/pdf/,
+    with no structured Open Data twin. Its **four Open Data datasets are mostly City Marshal oversight**
+    (executed evictions — DOI's most-viewed asset at ~237k views — and marshal revenue) plus the
+    Policy & Procedure Recommendations tracker and monthly performance indicators. And its **single most
+    important inbound transaction — reporting fraud, waste, or corruption — runs through a third-party
+    vendor form** (Kaseware, app.kaseware.us) with no API, backed by phone/fax/mail.
+
+
+    This contract does three things: (1) presents the structured Open Data as one clean resource model,
+    (2) exposes an index over the PDF-only public reports so the investigative corpus is searchable, and
+    (3) adds the one net-new **write** workflow — filing a **corruption complaint** — that today exists
+    only behind the Kaseware portal or a phone call.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.doi.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Reports
+    description: DOI public investigation reports and reform recommendations (PDF-only today).
+  - name: Recommendations
+    description: Policy & Procedure Recommendations issued to City agencies and their implementation status.
+  - name: Marshals
+    description: City Marshal oversight — executed evictions and marshal revenue.
+  - name: Performance
+    description: Monthly DOI performance-management indicators.
+  - name: Complaints
+    description: Report and track fraud/waste/corruption complaints (read + write). The net-new surface, today locked in the Kaseware intake portal.
+
+paths:
+  /reports:
+    get:
+      operationId: listReports
+      summary: List / search DOI public reports
+      tags: [Reports]
+      parameters:
+        - name: year
+          in: query
+          schema: { type: integer }
+        - name: reportType
+          in: query
+          schema: { type: string, enum: [Investigation, Annual Report, OIG-NYPD Report, Policy/Systemic, Press Release, Other] }
+        - name: subjectAgency
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of public reports.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/public-report.json' } }
+  /reports/{reportId}:
+    get:
+      operationId: getReport
+      summary: Get a public report by id
+      tags: [Reports]
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The public report.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/public-report.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /recommendations:
+    get:
+      operationId: listRecommendations
+      summary: List / search Policy & Procedure Recommendations
+      tags: [Recommendations]
+      parameters:
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: acceptanceStatus
+          in: query
+          schema: { type: string }
+        - name: implementationStatus
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of policy recommendations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/policy-recommendation.json' } }
+
+  /evictions:
+    get:
+      operationId: listEvictions
+      summary: Search executed City Marshal evictions
+      tags: [Marshals]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: residentialCommercial
+          in: query
+          schema: { type: string, enum: [Residential, Commercial] }
+        - name: marshalLastName
+          in: query
+          schema: { type: string }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of evictions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/eviction.json' } }
+
+  /marshal-revenue:
+    get:
+      operationId: listMarshalRevenue
+      summary: List City Marshal annual revenue figures
+      tags: [Marshals]
+      parameters:
+        - name: marshalLastName
+          in: query
+          schema: { type: string }
+        - name: year
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of marshal revenue records.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/marshal-revenue.json' } }
+
+  /performance-indicators:
+    get:
+      operationId: listPerformanceIndicators
+      summary: List monthly DOI performance-management indicators
+      tags: [Performance]
+      parameters:
+        - name: indicatorName
+          in: query
+          schema: { type: string }
+        - name: reportMonth
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of performance indicators.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/performance-indicator.json' } }
+
+  /complaints:
+    get:
+      operationId: listComplaints
+      summary: List the authenticated reporter's own complaints
+      description: Reads complaints the reporter filed — today only visible inside the Kaseware intake portal.
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Received, Under Review, Referred, Investigation Opened, Closed - No Action, Closed - Resolved] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the reporter's complaints.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/corruption-complaint.json' } }
+    post:
+      operationId: createComplaint
+      summary: File a corruption complaint
+      description: >-
+        The net-new write surface — an API for reporting fraud, waste, or corruption, replacing the
+        Kaseware-only intake form. Supports anonymous filing and invoking Whistleblower Law protection.
+        City employees have an Executive Order 16 obligation to report allegations to DOI.
+      tags: [Complaints]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/corruption-complaint.json' }
+      responses:
+        '201':
+          description: Complaint received.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/corruption-complaint.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /complaints/{complaintId}:
+    get:
+      operationId: getComplaint
+      summary: Get a complaint by id
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: complaintId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The complaint.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/corruption-complaint.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    PublicReport: { $ref: '../schemas/public-report.json' }
+    PolicyRecommendation: { $ref: '../schemas/policy-recommendation.json' }
+    Eviction: { $ref: '../schemas/eviction.json' }
+    MarshalRevenue: { $ref: '../schemas/marshal-revenue.json' }
+    PerformanceIndicator: { $ref: '../schemas/performance-indicator.json' }
+    CorruptionComplaint: { $ref: '../schemas/corruption-complaint.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bic/schemas/registrant.json",
+  "title": "Registrant",
+  "description": "A BIC-registered business — one canonical schema for BIC's three parallel registration datasets: 'Trade Waste Broker Registrants' (krx7-u82t), 'Self Hauler Registrants' (a8wp-rerh), and 'Construction Demolition Registrants' (cspg-yi7g). Registration is the lighter-touch credential (vs. a full license). Keyed on BIC NUMBER; the `industry` field distinguishes which registration stream a record comes from.",
+  "type": "object",
+  "x-source": {
+    "opendata_broker": "https://data.cityofnewyork.us/d/krx7-u82t",
+    "opendata_self_hauler": "https://data.cityofnewyork.us/d/a8wp-rerh",
+    "opendata_construction_demolition": "https://data.cityofnewyork.us/d/cspg-yi7g"
+  },
+  "properties": {
+    "bicNumber": { "type": "string", "description": "'BIC NUMBER' / 'BIC_NUMBER' — primary key." },
+    "industry": {
+      "type": "string",
+      "enum": ["Trade Waste Broker", "Self Hauler", "Construction & Demolition"],
+      "description": "Which registration stream this record comes from."
+    },
+    "accountName": { "type": ["string", "null"], "description": "'ACCOUNT NAME'." },
+    "tradeName": { "type": ["string", "null"], "description": "'TRADE NAME'." },
+    "applicationType": { "$ref": "_common.json#/$defs/ApplicationType" },
+    "renewal": { "type": ["boolean", "string", "null"], "description": "'RENEWAL'." },
+    "phone": { "type": ["string", "null"], "description": "'PHONE'." },
+    "email": { "type": ["string", "null"], "format": "email", "description": "'EMAIL'." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "effectiveDate": { "type": ["string", "null"], "format": "date", "description": "'EFFECTIVE DATE'." },
+    "expirationDate": { "type": ["string", "null"], "format": "date", "description": "'EXPIRATION DATE'." },
+    "dispositionDate": { "type": ["string", "null"], "format": "date", "description": "'DISPOSITION DATE'." },
+    "created": { "type": ["string", "null"], "format": "date-time", "description": "'CREATED'." },
+    "exportDate": { "type": ["string", "null"], "format": "date-time", "description": "'EXPORT DATE' — snapshot timestamp.", "readOnly": true }
+  },
+  "required": ["bicNumber", "industry"],
+  "additionalProperties": false
+}
