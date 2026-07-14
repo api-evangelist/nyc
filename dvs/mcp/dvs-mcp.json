@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -393,5 +400,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dvs",
+      "domain": "dvs",
+      "description": "Search and read NYC Veterans' Services (DVS) records \u2014 Resources, Businesses, AssistanceRequests, Cases.",
+      "uses": [
+        "find_veteran_resources",
+        "get_veteran_resource",
+        "find_veteran_owned_businesses",
+        "find_assistance_requests"
+      ]
+    },
+    {
+      "name": "apply_for_dvs",
+      "domain": "dvs",
+      "description": "ServiceReferral \u2014 make a VetConnectNYC care-coordination referral connecting a veteran to services (housing, benefits, VA claims, health, employment, education, food, legal), routed to DVS Care Coordinators with an urgen",
+      "uses": [
+        "make_referral"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dvs",
+      "name": "NYC Veterans' Services (DVS) \u2014 profile",
+      "description": "NYC Veterans' Services (DVS): 9 operations, 8 tools, verb \u201ccoordinate\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dvs"
+    },
+    {
+      "uri": "nyc://dvs/openapi",
+      "name": "NYC Veterans' Services (DVS) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dvs/openapi/dvs.yaml"
+    },
+    {
+      "uri": "nyc://dvs/resources/{id}",
+      "name": "Resources record (templated)",
+      "description": "A single NYC Veterans' Services (DVS) Resources record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

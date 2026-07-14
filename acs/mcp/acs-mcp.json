@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -448,5 +455,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_acs",
+      "domain": "acs",
+      "description": "Search and read NYC Children's Services (ACS) records \u2014 Providers, ChildWelfare, Prevention, FosterCare.",
+      "uses": [
+        "find_providers",
+        "get_provider",
+        "find_child_welfare_indicators",
+        "find_prevention_services"
+      ]
+    },
+    {
+      "name": "report_acs",
+      "domain": "acs",
+      "description": "ChildCareComplaint \u2014 submit a complaint about a child care provider (models the provider concern, never case data; abuse routed to the State Central Register)",
+      "uses": [
+        "report_child_care_concern"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://acs",
+      "name": "NYC Children's Services (ACS) \u2014 profile",
+      "description": "NYC Children's Services (ACS): 9 operations, 9 tools, verb \u201cinsource\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=acs"
+    },
+    {
+      "uri": "nyc://acs/openapi",
+      "name": "NYC Children's Services (ACS) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/acs/openapi/acs.yaml"
+    },
+    {
+      "uri": "nyc://acs/providers/{id}",
+      "name": "Providers record (templated)",
+      "description": "A single NYC Children's Services (ACS) Providers record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

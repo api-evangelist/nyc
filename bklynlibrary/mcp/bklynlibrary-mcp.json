@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -509,5 +516,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_bklynlibrary",
+      "domain": "bklynlibrary",
+      "description": "Search and read Brooklyn Public Library (BPL) records \u2014 Branches, Events, Catalog, Collections.",
+      "uses": [
+        "find_branches",
+        "get_branch",
+        "find_events",
+        "get_event"
+      ]
+    },
+    {
+      "name": "apply_for_bklynlibrary",
+      "domain": "bklynlibrary",
+      "description": "place a hold (BookHold)",
+      "uses": [
+        "apply_for_library_card"
+      ]
+    },
+    {
+      "name": "schedule_bklynlibrary",
+      "domain": "bklynlibrary",
+      "description": "place a hold (BookHold)",
+      "uses": [
+        "place_hold"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://bklynlibrary",
+      "name": "Brooklyn Public Library (BPL) \u2014 profile",
+      "description": "Brooklyn Public Library (BPL): 13 operations, 13 tools, verb \u201cformalize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=bklynlibrary"
+    },
+    {
+      "uri": "nyc://bklynlibrary/openapi",
+      "name": "Brooklyn Public Library (BPL) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bklynlibrary/openapi/bklynlibrary.yaml"
+    },
+    {
+      "uri": "nyc://bklynlibrary/branches/{id}",
+      "name": "Branches record (templated)",
+      "description": "A single Brooklyn Public Library (BPL) Branches record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -430,5 +437,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_hra",
+      "domain": "hra",
+      "description": "Search and read NYC Social Services (HRA) records \u2014 Programs, Centers, Caseloads, CaseActions.",
+      "uses": [
+        "find_programs",
+        "get_program",
+        "find_centers",
+        "find_caseload_statistics"
+      ]
+    },
+    {
+      "name": "apply_for_hra",
+      "domain": "hra",
+      "description": "BenefitsApplication \u2014 apply for and track SNAP / Cash Assistance / Medicaid, today locked in the ACCESS HRA portal",
+      "uses": [
+        "apply_for_benefits"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://hra",
+      "name": "NYC Social Services (HRA) \u2014 profile",
+      "description": "NYC Social Services (HRA): 10 operations, 9 tools, verb \u201cconnect\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=hra"
+    },
+    {
+      "uri": "nyc://hra/openapi",
+      "name": "NYC Social Services (HRA) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hra/openapi/hra.yaml"
+    },
+    {
+      "uri": "nyc://hra/programs/{id}",
+      "name": "Programs record (templated)",
+      "description": "A single NYC Social Services (HRA) Programs record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -459,5 +466,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_sca",
+      "domain": "sca",
+      "description": "Search and read NYC School Construction Authority (SCA) records \u2014 CapitalProjects, Procurement, Vendors, Capacity.",
+      "uses": [
+        "find_capital_projects",
+        "get_capital_project",
+        "find_upcoming_contracts",
+        "find_solicitations"
+      ]
+    },
+    {
+      "name": "apply_for_sca",
+      "domain": "sca",
+      "description": "VendorPrequalification \u2014 apply to become a prequalified SCA vendor",
+      "uses": [
+        "apply_for_prequalification"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://sca",
+      "name": "NYC School Construction Authority (SCA) \u2014 profile",
+      "description": "NYC School Construction Authority (SCA): 10 operations, 9 tools, verb \u201conboard\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=sca"
+    },
+    {
+      "uri": "nyc://sca/openapi",
+      "name": "NYC School Construction Authority (SCA) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sca/openapi/sca.yaml"
+    },
+    {
+      "uri": "nyc://sca/capitalprojects/{id}",
+      "name": "CapitalProjects record (templated)",
+      "description": "A single NYC School Construction Authority (SCA) CapitalProjects record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

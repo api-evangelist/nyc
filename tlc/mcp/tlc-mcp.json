@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -440,5 +447,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_tlc",
+      "domain": "tlc",
+      "description": "Search and read NYC Taxi & Limousine (TLC) records \u2014 Trips, Vehicles, Drivers, Bases.",
+      "uses": [
+        "find_trip_records",
+        "find_vehicles",
+        "get_vehicle",
+        "find_drivers"
+      ]
+    },
+    {
+      "name": "apply_for_tlc",
+      "domain": "tlc",
+      "description": "Submit an application for a TLC driver or vehicle license. NET-NEW workflow with no equivalent today (Open Data exposes only read-only status). Requires an authenticated user. Mutates state \u2014 confirm details with the use",
+      "uses": [
+        "apply_for_license"
+      ]
+    },
+    {
+      "name": "check_tlc_status",
+      "domain": "tlc",
+      "description": "Check the status of a NYC Taxi & Limousine (TLC) application, case, or request.",
+      "uses": [
+        "get_application_status"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://tlc",
+      "name": "NYC Taxi & Limousine (TLC) \u2014 profile",
+      "description": "NYC Taxi & Limousine (TLC): 13 operations, 10 tools, verb \u201cOperationalize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=tlc"
+    },
+    {
+      "uri": "nyc://tlc/openapi",
+      "name": "NYC Taxi & Limousine (TLC) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/tlc/openapi/tlc.yaml"
+    },
+    {
+      "uri": "nyc://tlc/trips/{id}",
+      "name": "Trips record (templated)",
+      "description": "A single NYC Taxi & Limousine (TLC) Trips record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

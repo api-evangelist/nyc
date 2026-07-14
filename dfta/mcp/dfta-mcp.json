@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -403,5 +410,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dfta",
+      "domain": "dfta",
+      "description": "Search and read NYC Aging (DFTA) records \u2014 Providers, Centers, Activities, Services.",
+      "uses": [
+        "find_providers",
+        "get_provider",
+        "find_older_adult_centers",
+        "find_activities"
+      ]
+    },
+    {
+      "name": "apply_for_dfta",
+      "domain": "dfta",
+      "description": "ServiceReferral \u2014 connect an older adult to DFTA services (case management, meals, benefits, caregiver, elder abuse, center enrollment) with an urgent path to Aging Connect / Adult Protective Services.",
+      "uses": [
+        "make_referral"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dfta",
+      "name": "NYC Aging (DFTA) \u2014 profile",
+      "description": "NYC Aging (DFTA): 9 operations, 8 tools, verb \u201cconnect\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dfta"
+    },
+    {
+      "uri": "nyc://dfta/openapi",
+      "name": "NYC Aging (DFTA) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dfta/openapi/dfta.yaml"
+    },
+    {
+      "uri": "nyc://dfta/providers/{id}",
+      "name": "Providers record (templated)",
+      "description": "A single NYC Aging (DFTA) Providers record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

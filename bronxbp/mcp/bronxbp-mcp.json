@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -426,5 +433,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_bronxbp",
+      "domain": "bronxbp",
+      "description": "Search and read Bronx Borough President records \u2014 LandUse, CommunityBoards, Funding, Newsroom.",
+      "uses": [
+        "find_land_use_recommendations",
+        "get_land_use_recommendation",
+        "find_community_board_appointments",
+        "find_discretionary_funding"
+      ]
+    },
+    {
+      "name": "apply_for_bronxbp",
+      "domain": "bronxbp",
+      "description": "CommunityBoardApplication \u2014 apply to serve on one of the Bronx's twelve community boards (today a PDF/email; no structured intake or status).",
+      "uses": [
+        "apply_to_community_board"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://bronxbp",
+      "name": "Bronx Borough President \u2014 profile",
+      "description": "Bronx Borough President: 10 operations, 9 tools, verb \u201ctemplatize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=bronxbp"
+    },
+    {
+      "uri": "nyc://bronxbp/openapi",
+      "name": "Bronx Borough President OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxbp/openapi/bronxbp.yaml"
+    },
+    {
+      "uri": "nyc://bronxbp/landuse/{id}",
+      "name": "LandUse record (templated)",
+      "description": "A single Bronx Borough President LandUse record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

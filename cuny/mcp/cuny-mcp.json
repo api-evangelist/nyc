@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -426,5 +433,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_cuny",
+      "domain": "cuny",
+      "description": "Search and read City University of New York (CUNY) records \u2014 Campuses, Programs, Courses, Enrollment.",
+      "uses": [
+        "find_campuses",
+        "get_campus",
+        "find_programs",
+        "get_program"
+      ]
+    },
+    {
+      "name": "apply_for_cuny",
+      "domain": "cuny",
+      "description": "AdmissionsApplication (submit a CUNY application)",
+      "uses": [
+        "submit_application"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://cuny",
+      "name": "City University of New York (CUNY) \u2014 profile",
+      "description": "City University of New York (CUNY): 10 operations, 9 tools, verb \u201cfederate\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=cuny"
+    },
+    {
+      "uri": "nyc://cuny/openapi",
+      "name": "City University of New York (CUNY) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cuny/openapi/cuny.yaml"
+    },
+    {
+      "uri": "nyc://cuny/campuses/{id}",
+      "name": "Campuses record (templated)",
+      "description": "A single City University of New York (CUNY) Campuses record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

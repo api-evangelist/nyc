@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -443,5 +450,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_ddc",
+      "domain": "ddc",
+      "description": "Search and read NYC Design & Construction (DDC) records \u2014 Projects, Contracts, Vendors, Divisions.",
+      "uses": [
+        "find_projects",
+        "get_project",
+        "get_project_contracts",
+        "find_contracts"
+      ]
+    },
+    {
+      "name": "apply_for_ddc",
+      "domain": "ddc",
+      "description": "VendorPrequalification \u2014 a firm submits a prequalification / expression of interest (optionally against a solicitation, with an optional City Record notice opt-in). A B2G write; DDC is vendor-facing, so there is no citiz",
+      "uses": [
+        "submit_prequalification"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://ddc",
+      "name": "NYC Design & Construction (DDC) \u2014 profile",
+      "description": "NYC Design & Construction (DDC): 11 operations, 10 tools, verb \u201csurface\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=ddc"
+    },
+    {
+      "uri": "nyc://ddc/openapi",
+      "name": "NYC Design & Construction (DDC) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ddc/openapi/ddc.yaml"
+    },
+    {
+      "uri": "nyc://ddc/projects/{id}",
+      "name": "Projects record (templated)",
+      "description": "A single NYC Design & Construction (DDC) Projects record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

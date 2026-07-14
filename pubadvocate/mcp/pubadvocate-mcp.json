@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -455,5 +462,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_pubadvocate",
+      "domain": "pubadvocate",
+      "description": "Search and read NYC Public Advocate records \u2014 Watchlist, Legislation, Reports, PublicInterest.",
+      "uses": [
+        "find_worst_landlords",
+        "get_worst_landlord",
+        "get_worst_landlord_buildings",
+        "find_watchlist_buildings"
+      ]
+    },
+    {
+      "name": "report_pubadvocate",
+      "domain": "pubadvocate",
+      "description": "OmbudsmanComplaint \u2014 file and track a 'help with a city agency' case against a NYC agency",
+      "uses": [
+        "file_complaint"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://pubadvocate",
+      "name": "NYC Public Advocate \u2014 profile",
+      "description": "NYC Public Advocate: 10 operations, 10 tools, verb \u201cRespond\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=pubadvocate"
+    },
+    {
+      "uri": "nyc://pubadvocate/openapi",
+      "name": "NYC Public Advocate OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pubadvocate/openapi/pubadvocate.yaml"
+    },
+    {
+      "uri": "nyc://pubadvocate/watchlist/{id}",
+      "name": "Watchlist record (templated)",
+      "description": "A single NYC Public Advocate Watchlist record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

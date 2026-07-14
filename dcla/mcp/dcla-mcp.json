@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -419,5 +426,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dcla",
+      "domain": "dcla",
+      "description": "Search and read NYC Cultural Affairs (DCLA) records \u2014 Organizations, Funding, PublicArt, MaterialsForTheArts.",
+      "uses": [
+        "find_cultural_organizations",
+        "get_cultural_organization",
+        "find_program_funding",
+        "find_capital_funding"
+      ]
+    },
+    {
+      "name": "apply_for_dcla",
+      "domain": "dcla",
+      "description": "Apply for a Cultural Development Fund grant (GrantApplication) \u2014 the core transaction with no API, locked in the Salesforce Grants Management System",
+      "uses": [
+        "apply_for_grant"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dcla",
+      "name": "NYC Cultural Affairs (DCLA) \u2014 profile",
+      "description": "NYC Cultural Affairs (DCLA): 10 operations, 9 tools, verb \u201copen\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dcla"
+    },
+    {
+      "uri": "nyc://dcla/openapi",
+      "name": "NYC Cultural Affairs (DCLA) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/openapi/dcla.yaml"
+    },
+    {
+      "uri": "nyc://dcla/organizations/{id}",
+      "name": "Organizations record (templated)",
+      "description": "A single NYC Cultural Affairs (DCLA) Organizations record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

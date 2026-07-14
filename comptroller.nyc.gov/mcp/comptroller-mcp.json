@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -417,5 +424,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_comptroller_nyc_gov",
+      "domain": "comptroller.nyc.gov",
+      "description": "Search and read NYC Comptroller records \u2014 Spending, Contracts, Audits, Claims.",
+      "uses": [
+        "find_spending",
+        "get_spending_transaction",
+        "find_contracts",
+        "get_contract"
+      ]
+    },
+    {
+      "name": "apply_for_comptroller_nyc_gov",
+      "domain": "comptroller.nyc.gov",
+      "description": "File a NEW claim against the City of New York (eClaim). NET-NEW workflow with no public API today. Requires an authenticated user. Mutates state \u2014 confirm all details with the user first.",
+      "uses": [
+        "file_claim"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://comptroller.nyc.gov",
+      "name": "NYC Comptroller \u2014 profile",
+      "description": "NYC Comptroller: 11 operations, 9 tools, verb \u201cConsolidate & Own\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=comptroller.nyc.gov"
+    },
+    {
+      "uri": "nyc://comptroller.nyc.gov/openapi",
+      "name": "NYC Comptroller OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/comptroller.nyc.gov/openapi/comptroller.yaml"
+    },
+    {
+      "uri": "nyc://comptroller.nyc.gov/spending/{id}",
+      "name": "Spending record (templated)",
+      "description": "A single NYC Comptroller Spending record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

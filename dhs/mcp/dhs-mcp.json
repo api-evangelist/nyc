@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -401,5 +408,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dhs",
+      "domain": "dhs",
+      "description": "Search and read NYC Homeless Services (DHS) records \u2014 Census, DropInCenters, Facilities, Contacts.",
+      "uses": [
+        "find_shelter_census",
+        "get_shelter_census",
+        "find_drop_in_centers",
+        "find_facilities"
+      ]
+    },
+    {
+      "name": "report_dhs",
+      "domain": "dhs",
+      "description": "OutreachRequest \u2014 request street outreach for a person experiencing homelessness (today only via NYC311)",
+      "uses": [
+        "request_outreach"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dhs",
+      "name": "NYC Homeless Services (DHS) \u2014 profile",
+      "description": "NYC Homeless Services (DHS): 10 operations, 9 tools, verb \u201cconnect\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dhs"
+    },
+    {
+      "uri": "nyc://dhs/openapi",
+      "name": "NYC Homeless Services (DHS) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dhs/openapi/dhs.yaml"
+    },
+    {
+      "uri": "nyc://dhs/census/{id}",
+      "name": "Census record (templated)",
+      "description": "A single NYC Homeless Services (DHS) Census record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

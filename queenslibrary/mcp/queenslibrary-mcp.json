@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -403,5 +410,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_queenslibrary",
+      "domain": "queenslibrary",
+      "description": "Search and read Queens Public Library (QPL) records \u2014 Branches, Catalog, Events, Digital.",
+      "uses": [
+        "find_branches",
+        "get_branch",
+        "search_catalog",
+        "get_catalog_item"
+      ]
+    },
+    {
+      "name": "schedule_queenslibrary",
+      "domain": "queenslibrary",
+      "description": "BookHold \u2014 place a hold/reservation on a catalog item (also: library-card application)",
+      "uses": [
+        "place_hold"
+      ]
+    },
+    {
+      "name": "apply_for_queenslibrary",
+      "domain": "queenslibrary",
+      "description": "BookHold \u2014 place a hold/reservation on a catalog item (also: library-card application)",
+      "uses": [
+        "apply_for_library_card"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://queenslibrary",
+      "name": "Queens Public Library (QPL) \u2014 profile",
+      "description": "Queens Public Library (QPL): 10 operations, 9 tools, verb \u201cfederate\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=queenslibrary"
+    },
+    {
+      "uri": "nyc://queenslibrary/openapi",
+      "name": "Queens Public Library (QPL) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queenslibrary/openapi/queenslibrary.yaml"
+    },
+    {
+      "uri": "nyc://queenslibrary/branches/{id}",
+      "name": "Branches record (templated)",
+      "description": "A single Queens Public Library (QPL) Branches record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

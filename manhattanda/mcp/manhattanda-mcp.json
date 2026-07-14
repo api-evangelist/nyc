@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -389,5 +396,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_manhattanda",
+      "domain": "manhattanda",
+      "description": "Search and read Manhattan District Attorney records \u2014 Newsroom, Programs, VictimServices, Prosecution.",
+      "uses": [
+        "find_press_releases",
+        "get_press_release",
+        "find_programs",
+        "get_program"
+      ]
+    },
+    {
+      "name": "report_manhattanda",
+      "domain": "manhattanda",
+      "description": "TipSubmission \u2014 submit a routable tip to a DA bureau (no API today; only a generic reCAPTCHA contact form). FOIL is delegated off-site to NYC OpenRecords.",
+      "uses": [
+        "submit_tip"
+      ]
+    },
+    {
+      "name": "check_manhattanda_status",
+      "domain": "manhattanda",
+      "description": "Check the status of a Manhattan District Attorney application, case, or request.",
+      "uses": [
+        "get_tip"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://manhattanda",
+      "name": "Manhattan District Attorney \u2014 profile",
+      "description": "Manhattan District Attorney: 10 operations, 9 tools, verb \u201cstandardize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=manhattanda"
+    },
+    {
+      "uri": "nyc://manhattanda/openapi",
+      "name": "Manhattan District Attorney OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanda/openapi/manhattanda.yaml"
+    },
+    {
+      "uri": "nyc://manhattanda/newsroom/{id}",
+      "name": "Newsroom record (templated)",
+      "description": "A single Manhattan District Attorney Newsroom record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

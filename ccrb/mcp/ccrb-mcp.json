@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -380,5 +387,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_ccrb",
+      "domain": "ccrb",
+      "description": "Search and read NYC Civilian Complaint Review (CCRB) records \u2014 Complaints, Allegations, Officers, Penalties.",
+      "uses": [
+        "find_complaints",
+        "get_complaint",
+        "get_complaint_allegations",
+        "find_allegations"
+      ]
+    },
+    {
+      "name": "report_ccrb",
+      "domain": "ccrb",
+      "description": "MisconductComplaint \u2014 file a police-misconduct complaint against an officer via API (today an online web form only)",
+      "uses": [
+        "file_misconduct_complaint"
+      ]
+    },
+    {
+      "name": "check_ccrb_status",
+      "domain": "ccrb",
+      "description": "Check the status of a NYC Civilian Complaint Review (CCRB) application, case, or request.",
+      "uses": [
+        "check_complaint_status"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://ccrb",
+      "name": "NYC Civilian Complaint Review (CCRB) \u2014 profile",
+      "description": "NYC Civilian Complaint Review (CCRB): 9 operations, 9 tools, verb \u201cexpose\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=ccrb"
+    },
+    {
+      "uri": "nyc://ccrb/openapi",
+      "name": "NYC Civilian Complaint Review (CCRB) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ccrb/openapi/ccrb.yaml"
+    },
+    {
+      "uri": "nyc://ccrb/complaints/{id}",
+      "name": "Complaints record (templated)",
+      "description": "A single NYC Civilian Complaint Review (CCRB) Complaints record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

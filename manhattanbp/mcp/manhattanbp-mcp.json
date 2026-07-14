@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -435,5 +442,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_manhattanbp",
+      "domain": "manhattanbp",
+      "description": "Search and read Manhattan Borough President records \u2014 CommunityBoards, LandUse, Appointments, Funding.",
+      "uses": [
+        "find_community_boards",
+        "get_community_board",
+        "find_land_use_recommendations",
+        "find_board_appointments"
+      ]
+    },
+    {
+      "name": "apply_for_manhattanbp",
+      "domain": "manhattanbp",
+      "description": "CommunityBoardApplication \u2014 apply to serve on a Manhattan community board (today a Forminator web form / PDF, no API)",
+      "uses": [
+        "apply_to_community_board"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://manhattanbp",
+      "name": "Manhattan Borough President \u2014 profile",
+      "description": "Manhattan Borough President: 10 operations, 9 tools, verb \u201cfederate\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=manhattanbp"
+    },
+    {
+      "uri": "nyc://manhattanbp/openapi",
+      "name": "Manhattan Borough President OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanbp/openapi/manhattanbp.yaml"
+    },
+    {
+      "uri": "nyc://manhattanbp/communityboards/{id}",
+      "name": "CommunityBoards record (templated)",
+      "description": "A single Manhattan Borough President CommunityBoards record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

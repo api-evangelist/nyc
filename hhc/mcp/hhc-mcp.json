@@ -18,6 +18,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -432,5 +439,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_hhc",
+      "domain": "hhc",
+      "description": "Search and read NYC Health + Hospitals records \u2014 Facilities, Services, Providers, FinancialAssistance.",
+      "uses": [
+        "find_facilities",
+        "get_facility",
+        "get_facility_services",
+        "find_services"
+      ]
+    },
+    {
+      "name": "schedule_hhc",
+      "domain": "hhc",
+      "description": "AppointmentRequest \u2014 request/book an appointment (no write in the live FHIR surface)",
+      "uses": [
+        "request_appointment"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://hhc",
+      "name": "NYC Health + Hospitals \u2014 profile",
+      "description": "NYC Health + Hospitals: 13 operations, 9 tools, verb \u201cextend\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=hhc"
+    },
+    {
+      "uri": "nyc://hhc/openapi",
+      "name": "NYC Health + Hospitals OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/openapi/hhc.yaml"
+    },
+    {
+      "uri": "nyc://hhc/facilities/{id}",
+      "name": "Facilities record (templated)",
+      "description": "A single NYC Health + Hospitals Facilities record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

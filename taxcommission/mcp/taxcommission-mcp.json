@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -373,5 +380,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_taxcommission",
+      "domain": "taxcommission",
+      "description": "Search and read NYC Tax Commission records \u2014 Properties, AssessmentActions, Article7Petitions, Appeals.",
+      "uses": [
+        "find_properties",
+        "get_property",
+        "find_assessment_actions",
+        "find_article7_petitions"
+      ]
+    },
+    {
+      "name": "dispute_taxcommission",
+      "domain": "taxcommission",
+      "description": "AssessmentAppeal \u2014 file a property-tax assessment appeal (Application for Correction).",
+      "uses": [
+        "file_appeal"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://taxcommission",
+      "name": "NYC Tax Commission \u2014 profile",
+      "description": "NYC Tax Commission: 9 operations, 9 tools, verb \u201cdigitize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=taxcommission"
+    },
+    {
+      "uri": "nyc://taxcommission/openapi",
+      "name": "NYC Tax Commission OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/taxcommission/openapi/taxcommission.yaml"
+    },
+    {
+      "uri": "nyc://taxcommission/properties/{id}",
+      "name": "Properties record (templated)",
+      "description": "A single NYC Tax Commission Properties record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

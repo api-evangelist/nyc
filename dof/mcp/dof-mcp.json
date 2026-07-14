@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -385,5 +392,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dof",
+      "domain": "dof",
+      "description": "Search and read NYC Finance (DOF) records \u2014 Property, TaxBills, ACRIS, Parking.",
+      "uses": [
+        "find_property_valuations",
+        "get_property_valuation",
+        "find_property_exemptions",
+        "get_property_tax_bill"
+      ]
+    },
+    {
+      "name": "pay_dof",
+      "domain": "dof",
+      "description": "ParkingTicketPayment \u2014 pay a parking/camera violation via API instead of the CityPay-only web form.",
+      "uses": [
+        "pay_parking_ticket"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dof",
+      "name": "NYC Finance (DOF) \u2014 profile",
+      "description": "NYC Finance (DOF): 12 operations, 9 tools, verb \u201cmodernize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dof"
+    },
+    {
+      "uri": "nyc://dof/openapi",
+      "name": "NYC Finance (DOF) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dof/openapi/dof.yaml"
+    },
+    {
+      "uri": "nyc://dof/property/{id}",
+      "name": "Property record (templated)",
+      "description": "A single NYC Finance (DOF) Property record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

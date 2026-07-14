@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -464,5 +471,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_cfb",
+      "domain": "cfb",
+      "description": "Search and read NYC Campaign Finance Board (CFB) records \u2014 Candidates, Committees, Contributions, Expenditures.",
+      "uses": [
+        "find_candidates",
+        "get_candidate",
+        "find_committees",
+        "find_contributions"
+      ]
+    },
+    {
+      "name": "apply_for_cfb",
+      "domain": "cfb",
+      "description": "DisclosureFiling \u2014 a filer submits a disclosure statement (today only via the login-walled C-SMART disclosure application)",
+      "uses": [
+        "file_disclosure"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://cfb",
+      "name": "NYC Campaign Finance Board (CFB) \u2014 profile",
+      "description": "NYC Campaign Finance Board (CFB): 10 operations, 9 tools, verb \u201cdocument\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=cfb"
+    },
+    {
+      "uri": "nyc://cfb/openapi",
+      "name": "NYC Campaign Finance Board (CFB) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cfb/openapi/cfb.yaml"
+    },
+    {
+      "uri": "nyc://cfb/candidates/{id}",
+      "name": "Candidates record (templated)",
+      "description": "A single NYC Campaign Finance Board (CFB) Candidates record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

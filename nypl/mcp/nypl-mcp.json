@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -466,5 +473,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_nypl",
+      "domain": "nypl",
+      "description": "Search and read New York Public Library (NYPL) records \u2014 DigitalCollections, Locations, Events, Catalog.",
+      "uses": [
+        "search_digital_collections",
+        "get_digital_item",
+        "list_collections",
+        "find_branches"
+      ]
+    },
+    {
+      "name": "schedule_nypl",
+      "domain": "nypl",
+      "description": "Hold (BookHold) \u2014 place and track a reservation on a catalog item via a clean, agent-native public API (backed by NYPL's existing internal hold services)",
+      "uses": [
+        "place_hold"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://nypl",
+      "name": "New York Public Library (NYPL) \u2014 profile",
+      "description": "New York Public Library (NYPL): 13 operations, 11 tools, verb \u201clead\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=nypl"
+    },
+    {
+      "uri": "nyc://nypl/openapi",
+      "name": "New York Public Library (NYPL) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypl/openapi/nypl.yaml"
+    },
+    {
+      "uri": "nyc://nypl/digitalcollections/{id}",
+      "name": "DigitalCollections record (templated)",
+      "description": "A single New York Public Library (NYPL) DigitalCollections record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

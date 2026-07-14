@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -381,5 +388,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_cchr",
+      "domain": "cchr",
+      "description": "Search and read NYC Human Rights (CCHR) records \u2014 Complaints, Law, Outreach, Statistics.",
+      "uses": [
+        "find_protected_classes",
+        "find_legal_guidance",
+        "find_training_events",
+        "find_inquiry_statistics"
+      ]
+    },
+    {
+      "name": "report_cchr",
+      "domain": "cchr",
+      "description": "A typed DiscriminationComplaint intake API (report discrimination) \u2014 replacing the untyped Report Discrimination HTML form.",
+      "uses": [
+        "report_discrimination"
+      ]
+    },
+    {
+      "name": "check_cchr_status",
+      "domain": "cchr",
+      "description": "Check the status of a NYC Human Rights (CCHR) application, case, or request.",
+      "uses": [
+        "get_complaint"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://cchr",
+      "name": "NYC Human Rights (CCHR) \u2014 profile",
+      "description": "NYC Human Rights (CCHR): 8 operations, 8 tools, verb \u201cstructure\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=cchr"
+    },
+    {
+      "uri": "nyc://cchr/openapi",
+      "name": "NYC Human Rights (CCHR) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cchr/openapi/cchr.yaml"
+    },
+    {
+      "uri": "nyc://cchr/complaints/{id}",
+      "name": "Complaints record (templated)",
+      "description": "A single NYC Human Rights (CCHR) Complaints record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

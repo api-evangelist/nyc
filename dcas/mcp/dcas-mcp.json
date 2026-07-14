@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -501,5 +508,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dcas",
+      "domain": "dcas",
+      "description": "Search and read NYC Citywide Admin Services (DCAS) records \u2014 Jobs, Titles, EligibleLists, Exams.",
+      "uses": [
+        "find_job_postings",
+        "get_job_posting",
+        "find_civil_service_titles",
+        "get_civil_service_title"
+      ]
+    },
+    {
+      "name": "register_dcas",
+      "domain": "dcas",
+      "description": "ExamRegistration \u2014 register for a civil-service exam (alt: JobApplication)",
+      "uses": [
+        "register_for_exam"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dcas",
+      "name": "NYC Citywide Admin Services (DCAS) \u2014 profile",
+      "description": "NYC Citywide Admin Services (DCAS): 12 operations, 11 tools, verb \u201cTransact\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dcas"
+    },
+    {
+      "uri": "nyc://dcas/openapi",
+      "name": "NYC Citywide Admin Services (DCAS) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcas/openapi/dcas.yaml"
+    },
+    {
+      "uri": "nyc://dcas/jobs/{id}",
+      "name": "Jobs record (templated)",
+      "description": "A single NYC Citywide Admin Services (DCAS) Jobs record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

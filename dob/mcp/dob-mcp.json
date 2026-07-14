@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -507,5 +514,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dob",
+      "domain": "dob",
+      "description": "Search and read NYC Buildings (DOB) records \u2014 Buildings, Filings, Permits, Violations.",
+      "uses": [
+        "find_buildings",
+        "get_building",
+        "find_job_filings",
+        "get_job_filing"
+      ]
+    },
+    {
+      "name": "apply_for_dob",
+      "domain": "dob",
+      "description": "File a new DOB NOW: Build permit application as a draft. NET-NEW workflow with no equivalent today (DOB NOW is browser-only). Requires an authenticated user. Mutates state \u2014 confirm all details with the user first.",
+      "uses": [
+        "file_permit_application"
+      ]
+    },
+    {
+      "name": "submit_permit_application",
+      "domain": "dob",
+      "description": "Update a draft permit application or advance it to 'Submitted' to lodge the DOB NOW filing for review. Requires an authenticated user. Mutates state \u2014 confirm with the user before submitting.",
+      "uses": [
+        "submit_permit_application"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dob",
+      "name": "NYC Buildings (DOB) \u2014 profile",
+      "description": "NYC Buildings (DOB): 17 operations, 10 tools, verb \u201cTransact\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dob"
+    },
+    {
+      "uri": "nyc://dob/openapi",
+      "name": "NYC Buildings (DOB) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dob/openapi/dob.yaml"
+    },
+    {
+      "uri": "nyc://dob/buildings/{id}",
+      "name": "Buildings record (templated)",
+      "description": "A single NYC Buildings (DOB) Buildings record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

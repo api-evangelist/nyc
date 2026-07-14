@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -273,5 +280,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_vote_nyc",
+      "domain": "vote.nyc",
+      "description": "Search and read NYC Board of Elections records \u2014 Poll Sites, Elections, Ballot, Results.",
+      "uses": [
+        "find_poll_site",
+        "list_elections",
+        "find_contests",
+        "find_candidates"
+      ]
+    },
+    {
+      "name": "register_vote_nyc",
+      "domain": "vote.nyc",
+      "description": "Submit a request for an absentee / mail-in ballot. NET-NEW workflow (fronts requestballot.vote.nyc). Requires an authenticated voter. Mutates state \u2014 confirm details with the user first.",
+      "uses": [
+        "request_mail_ballot"
+      ]
+    },
+    {
+      "name": "check_vote_nyc_status",
+      "domain": "vote.nyc",
+      "description": "Check the status of a NYC Board of Elections application, case, or request.",
+      "uses": [
+        "track_mail_ballot"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://vote.nyc",
+      "name": "NYC Board of Elections \u2014 profile",
+      "description": "NYC Board of Elections: 11 operations, 7 tools, verb \u201cDigitize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=vote.nyc"
+    },
+    {
+      "uri": "nyc://vote.nyc/openapi",
+      "name": "NYC Board of Elections OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/openapi/nyc-elections.yaml"
+    },
+    {
+      "uri": "nyc://vote.nyc/poll-sites/{id}",
+      "name": "Poll Sites record (templated)",
+      "description": "A single NYC Board of Elections Poll Sites record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

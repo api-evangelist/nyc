@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -448,5 +455,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_nycha",
+      "domain": "nycha",
+      "description": "Search and read NYC Housing Authority (NYCHA) records \u2014 Developments, Facilities, Utilities, Residents.",
+      "uses": [
+        "find_developments",
+        "get_development",
+        "get_development_addresses",
+        "find_addresses"
+      ]
+    },
+    {
+      "name": "report_nycha",
+      "domain": "nycha",
+      "description": "Create a NYCHA maintenance work order (report a repair). NET-NEW workflow with no public API today \u2014 it lives only in the Oracle Siebel Self Service Portal or a phone call to the Customer Contact Center. Requires an auth",
+      "uses": [
+        "report_repair"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://nycha",
+      "name": "NYC Housing Authority (NYCHA) \u2014 profile",
+      "description": "NYC Housing Authority (NYCHA): 10 operations, 9 tools, verb \u201cUnlock\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=nycha"
+    },
+    {
+      "uri": "nyc://nycha/openapi",
+      "name": "NYC Housing Authority (NYCHA) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycha/openapi/nycha.yaml"
+    },
+    {
+      "uri": "nyc://nycha/developments/{id}",
+      "name": "Developments record (templated)",
+      "description": "A single NYC Housing Authority (NYCHA) Developments record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

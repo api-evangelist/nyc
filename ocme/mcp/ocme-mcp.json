@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -382,5 +389,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_ocme",
+      "domain": "ocme",
+      "description": "Search and read NYC Medical Examiner (OCME) records \u2014 Indicators, Statistics, Services, Locations.",
+      "uses": [
+        "list_indicators",
+        "find_case_statistics",
+        "find_services",
+        "find_family_services_centers"
+      ]
+    },
+    {
+      "name": "request_ocme",
+      "domain": "ocme",
+      "description": "DeathRecordRequest \u2014 request and track a decedent's medical-examiner casefile record/report",
+      "uses": [
+        "request_record"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://ocme",
+      "name": "NYC Medical Examiner (OCME) \u2014 profile",
+      "description": "NYC Medical Examiner (OCME): 8 operations, 8 tools, verb \u201cinstrument\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=ocme"
+    },
+    {
+      "uri": "nyc://ocme/openapi",
+      "name": "NYC Medical Examiner (OCME) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ocme/openapi/ocme.yaml"
+    },
+    {
+      "uri": "nyc://ocme/indicators/{id}",
+      "name": "Indicators record (templated)",
+      "description": "A single NYC Medical Examiner (OCME) Indicators record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

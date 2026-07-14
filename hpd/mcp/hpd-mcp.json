@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -546,5 +553,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_hpd",
+      "domain": "hpd",
+      "description": "Search and read NYC Housing (HPD) records \u2014 Buildings, Violations, Complaints, Registrations.",
+      "uses": [
+        "find_buildings",
+        "get_building",
+        "get_building_violations",
+        "get_building_complaints"
+      ]
+    },
+    {
+      "name": "report_hpd",
+      "domain": "hpd",
+      "description": "File an HPD maintenance complaint against a building. NET-NEW write with no public API today (only 311 / web UI). Requires an authenticated user and mutates state \u2014 confirm details first.",
+      "uses": [
+        "file_complaint"
+      ]
+    },
+    {
+      "name": "apply_for_hpd",
+      "domain": "hpd",
+      "description": "Submit an NYC Housing Connect affordable-housing lottery application. NET-NEW workflow \u2014 Housing Connect has no public API today. Requires an authenticated household; carries PII and mutates state \u2014 confirm every field w",
+      "uses": [
+        "apply_to_lottery"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://hpd",
+      "name": "NYC Housing (HPD) \u2014 profile",
+      "description": "NYC Housing (HPD): 18 operations, 11 tools, verb \u201cExpose\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=hpd"
+    },
+    {
+      "uri": "nyc://hpd/openapi",
+      "name": "NYC Housing (HPD) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hpd/openapi/hpd.yaml"
+    },
+    {
+      "uri": "nyc://hpd/buildings/{id}",
+      "name": "Buildings record (templated)",
+      "description": "A single NYC Housing (HPD) Buildings record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

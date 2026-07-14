@@ -31,6 +31,8 @@
 .op code{font-size:.82rem}
 .op .to{font-size:.76rem;color:var(--fg-soft);white-space:nowrap}
 .dot{color:var(--fg-soft);padding:0 4px}
+.prbox{padding:6px 0;border-bottom:1px dashed var(--border)}
+.prlabel{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--fg-soft);font-weight:700;margin-right:8px}
 </style>
 </head>
 <body>
@@ -101,13 +103,14 @@
   document.getElementById("footer").innerHTML=footer();
   const X=await getJSON("data/experience.json");
   const T=X.totals;
+  const allPR=(T.allPrompts||T.prompts)+(T.allResources||T.resources);
   document.getElementById("tot").innerHTML=[
     [T.apis,"agency APIs"],[T.operations,"REST operations"],[T.tools,"MCP tools"],
-    [T.prompts+T.resources,"prompts + resources"],[T.skills,"government-process skills"]
+    [allPR,"prompts + resources"],[T.skills,"government-process skills"]
   ].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
   document.getElementById("c1").innerHTML=`<strong>${T.operations}</strong> operations across ${T.apis} agencies — the REST surface, mostly design-first.`;
   document.getElementById("c2").innerHTML=`<strong>${T.tools}</strong> tools make those operations agent-callable, 1:1 where a tool exists.`;
-  document.getElementById("c3").innerHTML=`<strong>${T.skills}</strong> skills + ${T.prompts} prompts orchestrate tools into finished citizen tasks.`;
+  document.getElementById("c3").innerHTML=`<strong>${T.skills}</strong> skills + <strong>${T.allPrompts||T.prompts}</strong> prompts + <strong>${T.allResources||T.resources}</strong> resources orchestrate tools into finished citizen tasks.`;
 
   const skillById={}; X.skills.forEach(s=>skillById[s.id]=s);
   let activeSkill=null;
@@ -160,10 +163,13 @@
       shown++;
       const chips=a.skills.map(sid=>`<span class="chip ${activeSkill===sid?'on':''}" style="cursor:default">${esc(skillById[sid]?skillById[sid].primitive:sid)}</span>`).join("");
       const open=(activeSkill||q)?"":"hidden";
+      const pr=(a.prompts&&a.prompts.length)?`<div class="prbox"><span class="prlabel">MCP prompts</span>${a.prompts.map(p=>`<span class="chip" style="cursor:default" title="${esc(p.description)}">${esc(p.name)}</span>`).join("")}</div>`:"";
+      const rr=(a.resources&&a.resources.length)?`<div class="prbox"><span class="prlabel">Resources</span>${a.resources.map(r=>`<span class="chip" style="cursor:default" title="${esc(r.description)}"><code>${esc(r.uri)}</code></span>`).join("")}</div>`:"";
       return `<div class="apirow"><div class="apihead" data-id="${a.id}">
           <h3>${esc(a.short)} <span class="muted" style="font-weight:400;font-size:.82rem">${esc(a.verb)}</span></h3>
-          <span class="c">${a.operationCount} ops · ${a.toolCount} tools</span></div>
+          <span class="c">${a.operationCount} ops · ${a.toolCount} tools · ${(a.prompts||[]).length} prompts · ${(a.resources||[]).length} res</span></div>
         <div class="opgrid" ${open==="hidden"?'style="display:none"':""}>
+          ${pr}${rr}
           ${ops.map(o=>`<div class="op"><span class="${mcls(o.method)}">${o.method.toUpperCase()}</span>
             <span><code>${esc(o.path)}</code><span class="dot">·</span><span class="muted">${esc(o.summary||"")}</span></span>
             <span class="to">${o.mcpTool?`🔧 <code>${esc(o.mcpTool)}</code>`:'<span style="color:var(--gap)">no tool</span>'} <span class="dot">→</span> ${esc(skillById[o.skill]?skillById[o.skill].primitive:o.skill)}</span></div>`).join("")}

@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -412,5 +419,41 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dcp",
+      "domain": "dcp",
+      "description": "Search and read NYC City Planning (DCP) records \u2014 Lots, Zoning, Geographies, Land Use.",
+      "uses": [
+        "geocode_address",
+        "lookup_lot",
+        "find_lots",
+        "find_zoning"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dcp",
+      "name": "NYC City Planning (DCP) \u2014 profile",
+      "description": "NYC City Planning (DCP): 12 operations, 10 tools, verb \u201cAnchor\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dcp"
+    },
+    {
+      "uri": "nyc://dcp/openapi",
+      "name": "NYC City Planning (DCP) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/openapi/dcp.yaml"
+    },
+    {
+      "uri": "nyc://dcp/lots/{id}",
+      "name": "Lots record (templated)",
+      "description": "A single NYC City Planning (DCP) Lots record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -409,5 +416,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_nypd",
+      "domain": "nypd",
+      "description": "Search and read NYPD records \u2014 Complaints, Arrests, Shootings, Precincts.",
+      "uses": [
+        "find_complaints",
+        "get_complaint",
+        "find_arrests",
+        "find_shooting_incidents"
+      ]
+    },
+    {
+      "name": "report_nypd",
+      "domain": "nypd",
+      "description": "Request a copy of an NYPD record \u2014 an incident report, a collision/accident report, or a FOIL request. NET-NEW workflow with no equivalent API today. Requires an authenticated user. Mutates state \u2014 confirm details with t",
+      "uses": [
+        "request_police_report"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://nypd",
+      "name": "NYPD \u2014 profile",
+      "description": "NYPD: 13 operations, 9 tools, verb \u201cExpose\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=nypd"
+    },
+    {
+      "uri": "nyc://nypd/openapi",
+      "name": "NYPD OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypd/openapi/nypd.yaml"
+    },
+    {
+      "uri": "nyc://nypd/complaints/{id}",
+      "name": "Complaints record (templated)",
+      "description": "A single NYPD Complaints record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

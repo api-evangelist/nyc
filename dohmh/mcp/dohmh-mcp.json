@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -477,5 +484,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dohmh",
+      "domain": "dohmh",
+      "description": "Search and read NYC Health (DOHMH) records \u2014 Food Establishments, Rodent Inspections, Childcare, Health Facilities.",
+      "uses": [
+        "find_food_establishments",
+        "get_food_establishment",
+        "get_food_establishment_inspections",
+        "find_inspections"
+      ]
+    },
+    {
+      "name": "request_dohmh",
+      "domain": "dohmh",
+      "description": "Order a certified copy of a NYC birth or death certificate. NET-NEW workflow with no open API today (locked in eVital VRRTS / VitalChek). Requires an authenticated user, places a paid order, and mutates state \u2014 confirm a",
+      "uses": [
+        "order_vital_record"
+      ]
+    },
+    {
+      "name": "check_dohmh_status",
+      "domain": "dohmh",
+      "description": "Check the status of a NYC Health (DOHMH) application, case, or request.",
+      "uses": [
+        "track_vital_record_request"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dohmh",
+      "name": "NYC Health (DOHMH) \u2014 profile",
+      "description": "NYC Health (DOHMH): 12 operations, 10 tools, verb \u201cTransact\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dohmh"
+    },
+    {
+      "uri": "nyc://dohmh/openapi",
+      "name": "NYC Health (DOHMH) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dohmh/openapi/dohmh.yaml"
+    },
+    {
+      "uri": "nyc://dohmh/food-establishments/{id}",
+      "name": "Food Establishments record (templated)",
+      "description": "A single NYC Health (DOHMH) Food Establishments record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

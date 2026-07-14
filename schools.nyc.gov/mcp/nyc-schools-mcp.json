@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -341,5 +348,65 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_schools_nyc_gov",
+      "domain": "schools.nyc.gov",
+      "description": "Search and read NYC Public Schools (DOE) records \u2014 Schools, Demographics, Assessments, Calendar.",
+      "uses": [
+        "find_schools",
+        "get_school",
+        "get_school_demographics",
+        "get_school_test_results"
+      ]
+    },
+    {
+      "name": "apply_for_schools_nyc_gov",
+      "domain": "schools.nyc.gov",
+      "description": "Submit a new NYC schools admissions/enrollment application (3K, PreK, K, G&T, Middle, High School, Specialized). NET-NEW workflow (MySchools) with no equivalent today. Requires an authenticated guardian. Mutates state \u2014 ",
+      "uses": [
+        "submit_enrollment_application"
+      ]
+    },
+    {
+      "name": "update_enrollment_application",
+      "domain": "schools.nyc.gov",
+      "description": "Update or withdraw a draft/submitted application (e.g. re-rank school choices). Requires an authenticated guardian. Mutates state \u2014 confirm with the user first.",
+      "uses": [
+        "update_enrollment_application"
+      ]
+    },
+    {
+      "name": "check_schools_nyc_gov_status",
+      "domain": "schools.nyc.gov",
+      "description": "Check the status of a NYC Public Schools (DOE) application, case, or request.",
+      "uses": [
+        "check_application_status"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://schools.nyc.gov",
+      "name": "NYC Public Schools (DOE) \u2014 profile",
+      "description": "NYC Public Schools (DOE): 11 operations, 9 tools, verb \u201cReclaim\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=schools.nyc.gov"
+    },
+    {
+      "uri": "nyc://schools.nyc.gov/openapi",
+      "name": "NYC Public Schools (DOE) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/schools.nyc.gov/openapi/nyc-schools.yaml"
+    },
+    {
+      "uri": "nyc://schools.nyc.gov/schools/{id}",
+      "name": "Schools record (templated)",
+      "description": "A single NYC Public Schools (DOE) Schools record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

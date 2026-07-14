@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -524,5 +531,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dep",
+      "domain": "dep",
+      "description": "Search and read NYC Environmental Protection (DEP) records \u2014 Water Supply, Water Quality, Green Infrastructure, Assets.",
+      "uses": [
+        "find_reservoir_levels",
+        "find_water_consumption",
+        "find_water_quality",
+        "find_green_infrastructure"
+      ]
+    },
+    {
+      "name": "report_dep",
+      "domain": "dep",
+      "description": "WaterServiceRequest",
+      "uses": [
+        "report_water_problem"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dep",
+      "name": "NYC Environmental Protection (DEP) \u2014 profile",
+      "description": "NYC Environmental Protection (DEP): 11 operations, 11 tools, verb \u201cTransact\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dep"
+    },
+    {
+      "uri": "nyc://dep/openapi",
+      "name": "NYC Environmental Protection (DEP) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dep/openapi/dep.yaml"
+    },
+    {
+      "uri": "nyc://dep/water-supply/{id}",
+      "name": "Water Supply record (templated)",
+      "description": "A single NYC Environmental Protection (DEP) Water Supply record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

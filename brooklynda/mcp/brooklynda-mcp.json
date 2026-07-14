@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -387,5 +394,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_brooklynda",
+      "domain": "brooklynda",
+      "description": "Search and read Brooklyn District Attorney records \u2014 PressReleases, Programs, Resources, VictimServices.",
+      "uses": [
+        "find_press_releases",
+        "get_press_release",
+        "find_programs",
+        "get_program"
+      ]
+    },
+    {
+      "name": "report_brooklynda",
+      "domain": "brooklynda",
+      "description": "TipSubmission \u2014 submit and track a confidential tip (report fraud, an unsafe landlord, a hate incident, trafficking, or information on an open case)",
+      "uses": [
+        "submit_tip"
+      ]
+    },
+    {
+      "name": "check_brooklynda_status",
+      "domain": "brooklynda",
+      "description": "Check the status of a Brooklyn District Attorney application, case, or request.",
+      "uses": [
+        "get_tip_status"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://brooklynda",
+      "name": "Brooklyn District Attorney \u2014 profile",
+      "description": "Brooklyn District Attorney: 9 operations, 9 tools, verb \u201ctemplate\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=brooklynda"
+    },
+    {
+      "uri": "nyc://brooklynda/openapi",
+      "name": "Brooklyn District Attorney OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynda/openapi/brooklynda.yaml"
+    },
+    {
+      "uri": "nyc://brooklynda/pressreleases/{id}",
+      "name": "PressReleases record (templated)",
+      "description": "A single Brooklyn District Attorney PressReleases record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

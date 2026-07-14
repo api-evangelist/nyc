@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -489,5 +496,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_queensbp",
+      "domain": "queensbp",
+      "description": "Search and read Queens Borough President records \u2014 CommunityBoards, LandUse, Budget, Newsroom.",
+      "uses": [
+        "find_community_boards",
+        "get_community_board",
+        "find_community_board_members",
+        "find_appointments"
+      ]
+    },
+    {
+      "name": "apply_for_queensbp",
+      "domain": "queensbp",
+      "description": "CommunityBoardApplication \u2014 apply to serve on a Queens community board (today an HTML/PDF form)",
+      "uses": [
+        "apply_to_community_board"
+      ]
+    },
+    {
+      "name": "check_queensbp_status",
+      "domain": "queensbp",
+      "description": "Check the status of a Queens Borough President application, case, or request.",
+      "uses": [
+        "get_community_board_application"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://queensbp",
+      "name": "Queens Borough President \u2014 profile",
+      "description": "Queens Borough President: 12 operations, 11 tools, verb \u201cstandardize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=queensbp"
+    },
+    {
+      "uri": "nyc://queensbp/openapi",
+      "name": "Queens Borough President OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/openapi/queensbp.yaml"
+    },
+    {
+      "uri": "nyc://queensbp/communityboards/{id}",
+      "name": "CommunityBoards record (templated)",
+      "description": "A single Queens Borough President CommunityBoards record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

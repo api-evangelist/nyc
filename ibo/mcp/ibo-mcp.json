@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -459,5 +466,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_ibo",
+      "domain": "ibo",
+      "description": "Search and read NYC Independent Budget Office (IBO) records \u2014 Publications, DataTables, FiscalData, Education.",
+      "uses": [
+        "find_publications",
+        "get_publication",
+        "find_data_tables",
+        "get_data_table"
+      ]
+    },
+    {
+      "name": "apply_for_ibo",
+      "domain": "ibo",
+      "description": "DataRequest \u2014 an API for the 'Ask IBO' data/analysis request, today a web form / email only",
+      "uses": [
+        "ask_ibo"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://ibo",
+      "name": "NYC Independent Budget Office (IBO) \u2014 profile",
+      "description": "NYC Independent Budget Office (IBO): 10 operations, 10 tools, verb \u201cformalize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=ibo"
+    },
+    {
+      "uri": "nyc://ibo/openapi",
+      "name": "NYC Independent Budget Office (IBO) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ibo/openapi/ibo.yaml"
+    },
+    {
+      "uri": "nyc://ibo/publications/{id}",
+      "name": "Publications record (templated)",
+      "description": "A single NYC Independent Budget Office (IBO) Publications record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

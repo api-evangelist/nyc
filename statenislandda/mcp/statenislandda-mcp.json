@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -350,5 +357,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_statenislandda",
+      "domain": "statenislandda",
+      "description": "Search and read Staten Island District Attorney records \u2014 PressReleases, Programs, VictimServices, CommunityResources.",
+      "uses": [
+        "find_press_releases",
+        "get_press_release",
+        "find_programs",
+        "get_program"
+      ]
+    },
+    {
+      "name": "report_statenislandda",
+      "domain": "statenislandda",
+      "description": "TipSubmission \u2014 an API for the confidential drug/scam tip forms (today Contact Form 7 email only)",
+      "uses": [
+        "submit_tip"
+      ]
+    },
+    {
+      "name": "check_statenislandda_status",
+      "domain": "statenislandda",
+      "description": "Check the status of a Staten Island District Attorney application, case, or request.",
+      "uses": [
+        "get_tip"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://statenislandda",
+      "name": "Staten Island District Attorney \u2014 profile",
+      "description": "Staten Island District Attorney: 9 operations, 9 tools, verb \u201csurface\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=statenislandda"
+    },
+    {
+      "uri": "nyc://statenislandda/openapi",
+      "name": "Staten Island District Attorney OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandda/openapi/statenislandda.yaml"
+    },
+    {
+      "uri": "nyc://statenislandda/pressreleases/{id}",
+      "name": "PressReleases record (templated)",
+      "description": "A single Staten Island District Attorney PressReleases record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

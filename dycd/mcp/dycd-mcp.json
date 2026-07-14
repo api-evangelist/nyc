@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -462,5 +469,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dycd",
+      "domain": "dycd",
+      "description": "Search and read NYC Youth & Community Dev (DYCD) records \u2014 Programs, ProgramSites, Providers, Contracts.",
+      "uses": [
+        "find_programs",
+        "get_program",
+        "find_program_sites",
+        "get_program_site"
+      ]
+    },
+    {
+      "name": "apply_for_dycd",
+      "domain": "dycd",
+      "description": "ProgramApplication \u2014 apply to a program (e.g. an SYEP application)",
+      "uses": [
+        "apply_to_program"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dycd",
+      "name": "NYC Youth & Community Dev (DYCD) \u2014 profile",
+      "description": "NYC Youth & Community Dev (DYCD): 11 operations, 10 tools, verb \u201csurface\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dycd"
+    },
+    {
+      "uri": "nyc://dycd/openapi",
+      "name": "NYC Youth & Community Dev (DYCD) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dycd/openapi/dycd.yaml"
+    },
+    {
+      "uri": "nyc://dycd/programs/{id}",
+      "name": "Programs record (templated)",
+      "description": "A single NYC Youth & Community Dev (DYCD) Programs record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

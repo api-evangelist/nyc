@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -492,5 +499,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_bic",
+      "domain": "bic",
+      "description": "Search and read NYC Business Integrity Commission (BIC) records \u2014 Licensees, Fleet, Registrants, Markets.",
+      "uses": [
+        "find_licensees",
+        "get_licensee",
+        "get_licensee_vehicles",
+        "find_registrants"
+      ]
+    },
+    {
+      "name": "register_bic",
+      "domain": "bic",
+      "description": "TradeWasteLicenseApplication \u2014 apply for a trade waste license/registration",
+      "uses": [
+        "apply_for_license"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://bic",
+      "name": "NYC Business Integrity Commission (BIC) \u2014 profile",
+      "description": "NYC Business Integrity Commission (BIC): 12 operations, 10 tools, verb \u201ctransact\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=bic"
+    },
+    {
+      "uri": "nyc://bic/openapi",
+      "name": "NYC Business Integrity Commission (BIC) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bic/openapi/bic.yaml"
+    },
+    {
+      "uri": "nyc://bic/licensees/{id}",
+      "name": "Licensees record (templated)",
+      "description": "A single NYC Business Integrity Commission (BIC) Licensees record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

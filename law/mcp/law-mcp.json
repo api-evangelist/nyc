@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -357,5 +364,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_law",
+      "domain": "law",
+      "description": "Search and read NYC Law Department records \u2014 Litigation, Divisions, Publications, Contracting.",
+      "uses": [
+        "find_cases",
+        "get_case",
+        "find_divisions",
+        "find_publications"
+      ]
+    },
+    {
+      "name": "apply_for_law",
+      "domain": "law",
+      "description": "LawInternshipApplication \u2014 submit a legal internship / fellowship application (the one citizen-initiated transaction with this agency)",
+      "uses": [
+        "submit_internship_application"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://law",
+      "name": "NYC Law Department \u2014 profile",
+      "description": "NYC Law Department: 9 operations, 8 tools, verb \u201ccatalog\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=law"
+    },
+    {
+      "uri": "nyc://law/openapi",
+      "name": "NYC Law Department OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/law/openapi/law.yaml"
+    },
+    {
+      "uri": "nyc://law/litigation/{id}",
+      "name": "Litigation record (templated)",
+      "description": "A single NYC Law Department Litigation record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

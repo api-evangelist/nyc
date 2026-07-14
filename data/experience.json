@@ -7,7 +7,11 @@
   "tools": 624,
   "prompts": 7,
   "resources": 7,
-  "skills": 10
+  "skills": 10,
+  "domainPrompts": 160,
+  "domainResources": 201,
+  "allPrompts": 167,
+  "allResources": 208
  },
  "chain": [
   "REST operation",
@@ -1422,6 +1426,66 @@
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_nycgovparks_org",
+     "domain": "nycgovparks.org",
+     "description": "Search and read NYC Parks & Recreation records \u2014 Parks, Facilities, Events, Monuments.",
+     "uses": [
+      "find_parks",
+      "get_park",
+      "list_park_facilities",
+      "find_facilities"
+     ]
+    },
+    {
+     "name": "apply_for_nycgovparks_org",
+     "domain": "nycgovparks.org",
+     "description": "Submit a new NYC Parks permit application (field-and-court, tennis, special-event, film-photo, research, etc.). NET-NEW workflow with no equivalent today. Requires an authenticated applicant. Mutates state \u2014 confirm deta",
+     "uses": [
+      "submit_permit_application"
+     ]
+    },
+    {
+     "name": "update_permit_application",
+     "domain": "nycgovparks.org",
+     "description": "Update or withdraw a draft/submitted permit application. Requires an authenticated applicant. Mutates state \u2014 confirm with the user first.",
+     "uses": [
+      "update_permit_application"
+     ]
+    },
+    {
+     "name": "check_nycgovparks_org_status",
+     "domain": "nycgovparks.org",
+     "description": "Check the status of a NYC Parks & Recreation application, case, or request.",
+     "uses": [
+      "get_capital_project"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://nycgovparks.org",
+     "name": "NYC Parks & Recreation \u2014 profile",
+     "description": "NYC Parks & Recreation: 17 operations, 15 tools, verb \u201cReplatform\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=nycgovparks.org"
+    },
+    {
+     "uri": "nyc://nycgovparks.org/openapi",
+     "name": "NYC Parks & Recreation OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycgovparks.org/openapi/nyc-parks.yaml"
+    },
+    {
+     "uri": "nyc://nycgovparks.org/parks/{id}",
+     "name": "Parks record (templated)",
+     "description": "A single NYC Parks & Recreation Parks record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -1648,6 +1712,66 @@
      "operationId": "updateEnrollmentApplication",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_schools_nyc_gov",
+     "domain": "schools.nyc.gov",
+     "description": "Search and read NYC Public Schools (DOE) records \u2014 Schools, Demographics, Assessments, Calendar.",
+     "uses": [
+      "find_schools",
+      "get_school",
+      "get_school_demographics",
+      "get_school_test_results"
+     ]
+    },
+    {
+     "name": "apply_for_schools_nyc_gov",
+     "domain": "schools.nyc.gov",
+     "description": "Submit a new NYC schools admissions/enrollment application (3K, PreK, K, G&T, Middle, High School, Specialized). NET-NEW workflow (MySchools) with no equivalent today. Requires an authenticated guardian. Mutates state \u2014 ",
+     "uses": [
+      "submit_enrollment_application"
+     ]
+    },
+    {
+     "name": "update_enrollment_application",
+     "domain": "schools.nyc.gov",
+     "description": "Update or withdraw a draft/submitted application (e.g. re-rank school choices). Requires an authenticated guardian. Mutates state \u2014 confirm with the user first.",
+     "uses": [
+      "update_enrollment_application"
+     ]
+    },
+    {
+     "name": "check_schools_nyc_gov_status",
+     "domain": "schools.nyc.gov",
+     "description": "Check the status of a NYC Public Schools (DOE) application, case, or request.",
+     "uses": [
+      "check_application_status"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://schools.nyc.gov",
+     "name": "NYC Public Schools (DOE) \u2014 profile",
+     "description": "NYC Public Schools (DOE): 11 operations, 9 tools, verb \u201cReclaim\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=schools.nyc.gov"
+    },
+    {
+     "uri": "nyc://schools.nyc.gov/openapi",
+     "name": "NYC Public Schools (DOE) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/schools.nyc.gov/openapi/nyc-schools.yaml"
+    },
+    {
+     "uri": "nyc://schools.nyc.gov/schools/{id}",
+     "name": "Schools record (templated)",
+     "description": "A single NYC Public Schools (DOE) Schools record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -1931,6 +2055,50 @@
      "write": true,
      "skill": "register-or-enroll"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_council_nyc_gov",
+     "domain": "council.nyc.gov",
+     "description": "Search and read NYC Council records \u2014 Members, Legislation, Committees, Meetings.",
+     "uses": [
+      "find_members",
+      "get_member",
+      "get_member_legislation",
+      "get_district"
+     ]
+    },
+    {
+     "name": "register_council_nyc_gov",
+     "domain": "council.nyc.gov",
+     "description": "Register to testify (in-person, remote, or written) at a Council hearing. NET-NEW workflow with no equivalent today. Requires an authenticated user. Mutates state \u2014 confirm details with the user first.",
+     "uses": [
+      "register_testimony"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://council.nyc.gov",
+     "name": "NYC Council \u2014 profile",
+     "description": "NYC Council: 15 operations, 10 tools, verb \u201cConsolidate & Own\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=council.nyc.gov"
+    },
+    {
+     "uri": "nyc://council.nyc.gov/openapi",
+     "name": "NYC Council OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/openapi/nyc-council.yaml"
+    },
+    {
+     "uri": "nyc://council.nyc.gov/members/{id}",
+     "name": "Members record (templated)",
+     "description": "A single NYC Council Members record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -2141,6 +2309,58 @@
      "write": false,
      "skill": "check-application-or-case-status"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_vote_nyc",
+     "domain": "vote.nyc",
+     "description": "Search and read NYC Board of Elections records \u2014 Poll Sites, Elections, Ballot, Results.",
+     "uses": [
+      "find_poll_site",
+      "list_elections",
+      "find_contests",
+      "find_candidates"
+     ]
+    },
+    {
+     "name": "register_vote_nyc",
+     "domain": "vote.nyc",
+     "description": "Submit a request for an absentee / mail-in ballot. NET-NEW workflow (fronts requestballot.vote.nyc). Requires an authenticated voter. Mutates state \u2014 confirm details with the user first.",
+     "uses": [
+      "request_mail_ballot"
+     ]
+    },
+    {
+     "name": "check_vote_nyc_status",
+     "domain": "vote.nyc",
+     "description": "Check the status of a NYC Board of Elections application, case, or request.",
+     "uses": [
+      "track_mail_ballot"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://vote.nyc",
+     "name": "NYC Board of Elections \u2014 profile",
+     "description": "NYC Board of Elections: 11 operations, 7 tools, verb \u201cDigitize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=vote.nyc"
+    },
+    {
+     "uri": "nyc://vote.nyc/openapi",
+     "name": "NYC Board of Elections OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/openapi/nyc-elections.yaml"
+    },
+    {
+     "uri": "nyc://vote.nyc/poll-sites/{id}",
+     "name": "Poll Sites record (templated)",
+     "description": "A single NYC Board of Elections Poll Sites record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -2293,6 +2513,58 @@
      "operationId": "listAgencies",
      "write": false,
      "skill": "search-city-data-and-records"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_nyc311",
+     "domain": "nyc311",
+     "description": "Search and read NYC311 records \u2014 Discovery, Services, Requests, Agencies.",
+     "uses": [
+      "find_service_types",
+      "get_service_definition",
+      "check_request_status",
+      "find_service_requests"
+     ]
+    },
+    {
+     "name": "report_nyc311",
+     "domain": "nyc311",
+     "description": "Report a 311 problem (Open311 POST Service Request). Revives the retired write path. Requires an api.nyc.gov key and an address + service code. Mutates state \u2014 confirm details with the user first.",
+     "uses": [
+      "submit_service_request"
+     ]
+    },
+    {
+     "name": "check_nyc311_status",
+     "domain": "nyc311",
+     "description": "Check the status of a NYC311 application, case, or request.",
+     "uses": [
+      "check_request_status"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://nyc311",
+     "name": "NYC311 \u2014 profile",
+     "description": "NYC311: 7 operations, 6 tools, verb \u201cStandardize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=nyc311"
+    },
+    {
+     "uri": "nyc://nyc311/openapi",
+     "name": "NYC311 OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc311/openapi/nyc-311.yaml"
+    },
+    {
+     "uri": "nyc://nyc311/discovery/{id}",
+     "name": "Discovery record (templated)",
+     "description": "A single NYC311 Discovery record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -2600,6 +2872,58 @@
      "operationId": "submitPermitApplication",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dob",
+     "domain": "dob",
+     "description": "Search and read NYC Buildings (DOB) records \u2014 Buildings, Filings, Permits, Violations.",
+     "uses": [
+      "find_buildings",
+      "get_building",
+      "find_job_filings",
+      "get_job_filing"
+     ]
+    },
+    {
+     "name": "apply_for_dob",
+     "domain": "dob",
+     "description": "File a new DOB NOW: Build permit application as a draft. NET-NEW workflow with no equivalent today (DOB NOW is browser-only). Requires an authenticated user. Mutates state \u2014 confirm all details with the user first.",
+     "uses": [
+      "file_permit_application"
+     ]
+    },
+    {
+     "name": "submit_permit_application",
+     "domain": "dob",
+     "description": "Update a draft permit application or advance it to 'Submitted' to lodge the DOB NOW filing for review. Requires an authenticated user. Mutates state \u2014 confirm with the user before submitting.",
+     "uses": [
+      "submit_permit_application"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dob",
+     "name": "NYC Buildings (DOB) \u2014 profile",
+     "description": "NYC Buildings (DOB): 17 operations, 10 tools, verb \u201cTransact\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dob"
+    },
+    {
+     "uri": "nyc://dob/openapi",
+     "name": "NYC Buildings (DOB) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dob/openapi/dob.yaml"
+    },
+    {
+     "uri": "nyc://dob/buildings/{id}",
+     "name": "Buildings record (templated)",
+     "description": "A single NYC Buildings (DOB) Buildings record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -2929,6 +3253,58 @@
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_hpd",
+     "domain": "hpd",
+     "description": "Search and read NYC Housing (HPD) records \u2014 Buildings, Violations, Complaints, Registrations.",
+     "uses": [
+      "find_buildings",
+      "get_building",
+      "get_building_violations",
+      "get_building_complaints"
+     ]
+    },
+    {
+     "name": "report_hpd",
+     "domain": "hpd",
+     "description": "File an HPD maintenance complaint against a building. NET-NEW write with no public API today (only 311 / web UI). Requires an authenticated user and mutates state \u2014 confirm details first.",
+     "uses": [
+      "file_complaint"
+     ]
+    },
+    {
+     "name": "apply_for_hpd",
+     "domain": "hpd",
+     "description": "Submit an NYC Housing Connect affordable-housing lottery application. NET-NEW workflow \u2014 Housing Connect has no public API today. Requires an authenticated household; carries PII and mutates state \u2014 confirm every field w",
+     "uses": [
+      "apply_to_lottery"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://hpd",
+     "name": "NYC Housing (HPD) \u2014 profile",
+     "description": "NYC Housing (HPD): 18 operations, 11 tools, verb \u201cExpose\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=hpd"
+    },
+    {
+     "uri": "nyc://hpd/openapi",
+     "name": "NYC Housing (HPD) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hpd/openapi/hpd.yaml"
+    },
+    {
+     "uri": "nyc://hpd/buildings/{id}",
+     "name": "Buildings record (templated)",
+     "description": "A single NYC Housing (HPD) Buildings record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -3186,6 +3562,50 @@
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dot",
+     "domain": "dot",
+     "description": "Search and read NYC Transportation (DOT) records \u2014 Bike Routes, Traffic Signals, Parking, Traffic Calming.",
+     "uses": [
+      "find_bike_routes",
+      "find_traffic_signals",
+      "find_parking_regulations",
+      "find_speed_humps"
+     ]
+    },
+    {
+     "name": "apply_for_dot",
+     "domain": "dot",
+     "description": "Submit a NEW street-opening / construction permit application. NET-NEW workflow with no public API today (only the NYCSTREET portal). Requires an authenticated user. Mutates state \u2014 confirm all details with the user firs",
+     "uses": [
+      "apply_street_work_permit"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dot",
+     "name": "NYC Transportation (DOT) \u2014 profile",
+     "description": "NYC Transportation (DOT): 13 operations, 10 tools, verb \u201cUnify\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dot"
+    },
+    {
+     "uri": "nyc://dot/openapi",
+     "name": "NYC Transportation (DOT) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/openapi/dot.yaml"
+    },
+    {
+     "uri": "nyc://dot/bike-routes/{id}",
+     "name": "Bike Routes record (templated)",
+     "description": "A single NYC Transportation (DOT) Bike Routes record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -3431,6 +3851,58 @@
      "write": false,
      "skill": "check-application-or-case-status"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dohmh",
+     "domain": "dohmh",
+     "description": "Search and read NYC Health (DOHMH) records \u2014 Food Establishments, Rodent Inspections, Childcare, Health Facilities.",
+     "uses": [
+      "find_food_establishments",
+      "get_food_establishment",
+      "get_food_establishment_inspections",
+      "find_inspections"
+     ]
+    },
+    {
+     "name": "request_dohmh",
+     "domain": "dohmh",
+     "description": "Order a certified copy of a NYC birth or death certificate. NET-NEW workflow with no open API today (locked in eVital VRRTS / VitalChek). Requires an authenticated user, places a paid order, and mutates state \u2014 confirm a",
+     "uses": [
+      "order_vital_record"
+     ]
+    },
+    {
+     "name": "check_dohmh_status",
+     "domain": "dohmh",
+     "description": "Check the status of a NYC Health (DOHMH) application, case, or request.",
+     "uses": [
+      "track_vital_record_request"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dohmh",
+     "name": "NYC Health (DOHMH) \u2014 profile",
+     "description": "NYC Health (DOHMH): 12 operations, 10 tools, verb \u201cTransact\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dohmh"
+    },
+    {
+     "uri": "nyc://dohmh/openapi",
+     "name": "NYC Health (DOHMH) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dohmh/openapi/dohmh.yaml"
+    },
+    {
+     "uri": "nyc://dohmh/food-establishments/{id}",
+     "name": "Food Establishments record (templated)",
+     "description": "A single NYC Health (DOHMH) Food Establishments record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -3639,6 +4111,50 @@
      "operationId": "createBulkPickupRequest",
      "write": true,
      "skill": "schedule-or-reserve"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dsny",
+     "domain": "dsny",
+     "description": "Search and read NYC Sanitation (DSNY) records \u2014 Collection, DropOff, LitterBaskets, Tonnage.",
+     "uses": [
+      "get_collection_schedule",
+      "find_districts",
+      "get_district",
+      "find_drop_off_sites"
+     ]
+    },
+    {
+     "name": "schedule_dsny",
+     "domain": "dsny",
+     "description": "Schedule a bulk / large-item, CFC-appliance, electronics, or special-waste pickup appointment. NET-NEW owned contract over the existing but undocumented ePickups backend. Requires an authenticated user. Mutates state \u2014 c",
+     "uses": [
+      "schedule_bulk_pickup"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dsny",
+     "name": "NYC Sanitation (DSNY) \u2014 profile",
+     "description": "NYC Sanitation (DSNY): 11 operations, 7 tools, verb \u201cExpose\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dsny"
+    },
+    {
+     "uri": "nyc://dsny/openapi",
+     "name": "NYC Sanitation (DSNY) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dsny/openapi/dsny.yaml"
+    },
+    {
+     "uri": "nyc://dsny/collection/{id}",
+     "name": "Collection record (templated)",
+     "description": "A single NYC Sanitation (DSNY) Collection record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -3887,6 +4403,50 @@
      "operationId": "createPoliceReportRequest",
      "write": true,
      "skill": "report-a-problem-or-file-a-complaint"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_nypd",
+     "domain": "nypd",
+     "description": "Search and read NYPD records \u2014 Complaints, Arrests, Shootings, Precincts.",
+     "uses": [
+      "find_complaints",
+      "get_complaint",
+      "find_arrests",
+      "find_shooting_incidents"
+     ]
+    },
+    {
+     "name": "report_nypd",
+     "domain": "nypd",
+     "description": "Request a copy of an NYPD record \u2014 an incident report, a collision/accident report, or a FOIL request. NET-NEW workflow with no equivalent API today. Requires an authenticated user. Mutates state \u2014 confirm details with t",
+     "uses": [
+      "request_police_report"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://nypd",
+     "name": "NYPD \u2014 profile",
+     "description": "NYPD: 13 operations, 9 tools, verb \u201cExpose\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=nypd"
+    },
+    {
+     "uri": "nyc://nypd/openapi",
+     "name": "NYPD OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypd/openapi/nypd.yaml"
+    },
+    {
+     "uri": "nyc://nypd/complaints/{id}",
+     "name": "Complaints record (templated)",
+     "description": "A single NYPD Complaints record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -4146,6 +4706,58 @@
      "write": false,
      "skill": "check-application-or-case-status"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_tlc",
+     "domain": "tlc",
+     "description": "Search and read NYC Taxi & Limousine (TLC) records \u2014 Trips, Vehicles, Drivers, Bases.",
+     "uses": [
+      "find_trip_records",
+      "find_vehicles",
+      "get_vehicle",
+      "find_drivers"
+     ]
+    },
+    {
+     "name": "apply_for_tlc",
+     "domain": "tlc",
+     "description": "Submit an application for a TLC driver or vehicle license. NET-NEW workflow with no equivalent today (Open Data exposes only read-only status). Requires an authenticated user. Mutates state \u2014 confirm details with the use",
+     "uses": [
+      "apply_for_license"
+     ]
+    },
+    {
+     "name": "check_tlc_status",
+     "domain": "tlc",
+     "description": "Check the status of a NYC Taxi & Limousine (TLC) application, case, or request.",
+     "uses": [
+      "get_application_status"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://tlc",
+     "name": "NYC Taxi & Limousine (TLC) \u2014 profile",
+     "description": "NYC Taxi & Limousine (TLC): 13 operations, 10 tools, verb \u201cOperationalize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=tlc"
+    },
+    {
+     "uri": "nyc://tlc/openapi",
+     "name": "NYC Taxi & Limousine (TLC) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/tlc/openapi/tlc.yaml"
+    },
+    {
+     "uri": "nyc://tlc/trips/{id}",
+     "name": "Trips record (templated)",
+     "description": "A single NYC Taxi & Limousine (TLC) Trips record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -4390,6 +5002,42 @@
      "write": false,
      "skill": "search-city-data-and-records"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dcp",
+     "domain": "dcp",
+     "description": "Search and read NYC City Planning (DCP) records \u2014 Lots, Zoning, Geographies, Land Use.",
+     "uses": [
+      "geocode_address",
+      "lookup_lot",
+      "find_lots",
+      "find_zoning"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dcp",
+     "name": "NYC City Planning (DCP) \u2014 profile",
+     "description": "NYC City Planning (DCP): 12 operations, 10 tools, verb \u201cAnchor\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dcp"
+    },
+    {
+     "uri": "nyc://dcp/openapi",
+     "name": "NYC City Planning (DCP) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/openapi/dcp.yaml"
+    },
+    {
+     "uri": "nyc://dcp/lots/{id}",
+     "name": "Lots record (templated)",
+     "description": "A single NYC City Planning (DCP) Lots record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -4614,6 +5262,50 @@
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_comptroller_nyc_gov",
+     "domain": "comptroller.nyc.gov",
+     "description": "Search and read NYC Comptroller records \u2014 Spending, Contracts, Audits, Claims.",
+     "uses": [
+      "find_spending",
+      "get_spending_transaction",
+      "find_contracts",
+      "get_contract"
+     ]
+    },
+    {
+     "name": "apply_for_comptroller_nyc_gov",
+     "domain": "comptroller.nyc.gov",
+     "description": "File a NEW claim against the City of New York (eClaim). NET-NEW workflow with no public API today. Requires an authenticated user. Mutates state \u2014 confirm all details with the user first.",
+     "uses": [
+      "file_claim"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://comptroller.nyc.gov",
+     "name": "NYC Comptroller \u2014 profile",
+     "description": "NYC Comptroller: 11 operations, 9 tools, verb \u201cConsolidate & Own\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=comptroller.nyc.gov"
+    },
+    {
+     "uri": "nyc://comptroller.nyc.gov/openapi",
+     "name": "NYC Comptroller OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/comptroller.nyc.gov/openapi/comptroller.yaml"
+    },
+    {
+     "uri": "nyc://comptroller.nyc.gov/spending/{id}",
+     "name": "Spending record (templated)",
+     "description": "A single NYC Comptroller Spending record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -4827,6 +5519,50 @@
      "write": true,
      "skill": "report-a-problem-or-file-a-complaint"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_nycha",
+     "domain": "nycha",
+     "description": "Search and read NYC Housing Authority (NYCHA) records \u2014 Developments, Facilities, Utilities, Residents.",
+     "uses": [
+      "find_developments",
+      "get_development",
+      "get_development_addresses",
+      "find_addresses"
+     ]
+    },
+    {
+     "name": "report_nycha",
+     "domain": "nycha",
+     "description": "Create a NYCHA maintenance work order (report a repair). NET-NEW workflow with no public API today \u2014 it lives only in the Oracle Siebel Self Service Portal or a phone call to the Customer Contact Center. Requires an auth",
+     "uses": [
+      "report_repair"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://nycha",
+     "name": "NYC Housing Authority (NYCHA) \u2014 profile",
+     "description": "NYC Housing Authority (NYCHA): 10 operations, 9 tools, verb \u201cUnlock\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=nycha"
+    },
+    {
+     "uri": "nyc://nycha/openapi",
+     "name": "NYC Housing Authority (NYCHA) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycha/openapi/nycha.yaml"
+    },
+    {
+     "uri": "nyc://nycha/developments/{id}",
+     "name": "Developments record (templated)",
+     "description": "A single NYC Housing Authority (NYCHA) Developments record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -5026,6 +5762,50 @@
      "operationId": "createChildCareComplaint",
      "write": true,
      "skill": "report-a-problem-or-file-a-complaint"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_acs",
+     "domain": "acs",
+     "description": "Search and read NYC Children's Services (ACS) records \u2014 Providers, ChildWelfare, Prevention, FosterCare.",
+     "uses": [
+      "find_providers",
+      "get_provider",
+      "find_child_welfare_indicators",
+      "find_prevention_services"
+     ]
+    },
+    {
+     "name": "report_acs",
+     "domain": "acs",
+     "description": "ChildCareComplaint \u2014 submit a complaint about a child care provider (models the provider concern, never case data; abuse routed to the State Central Register)",
+     "uses": [
+      "report_child_care_concern"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://acs",
+     "name": "NYC Children's Services (ACS) \u2014 profile",
+     "description": "NYC Children's Services (ACS): 9 operations, 9 tools, verb \u201cinsource\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=acs"
+    },
+    {
+     "uri": "nyc://acs/openapi",
+     "name": "NYC Children's Services (ACS) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/acs/openapi/acs.yaml"
+    },
+    {
+     "uri": "nyc://acs/providers/{id}",
+     "name": "Providers record (templated)",
+     "description": "A single NYC Children's Services (ACS) Providers record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -5270,6 +6050,50 @@
      "operationId": "createApplication",
      "write": true,
      "skill": "register-or-enroll"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_bic",
+     "domain": "bic",
+     "description": "Search and read NYC Business Integrity Commission (BIC) records \u2014 Licensees, Fleet, Registrants, Markets.",
+     "uses": [
+      "find_licensees",
+      "get_licensee",
+      "get_licensee_vehicles",
+      "find_registrants"
+     ]
+    },
+    {
+     "name": "register_bic",
+     "domain": "bic",
+     "description": "TradeWasteLicenseApplication \u2014 apply for a trade waste license/registration",
+     "uses": [
+      "apply_for_license"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://bic",
+     "name": "NYC Business Integrity Commission (BIC) \u2014 profile",
+     "description": "NYC Business Integrity Commission (BIC): 12 operations, 10 tools, verb \u201ctransact\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=bic"
+    },
+    {
+     "uri": "nyc://bic/openapi",
+     "name": "NYC Business Integrity Commission (BIC) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bic/openapi/bic.yaml"
+    },
+    {
+     "uri": "nyc://bic/licensees/{id}",
+     "name": "Licensees record (templated)",
+     "description": "A single NYC Business Integrity Commission (BIC) Licensees record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -5552,6 +6376,58 @@
      "write": false,
      "skill": "search-city-data-and-records"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_bklynlibrary",
+     "domain": "bklynlibrary",
+     "description": "Search and read Brooklyn Public Library (BPL) records \u2014 Branches, Events, Catalog, Collections.",
+     "uses": [
+      "find_branches",
+      "get_branch",
+      "find_events",
+      "get_event"
+     ]
+    },
+    {
+     "name": "apply_for_bklynlibrary",
+     "domain": "bklynlibrary",
+     "description": "place a hold (BookHold)",
+     "uses": [
+      "apply_for_library_card"
+     ]
+    },
+    {
+     "name": "schedule_bklynlibrary",
+     "domain": "bklynlibrary",
+     "description": "place a hold (BookHold)",
+     "uses": [
+      "place_hold"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://bklynlibrary",
+     "name": "Brooklyn Public Library (BPL) \u2014 profile",
+     "description": "Brooklyn Public Library (BPL): 13 operations, 13 tools, verb \u201cformalize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=bklynlibrary"
+    },
+    {
+     "uri": "nyc://bklynlibrary/openapi",
+     "name": "Brooklyn Public Library (BPL) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bklynlibrary/openapi/bklynlibrary.yaml"
+    },
+    {
+     "uri": "nyc://bklynlibrary/branches/{id}",
+     "name": "Branches record (templated)",
+     "description": "A single Brooklyn Public Library (BPL) Branches record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -5765,6 +6641,50 @@
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_bronxbp",
+     "domain": "bronxbp",
+     "description": "Search and read Bronx Borough President records \u2014 LandUse, CommunityBoards, Funding, Newsroom.",
+     "uses": [
+      "find_land_use_recommendations",
+      "get_land_use_recommendation",
+      "find_community_board_appointments",
+      "find_discretionary_funding"
+     ]
+    },
+    {
+     "name": "apply_for_bronxbp",
+     "domain": "bronxbp",
+     "description": "CommunityBoardApplication \u2014 apply to serve on one of the Bronx's twelve community boards (today a PDF/email; no structured intake or status).",
+     "uses": [
+      "apply_to_community_board"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://bronxbp",
+     "name": "Bronx Borough President \u2014 profile",
+     "description": "Bronx Borough President: 10 operations, 9 tools, verb \u201ctemplatize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=bronxbp"
+    },
+    {
+     "uri": "nyc://bronxbp/openapi",
+     "name": "Bronx Borough President OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxbp/openapi/bronxbp.yaml"
+    },
+    {
+     "uri": "nyc://bronxbp/landuse/{id}",
+     "name": "LandUse record (templated)",
+     "description": "A single Bronx Borough President LandUse record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -5945,6 +6865,58 @@
      "operationId": "getSubmission",
      "write": false,
      "skill": "check-application-or-case-status"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_bronxda",
+     "domain": "bronxda",
+     "description": "Search and read Bronx District Attorney records \u2014 Newsroom, Data, Programs, Community.",
+     "uses": [
+      "find_press_releases",
+      "get_press_release",
+      "find_case_statistics",
+      "find_programs"
+     ]
+    },
+    {
+     "name": "report_bronxda",
+     "domain": "bronxda",
+     "description": "TipSubmission \u2014 a structured, trackable intake for a crime tip, a Civilian Complaint Unit complaint of police misconduct, or a FOIL records request (today a phone call to 718-590-2300 or an email to FOILREQUEST@BRONXDA.N",
+     "uses": [
+      "submit_tip"
+     ]
+    },
+    {
+     "name": "check_bronxda_status",
+     "domain": "bronxda",
+     "description": "Check the status of a Bronx District Attorney application, case, or request.",
+     "uses": [
+      "check_submission"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://bronxda",
+     "name": "Bronx District Attorney \u2014 profile",
+     "description": "Bronx District Attorney: 8 operations, 8 tools, verb \u201cstandardize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=bronxda"
+    },
+    {
+     "uri": "nyc://bronxda/openapi",
+     "name": "Bronx District Attorney OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxda/openapi/bronxda.yaml"
+    },
+    {
+     "uri": "nyc://bronxda/newsroom/{id}",
+     "name": "Newsroom record (templated)",
+     "description": "A single Bronx District Attorney Newsroom record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -6172,6 +7144,58 @@
      "write": false,
      "skill": "check-application-or-case-status"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_brooklynbp",
+     "domain": "brooklynbp",
+     "description": "Search and read Brooklyn Borough President records \u2014 LandUse, CommunityBoards, Funding, Publications.",
+     "uses": [
+      "find_land_use_recommendations",
+      "get_land_use_recommendation",
+      "find_community_boards",
+      "find_appointments"
+     ]
+    },
+    {
+     "name": "apply_for_brooklynbp",
+     "domain": "brooklynbp",
+     "description": "CommunityBoardApplication \u2014 apply to serve on a Brooklyn community board (net-new write; today only a web form).",
+     "uses": [
+      "apply_to_community_board"
+     ]
+    },
+    {
+     "name": "check_brooklynbp_status",
+     "domain": "brooklynbp",
+     "description": "Check the status of a Brooklyn Borough President application, case, or request.",
+     "uses": [
+      "get_application_status"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://brooklynbp",
+     "name": "Brooklyn Borough President \u2014 profile",
+     "description": "Brooklyn Borough President: 11 operations, 9 tools, verb \u201ctemplate\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=brooklynbp"
+    },
+    {
+     "uri": "nyc://brooklynbp/openapi",
+     "name": "Brooklyn Borough President OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynbp/openapi/brooklynbp.yaml"
+    },
+    {
+     "uri": "nyc://brooklynbp/landuse/{id}",
+     "name": "LandUse record (templated)",
+     "description": "A single Brooklyn Borough President LandUse record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -6372,6 +7396,58 @@
      "operationId": "getTip",
      "write": false,
      "skill": "check-application-or-case-status"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_brooklynda",
+     "domain": "brooklynda",
+     "description": "Search and read Brooklyn District Attorney records \u2014 PressReleases, Programs, Resources, VictimServices.",
+     "uses": [
+      "find_press_releases",
+      "get_press_release",
+      "find_programs",
+      "get_program"
+     ]
+    },
+    {
+     "name": "report_brooklynda",
+     "domain": "brooklynda",
+     "description": "TipSubmission \u2014 submit and track a confidential tip (report fraud, an unsafe landlord, a hate incident, trafficking, or information on an open case)",
+     "uses": [
+      "submit_tip"
+     ]
+    },
+    {
+     "name": "check_brooklynda_status",
+     "domain": "brooklynda",
+     "description": "Check the status of a Brooklyn District Attorney application, case, or request.",
+     "uses": [
+      "get_tip_status"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://brooklynda",
+     "name": "Brooklyn District Attorney \u2014 profile",
+     "description": "Brooklyn District Attorney: 9 operations, 9 tools, verb \u201ctemplate\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=brooklynda"
+    },
+    {
+     "uri": "nyc://brooklynda/openapi",
+     "name": "Brooklyn District Attorney OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynda/openapi/brooklynda.yaml"
+    },
+    {
+     "uri": "nyc://brooklynda/pressreleases/{id}",
+     "name": "PressReleases record (templated)",
+     "description": "A single Brooklyn District Attorney PressReleases record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -6586,6 +7662,50 @@
      "write": true,
      "skill": "dispute-or-appeal"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_bsa",
+     "domain": "bsa",
+     "description": "Search and read NYC Standards & Appeals (BSA) records \u2014 Applications, Resolutions, Hearings, PreApplication.",
+     "uses": [
+      "find_applications",
+      "get_application",
+      "get_application_resolution",
+      "find_resolutions"
+     ]
+    },
+    {
+     "name": "dispute_bsa",
+     "domain": "bsa",
+     "description": "VarianceApplication \u2014 file a zoning variance / special permit / extension / appeal (today a paper PDF-form process)",
+     "uses": [
+      "file_variance_application"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://bsa",
+     "name": "NYC Standards & Appeals (BSA) \u2014 profile",
+     "description": "NYC Standards & Appeals (BSA): 10 operations, 9 tools, verb \u201cdigitize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=bsa"
+    },
+    {
+     "uri": "nyc://bsa/openapi",
+     "name": "NYC Standards & Appeals (BSA) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bsa/openapi/bsa.yaml"
+    },
+    {
+     "uri": "nyc://bsa/applications/{id}",
+     "name": "Applications record (templated)",
+     "description": "A single NYC Standards & Appeals (BSA) Applications record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -6766,6 +7886,58 @@
      "operationId": "createComplaint",
      "write": true,
      "skill": "report-a-problem-or-file-a-complaint"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_cchr",
+     "domain": "cchr",
+     "description": "Search and read NYC Human Rights (CCHR) records \u2014 Complaints, Law, Outreach, Statistics.",
+     "uses": [
+      "find_protected_classes",
+      "find_legal_guidance",
+      "find_training_events",
+      "find_inquiry_statistics"
+     ]
+    },
+    {
+     "name": "report_cchr",
+     "domain": "cchr",
+     "description": "A typed DiscriminationComplaint intake API (report discrimination) \u2014 replacing the untyped Report Discrimination HTML form.",
+     "uses": [
+      "report_discrimination"
+     ]
+    },
+    {
+     "name": "check_cchr_status",
+     "domain": "cchr",
+     "description": "Check the status of a NYC Human Rights (CCHR) application, case, or request.",
+     "uses": [
+      "get_complaint"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://cchr",
+     "name": "NYC Human Rights (CCHR) \u2014 profile",
+     "description": "NYC Human Rights (CCHR): 8 operations, 8 tools, verb \u201cstructure\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=cchr"
+    },
+    {
+     "uri": "nyc://cchr/openapi",
+     "name": "NYC Human Rights (CCHR) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cchr/openapi/cchr.yaml"
+    },
+    {
+     "uri": "nyc://cchr/complaints/{id}",
+     "name": "Complaints record (templated)",
+     "description": "A single NYC Human Rights (CCHR) Complaints record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -6967,6 +8139,58 @@
      "operationId": "getMisconductComplaintStatus",
      "write": false,
      "skill": "check-application-or-case-status"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_ccrb",
+     "domain": "ccrb",
+     "description": "Search and read NYC Civilian Complaint Review (CCRB) records \u2014 Complaints, Allegations, Officers, Penalties.",
+     "uses": [
+      "find_complaints",
+      "get_complaint",
+      "get_complaint_allegations",
+      "find_allegations"
+     ]
+    },
+    {
+     "name": "report_ccrb",
+     "domain": "ccrb",
+     "description": "MisconductComplaint \u2014 file a police-misconduct complaint against an officer via API (today an online web form only)",
+     "uses": [
+      "file_misconduct_complaint"
+     ]
+    },
+    {
+     "name": "check_ccrb_status",
+     "domain": "ccrb",
+     "description": "Check the status of a NYC Civilian Complaint Review (CCRB) application, case, or request.",
+     "uses": [
+      "check_complaint_status"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://ccrb",
+     "name": "NYC Civilian Complaint Review (CCRB) \u2014 profile",
+     "description": "NYC Civilian Complaint Review (CCRB): 9 operations, 9 tools, verb \u201cexpose\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=ccrb"
+    },
+    {
+     "uri": "nyc://ccrb/openapi",
+     "name": "NYC Civilian Complaint Review (CCRB) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ccrb/openapi/ccrb.yaml"
+    },
+    {
+     "uri": "nyc://ccrb/complaints/{id}",
+     "name": "Complaints record (templated)",
+     "description": "A single NYC Civilian Complaint Review (CCRB) Complaints record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -7180,6 +8404,50 @@
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_cfb",
+     "domain": "cfb",
+     "description": "Search and read NYC Campaign Finance Board (CFB) records \u2014 Candidates, Committees, Contributions, Expenditures.",
+     "uses": [
+      "find_candidates",
+      "get_candidate",
+      "find_committees",
+      "find_contributions"
+     ]
+    },
+    {
+     "name": "apply_for_cfb",
+     "domain": "cfb",
+     "description": "DisclosureFiling \u2014 a filer submits a disclosure statement (today only via the login-walled C-SMART disclosure application)",
+     "uses": [
+      "file_disclosure"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://cfb",
+     "name": "NYC Campaign Finance Board (CFB) \u2014 profile",
+     "description": "NYC Campaign Finance Board (CFB): 10 operations, 9 tools, verb \u201cdocument\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=cfb"
+    },
+    {
+     "uri": "nyc://cfb/openapi",
+     "name": "NYC Campaign Finance Board (CFB) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cfb/openapi/cfb.yaml"
+    },
+    {
+     "uri": "nyc://cfb/candidates/{id}",
+     "name": "Candidates record (templated)",
+     "description": "A single NYC Campaign Finance Board (CFB) Candidates record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -7360,6 +8628,58 @@
      "operationId": "listFundraisingReports",
      "write": false,
      "skill": "search-city-data-and-records"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_cityclerk",
+     "domain": "cityclerk",
+     "description": "Search and read NYC City Clerk records \u2014 Marriage, Lobbying.",
+     "uses": [
+      "find_appointments",
+      "get_marriage_license_application",
+      "get_marriage_license",
+      "find_lobbyist_registrations"
+     ]
+    },
+    {
+     "name": "apply_for_cityclerk",
+     "domain": "cityclerk",
+     "description": "MarriageLicenseApplication \u2014 a couple applies for a NYC marriage license (today only via Project Cupid's Unqork screens)",
+     "uses": [
+      "apply_for_marriage_license"
+     ]
+    },
+    {
+     "name": "check_cityclerk_status",
+     "domain": "cityclerk",
+     "description": "Check the status of a NYC City Clerk application, case, or request.",
+     "uses": [
+      "get_marriage_license_application"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://cityclerk",
+     "name": "NYC City Clerk \u2014 profile",
+     "description": "NYC City Clerk: 8 operations, 8 tools, verb \u201ccontract\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=cityclerk"
+    },
+    {
+     "uri": "nyc://cityclerk/openapi",
+     "name": "NYC City Clerk OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cityclerk/openapi/cityclerk.yaml"
+    },
+    {
+     "uri": "nyc://cityclerk/marriage/{id}",
+     "name": "Marriage record (templated)",
+     "description": "A single NYC City Clerk Marriage record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -7564,6 +8884,50 @@
      "operationId": "createFinancialDisclosureFiling",
      "write": true,
      "skill": "report-a-problem-or-file-a-complaint"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_coib",
+     "domain": "coib",
+     "description": "Search and read NYC Conflicts of Interest Board (COIB) records \u2014 Enforcement, Donations, Policymakers, LegalDefenseTrusts.",
+     "uses": [
+      "find_enforcement_dispositions",
+      "get_enforcement_disposition",
+      "find_agency_donations",
+      "find_policymakers"
+     ]
+    },
+    {
+     "name": "report_coib",
+     "domain": "coib",
+     "description": "FinancialDisclosureFiling \u2014 a public servant files/attests an annual financial disclosure report, today locked inside the login-only COIB filing website with no API",
+     "uses": [
+      "file_financial_disclosure"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://coib",
+     "name": "NYC Conflicts of Interest Board (COIB) \u2014 profile",
+     "description": "NYC Conflicts of Interest Board (COIB): 10 operations, 8 tools, verb \u201cattest\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=coib"
+    },
+    {
+     "uri": "nyc://coib/openapi",
+     "name": "NYC Conflicts of Interest Board (COIB) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/coib/openapi/coib.yaml"
+    },
+    {
+     "uri": "nyc://coib/enforcement/{id}",
+     "name": "Enforcement record (templated)",
+     "description": "A single NYC Conflicts of Interest Board (COIB) Enforcement record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -7776,6 +9140,50 @@
      "operationId": "createApplication",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_cuny",
+     "domain": "cuny",
+     "description": "Search and read City University of New York (CUNY) records \u2014 Campuses, Programs, Courses, Enrollment.",
+     "uses": [
+      "find_campuses",
+      "get_campus",
+      "find_programs",
+      "get_program"
+     ]
+    },
+    {
+     "name": "apply_for_cuny",
+     "domain": "cuny",
+     "description": "AdmissionsApplication (submit a CUNY application)",
+     "uses": [
+      "submit_application"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://cuny",
+     "name": "City University of New York (CUNY) \u2014 profile",
+     "description": "City University of New York (CUNY): 10 operations, 9 tools, verb \u201cfederate\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=cuny"
+    },
+    {
+     "uri": "nyc://cuny/openapi",
+     "name": "City University of New York (CUNY) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cuny/openapi/cuny.yaml"
+    },
+    {
+     "uri": "nyc://cuny/campuses/{id}",
+     "name": "Campuses record (templated)",
+     "description": "A single City University of New York (CUNY) Campuses record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -8030,6 +9438,50 @@
      "write": false,
      "skill": "search-city-data-and-records"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dcas",
+     "domain": "dcas",
+     "description": "Search and read NYC Citywide Admin Services (DCAS) records \u2014 Jobs, Titles, EligibleLists, Exams.",
+     "uses": [
+      "find_job_postings",
+      "get_job_posting",
+      "find_civil_service_titles",
+      "get_civil_service_title"
+     ]
+    },
+    {
+     "name": "register_dcas",
+     "domain": "dcas",
+     "description": "ExamRegistration \u2014 register for a civil-service exam (alt: JobApplication)",
+     "uses": [
+      "register_for_exam"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dcas",
+     "name": "NYC Citywide Admin Services (DCAS) \u2014 profile",
+     "description": "NYC Citywide Admin Services (DCAS): 12 operations, 11 tools, verb \u201cTransact\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dcas"
+    },
+    {
+     "uri": "nyc://dcas/openapi",
+     "name": "NYC Citywide Admin Services (DCAS) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcas/openapi/dcas.yaml"
+    },
+    {
+     "uri": "nyc://dcas/jobs/{id}",
+     "name": "Jobs record (templated)",
+     "description": "A single NYC Citywide Admin Services (DCAS) Jobs record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -8241,6 +9693,50 @@
      "operationId": "createGrantApplication",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dcla",
+     "domain": "dcla",
+     "description": "Search and read NYC Cultural Affairs (DCLA) records \u2014 Organizations, Funding, PublicArt, MaterialsForTheArts.",
+     "uses": [
+      "find_cultural_organizations",
+      "get_cultural_organization",
+      "find_program_funding",
+      "find_capital_funding"
+     ]
+    },
+    {
+     "name": "apply_for_dcla",
+     "domain": "dcla",
+     "description": "Apply for a Cultural Development Fund grant (GrantApplication) \u2014 the core transaction with no API, locked in the Salesforce Grants Management System",
+     "uses": [
+      "apply_for_grant"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dcla",
+     "name": "NYC Cultural Affairs (DCLA) \u2014 profile",
+     "description": "NYC Cultural Affairs (DCLA): 10 operations, 9 tools, verb \u201copen\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dcla"
+    },
+    {
+     "uri": "nyc://dcla/openapi",
+     "name": "NYC Cultural Affairs (DCLA) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/openapi/dcla.yaml"
+    },
+    {
+     "uri": "nyc://dcla/organizations/{id}",
+     "name": "Organizations record (templated)",
+     "description": "A single NYC Cultural Affairs (DCLA) Organizations record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -8475,6 +9971,58 @@
      "write": true,
      "skill": "report-a-problem-or-file-a-complaint"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dcwp",
+     "domain": "dcwp",
+     "description": "Search and read NYC Consumer & Worker Protection (DCWP) records \u2014 Licenses, Applications, Inspections, Enforcement.",
+     "uses": [
+      "find_licenses",
+      "get_license",
+      "find_applications",
+      "get_application"
+     ]
+    },
+    {
+     "name": "apply_for_dcwp",
+     "domain": "dcwp",
+     "description": "File a consumer complaint (ConsumerComplaint) and apply for a business license (LicenseApplication) \u2014 the two citizen writes with no API",
+     "uses": [
+      "apply_for_license"
+     ]
+    },
+    {
+     "name": "report_dcwp",
+     "domain": "dcwp",
+     "description": "File a consumer complaint (ConsumerComplaint) and apply for a business license (LicenseApplication) \u2014 the two citizen writes with no API",
+     "uses": [
+      "file_complaint"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dcwp",
+     "name": "NYC Consumer & Worker Protection (DCWP) \u2014 profile",
+     "description": "NYC Consumer & Worker Protection (DCWP): 11 operations, 10 tools, verb \u201cbind\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dcwp"
+    },
+    {
+     "uri": "nyc://dcwp/openapi",
+     "name": "NYC Consumer & Worker Protection (DCWP) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcwp/openapi/dcwp.yaml"
+    },
+    {
+     "uri": "nyc://dcwp/licenses/{id}",
+     "name": "Licenses record (templated)",
+     "description": "A single NYC Consumer & Worker Protection (DCWP) Licenses record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -8706,6 +10254,50 @@
      "operationId": "createPrequalification",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_ddc",
+     "domain": "ddc",
+     "description": "Search and read NYC Design & Construction (DDC) records \u2014 Projects, Contracts, Vendors, Divisions.",
+     "uses": [
+      "find_projects",
+      "get_project",
+      "get_project_contracts",
+      "find_contracts"
+     ]
+    },
+    {
+     "name": "apply_for_ddc",
+     "domain": "ddc",
+     "description": "VendorPrequalification \u2014 a firm submits a prequalification / expression of interest (optionally against a solicitation, with an optional City Record notice opt-in). A B2G write; DDC is vendor-facing, so there is no citiz",
+     "uses": [
+      "submit_prequalification"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://ddc",
+     "name": "NYC Design & Construction (DDC) \u2014 profile",
+     "description": "NYC Design & Construction (DDC): 11 operations, 10 tools, verb \u201csurface\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=ddc"
+    },
+    {
+     "uri": "nyc://ddc/openapi",
+     "name": "NYC Design & Construction (DDC) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ddc/openapi/ddc.yaml"
+    },
+    {
+     "uri": "nyc://ddc/projects/{id}",
+     "name": "Projects record (templated)",
+     "description": "A single NYC Design & Construction (DDC) Projects record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -8947,6 +10539,50 @@
      "write": true,
      "skill": "report-a-problem-or-file-a-complaint"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dep",
+     "domain": "dep",
+     "description": "Search and read NYC Environmental Protection (DEP) records \u2014 Water Supply, Water Quality, Green Infrastructure, Assets.",
+     "uses": [
+      "find_reservoir_levels",
+      "find_water_consumption",
+      "find_water_quality",
+      "find_green_infrastructure"
+     ]
+    },
+    {
+     "name": "report_dep",
+     "domain": "dep",
+     "description": "WaterServiceRequest",
+     "uses": [
+      "report_water_problem"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dep",
+     "name": "NYC Environmental Protection (DEP) \u2014 profile",
+     "description": "NYC Environmental Protection (DEP): 11 operations, 11 tools, verb \u201cTransact\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dep"
+    },
+    {
+     "uri": "nyc://dep/openapi",
+     "name": "NYC Environmental Protection (DEP) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dep/openapi/dep.yaml"
+    },
+    {
+     "uri": "nyc://dep/water-supply/{id}",
+     "name": "Water Supply record (templated)",
+     "description": "A single NYC Environmental Protection (DEP) Water Supply record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -9138,6 +10774,50 @@
      "operationId": "createReferral",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dfta",
+     "domain": "dfta",
+     "description": "Search and read NYC Aging (DFTA) records \u2014 Providers, Centers, Activities, Services.",
+     "uses": [
+      "find_providers",
+      "get_provider",
+      "find_older_adult_centers",
+      "find_activities"
+     ]
+    },
+    {
+     "name": "apply_for_dfta",
+     "domain": "dfta",
+     "description": "ServiceReferral \u2014 connect an older adult to DFTA services (case management, meals, benefits, caregiver, elder abuse, center enrollment) with an urgent path to Aging Connect / Adult Protective Services.",
+     "uses": [
+      "make_referral"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dfta",
+     "name": "NYC Aging (DFTA) \u2014 profile",
+     "description": "NYC Aging (DFTA): 9 operations, 8 tools, verb \u201cconnect\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dfta"
+    },
+    {
+     "uri": "nyc://dfta/openapi",
+     "name": "NYC Aging (DFTA) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dfta/openapi/dfta.yaml"
+    },
+    {
+     "uri": "nyc://dfta/providers/{id}",
+     "name": "Providers record (templated)",
+     "description": "A single NYC Aging (DFTA) Providers record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -9352,6 +11032,50 @@
      "write": true,
      "skill": "report-a-problem-or-file-a-complaint"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dhs",
+     "domain": "dhs",
+     "description": "Search and read NYC Homeless Services (DHS) records \u2014 Census, DropInCenters, Facilities, Contacts.",
+     "uses": [
+      "find_shelter_census",
+      "get_shelter_census",
+      "find_drop_in_centers",
+      "find_facilities"
+     ]
+    },
+    {
+     "name": "report_dhs",
+     "domain": "dhs",
+     "description": "OutreachRequest \u2014 request street outreach for a person experiencing homelessness (today only via NYC311)",
+     "uses": [
+      "request_outreach"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dhs",
+     "name": "NYC Homeless Services (DHS) \u2014 profile",
+     "description": "NYC Homeless Services (DHS): 10 operations, 9 tools, verb \u201cconnect\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dhs"
+    },
+    {
+     "uri": "nyc://dhs/openapi",
+     "name": "NYC Homeless Services (DHS) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dhs/openapi/dhs.yaml"
+    },
+    {
+     "uri": "nyc://dhs/census/{id}",
+     "name": "Census record (templated)",
+     "description": "A single NYC Homeless Services (DHS) Census record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -9557,6 +11281,58 @@
      "operationId": "createComplaint",
      "write": true,
      "skill": "report-a-problem-or-file-a-complaint"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_doc",
+     "domain": "doc",
+     "description": "Search and read NYC Correction (DOC) records \u2014 People In Custody, Facilities, Population, Incidents.",
+     "uses": [
+      "find_people_in_custody",
+      "get_person_in_custody",
+      "find_facilities",
+      "find_daily_population"
+     ]
+    },
+    {
+     "name": "schedule_doc",
+     "domain": "doc",
+     "description": "VisitScheduling \u2014 schedule a visit with a person in custody (no API today; arranged by phone, in person, or vendor portal). Complaint / records request is a second net-new write.",
+     "uses": [
+      "schedule_visit"
+     ]
+    },
+    {
+     "name": "report_doc",
+     "domain": "doc",
+     "description": "VisitScheduling \u2014 schedule a visit with a person in custody (no API today; arranged by phone, in person, or vendor portal). Complaint / records request is a second net-new write.",
+     "uses": [
+      "file_complaint"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://doc",
+     "name": "NYC Correction (DOC) \u2014 profile",
+     "description": "NYC Correction (DOC): 10 operations, 8 tools, verb \u201cexpose\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=doc"
+    },
+    {
+     "uri": "nyc://doc/openapi",
+     "name": "NYC Correction (DOC) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doc/openapi/doc.yaml"
+    },
+    {
+     "uri": "nyc://doc/people-in-custody/{id}",
+     "name": "People In Custody record (templated)",
+     "description": "A single NYC Correction (DOC) People In Custody record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -9795,6 +11571,50 @@
      "write": true,
      "skill": "pay-a-city-charge"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dof",
+     "domain": "dof",
+     "description": "Search and read NYC Finance (DOF) records \u2014 Property, TaxBills, ACRIS, Parking.",
+     "uses": [
+      "find_property_valuations",
+      "get_property_valuation",
+      "find_property_exemptions",
+      "get_property_tax_bill"
+     ]
+    },
+    {
+     "name": "pay_dof",
+     "domain": "dof",
+     "description": "ParkingTicketPayment \u2014 pay a parking/camera violation via API instead of the CityPay-only web form.",
+     "uses": [
+      "pay_parking_ticket"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dof",
+     "name": "NYC Finance (DOF) \u2014 profile",
+     "description": "NYC Finance (DOF): 12 operations, 9 tools, verb \u201cmodernize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dof"
+    },
+    {
+     "uri": "nyc://dof/openapi",
+     "name": "NYC Finance (DOF) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dof/openapi/dof.yaml"
+    },
+    {
+     "uri": "nyc://dof/property/{id}",
+     "name": "Property record (templated)",
+     "description": "A single NYC Finance (DOF) Property record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -9986,6 +11806,50 @@
      "operationId": "createComplaint",
      "write": true,
      "skill": "report-a-problem-or-file-a-complaint"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_doi",
+     "domain": "doi",
+     "description": "Search and read NYC Investigation (DOI) records \u2014 Reports, Recommendations, Marshals, Performance.",
+     "uses": [
+      "find_reports",
+      "get_report",
+      "find_recommendations",
+      "find_evictions"
+     ]
+    },
+    {
+     "name": "report_doi",
+     "domain": "doi",
+     "description": "CorruptionComplaint \u2014 file and track a fraud/waste/corruption tip (with anonymous filing and Whistleblower-Law protection), the transaction that starts every DOI investigation and today lives only in a vendor Kaseware fo",
+     "uses": [
+      "file_complaint"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://doi",
+     "name": "NYC Investigation (DOI) \u2014 profile",
+     "description": "NYC Investigation (DOI): 9 operations, 8 tools, verb \u201cDigitize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=doi"
+    },
+    {
+     "uri": "nyc://doi/openapi",
+     "name": "NYC Investigation (DOI) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doi/openapi/doi.yaml"
+    },
+    {
+     "uri": "nyc://doi/reports/{id}",
+     "name": "Reports record (templated)",
+     "description": "A single NYC Investigation (DOI) Reports record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -10211,6 +12075,50 @@
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_doris",
+     "domain": "doris",
+     "description": "Search and read NYC Records (DORIS) records \u2014 Archives, VitalRecords, Publications, HonoraryStreetNames.",
+     "uses": [
+      "find_collections",
+      "get_collection",
+      "find_digital_items",
+      "get_digital_item"
+     ]
+    },
+    {
+     "name": "apply_for_doris",
+     "domain": "doris",
+     "description": "RecordsRequest \u2014 request/retrieve a record: order a copy of a historical vital record, an archival item/photo, a library publication, or file a FOIL request",
+     "uses": [
+      "request_record"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://doris",
+     "name": "NYC Records (DORIS) \u2014 profile",
+     "description": "NYC Records (DORIS): 11 operations, 9 tools, verb \u201cretrieve\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=doris"
+    },
+    {
+     "uri": "nyc://doris/openapi",
+     "name": "NYC Records (DORIS) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doris/openapi/doris.yaml"
+    },
+    {
+     "uri": "nyc://doris/archives/{id}",
+     "name": "Archives record (templated)",
+     "description": "A single NYC Records (DORIS) Archives record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -10402,6 +12310,50 @@
      "operationId": "createReferral",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dvs",
+     "domain": "dvs",
+     "description": "Search and read NYC Veterans' Services (DVS) records \u2014 Resources, Businesses, AssistanceRequests, Cases.",
+     "uses": [
+      "find_veteran_resources",
+      "get_veteran_resource",
+      "find_veteran_owned_businesses",
+      "find_assistance_requests"
+     ]
+    },
+    {
+     "name": "apply_for_dvs",
+     "domain": "dvs",
+     "description": "ServiceReferral \u2014 make a VetConnectNYC care-coordination referral connecting a veteran to services (housing, benefits, VA claims, health, employment, education, food, legal), routed to DVS Care Coordinators with an urgen",
+     "uses": [
+      "make_referral"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dvs",
+     "name": "NYC Veterans' Services (DVS) \u2014 profile",
+     "description": "NYC Veterans' Services (DVS): 9 operations, 8 tools, verb \u201ccoordinate\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dvs"
+    },
+    {
+     "uri": "nyc://dvs/openapi",
+     "name": "NYC Veterans' Services (DVS) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dvs/openapi/dvs.yaml"
+    },
+    {
+     "uri": "nyc://dvs/resources/{id}",
+     "name": "Resources record (templated)",
+     "description": "A single NYC Veterans' Services (DVS) Resources record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -10635,6 +12587,50 @@
      "operationId": "createApplication",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_dycd",
+     "domain": "dycd",
+     "description": "Search and read NYC Youth & Community Dev (DYCD) records \u2014 Programs, ProgramSites, Providers, Contracts.",
+     "uses": [
+      "find_programs",
+      "get_program",
+      "find_program_sites",
+      "get_program_site"
+     ]
+    },
+    {
+     "name": "apply_for_dycd",
+     "domain": "dycd",
+     "description": "ProgramApplication \u2014 apply to a program (e.g. an SYEP application)",
+     "uses": [
+      "apply_to_program"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://dycd",
+     "name": "NYC Youth & Community Dev (DYCD) \u2014 profile",
+     "description": "NYC Youth & Community Dev (DYCD): 11 operations, 10 tools, verb \u201csurface\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=dycd"
+    },
+    {
+     "uri": "nyc://dycd/openapi",
+     "name": "NYC Youth & Community Dev (DYCD) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dycd/openapi/dycd.yaml"
+    },
+    {
+     "uri": "nyc://dycd/programs/{id}",
+     "name": "Programs record (templated)",
+     "description": "A single NYC Youth & Community Dev (DYCD) Programs record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -10889,6 +12885,50 @@
      "write": true,
      "skill": "register-or-enroll"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_edc",
+     "domain": "edc",
+     "description": "Search and read NYC Economic Development (EDC) records \u2014 Projects, RealEstate, Solicitations, Companies.",
+     "uses": [
+      "find_projects",
+      "get_project",
+      "find_properties",
+      "get_property"
+     ]
+    },
+    {
+     "name": "register_edc",
+     "domain": "edc",
+     "description": "RFPResponse \u2014 register interest in / submit a proposal to an EDC solicitation (RFP/RFEI)",
+     "uses": [
+      "submit_rfp_response"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://edc",
+     "name": "NYC Economic Development (EDC) \u2014 profile",
+     "description": "NYC Economic Development (EDC): 12 operations, 11 tools, verb \u201csurface\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=edc"
+    },
+    {
+     "uri": "nyc://edc/openapi",
+     "name": "NYC Economic Development (EDC) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/edc/openapi/edc.yaml"
+    },
+    {
+     "uri": "nyc://edc/projects/{id}",
+     "name": "Projects record (templated)",
+     "description": "A single NYC Economic Development (EDC) Projects record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -11109,6 +13149,50 @@
      "operationId": "getPermitApplication",
      "write": false,
      "skill": "search-city-data-and-records"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_fdny",
+     "domain": "fdny",
+     "description": "Search and read NYC Fire (FDNY) records \u2014 Firehouses, Incidents, Inspections, Violations.",
+     "uses": [
+      "find_firehouses",
+      "get_firehouse",
+      "find_incidents",
+      "get_incident"
+     ]
+    },
+    {
+     "name": "apply_for_fdny",
+     "domain": "fdny",
+     "description": "FirePermitApplication \u2014 apply for and track a fire permit / Certificate of Operation / inspection request via FDNY Business",
+     "uses": [
+      "apply_for_permit"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://fdny",
+     "name": "NYC Fire (FDNY) \u2014 profile",
+     "description": "NYC Fire (FDNY): 10 operations, 10 tools, verb \u201cfront\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=fdny"
+    },
+    {
+     "uri": "nyc://fdny/openapi",
+     "name": "NYC Fire (FDNY) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/fdny/openapi/fdny.yaml"
+    },
+    {
+     "uri": "nyc://fdny/firehouses/{id}",
+     "name": "Firehouses record (templated)",
+     "description": "A single NYC Fire (FDNY) Firehouses record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -11360,6 +13444,50 @@
      "write": true,
      "skill": "schedule-or-reserve"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_hhc",
+     "domain": "hhc",
+     "description": "Search and read NYC Health + Hospitals records \u2014 Facilities, Services, Providers, FinancialAssistance.",
+     "uses": [
+      "find_facilities",
+      "get_facility",
+      "get_facility_services",
+      "find_services"
+     ]
+    },
+    {
+     "name": "schedule_hhc",
+     "domain": "hhc",
+     "description": "AppointmentRequest \u2014 request/book an appointment (no write in the live FHIR surface)",
+     "uses": [
+      "request_appointment"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://hhc",
+     "name": "NYC Health + Hospitals \u2014 profile",
+     "description": "NYC Health + Hospitals: 13 operations, 9 tools, verb \u201cextend\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=hhc"
+    },
+    {
+     "uri": "nyc://hhc/openapi",
+     "name": "NYC Health + Hospitals OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/openapi/hhc.yaml"
+    },
+    {
+     "uri": "nyc://hhc/facilities/{id}",
+     "name": "Facilities record (templated)",
+     "description": "A single NYC Health + Hospitals Facilities record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -11572,6 +13700,50 @@
      "operationId": "createApplication",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_hra",
+     "domain": "hra",
+     "description": "Search and read NYC Social Services (HRA) records \u2014 Programs, Centers, Caseloads, CaseActions.",
+     "uses": [
+      "find_programs",
+      "get_program",
+      "find_centers",
+      "find_caseload_statistics"
+     ]
+    },
+    {
+     "name": "apply_for_hra",
+     "domain": "hra",
+     "description": "BenefitsApplication \u2014 apply for and track SNAP / Cash Assistance / Medicaid, today locked in the ACCESS HRA portal",
+     "uses": [
+      "apply_for_benefits"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://hra",
+     "name": "NYC Social Services (HRA) \u2014 profile",
+     "description": "NYC Social Services (HRA): 10 operations, 9 tools, verb \u201cconnect\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=hra"
+    },
+    {
+     "uri": "nyc://hra/openapi",
+     "name": "NYC Social Services (HRA) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hra/openapi/hra.yaml"
+    },
+    {
+     "uri": "nyc://hra/programs/{id}",
+     "name": "Programs record (templated)",
+     "description": "A single NYC Social Services (HRA) Programs record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -11793,6 +13965,50 @@
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_ibo",
+     "domain": "ibo",
+     "description": "Search and read NYC Independent Budget Office (IBO) records \u2014 Publications, DataTables, FiscalData, Education.",
+     "uses": [
+      "find_publications",
+      "get_publication",
+      "find_data_tables",
+      "get_data_table"
+     ]
+    },
+    {
+     "name": "apply_for_ibo",
+     "domain": "ibo",
+     "description": "DataRequest \u2014 an API for the 'Ask IBO' data/analysis request, today a web form / email only",
+     "uses": [
+      "ask_ibo"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://ibo",
+     "name": "NYC Independent Budget Office (IBO) \u2014 profile",
+     "description": "NYC Independent Budget Office (IBO): 10 operations, 10 tools, verb \u201cformalize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=ibo"
+    },
+    {
+     "uri": "nyc://ibo/openapi",
+     "name": "NYC Independent Budget Office (IBO) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ibo/openapi/ibo.yaml"
+    },
+    {
+     "uri": "nyc://ibo/publications/{id}",
+     "name": "Publications record (templated)",
+     "description": "A single NYC Independent Budget Office (IBO) Publications record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -11984,6 +14200,50 @@
      "operationId": "createInternshipApplication",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_law",
+     "domain": "law",
+     "description": "Search and read NYC Law Department records \u2014 Litigation, Divisions, Publications, Contracting.",
+     "uses": [
+      "find_cases",
+      "get_case",
+      "find_divisions",
+      "find_publications"
+     ]
+    },
+    {
+     "name": "apply_for_law",
+     "domain": "law",
+     "description": "LawInternshipApplication \u2014 submit a legal internship / fellowship application (the one citizen-initiated transaction with this agency)",
+     "uses": [
+      "submit_internship_application"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://law",
+     "name": "NYC Law Department \u2014 profile",
+     "description": "NYC Law Department: 9 operations, 8 tools, verb \u201ccatalog\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=law"
+    },
+    {
+     "uri": "nyc://law/openapi",
+     "name": "NYC Law Department OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/law/openapi/law.yaml"
+    },
+    {
+     "uri": "nyc://law/litigation/{id}",
+     "name": "Litigation record (templated)",
+     "description": "A single NYC Law Department Litigation record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -12218,6 +14478,50 @@
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_lpc",
+     "domain": "lpc",
+     "description": "Search and read NYC Landmarks (LPC) records \u2014 Landmarks, HistoricDistricts, Reports, Permits.",
+     "uses": [
+      "find_landmarks",
+      "get_landmark",
+      "get_landmark_buildings",
+      "find_buildings"
+     ]
+    },
+    {
+     "name": "apply_for_lpc",
+     "domain": "lpc",
+     "description": "LandmarkPermitApplication \u2014 file a Certificate of Appropriateness / No Effect / Minor Work application (today Salesforce Portico only, no API)",
+     "uses": [
+      "file_permit_application"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://lpc",
+     "name": "NYC Landmarks (LPC) \u2014 profile",
+     "description": "NYC Landmarks (LPC): 11 operations, 10 tools, verb \u201cbind\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=lpc"
+    },
+    {
+     "uri": "nyc://lpc/openapi",
+     "name": "NYC Landmarks (LPC) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/lpc/openapi/lpc.yaml"
+    },
+    {
+     "uri": "nyc://lpc/landmarks/{id}",
+     "name": "Landmarks record (templated)",
+     "description": "A single NYC Landmarks (LPC) Landmarks record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -12430,6 +14734,50 @@
      "operationId": "createCommunityBoardApplication",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_manhattanbp",
+     "domain": "manhattanbp",
+     "description": "Search and read Manhattan Borough President records \u2014 CommunityBoards, LandUse, Appointments, Funding.",
+     "uses": [
+      "find_community_boards",
+      "get_community_board",
+      "find_land_use_recommendations",
+      "find_board_appointments"
+     ]
+    },
+    {
+     "name": "apply_for_manhattanbp",
+     "domain": "manhattanbp",
+     "description": "CommunityBoardApplication \u2014 apply to serve on a Manhattan community board (today a Forminator web form / PDF, no API)",
+     "uses": [
+      "apply_to_community_board"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://manhattanbp",
+     "name": "Manhattan Borough President \u2014 profile",
+     "description": "Manhattan Borough President: 10 operations, 9 tools, verb \u201cfederate\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=manhattanbp"
+    },
+    {
+     "uri": "nyc://manhattanbp/openapi",
+     "name": "Manhattan Borough President OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanbp/openapi/manhattanbp.yaml"
+    },
+    {
+     "uri": "nyc://manhattanbp/communityboards/{id}",
+     "name": "CommunityBoards record (templated)",
+     "description": "A single Manhattan Borough President CommunityBoards record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -12645,6 +14993,58 @@
      "write": false,
      "skill": "check-application-or-case-status"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_manhattanda",
+     "domain": "manhattanda",
+     "description": "Search and read Manhattan District Attorney records \u2014 Newsroom, Programs, VictimServices, Prosecution.",
+     "uses": [
+      "find_press_releases",
+      "get_press_release",
+      "find_programs",
+      "get_program"
+     ]
+    },
+    {
+     "name": "report_manhattanda",
+     "domain": "manhattanda",
+     "description": "TipSubmission \u2014 submit a routable tip to a DA bureau (no API today; only a generic reCAPTCHA contact form). FOIL is delegated off-site to NYC OpenRecords.",
+     "uses": [
+      "submit_tip"
+     ]
+    },
+    {
+     "name": "check_manhattanda_status",
+     "domain": "manhattanda",
+     "description": "Check the status of a Manhattan District Attorney application, case, or request.",
+     "uses": [
+      "get_tip"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://manhattanda",
+     "name": "Manhattan District Attorney \u2014 profile",
+     "description": "Manhattan District Attorney: 10 operations, 9 tools, verb \u201cstandardize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=manhattanda"
+    },
+    {
+     "uri": "nyc://manhattanda/openapi",
+     "name": "Manhattan District Attorney OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanda/openapi/manhattanda.yaml"
+    },
+    {
+     "uri": "nyc://manhattanda/newsroom/{id}",
+     "name": "Newsroom record (templated)",
+     "description": "A single Manhattan District Attorney Newsroom record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -12846,6 +15246,58 @@
      "write": false,
      "skill": "check-application-or-case-status"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_mocj",
+     "domain": "mocj",
+     "description": "Search and read NYC Criminal Justice (MOCJ) records \u2014 Programs, SupervisedRelease, SystemData, Publications.",
+     "uses": [
+      "find_programs",
+      "get_program",
+      "find_supervised_release_dockets",
+      "find_jail_population_metrics"
+     ]
+    },
+    {
+     "name": "apply_for_mocj",
+     "domain": "mocj",
+     "description": "ProgramReferral \u2014 route a person or court case to a MOCJ-coordinated program",
+     "uses": [
+      "refer_to_program"
+     ]
+    },
+    {
+     "name": "check_mocj_status",
+     "domain": "mocj",
+     "description": "Check the status of a NYC Criminal Justice (MOCJ) application, case, or request.",
+     "uses": [
+      "get_referral"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://mocj",
+     "name": "NYC Criminal Justice (MOCJ) \u2014 profile",
+     "description": "NYC Criminal Justice (MOCJ): 9 operations, 9 tools, verb \u201croute\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=mocj"
+    },
+    {
+     "uri": "nyc://mocj/openapi",
+     "name": "NYC Criminal Justice (MOCJ) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mocj/openapi/mocj.yaml"
+    },
+    {
+     "uri": "nyc://mocj/programs/{id}",
+     "name": "Programs record (templated)",
+     "description": "A single NYC Criminal Justice (MOCJ) Programs record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -13038,6 +15490,50 @@
      "operationId": "createPermitApplication",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_mome",
+     "domain": "mome",
+     "description": "Search and read NYC Media & Entertainment (MOME) records \u2014 FilmPermits, ScreenActivity, Programs, Nightlife.",
+     "uses": [
+      "find_film_permits",
+      "get_film_permit",
+      "get_film_permit_locations",
+      "find_screen_activity"
+     ]
+    },
+    {
+     "name": "apply_for_mome",
+     "domain": "mome",
+     "description": "FilmPermitApplication \u2014 apply for a film/photography permit via API instead of the login-walled E-Apply portal",
+     "uses": [
+      "apply_for_film_permit"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://mome",
+     "name": "NYC Media & Entertainment (MOME) \u2014 profile",
+     "description": "NYC Media & Entertainment (MOME): 9 operations, 8 tools, verb \u201cgreenlight\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=mome"
+    },
+    {
+     "uri": "nyc://mome/openapi",
+     "name": "NYC Media & Entertainment (MOME) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mome/openapi/mome.yaml"
+    },
+    {
+     "uri": "nyc://mome/filmpermits/{id}",
+     "name": "FilmPermits record (templated)",
+     "description": "A single NYC Media & Entertainment (MOME) FilmPermits record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -13239,6 +15735,50 @@
      "operationId": "getNotifyNycSubscription",
      "write": false,
      "skill": "search-city-data-and-records"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_nycem",
+     "domain": "nycem",
+     "description": "Search and read NYC Emergency Management (NYCEM) records \u2014 Notifications, EvacuationZones, Incidents, Mitigation.",
+     "uses": [
+      "find_notifications",
+      "get_notification",
+      "find_evacuation_zones",
+      "find_evacuation_centers"
+     ]
+    },
+    {
+     "name": "apply_for_nycem",
+     "domain": "nycem",
+     "description": "NotifyNYCSubscription \u2014 subscribe to Notify NYC emergency alerts by channel, location, and category through an owned write API",
+     "uses": [
+      "subscribe_notify_nyc"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://nycem",
+     "name": "NYC Emergency Management (NYCEM) \u2014 profile",
+     "description": "NYC Emergency Management (NYCEM): 9 operations, 9 tools, verb \u201csyndicate\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=nycem"
+    },
+    {
+     "uri": "nyc://nycem/openapi",
+     "name": "NYC Emergency Management (NYCEM) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/openapi/nycem.yaml"
+    },
+    {
+     "uri": "nyc://nycem/notifications/{id}",
+     "name": "Notifications record (templated)",
+     "description": "A single NYC Emergency Management (NYCEM) Notifications record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -13505,6 +16045,50 @@
      "write": true,
      "skill": "schedule-or-reserve"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_nypl",
+     "domain": "nypl",
+     "description": "Search and read New York Public Library (NYPL) records \u2014 DigitalCollections, Locations, Events, Catalog.",
+     "uses": [
+      "search_digital_collections",
+      "get_digital_item",
+      "list_collections",
+      "find_branches"
+     ]
+    },
+    {
+     "name": "schedule_nypl",
+     "domain": "nypl",
+     "description": "Hold (BookHold) \u2014 place and track a reservation on a catalog item via a clean, agent-native public API (backed by NYPL's existing internal hold services)",
+     "uses": [
+      "place_hold"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://nypl",
+     "name": "New York Public Library (NYPL) \u2014 profile",
+     "description": "New York Public Library (NYPL): 13 operations, 11 tools, verb \u201clead\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=nypl"
+    },
+    {
+     "uri": "nyc://nypl/openapi",
+     "name": "New York Public Library (NYPL) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypl/openapi/nypl.yaml"
+    },
+    {
+     "uri": "nyc://nypl/digitalcollections/{id}",
+     "name": "DigitalCollections record (templated)",
+     "description": "A single New York Public Library (NYPL) DigitalCollections record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -13706,6 +16290,58 @@
      "write": true,
      "skill": "dispute-or-appeal"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_oath",
+     "domain": "oath",
+     "description": "Search and read NYC Admin Trials & Hearings (OATH) records \u2014 Summonses, Hearings, Decisions, Trials.",
+     "uses": [
+      "find_summonses",
+      "get_summons",
+      "get_summons_hearing",
+      "get_summons_decision"
+     ]
+    },
+    {
+     "name": "dispute_oath",
+     "domain": "oath",
+     "description": "SummonsDispute \u2014 respond to / dispute a summons (request a hearing) via an owned API",
+     "uses": [
+      "dispute_summons"
+     ]
+    },
+    {
+     "name": "check_oath_status",
+     "domain": "oath",
+     "description": "Check the status of a NYC Admin Trials & Hearings (OATH) application, case, or request.",
+     "uses": [
+      "get_dispute_status"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://oath",
+     "name": "NYC Admin Trials & Hearings (OATH) \u2014 profile",
+     "description": "NYC Admin Trials & Hearings (OATH): 9 operations, 9 tools, verb \u201crespond\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=oath"
+    },
+    {
+     "uri": "nyc://oath/openapi",
+     "name": "NYC Admin Trials & Hearings (OATH) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oath/openapi/oath.yaml"
+    },
+    {
+     "uri": "nyc://oath/summonses/{id}",
+     "name": "Summonses record (templated)",
+     "description": "A single NYC Admin Trials & Hearings (OATH) Summonses record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -13886,6 +16522,50 @@
      "operationId": "createRecordRequest",
      "write": true,
      "skill": "request-public-records"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_ocme",
+     "domain": "ocme",
+     "description": "Search and read NYC Medical Examiner (OCME) records \u2014 Indicators, Statistics, Services, Locations.",
+     "uses": [
+      "list_indicators",
+      "find_case_statistics",
+      "find_services",
+      "find_family_services_centers"
+     ]
+    },
+    {
+     "name": "request_ocme",
+     "domain": "ocme",
+     "description": "DeathRecordRequest \u2014 request and track a decedent's medical-examiner casefile record/report",
+     "uses": [
+      "request_record"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://ocme",
+     "name": "NYC Medical Examiner (OCME) \u2014 profile",
+     "description": "NYC Medical Examiner (OCME): 8 operations, 8 tools, verb \u201cinstrument\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=ocme"
+    },
+    {
+     "uri": "nyc://ocme/openapi",
+     "name": "NYC Medical Examiner (OCME) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ocme/openapi/ocme.yaml"
+    },
+    {
+     "uri": "nyc://ocme/indicators/{id}",
+     "name": "Indicators record (templated)",
+     "description": "A single NYC Medical Examiner (OCME) Indicators record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -14153,6 +16833,58 @@
      "write": false,
      "skill": "search-city-data-and-records"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_oti",
+     "domain": "oti",
+     "description": "Search and read NYC Technology & Innovation (OTI) records \u2014 Catalog, Gateway, Geocoding, LinkNYC.",
+     "uses": [
+      "search_datasets",
+      "get_dataset",
+      "list_gateway_services",
+      "get_gateway_service"
+     ]
+    },
+    {
+     "name": "register_oti",
+     "domain": "oti",
+     "description": "One owned, unified gateway + catalog API \u2014 plus two write surfaces: register a dataset, and request an api.nyc.gov gateway key.",
+     "uses": [
+      "register_dataset"
+     ]
+    },
+    {
+     "name": "apply_for_oti",
+     "domain": "oti",
+     "description": "One owned, unified gateway + catalog API \u2014 plus two write surfaces: register a dataset, and request an api.nyc.gov gateway key.",
+     "uses": [
+      "request_api_key"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://oti",
+     "name": "NYC Technology & Innovation (OTI) \u2014 profile",
+     "description": "NYC Technology & Innovation (OTI): 13 operations, 11 tools, verb \u201cproductize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=oti"
+    },
+    {
+     "uri": "nyc://oti/openapi",
+     "name": "NYC Technology & Innovation (OTI) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oti/openapi/oti.yaml"
+    },
+    {
+     "uri": "nyc://oti/catalog/{id}",
+     "name": "Catalog record (templated)",
+     "description": "A single NYC Technology & Innovation (OTI) Catalog record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -14373,6 +17105,50 @@
      "operationId": "getOmbudsmanComplaint",
      "write": false,
      "skill": "search-city-data-and-records"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_pubadvocate",
+     "domain": "pubadvocate",
+     "description": "Search and read NYC Public Advocate records \u2014 Watchlist, Legislation, Reports, PublicInterest.",
+     "uses": [
+      "find_worst_landlords",
+      "get_worst_landlord",
+      "get_worst_landlord_buildings",
+      "find_watchlist_buildings"
+     ]
+    },
+    {
+     "name": "report_pubadvocate",
+     "domain": "pubadvocate",
+     "description": "OmbudsmanComplaint \u2014 file and track a 'help with a city agency' case against a NYC agency",
+     "uses": [
+      "file_complaint"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://pubadvocate",
+     "name": "NYC Public Advocate \u2014 profile",
+     "description": "NYC Public Advocate: 10 operations, 10 tools, verb \u201cRespond\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=pubadvocate"
+    },
+    {
+     "uri": "nyc://pubadvocate/openapi",
+     "name": "NYC Public Advocate OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pubadvocate/openapi/pubadvocate.yaml"
+    },
+    {
+     "uri": "nyc://pubadvocate/watchlist/{id}",
+     "name": "Watchlist record (templated)",
+     "description": "A single NYC Public Advocate Watchlist record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -14628,6 +17404,58 @@
      "write": false,
      "skill": "check-application-or-case-status"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_queensbp",
+     "domain": "queensbp",
+     "description": "Search and read Queens Borough President records \u2014 CommunityBoards, LandUse, Budget, Newsroom.",
+     "uses": [
+      "find_community_boards",
+      "get_community_board",
+      "find_community_board_members",
+      "find_appointments"
+     ]
+    },
+    {
+     "name": "apply_for_queensbp",
+     "domain": "queensbp",
+     "description": "CommunityBoardApplication \u2014 apply to serve on a Queens community board (today an HTML/PDF form)",
+     "uses": [
+      "apply_to_community_board"
+     ]
+    },
+    {
+     "name": "check_queensbp_status",
+     "domain": "queensbp",
+     "description": "Check the status of a Queens Borough President application, case, or request.",
+     "uses": [
+      "get_community_board_application"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://queensbp",
+     "name": "Queens Borough President \u2014 profile",
+     "description": "Queens Borough President: 12 operations, 11 tools, verb \u201cstandardize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=queensbp"
+    },
+    {
+     "uri": "nyc://queensbp/openapi",
+     "name": "Queens Borough President OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/openapi/queensbp.yaml"
+    },
+    {
+     "uri": "nyc://queensbp/communityboards/{id}",
+     "name": "CommunityBoards record (templated)",
+     "description": "A single Queens Borough President CommunityBoards record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -14854,6 +17682,50 @@
      "write": true,
      "skill": "report-a-problem-or-file-a-complaint"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_queensda",
+     "domain": "queensda",
+     "description": "Search and read Queens District Attorney records \u2014 PressReleases, Cases, ColdCases, Programs.",
+     "uses": [
+      "find_press_releases",
+      "get_press_release",
+      "find_cases",
+      "get_case"
+     ]
+    },
+    {
+     "name": "report_queensda",
+     "domain": "queensda",
+     "description": "TipSubmission \u2014 submit a tip, cold-case lead, or FOIL request (no inbound channel today)",
+     "uses": [
+      "submit_tip"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://queensda",
+     "name": "Queens District Attorney \u2014 profile",
+     "description": "Queens District Attorney: 11 operations, 9 tools, verb \u201cstructure\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=queensda"
+    },
+    {
+     "uri": "nyc://queensda/openapi",
+     "name": "Queens District Attorney OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensda/openapi/queensda.yaml"
+    },
+    {
+     "uri": "nyc://queensda/pressreleases/{id}",
+     "name": "PressReleases record (templated)",
+     "description": "A single Queens District Attorney PressReleases record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -15066,6 +17938,58 @@
      "operationId": "applyForLibraryCard",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_queenslibrary",
+     "domain": "queenslibrary",
+     "description": "Search and read Queens Public Library (QPL) records \u2014 Branches, Catalog, Events, Digital.",
+     "uses": [
+      "find_branches",
+      "get_branch",
+      "search_catalog",
+      "get_catalog_item"
+     ]
+    },
+    {
+     "name": "schedule_queenslibrary",
+     "domain": "queenslibrary",
+     "description": "BookHold \u2014 place a hold/reservation on a catalog item (also: library-card application)",
+     "uses": [
+      "place_hold"
+     ]
+    },
+    {
+     "name": "apply_for_queenslibrary",
+     "domain": "queenslibrary",
+     "description": "BookHold \u2014 place a hold/reservation on a catalog item (also: library-card application)",
+     "uses": [
+      "apply_for_library_card"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://queenslibrary",
+     "name": "Queens Public Library (QPL) \u2014 profile",
+     "description": "Queens Public Library (QPL): 10 operations, 9 tools, verb \u201cfederate\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=queenslibrary"
+    },
+    {
+     "uri": "nyc://queenslibrary/openapi",
+     "name": "Queens Public Library (QPL) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queenslibrary/openapi/queenslibrary.yaml"
+    },
+    {
+     "uri": "nyc://queenslibrary/branches/{id}",
+     "name": "Branches record (templated)",
+     "description": "A single Queens Public Library (QPL) Branches record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -15300,6 +18224,50 @@
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_sbs",
+     "domain": "sbs",
+     "description": "Search and read NYC Small Business Services (SBS) records \u2014 CertifiedBusinesses, BIDs, Workforce, Locations.",
+     "uses": [
+      "find_certified_businesses",
+      "get_certified_business",
+      "find_business_improvement_districts",
+      "get_business_improvement_district"
+     ]
+    },
+    {
+     "name": "apply_for_sbs",
+     "domain": "sbs",
+     "description": "MWBECertificationApplication \u2014 apply for M/WBE (also EBE/LBE) certification; no API today, only the MyCity Business portal.",
+     "uses": [
+      "apply_for_mwbe_certification"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://sbs",
+     "name": "NYC Small Business Services (SBS) \u2014 profile",
+     "description": "NYC Small Business Services (SBS): 11 operations, 10 tools, verb \u201cnavigate\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=sbs"
+    },
+    {
+     "uri": "nyc://sbs/openapi",
+     "name": "NYC Small Business Services (SBS) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/openapi/sbs.yaml"
+    },
+    {
+     "uri": "nyc://sbs/certifiedbusinesses/{id}",
+     "name": "CertifiedBusinesses record (templated)",
+     "description": "A single NYC Small Business Services (SBS) CertifiedBusinesses record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -15512,6 +18480,50 @@
      "operationId": "createPrequalification",
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_sca",
+     "domain": "sca",
+     "description": "Search and read NYC School Construction Authority (SCA) records \u2014 CapitalProjects, Procurement, Vendors, Capacity.",
+     "uses": [
+      "find_capital_projects",
+      "get_capital_project",
+      "find_upcoming_contracts",
+      "find_solicitations"
+     ]
+    },
+    {
+     "name": "apply_for_sca",
+     "domain": "sca",
+     "description": "VendorPrequalification \u2014 apply to become a prequalified SCA vendor",
+     "uses": [
+      "apply_for_prequalification"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://sca",
+     "name": "NYC School Construction Authority (SCA) \u2014 profile",
+     "description": "NYC School Construction Authority (SCA): 10 operations, 9 tools, verb \u201conboard\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=sca"
+    },
+    {
+     "uri": "nyc://sca/openapi",
+     "name": "NYC School Construction Authority (SCA) OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sca/openapi/sca.yaml"
+    },
+    {
+     "uri": "nyc://sca/capitalprojects/{id}",
+     "name": "CapitalProjects record (templated)",
+     "description": "A single NYC School Construction Authority (SCA) CapitalProjects record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   },
@@ -15727,6 +18739,58 @@
      "write": true,
      "skill": "apply-for-a-permit-license-or-benefit"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_statenislandbp",
+     "domain": "statenislandbp",
+     "description": "Search and read Staten Island Borough President records \u2014 LandUse, CommunityBoards, Budget, BoroughBoard.",
+     "uses": [
+      "find_land_use_recommendations",
+      "get_land_use_recommendation",
+      "find_community_board_appointments",
+      "find_discretionary_funding_awards"
+     ]
+    },
+    {
+     "name": "report_statenislandbp",
+     "domain": "statenislandbp",
+     "description": "CommunityBoardApplication \u2014 apply to serve on a Staten Island community board (today an opaque Weebly form)",
+     "uses": [
+      "report_quality_of_life_issue"
+     ]
+    },
+    {
+     "name": "apply_for_statenislandbp",
+     "domain": "statenislandbp",
+     "description": "CommunityBoardApplication \u2014 apply to serve on a Staten Island community board (today an opaque Weebly form)",
+     "uses": [
+      "apply_to_community_board"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://statenislandbp",
+     "name": "Staten Island Borough President \u2014 profile",
+     "description": "Staten Island Borough President: 10 operations, 9 tools, verb \u201cfederate\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=statenislandbp"
+    },
+    {
+     "uri": "nyc://statenislandbp/openapi",
+     "name": "Staten Island Borough President OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandbp/openapi/statenislandbp.yaml"
+    },
+    {
+     "uri": "nyc://statenislandbp/landuse/{id}",
+     "name": "LandUse record (templated)",
+     "description": "A single Staten Island Borough President LandUse record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -15928,6 +18992,58 @@
      "write": false,
      "skill": "check-application-or-case-status"
     }
+   ],
+   "prompts": [
+    {
+     "name": "explore_statenislandda",
+     "domain": "statenislandda",
+     "description": "Search and read Staten Island District Attorney records \u2014 PressReleases, Programs, VictimServices, CommunityResources.",
+     "uses": [
+      "find_press_releases",
+      "get_press_release",
+      "find_programs",
+      "get_program"
+     ]
+    },
+    {
+     "name": "report_statenislandda",
+     "domain": "statenislandda",
+     "description": "TipSubmission \u2014 an API for the confidential drug/scam tip forms (today Contact Form 7 email only)",
+     "uses": [
+      "submit_tip"
+     ]
+    },
+    {
+     "name": "check_statenislandda_status",
+     "domain": "statenislandda",
+     "description": "Check the status of a Staten Island District Attorney application, case, or request.",
+     "uses": [
+      "get_tip"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://statenislandda",
+     "name": "Staten Island District Attorney \u2014 profile",
+     "description": "Staten Island District Attorney: 9 operations, 9 tools, verb \u201csurface\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=statenislandda"
+    },
+    {
+     "uri": "nyc://statenislandda/openapi",
+     "name": "Staten Island District Attorney OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandda/openapi/statenislandda.yaml"
+    },
+    {
+     "uri": "nyc://statenislandda/pressreleases/{id}",
+     "name": "PressReleases record (templated)",
+     "description": "A single Staten Island District Attorney PressReleases record by id.",
+     "mimeType": "application/json",
+     "template": true
+    }
    ]
   },
   {
@@ -16128,6 +19244,50 @@
      "operationId": "getDetermination",
      "write": false,
      "skill": "search-city-data-and-records"
+    }
+   ],
+   "prompts": [
+    {
+     "name": "explore_taxcommission",
+     "domain": "taxcommission",
+     "description": "Search and read NYC Tax Commission records \u2014 Properties, AssessmentActions, Article7Petitions, Appeals.",
+     "uses": [
+      "find_properties",
+      "get_property",
+      "find_assessment_actions",
+      "find_article7_petitions"
+     ]
+    },
+    {
+     "name": "dispute_taxcommission",
+     "domain": "taxcommission",
+     "description": "AssessmentAppeal \u2014 file a property-tax assessment appeal (Application for Correction).",
+     "uses": [
+      "file_appeal"
+     ]
+    }
+   ],
+   "resources": [
+    {
+     "uri": "nyc://taxcommission",
+     "name": "NYC Tax Commission \u2014 profile",
+     "description": "NYC Tax Commission: 9 operations, 9 tools, verb \u201cdigitize\u201d.",
+     "mimeType": "application/json",
+     "backing": "domain.html?d=taxcommission"
+    },
+    {
+     "uri": "nyc://taxcommission/openapi",
+     "name": "NYC Tax Commission OpenAPI",
+     "description": "The agency's OpenAPI 3.1 contract (every operation).",
+     "mimeType": "application/yaml",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/taxcommission/openapi/taxcommission.yaml"
+    },
+    {
+     "uri": "nyc://taxcommission/properties/{id}",
+     "name": "Properties record (templated)",
+     "description": "A single NYC Tax Commission Properties record by id.",
+     "mimeType": "application/json",
+     "template": true
     }
    ]
   }

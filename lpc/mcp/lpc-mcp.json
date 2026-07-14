@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -521,5 +528,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_lpc",
+      "domain": "lpc",
+      "description": "Search and read NYC Landmarks (LPC) records \u2014 Landmarks, HistoricDistricts, Reports, Permits.",
+      "uses": [
+        "find_landmarks",
+        "get_landmark",
+        "get_landmark_buildings",
+        "find_buildings"
+      ]
+    },
+    {
+      "name": "apply_for_lpc",
+      "domain": "lpc",
+      "description": "LandmarkPermitApplication \u2014 file a Certificate of Appropriateness / No Effect / Minor Work application (today Salesforce Portico only, no API)",
+      "uses": [
+        "file_permit_application"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://lpc",
+      "name": "NYC Landmarks (LPC) \u2014 profile",
+      "description": "NYC Landmarks (LPC): 11 operations, 10 tools, verb \u201cbind\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=lpc"
+    },
+    {
+      "uri": "nyc://lpc/openapi",
+      "name": "NYC Landmarks (LPC) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/lpc/openapi/lpc.yaml"
+    },
+    {
+      "uri": "nyc://lpc/landmarks/{id}",
+      "name": "Landmarks record (templated)",
+      "description": "A single NYC Landmarks (LPC) Landmarks record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -415,5 +422,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_statenislandbp",
+      "domain": "statenislandbp",
+      "description": "Search and read Staten Island Borough President records \u2014 LandUse, CommunityBoards, Budget, BoroughBoard.",
+      "uses": [
+        "find_land_use_recommendations",
+        "get_land_use_recommendation",
+        "find_community_board_appointments",
+        "find_discretionary_funding_awards"
+      ]
+    },
+    {
+      "name": "report_statenislandbp",
+      "domain": "statenislandbp",
+      "description": "CommunityBoardApplication \u2014 apply to serve on a Staten Island community board (today an opaque Weebly form)",
+      "uses": [
+        "report_quality_of_life_issue"
+      ]
+    },
+    {
+      "name": "apply_for_statenislandbp",
+      "domain": "statenislandbp",
+      "description": "CommunityBoardApplication \u2014 apply to serve on a Staten Island community board (today an opaque Weebly form)",
+      "uses": [
+        "apply_to_community_board"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://statenislandbp",
+      "name": "Staten Island Borough President \u2014 profile",
+      "description": "Staten Island Borough President: 10 operations, 9 tools, verb \u201cfederate\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=statenislandbp"
+    },
+    {
+      "uri": "nyc://statenislandbp/openapi",
+      "name": "Staten Island Borough President OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandbp/openapi/statenislandbp.yaml"
+    },
+    {
+      "uri": "nyc://statenislandbp/landuse/{id}",
+      "name": "LandUse record (templated)",
+      "description": "A single Staten Island Borough President LandUse record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

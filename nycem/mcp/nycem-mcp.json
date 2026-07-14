@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -452,5 +459,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_nycem",
+      "domain": "nycem",
+      "description": "Search and read NYC Emergency Management (NYCEM) records \u2014 Notifications, EvacuationZones, Incidents, Mitigation.",
+      "uses": [
+        "find_notifications",
+        "get_notification",
+        "find_evacuation_zones",
+        "find_evacuation_centers"
+      ]
+    },
+    {
+      "name": "apply_for_nycem",
+      "domain": "nycem",
+      "description": "NotifyNYCSubscription \u2014 subscribe to Notify NYC emergency alerts by channel, location, and category through an owned write API",
+      "uses": [
+        "subscribe_notify_nyc"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://nycem",
+      "name": "NYC Emergency Management (NYCEM) \u2014 profile",
+      "description": "NYC Emergency Management (NYCEM): 9 operations, 9 tools, verb \u201csyndicate\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=nycem"
+    },
+    {
+      "uri": "nyc://nycem/openapi",
+      "name": "NYC Emergency Management (NYCEM) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/openapi/nycem.yaml"
+    },
+    {
+      "uri": "nyc://nycem/notifications/{id}",
+      "name": "Notifications record (templated)",
+      "description": "A single NYC Emergency Management (NYCEM) Notifications record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

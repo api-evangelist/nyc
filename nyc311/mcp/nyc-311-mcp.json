@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -219,5 +226,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_nyc311",
+      "domain": "nyc311",
+      "description": "Search and read NYC311 records \u2014 Discovery, Services, Requests, Agencies.",
+      "uses": [
+        "find_service_types",
+        "get_service_definition",
+        "check_request_status",
+        "find_service_requests"
+      ]
+    },
+    {
+      "name": "report_nyc311",
+      "domain": "nyc311",
+      "description": "Report a 311 problem (Open311 POST Service Request). Revives the retired write path. Requires an api.nyc.gov key and an address + service code. Mutates state \u2014 confirm details with the user first.",
+      "uses": [
+        "submit_service_request"
+      ]
+    },
+    {
+      "name": "check_nyc311_status",
+      "domain": "nyc311",
+      "description": "Check the status of a NYC311 application, case, or request.",
+      "uses": [
+        "check_request_status"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://nyc311",
+      "name": "NYC311 \u2014 profile",
+      "description": "NYC311: 7 operations, 6 tools, verb \u201cStandardize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=nyc311"
+    },
+    {
+      "uri": "nyc://nyc311/openapi",
+      "name": "NYC311 OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc311/openapi/nyc-311.yaml"
+    },
+    {
+      "uri": "nyc://nyc311/discovery/{id}",
+      "name": "Discovery record (templated)",
+      "description": "A single NYC311 Discovery record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

@@ -12,8 +12,8 @@ Interactive: **[nyc.apievangelist.com/experience.html](https://nyc.apievangelist
 | REST operations | 721 |
 | — of which net-new write operations | 77 |
 | MCP tools | 624 |
-| MCP prompts (cross-agency) | 7 |
-| MCP resources (cross-agency) | 7 |
+| MCP prompts (cross-agency + per-agency) | 7 + 160 = **167** |
+| MCP resources (cross-agency + per-agency) | 7 + 201 = **208** |
 | Common government-process skills | 10 |
 
 Built on the [API Experience](https://experience.apicommons.org) chain — **REST operation → MCP tool → Agent Skill** — minus the free/pro tiering and AI enrichment: a clean view of the whole programmable surface the city could have.

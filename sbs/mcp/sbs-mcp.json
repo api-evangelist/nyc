@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -498,5 +505,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_sbs",
+      "domain": "sbs",
+      "description": "Search and read NYC Small Business Services (SBS) records \u2014 CertifiedBusinesses, BIDs, Workforce, Locations.",
+      "uses": [
+        "find_certified_businesses",
+        "get_certified_business",
+        "find_business_improvement_districts",
+        "get_business_improvement_district"
+      ]
+    },
+    {
+      "name": "apply_for_sbs",
+      "domain": "sbs",
+      "description": "MWBECertificationApplication \u2014 apply for M/WBE (also EBE/LBE) certification; no API today, only the MyCity Business portal.",
+      "uses": [
+        "apply_for_mwbe_certification"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://sbs",
+      "name": "NYC Small Business Services (SBS) \u2014 profile",
+      "description": "NYC Small Business Services (SBS): 11 operations, 10 tools, verb \u201cnavigate\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=sbs"
+    },
+    {
+      "uri": "nyc://sbs/openapi",
+      "name": "NYC Small Business Services (SBS) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/openapi/sbs.yaml"
+    },
+    {
+      "uri": "nyc://sbs/certifiedbusinesses/{id}",
+      "name": "CertifiedBusinesses record (templated)",
+      "description": "A single NYC Small Business Services (SBS) CertifiedBusinesses record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

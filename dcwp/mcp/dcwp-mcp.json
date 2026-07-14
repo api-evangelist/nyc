@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -449,5 +456,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dcwp",
+      "domain": "dcwp",
+      "description": "Search and read NYC Consumer & Worker Protection (DCWP) records \u2014 Licenses, Applications, Inspections, Enforcement.",
+      "uses": [
+        "find_licenses",
+        "get_license",
+        "find_applications",
+        "get_application"
+      ]
+    },
+    {
+      "name": "apply_for_dcwp",
+      "domain": "dcwp",
+      "description": "File a consumer complaint (ConsumerComplaint) and apply for a business license (LicenseApplication) \u2014 the two citizen writes with no API",
+      "uses": [
+        "apply_for_license"
+      ]
+    },
+    {
+      "name": "report_dcwp",
+      "domain": "dcwp",
+      "description": "File a consumer complaint (ConsumerComplaint) and apply for a business license (LicenseApplication) \u2014 the two citizen writes with no API",
+      "uses": [
+        "file_complaint"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dcwp",
+      "name": "NYC Consumer & Worker Protection (DCWP) \u2014 profile",
+      "description": "NYC Consumer & Worker Protection (DCWP): 11 operations, 10 tools, verb \u201cbind\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dcwp"
+    },
+    {
+      "uri": "nyc://dcwp/openapi",
+      "name": "NYC Consumer & Worker Protection (DCWP) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcwp/openapi/dcwp.yaml"
+    },
+    {
+      "uri": "nyc://dcwp/licenses/{id}",
+      "name": "Licenses record (templated)",
+      "description": "A single NYC Consumer & Worker Protection (DCWP) Licenses record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

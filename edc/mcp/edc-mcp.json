@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -532,5 +539,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_edc",
+      "domain": "edc",
+      "description": "Search and read NYC Economic Development (EDC) records \u2014 Projects, RealEstate, Solicitations, Companies.",
+      "uses": [
+        "find_projects",
+        "get_project",
+        "find_properties",
+        "get_property"
+      ]
+    },
+    {
+      "name": "register_edc",
+      "domain": "edc",
+      "description": "RFPResponse \u2014 register interest in / submit a proposal to an EDC solicitation (RFP/RFEI)",
+      "uses": [
+        "submit_rfp_response"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://edc",
+      "name": "NYC Economic Development (EDC) \u2014 profile",
+      "description": "NYC Economic Development (EDC): 12 operations, 11 tools, verb \u201csurface\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=edc"
+    },
+    {
+      "uri": "nyc://edc/openapi",
+      "name": "NYC Economic Development (EDC) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/edc/openapi/edc.yaml"
+    },
+    {
+      "uri": "nyc://edc/projects/{id}",
+      "name": "Projects record (templated)",
+      "description": "A single NYC Economic Development (EDC) Projects record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -493,5 +500,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_fdny",
+      "domain": "fdny",
+      "description": "Search and read NYC Fire (FDNY) records \u2014 Firehouses, Incidents, Inspections, Violations.",
+      "uses": [
+        "find_firehouses",
+        "get_firehouse",
+        "find_incidents",
+        "get_incident"
+      ]
+    },
+    {
+      "name": "apply_for_fdny",
+      "domain": "fdny",
+      "description": "FirePermitApplication \u2014 apply for and track a fire permit / Certificate of Operation / inspection request via FDNY Business",
+      "uses": [
+        "apply_for_permit"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://fdny",
+      "name": "NYC Fire (FDNY) \u2014 profile",
+      "description": "NYC Fire (FDNY): 10 operations, 10 tools, verb \u201cfront\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=fdny"
+    },
+    {
+      "uri": "nyc://fdny/openapi",
+      "name": "NYC Fire (FDNY) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/fdny/openapi/fdny.yaml"
+    },
+    {
+      "uri": "nyc://fdny/firehouses/{id}",
+      "name": "Firehouses record (templated)",
+      "description": "A single NYC Fire (FDNY) Firehouses record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

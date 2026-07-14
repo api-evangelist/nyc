@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -585,5 +592,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_oti",
+      "domain": "oti",
+      "description": "Search and read NYC Technology & Innovation (OTI) records \u2014 Catalog, Gateway, Geocoding, LinkNYC.",
+      "uses": [
+        "search_datasets",
+        "get_dataset",
+        "list_gateway_services",
+        "get_gateway_service"
+      ]
+    },
+    {
+      "name": "register_oti",
+      "domain": "oti",
+      "description": "One owned, unified gateway + catalog API \u2014 plus two write surfaces: register a dataset, and request an api.nyc.gov gateway key.",
+      "uses": [
+        "register_dataset"
+      ]
+    },
+    {
+      "name": "apply_for_oti",
+      "domain": "oti",
+      "description": "One owned, unified gateway + catalog API \u2014 plus two write surfaces: register a dataset, and request an api.nyc.gov gateway key.",
+      "uses": [
+        "request_api_key"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://oti",
+      "name": "NYC Technology & Innovation (OTI) \u2014 profile",
+      "description": "NYC Technology & Innovation (OTI): 13 operations, 11 tools, verb \u201cproductize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=oti"
+    },
+    {
+      "uri": "nyc://oti/openapi",
+      "name": "NYC Technology & Innovation (OTI) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oti/openapi/oti.yaml"
+    },
+    {
+      "uri": "nyc://oti/catalog/{id}",
+      "name": "Catalog record (templated)",
+      "description": "A single NYC Technology & Innovation (OTI) Catalog record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

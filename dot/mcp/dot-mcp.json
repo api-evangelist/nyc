@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -508,5 +515,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dot",
+      "domain": "dot",
+      "description": "Search and read NYC Transportation (DOT) records \u2014 Bike Routes, Traffic Signals, Parking, Traffic Calming.",
+      "uses": [
+        "find_bike_routes",
+        "find_traffic_signals",
+        "find_parking_regulations",
+        "find_speed_humps"
+      ]
+    },
+    {
+      "name": "apply_for_dot",
+      "domain": "dot",
+      "description": "Submit a NEW street-opening / construction permit application. NET-NEW workflow with no public API today (only the NYCSTREET portal). Requires an authenticated user. Mutates state \u2014 confirm all details with the user firs",
+      "uses": [
+        "apply_street_work_permit"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dot",
+      "name": "NYC Transportation (DOT) \u2014 profile",
+      "description": "NYC Transportation (DOT): 13 operations, 10 tools, verb \u201cUnify\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dot"
+    },
+    {
+      "uri": "nyc://dot/openapi",
+      "name": "NYC Transportation (DOT) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/openapi/dot.yaml"
+    },
+    {
+      "uri": "nyc://dot/bike-routes/{id}",
+      "name": "Bike Routes record (templated)",
+      "description": "A single NYC Transportation (DOT) Bike Routes record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

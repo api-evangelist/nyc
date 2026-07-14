@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -388,5 +395,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_doi",
+      "domain": "doi",
+      "description": "Search and read NYC Investigation (DOI) records \u2014 Reports, Recommendations, Marshals, Performance.",
+      "uses": [
+        "find_reports",
+        "get_report",
+        "find_recommendations",
+        "find_evictions"
+      ]
+    },
+    {
+      "name": "report_doi",
+      "domain": "doi",
+      "description": "CorruptionComplaint \u2014 file and track a fraud/waste/corruption tip (with anonymous filing and Whistleblower-Law protection), the transaction that starts every DOI investigation and today lives only in a vendor Kaseware fo",
+      "uses": [
+        "file_complaint"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://doi",
+      "name": "NYC Investigation (DOI) \u2014 profile",
+      "description": "NYC Investigation (DOI): 9 operations, 8 tools, verb \u201cDigitize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=doi"
+    },
+    {
+      "uri": "nyc://doi/openapi",
+      "name": "NYC Investigation (DOI) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doi/openapi/doi.yaml"
+    },
+    {
+      "uri": "nyc://doi/reports/{id}",
+      "name": "Reports record (templated)",
+      "description": "A single NYC Investigation (DOI) Reports record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

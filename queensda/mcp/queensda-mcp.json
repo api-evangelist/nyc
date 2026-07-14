@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -456,5 +463,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_queensda",
+      "domain": "queensda",
+      "description": "Search and read Queens District Attorney records \u2014 PressReleases, Cases, ColdCases, Programs.",
+      "uses": [
+        "find_press_releases",
+        "get_press_release",
+        "find_cases",
+        "get_case"
+      ]
+    },
+    {
+      "name": "report_queensda",
+      "domain": "queensda",
+      "description": "TipSubmission \u2014 submit a tip, cold-case lead, or FOIL request (no inbound channel today)",
+      "uses": [
+        "submit_tip"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://queensda",
+      "name": "Queens District Attorney \u2014 profile",
+      "description": "Queens District Attorney: 11 operations, 9 tools, verb \u201cstructure\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=queensda"
+    },
+    {
+      "uri": "nyc://queensda/openapi",
+      "name": "Queens District Attorney OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensda/openapi/queensda.yaml"
+    },
+    {
+      "uri": "nyc://queensda/pressreleases/{id}",
+      "name": "PressReleases record (templated)",
+      "description": "A single Queens District Attorney PressReleases record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

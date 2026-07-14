@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -347,5 +354,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_cityclerk",
+      "domain": "cityclerk",
+      "description": "Search and read NYC City Clerk records \u2014 Marriage, Lobbying.",
+      "uses": [
+        "find_appointments",
+        "get_marriage_license_application",
+        "get_marriage_license",
+        "find_lobbyist_registrations"
+      ]
+    },
+    {
+      "name": "apply_for_cityclerk",
+      "domain": "cityclerk",
+      "description": "MarriageLicenseApplication \u2014 a couple applies for a NYC marriage license (today only via Project Cupid's Unqork screens)",
+      "uses": [
+        "apply_for_marriage_license"
+      ]
+    },
+    {
+      "name": "check_cityclerk_status",
+      "domain": "cityclerk",
+      "description": "Check the status of a NYC City Clerk application, case, or request.",
+      "uses": [
+        "get_marriage_license_application"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://cityclerk",
+      "name": "NYC City Clerk \u2014 profile",
+      "description": "NYC City Clerk: 8 operations, 8 tools, verb \u201ccontract\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=cityclerk"
+    },
+    {
+      "uri": "nyc://cityclerk/openapi",
+      "name": "NYC City Clerk OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cityclerk/openapi/cityclerk.yaml"
+    },
+    {
+      "uri": "nyc://cityclerk/marriage/{id}",
+      "name": "Marriage record (templated)",
+      "description": "A single NYC City Clerk Marriage record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

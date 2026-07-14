@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -414,5 +421,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_mocj",
+      "domain": "mocj",
+      "description": "Search and read NYC Criminal Justice (MOCJ) records \u2014 Programs, SupervisedRelease, SystemData, Publications.",
+      "uses": [
+        "find_programs",
+        "get_program",
+        "find_supervised_release_dockets",
+        "find_jail_population_metrics"
+      ]
+    },
+    {
+      "name": "apply_for_mocj",
+      "domain": "mocj",
+      "description": "ProgramReferral \u2014 route a person or court case to a MOCJ-coordinated program",
+      "uses": [
+        "refer_to_program"
+      ]
+    },
+    {
+      "name": "check_mocj_status",
+      "domain": "mocj",
+      "description": "Check the status of a NYC Criminal Justice (MOCJ) application, case, or request.",
+      "uses": [
+        "get_referral"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://mocj",
+      "name": "NYC Criminal Justice (MOCJ) \u2014 profile",
+      "description": "NYC Criminal Justice (MOCJ): 9 operations, 9 tools, verb \u201croute\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=mocj"
+    },
+    {
+      "uri": "nyc://mocj/openapi",
+      "name": "NYC Criminal Justice (MOCJ) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mocj/openapi/mocj.yaml"
+    },
+    {
+      "uri": "nyc://mocj/programs/{id}",
+      "name": "Programs record (templated)",
+      "description": "A single NYC Criminal Justice (MOCJ) Programs record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

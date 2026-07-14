@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -403,5 +410,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_coib",
+      "domain": "coib",
+      "description": "Search and read NYC Conflicts of Interest Board (COIB) records \u2014 Enforcement, Donations, Policymakers, LegalDefenseTrusts.",
+      "uses": [
+        "find_enforcement_dispositions",
+        "get_enforcement_disposition",
+        "find_agency_donations",
+        "find_policymakers"
+      ]
+    },
+    {
+      "name": "report_coib",
+      "domain": "coib",
+      "description": "FinancialDisclosureFiling \u2014 a public servant files/attests an annual financial disclosure report, today locked inside the login-only COIB filing website with no API",
+      "uses": [
+        "file_financial_disclosure"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://coib",
+      "name": "NYC Conflicts of Interest Board (COIB) \u2014 profile",
+      "description": "NYC Conflicts of Interest Board (COIB): 10 operations, 8 tools, verb \u201cattest\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=coib"
+    },
+    {
+      "uri": "nyc://coib/openapi",
+      "name": "NYC Conflicts of Interest Board (COIB) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/coib/openapi/coib.yaml"
+    },
+    {
+      "uri": "nyc://coib/enforcement/{id}",
+      "name": "Enforcement record (templated)",
+      "description": "A single NYC Conflicts of Interest Board (COIB) Enforcement record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

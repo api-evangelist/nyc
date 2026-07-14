@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -431,5 +438,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_brooklynbp",
+      "domain": "brooklynbp",
+      "description": "Search and read Brooklyn Borough President records \u2014 LandUse, CommunityBoards, Funding, Publications.",
+      "uses": [
+        "find_land_use_recommendations",
+        "get_land_use_recommendation",
+        "find_community_boards",
+        "find_appointments"
+      ]
+    },
+    {
+      "name": "apply_for_brooklynbp",
+      "domain": "brooklynbp",
+      "description": "CommunityBoardApplication \u2014 apply to serve on a Brooklyn community board (net-new write; today only a web form).",
+      "uses": [
+        "apply_to_community_board"
+      ]
+    },
+    {
+      "name": "check_brooklynbp_status",
+      "domain": "brooklynbp",
+      "description": "Check the status of a Brooklyn Borough President application, case, or request.",
+      "uses": [
+        "get_application_status"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://brooklynbp",
+      "name": "Brooklyn Borough President \u2014 profile",
+      "description": "Brooklyn Borough President: 11 operations, 9 tools, verb \u201ctemplate\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=brooklynbp"
+    },
+    {
+      "uri": "nyc://brooklynbp/openapi",
+      "name": "Brooklyn Borough President OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynbp/openapi/brooklynbp.yaml"
+    },
+    {
+      "uri": "nyc://brooklynbp/landuse/{id}",
+      "name": "LandUse record (templated)",
+      "description": "A single Brooklyn Borough President LandUse record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

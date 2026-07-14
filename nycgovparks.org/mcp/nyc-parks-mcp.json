@@ -18,6 +18,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -608,5 +615,65 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_nycgovparks_org",
+      "domain": "nycgovparks.org",
+      "description": "Search and read NYC Parks & Recreation records \u2014 Parks, Facilities, Events, Monuments.",
+      "uses": [
+        "find_parks",
+        "get_park",
+        "list_park_facilities",
+        "find_facilities"
+      ]
+    },
+    {
+      "name": "apply_for_nycgovparks_org",
+      "domain": "nycgovparks.org",
+      "description": "Submit a new NYC Parks permit application (field-and-court, tennis, special-event, film-photo, research, etc.). NET-NEW workflow with no equivalent today. Requires an authenticated applicant. Mutates state \u2014 confirm deta",
+      "uses": [
+        "submit_permit_application"
+      ]
+    },
+    {
+      "name": "update_permit_application",
+      "domain": "nycgovparks.org",
+      "description": "Update or withdraw a draft/submitted permit application. Requires an authenticated applicant. Mutates state \u2014 confirm with the user first.",
+      "uses": [
+        "update_permit_application"
+      ]
+    },
+    {
+      "name": "check_nycgovparks_org_status",
+      "domain": "nycgovparks.org",
+      "description": "Check the status of a NYC Parks & Recreation application, case, or request.",
+      "uses": [
+        "get_capital_project"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://nycgovparks.org",
+      "name": "NYC Parks & Recreation \u2014 profile",
+      "description": "NYC Parks & Recreation: 17 operations, 15 tools, verb \u201cReplatform\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=nycgovparks.org"
+    },
+    {
+      "uri": "nyc://nycgovparks.org/openapi",
+      "name": "NYC Parks & Recreation OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycgovparks.org/openapi/nyc-parks.yaml"
+    },
+    {
+      "uri": "nyc://nycgovparks.org/parks/{id}",
+      "name": "Parks record (templated)",
+      "description": "A single NYC Parks & Recreation Parks record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

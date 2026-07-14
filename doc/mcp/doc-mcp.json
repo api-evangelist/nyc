@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -356,5 +363,57 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_doc",
+      "domain": "doc",
+      "description": "Search and read NYC Correction (DOC) records \u2014 People In Custody, Facilities, Population, Incidents.",
+      "uses": [
+        "find_people_in_custody",
+        "get_person_in_custody",
+        "find_facilities",
+        "find_daily_population"
+      ]
+    },
+    {
+      "name": "schedule_doc",
+      "domain": "doc",
+      "description": "VisitScheduling \u2014 schedule a visit with a person in custody (no API today; arranged by phone, in person, or vendor portal). Complaint / records request is a second net-new write.",
+      "uses": [
+        "schedule_visit"
+      ]
+    },
+    {
+      "name": "report_doc",
+      "domain": "doc",
+      "description": "VisitScheduling \u2014 schedule a visit with a person in custody (no API today; arranged by phone, in person, or vendor portal). Complaint / records request is a second net-new write.",
+      "uses": [
+        "file_complaint"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://doc",
+      "name": "NYC Correction (DOC) \u2014 profile",
+      "description": "NYC Correction (DOC): 10 operations, 8 tools, verb \u201cexpose\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=doc"
+    },
+    {
+      "uri": "nyc://doc/openapi",
+      "name": "NYC Correction (DOC) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doc/openapi/doc.yaml"
+    },
+    {
+      "uri": "nyc://doc/people-in-custody/{id}",
+      "name": "People In Custody record (templated)",
+      "description": "A single NYC Correction (DOC) People In Custody record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

@@ -167,7 +167,73 @@ for d in DOMAINS:
         "operations": op_rows, "tools": tools,
     })
 
-# enrich each domain MCP in place with per-tool x-agent-skill
+# ---------------- per-domain prompts + resources ----------------
+SKILL_VERB = {
+ "apply-for-a-permit-license-or-benefit": "apply_for",
+ "report-a-problem-or-file-a-complaint": "report",
+ "request-public-records": "request",
+ "schedule-or-reserve": "schedule",
+ "register-or-enroll": "register",
+ "dispute-or-appeal": "dispute",
+ "pay-a-city-charge": "pay",
+}
+netnew = {}
+for d in DOMAINS:
+    try:
+        netnew[d["id"]] = ((json.load(open(f'{d["id"]}/fruit.json')).get("meta", {}) or {}).get("netnew", "")) or ""
+    except Exception:
+        netnew[d["id"]] = ""
+
+def domain_pr(db):
+    """Per-domain prompts + resources, generated from the agency's own tools/ops."""
+    did = db["id"]
+    key = re.sub(r"[^a-z0-9]+", "_", did.lower()).strip("_")
+    tags = []
+    for o in db["operations"]:
+        for t in (o.get("tags") or []):
+            if t not in tags:
+                tags.append(t)
+    read_tools = [t["name"] for t in db["tools"] if not t["write"]]
+    write_tools = [t for t in db["tools"] if t["write"]]
+    prompts = []
+    used = set()
+    def add(name, desc, uses):
+        if name in used or not uses:
+            return
+        used.add(name)
+        prompts.append({"name": name, "domain": did, "description": desc[:220], "uses": uses})
+    if read_tools:
+        add(f"explore_{key}", f"Search and read {db['short']} records" + (f" — {', '.join(tags[:4])}." if tags else "."), read_tools[:4])
+    for wt in write_tools[:3]:
+        verb = SKILL_VERB.get(wt["skill"], "submit")
+        name = f"{verb}_{key}"
+        if name in used:
+            name = wt["name"]  # tool names are unique per domain
+        add(name, netnew.get(did) or wt.get("description") or f"{wt['title']} — the net-new write workflow.", [wt["name"]])
+    if "check-application-or-case-status" in db["skills"]:
+        add(f"check_{key}_status", f"Check the status of a {db['short']} application, case, or request.",
+            [t["name"] for t in db["tools"] if t["skill"] == "check-application-or-case-status"][:3])
+    resources = [
+        {"uri": f"nyc://{did}", "name": f"{db['short']} — profile",
+         "description": f"{db['short']}: {db['operationCount']} operations, {db['toolCount']} tools, verb “{db['verb']}”.",
+         "mimeType": "application/json", "backing": f"domain.html?d={did}"},
+        {"uri": f"nyc://{did}/openapi", "name": f"{db['short']} OpenAPI",
+         "description": "The agency's OpenAPI 3.1 contract (every operation).",
+         "mimeType": "application/yaml", "url": db["openapi"]},
+    ]
+    prim = tags[0] if tags else None
+    if prim:
+        pslug = re.sub(r"[^a-z0-9]+", "-", prim.lower()).strip("-")
+        resources.append({"uri": f"nyc://{did}/{pslug}/{{id}}", "name": f"{prim} record (templated)",
+            "description": f"A single {db['short']} {prim} record by id.", "mimeType": "application/json", "template": True})
+    return prompts, resources
+
+for db in domain_blocks:
+    p, r = domain_pr(db)
+    db["prompts"] = p
+    db["resources"] = r
+
+# enrich each domain MCP in place with per-tool x-agent-skill + prompts + resources
 for db in domain_blocks:
     did = db["id"]
     fs = glob.glob(f"{did}/mcp/*.json")
@@ -178,8 +244,14 @@ for db in domain_blocks:
     for t in j.get("tools", []):
         if t["name"] in tskill:
             t["x-agent-skill"] = tskill[t["name"]]
-    j.setdefault("x-agent-skills", {"index": f"{SITE}/experience/skills/index.json",
-                                    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."})
+    j["prompts"] = db["prompts"]
+    j["resources"] = db["resources"]
+    caps = j.get("capabilities", {}) or {}
+    caps.setdefault("prompts", {"listChanged": False})
+    caps.setdefault("resources", {"listChanged": False, "subscribe": False})
+    j["capabilities"] = caps
+    j["x-agent-skills"] = {"index": f"{SITE}/experience/skills/index.json",
+                           "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."}
     json.dump(j, open(fs[0], "w"), indent=2)
     open(fs[0], "a").write("\n")
 
@@ -213,8 +285,12 @@ for s in SKILLS:
                        "domains": [{"id": x, "short": short[x]} for x in doms],
                        "spec": f"{SITE}/experience/skills/{s['id']}.md"})
 
+dom_prompts = sum(len(db["prompts"]) for db in domain_blocks)
+dom_resources = sum(len(db["resources"]) for db in domain_blocks)
 totals = {"apis": len(domain_blocks), "operations": tot_ops, "writeOperations": tot_write,
-          "tools": tot_tools, "prompts": len(PROMPTS), "resources": len(RESOURCES), "skills": len(SKILLS)}
+          "tools": tot_tools, "prompts": len(PROMPTS), "resources": len(RESOURCES), "skills": len(SKILLS),
+          "domainPrompts": dom_prompts, "domainResources": dom_resources,
+          "allPrompts": len(PROMPTS) + dom_prompts, "allResources": len(RESOURCES) + dom_resources}
 
 # ---------------- data/experience.json (for the single-page doc) ----------------
 experience = {
@@ -342,8 +418,8 @@ M = [f"# NYC — Programmable City (the experience layer)\n",
  f"| REST operations | {totals['operations']} |",
  f"| — of which net-new write operations | {totals['writeOperations']} |",
  f"| MCP tools | {totals['tools']} |",
- f"| MCP prompts (cross-agency) | {totals['prompts']} |",
- f"| MCP resources (cross-agency) | {totals['resources']} |",
+ f"| MCP prompts (cross-agency + per-agency) | {totals['prompts']} + {totals['domainPrompts']} = **{totals['allPrompts']}** |",
+ f"| MCP resources (cross-agency + per-agency) | {totals['resources']} + {totals['domainResources']} = **{totals['allResources']}** |",
  f"| Common government-process skills | {totals['skills']} |", "",
  "Built on the [API Experience](https://experience.apicommons.org) chain — **REST operation → MCP tool → Agent Skill** — minus the free/pro tiering and AI enrichment: a clean view of the whole programmable surface the city could have.\n",
  "## Ten common government processes (Agent Skills)\n",
@@ -359,3 +435,4 @@ open("EXPERIENCE.md", "w").write("\n".join(M))
 print(f"experience: {totals}")
 print("skills:", [(s['id'], s['operationCount'], s['domainCount']) for s in skills_out])
 print("unified openapi paths:", len(paths), "| op_map:", len(op_map))
+print(f"per-domain: {dom_prompts} prompts + {dom_resources} resources across {len(domain_blocks)} agencies")

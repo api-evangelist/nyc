@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -430,5 +437,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_doris",
+      "domain": "doris",
+      "description": "Search and read NYC Records (DORIS) records \u2014 Archives, VitalRecords, Publications, HonoraryStreetNames.",
+      "uses": [
+        "find_collections",
+        "get_collection",
+        "find_digital_items",
+        "get_digital_item"
+      ]
+    },
+    {
+      "name": "apply_for_doris",
+      "domain": "doris",
+      "description": "RecordsRequest \u2014 request/retrieve a record: order a copy of a historical vital record, an archival item/photo, a library publication, or file a FOIL request",
+      "uses": [
+        "request_record"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://doris",
+      "name": "NYC Records (DORIS) \u2014 profile",
+      "description": "NYC Records (DORIS): 11 operations, 9 tools, verb \u201cretrieve\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=doris"
+    },
+    {
+      "uri": "nyc://doris/openapi",
+      "name": "NYC Records (DORIS) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doris/openapi/doris.yaml"
+    },
+    {
+      "uri": "nyc://doris/archives/{id}",
+      "name": "Archives record (templated)",
+      "description": "A single NYC Records (DORIS) Archives record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

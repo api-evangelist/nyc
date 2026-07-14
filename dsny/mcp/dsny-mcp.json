@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -319,5 +326,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_dsny",
+      "domain": "dsny",
+      "description": "Search and read NYC Sanitation (DSNY) records \u2014 Collection, DropOff, LitterBaskets, Tonnage.",
+      "uses": [
+        "get_collection_schedule",
+        "find_districts",
+        "get_district",
+        "find_drop_off_sites"
+      ]
+    },
+    {
+      "name": "schedule_dsny",
+      "domain": "dsny",
+      "description": "Schedule a bulk / large-item, CFC-appliance, electronics, or special-waste pickup appointment. NET-NEW owned contract over the existing but undocumented ePickups backend. Requires an authenticated user. Mutates state \u2014 c",
+      "uses": [
+        "schedule_bulk_pickup"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://dsny",
+      "name": "NYC Sanitation (DSNY) \u2014 profile",
+      "description": "NYC Sanitation (DSNY): 11 operations, 7 tools, verb \u201cExpose\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=dsny"
+    },
+    {
+      "uri": "nyc://dsny/openapi",
+      "name": "NYC Sanitation (DSNY) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dsny/openapi/dsny.yaml"
+    },
+    {
+      "uri": "nyc://dsny/collection/{id}",
+      "name": "Collection record (templated)",
+      "description": "A single NYC Sanitation (DSNY) Collection record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }

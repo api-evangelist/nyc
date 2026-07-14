@@ -17,6 +17,13 @@
   "capabilities": {
     "tools": {
       "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
     }
   },
   "tools": [
@@ -409,5 +416,49 @@
   "x-agent-skills": {
     "index": "https://nyc.apievangelist.com/experience/skills/index.json",
     "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
-  }
+  },
+  "prompts": [
+    {
+      "name": "explore_mome",
+      "domain": "mome",
+      "description": "Search and read NYC Media & Entertainment (MOME) records \u2014 FilmPermits, ScreenActivity, Programs, Nightlife.",
+      "uses": [
+        "find_film_permits",
+        "get_film_permit",
+        "get_film_permit_locations",
+        "find_screen_activity"
+      ]
+    },
+    {
+      "name": "apply_for_mome",
+      "domain": "mome",
+      "description": "FilmPermitApplication \u2014 apply for a film/photography permit via API instead of the login-walled E-Apply portal",
+      "uses": [
+        "apply_for_film_permit"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://mome",
+      "name": "NYC Media & Entertainment (MOME) \u2014 profile",
+      "description": "NYC Media & Entertainment (MOME): 9 operations, 8 tools, verb \u201cgreenlight\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=mome"
+    },
+    {
+      "uri": "nyc://mome/openapi",
+      "name": "NYC Media & Entertainment (MOME) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mome/openapi/mome.yaml"
+    },
+    {
+      "uri": "nyc://mome/filmpermits/{id}",
+      "name": "FilmPermits record (templated)",
+      "description": "A single NYC Media & Entertainment (MOME) FilmPermits record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
 }
