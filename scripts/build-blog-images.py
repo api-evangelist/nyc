@@ -147,34 +147,48 @@ def scene_skyline(r):
     return e
 
 # ---------- street pieces ----------
+def _hat(cx, cy, hr):                                    # simple brim + shallow crown
+    bw = hr*2.5
+    return [line(cx-bw/2, cy, cx+bw/2, cy),
+            path(f"M{cx-hr*1.05:.1f},{cy:.1f} Q{cx:.1f},{cy-hr*1.7:.1f} {cx+hr*1.05:.1f},{cy:.1f}", fill="#fff")]
+
 def person(r, cx, gy, s, flip):
-    e = []; y0 = gy - s
-    hr = 0.095*s; e.append(circle(cx, y0+hr*1.05, hr))
-    sh = y0+0.27*s; hip = y0+0.58*s; hw = 0.12*s; hipw = 0.085*s
-    e.append(path(f"M{cx-hw:.1f},{sh:.1f} C{cx-hw*1.1:.1f},{sh+0.16*s:.1f} {cx-hipw*1.2:.1f},{hip-0.1*s:.1f} {cx-hipw:.1f},{hip:.1f} "
-                  f"L{cx+hipw:.1f},{hip:.1f} C{cx+hipw*1.2:.1f},{hip-0.1*s:.1f} {cx+hw*1.1:.1f},{sh+0.16*s:.1f} {cx+hw:.1f},{sh:.1f} "
-                  f"Q{cx:.1f},{sh-0.06*s:.1f} {cx-hw:.1f},{sh:.1f} Z"))
-    st = 0.10*s
-    e.append(line(cx-0.03*s, hip, cx-0.03*s-st*0.4, gy)); e.append(line(cx+0.03*s, hip, cx+0.03*s+st, gy))
-    e.append(line(cx-0.03*s-st*0.4, gy, cx-0.03*s-st*0.4-0.05*s*flip, gy))
-    e.append(line(cx+0.03*s+st, gy, cx+0.03*s+st+0.05*s*flip, gy))
-    arm_x = cx+hw*0.7*flip; hand_y = hip-0.02*s
-    e.append(line(arm_x, sh+0.03*s, arm_x+0.05*s*flip, hand_y))
-    kind = r.random()
-    if kind < 0.25:                          # shopping bag
-        bx = arm_x+0.05*s*flip
-        e.append(rectp(bx-0.05*s, hand_y, 0.1*s, 0.14*s, fill="#fff"))
-        e.append(path(f"M{bx-0.03*s:.1f},{hand_y:.1f} q{0.03*s:.1f},{-0.05*s:.1f} {0.06*s:.1f},0"))
-    elif kind < 0.4:                         # dog on a leash
-        dx = cx+0.32*s*flip
-        e.append(line(arm_x+0.05*s*flip, hand_y, dx, gy-0.12*s))
-        e.append(path(f"M{dx-0.11*s:.1f},{gy:.1f} l0,{-0.11*s:.1f} l{0.02*s:.1f},{-0.03*s:.1f} l{0.16*s:.1f},0 l{0.02*s:.1f},{0.03*s:.1f} l0,{0.11*s:.1f}", fill="#fff"))
-        e.append(circle(dx+0.16*s, gy-0.13*s, 0.03*s))            # head
-        e.append(line(dx+0.19*s, gy-0.15*s, dx+0.23*s, gy-0.13*s))# tail-ish/nose
+    """A minimal, elegant walking figure: round head, A-line coat, two legs."""
+    e = []
+    top = gy - s
+    hr = 0.085*s
+    hcy = top + hr
+    e.append(circle(cx, hcy, hr))                        # head
+    if r.random() < 0.30:
+        e += _hat(cx, hcy-hr*0.35, hr)
+    y_sh = top + 2*hr + 0.02*s                           # shoulders, tucked under head
+    y_hem = gy - r.uniform(0.36, 0.44)*s                 # coat hem (varied length)
+    wsh = 0.095*s; whem = r.uniform(0.12, 0.155)*s
+    e.append(path(                                       # A-line coat silhouette
+        f"M{cx-wsh:.1f},{y_sh:.1f} Q{cx:.1f},{y_sh-0.05*s:.1f} {cx+wsh:.1f},{y_sh:.1f} "
+        f"L{cx+whem:.1f},{y_hem:.1f} Q{cx:.1f},{y_hem+0.03*s:.1f} {cx-whem:.1f},{y_hem:.1f} Z",
+        fill="#fff"))
+    st = r.uniform(0.03, 0.06)*s                         # gentle forward stride
+    lx, rx = cx-0.05*s, cx+0.05*s
+    e.append(line(lx, y_hem, lx-st*flip, gy))
+    e.append(line(rx, y_hem, rx+st*0.4*flip, gy))
+    fl = 0.055*s*flip
+    e.append(line(lx-st*flip, gy, lx-st*flip+fl, gy))    # feet, pointing in walk direction
+    e.append(line(rx+st*0.4*flip, gy, rx+st*0.4*flip+fl, gy))
+    k = r.random()                                       # optional carried item (no stick arms otherwise)
+    if k < 0.20:                                         # tote bag at the side
+        hx = cx+whem*0.9*flip; hy = (y_sh+y_hem)/2+0.05*s
+        e.append(line(cx+wsh*0.55*flip, y_sh+0.05*s, hx, hy))
+        e.append(rectp(hx-0.045*s, hy, 0.09*s, 0.12*s, fill="#fff"))
+        e.append(path(f"M{hx-0.028*s:.1f},{hy:.1f} q{0.028*s:.1f},{-0.04*s:.1f} {0.056*s:.1f},0"))
+    elif k < 0.30:                                       # briefcase held low
+        hx = cx+whem*0.95*flip; hy = y_hem+0.03*s
+        e.append(line(cx+wsh*0.55*flip, y_sh+0.06*s, hx, hy-0.02*s))
+        e.append(rectp(hx-0.06*s, hy, 0.12*s, 0.07*s, fill="#fff"))
     return e
 
 def couple(r, cx, gy, s):
-    return person(r, cx-0.14*s, gy, s, 1) + person(r, cx+0.14*s, gy, s*r.uniform(0.9, 1.0), -1)
+    return person(r, cx-0.13*s, gy, s, 1) + person(r, cx+0.13*s, gy, s*r.uniform(0.9, 1.0), -1)
 
 def stall(r, cx, gy):
     e = []; w = r.uniform(120, 175); h = w*0.72
@@ -264,12 +278,13 @@ def scene_street(r):
         e += stall(r, r.uniform(W*0.12, W*0.88), side_y)
     for fn in r.sample([tree, lamp, hydrant, bench, tree], r.randint(2, 4)):
         e += fn(r, r.uniform(40, W-40), side_y)
-    # people across the foreground
-    n = r.randint(6, 10); xs = sorted(r.uniform(30, W-30) for _ in range(n))
-    for px in xs:
-        s = r.uniform(80, 120)
-        gy = side_y + r.uniform(2, 10)       # feet near the sidewalk
-        if r.random() < 0.18:
+    # people evenly spaced across the foreground (jittered), varied size for depth
+    n = r.randint(6, 9)
+    for i in range(n):
+        px = (i+0.5)*W/n + r.uniform(-W/(n*3.2), W/(n*3.2))
+        s = r.uniform(80, 118)
+        gy = side_y + r.uniform(2, 9)        # feet near the sidewalk
+        if r.random() < 0.16:
             e += couple(r, px, gy, s)
         else:
             e += person(r, px, gy, s, r.choice([-1, 1]))
