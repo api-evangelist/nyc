@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mome/schemas/production-company.json",
+  "title": "ProductionCompany",
+  "description": "A production company / applicant / permittee — the party that applies for and holds a NYC film permit. GAP: MOME never publishes the applicant to the Film Permits Open Data (tg4x-b46p); the production company exists only inside the login-walled 'MOME E-Apply' portal (nyceventpermits.nyc.gov/film) and, partially, on DOT's filming-permit dataset (c2az-nhru, PRIMARYCONTACT* fields). Reconstructed here as the intake identity behind a FilmPermitApplication.",
+  "type": "object",
+  "x-source": {
+    "portal": "https://nyceventpermits.nyc.gov/film/",
+    "opendata_dot_contacts": "https://data.cityofnewyork.us/d/c2az-nhru",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "companyName": { "type": "string", "description": "Legal / production company name ('APPLICATIONNAME' on the DOT twin)." },
+    "productionTitle": { "type": ["string", "null"], "description": "Working title of the film/show/project." },
+    "category": { "$ref": "_common.json#/$defs/ProductionCategory" },
+    "primaryContact": { "$ref": "_common.json#/$defs/ContactInfo" },
+    "emergencyContact": { "$ref": "_common.json#/$defs/ContactInfo" },
+    "address": { "type": ["string", "null"], "description": "Mailing address of the production office." },
+    "city": { "type": ["string", "null"] },
+    "state": { "type": ["string", "null"] },
+    "zipCode": { "type": ["string", "null"] },
+    "internationalProduction": { "type": ["boolean", "null"], "description": "Whether this is an international production (MOME has a dedicated international-production track)." }
+  },
+  "required": ["companyName"],
+  "additionalProperties": false
+}

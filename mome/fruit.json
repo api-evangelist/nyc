@@ -1,0 +1,148 @@
+{
+  "domain": "mome",
+  "agency": "NYC Mayor's Office of Media & Entertainment (MOME)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/mome (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace) and the film-permit application system at nyceventpermits.nyc.gov/film, identified as an ASP.NET Core app titled 'MOME E-Apply' (Microsoft-IIS/10.0, X-Powered-By ASP.NET, .AspNetCore.Antiforgery cookie, /Web/Login redirect) on the shared NYC event-permitting platform. Verified the NYC Open Data agency label 'Mayor's Office of Media And Entertainment (MOME)' via the Socrata Discovery API (note the capitalized 'And') and pulled both assets with column schemas.",
+  "related_domains": ["nyceventpermits.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/dot", "nyc.gov/site/nightlife", "nyc.gov/html/film"],
+  "meta": {
+    "short": "NYC Media & Entertainment (MOME)",
+    "verb": "greenlight",
+    "platform": "NYC.gov 'Livesite' informational site (Akamai/nginx/Dynatrace) + a login-walled ASP.NET Core 'MOME E-Apply' film-permit portal on the shared nyceventpermits.nyc.gov event-permitting platform",
+    "netnew": "FilmPermitApplication — apply for a film/photography permit via API instead of the login-walled E-Apply portal",
+    "accent": "#c25a8a",
+    "tagline": "The output is the most-viewed dataset in the city; the application is trapped behind a portal login.",
+    "headline": "MOME publishes every permit it greenlights daily, but the act of applying for one has no machine-readable front door."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 2,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov Livesite chassis + a packaged ASP.NET event-permit portal; no MOME-owned platform.",
+    "siteApi": "No content/site API on nyc.gov/site/mome — HTML only.",
+    "openData": "Film Permits is a flagship, daily-automated, ~530k-view dataset — but only 2 MOME-labeled assets total (narrow breadth).",
+    "coreData": "FilmPermit is cleanly keyed on EventID with the geography spine, but thin (14 cols; no applicant, fee, or lat/long).",
+    "writeApi": "Applying for a permit is locked entirely inside the login-walled E-Apply portal — no API.",
+    "agent": "No agent-native surface of any kind; the OpenAPI + MCP here are proposals.",
+    "ownership": "MOME owns and publishes its flagship data itself (automated daily), but the transaction runs on a shared, packaged portal."
+  },
+  "headline_findings": [
+    "MOME is a split domain: an informational NYC.gov/Livesite site (Akamai/nginx/Dynatrace) plus a film-permit application system — 'MOME E-Apply', an ASP.NET Core app at nyceventpermits.nyc.gov/film — that is login-walled with no API.",
+    "The flagship OUTPUT is heroically open: 'Film Permits' (tg4x-b46p) is one of the most-viewed datasets in all of NYC Open Data (~530k lifetime views), automated and updated daily — every location shoot the Film Office greenlights, as a public geography record.",
+    "But the INTAKE is closed: applying for a permit (the everyday production transaction) lives only inside the E-Apply portal or a Letter-in-Lieu email. The applicant / production company is never published — only the issued permit is.",
+    "MOME's Open Data footprint is unusually narrow: just 2 assets under its label — Film Permits and MARCH nightlife inspections (b84a-xy2t, via the Office of Nightlife). The rest of MOME (Made in NY, workforce, Public Access Media) is HTML only.",
+    "Net-new write surface: apply_for_film_permit (FilmPermitApplication) — the one transaction that turns MOME's open output into an owned, agent-native front door. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "2 MOME datasets; SODA /resource/<id>.json endpoints. Film Permits (tg4x-b46p) is the flagship, daily-automated feed of issued permits — the one real, open MOME API. MARCH inspections (b84a-xy2t) is the other." },
+    { "endpoint": "nyceventpermits.nyc.gov/film", "type": "film-permit application portal (E-Apply)", "owner": "MOME (ASP.NET Core app on shared event-permit platform)", "public": "login-walled UI, no API", "note": "'MOME E-Apply' — Microsoft-IIS/10.0, X-Powered-By ASP.NET, .AspNetCore.Antiforgery cookie, /Web/Login redirect. Where productions actually apply for permits; no JSON/OpenAPI. Shared platform also serves CECM/DOT event permits." },
+    { "endpoint": "www.nyc.gov/site/mome", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM. Permit instructions, programs, Public Access Media, Nightlife. No content API." },
+    { "endpoint": "data.cityofnewyork.us (DOT twin)", "type": "open data API", "owner": "NYC DOT", "public": true, "note": "'Filming Permits - Transportation Department' (c2az-nhru, ~90k views) — the same permits from DOT's street-work angle, WITH applicant contacts, fees, milestones, and lat/long that MOME's own feed omits." },
+    { "endpoint": "Akamai edge", "type": "CDN API", "owner": "Akamai", "public": "vendor", "note": "x-akamai-transformed on the informational site." },
+    { "endpoint": "Dynatrace RUM", "type": "monitoring beacon", "owner": "Dynatrace", "public": "vendor", "note": "x-oneagent-js-injection real-user monitoring." }
+  ],
+  "fruit": [
+    {
+      "name": "Film Permits",
+      "type": "data table + geography",
+      "entity": "FilmPermit",
+      "url": "https://data.cityofnewyork.us/d/tg4x-b46p",
+      "count": "~530k lifetime views; daily updates",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Film Permits tg4x-b46p (14c)"],
+      "notes": "The flagship. One row per issued permit, keyed on EventID, typed by production Category/SubCategoryName, joined to the borough/community-board/precinct/ZIP spine. One of the most-viewed datasets in the whole NYC catalog. Publishes the OUTPUT of the permit workflow, never the applicant."
+    },
+    {
+      "name": "Held filming locations (ScreenActivity)",
+      "type": "derived location detail",
+      "entity": "ScreenActivity",
+      "url": "https://data.cityofnewyork.us/d/tg4x-b46p",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Film Permits tg4x-b46p (ParkingHeld)", "Filming Permits - Transportation Department c2az-nhru"],
+      "notes": "The exact street segments a shoot reserves ('ParkingHeld', e.g. 'VARICK STREET between CANAL STREET and LAIGHT STREET'). One permit holds many locations across boroughs/precincts. DOT's twin (c2az-nhru) adds lat/long and street-closure detail."
+    },
+    {
+      "name": "MARCH nightlife inspections",
+      "type": "data table",
+      "entity": "MarchInspection",
+      "url": "https://data.cityofnewyork.us/d/b84a-xy2t",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Multi Agency Response to Community Hotspot (MARCH) Inspections b84a-xy2t (35c)"],
+      "notes": "Joint NYPD/FDNY/DOB/DOHMH/DEP enforcement visits to nightlife venues, under MOME's Office of Nightlife. The only other MOME-labeled Open Data asset besides Film Permits."
+    },
+    {
+      "name": "MOME programs & Public Access Media",
+      "type": "directory (HTML)",
+      "entity": "MediaProgram",
+      "url": "https://www.nyc.gov/site/mome/index.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Made in NY marketing/discount, workforce/training, press credentials, Office of Nightlife, and the borough Public Access Media providers MOME designates (MNN, BronxNet, BRIC/BCAT, QPTV, Staten Island Community TV). HTML only — no dataset, no API."
+    },
+    {
+      "name": "Production company / applicant",
+      "type": "intake identity",
+      "entity": "ProductionCompany",
+      "url": "https://nyceventpermits.nyc.gov/film/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["(partial) Filming Permits - Transportation Department c2az-nhru PRIMARYCONTACT*"],
+      "opendata_gap": true,
+      "notes": "The party that applies for and holds a permit. MOME never publishes it; it lives inside the E-Apply portal (and partially on DOT's twin). Reconstructed as the identity behind a FilmPermitApplication."
+    },
+    {
+      "name": "Do I need a permit? (Step 1)",
+      "type": "guidance (HTML)",
+      "entity": "MediaProgram",
+      "url": "https://www.nyc.gov/site/mome/permits/permit-step1.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Rules for when a permit is/ isn't required (hand-held vs. exclusive use, parking held, prop weapons). Encodable as agent-answerable logic; today it is prose on nyc.gov."
+    },
+    {
+      "name": "Insurance requirement",
+      "type": "prerequisite (HTML)",
+      "entity": "FilmPermitApplication",
+      "url": "https://www.nyc.gov/site/mome/permits/insurance.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "A certificate of insurance must be on file before a permit issues — modeled as insuranceOnFile on the application. No API to check or submit it today."
+    },
+    {
+      "name": "Letter in Lieu of Permit",
+      "type": "workflow (email)",
+      "entity": "FilmPermitApplication",
+      "url": "https://www.nyc.gov/site/mome/permits/letter-in-lieu-of-optional-permit.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Low-impact exterior shoots can request a Letter in Lieu instead of a full permit — today by email. Modeled as letterInLieu on the application."
+    },
+    {
+      "name": "Apply for a permit (Step 2)",
+      "type": "sign-up / application workflow",
+      "entity": "FilmPermitApplication",
+      "url": "https://nyceventpermits.nyc.gov/film/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common production transaction — submit and track a film/photography permit application. No API and no Open Data twin for the intake; lives only in the login-walled 'MOME E-Apply' ASP.NET portal or a Letter-in-Lieu email. The net-new WRITE surface for this domain."
+    }
+  ]
+}

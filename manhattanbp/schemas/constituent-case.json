@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanbp/schemas/constituent-case.json",
+  "title": "ConstituentCase",
+  "description": "A constituent service case handled by the Manhattan Borough President's office — a resident request for help or referral, published in de-identified aggregate. Canonical schema reconciling the 'Constituent Services' dataset (39qw-754y, 13 columns) and the older 'Constituent Services - Historical' (kpjg-ubxi). Cases are published without personal identifiers; the office publishes case type, subject, status, and geography, never the constituent's identity.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/39qw-754y",
+    "opendata_historical": "https://data.cityofnewyork.us/d/kpjg-ubxi"
+  },
+  "properties": {
+    "caseId": { "type": ["string", "null"], "description": "Case identifier ('Case ID')." },
+    "caseType": { "type": ["string", "null"], "description": "Case type ('Case Type' / 'Issue')." },
+    "caseSubject": { "type": ["string", "null"], "description": "Case subject ('Case Subject')." },
+    "subTypes": { "type": ["string", "null"], "description": "Sub-types ('Sub-Types')." },
+    "caseStatus": { "type": ["string", "null"], "description": "Status ('Case Status' / 'Status')." },
+    "caseStartDate": { "type": ["string", "null"], "format": "date", "description": "Opened date ('Case Start Date' / 'Date')." },
+    "caseEndDate": { "type": ["string", "null"], "format": "date", "description": "Closed date ('Case End Date')." },
+    "councilMember": { "type": ["string", "null"], "description": "Associated Council Member ('Council Member')." },
+    "language": { "type": ["string", "null"], "description": "Constituent language, historical dataset ('Language (If blank, English)')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/schemas/community-board-application.json",
+  "title": "CommunityBoardApplication",
+  "description": "An application from a Queens resident to be appointed to a community board — the QBP's flagship participatory act (the '2026 Queens Community Board Application Process'). NET-NEW: there is NO public API and NO Open Data twin; today residents apply through an HTML/PDF form on queensbp.nyc.gov. This schema serves both the read surface (an applicant checking their own submission) and the write surface (submit an application). It is the one net-new WRITE object for this domain.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.queensbp.nyc.gov/community-boards/",
+    "site_process": "https://www.queensbp.nyc.gov/qbp-richards-launches-2026-queens-community-board-application-process/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application/confirmation number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Under Review", "Interview Scheduled", "Appointed", "Waitlisted", "Not Selected", null],
+      "description": "Lifecycle status. Set by the Borough President's office, not the applicant.",
+      "readOnly": true
+    },
+    "applicant": {
+      "type": "object",
+      "description": "The resident applying.",
+      "properties": {
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "address": { "type": ["string", "null"] }
+      },
+      "required": ["firstName", "lastName", "email"],
+      "additionalProperties": false
+    },
+    "boardPreference": {
+      "allOf": [{ "$ref": "_common.json#/$defs/CommunityBoardReference" }],
+      "description": "The community board the resident wishes to serve on (they must live, work, or have significant interest in the district)."
+    },
+    "residencyDistrict": { "$ref": "_common.json#/$defs/Geography" },
+    "yearsInDistrict": { "type": ["integer", "null"], "minimum": 0 },
+    "priorService": { "type": ["boolean", "null"], "description": "Whether the applicant has previously served on a community board." },
+    "statementOfInterest": { "type": "string", "description": "Why the applicant wants to serve / relevant experience." },
+    "resumeUrl": { "type": ["string", "null"], "format": "uri", "description": "Optional link to an uploaded resume." },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["applicant", "boardPreference", "statementOfInterest"],
+  "additionalProperties": false
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxbp/schemas/community-board-application.json",
+  "title": "CommunityBoardApplication",
+  "description": "A resident's application to serve on one of the Bronx's twelve community boards — the net-new WRITE surface for this domain. The Borough President appoints community-board members, and residents apply to be considered; today that application is a downloadable PDF / paper form or an email to the office, with NO API and NO structured intake. This schema serves both the write surface (submit an application) and the read surface (an applicant checking their own submission). It is the natural inbound counterpart to the published CommunityBoardAppointment data (wbau-xy7g even records the applicant's 'Zip Code of Application').",
+  "type": "object",
+  "x-source": {
+    "site": "https://bronxboropres.nyc.gov/community/community_boards.php",
+    "appointments_opendata": "https://data.cityofnewyork.us/d/wbau-xy7g",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application/confirmation number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Under Review", "Interview Scheduled", "Appointed", "Waitlisted", "Declined", "Withdrawn", null],
+      "description": "Lifecycle status. Set by the office, not the applicant.",
+      "readOnly": true
+    },
+    "firstName": { "type": "string", "description": "Applicant first name." },
+    "lastName": { "type": "string", "description": "Applicant last name." },
+    "email": { "type": ["string", "null"], "format": "email", "description": "Contact email." },
+    "phone": { "type": ["string", "null"], "description": "Contact phone." },
+    "residenceAddress": { "type": ["string", "null"], "description": "Applicant residential address (must be in the Bronx)." },
+    "applicationZipCode": { "type": ["string", "null"], "description": "ZIP code of residence — carried into the appointment record as 'Zip Code of Application'." },
+    "requestedCommunityBoard": { "$ref": "_common.json#/$defs/CommunityBoardReference" },
+    "reasonForInterest": { "type": ["string", "null"], "description": "Statement of interest / why the applicant wants to serve." },
+    "relevantExperience": { "type": ["string", "null"], "description": "Community involvement, professional background, and skills." },
+    "occupation": { "type": ["string", "null"], "description": "Current occupation / employer." },
+    "isRegisteredVoter": { "type": ["boolean", "null"], "description": "Whether the applicant is a registered voter (not required to serve)." },
+    "consentToContact": { "type": "boolean", "default": true, "description": "Applicant consents to be contacted about the application." },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["firstName", "lastName", "requestedCommunityBoard"],
+  "additionalProperties": false
+}

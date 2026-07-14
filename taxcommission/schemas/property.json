@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/taxcommission/schemas/property.json",
+  "title": "Property",
+  "description": "A NYC property / tax lot as it enters the Tax Commission — the thing being appealed. The Department of Finance (DOF) SETS the tentative assessment (Notice of Property Value); the Tax Commission HEARS the appeal of it. This schema is reverse-engineered from the Tax Commission application forms (TC101/TC108/TC109) and the property fields carried in the Assessment Actions dataset (4nft-bihw). Keyed on BBL (Borough-Block-Lot).",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/taxcommission/about/challenging-notice-of-property-value.page",
+    "opendata_assessment_actions": "https://data.cityofnewyork.us/d/4nft-bihw",
+    "dof_notice_of_property_value": "https://www.nyc.gov/site/finance/property/property-notice-of-property-value-nopv.page",
+    "opendata_gap": true
+  },
+  "properties": {
+    "bbl": { "type": ["string", "null"], "description": "10-digit Borough-Block-Lot identifier — primary key." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "boroughCode": { "$ref": "_common.json#/$defs/BoroughCode" },
+    "block": { "type": ["string", "integer", "null"], "description": "Tax block ('Block Number')." },
+    "lot": { "type": ["string", "integer", "null"], "description": "Tax lot ('Lot Number')." },
+    "address": { "type": ["string", "null"], "description": "Property address ('Property Address')." },
+    "ownerName": { "type": ["string", "null"], "description": "Owner of record ('Owner Name')." },
+    "taxClass": { "$ref": "_common.json#/$defs/TaxClass" },
+    "buildingClass": { "type": ["string", "null"], "description": "DOF building class code." },
+    "taxYear": { "type": ["string", "null"], "description": "Assessment / tax year the values apply to ('Tax Year')." },
+    "tentativeAssessedValue": { "$ref": "_common.json#/$defs/Money" },
+    "transitionalAssessedValue": { "$ref": "_common.json#/$defs/Money" },
+    "marketValue": { "$ref": "_common.json#/$defs/Money" },
+    "incomeProducing": { "type": ["boolean", "null"], "description": "Whether the property produces income (rental/commercial) — triggers an income & expense statement (TC201/203/208)." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

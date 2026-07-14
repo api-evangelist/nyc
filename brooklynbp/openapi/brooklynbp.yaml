@@ -1,0 +1,385 @@
+openapi: 3.1.0
+info:
+  title: Brooklyn Borough President API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the Office of the Brooklyn Borough President — publishing its
+    existing open data (ULURP land-use recommendations, board appointments, community boards,
+    discretionary/capital/tourism funding awards, reports, and events) as coherent resources, and adding
+    the missing constituent write surface — applying to serve on a community board.
+  description: >-
+    Proposed API-first surface for the Office of the Brooklyn Borough President (BPBK), from the NYC
+    Modernization low-hanging-fruit assessment of brooklynbp.nyc.gov (and the lapsed brooklyn-usa.org).
+
+
+    The Brooklyn BP domain is the fifth distinct pattern. Its office **does** have real machine-readable
+    surface — 21 NYC Open Data datasets under the label 'Brooklyn Borough President (BPBK)' (ULURP
+    recommendations, capital/discretionary/tourism awards, appointments to a dozen boards, the community
+    board contact list, passed legislation), **plus** a live generic content API on the current site (the
+    WordPress REST API and The Events Calendar plugin at `wp-json/tribe/events/v1`). But none of it is
+    **owned or purpose-built**: the data is scattered across 21 single-purpose Socrata IDs and a
+    commercial headless-WordPress CMS, several datasets are thin and stale (award/appointment snapshots
+    from 2015-2018), and the office recently **let its own brooklyn-usa.org domain lapse** (it now
+    redirects offsite). No write path exists for the constituent action that matters most each year —
+    **applying to serve on a community board**.
+
+
+    This contract does two things: (1) presents the open BPBK datasets and the events feed as one clean
+    resource model, and (2) adds the one net-new **write** workflow — submitting a **community board
+    application** — that today exists only as an unstructured web form.
+
+
+    Because all five NYC Borough Presidents run near-identical thin offices with the same powers (ULURP
+    advice, board appointments, discretionary funding, community-board coordination), this contract is
+    designed to be **templated across all five boroughs** rather than rebuilt five times.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.brooklynbp.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: LandUse
+    description: ULURP land-use recommendations — the office's signature statutory power.
+  - name: CommunityBoards
+    description: Brooklyn's 18 community boards and the members the BP appoints to boards/councils.
+  - name: Funding
+    description: Discretionary, capital, and tourism funding awards.
+  - name: Publications
+    description: Legislation, resolutions, reports, testimony, op-eds, and press releases.
+  - name: Events
+    description: Public events, hearings, and borough board meetings (read).
+  - name: Applications
+    description: Apply to serve on a community board (read + write). The net-new surface, today only a web form.
+
+paths:
+  /land-use-recommendations:
+    get:
+      operationId: listLandUseRecommendations
+      summary: List / search ULURP land-use recommendations
+      tags: [LandUse]
+      parameters:
+        - name: recommendation
+          in: query
+          schema: { type: string, enum: [Approved, Approved with Conditions, Approved with Modifications, Disapproved, Disapproved with Conditions, No Recommendation] }
+        - name: communityBoard
+          in: query
+          schema: { type: string }
+        - name: councilDistrict
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of ULURP recommendations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/land-use-recommendation.json' } }
+  /land-use-recommendations/{ulurpNumber}:
+    get:
+      operationId: getLandUseRecommendation
+      summary: Get a ULURP recommendation by application number
+      tags: [LandUse]
+      parameters:
+        - name: ulurpNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The recommendation.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/land-use-recommendation.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /community-boards:
+    get:
+      operationId: listCommunityBoards
+      summary: List Brooklyn community boards and contacts
+      tags: [CommunityBoards]
+      parameters:
+        - name: boardNumber
+          in: query
+          schema: { type: string }
+        - name: councilDistrict
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of community boards.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/community-board.json' } }
+  /community-boards/{boardNumber}:
+    get:
+      operationId: getCommunityBoard
+      summary: Get a Brooklyn community board by number
+      tags: [CommunityBoards]
+      parameters:
+        - name: boardNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The community board.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/community-board.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /appointments:
+    get:
+      operationId: listBoardAppointments
+      summary: List / search Borough President board appointments
+      tags: [CommunityBoards]
+      parameters:
+        - name: boardType
+          in: query
+          schema: { type: string, enum: [Community Education Council, HHC Community Advisory Board, Brooklyn Public Library Board, DYCD Neighborhood Advisory Board, Business Improvement District, Solid Waste Advisory Board, Miscellaneous Board] }
+        - name: board
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of appointments.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/board-appointment.json' } }
+
+  /funding-awards:
+    get:
+      operationId: listFundingAwards
+      summary: List / search discretionary, capital, and tourism funding awards
+      tags: [Funding]
+      parameters:
+        - name: awardType
+          in: query
+          schema: { type: string, enum: [Capital, Discretionary Contract, Tourism Grant, Expense, Other] }
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - name: organization
+          in: query
+          schema: { type: string }
+        - name: communityBoard
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of funding awards.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/funding-award.json' } }
+
+  /reports:
+    get:
+      operationId: listReports
+      summary: List / search publications — legislation, reports, testimony, op-eds, press releases
+      tags: [Publications]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [Legislation, Resolution, Report, Testimony, Op-Ed, Press Release] }
+        - name: subject
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of publications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/report.json' } }
+
+  /events:
+    get:
+      operationId: listEvents
+      summary: List upcoming Borough President events, hearings, and board meetings
+      description: Wraps The Events Calendar REST feed on the current site into an owned, stable contract.
+      tags: [Events]
+      parameters:
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - name: category
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of events.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/event.json' } }
+  /events/{eventId}:
+    get:
+      operationId: getEvent
+      summary: Get an event by id
+      tags: [Events]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The event.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/event.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /community-board-applications:
+    post:
+      operationId: createCommunityBoardApplication
+      summary: Apply to serve on a community board (submit an application)
+      description: >-
+        The net-new write surface — an API for applying to serve on a Brooklyn community board (or other
+        BP-appointed body), replacing the unstructured web form. Mutates state and requires an applicant's
+        contact details; confirm board preference and statement of interest with the user before submitting.
+      tags: [Applications]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/community-board-application.json' }
+      responses:
+        '201':
+          description: Application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/community-board-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /community-board-applications/{applicationId}:
+    get:
+      operationId: getCommunityBoardApplication
+      summary: Get the status of a submitted community board application
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/community-board-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LandUseRecommendation: { $ref: '../schemas/land-use-recommendation.json' }
+    CommunityBoard: { $ref: '../schemas/community-board.json' }
+    BoardAppointment: { $ref: '../schemas/board-appointment.json' }
+    FundingAward: { $ref: '../schemas/funding-award.json' }
+    Report: { $ref: '../schemas/report.json' }
+    Event: { $ref: '../schemas/event.json' }
+    CommunityBoardApplication: { $ref: '../schemas/community-board-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

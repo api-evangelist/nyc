@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cityclerk/schemas/lobbyist-registration.json",
+  "title": "LobbyistRegistration",
+  "description": "A lobbyist (and its client) registered with the Office of the City Clerk's Lobbying Bureau under the NYC Lobbying Law. Registration and filing happen inside e-Lobbyist (apps.nyc.gov/elobbyist), a login-walled Java application fronted by SAP CDC / Gigya SSO; the public can browse registrants through Lobbyist Search (lobbyistsearch.nyc.gov). This schema reconciles the registrant/client identity fields that key the 'City Clerk eLobbyist Data' dataset (fmf3-knd8) — LOBBYIST_ID, CLIENT_ID, REGISTRATION_ID.",
+  "type": "object",
+  "x-source": {
+    "filing_system": "https://apps.nyc.gov/elobbyist/",
+    "public_search": "https://lobbyistsearch.nyc.gov/",
+    "opendata": "https://data.cityofnewyork.us/d/fmf3-knd8"
+  },
+  "properties": {
+    "registrationId": { "type": ["string", "null"], "description": "'REGISTRATION_ID' — the eLobbyist registration key." },
+    "lobbyistId": { "type": ["string", "null"], "description": "'LOBBYIST_ID'." },
+    "lobbyistName": { "type": "string", "description": "'LOBBYIST_NAME' — registered lobbyist / lobbying firm." },
+    "lobbyistPrincipalOfficer": { "type": ["string", "null"], "description": "'LOBBYIST_PO' — lobbyist principal officer." },
+    "lobbyistEmployees": { "type": ["integer", "string", "null"], "description": "'LOBBYIST_EMPLOYEES'." },
+    "lobbyistHasFinancialInterest": { "type": ["boolean", "string", "null"], "description": "'LOBBYIST_HAS_FINACIAL_INTEREST' (dataset spelling)." },
+    "isCoLobbyist": { "type": ["boolean", "string", "null"], "description": "'LOBBYIST_IS_COLOBBYIST'." },
+    "clientId": { "type": ["string", "null"], "description": "'CLIENT_ID'." },
+    "clientName": { "type": ["string", "null"], "description": "'CLIENT_NAME' — the client on whose behalf lobbying is done." },
+    "clientPrincipalOfficer": { "type": ["string", "null"], "description": "'CLIENT_PO' — client principal officer." },
+    "clientIndustry": { "type": ["string", "null"], "description": "'CLIENT_INDUSTRY'." },
+    "reportYear": { "type": ["integer", "string", "null"], "description": "'REPORT_YEAR' — annual registration year." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "bureau": { "$ref": "_common.json#/$defs/Bureau" }
+  },
+  "required": ["lobbyistName"],
+  "additionalProperties": false
+}

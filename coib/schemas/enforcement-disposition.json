@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/coib/schemas/enforcement-disposition.json",
+  "title": "EnforcementDisposition",
+  "description": "A resolved COIB enforcement action — the outcome of a conflicts-of-interest case, including the fine and any other penalty. Canonical schema reconciling the 'Enforcement Fines' dataset (p39r-nm7f, 13 columns), COIB's most-viewed asset. Keyed on Case Number.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/p39r-nm7f",
+    "site": "https://www.nyc.gov/site/coib/public-documents/public-documents.page"
+  },
+  "properties": {
+    "caseNumber": { "type": ["string", "null"], "description": "COIB case number ('Case Number') — primary key." },
+    "caseName": { "type": ["string", "null"], "description": "Case caption ('Case Name'), typically the respondent public servant." },
+    "date": { "type": ["string", "null"], "format": "date", "description": "Disposition date ('Date')." },
+    "agency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "finePaidToCoib": { "$ref": "_common.json#/$defs/Money", "description": "'Fine paid to COIB'." },
+    "fineImposedNotPaid": { "$ref": "_common.json#/$defs/Money", "description": "'Fine Imposed by COIB but not Paid'." },
+    "finePaidToAgency": { "$ref": "_common.json#/$defs/Money", "description": "'Fine Paid to Agency'." },
+    "explanation": { "type": ["string", "null"], "description": "Narrative of the violation and penalty ('Explanation of COIB Fine')." },
+    "otherPenalty": { "type": ["string", "null"], "description": "Non-monetary penalty description ('Other Penalty')." },
+    "otherPenaltyValue": { "$ref": "_common.json#/$defs/Money", "description": "'Other Penalty Value'." },
+    "suspensionDays": { "type": ["integer", "null"], "description": "'Suspension Days'." },
+    "suspensionValue": { "$ref": "_common.json#/$defs/Money", "description": "'Suspension Value'." },
+    "threeWaySettlement": { "type": ["boolean", "string", "null"], "description": "'3-Way Settlement' — settled jointly with the respondent's agency." }
+  },
+  "additionalProperties": false
+}

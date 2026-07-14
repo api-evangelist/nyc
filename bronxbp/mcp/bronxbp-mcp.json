@@ -1,0 +1,162 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Office of the Bronx Borough President's charter work (land-use/ULURP recommendations, community-board appointments, discretionary funding, newsroom, events) and adds apply_to_community_board — the net-new write workflow that today is a downloadable PDF or an email. Written to be templatable across all five Borough President offices.",
+    "openapi": "../openapi/bronxbp.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.bronxbp",
+    "title": "Bronx Borough President",
+    "version": "0.1.0",
+    "description": "Agent-native access to the Office of the Bronx Borough President — land-use (ULURP) advisory recommendations, community-board appointments and discretionary funding awards (from NYC Open Data), plus the newsroom and public events, and the net-new ability to apply to serve on a Bronx community board. Only two of these entities are machine-readable today (Capital Funding mdgu-ar69, Bronx Community Boards wbau-xy7g); the rest are reverse-engineered from a Revize CMS brochure site with no API.",
+    "instructions": "Use find_land_use_recommendations / get_land_use_recommendation to look up the Borough President's ULURP advisory dispositions (today published only as document-center PDFs). find_community_board_appointments lists who serves on the twelve Bronx community boards (open data). find_discretionary_funding answers 'what did the Borough President fund?' by fiscal year, community board, or council district (open data). find_press_releases / get_press_release cover the newsroom; find_events covers public events and meetings. apply_to_community_board (net-new) submits a resident's application to serve on a community board; it mutates state and needs an authenticated user — confirm the requested board, the applicant's name, and residence before submitting. list_my_community_board_applications reads the applicant's own submissions and status."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_land_use_recommendations",
+      "title": "Find Land-Use Recommendations",
+      "description": "Search the Borough President's ULURP / land-use advisory recommendations by community board, disposition, action type, date range, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "communityBoard": { "type": "integer", "minimum": 1, "maximum": 12 },
+          "recommendation": { "type": "string" },
+          "actionType": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/land-use-recommendation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLandUseRecommendations"
+    },
+    {
+      "name": "get_land_use_recommendation",
+      "title": "Get Land-Use Recommendation",
+      "description": "Fetch a single Borough President land-use recommendation by its ULURP/ZAP application number.",
+      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
+      "outputSchema": { "$ref": "../schemas/land-use-recommendation.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getLandUseRecommendation"
+    },
+    {
+      "name": "find_community_board_appointments",
+      "title": "Find Community Board Appointments",
+      "description": "List appointments to the twelve Bronx community boards by board number, year, or recommending official. Backed by NYC Open Data (wbau-xy7g).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "communityBoard": { "type": "integer", "minimum": 1, "maximum": 12 },
+          "year": { "type": "integer" },
+          "recommendingOfficial": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-board-appointment.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCommunityBoardAppointments"
+    },
+    {
+      "name": "find_discretionary_funding",
+      "title": "Find Discretionary Funding",
+      "description": "Search the Borough President's discretionary capital / expense funding awards by fiscal year, type, community board, or council district. Backed by NYC Open Data (mdgu-ar69).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fiscalYear": { "type": "string" },
+          "type": { "type": "string" },
+          "communityBoard": { "type": "integer", "minimum": 1, "maximum": 12 },
+          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/discretionary-funding-award.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listDiscretionaryFundingAwards"
+    },
+    {
+      "name": "find_press_releases",
+      "title": "Find Newsroom Items",
+      "description": "List newsroom items (press releases, statements, letters, testimonies) by category, date range, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string", "enum": ["Press Release", "Statement", "Letter", "Testimony", "Video"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/press-release.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPressReleases"
+    },
+    {
+      "name": "get_press_release",
+      "title": "Get Newsroom Item",
+      "description": "Fetch a single newsroom item (release, statement, letter, or testimony) by id.",
+      "inputSchema": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] },
+      "outputSchema": { "$ref": "../schemas/press-release.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getPressRelease"
+    },
+    {
+      "name": "find_events",
+      "title": "Find Events",
+      "description": "List the Borough President's public events and meetings by calendar (Events or Meetings) and date range.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "calendar": { "type": "string", "enum": ["Events", "Meetings"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/event.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listEvents"
+    },
+    {
+      "name": "list_my_community_board_applications",
+      "title": "List My Community Board Applications",
+      "description": "List the authenticated applicant's own applications to serve on a Bronx community board, and their status — today there is no way to check this at all.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Under Review", "Interview Scheduled", "Appointed", "Waitlisted", "Declined", "Withdrawn"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-board-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCommunityBoardApplications",
+      "x-auth": "user"
+    },
+    {
+      "name": "apply_to_community_board",
+      "title": "Apply to a Community Board",
+      "description": "Submit a resident's application to serve on one of the Bronx's twelve community boards. NET-NEW workflow with no API today — currently a downloadable PDF or an email to the office. Requires an authenticated user and mutates state — confirm the requested board, the applicant's name, and Bronx residence before submitting.",
+      "inputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "outputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createCommunityBoardApplication",
+      "x-auth": "user"
+    }
+  ]
+}

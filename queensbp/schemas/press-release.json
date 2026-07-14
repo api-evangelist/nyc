@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/schemas/press-release.json",
+  "title": "PressRelease",
+  "description": "A press release, statement, or report published by the Office of the Queens Borough President in the Newsroom. Ironically the site runs WordPress with the REST API (wp/v2) enabled, but wp/v2/posts returns 0 results — releases are authored as Divi page-builder Pages rather than as posts, so the one machine-readable surface the platform already ships is dormant. This schema models the release as it should be published.",
+  "type": "object",
+  "x-source": {
+    "site_newsroom": "https://www.queensbp.nyc.gov/newsroom/",
+    "site_press": "https://www.queensbp.nyc.gov/press-release/",
+    "wp_rest": "https://www.queensbp.nyc.gov/wp-json/wp/v2/posts",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "id": { "type": ["string", "integer", "null"], "description": "WordPress post ID or slug.", "readOnly": true },
+    "title": { "type": "string", "description": "Headline ('title.rendered')." },
+    "slug": { "type": ["string", "null"], "description": "URL slug." },
+    "type": {
+      "type": ["string", "null"],
+      "enum": ["Press Release", "Statement", "Report", "Advisory", null],
+      "description": "Kind of newsroom item."
+    },
+    "publishedDate": { "type": ["string", "null"], "format": "date-time", "description": "Publish date ('date')." },
+    "summary": { "type": ["string", "null"], "description": "Excerpt ('excerpt.rendered', HTML stripped)." },
+    "body": { "type": ["string", "null"], "description": "Full content ('content.rendered')." },
+    "topics": { "type": "array", "items": { "type": "string" }, "description": "Subject tags (housing, land use, budget, civic engagement, etc.)." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical link ('link')." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

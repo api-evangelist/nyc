@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mome/schemas/media-program.json",
+  "title": "MediaProgram",
+  "description": "A MOME program, initiative, or designated resource beyond film permitting — 'Made in NY' marketing/discount programs, the Office of Nightlife, IFP/workforce and training programs, press credentials, and PublicAccessMedia (the borough public-access TV organizations MOME designates and oversees: MNN, BronxNet, BRIC/BCAT, QPTV, Staten Island Community TV). GAP: MOME publishes none of these as Open Data; they exist only as HTML on nyc.gov/site/mome. Modeled here so an agent can enumerate MOME's non-permit surface.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/mome/index.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Program / resource name (e.g. 'Made in NY Marketing Credit', 'Public Access Media', 'Office of Nightlife')." },
+    "programType": {
+      "type": ["string", "null"],
+      "enum": ["Made in NY", "Workforce/Training", "Nightlife", "Public Access Media", "Press Credentials", "Marketing/Discount", "Grant/Funding", "Other", null],
+      "description": "MOME program family."
+    },
+    "description": { "type": ["string", "null"], "description": "What the program does." },
+    "audience": { "type": ["string", "null"], "description": "Who it serves (productions, nightlife venues, residents, press, community media)." },
+    "publicAccessProvider": {
+      "type": ["string", "null"],
+      "description": "For PublicAccessMedia programs, the borough public-access organization MOME designates.",
+      "enum": ["Manhattan Neighborhood Network (MNN)", "BronxNet", "BRIC/BCAT", "Queens Public Television (QPTV)", "Staten Island Community TV", null]
+    },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Program page on nyc.gov/site/mome." },
+    "contact": { "$ref": "_common.json#/$defs/ContactInfo" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pubadvocate/schemas/worst-landlord.json",
+  "title": "WorstLandlord",
+  "description": "A landlord on the NYC Public Advocate's Worst Landlord Watchlist — the office's flagship data product. Canonical schema reverse-engineered from the undocumented JSON endpoint landlordwatchlist.com/api/landlords, which returns ~99 ranked landlords. Each landlord is ranked on aggregate housing conditions across their portfolio (open HPD Housing Maintenance Code violations, DOB violations, evictions, tax liens). No public/documented API or Open Data twin exists under a Public Advocate label.",
+  "type": "object",
+  "x-source": {
+    "api": "https://www.landlordwatchlist.com/api/landlords",
+    "site": "https://www.landlordwatchlist.com/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "landlordId": { "type": ["integer", "string"], "description": "Watchlist landlord identifier ('landlordid')." },
+    "rank": { "type": ["integer", "string", "null"], "description": "Position on the Top 100 Worst Landlords list ('rank'); 1 = worst." },
+    "org": { "type": ["string", "null"], "description": "Ownership organization / LLC name ('org')." },
+    "officer": { "type": ["string", "null"], "description": "Named principal / responsible officer registered with HPD ('officer')." },
+    "buildings": { "type": ["integer", "null"], "description": "Number of buildings in the landlord's portfolio ('buildings')." },
+    "units": { "type": ["integer", "null"], "description": "Number of residential units across the portfolio ('UNIT')." },
+    "averageOpenViolations": { "type": ["number", "null"], "description": "Average open HPD Housing Maintenance Code violations per building, the primary ranking metric ('num_avg')." },
+    "dobViolations": { "type": ["integer", "null"], "description": "Department of Buildings violations count ('dob')." },
+    "taxLiens": { "type": ["integer", "null"], "description": "Number of tax liens across the portfolio ('tax_lien')." },
+    "evictions": { "type": ["integer", "null"], "description": "Number of evictions across the portfolio ('evictions')." },
+    "note": { "type": ["string", "null"], "description": "Editorial note ('note')." }
+  },
+  "required": ["landlordId"],
+  "additionalProperties": false
+}

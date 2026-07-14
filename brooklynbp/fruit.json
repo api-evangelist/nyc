@@ -1,0 +1,137 @@
+{
+  "domain": "brooklynbp",
+  "agency": "Office of the Brooklyn Borough President (BPBK)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting). The assessment target brooklyn-usa.org has been LET GO: its www and apex hosts 301-redirect offsite to batman-news.com via a WordPress 'Redirection' plugin on WPX Cloud hosting (bm-bulker-api / bm-migration-api namespaces) — a domain-flip. The office's current site is www.brooklynbp.nyc.gov, fingerprinted as headless WordPress on WP Engine (x-powered-by: WP Engine) with a Next.js front end, behind Cloudflare. Its WordPress REST API (wp-json/wp/v2) and The Events Calendar plugin API (wp-json/tribe/events/v1) are live and public. Verified the NYC Open Data agency label 'Brooklyn Borough President (BPBK)' via the Socrata Discovery API and pulled all 21 assets with column schemas (the brief's guess of zero was wrong).",
+  "related_domains": ["brooklyn-usa.org", "batman-news.com", "www.brooklynbp.nyc.gov", "data.cityofnewyork.us", "council.nyc.gov", "www.nyc.gov/site/planning"],
+  "headline_findings": [
+    "The office LET ITS OWN DOMAIN GO: brooklyn-usa.org now 301-redirects to batman-news.com (WordPress 'Redirection'/'Permalink Manager' plugins on WPX Cloud, bm-*-api migration namespaces). The live office site is www.brooklynbp.nyc.gov — headless WordPress on WP Engine + Next.js, behind Cloudflare.",
+    "Contrary to the brief's guess of zero, there ARE 21 NYC Open Data datasets under 'Brooklyn Borough President (BPBK)': ULURP land-use recommendations, a community-board contact list, a dozen 'BP Appointments' tables, and capital/discretionary/tourism award tables.",
+    "But the open data is fragmented and uneven: 21 single-purpose Socrata IDs, many thin (3-6 columns), several stale snapshots (Cornerstone Awards 2015-2017, Discretionary Contract Awards 2017-2018). Nothing is an owned, purpose-built BP API.",
+    "The one real, live, purpose-shaped read API is generic CMS plumbing: the WordPress REST API (wp/v2/posts, 315 posts) and The Events Calendar (tribe/events/v1/events) — machine-readable but not a Borough-President contract.",
+    "There is no write surface for the constituent action that matters most each year — applying to serve on a community board — which today is only an unstructured web form. That is the net-new WRITE object (CommunityBoardApplication).",
+    "All five NYC Borough Presidents run near-identical thin offices with the same powers (ULURP advice, board appointments, discretionary funding, community-board coordination) — the fruit is ONE shared, templated Borough President API, not five bespoke ones. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "21 BPBK datasets; SODA /resource/<id>.json endpoints. Real, open, machine-readable — but scattered across 21 single-purpose IDs, several thin/stale." },
+    { "endpoint": "www.brooklynbp.nyc.gov/wp-json/tribe/events/v1", "type": "events API (The Events Calendar plugin)", "owner": "Brooklyn BP (via WP Engine WordPress)", "public": true, "note": "Live, purpose-shaped read API for events/hearings/board meetings; 6 upcoming events at assessment. The one BP-specific live API surface." },
+    { "endpoint": "www.brooklynbp.nyc.gov/wp-json/wp/v2", "type": "WordPress REST API", "owner": "Brooklyn BP (WP Engine)", "public": true, "note": "Generic CMS content API — 315 posts (press releases/news), 74+ pages. Machine-readable but not a purpose-built BP contract; only /wp-admin/ is disallowed in robots.txt." },
+    { "endpoint": "www.brooklynbp.nyc.gov", "type": "site (headless WordPress + Next.js)", "owner": "Brooklyn BP (WP Engine, Cloudflare)", "public": "html", "note": "x-powered-by: WP Engine; _next front-end; Tribe Events, Wordfence, wp-statistics plugins." },
+    { "endpoint": "brooklyn-usa.org", "type": "LAPSED / repurposed domain", "owner": "third party (WPX Cloud)", "public": "redirects offsite", "note": "301-redirects to batman-news.com; bm-bulker-api/bm-migration-api namespaces = domain-flip. The office no longer controls its former primary domain." }
+  ],
+  "fruit": [
+    {
+      "name": "ULURP Land Use Recommendations",
+      "type": "data table",
+      "entity": "LandUseRecommendation",
+      "url": "https://data.cityofnewyork.us/d/4j6i-9rmr",
+      "count": "~ULURP recommendations",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Uniform Land Use Review Procedure (ULURP) Recommendations 4j6i-9rmr (6c)"],
+      "notes": "The office's signature statutory power — advisory recommendations (Approved / Approved with Conditions / Disapproved) on land-use applications. Keyed on ULURP Number(s), with community board(s) and council district(s)."
+    },
+    {
+      "name": "Community Boards",
+      "type": "directory",
+      "entity": "CommunityBoard",
+      "url": "https://data.cityofnewyork.us/d/dy27-rrad",
+      "count": "18 Brooklyn boards",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Community Board Contact List dy27-rrad (16c)"],
+      "notes": "Chair, district manager, contact email, address, meeting date, and full geography spine for each of Brooklyn's 18 community boards."
+    },
+    {
+      "name": "BP Board Appointments",
+      "type": "data tables (one per board family)",
+      "entity": "BoardAppointment",
+      "url": "https://data.cityofnewyork.us/d/pvxf-9irb",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["BIDS pvxf-9irb (23c)", "Community Education Councils 5mxw-kxpt", "HHC Community Advisory Boards avh4-h5hx", "Brooklyn Public Library Board q7f5-jwds", "DYCD Neighborhood Advisory Boards 95u9-kyyu", "Solid Waste Advisory Board rbwa-m4iy", "Miscellaneous Boards efdc-dxuz"],
+      "notes": "The BP's appointment power, published as one thin table per board family. Common shape: name, appointee-or-representative, term of office, term expiring, voting. A candidate for consolidation into one BoardAppointment resource."
+    },
+    {
+      "name": "Funding Awards (capital / discretionary / tourism)",
+      "type": "data tables",
+      "entity": "FundingAward",
+      "url": "https://data.cityofnewyork.us/d/rma9-fm39",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Tourism Grants rma9-fm39 (19c)", "Capital Awards n6ej-pebd", "Discretionary Contract Awards tsb8-3rct", "Discretionary Contract Awards 2017-2018 ubuy-v2nw"],
+      "notes": "Discretionary/capital/tourism awards to organizations. Tourism Grants carries the full geography spine; capital/discretionary tables are thinner and several are stale snapshots (2017-2018)."
+    },
+    {
+      "name": "Publications (legislation / reports / testimony / press)",
+      "type": "data table + CMS content",
+      "entity": "Report",
+      "url": "https://data.cityofnewyork.us/d/e6ph-9uv7",
+      "machine_readable": "Open Data (SODA) + WordPress REST",
+      "verified": true,
+      "opendata_match": ["Office Legislation - Passed e6ph-9uv7 (4c)"],
+      "opendata_gap": false,
+      "notes": "Passed legislation lives in one thin Socrata table; reports, testimony, op-eds, and press releases (315 posts) live only in the WordPress REST API as generic posts/pages. No purpose-built publications API."
+    },
+    {
+      "name": "Events & Hearings",
+      "type": "events feed (live API)",
+      "entity": "Event",
+      "url": "https://www.brooklynbp.nyc.gov/wp-json/tribe/events/v1/events",
+      "count": "6 upcoming (incl. ULURP public hearings, borough board)",
+      "machine_readable": "The Events Calendar REST API",
+      "verified": true,
+      "opendata_match": [],
+      "notes": "The one live, purpose-shaped read API on the current site — ULURP public hearings and borough board meetings among them. Provided by the generic Tribe Events plugin, not an owned BP contract."
+    },
+    {
+      "name": "Meeting requests / requests for assistance",
+      "type": "form-submission log",
+      "entity": "CommunityBoardApplication",
+      "url": "https://data.cityofnewyork.us/d/gqzy-vhwd",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["Meeting Requests gqzy-vhwd (form dump)", "Office Requests for Assistance y6ds-67d5 (aggregate counts)"],
+      "opendata_gap": true,
+      "notes": "Constituent intake exists only as unstructured web-form dumps / aggregate call counts — not a service API. Illustrates the missing write layer."
+    },
+    {
+      "name": "Apply to a community board",
+      "type": "sign-up / application workflow",
+      "entity": "CommunityBoardApplication",
+      "url": "https://www.brooklynbp.nyc.gov/community-boards/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most consequential constituent action the office runs each year — applying to serve on a community board. Today only an unstructured web form; no API and no Open Data twin. The net-new WRITE surface for this domain (counterpart to the read-only BP Appointments and Community Board datasets)."
+    }
+  ],
+  "meta": {
+    "short": "Brooklyn Borough President",
+    "verb": "template",
+    "platform": "Headless WordPress on WP Engine + Next.js, behind Cloudflare (www.brooklynbp.nyc.gov) — after the office let its former primary domain brooklyn-usa.org lapse (now redirecting offsite to batman-news.com).",
+    "netnew": "CommunityBoardApplication — apply to serve on a Brooklyn community board (net-new write; today only a web form).",
+    "accent": "#4a7ab0",
+    "tagline": "A thin borough office with real but scattered open data, a generic CMS API, and a lapsed domain — the fruit is one templated Borough President API reused across all five boroughs.",
+    "headline": "Brooklyn's Borough President already publishes 21 open datasets and a live events feed, but owns none of it as an API and let its own domain go — so the move is to define one shared, templated Borough President API rather than five bespoke ones."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 2,
+    "openData": 2,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 1,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Modern managed headless WordPress (WP Engine) + Next.js + Cloudflare, but a commercial host, not owned infra.",
+    "siteApi": "Live public read APIs exist — WordPress REST + The Events Calendar — but they are generic CMS plumbing, not a purpose-built BP contract.",
+    "openData": "21 real BPBK Socrata datasets, but scattered across single-purpose IDs, many thin (3-6 cols) and several stale (2015-2018).",
+    "coreData": "Core BP functions are represented (ULURP, appointments, funding, community boards) but shallowly and unevenly.",
+    "writeApi": "No write API at all; meeting/assistance/board intake is unstructured web forms and call-count logs.",
+    "agent": "Everything is technically machine-readable (wp-json, Tribe Events, SODA) and agent-consumable, but nothing is agent-native — no MCP, no OpenAPI, no owned contract.",
+    "ownership": "The office let its own brooklyn-usa.org domain lapse (now redirects offsite); content sits on a commercial host and 21 city-owned Socrata IDs — weak, fragmented ownership."
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mome/schemas/march-inspection.json",
+  "title": "MarchInspection",
+  "description": "A Multi-Agency Response to Community Hotspots (MARCH) inspection — a joint NYPD/FDNY/DOB/DOHMH/DEP enforcement visit to a nightlife establishment, logged under MOME because MOME runs the Office of Nightlife. Canonical schema for the 'Multi Agency Response to Community Hotspot (MARCH) Inspections' dataset (b84a-xy2t). The only other MOME-labeled Open Data asset besides Film Permits.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/b84a-xy2t"
+  },
+  "properties": {
+    "marchInspection": { "type": ["string", "null"], "description": "Whether this was a M.A.R.C.H inspection ('M.A.R.C.H inspection')." },
+    "dateOfInspection": { "type": ["string", "null"], "format": "date", "description": "'Date of inspection'." },
+    "timeOfVisitation": { "type": ["string", "null"], "description": "'Time of visitation (hh:mm:ss)'." },
+    "requestingPrecinct": { "type": ["string", "null"], "description": "'Requesting precinct'." },
+    "locationId": { "type": ["string", "null"], "description": "'Location ID' (anonymized establishment key)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "inspectionDurationMin": { "type": ["number", "null"], "description": "'Inspection duration (min)'." },
+    "establishmentClosed": { "type": ["boolean", "string", "null"], "description": "'Closure of establishment?'." },
+    "closureDurationMin": { "type": ["number", "null"], "description": "'Closure duration (min)'." },
+    "inspectors": {
+      "type": "object",
+      "description": "Inspectors present by agency.",
+      "properties": {
+        "total": { "type": ["integer", "null"], "description": "'Total inspectors from City government agencies present'." },
+        "nypd": { "type": ["integer", "null"] },
+        "fdny": { "type": ["integer", "null"] },
+        "dob": { "type": ["integer", "null"] },
+        "dohmh": { "type": ["integer", "null"] },
+        "dep": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "summonses": {
+      "type": "object",
+      "description": "Summonses issued by agency.",
+      "properties": {
+        "total": { "type": ["integer", "null"], "description": "'Total Summonses issued by City government agencies'." },
+        "nypd": { "type": ["integer", "null"] },
+        "fdny": { "type": ["integer", "null"] },
+        "dob": { "type": ["integer", "null"] },
+        "dohmh": { "type": ["integer", "null"] },
+        "dep": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "writtenNotices": { "type": ["integer", "null"], "description": "'Written Notices pursuant to Admin. Code § 14-181'." },
+    "triggeringConduct": {
+      "type": "array",
+      "description": "The conduct/complaint(s) that led to the requested operation.",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

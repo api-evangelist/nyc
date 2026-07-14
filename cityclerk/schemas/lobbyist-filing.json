@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cityclerk/schemas/lobbyist-filing.json",
+  "title": "LobbyistFiling",
+  "description": "A periodic lobbying report filed with the Office of the City Clerk's Lobbying Bureau under the NYC Lobbying Law — the compensation, expense, activity, and target detail a lobbyist reports for a reporting period. Canonical schema reconciling the 'City Clerk eLobbyist Data' dataset (fmf3-knd8, 28 columns). Filing itself happens only inside the login-walled e-Lobbyist Java application (apps.nyc.gov/elobbyist); the reported data is then published to Open Data.",
+  "type": "object",
+  "x-source": {
+    "filing_system": "https://apps.nyc.gov/elobbyist/",
+    "public_search": "https://lobbyistsearch.nyc.gov/",
+    "opendata": "https://data.cityofnewyork.us/d/fmf3-knd8"
+  },
+  "properties": {
+    "periodicId": { "type": ["string", "null"], "description": "'PERIODIC_ID' — the periodic report id." },
+    "registrationId": { "type": ["string", "null"], "description": "'REGISTRATION_ID'." },
+    "registration": { "$ref": "lobbyist-registration.json" },
+    "reportYear": { "type": ["integer", "string", "null"], "description": "'REPORT_YEAR'." },
+    "periodicYear": { "type": ["integer", "string", "null"], "description": "'PERIODIC_YEAR'." },
+    "period": { "type": ["string", "null"], "description": "'PERIOD' — the reporting period (e.g. a bi-monthly period)." },
+    "numPeriods": { "type": ["integer", "string", "null"], "description": "'NUM_PERIODS'." },
+    "startDate": { "type": ["string", "null"], "format": "date", "description": "'START_DATE'." },
+    "endDate": { "type": ["string", "null"], "format": "date", "description": "'END_DATE'." },
+    "activities": { "type": ["string", "null"], "description": "'PERIODIC_ACTIVITIES' / 'LOBBYIST_ACTIVITIES' — subjects lobbied." },
+    "targets": { "type": ["string", "null"], "description": "'PERIODIC_TARGETS' / 'LOBBYIST_TARGETS' — agencies/officials lobbied." },
+    "compensationTotal": { "$ref": "_common.json#/$defs/Money" },
+    "lobbyingExpensesTotal": { "$ref": "_common.json#/$defs/Money" },
+    "itemizedExpenseTotal": { "$ref": "_common.json#/$defs/Money" },
+    "smallExpenseTotal": { "$ref": "_common.json#/$defs/Money" },
+    "salaryExpenseTotal": { "$ref": "_common.json#/$defs/Money" },
+    "reimbursedExpensesTotal": { "$ref": "_common.json#/$defs/Money" }
+  },
+  "required": ["periodicId"],
+  "additionalProperties": false
+}

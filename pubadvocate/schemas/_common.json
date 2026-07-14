@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pubadvocate/schemas/_common.json",
+  "title": "NYC Public Advocate — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Public Advocate (Office of the Public Advocate) object schemas. Reconciles fields common to the Worst Landlord Watchlist (landlordwatchlist.com/api/landlords), the self-hosted advocate.nyc.gov site, and the City Council Legistar system where the PA's sponsored legislation lives. Includes the NYC geography spine (community board, council district, census tract, NTA, BBL/BIN) used to locate watchlist buildings and complaints, and a reference to any of the city agencies the ombudsman intervenes with.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (latitude / longitude).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine — the join keys back to the rest of city government, used to place a watchlist building or a complaint.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community District / Board." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district." },
+        "censusTract": { "type": ["string", "null"], "description": "2020 Census tract." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number." },
+        "communityDistrict": { "type": ["string", "integer", "null"], "description": "Alias of communityBoard for datasets using 'COMMUNITY DISTRICT'." }
+      },
+      "additionalProperties": false
+    },
+    "Contact": {
+      "type": "object",
+      "description": "Requester or point-of-contact details.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "preferredLanguage": { "type": ["string", "null"], "description": "Preferred language for follow-up." }
+      },
+      "additionalProperties": false
+    },
+    "AgencyReference": {
+      "type": "object",
+      "description": "A reference to a NYC agency the Public Advocate oversees or intervenes with on a resident's behalf.",
+      "properties": {
+        "agency": { "type": "string", "description": "Agency name (e.g. 'Department of Housing Preservation and Development')." },
+        "acronym": { "type": ["string", "null"], "description": "Agency acronym (e.g. 'HPD', 'HRA', 'DOE', 'NYCHA')." }
+      },
+      "required": ["agency"],
+      "additionalProperties": false
+    },
+    "ComplaintCategory": {
+      "type": "string",
+      "description": "Subject area of a 'help with a city agency' ombudsman complaint.",
+      "enum": [
+        "Housing / Landlord",
+        "NYCHA / Public Housing",
+        "Public Benefits",
+        "Education",
+        "Immigration",
+        "Health",
+        "Sanitation / Environment",
+        "Transportation",
+        "Consumer / Worker",
+        "Police / Civil Rights",
+        "Other"
+      ]
+    }
+  }
+}

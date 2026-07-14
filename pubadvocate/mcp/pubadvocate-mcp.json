@@ -1,0 +1,169 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the NYC Public Advocate's scattered output (Worst Landlord Watchlist, sponsored legislation, reports, public interest requests) as documented tools and adds file_complaint — the net-new write workflow that today exists only as a web form, phone call, or email to the office.",
+    "openapi": "../openapi/pubadvocate.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.pubadvocate",
+    "title": "NYC Public Advocate",
+    "version": "0.1.0",
+    "description": "Agent-native access to the New York City Public Advocate — the Worst Landlord Watchlist (ranked landlords and their buildings), legislation sponsored by the office, reports and investigations, and public interest demands to city agencies, plus the net-new ability to file and track an ombudsman complaint (help with a city agency) that today exists only as a web form, phone call, or email.",
+    "instructions": "Use find_worst_landlords / get_worst_landlord (and get_worst_landlord_buildings) to explore the Worst Landlord Watchlist by rank or organization/officer name and drill into a landlord's buildings; find_watchlist_buildings searches buildings directly by borough, BIN, BBL, or ZIP. find_legislation covers bills the Public Advocate sponsors (sourced from the Council's Legistar). find_reports returns the office's reports, investigations, and agency report cards; find_public_interest_requests returns oversight demands to agencies. file_complaint (net-new) creates an ombudsman 'help with a city agency' case; it requires an authenticated resident and mutates state — confirm the agency, category, and description with the user, and set consentToContactAgency before submitting so the office may contact the agency on their behalf. Note: the Public Advocate publishes no NYC Open Data, so these tools stand in for surfaces that are today undocumented, PDF-bound, or intake-only."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_worst_landlords",
+      "title": "Find Worst Landlords",
+      "description": "Search the NYC Public Advocate's Worst Landlord Watchlist by organization/officer name or rank range.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": { "type": "string" },
+          "minRank": { "type": "integer", "minimum": 1 },
+          "maxRank": { "type": "integer", "minimum": 1 },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/worst-landlord.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listWorstLandlords"
+    },
+    {
+      "name": "get_worst_landlord",
+      "title": "Get Worst Landlord",
+      "description": "Fetch a single landlord from the Worst Landlord Watchlist (portfolio size, units, violations, evictions, rank) by landlord id.",
+      "inputSchema": { "type": "object", "properties": { "landlordId": { "type": "string" } }, "required": ["landlordId"] },
+      "outputSchema": { "$ref": "../schemas/worst-landlord.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getWorstLandlord"
+    },
+    {
+      "name": "get_worst_landlord_buildings",
+      "title": "Get Worst Landlord Buildings",
+      "description": "List the buildings in a Watchlist landlord's portfolio, with open HPD/DOB violations.",
+      "inputSchema": { "type": "object", "properties": { "landlordId": { "type": "string" } }, "required": ["landlordId"] },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/watchlist-building.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getWorstLandlordBuildings"
+    },
+    {
+      "name": "find_watchlist_buildings",
+      "title": "Find Watchlist Buildings",
+      "description": "Search Worst Landlord Watchlist buildings by borough, BIN, BBL, ZIP, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "bin": { "type": "string" },
+          "bbl": { "type": "string" },
+          "zipCode": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/watchlist-building.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listWatchlistBuildings"
+    },
+    {
+      "name": "find_legislation",
+      "title": "Find Legislation",
+      "description": "List legislation the Public Advocate sponsors (Intro #, title, status, committee) — sourced from the City Council's Legistar system.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Introduced", "In Committee", "Hearing Held", "Passed", "Enacted", "Vetoed", "Failed", "Withdrawn"] },
+          "committee": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/legislation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLegislation"
+    },
+    {
+      "name": "find_reports",
+      "title": "Find Reports",
+      "description": "List Public Advocate reports, investigations, and agency report cards by topic, agency, or date.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "topic": { "type": "string" },
+          "agency": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/report.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listReports"
+    },
+    {
+      "name": "find_public_interest_requests",
+      "title": "Find Public Interest Requests",
+      "description": "List public interest demands the Public Advocate has issued to city agencies, and their status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "agency": { "type": "string" },
+          "status": { "type": "string", "enum": ["Issued", "Acknowledged", "Partially Answered", "Answered", "Refused", "Escalated"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/public-interest-request.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPublicInterestRequests"
+    },
+    {
+      "name": "list_my_complaints",
+      "title": "List My Complaints",
+      "description": "List the authenticated resident's own ombudsman 'help with a city agency' complaints and their status — today untrackable by machine.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "In Review", "Agency Contacted", "Awaiting Resident", "Resolved", "Closed", "Referred"] },
+          "category": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/ombudsman-complaint.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listOmbudsmanComplaints",
+      "x-auth": "user"
+    },
+    {
+      "name": "file_complaint",
+      "title": "File a Complaint",
+      "description": "File an ombudsman complaint asking the NYC Public Advocate for help with a city agency. NET-NEW workflow with no public API today — it lives only as a web form, phone call, or email to the office. Requires an authenticated resident. Mutates state — confirm the agency, category, and description first, and set consentToContactAgency=true so the office may contact the agency on the resident's behalf.",
+      "inputSchema": { "$ref": "../schemas/ombudsman-complaint.json" },
+      "outputSchema": { "$ref": "../schemas/ombudsman-complaint.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createOmbudsmanComplaint",
+      "x-auth": "user"
+    },
+    {
+      "name": "get_complaint",
+      "title": "Get Complaint",
+      "description": "Get the status and detail of one ombudsman complaint by case number.",
+      "inputSchema": { "type": "object", "properties": { "complaintId": { "type": "string" } }, "required": ["complaintId"] },
+      "outputSchema": { "$ref": "../schemas/ombudsman-complaint.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getOmbudsmanComplaint",
+      "x-auth": "user"
+    }
+  ]
+}

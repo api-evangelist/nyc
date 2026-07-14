@@ -1,0 +1,138 @@
+{
+  "domain": "statenislandbp",
+  "agency": "Office of the Staten Island Borough President (BPSI)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — statenislandusa.com/robots.txt disallows only /ajax/, /apps/, /ida.html, /stayonstatenisland.html). Fingerprinted www.statenislandusa.com as a Weebly brochure site behind Cloudflare (server: cloudflare, cf-ray; x-host: *.weebly.net; weebly-anchor.js; Weebly Forms posting to weebly.com/apps/formSubmit.php; Constant Contact newsletter). Walked the sitemap and key pages (cbapplication, bpassist, budget, borough-board, community-events, notices, staffdirectory). Verified the NYC Open Data agency label 'Staten Island Borough President (BPSI)' via the Socrata Discovery API (display attribution is 'Office of the Staten Island Borough President') and pulled all 2 assets with column schemas.",
+  "related_domains": ["data.cityofnewyork.us", "manhattanbp", "brooklynbp", "queensbp", "bronxbp", "www1.nyc.gov/site/planning (ZAP)"],
+  "meta": {
+    "short": "Staten Island Borough President",
+    "verb": "federate",
+    "platform": "Weebly brochure site behind Cloudflare (Weebly Forms + Constant Contact); no CMS of record, no API",
+    "netnew": "CommunityBoardApplication — apply to serve on a Staten Island community board (today an opaque Weebly form)",
+    "accent": "#7a5aa0",
+    "tagline": "The thinnest domain yet: a Weebly brochure site, two trivial datasets, and none of the borough president's charter work available as data.",
+    "headline": "A borough president office with essentially no data or API — and four identical sibling offices — is not a replatform, it is a case for one shared, federated Borough President API."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 1,
+    "coreData": 0,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 0
+  },
+  "scorecard_notes": {
+    "platform": "Weebly DIY site builder behind Cloudflare — no CMS of record or application server",
+    "siteApi": "No site API of any kind; no JSON, no OpenAPI",
+    "openData": "Two BPSI datasets: one aggregate (3fes-huds, ends FY20), one zero-column blob (mmut-uup9)",
+    "coreData": "Land use, appointments, budget, resolutions — none of the charter work exists as data",
+    "writeApi": "BP Assist and the community board application are web/Weebly forms; no API",
+    "agent": "Nothing agent-native; no MCP, no structured contract",
+    "ownership": "Owns almost nothing — site on Weebly, forms on Weebly, email on Constant Contact, data on Socrata"
+  },
+  "headline_findings": [
+    "The Office of the Staten Island Borough President has the thinnest technical footprint assessed so far: a Weebly brochure site (statenislandusa.com) behind Cloudflare, with no CMS of record, no application, and no API.",
+    "Only two NYC Open Data assets carry the agency label 'Staten Island Borough President (BPSI)': 'BP Assist Helpline Requests' (3fes-huds), an aggregate count-by-request-type table that ends at FY20, and 'Category Master File' (mmut-uup9), a zero-column blob.",
+    "None of the borough president's actual NYC Charter functions — advisory ULURP land-use recommendations, community board appointments, discretionary capital/expense funding, and Borough Board resolutions — is published as data anywhere the office owns; they exist only as PDFs, HTML, or inside other agencies' systems (City Planning ZAP, the adopted budget Schedule C).",
+    "The office's two real transactions are un-contracted: BP Assist (report a pothole/litter/graffiti issue) is a web widget, and the Community Board Membership Application is an opaque Weebly form posting to weebly.com/apps/formSubmit.php.",
+    "Net-new write surface: apply to a community board (CommunityBoardApplication), plus a BP Assist constituent request. The strategic finding is that all five NYC borough-president offices are near-identical thin sites, making this a candidate for one shared, federated Borough President API keyed by borough — not five bespoke builds."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Only 2 BPSI assets: 3fes-huds (aggregate BP Assist counts, ends FY20) and mmut-uup9 (zero-column file). A SODA /resource/3fes-huds.json endpoint exists but the office does not consume it." },
+    { "endpoint": "weebly.com/weebly/apps/formSubmit.php", "type": "form-relay endpoint", "owner": "Weebly (Square)", "public": "vendor", "note": "Where the Community Board Membership Application posts. Opaque _u… field names; not an API, not documented, not agent-usable." },
+    { "endpoint": "lp.constantcontactpages.com/su/wWLrBxD/sibp", "type": "email sign-up", "owner": "Constant Contact", "public": "vendor", "note": "Newsletter capture." },
+    { "endpoint": "www.statenislandusa.com/apps/search", "type": "site search", "owner": "Weebly", "public": "vendor", "note": "Weebly built-in site search; no JSON contract." },
+    { "endpoint": "www.statenislandusa.com", "type": "brochure site", "owner": "Weebly behind Cloudflare", "public": "html", "note": "Content only; no content API, no JSON, no OpenAPI." }
+  ],
+  "fruit": [
+    {
+      "name": "Land-use / ULURP recommendations",
+      "type": "documents (PDF/notices)",
+      "entity": "LandUseRecommendation",
+      "url": "https://www.statenislandusa.com/notices.html",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The BP's NYC Charter advisory review of every land-use application. Published only as PDFs/notices; the underlying applications live in City Planning's ZAP system, not here. No BPSI API or dataset."
+    },
+    {
+      "name": "Community board appointments",
+      "type": "roster / recruitment",
+      "entity": "CommunityBoardAppointment",
+      "url": "https://www.statenislandusa.com/cbapplication.html",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The BP appoints all members of Staten Island's three community boards (CB1 North Shore, CB2 Mid-Island, CB3 South Shore), half on council-member nomination. No published roster dataset."
+    },
+    {
+      "name": "Discretionary funding awards",
+      "type": "budget allocations",
+      "entity": "DiscretionaryFundingAward",
+      "url": "https://www.statenislandusa.com/budget.html",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Capital and expense allocations the BP makes to agencies and organizations. Requests accepted 'via mail or email' only; awards appear only inside the adopted citywide budget (Schedule C). No BPSI API or dataset."
+    },
+    {
+      "name": "Borough Board resolutions & reports",
+      "type": "documents (monthly PDFs)",
+      "entity": "Resolution",
+      "url": "https://www.statenislandusa.com/borough-board.html",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Staten Island Borough Board (BP + council members + community board chairs) meets monthly and issues resolutions/reports. Published only as monthly PDFs going back years. No dataset, no API."
+    },
+    {
+      "name": "Community events & concerts",
+      "type": "calendar",
+      "entity": "Event",
+      "url": "https://www.statenislandusa.com/community-events.html",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Borough community calendar and the 'Sounds of Summer' concert series. HTML/embedded only; no iCal feed, dataset, or API."
+    },
+    {
+      "name": "BP Assist help line",
+      "type": "issue-reporting widget",
+      "entity": "ConstituentRequest",
+      "url": "https://www.statenislandusa.com/bpassist.html",
+      "machine_readable": "aggregate only",
+      "verified": true,
+      "opendata_match": ["BP Assist Helpline Requests 3fes-huds (4c)"],
+      "opendata_gap": true,
+      "notes": "The office's one transactional surface: report potholes, litter, graffiti, relayed to the help line and on to a city agency. The only related Open Data (3fes-huds) is AGGREGATE annual counts by request type and ends at FY20 — never the individual request."
+    },
+    {
+      "name": "Apply to a community board",
+      "type": "sign-up / application form",
+      "entity": "CommunityBoardApplication",
+      "url": "https://www.statenislandusa.com/cbapplication.html",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Community Board Membership Application — the net-new WRITE surface. Today an opaque Weebly form posting to weebly.com/apps/formSubmit.php with _u… field names; no API, no structured intake, no Open Data twin."
+    },
+    {
+      "name": "Category Master File",
+      "type": "lookup file",
+      "entity": "ConstituentRequest",
+      "url": "https://data.cityofnewyork.us/d/mmut-uup9",
+      "machine_readable": "Open Data (file)",
+      "verified": true,
+      "opendata_match": ["Category Master File mmut-uup9 (0c)"],
+      "opendata_gap": false,
+      "notes": "The only other BPSI asset — a 'file' type with zero exposed columns, effectively a lookup blob rather than a queryable dataset."
+    }
+  ]
+}

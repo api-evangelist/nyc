@@ -1,0 +1,316 @@
+openapi: 3.1.0
+info:
+  title: NYC City Clerk API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the New York City Office of the City Clerk — publishing its
+    open lobbyist-registration and filing data as coherent resources, and adding the missing write
+    surface locked inside the rented Project Cupid (Unqork) marriage system: applying for a marriage
+    license.
+  description: >-
+    Proposed API-first surface for the New York City Office of the City Clerk (OCC), from the NYC
+    Modernization low-hanging-fruit assessment of cityclerk.nyc.gov, the Project Cupid marriage-license
+    system, and the e-Lobbyist filing / Lobbyist Search applications.
+
+
+    The City Clerk runs two bureaus on rented, agent-invisible platforms. The **Marriage Bureau**'s
+    flagship citizen transaction — applying for a marriage license, booking a ceremony — runs entirely
+    on **Project Cupid** (`projectcupid.cityofnewyork.us`), a no-code application built on the rented
+    **Unqork** platform, with no API and no Open Data output at all. The **Lobbying Bureau**'s
+    registration and periodic filing run inside **e-Lobbyist** (`apps.nyc.gov/elobbyist`), a login-walled
+    Java application behind SAP CDC / Gigya SSO; that side at least publishes its reported data to two NYC
+    Open Data datasets, and exposes a public Lobbyist Search (`lobbyistsearch.nyc.gov`).
+
+
+    This contract does two things: (1) presents the open lobbyist registration, filing, and fundraising
+    data as one clean resource model, and (2) adds the one net-new **write** workflow — submitting a
+    **marriage-license application** (and finding an appointment) — that today exists only behind the
+    Unqork-hosted Project Cupid screens.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.cityclerk.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Marriage
+    description: Marriage licenses, applications, and ceremony appointments — today locked in Project Cupid (Unqork).
+  - name: Lobbying
+    description: Lobbyist registrations, periodic filings, and fundraising reports — the Lobbying Bureau's open data.
+
+paths:
+  /appointments:
+    get:
+      operationId: listAppointments
+      summary: Find available City Clerk appointment slots (ceremonies, license appointments)
+      description: >-
+        Lists available appointment slots for marriage licenses, marriage ceremonies, and domestic
+        partnership registrations/ceremonies — today reachable only through Project Cupid.
+      tags: [Marriage]
+      parameters:
+        - name: ceremonyType
+          in: query
+          schema: { type: string, enum: [Marriage Ceremony, Domestic Partnership Ceremony, Marriage License Appointment, Domestic Partnership Registration] }
+        - name: office
+          in: query
+          schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of available appointment slots.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/ceremony.json' } }
+
+  /marriage-license-applications:
+    post:
+      operationId: createMarriageLicenseApplication
+      summary: Apply for a marriage license (net-new write)
+      description: >-
+        The net-new write surface — an API for submitting a NYC marriage-license application, replacing
+        the Unqork-only Project Cupid workflow. Mutates state and requires an authenticated applicant.
+        Confirm both applicants' identities, residences, and prior-marriage counts before submitting.
+      tags: [Marriage]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/marriage-license-application.json' }
+      responses:
+        '201':
+          description: Marriage-license application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/marriage-license-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /marriage-license-applications/{applicationId}:
+    get:
+      operationId: getMarriageLicenseApplication
+      summary: Get the status of a marriage-license application
+      tags: [Marriage]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The marriage-license application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/marriage-license-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /marriage-licenses/{licenseId}:
+    get:
+      operationId: getMarriageLicense
+      summary: Get an issued marriage license
+      tags: [Marriage]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: licenseId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The marriage license.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/marriage-license.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /lobbyist-registrations:
+    get:
+      operationId: listLobbyistRegistrations
+      summary: Search lobbyist registrations (public Lobbyist Search)
+      description: Publishes the Lobbyist Search public database as a clean resource — registrants and their clients.
+      tags: [Lobbying]
+      parameters:
+        - name: lobbyistName
+          in: query
+          schema: { type: string }
+        - name: clientName
+          in: query
+          schema: { type: string }
+        - name: clientIndustry
+          in: query
+          schema: { type: string }
+        - name: reportYear
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of lobbyist registrations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/lobbyist-registration.json' } }
+  /lobbyist-registrations/{registrationId}:
+    get:
+      operationId: getLobbyistRegistration
+      summary: Get a lobbyist registration
+      tags: [Lobbying]
+      parameters:
+        - name: registrationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The lobbyist registration.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/lobbyist-registration.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /lobbyist-filings:
+    get:
+      operationId: listLobbyistFilings
+      summary: Search periodic lobbying reports (eLobbyist Data)
+      description: The 'City Clerk eLobbyist Data' dataset (fmf3-knd8) as a clean resource — compensation, expenses, activities, and targets per reporting period.
+      tags: [Lobbying]
+      parameters:
+        - name: lobbyistName
+          in: query
+          schema: { type: string }
+        - name: clientName
+          in: query
+          schema: { type: string }
+        - name: reportYear
+          in: query
+          schema: { type: integer }
+        - name: period
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of periodic lobbying filings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/lobbyist-filing.json' } }
+
+  /fundraising-reports:
+    get:
+      operationId: listFundraisingReports
+      summary: Search lobbyist fundraising & political-consulting reports
+      description: The 'Lobbyists' Fundraising and Political Consulting Reports' dataset (7arw-dbem) as a clean resource.
+      tags: [Lobbying]
+      parameters:
+        - name: entityName
+          in: query
+          schema: { type: string }
+        - name: candidateLastName
+          in: query
+          schema: { type: string }
+        - name: targetOffice
+          in: query
+          schema: { type: string }
+        - name: filingYear
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of fundraising & political-consulting reports.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/fundraising-report.json' } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    MarriageLicense: { $ref: '../schemas/marriage-license.json' }
+    MarriageLicenseApplication: { $ref: '../schemas/marriage-license-application.json' }
+    Ceremony: { $ref: '../schemas/ceremony.json' }
+    LobbyistRegistration: { $ref: '../schemas/lobbyist-registration.json' }
+    LobbyistFiling: { $ref: '../schemas/lobbyist-filing.json' }
+    FundraisingReport: { $ref: '../schemas/fundraising-report.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

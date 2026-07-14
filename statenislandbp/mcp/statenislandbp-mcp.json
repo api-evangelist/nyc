@@ -1,0 +1,161 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Staten Island Borough President's charter functions (land-use recommendations, community board appointments, discretionary funding, borough board resolutions, community events, BP Assist) that have no API today, and adds two net-new write workflows: report_quality_of_life_issue (BP Assist) and apply_to_community_board.",
+    "openapi": "../openapi/statenislandbp.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.statenislandbp",
+    "title": "Staten Island Borough President",
+    "version": "0.1.0",
+    "description": "Agent-native access to the Office of the Staten Island Borough President — land-use (ULURP) recommendations, community board appointments, discretionary capital/expense funding awards, borough board resolutions, and the community calendar, none of which have an API or a real Open Data source today, plus the net-new ability to report a quality-of-life issue to the BP Assist help line and to apply to serve on a community board.",
+    "instructions": "This office has almost no machine-readable source — a Weebly brochure site and two trivial datasets — so most tools describe a proposed contract over data that today exists only as PDFs and HTML. find_land_use_recommendations / get_land_use_recommendation cover the BP's ULURP review role; find_community_board_appointments lists the three Staten Island boards' membership; find_discretionary_funding_awards covers capital/expense allocations; find_resolutions covers Borough Board resolutions and reports; find_events covers the community calendar and Sounds of Summer concerts. find_constituent_requests reads BP Assist data — remember the only existing dataset is AGGREGATE counts by request type, not individual requests. Two tools MUTATE state, so confirm details before submitting: report_quality_of_life_issue files a BP Assist request (potholes, litter, graffiti) and apply_to_community_board (net-new) submits a community board membership application — the applicant must be a NYC resident of, or have a significant interest in, the district. NOTE: all five NYC borough-president offices are near-identical; this same tool surface should federate into one shared Borough President server keyed by borough."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_land_use_recommendations",
+      "title": "Find Land-Use Recommendations",
+      "description": "Search Borough President recommendations on ULURP / land-use applications by community board, application type, disposition, or period.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "communityBoard": { "type": "integer", "minimum": 1, "maximum": 3 },
+          "applicationType": { "type": "string" },
+          "recommendation": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/land-use-recommendation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLandUseRecommendations"
+    },
+    {
+      "name": "get_land_use_recommendation",
+      "title": "Get Land-Use Recommendation",
+      "description": "Fetch a single Borough President land-use recommendation by its ULURP / City Planning application number.",
+      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
+      "outputSchema": { "$ref": "../schemas/land-use-recommendation.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getLandUseRecommendation"
+    },
+    {
+      "name": "find_community_board_appointments",
+      "title": "Find Community Board Appointments",
+      "description": "List members / appointments across Staten Island's three community boards, filtered by board, role, or status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "communityBoard": { "type": "integer", "minimum": 1, "maximum": 3 },
+          "role": { "type": "string" },
+          "status": { "type": "string", "enum": ["Active", "Expired", "Resigned", "Pending"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-board-appointment.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCommunityBoardAppointments"
+    },
+    {
+      "name": "find_discretionary_funding_awards",
+      "title": "Find Discretionary Funding Awards",
+      "description": "Search the Borough President's discretionary capital and expense funding awards by fiscal year, funding type, or recipient type.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fiscalYear": { "type": "string" },
+          "fundingType": { "type": "string", "enum": ["Capital", "Expense"] },
+          "recipientType": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/discretionary-funding-award.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listDiscretionaryFundingAwards"
+    },
+    {
+      "name": "find_resolutions",
+      "title": "Find Resolutions",
+      "description": "List Staten Island Borough Board resolutions, reports, and minutes by type or period.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["Resolution", "Report", "Minutes", "Testimony", "Statement"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/resolution.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listResolutions"
+    },
+    {
+      "name": "find_events",
+      "title": "Find Events",
+      "description": "List Staten Island community events and Sounds of Summer concerts by category or date range.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/event.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listEvents"
+    },
+    {
+      "name": "find_constituent_requests",
+      "title": "Find Constituent Requests",
+      "description": "Read BP Assist help line quality-of-life requests. The only existing Open Data (3fes-huds) is AGGREGATE annual counts by request type — set aggregate=true for those; individual requests have no public source today.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestType": { "type": "string" },
+          "fiscalYear": { "type": "string" },
+          "aggregate": { "type": "boolean", "default": false },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/constituent-request.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listConstituentRequests"
+    },
+    {
+      "name": "report_quality_of_life_issue",
+      "title": "Report a Quality-of-Life Issue (BP Assist)",
+      "description": "File a BP Assist help line request (pothole, litter, graffiti, and similar) to be relayed to the relevant city agency. NET-NEW write workflow with no API today. Mutates state — confirm the issue type, description, and location with the user before submitting.",
+      "inputSchema": { "$ref": "../schemas/constituent-request.json" },
+      "outputSchema": { "$ref": "../schemas/constituent-request.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createConstituentRequest"
+    },
+    {
+      "name": "apply_to_community_board",
+      "title": "Apply to a Community Board",
+      "description": "Submit a Staten Island community board membership application — the NET-NEW write surface that today is only an opaque Weebly form. Mutates state. The applicant must be a NYC resident of, or have a significant interest in, the district; confirm the applicant details, requested board, and residency before submitting.",
+      "inputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "outputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createCommunityBoardApplication"
+    }
+  ]
+}

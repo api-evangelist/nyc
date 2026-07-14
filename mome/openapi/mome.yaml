@@ -1,0 +1,328 @@
+openapi: 3.1.0
+info:
+  title: MOME API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Mayor's Office of Media & Entertainment — publishing
+    its flagship open data (Film Permits, MARCH nightlife inspections) as coherent resources, exposing
+    MOME's non-permit programs, and adding the missing write surface locked inside the 'MOME E-Apply'
+    portal: applying for a film/photography permit.
+  description: >-
+    Proposed API-first surface for the NYC Mayor's Office of Media & Entertainment (MOME), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/mome and the film-permit application
+    system.
+
+
+    MOME is a **greenlight-the-intake** domain. Its flagship output — **Film Permits** (`tg4x-b46p`) —
+    is one of the most-viewed datasets in all of NYC Open Data (~530k views), automated and updated
+    daily: every location shoot the Film Office greenlights becomes a public record. But the *application*
+    that produces those permits is **entirely locked inside a login-walled ASP.NET portal** ('MOME
+    E-Apply', `nyceventpermits.nyc.gov/film`) — no API, no OpenAPI, no JSON. A production or agent asking
+    "apply for a permit to shoot on Varick Street next Tuesday" has nothing to call.
+
+
+    This contract does two things: (1) presents the open outputs (issued permits, the ScreenActivity held
+    locations inside them, MARCH inspections, and MOME's programs) as one clean resource model, and (2)
+    adds the one net-new **write** workflow — submitting a **FilmPermitApplication** — that today exists
+    only behind the E-Apply portal or a Letter-in-Lieu email.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.mome.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: FilmPermits
+    description: Issued NYC film/photography location permits — the flagship open dataset.
+  - name: ScreenActivity
+    description: The held street locations inside a permit (ParkingHeld exploded).
+  - name: Programs
+    description: MOME programs and designated resources — Made in NY, Nightlife, Public Access Media.
+  - name: Nightlife
+    description: MARCH multi-agency nightlife inspections.
+  - name: Applications
+    description: Apply for and track a film/photography permit (read + write). The net-new surface, today locked in the MOME E-Apply portal.
+
+paths:
+  /film-permits:
+    get:
+      operationId: listFilmPermits
+      summary: List / search issued film permits
+      tags: [FilmPermits]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: category
+          in: query
+          schema: { type: string, enum: [Film, Television, Commercial, Still Photography, WEB, Music Video, Theater, Documentary, Student, Red Carpet/Premiere, Other] }
+        - name: eventType
+          in: query
+          schema: { type: string }
+        - name: subCategoryName
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of film permits.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/film-permit.json' } }
+  /film-permits/{eventId}:
+    get:
+      operationId: getFilmPermit
+      summary: Get a film permit by EventID
+      tags: [FilmPermits]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The film permit.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/film-permit.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /film-permits/{eventId}/locations:
+    get:
+      operationId: getFilmPermitLocations
+      summary: List the held screen-activity locations in a permit
+      description: Explodes the permit's ParkingHeld into individual street segments.
+      tags: [ScreenActivity]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Screen-activity locations.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/screen-activity.json' } }
+
+  /screen-activity:
+    get:
+      operationId: listScreenActivity
+      summary: Search held film locations across permits
+      description: Where is filming happening — by street, borough, precinct, or date.
+      tags: [ScreenActivity]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: streetName
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of screen-activity locations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/screen-activity.json' } }
+
+  /programs:
+    get:
+      operationId: listPrograms
+      summary: List MOME programs and designated resources
+      description: Made in NY, Office of Nightlife, workforce/training, press credentials, and Public Access Media providers.
+      tags: [Programs]
+      parameters:
+        - name: programType
+          in: query
+          schema: { type: string, enum: [Made in NY, Workforce/Training, Nightlife, Public Access Media, Press Credentials, Marketing/Discount, Grant/Funding, Other] }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of MOME programs.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/media-program.json' } }
+
+  /march-inspections:
+    get:
+      operationId: listMarchInspections
+      summary: Search MARCH nightlife inspections
+      tags: [Nightlife]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of MARCH inspections.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/march-inspection.json' } }
+
+  /permit-applications:
+    get:
+      operationId: listPermitApplications
+      summary: List the authenticated applicant's film-permit applications
+      description: Reads the applicant's own applications and their status — today only visible inside the MOME E-Apply portal.
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Draft, Submitted, Under Review, Insurance Pending, Approved, Permit Issued, Denied, Cancelled] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the applicant's permit applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/film-permit-application.json' } }
+    post:
+      operationId: createPermitApplication
+      summary: Apply for a film/photography permit
+      description: >-
+        The net-new write surface — an API for applying for a film permit, replacing the E-Apply-only
+        workflow. Insurance must be on file before a permit is issued; low-impact exterior shoots may
+        set `letterInLieu` to request a Letter in Lieu of Permit instead.
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/film-permit-application.json' }
+      responses:
+        '201':
+          description: Permit application created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/film-permit-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /permit-applications/{applicationId}:
+    get:
+      operationId: getPermitApplication
+      summary: Get a film-permit application
+      tags: [Applications]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The permit application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/film-permit-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    FilmPermit: { $ref: '../schemas/film-permit.json' }
+    ProductionCompany: { $ref: '../schemas/production-company.json' }
+    ScreenActivity: { $ref: '../schemas/screen-activity.json' }
+    MediaProgram: { $ref: '../schemas/media-program.json' }
+    MarchInspection: { $ref: '../schemas/march-inspection.json' }
+    FilmPermitApplication: { $ref: '../schemas/film-permit-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

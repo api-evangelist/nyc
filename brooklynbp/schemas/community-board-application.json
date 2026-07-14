@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynbp/schemas/community-board-application.json",
+  "title": "CommunityBoardApplication",
+  "description": "An application from a Brooklyn resident to be appointed to a community board (or other body the Borough President appoints to) — the single most consequential constituent-facing action the office takes each year, and the natural counterpart to the read-only 'BP Appointments' and 'Community Board Contact List' datasets. NET-NEW: there is NO public API and NO Open Data twin for the application intake; today it is collected only through a WordPress web form (Contact Form 7 / third-party form) with no machine-readable contract. This schema serves both the write surface (submit an application) and the read-back of an applicant's own submission.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.brooklynbp.nyc.gov/community-boards/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application reference. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Under Review", "Interview", "Appointed", "Waitlisted", "Declined", null],
+      "description": "Lifecycle status. Set by the office, not the applicant.",
+      "readOnly": true
+    },
+    "boardType": {
+      "type": "string",
+      "description": "Which body the applicant is applying to serve on.",
+      "enum": ["Community Board", "Community Education Council", "HHC Community Advisory Board", "Business Improvement District", "Solid Waste Advisory Board", "Other"]
+    },
+    "communityBoardPreference": { "type": ["string", "integer", "null"], "description": "Preferred Brooklyn community board number (1-18) where applicable." },
+    "applicant": { "$ref": "_common.json#/$defs/PersonName" },
+    "contact": {
+      "type": "object",
+      "description": "Applicant contact details.",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "address": { "type": ["string", "null"] }
+      },
+      "required": ["email"],
+      "additionalProperties": false
+    },
+    "residence": { "$ref": "_common.json#/$defs/Geography" },
+    "isBrooklynResident": { "type": "boolean", "description": "Applicant attests to living or working in Brooklyn." },
+    "statementOfInterest": { "type": "string", "description": "Why the applicant wants to serve and relevant experience." },
+    "resumeUrl": { "type": ["string", "null"], "format": "uri", "description": "Optional link to a résumé / CV." },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["boardType", "applicant", "contact", "statementOfInterest"],
+  "additionalProperties": false
+}

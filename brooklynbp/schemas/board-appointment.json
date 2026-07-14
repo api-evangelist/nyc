@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynbp/schemas/board-appointment.json",
+  "title": "BoardAppointment",
+  "description": "A person the Brooklyn Borough President has appointed to (or designated as a representative on) a board, council, or advisory body — the office's appointment power. One canonical schema reconciling the many parallel 'BP Appointments' Open Data datasets: Community Education Councils (5mxw-kxpt), HHC Community Advisory Boards (avh4-h5hx), Brooklyn Public Library Board (q7f5-jwds), DYCD Neighborhood Advisory Boards (95u9-kyyu), Business Improvement Districts (pvxf-9irb), Solid Waste Advisory Board (rbwa-m4iy), and Miscellaneous Boards (efdc-dxuz).",
+  "type": "object",
+  "x-source": {
+    "opendata_cec": "https://data.cityofnewyork.us/d/5mxw-kxpt",
+    "opendata_hhc_cab": "https://data.cityofnewyork.us/d/avh4-h5hx",
+    "opendata_bpl": "https://data.cityofnewyork.us/d/q7f5-jwds",
+    "opendata_dycd_nabs": "https://data.cityofnewyork.us/d/95u9-kyyu",
+    "opendata_bids": "https://data.cityofnewyork.us/d/pvxf-9irb",
+    "opendata_swab": "https://data.cityofnewyork.us/d/rbwa-m4iy",
+    "opendata_misc": "https://data.cityofnewyork.us/d/efdc-dxuz"
+  },
+  "properties": {
+    "board": { "type": "string", "description": "The board / council / body the person serves on (e.g. Community Education Council, HHC CAB, BPL Board, BID, SWAB)." },
+    "boardType": {
+      "type": ["string", "null"],
+      "description": "Which appointments dataset / board family this record comes from.",
+      "enum": ["Community Education Council", "HHC Community Advisory Board", "Brooklyn Public Library Board", "DYCD Neighborhood Advisory Board", "Business Improvement District", "Solid Waste Advisory Board", "Miscellaneous Board", null]
+    },
+    "name": { "$ref": "_common.json#/$defs/PersonName" },
+    "appointeeOrRepresentative": { "$ref": "_common.json#/$defs/AppointeeOrRepresentative" },
+    "term": { "$ref": "_common.json#/$defs/Term" },
+    "voting": { "type": ["boolean", "string", "null"], "description": "Whether the seat is voting ('VOTING')." },
+    "organization": { "type": ["string", "null"], "description": "Affiliated organization where present ('ORGANIZATION')." },
+    "title": { "type": ["string", "null"], "description": "Contact title where present ('TITLE/ Contact Persons')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["board"],
+  "additionalProperties": false
+}

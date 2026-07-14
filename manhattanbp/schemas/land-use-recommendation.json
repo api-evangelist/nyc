@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanbp/schemas/land-use-recommendation.json",
+  "title": "LandUseRecommendation",
+  "description": "A Manhattan Borough President advisory recommendation on a Uniform Land Use Review Procedure (ULURP) application — the office's statutory land-use role. Canonical schema reconciling the 'ULURP Recommendations' dataset (gt5i-dmde, 4 columns). The recommendation text itself is published only as a linked PDF (an opendata gap for the substance of each recommendation).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/gt5i-dmde",
+    "site": "https://www.manhattanbp.nyc.gov/land-use/",
+    "opendata_gap_note": "Recommendation body is a linked PDF, not structured data."
+  },
+  "properties": {
+    "ulurpApplicationNumber": { "type": ["string", "null"], "description": "ULURP application number ('ULURP Application Number')." },
+    "project": { "type": ["string", "null"], "description": "Project / application name ('Project')." },
+    "date": { "type": ["string", "null"], "format": "date", "description": "Recommendation date ('Date')." },
+    "pdfUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the full recommendation PDF ('PDF download')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "additionalProperties": false
+}

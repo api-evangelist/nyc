@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/schemas/land-use-recommendation.json",
+  "title": "LandUseRecommendation",
+  "description": "The Queens Borough President's advisory recommendation on a land-use application under the city's Uniform Land Use Review Procedure (ULURP). After hosting a Land Use Public Hearing where applicants seeking variances or zoning-map changes present their plans, the Borough President issues an advisory recommendation in favor or in opposition. NO public API and NO Open Data twin today — this content lives only as HTML/PDF on queensbp.nyc.gov and in ULURP records at DCP/City Planning.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.queensbp.nyc.gov/land-use/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "ulurpNumber": { "type": ["string", "null"], "description": "City Planning ULURP application number (e.g. 'C 240123 ZMQ')." },
+    "applicationName": { "type": "string", "description": "Name / short title of the land-use application." },
+    "applicant": { "type": ["string", "null"], "description": "The entity seeking the variance or zoning change." },
+    "actionType": {
+      "type": ["string", "null"],
+      "description": "Type of land-use action.",
+      "enum": ["Zoning Map Amendment", "Zoning Text Amendment", "Special Permit", "Variance", "Disposition of City Property", "Site Selection", "Acquisition", "Landmark", "Other", null]
+    },
+    "communityBoard": { "$ref": "_common.json#/$defs/CommunityBoardReference" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "hearingDate": { "type": ["string", "null"], "format": "date", "description": "Date of the Land Use Public Hearing." },
+    "recommendation": {
+      "type": ["string", "null"],
+      "enum": ["Approve", "Approve with Conditions", "Disapprove", "Disapprove with Conditions", "No Recommendation", null],
+      "description": "The Borough President's advisory recommendation."
+    },
+    "recommendationDate": { "type": ["string", "null"], "format": "date", "description": "Date the recommendation was issued." },
+    "documentUrl": { "type": ["string", "null"], "format": "uri", "description": "URL of the recommendation document / hearing notice." }
+  },
+  "required": ["applicationName"],
+  "additionalProperties": false
+}

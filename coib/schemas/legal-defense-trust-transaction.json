@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/coib/schemas/legal-defense-trust-transaction.json",
+  "title": "LegalDefenseTrustTransaction",
+  "description": "A single financial transaction on a public servant's Legal Defense Trust — a donation into, refund out of, or expenditure from a trust established to pay legal costs (Board Rules Chapter 7). One canonical schema reconciling three parallel Open Data datasets: 'Legal Defense Trust Donations' (jsiv-zh9r, 10 columns), 'Legal Defense Trust Refunded Donations' (t3pj-3dgu, 11 columns), and 'Legal Defense Trust Expenditures' (mhyv-6iza, 20 columns — the only COIB dataset carrying the full geography spine).",
+  "type": "object",
+  "x-source": {
+    "opendata_donations": "https://data.cityofnewyork.us/d/jsiv-zh9r",
+    "opendata_refunded": "https://data.cityofnewyork.us/d/t3pj-3dgu",
+    "opendata_expenditures": "https://data.cityofnewyork.us/d/mhyv-6iza"
+  },
+  "properties": {
+    "transactionType": {
+      "type": "string",
+      "enum": ["Donation", "RefundedDonation", "Expenditure"],
+      "description": "Which of the three parallel Legal Defense Trust datasets this row comes from."
+    },
+    "trustName": { "type": "string", "description": "'Trust Name' — the legal defense trust." },
+    "transactionName": { "type": ["string", "null"], "description": "'Donation Name' / 'Expenditure Name' — the transaction label." },
+    "transactionNumber": { "type": ["string", "null"], "description": "'Donation Number' (refunds dataset)." },
+    "amount": { "$ref": "_common.json#/$defs/Money", "description": "'Amount' / 'Donation Amount' — donation or expenditure value." },
+    "refundAmount": { "$ref": "_common.json#/$defs/Money", "description": "'Refund Amount' (refunds only)." },
+    "date": { "type": ["string", "null"], "format": "date", "description": "'Date of Donation' / 'Donation Date' / 'Date of Incurrence'." },
+    "refundDate": { "type": ["string", "null"], "format": "date", "description": "'Refund Date' (refunds only)." },
+    "firstName": { "type": ["string", "null"], "description": "Donor first name ('First Name')." },
+    "lastName": { "type": ["string", "null"], "description": "Donor last name ('Last Name')." },
+    "description": { "type": ["string", "null"], "description": "'Description' / 'Purpose of Expenditure'." },
+    "payeeName": { "type": ["string", "null"], "description": "'Payee Name' (expenditures only)." },
+    "attestedBy": { "type": ["string", "null"], "description": "'Attested By' (expenditures only)." },
+    "location": { "$ref": "_common.json#/$defs/PostalAddress" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["transactionType", "trustName"],
+  "additionalProperties": false
+}

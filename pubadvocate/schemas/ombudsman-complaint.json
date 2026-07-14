@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pubadvocate/schemas/ombudsman-complaint.json",
+  "title": "OmbudsmanComplaint",
+  "description": "A 'help with a city agency' request to the NYC Public Advocate — the office's constitutional ombudsman function and the most common resident interaction with it. NET-NEW: there is NO public API today; residents can only submit a web form, call, or email, and cannot machine-track a case. This schema serves both the read surface (list/get a resident's own complaints) and the write surface (file a complaint asking the ombudsman to intervene with a NYC agency).",
+  "type": "object",
+  "x-source": {
+    "site": "https://advocate.nyc.gov/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "complaintId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned case number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "In Review", "Agency Contacted", "Awaiting Resident", "Resolved", "Closed", "Referred", null],
+      "description": "Case lifecycle status. Set by the office, not the requester.",
+      "readOnly": true
+    },
+    "category": { "$ref": "_common.json#/$defs/ComplaintCategory" },
+    "agency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "subject": { "type": "string", "description": "Short summary of the problem." },
+    "description": { "type": "string", "description": "Full description of the issue and what help is being requested." },
+    "address": { "type": ["string", "null"], "description": "Relevant address (e.g. the building or facility involved)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "priorAgencyContact": { "type": ["boolean", "null"], "description": "Whether the resident already tried to resolve this with the agency directly." },
+    "consentToContactAgency": { "type": "boolean", "default": true, "description": "Resident consents to the Public Advocate contacting the agency on their behalf." },
+    "contact": { "$ref": "_common.json#/$defs/Contact" },
+    "createdDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "resolvedDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "required": ["category", "subject", "description"],
+  "additionalProperties": false
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/coib/schemas/advisory-opinion.json",
+  "title": "AdvisoryOpinion",
+  "description": "A published COIB advisory opinion — the Board's formal interpretation of the City's conflicts-of-interest law (Charter Chapter 68). NO Open Data twin: advisory opinions are published only as PDFs on the COIB public-documents pages, with no machine-readable index. This schema proposes the read model for that reference corpus.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/coib/public-documents/public-documents.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "opinionNumber": { "type": "string", "description": "Advisory opinion number (e.g. 'AO 2024-1')." },
+    "title": { "type": ["string", "null"], "description": "Opinion title / subject." },
+    "date": { "type": ["string", "null"], "format": "date", "description": "Date issued." },
+    "summary": { "type": ["string", "null"], "description": "Board summary / headnote." },
+    "charterSections": { "type": "array", "items": { "type": "string" }, "description": "Charter Chapter 68 sections interpreted (e.g. '2604(b)(2)')." },
+    "topics": { "type": "array", "items": { "type": "string" }, "description": "Subject tags (e.g. 'Gifts', 'Post-employment', 'Moonlighting')." },
+    "documentUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the published PDF." }
+  },
+  "required": ["opinionNumber"],
+  "additionalProperties": false
+}

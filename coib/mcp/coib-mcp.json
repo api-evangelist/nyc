@@ -1,0 +1,155 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces COIB's open transparency data (enforcement dispositions, agency donations, policymakers, legal defense trusts, advisory opinions) and adds file_financial_disclosure — the net-new write workflow locked today inside the login-only COIB Annual Financial Disclosure filing website.",
+    "openapi": "../openapi/coib.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.coib",
+    "title": "NYC Conflicts of Interest Board (COIB)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Conflicts of Interest Board — enforcement dispositions and fines, donations to agencies and elected-official-affiliated non-profits, the monthly policymakers list, legal defense trust donations/refunds/expenditures, and published advisory opinions from NYC Open Data, plus the net-new ability to file and track an annual financial disclosure report that today lives only in the login-gated COIB filing website.",
+    "instructions": "Use find_enforcement_dispositions / get_enforcement_disposition to answer questions about resolved conflicts-of-interest cases and their fines. find_agency_donations covers gifts to City agencies and to non-profits affiliated with elected officials. find_policymakers returns the monthly list of designated policymakers (the roles that must file annual disclosure). find_legal_defense_trust_transactions covers trust donations, refunds, and expenditures. find_advisory_opinions searches the Board's published interpretations of Charter Chapter 68. file_financial_disclosure (net-new) submits an annual financial disclosure report; it requires an authenticated filer and mutates state — confirm the filer type, reporting year, positions, and interests with the user, and ensure they attest the report is true and complete before submitting. Reported financial interests are confidential except for elected officials."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_enforcement_dispositions",
+      "title": "Find Enforcement Dispositions",
+      "description": "Search resolved COIB enforcement actions by agency, date range, minimum fine, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "agency": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "minFine": { "type": "number" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/enforcement-disposition.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listEnforcementDispositions"
+    },
+    {
+      "name": "get_enforcement_disposition",
+      "title": "Get Enforcement Disposition",
+      "description": "Fetch a single resolved enforcement action (fine, penalty, explanation) by COIB case number.",
+      "inputSchema": { "type": "object", "properties": { "caseNumber": { "type": "string" } }, "required": ["caseNumber"] },
+      "outputSchema": { "$ref": "../schemas/enforcement-disposition.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getEnforcementDisposition"
+    },
+    {
+      "name": "find_agency_donations",
+      "title": "Find Agency Donations",
+      "description": "Search donations to City agencies and to non-profits affiliated with elected officials, by stream, agency, elected official, year, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "stream": { "type": "string", "enum": ["NFPAffiliatedWithElectedOfficial", "ReceivedByAgency", "OfficialFundraising"] },
+          "agency": { "type": "string" },
+          "electedOfficial": { "type": "string" },
+          "year": { "type": "integer" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/agency-donation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listAgencyDonations"
+    },
+    {
+      "name": "find_policymakers",
+      "title": "Find Policymakers",
+      "description": "List designated City policymakers (the roles that must file annual financial disclosure) by agency, calendar year, or month.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "agency": { "type": "string" },
+          "calendarYear": { "type": "integer" },
+          "month": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/policymaker.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPolicymakers"
+    },
+    {
+      "name": "find_legal_defense_trust_transactions",
+      "title": "Find Legal Defense Trust Transactions",
+      "description": "Search legal defense trust donations, refunds, and expenditures by transaction type, trust name, borough, or date range.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "transactionType": { "type": "string", "enum": ["Donation", "RefundedDonation", "Expenditure"] },
+          "trustName": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/legal-defense-trust-transaction.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLegalDefenseTrustTransactions"
+    },
+    {
+      "name": "find_advisory_opinions",
+      "title": "Find Advisory Opinions",
+      "description": "Search the Board's published advisory opinions interpreting Charter Chapter 68, by charter section, topic, year, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "charterSection": { "type": "string" },
+          "topic": { "type": "string" },
+          "year": { "type": "integer" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/advisory-opinion.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listAdvisoryOpinions"
+    },
+    {
+      "name": "list_my_financial_disclosure_filings",
+      "title": "List My Financial Disclosure Filings",
+      "description": "List the authenticated filer's own annual financial disclosure reports and their status — today visible only inside the login-gated COIB filing website.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reportingYear": { "type": "integer" },
+          "status": { "type": "string", "enum": ["Draft", "Submitted", "Amended", "Late", "Waived", "Under Review", "Accepted"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/financial-disclosure-filing.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listFinancialDisclosureFilings",
+      "x-auth": "user"
+    },
+    {
+      "name": "file_financial_disclosure",
+      "title": "File Financial Disclosure",
+      "description": "Submit an annual financial disclosure report (NYC Annual Disclosure Law). NET-NEW workflow with no public API today — it lives only in the login-gated COIB Annual Financial Disclosure filing website. Requires an authenticated filer. Mutates state — confirm filer type, reporting year, positions, and interests first, and ensure the filer attests the report is true and complete. Reported financial interests are confidential except for elected officials.",
+      "inputSchema": { "$ref": "../schemas/financial-disclosure-filing.json" },
+      "outputSchema": { "$ref": "../schemas/financial-disclosure-filing.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createFinancialDisclosureFiling",
+      "x-auth": "user"
+    }
+  ]
+}

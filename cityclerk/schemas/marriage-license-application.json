@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cityclerk/schemas/marriage-license-application.json",
+  "title": "MarriageLicenseApplication",
+  "description": "An application for a NYC marriage license submitted to the Office of the City Clerk's Marriage Bureau — the single highest-value citizen transaction of this domain. NET-NEW: there is NO public API and NO Open Data twin for marriage-license applications; today a couple can only apply through Project Cupid (projectcupid.cityofnewyork.us), a no-code application built on the rented Unqork platform. This schema is the write surface (apply) and its own read surface (check application status); an approved application yields a marriage-license.json.",
+  "type": "object",
+  "x-source": {
+    "system": "https://projectcupid.cityofnewyork.us/app/cupidceremony",
+    "site": "https://www.cityclerk.nyc.gov/content/marriage-license",
+    "platform": "Unqork (no-code)",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application id (Project Cupid record id). Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Draft", "Submitted", "Under Review", "Approved", "Denied", "Appointment Scheduled", "License Issued", null],
+      "description": "Application lifecycle status. Set by the Marriage Bureau / Project Cupid, not the applicant.",
+      "readOnly": true
+    },
+    "applicantA": { "$ref": "_common.json#/$defs/Person" },
+    "applicantB": { "$ref": "_common.json#/$defs/Person" },
+    "residenceA": { "$ref": "_common.json#/$defs/Address" },
+    "residenceB": { "$ref": "_common.json#/$defs/Address" },
+    "priorMarriagesA": { "type": ["integer", "null"], "minimum": 0, "description": "Number of prior marriages for applicant A (affects documentation required)." },
+    "priorMarriagesB": { "type": ["integer", "null"], "minimum": 0, "description": "Number of prior marriages for applicant B." },
+    "newNameA": { "type": ["string", "null"], "description": "Optional new surname applicant A elects to take." },
+    "newNameB": { "type": ["string", "null"], "description": "Optional new surname applicant B elects to take." },
+    "appointmentType": {
+      "type": ["string", "null"],
+      "enum": ["In-Person", "Virtual", null],
+      "description": "Whether the license appointment is in person or via video (Project Cupid supports both for marriage licenses)."
+    },
+    "requestedAppointmentId": { "type": ["string", "null"], "description": "The appointment slot the couple wants to book for their license appointment (see appointment on ceremony.json)." },
+    "waiverRequested": { "type": ["boolean", "null"], "default": false, "description": "Request a judicial waiver of the 24-hour waiting period." },
+    "attestation": { "type": ["boolean", "null"], "description": "Applicants attest that the information provided is true and both parties consent to the marriage." },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "licenseId": { "type": ["string", "null"], "description": "The marriage license id issued once this application is approved.", "readOnly": true }
+  },
+  "required": ["applicantA", "applicantB"],
+  "additionalProperties": false
+}

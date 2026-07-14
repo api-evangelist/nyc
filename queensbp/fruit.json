@@ -1,0 +1,137 @@
+{
+  "domain": "queensbp",
+  "agency": "Office of the Queens Borough President (QBP)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting). queensbp.org 301-redirects to www.queensbp.nyc.gov; fingerprinted the target as WordPress (Divi theme + Elementor) on WP Engine behind Cloudflare, with Yoast SEO and Wordfence (via response headers, wp-json namespaces, generator/theme markup, and sitemap_index.xml). Confirmed the WordPress REST API (/wp-json/wp/v2) is enabled but effectively empty — X-WP-Total: 0 for both posts and the 'project' custom post type; content is authored as Divi Pages. Verified NYC Open Data via the Socrata Discovery API: Dataset-Information_Agency='Queens Borough President (QBP)' returns TWO datasets (community board members rps4-dwwk; district managers and chairs 8z5h-tzdr), both pulled with column schemas. Mapped site content areas from the page sitemap (land use, community boards, budget/major allocations, constituent services, newsroom).",
+  "related_domains": ["queensbp.org", "www.queensbp.nyc.gov", "manhattanbp.nyc.gov", "brooklyn-usa.org", "bronxboropres.nyc.gov", "statenislandusa.com", "data.cityofnewyork.us", "nyc.gov/site/planning"],
+  "headline_findings": [
+    "queensbp.org 301-redirects to www.queensbp.nyc.gov — a WordPress/Divi brochure site on WP Engine behind Cloudflare (Yoast, Wordfence, Google Language Translator). A fifth distinct platform after Parks (Smarty/PHP), DOE (Sitefinity/.NET), Council (WordPress), and NYCHA (NYC.gov Livesite + Oracle Siebel).",
+    "The WordPress REST API (/wp-json/wp/v2) is switched ON but effectively EMPTY: 0 posts and 0 'project' custom-post-type entries. The one machine-readable surface the platform already ships is dormant because content is authored as Divi page-builder Pages, not structured posts.",
+    "Open Data is nearly absent but NOT zero: exactly TWO datasets attributed to 'Queens Borough President (QBP)', both about community boards — Queens Community Board Members (rps4-dwwk, 4 cols) and Queens Community Board District Managers and Chairs (8z5h-tzdr, 20 cols).",
+    "The core borough-president acts have NO machine-readable contract: advisory land-use (ULURP) recommendations, tens of millions in annual discretionary funding to nonprofits/schools/cultural groups, events, and press releases all live only as HTML.",
+    "Net-new write surface: apply to serve on a community board (CommunityBoardApplication) — the QBP's flagship participatory act ('2026 Queens Community Board Application Process'), today only an HTML/PDF form. See tech-stack.md and apis-observed.md.",
+    "Reframe: all five borough presidents run near-identical thin sites. The real low-hanging fruit is ONE shared Borough President API standard implemented per borough, not five one-off builds."
+  ],
+  "apis_observed": [
+    { "endpoint": "www.queensbp.nyc.gov/wp-json/wp/v2", "type": "WordPress REST API", "owner": "QBP (WordPress/Divi on WP Engine)", "public": true, "note": "Enabled and publicly reachable, returns valid JSON for pages, but X-WP-Total=0 for posts and the 'project' custom post type. A real API surface carrying almost no structured content. Namespaces include wp/v2, oembed, yoast/v1, divi/v1, wpe/cache-plugin, wordfence/v1." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Two QBP-attributed datasets (rps4-dwwk community board members; 8z5h-tzdr district managers and chairs). SODA /resource/<id>.json endpoints. The only substantive machine-readable QBP data — both about community boards." },
+    { "endpoint": "www.queensbp.nyc.gov", "type": "informational site", "owner": "QBP (WordPress/Divi, WP Engine, Cloudflare)", "public": "html", "note": "Land use, community boards, budget/major allocations, constituent services, newsroom — all Divi page-builder Pages; content only, no content API in practice." },
+    { "endpoint": "queensbp.org", "type": "legacy domain redirect", "owner": "QBP", "public": "301", "note": "301-redirects to www.queensbp.nyc.gov (Cloudflare); the office has migrated onto the nyc.gov domain." }
+  ],
+  "meta": {
+    "short": "Queens Borough President",
+    "verb": "standardize",
+    "platform": "WordPress (Divi + Elementor) on WP Engine behind Cloudflare; Yoast + Wordfence; queensbp.org 301s to www.queensbp.nyc.gov",
+    "netnew": "CommunityBoardApplication — apply to serve on a Queens community board (today an HTML/PDF form)",
+    "accent": "#d98a2a",
+    "tagline": "A thin WordPress brochure with its REST API switched on but empty, and almost no open data — the fix is one shared Borough President API, not a fifth one-off.",
+    "headline": "Queens Borough President is a WordPress/Divi brochure whose one machine-readable surface (the WP REST API) is enabled but empty, with just two community-board datasets on Open Data — a candidate for one standardized API shared across all five borough presidents."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 2,
+    "openData": 1,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Modern managed WordPress/Divi on WP Engine + Cloudflare, but a page-builder brochure configuration",
+    "siteApi": "WordPress REST API (wp/v2) is enabled and reachable but effectively empty (0 posts / 0 projects)",
+    "openData": "Only two datasets, both community boards; the core BP functions have no open data",
+    "coreData": "Land-use recs, discretionary funding, events, press are HTML-only; just community-board rosters are structured",
+    "writeApi": "No write API — community board applications, land-use testimony, constituent requests are all email/HTML forms",
+    "agent": "No MCP or agent-native surface; wp-json exists generically but is not oriented to agents or populated",
+    "ownership": "Migrated onto the nyc.gov domain and owns its CMS content, but the stack is commodity vendor SaaS (WP Engine, Divi, Cloudflare)"
+  },
+  "fruit": [
+    {
+      "name": "Community Boards (district managers & chairs)",
+      "type": "directory + map",
+      "entity": "CommunityBoard",
+      "url": "https://www.queensbp.nyc.gov/community-boards/",
+      "count": "14 Queens community boards",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Queens Community Board District Managers and Chairs 8z5h-tzdr (20c)"],
+      "notes": "The board office: district manager, chair, address, monthly meeting, and full NYC geography spine (BBL/BIN, council district, census tract, NTA, lat/long)."
+    },
+    {
+      "name": "Community Board Members (appointments)",
+      "type": "data table",
+      "entity": "CommunityBoardAppointment",
+      "url": "https://data.cityofnewyork.us/d/rps4-dwwk",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Queens Community Board Members rps4-dwwk (4c)", "Queens Community Board District Managers and Chairs 8z5h-tzdr (20c)"],
+      "notes": "Who serves: first/last name, board, year appointed. The Borough President appoints all Queens CB members (half nominated by the local Council Member) per City Charter."
+    },
+    {
+      "name": "Land Use / ULURP recommendations",
+      "type": "hearings + advisory recommendation",
+      "entity": "LandUseRecommendation",
+      "url": "https://www.queensbp.nyc.gov/land-use/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Borough President hosts Land Use Public Hearings and issues advisory recommendations (approve/disapprove) on ULURP applications. HTML/PDF only; no API, no QBP Open Data twin."
+    },
+    {
+      "name": "Discretionary funding (budget / major allocations)",
+      "type": "grants program",
+      "entity": "DiscretionaryFundingAward",
+      "url": "https://www.queensbp.nyc.gov/budget/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Tens of millions each year in capital and expense funding to nonprofits, schools, and cultural institutions. Application and awards are HTML-only; no API, no QBP Open Data twin."
+    },
+    {
+      "name": "Events (hearings, borough board/cabinet, expos, webinars)",
+      "type": "event listings",
+      "entity": "Event",
+      "url": "https://www.queensbp.nyc.gov/newsroom/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Land use hearings, Borough Board/Cabinet meetings, tech expo, affordable-housing webinars. Authored as Divi Pages; the WP REST API returns 0 events."
+    },
+    {
+      "name": "Newsroom (press releases, statements, reports)",
+      "type": "news feed",
+      "entity": "PressRelease",
+      "url": "https://www.queensbp.nyc.gov/newsroom/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Runs on WordPress with the REST API enabled, yet wp/v2/posts returns 0 — releases are Divi Pages, so the platform's own machine-readable surface is dormant."
+    },
+    {
+      "name": "Apply to a community board",
+      "type": "sign-up / application workflow",
+      "entity": "CommunityBoardApplication",
+      "url": "https://www.queensbp.nyc.gov/qbp-richards-launches-2026-queens-community-board-application-process/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The QBP's flagship participatory act — residents apply to be appointed to a community board (the '2026 Queens Community Board Application Process'). HTML/PDF form only; no API and no Open Data twin. The net-new WRITE surface for this domain."
+    },
+    {
+      "name": "Constituent services request",
+      "type": "complaint / request workflow",
+      "entity": "CommunityBoardApplication",
+      "url": "https://www.queensbp.nyc.gov/constituent-services/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Constituent Services Unit fields complaints about local government services and liaises with city agencies. Appointment/contact form only — an alternative net-new write surface alongside the community board application."
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandbp/schemas/resolution.json",
+  "title": "Resolution",
+  "description": "A resolution, report, or set of minutes produced by the Staten Island Borough Board or the Borough President's office. The Borough Board (the BP, the borough's council members, and the community board chairs) meets monthly and issues resolutions and reports on borough-wide matters. NET-NEW as data: these appear only as monthly PDFs on statenislandusa.com/borough-board.html — no dataset, no API. Modeled from the published meeting archive.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.statenislandusa.com/borough-board.html",
+    "office": "Community Affairs",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "resolutionId": { "type": ["string", "null"], "description": "Resolution / report identifier." },
+    "type": {
+      "type": ["string", "null"],
+      "enum": ["Resolution", "Report", "Minutes", "Testimony", "Statement", null]
+    },
+    "title": { "type": ["string", "null"], "description": "Title or subject." },
+    "body": {
+      "type": ["string", "null"],
+      "enum": ["Staten Island Borough Board", "Office of the Borough President", null],
+      "description": "Issuing body."
+    },
+    "meetingDate": { "type": ["string", "null"], "format": "date", "description": "Date of the Borough Board meeting." },
+    "summary": { "type": ["string", "null"], "description": "Short description of the matter addressed." },
+    "outcome": {
+      "type": ["string", "null"],
+      "enum": ["Adopted", "Rejected", "Tabled", "Referred", "Informational", null]
+    },
+    "documentUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the published PDF." },
+    "relatedApplicationId": { "type": ["string", "null"], "description": "Related ULURP / land-use application, if any." }
+  },
+  "required": ["type"],
+  "additionalProperties": false
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pubadvocate/schemas/legislation.json",
+  "title": "Legislation",
+  "description": "A piece of legislation introduced or sponsored by the NYC Public Advocate. The Public Advocate is a non-voting member of the City Council with the power to introduce legislation; those bills live in the Council's Legistar system (legistar.council.nyc.gov), owned by NYCC, not the PA. Proposed schema modeling a PA-owned view over the sponsored subset — there is no PA-owned legislation feed today.",
+  "type": "object",
+  "x-source": {
+    "system": "https://legistar.council.nyc.gov/",
+    "owner": "City Council (NYCC) / Granicus Legistar",
+    "opendata_gap": true
+  },
+  "properties": {
+    "fileId": { "type": ["string", "null"], "description": "Legistar file / record identifier." },
+    "introNumber": { "type": ["string", "null"], "description": "Introduction number (e.g. 'Int 0123-2026')." },
+    "title": { "type": "string", "description": "Short title of the bill." },
+    "summary": { "type": ["string", "null"], "description": "Plain-language summary." },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Introduced", "In Committee", "Hearing Held", "Passed", "Enacted", "Vetoed", "Failed", "Withdrawn", null],
+      "description": "Legislative status."
+    },
+    "type": { "type": ["string", "null"], "description": "Matter type (e.g. Introduction, Resolution, Local Law)." },
+    "introducedDate": { "type": ["string", "null"], "format": "date", "description": "Date introduced." },
+    "primeSponsor": { "type": ["string", "null"], "description": "Prime sponsor (the Public Advocate for PA bills)." },
+    "sponsors": { "type": "array", "items": { "type": "string" }, "description": "Co-sponsoring council members." },
+    "committee": { "type": ["string", "null"], "description": "Council committee of reference." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Legistar detail URL." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

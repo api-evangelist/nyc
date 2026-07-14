@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynbp/schemas/funding-award.json",
+  "title": "FundingAward",
+  "description": "A discretionary funding award made by the Brooklyn Borough President — capital allocations, expense/discretionary contract awards, and tourism grants. One canonical schema reconciling 'Capital Awards' (n6ej-pebd), 'Discretionary Contract Awards' (tsb8-3rct) and 'Discretionary Contract Awards 2017-2018' (ubuy-v2nw), and 'Tourism Grants' (rma9-fm39, the richest, with a full geography spine). Also covers the /budget 'Get Funded by Borough President Reynoso' and capital-funding-application site sections.",
+  "type": "object",
+  "x-source": {
+    "opendata_capital": "https://data.cityofnewyork.us/d/n6ej-pebd",
+    "opendata_discretionary": "https://data.cityofnewyork.us/d/tsb8-3rct",
+    "opendata_discretionary_1718": "https://data.cityofnewyork.us/d/ubuy-v2nw",
+    "opendata_tourism": "https://data.cityofnewyork.us/d/rma9-fm39",
+    "site": "https://www.brooklynbp.nyc.gov/budget/"
+  },
+  "properties": {
+    "awardType": {
+      "type": "string",
+      "description": "The kind of award.",
+      "enum": ["Capital", "Discretionary Contract", "Tourism Grant", "Expense", "Other"]
+    },
+    "organization": { "type": ["string", "null"], "description": "Recipient organization ('ORGANIZATION' / 'Organization Name' / 'Vend-Legal Name')." },
+    "organizationAddress": { "type": ["string", "null"], "description": "Recipient address where present ('Organization Address')." },
+    "projectTitle": { "type": ["string", "null"], "description": "Funded project / purpose ('CAPITAL PROJECT' / 'Project Title' / 'Actg-Line Description' / 'Discretionary Grant Allocations')." },
+    "fundedAmount": { "type": ["number", "null"], "description": "Amount awarded ('FUNDING' / 'Funded Amount' / 'Comm-Item Total Amt' / 'Amount')." },
+    "amountRequested": { "type": ["number", "null"], "description": "Amount requested where present ('Amount Requested')." },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "agency": { "type": ["string", "null"], "description": "Administering agency where present ('Agency')." },
+    "acceptanceDate": { "type": ["string", "null"], "format": "date", "description": "Contract acceptance date where present ('Hdr-System Acceptance Date')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["awardType"],
+  "additionalProperties": false
+}

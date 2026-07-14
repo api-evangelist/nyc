@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxbp/schemas/event.json",
+  "title": "Event",
+  "description": "A public event or meeting hosted or promoted by the Office of the Bronx Borough President. NET GAP: there is no owned API; the calendar (bronxboropres.nyc.gov/calendar.php) is a Revize plugin that imports two Google Calendars ('Events' and 'Meetings'). This schema is reverse-engineered from that calendar so events can be published as an owned, machine-readable resource.",
+  "type": "object",
+  "x-source": {
+    "site": "https://bronxboropres.nyc.gov/calendar.php",
+    "backing": "Google Calendar (Revize revize_calendar plugin; calendars 'Events' and 'Meetings')",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "id": { "type": ["string", "null"], "description": "Event id (Google Calendar event id)." },
+    "title": { "type": "string", "description": "Event title." },
+    "calendar": {
+      "type": ["string", "null"],
+      "enum": ["Events", "Meetings", null],
+      "description": "Source calendar."
+    },
+    "description": { "type": ["string", "null"], "description": "Event description." },
+    "start": { "type": ["string", "null"], "format": "date-time", "description": "Start date/time." },
+    "end": { "type": ["string", "null"], "format": "date-time", "description": "End date/time." },
+    "allDay": { "type": ["boolean", "null"], "description": "Whether the event is all-day." },
+    "location": { "type": ["string", "null"], "description": "Venue / address." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Event detail or registration URL." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

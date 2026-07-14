@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynbp/schemas/report.json",
+  "title": "Report",
+  "description": "A published position of the Office of the Brooklyn Borough President — a resolution/legislation, report, testimony, op-ed, or press release. Canonical schema reconciling the 'Brooklyn Borough President's Office Legislation - Passed' dataset (e6ph-9uv7) with the WordPress content sections that carry the rest as posts/pages (/reports, /bkbp-testimonies, /op-ed, /newsroom & /press-releases). The current site publishes these through the generic WordPress REST API (wp/v2/posts, wp/v2/pages) — there is no purpose-built BP publications API.",
+  "type": "object",
+  "x-source": {
+    "opendata_legislation": "https://data.cityofnewyork.us/d/e6ph-9uv7",
+    "site_reports": "https://www.brooklynbp.nyc.gov/reports/",
+    "site_press": "https://www.brooklynbp.nyc.gov/newsroom/",
+    "wp_rest": "https://www.brooklynbp.nyc.gov/wp-json/wp/v2/posts"
+  },
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Publication type.",
+      "enum": ["Legislation", "Resolution", "Report", "Testimony", "Op-Ed", "Press Release"]
+    },
+    "title": { "type": "string", "description": "Title / name ('Name' in the legislation dataset; post title on the site)." },
+    "subject": { "type": ["string", "null"], "description": "Subject / topic ('Subject')." },
+    "status": { "type": ["string", "null"], "description": "Status where applicable ('Status' — e.g. Passed)." },
+    "link": { "type": ["string", "null"], "format": "uri", "description": "Canonical link to the document or page ('Link')." },
+    "publishedDate": { "type": ["string", "null"], "format": "date", "description": "Date published where available." }
+  },
+  "required": ["type", "title"],
+  "additionalProperties": false
+}

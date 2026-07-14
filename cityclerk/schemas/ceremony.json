@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cityclerk/schemas/ceremony.json",
+  "title": "Ceremony",
+  "description": "A civil marriage ceremony or domestic-partnership ceremony performed by the Office of the City Clerk, together with its appointment slot. Scheduling runs through Project Cupid (projectcupid.cityofnewyork.us). There is NO Open Data twin and NO public API; appointment availability and bookings live only inside the Unqork-hosted Project Cupid system. This schema doubles as the Appointment shape returned by availability lookups.",
+  "type": "object",
+  "x-source": {
+    "system": "https://projectcupid.cityofnewyork.us/app/cupidceremony",
+    "site": "https://www.cityclerk.nyc.gov/content/marriage-ceremony",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "appointmentId": { "type": ["string", "null"], "description": "Appointment / booking id (Project Cupid). Server-assigned.", "readOnly": true },
+    "ceremonyType": {
+      "type": "string",
+      "enum": ["Marriage Ceremony", "Domestic Partnership Ceremony", "Marriage License Appointment", "Domestic Partnership Registration"],
+      "description": "The kind of appointment being scheduled at the City Clerk's office."
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Available", "Booked", "Completed", "Cancelled", "No-Show", null],
+      "description": "Slot / ceremony status. 'Available' is returned by availability lookups; the rest are set by the Marriage Bureau.",
+      "readOnly": true
+    },
+    "office": { "$ref": "_common.json#/$defs/Borough" },
+    "scheduledStart": { "type": ["string", "null"], "format": "date-time", "description": "Start date-time of the appointment slot." },
+    "scheduledEnd": { "type": ["string", "null"], "format": "date-time", "description": "End date-time of the appointment slot." },
+    "licenseId": { "type": ["string", "null"], "description": "Marriage license presented for a marriage ceremony (required for a ceremony; a valid, unexpired license is a precondition)." },
+    "applicationId": { "type": ["string", "null"], "description": "The MarriageLicenseApplication this appointment is attached to, if any." },
+    "partyA": { "$ref": "_common.json#/$defs/Person" },
+    "partyB": { "$ref": "_common.json#/$defs/Person" },
+    "officiant": { "type": ["string", "null"], "description": "Name of the City Clerk officiant, if assigned." },
+    "guestCount": { "type": ["integer", "null"], "minimum": 0, "description": "Number of guests (couples may bring up to four guests to a marriage ceremony)." },
+    "fee": { "$ref": "_common.json#/$defs/Money" }
+  },
+  "required": ["ceremonyType"],
+  "additionalProperties": false
+}

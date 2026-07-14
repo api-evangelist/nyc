@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/schemas/_common.json",
+  "title": "Queens Borough President — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across Office of the Queens Borough President (QBP) object schemas. Reconciles fields common to the two QBP NYC Open Data datasets (Queens Community Board Members rps4-dwwk; District Managers and Chairs 8z5h-tzdr), the queensbp.nyc.gov WordPress site, and the borough-president functions (land use / ULURP recommendations, discretionary funding, community-board appointments). Includes the NYC geography spine, a Community Board reference, and Coordinates.",
+  "$defs": {
+    "Borough": {
+      "type": "string",
+      "description": "NYC borough. The Queens Borough President's jurisdiction is Queens; the enum carries all five for spine consistency with the rest of city government.",
+      "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"]
+    },
+    "Coordinates": {
+      "type": "object",
+      "description": "WGS84 point (Open Data Latitude / Longitude).",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false
+    },
+    "Geography": {
+      "type": "object",
+      "description": "The NYC geography spine shared across QBP datasets — the join keys back to the rest of city government.",
+      "properties": {
+        "borough": { "$ref": "#/$defs/Borough" },
+        "communityBoard": { "type": ["string", "integer", "null"], "description": "Community Board / District number ('Community Board' / 'Board')." },
+        "councilDistrict": { "type": ["integer", "null"], "minimum": 1, "maximum": 51, "description": "NYC Council district ('Council District')." },
+        "censusTract": { "type": ["string", "null"], "description": "Census tract ('Census Tract')." },
+        "nta": { "type": ["string", "null"], "description": "Neighborhood Tabulation Area name or code ('NTA')." },
+        "bbl": { "type": ["string", "null"], "description": "Borough-Block-Lot ('BBL')." },
+        "bin": { "type": ["string", "null"], "description": "Building Identification Number ('BIN')." },
+        "postcode": { "type": ["string", "null"], "description": "ZIP / postcode ('Postcode')." }
+      },
+      "additionalProperties": false
+    },
+    "CommunityBoardReference": {
+      "type": "object",
+      "description": "A reference to one of Queens' 14 community boards.",
+      "properties": {
+        "board": { "type": ["string", "integer"], "description": "Community board number ('Board' / 'Community Board'), e.g. 'Queens Community Board 1'." },
+        "borough": { "$ref": "#/$defs/Borough" }
+      },
+      "required": ["board"],
+      "additionalProperties": false
+    },
+    "Person": {
+      "type": "object",
+      "description": "A named person (community board member, chair, or district manager).",
+      "properties": {
+        "firstName": { "type": ["string", "null"], "description": "'First Name' / 'CB Chair - First Name' / 'District Manager - First Name'." },
+        "lastName": { "type": ["string", "null"], "description": "'Last Name' / 'CB Chair - Last Name' / 'District Manager - Last Name'." }
+      },
+      "additionalProperties": false
+    },
+    "Money": {
+      "type": ["number", "null"],
+      "description": "A US dollar amount (discretionary funding award / capital allocation)."
+    }
+  }
+}

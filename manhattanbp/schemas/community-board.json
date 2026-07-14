@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanbp/schemas/community-board.json",
+  "title": "CommunityBoard",
+  "description": "A Manhattan community board — one of the borough's 12 advisory districts, whose members the Borough President appoints. Canonical schema reconciling the 'Community Board Leadership' dataset (3gkd-ddzn, 26 columns): chair, district manager, meeting details, office location, and the geography spine.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/3gkd-ddzn",
+    "site": "https://www.manhattanbp.nyc.gov/community-boards/"
+  },
+  "properties": {
+    "communityBoard": { "type": "string", "description": "Community Board number ('Community Board'), 1–12." },
+    "chair": { "type": ["string", "null"], "description": "Board chair ('Chair')." },
+    "districtManager": { "type": ["string", "null"], "description": "District manager ('District Manager')." },
+    "boardMeeting": { "type": ["string", "null"], "description": "Board / cabinet meeting schedule ('Board Meeting/Cabinet Meeting')." },
+    "phone": { "type": ["string", "null"], "description": "Office phone ('Phone Number')." },
+    "address1": { "type": ["string", "null"], "description": "Office address line 1 ('Address 1')." },
+    "address2": { "type": ["string", "null"], "description": "Office address line 2 ('Address 2')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["communityBoard"],
+  "additionalProperties": false
+}

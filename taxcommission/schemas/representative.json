@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/taxcommission/schemas/representative.json",
+  "title": "Representative",
+  "description": "The attorney, agent, or authorized person filing an assessment appeal on behalf of a property owner before the Tax Commission. Reverse-engineered from the representative section of the application forms (TC101 et al.) and reconciled with the attorney fields carried in the Open Article 7 Petitions dataset (aht6-vxai: 'Attorney Name', 'Attorney Identifier').",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/taxcommission/forms/forms.page",
+    "opendata_article7": "https://data.cityofnewyork.us/d/aht6-vxai"
+  },
+  "properties": {
+    "name": { "type": ["string", "null"], "description": "Representative name ('Attorney Name')." },
+    "type": {
+      "type": ["string", "null"],
+      "enum": ["Owner", "Attorney", "Agent", "Employee", "Officer", "Other", null],
+      "description": "Relationship to the applicant / capacity in which they file."
+    },
+    "attorneyIdentifier": { "type": ["string", "null"], "description": "Tax Commission / court attorney identifier ('Attorney Identifier')." },
+    "firm": { "type": ["string", "null"], "description": "Law firm or representing organization." },
+    "phone": { "type": ["string", "null"] },
+    "email": { "type": ["string", "null"], "format": "email" },
+    "address": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}

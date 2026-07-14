@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanbp/schemas/board-appointment.json",
+  "title": "BoardAppointment",
+  "description": "An appointment made by the Manhattan Borough President to a board, commission, or community body — community boards, HHC Community Advisory Boards, Community Education Councils, and other civic bodies. Canonical schema reconciling the 'BP Appointments' dataset (nr9n-yqxr, 3 columns): appointee, board category, and appointing/host organization.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/nr9n-yqxr",
+    "site": "https://www.manhattanbp.nyc.gov/community-boards/"
+  },
+  "properties": {
+    "appointeeName": { "type": "string", "description": "Name of the appointee ('Appointee Name')." },
+    "boardCategory": { "type": ["string", "null"], "description": "Category of board the person is appointed to ('Board Category'), e.g. Community Board, CEC, HHC CAB." },
+    "organization": { "type": ["string", "null"], "description": "Board / organization the appointee serves on ('Organization')." }
+  },
+  "required": ["appointeeName"],
+  "additionalProperties": false
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pubadvocate/schemas/public-interest-request.json",
+  "title": "PublicInterestRequest",
+  "description": "A Public Interest demand issued by the NYC Public Advocate — the office's charter power to compel a city agency to produce information or take action in the public interest. Today these demands and their responses live only in correspondence and reports, with no machine-readable surface. Proposed schema for tracking an oversight/records-access request and the agency's response.",
+  "type": "object",
+  "x-source": {
+    "site": "https://advocate.nyc.gov/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "requestId": { "type": ["string", "null"], "description": "Identifier for the public interest request." },
+    "subject": { "type": "string", "description": "What information or action is being demanded." },
+    "agency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "description": { "type": ["string", "null"], "description": "Full text / basis of the demand." },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Issued", "Acknowledged", "Partially Answered", "Answered", "Refused", "Escalated", null],
+      "description": "Where the demand stands."
+    },
+    "issuedDate": { "type": ["string", "null"], "format": "date" },
+    "responseDueDate": { "type": ["string", "null"], "format": "date" },
+    "respondedDate": { "type": ["string", "null"], "format": "date" },
+    "documentUrl": { "type": ["string", "null"], "format": "uri" }
+  },
+  "required": ["subject"],
+  "additionalProperties": false
+}

@@ -1,0 +1,185 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Queens Borough President functions (community boards and appointments, land-use/ULURP recommendations, discretionary funding, events, press releases) and adds apply_to_community_board — the net-new write workflow that today lives only as an HTML/PDF form.",
+    "openapi": "../openapi/queensbp.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.queensbp",
+    "title": "Queens Borough President (QBP)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the Office of the Queens Borough President — Queens' 14 community boards and their appointed members (from NYC Open Data), advisory land-use (ULURP) recommendations, discretionary funding awards, public events, and Newsroom press releases, plus the net-new ability to apply to serve on a community board, which today exists only as an HTML/PDF form.",
+    "instructions": "Use find_community_boards / get_community_board to locate a board (district manager, chair, monthly meeting) and find_community_board_members / find_appointments for who serves on it (the two published Open Data datasets). find_land_use_recommendations covers the Borough President's advisory ULURP positions; find_discretionary_funding covers capital/expense awards to nonprofits, schools, and cultural groups; find_events and find_press_releases cover the Newsroom. apply_to_community_board (net-new) submits a community board application; it requires an authenticated resident and mutates state — confirm the applicant's district eligibility, board preference, and statement of interest before submitting. Note: most QBP data has no API today and the site's own WordPress REST API is enabled but empty; treat results as a proposed contract."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_community_boards",
+      "title": "Find Community Boards",
+      "description": "List Queens' community boards with their district manager, chair, office, and monthly meeting.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-board.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCommunityBoards"
+    },
+    {
+      "name": "get_community_board",
+      "title": "Get Community Board",
+      "description": "Fetch one Queens community board by number.",
+      "inputSchema": { "type": "object", "properties": { "board": { "type": "string" } }, "required": ["board"] },
+      "outputSchema": { "$ref": "../schemas/community-board.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCommunityBoard"
+    },
+    {
+      "name": "find_community_board_members",
+      "title": "Find Community Board Members",
+      "description": "List the appointed members (and chair / district manager) of a specific community board.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "board": { "type": "string" },
+          "role": { "type": "string", "enum": ["Member", "Chair", "District Manager"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        },
+        "required": ["board"]
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-board-appointment.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCommunityBoardMembers"
+    },
+    {
+      "name": "find_appointments",
+      "title": "Find Appointments",
+      "description": "Search Queens community board appointments across all boards by board, role, or year appointed.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "board": { "type": "string" },
+          "role": { "type": "string", "enum": ["Member", "Chair", "District Manager"] },
+          "yearAppointed": { "type": "integer" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-board-appointment.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCommunityBoardAppointments"
+    },
+    {
+      "name": "find_land_use_recommendations",
+      "title": "Find Land Use Recommendations",
+      "description": "Search the Borough President's advisory ULURP land-use recommendations by board, recommendation, or action type.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "board": { "type": "string" },
+          "recommendation": { "type": "string", "enum": ["Approve", "Approve with Conditions", "Disapprove", "Disapprove with Conditions", "No Recommendation"] },
+          "actionType": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/land-use-recommendation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLandUseRecommendations"
+    },
+    {
+      "name": "get_land_use_recommendation",
+      "title": "Get Land Use Recommendation",
+      "description": "Fetch a single land-use recommendation by ULURP number.",
+      "inputSchema": { "type": "object", "properties": { "ulurpNumber": { "type": "string" } }, "required": ["ulurpNumber"] },
+      "outputSchema": { "$ref": "../schemas/land-use-recommendation.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getLandUseRecommendation"
+    },
+    {
+      "name": "find_discretionary_funding",
+      "title": "Find Discretionary Funding",
+      "description": "Search Borough President discretionary funding awards by fiscal year, recipient type, or capital/expense funding type.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fiscalYear": { "type": "string" },
+          "recipientType": { "type": "string", "enum": ["Nonprofit", "Cultural Institution", "Public School", "Charter School", "City Agency", "Other"] },
+          "fundingType": { "type": "string", "enum": ["Capital", "Expense"] },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/discretionary-funding-award.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listDiscretionaryFundingAwards"
+    },
+    {
+      "name": "find_events",
+      "title": "Find Events",
+      "description": "List public events hosted by the Borough President — land use hearings, borough board/cabinet meetings, town halls, expos, and webinars.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "eventType": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/event.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listEvents"
+    },
+    {
+      "name": "find_press_releases",
+      "title": "Find Press Releases",
+      "description": "List Newsroom press releases, statements, and reports by type, topic, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["Press Release", "Statement", "Report", "Advisory"] },
+          "topic": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/press-release.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listPressReleases"
+    },
+    {
+      "name": "apply_to_community_board",
+      "title": "Apply to a Community Board",
+      "description": "Submit a Queens community board application (net-new). No public API today — it lives only as an HTML/PDF form. Requires an authenticated resident. Mutates state — confirm the applicant's district eligibility, board preference, and statement of interest before submitting.",
+      "inputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "outputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createCommunityBoardApplication",
+      "x-auth": "user"
+    },
+    {
+      "name": "get_community_board_application",
+      "title": "Get Community Board Application",
+      "description": "Check the status of a submitted community board application by its confirmation number.",
+      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
+      "outputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCommunityBoardApplication",
+      "x-auth": "user"
+    }
+  ]
+}

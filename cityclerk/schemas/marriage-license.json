@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cityclerk/schemas/marriage-license.json",
+  "title": "MarriageLicense",
+  "description": "A New York City marriage license issued by the Office of the City Clerk's Marriage Bureau — the record produced once a MarriageLicenseApplication is approved through Project Cupid (projectcupid.cityofnewyork.us). There is NO Open Data twin and NO public API for marriage licenses; the record lives only inside the Unqork-hosted Project Cupid system. Read surface only — the write surface is marriage-license-application.json.",
+  "type": "object",
+  "x-source": {
+    "system": "https://projectcupid.cityofnewyork.us/app/cupidceremony",
+    "site": "https://www.cityclerk.nyc.gov/content/marriage-license",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "licenseId": { "type": "string", "description": "City Clerk marriage-license number (Project Cupid record id). Server-assigned.", "readOnly": true },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Issued", "Pending Ceremony", "Ceremony Completed", "Expired", "Void", null],
+      "description": "License lifecycle status. Set by the Marriage Bureau, not the applicant.",
+      "readOnly": true
+    },
+    "applicationId": { "type": ["string", "null"], "description": "The MarriageLicenseApplication this license was issued from.", "readOnly": true },
+    "applicantA": { "$ref": "_common.json#/$defs/Person" },
+    "applicantB": { "$ref": "_common.json#/$defs/Person" },
+    "issuedDate": { "type": ["string", "null"], "format": "date", "description": "Date the license was issued.", "readOnly": true },
+    "effectiveDate": { "type": ["string", "null"], "format": "date", "description": "First date the license is valid (24-hour waiting period after issuance).", "readOnly": true },
+    "expirationDate": { "type": ["string", "null"], "format": "date", "description": "Last date the license is valid (licenses expire 60 days after issuance).", "readOnly": true },
+    "waiverGranted": { "type": ["boolean", "null"], "description": "Whether a judicial waiver of the 24-hour waiting period was granted." },
+    "issuingOffice": { "$ref": "_common.json#/$defs/Borough" },
+    "newNameA": { "type": ["string", "null"], "description": "Optional new surname elected by applicant A on the license." },
+    "newNameB": { "type": ["string", "null"], "description": "Optional new surname elected by applicant B on the license." }
+  },
+  "required": ["licenseId"],
+  "additionalProperties": false
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/coib/schemas/policymaker.json",
+  "title": "Policymaker",
+  "description": "A City public servant designated a 'policymaker' (Board Rules § 1-02) — a role that, among other things, triggers the annual financial disclosure obligation. Canonical schema reconciling the 'Policymakers List' dataset (wf8t-6cqt, 7 columns), published monthly.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/wf8t-6cqt",
+    "site": "https://www.nyc.gov/site/coib/annual-disclosure/annual-disclosure.page"
+  },
+  "properties": {
+    "filer": { "$ref": "_common.json#/$defs/FilerReference" },
+    "name": { "type": ["string", "null"], "description": "'Name of Employee'." },
+    "firstName": { "type": ["string", "null"], "description": "'First Name'." },
+    "lastName": { "type": ["string", "null"], "description": "'Last Name'." },
+    "title": { "type": ["string", "null"], "description": "'Title'." },
+    "agencyName": { "type": ["string", "null"], "description": "'Agency Name'." },
+    "calendarYear": { "type": ["integer", "null"], "description": "'Calendar Year' of the list." },
+    "month": { "type": ["string", "null"], "description": "'Month' of the monthly snapshot." }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/coib/schemas/financial-disclosure-filing.json",
+  "title": "FinancialDisclosureFiling",
+  "description": "An annual financial disclosure report filed by a City public servant under the NYC Annual Disclosure Law (Admin. Code § 12-110). NET-NEW: there is NO public API and NO Open Data twin for the filing itself; today a filer completes and submits their report only inside COIB's login-gated electronic filing website (elected officials' reports are later posted as PDFs, and only on request). This schema serves both the read surface (a filer's own submitted filings and their status) and the write surface (submit / attest an annual disclosure report). Reported financial interests are confidential except for elected officials.",
+  "type": "object",
+  "x-source": {
+    "filing_website": "https://www.nyc.gov/site/coib/annual-disclosure/annual-disclosure.page",
+    "elected_reports": "https://www.nyc.gov/site/coib/annual-disclosure/elected-officials-annual-disclosure-reports.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "filingId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned filing/confirmation number. Omit on create; returned on the submitted report.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Draft", "Submitted", "Amended", "Late", "Waived", "Under Review", "Accepted", null],
+      "description": "Filing lifecycle status. Set by COIB, not the filer.",
+      "readOnly": true
+    },
+    "filer": { "$ref": "_common.json#/$defs/FilerReference" },
+    "filerType": {
+      "type": "string",
+      "enum": ["Elected Official", "Agency Head", "Deputy/Assistant Agency Head", "Policymaker", "Managerial (M4+)", "Contract/Land-Use Employee", "Tax Assessor", "Local Public Authority", "Candidate"],
+      "description": "Which filing category the filer falls under (drives which questions are required)."
+    },
+    "reportingYear": { "type": "integer", "description": "Calendar year the disclosure covers." },
+    "reportType": {
+      "type": "string",
+      "enum": ["Annual", "New Hire", "Separation", "Candidate 9-Month Partial", "Amendment"],
+      "default": "Annual",
+      "description": "Kind of report being filed."
+    },
+    "positionsHeld": {
+      "type": "array",
+      "description": "Positions held by the filer or spouse/domestic partner/unemancipated children, paid or unpaid (Admin. Code § 12-110).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "organization": { "type": "string" },
+          "position": { "type": "string" },
+          "compensated": { "type": "boolean" },
+          "heldBy": { "type": "string", "enum": ["Filer", "Spouse/Domestic Partner", "Child"] }
+        },
+        "required": ["organization", "position"],
+        "additionalProperties": false
+      }
+    },
+    "financialInterests": {
+      "type": "array",
+      "description": "Disclosed financial interests. Confidential except for elected officials.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": { "type": "string", "enum": ["Income", "Investment/Ownership", "Real Property", "Creditor/Debtor", "Gift", "Honorarium", "Other"] },
+          "description": { "type": "string" },
+          "heldBy": { "type": "string", "enum": ["Filer", "Spouse/Domestic Partner", "Child"] },
+          "valueRange": { "type": ["string", "null"], "description": "Disclosed value band (COIB uses ranges, not exact amounts)." }
+        },
+        "required": ["category", "description"],
+        "additionalProperties": false
+      }
+    },
+    "attestation": {
+      "type": "object",
+      "description": "The filer's certification that the report is true and complete.",
+      "properties": {
+        "certified": { "type": "boolean", "description": "Filer attests the report is true and complete." },
+        "certifiedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+      },
+      "required": ["certified"],
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "deadline": { "type": ["string", "null"], "format": "date", "description": "Filing deadline for this report.", "readOnly": true }
+  },
+  "required": ["filerType", "reportingYear", "attestation"],
+  "additionalProperties": false
+}

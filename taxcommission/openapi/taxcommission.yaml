@@ -1,0 +1,317 @@
+openapi: 3.1.0
+info:
+  title: NYC Tax Commission API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the New York City Tax Commission — publishing its
+    outcome data (assessment actions, open Article 7 petitions) as coherent resources, and adding
+    the missing write surface that today lives only in PDF forms and the online filing system:
+    filing a property-tax assessment appeal (Application for Correction).
+  description: >-
+    Proposed API-first surface for the New York City Tax Commission, from the NYC Modernization
+    low-hanging-fruit assessment of nyc.gov/site/taxcommission and its online filing system.
+
+
+    The Tax Commission is the City's **independent** body for reviewing property-tax assessments.
+    The Department of Finance (DOF) **sets** the tentative assessed value (the Notice of Property
+    Value); the Tax Commission **hears the owner's appeal** of it. That appeal is an 'Application for
+    Correction', filed today on PDF forms (TC101 for Class 2/4, TC108 for Class 1, TC109 for condo
+    units, TC106 for exemptions, plus income & expense statements TC201/TC203/TC208/TC214 and, for an
+    assessed value of $5.4M or more, the accountant's certification TC309) or through the Commission's
+    online filing system. **None of that filing process has a machine-readable contract.**
+
+
+    What IS public is thin and outcome-only: two NYC Open Data assets published under the Office of
+    Administrative Tax Appeals (OATA) — **Assessment Actions** (`4nft-bihw`, the reductions granted)
+    and **Open Article 7 Petitions** (`aht6-vxai`, the court challenges that escalate a determination).
+
+
+    This contract does two things: (1) presents the open outcome datasets as one clean resource model,
+    and (2) adds the one net-new **write** workflow — filing an assessment appeal and tracking its
+    determination.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.taxcommission.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Properties
+    description: NYC properties / tax lots — the subject of an appeal (assessment set by DOF).
+  - name: AssessmentActions
+    description: Published Tax Commission actions reducing assessments or reclassifying property.
+  - name: Article7Petitions
+    description: Open petitions challenging assessments in NY State Supreme Court (judicial escalation).
+  - name: Appeals
+    description: File and track a property-tax assessment appeal (read + write). The net-new surface, today locked in PDF forms and the online filing system.
+
+paths:
+  /properties:
+    get:
+      operationId: listProperties
+      summary: Search NYC properties / tax lots
+      tags: [Properties]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: block
+          in: query
+          schema: { type: string }
+        - name: taxClass
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of properties.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/property.json' } }
+  /properties/{bbl}:
+    get:
+      operationId: getProperty
+      summary: Get a property by BBL
+      tags: [Properties]
+      parameters:
+        - name: bbl
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The property / tax lot.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/property.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /assessment-actions:
+    get:
+      operationId: listAssessmentActions
+      summary: Search published assessment actions (granted reductions / reclassifications)
+      tags: [AssessmentActions]
+      parameters:
+        - name: taxYear
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: block
+          in: query
+          schema: { type: string }
+        - name: taxClass
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of assessment actions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/assessment-action.json' } }
+
+  /article7-petitions:
+    get:
+      operationId: listArticle7Petitions
+      summary: Search open Article 7 petitions (judicial assessment challenges)
+      tags: [Article7Petitions]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: petitionYear
+          in: query
+          schema: { type: string }
+        - name: attorney
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of open Article 7 petitions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/article7-petition.json' } }
+  /article7-petitions/{indexNumber}:
+    get:
+      operationId: getArticle7Petition
+      summary: Get an open Article 7 petition by index number
+      tags: [Article7Petitions]
+      parameters:
+        - name: indexNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The petition.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/article7-petition.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /appeals:
+    get:
+      operationId: listAssessmentAppeals
+      summary: List the authenticated applicant's assessment appeals
+      description: Reads the applicant's own Applications for Correction — today only visible inside the online filing system.
+      tags: [Appeals]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Received, Under Review, Hearing Scheduled, Offer Made, Determined, Withdrawn] }
+        - name: taxYear
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the applicant's appeals.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/assessment-appeal.json' } }
+    post:
+      operationId: createAssessmentAppeal
+      summary: File a property-tax assessment appeal (Application for Correction)
+      description: >-
+        The net-new write surface — an API for filing an assessment appeal, replacing the PDF-form and
+        online-filing-only workflow. The appeal challenges DOF's tentative assessed value and/or tax
+        class for a tax year. A $175 fee applies when the assessed value is $2M or more (unless review
+        is waived); income-producing property requires an income & expense statement, and an assessed
+        value of $5.4M or more requires the TC309 accountant's certification.
+      tags: [Appeals]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/assessment-appeal.json' }
+      responses:
+        '201':
+          description: Appeal filed.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/assessment-appeal.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /appeals/{applicationId}:
+    get:
+      operationId: getAssessmentAppeal
+      summary: Get an assessment appeal
+      tags: [Appeals]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The appeal.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/assessment-appeal.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /appeals/{applicationId}/determination:
+    get:
+      operationId: getDetermination
+      summary: Get the Tax Commission's determination / offer on an appeal
+      tags: [Appeals]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The determination.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/determination.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Property: { $ref: '../schemas/property.json' }
+    Representative: { $ref: '../schemas/representative.json' }
+    AssessmentAppeal: { $ref: '../schemas/assessment-appeal.json' }
+    Determination: { $ref: '../schemas/determination.json' }
+    AssessmentAction: { $ref: '../schemas/assessment-action.json' }
+    Article7Petition: { $ref: '../schemas/article7-petition.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

@@ -1,0 +1,137 @@
+{
+  "domain": "cityclerk",
+  "agency": "New York City Office of the City Clerk (OCC)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting). Fingerprinted the informational site cityclerk.nyc.gov (AWS ALB + Akamai + nginx + Dynatrace, jQuery/Bootstrap, WebTrends) which is now driven by the NYC.gov Content API (apps.nyc.gov/content-api/v1/content + /v2/nav — a real, undocumented JSON backend). Probed Project Cupid (projectcupid.cityofnewyork.us/app/cupidceremony), the online marriage-license/appointment system, identified as a no-code application on the rented Unqork platform (polyfill.unqork.io, /fbu/ uapi, Angular SPA). Probed e-Lobbyist (apps.nyc.gov/elobbyist), a login-walled Java application (JSESSIONID, .do) behind SAP CDC / Gigya SSO, and the public Lobbyist Search (lobbyistsearch.nyc.gov, JS SPA over a .do Java backend). Verified the NYC Open Data agency label 'Office of the City Clerk (OCC)' via the Socrata Discovery API and pulled all 2 assets with column schemas.",
+  "related_domains": ["projectcupid.cityofnewyork.us", "apps.nyc.gov", "lobbyistsearch.nyc.gov", "cityclerkforms.nyc.gov", "data.cityofnewyork.us", "nyc.gov/site/doris"],
+  "headline_findings": [
+    "The City Clerk runs two bureaus on rented, agent-invisible platforms: the Marriage Bureau's Project Cupid is a no-code application on the rented Unqork platform, and the Lobbying Bureau's e-Lobbyist is a login-walled Java app behind rented SAP CDC / Gigya SSO.",
+    "The flagship citizen transaction — applying for a marriage license — has NO API and NO Open Data twin at all. It lives only inside Project Cupid's Unqork screens; NYC's most personal civic transaction is outsourced to a no-code vendor.",
+    "The Lobbying Bureau is the more open half: registration and periodic filing happen in e-Lobbyist, but the reported data IS published — two NYC Open Data datasets (City Clerk eLobbyist Data fmf3-knd8, 28c; Lobbyists' Fundraising & Political Consulting Reports 7arw-dbem, 24c) plus a public Lobbyist Search.",
+    "Marriage records are NOT the City Clerk's on Open Data — only DORIS publishes historical vital-records indexes (j62e-7maa, d8dr-nyhw). The live marriage side is entirely closed.",
+    "The informational site was quietly modernized onto the NYC.gov Content API (apps.nyc.gov/content-api/v1) — a real JSON backend serving content and navigation — but it is undocumented, shared, and read-only.",
+    "Net-new write surface: apply for a marriage license (MarriageLicenseApplication) — the single most common Marriage Bureau transaction, with no API today. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "apps.nyc.gov/content-api/v1/content/cityclerk + /v2/nav/cityclerk", "type": "content API", "owner": "NYC (OTI) shared platform", "public": "json, undocumented", "note": "Real JSON backend that drives cityclerk.nyc.gov (content + navigation). Read-only, undocumented, shared across NYC.gov agency sites. Content only — no transactions." },
+    { "endpoint": "projectcupid.cityofnewyork.us/app/cupidceremony", "type": "marriage-license / appointment system", "owner": "NYC City Clerk (on Unqork)", "public": "login-walled SPA, no API", "note": "Online marriage-license application, appointment scheduling, and ceremony booking. Built on the rented Unqork no-code platform (polyfill.unqork.io, /fbu/ uapi, Angular SPA). No documented API, no OpenAPI, no Open Data output. The net-new write surface (MarriageLicenseApplication)." },
+    { "endpoint": "apps.nyc.gov/elobbyist", "type": "lobbyist filing application", "owner": "NYC City Clerk (Java)", "public": "login-walled, no API", "note": "e-Lobbyist registration and periodic filing. Java servlet app (JSESSIONID, .do) fronted by SAP CDC / Gigya SAML SSO (fidm.us1.gigya.com). No public API; reported data is published to Open Data." },
+    { "endpoint": "lobbyistsearch.nyc.gov", "type": "public lobbyist search database", "owner": "NYC City Clerk", "public": "public SPA, no documented API", "note": "Lobbyist Search public database — JS SPA (webpack bundle) over a .do Java backend. Public but no documented/OpenAPI contract." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "2 City Clerk datasets (lobbyist filing + fundraising reports), each a SODA /resource/<id>.json endpoint. The only open, machine-readable City Clerk API — and only for the lobbying side." },
+    { "endpoint": "cityclerkforms.nyc.gov/cityclerkformsonline", "type": "forms application", "owner": "NYC City Clerk (Java)", "public": "html forms, no API", "note": "City Clerk Forms Online (officiant registration, records requests). Server-rendered Java forms app; no API." }
+  ],
+  "fruit": [
+    {
+      "name": "Apply for a marriage license",
+      "type": "transaction (Project Cupid)",
+      "entity": "MarriageLicenseApplication",
+      "url": "https://projectcupid.cityofnewyork.us/app/cupidceremony",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common Marriage Bureau transaction — apply for a NYC marriage license. No API and no Open Data twin; lives only inside the Unqork-hosted Project Cupid system. The net-new WRITE surface for this domain."
+    },
+    {
+      "name": "Book a marriage / domestic-partnership ceremony (appointment)",
+      "type": "workflow (Project Cupid)",
+      "entity": "Ceremony",
+      "url": "https://www.cityclerk.nyc.gov/content/marriage-ceremony",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Schedule a civil marriage or domestic-partnership ceremony / license appointment. Availability and booking are Project Cupid (Unqork) only; no API, no Open Data. An alternative net-new write/read surface (find_appointments)."
+    },
+    {
+      "name": "Marriage license (issued record)",
+      "type": "record (Project Cupid)",
+      "entity": "MarriageLicense",
+      "url": "https://www.cityclerk.nyc.gov/content/marriage-license",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The issued marriage-license record. No public API and no Open Data twin; only DORIS publishes historical vital-records indexes (j62e-7maa, d8dr-nyhw), not the live City Clerk record."
+    },
+    {
+      "name": "Marriage officiant registration",
+      "type": "workflow (forms)",
+      "entity": "MarriageLicenseApplication",
+      "url": "https://cityclerkforms.nyc.gov/cityclerkformsonline/formslist.htm?recordType=OFFICIANT",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Register as a marriage officiant / one-day officiant. Java forms application (City Clerk Forms Online); no API, no Open Data."
+    },
+    {
+      "name": "Lobbyist registration / Lobbyist Search",
+      "type": "data table + search",
+      "entity": "LobbyistRegistration",
+      "url": "https://lobbyistsearch.nyc.gov/",
+      "machine_readable": "Open Data (SODA) + public search",
+      "verified": true,
+      "opendata_match": ["City Clerk eLobbyist Data fmf3-knd8 (28c)"],
+      "notes": "Registered lobbyists and their clients. Filing is login-walled e-Lobbyist (Java + Gigya SSO), but the registrant/client identity is published via the eLobbyist Data dataset and the public Lobbyist Search."
+    },
+    {
+      "name": "Lobbyist periodic filings (compensation, expenses, activities)",
+      "type": "data table",
+      "entity": "LobbyistFiling",
+      "url": "https://data.cityofnewyork.us/d/fmf3-knd8",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["City Clerk eLobbyist Data fmf3-knd8 (28c)"],
+      "notes": "Periodic lobbying reports — compensation, expense, activity, and target detail per period. The City Clerk's most-viewed dataset. Filing itself is e-Lobbyist-only; the reported data is open."
+    },
+    {
+      "name": "Lobbyist fundraising & political-consulting reports",
+      "type": "data table",
+      "entity": "FundraisingReport",
+      "url": "https://data.cityofnewyork.us/d/7arw-dbem",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Lobbyists' Fundraising and Political Consulting Reports 7arw-dbem (24c)"],
+      "notes": "Fundraising and political-consulting activity by lobbyists on behalf of candidates. Open Data twin exists; filed via e-Lobbyist."
+    },
+    {
+      "name": "Commissioner of Deeds / Oath of Office",
+      "type": "workflow (forms)",
+      "entity": "LobbyistRegistration",
+      "url": "https://www.cityclerk.nyc.gov/content/commissioner-of-deeds",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Additional Services: become a Commissioner of Deeds, file an Oath of Office, obtain City Council transcripts. Forms/PDF only; no API, no Open Data. A registry-style transaction with no machine-readable surface."
+    }
+  ],
+  "meta": {
+    "short": "NYC City Clerk",
+    "verb": "contract",
+    "platform": "cityclerk.nyc.gov on the NYC.gov Content API (AWS ALB + Akamai + nginx + Dynatrace, jQuery/Bootstrap, WebTrends); Project Cupid marriage system on the rented Unqork no-code platform (Angular SPA); e-Lobbyist Java filing app behind SAP CDC / Gigya SSO; Lobbyist Search JS SPA over a .do Java backend",
+    "netnew": "MarriageLicenseApplication — a couple applies for a NYC marriage license (today only via Project Cupid's Unqork screens)",
+    "accent": "#b06f8a",
+    "tagline": "The City Clerk rents the machinery of the city's two most personal civic transactions — getting married and registering to lobby — and owns no API contract over either.",
+    "headline": "The Marriage Bureau's flagship transaction runs on a no-code Unqork app with no API and no data, while the Lobbying Bureau at least publishes its filings — so the modernization move is to put an owned contract in front of both rented platforms."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 2,
+    "openData": 1,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Own domain and a modern content-API-driven site, but the two core transaction systems are rented — Unqork (no-code) for marriage and SAP CDC / Gigya for lobbyist auth.",
+    "siteApi": "A real JSON Content API (apps.nyc.gov/content-api/v1) drives the site, and Lobbyist Search runs on a JSON backend — but both are undocumented, shared, and contract-less.",
+    "openData": "Only 2 datasets, both lobbying; the entire marriage side has no Open Data at all (DORIS publishes only historical vital-records indexes).",
+    "coreData": "Lobbyist registration, filing, and fundraising are richly published, but the bigger half of the domain — marriage licenses, ceremonies — publishes nothing.",
+    "writeApi": "No write API; applying for a marriage license and filing lobbyist reports are both locked in rented apps (Unqork / Java+Gigya).",
+    "agent": "No MCP, no agent-native surface, no documented API for an agent to call.",
+    "ownership": "The flagship citizen transaction (Project Cupid) is a rented no-code app and auth is rented (Gigya); the City Clerk owns its domain and Java apps but not the machinery of its most important transaction."
+  }
+}

@@ -1,0 +1,370 @@
+openapi: 3.1.0
+info:
+  title: COIB API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Conflicts of Interest Board — publishing its
+    already-open transparency data (enforcement dispositions, agency donations, policymaker lists,
+    legal defense trusts) as coherent resources, and adding the missing write surface locked inside
+    the login-only Annual Financial Disclosure filing website — filing an annual disclosure report.
+  description: >-
+    Proposed API-first surface for the NYC Conflicts of Interest Board (COIB), from the NYC
+    Modernization low-hanging-fruit assessment of nyc.gov/site/coib and the Annual Financial
+    Disclosure filing website.
+
+
+    COIB is the City's ethics regulator, and it is a transparency-out / attestation-in agency. Its
+    **enforcement and transparency data is genuinely open** on NYC Open Data — 8 datasets covering
+    enforcement dispositions (fines), donations to agencies and to elected-official-affiliated
+    non-profits, the monthly policymakers list, and legal defense trust donations, refunds, and
+    expenditures. But the **core compliance transaction — the annual financial disclosure filing —
+    is locked inside a login-gated electronic filing website** with no API, and neither the filing,
+    the published advisory opinions, nor the ethics-training records have a machine-readable contract.
+
+
+    This contract does two things: (1) presents the open transparency datasets as one clean resource
+    model, and (2) adds the one net-new **write** workflow — submitting an annual **financial
+    disclosure filing** — that today exists only behind the COIB filing website.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.coib.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Enforcement
+    description: Resolved COIB enforcement actions and their fines/penalties.
+  - name: Donations
+    description: Donations to City agencies and to elected-official-affiliated non-profits.
+  - name: Policymakers
+    description: The monthly list of designated City policymakers.
+  - name: LegalDefenseTrusts
+    description: Legal defense trust donations, refunds, and expenditures.
+  - name: AdvisoryOpinions
+    description: Published Board interpretations of Charter Chapter 68.
+  - name: FinancialDisclosure
+    description: File and track the annual financial disclosure report (read + write). The net-new surface, today locked in the login-only COIB filing website.
+
+paths:
+  /enforcement-dispositions:
+    get:
+      operationId: listEnforcementDispositions
+      summary: List / search resolved enforcement actions
+      tags: [Enforcement]
+      parameters:
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - name: minFine
+          in: query
+          schema: { type: number }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of enforcement dispositions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/enforcement-disposition.json' } }
+  /enforcement-dispositions/{caseNumber}:
+    get:
+      operationId: getEnforcementDisposition
+      summary: Get an enforcement disposition by case number
+      tags: [Enforcement]
+      parameters:
+        - name: caseNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The enforcement disposition.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/enforcement-disposition.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /agency-donations:
+    get:
+      operationId: listAgencyDonations
+      summary: Search donations to agencies and to elected-official-affiliated non-profits
+      tags: [Donations]
+      parameters:
+        - name: stream
+          in: query
+          schema: { type: string, enum: [NFPAffiliatedWithElectedOfficial, ReceivedByAgency, OfficialFundraising] }
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: electedOfficial
+          in: query
+          schema: { type: string }
+        - name: year
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of donations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/agency-donation.json' } }
+
+  /policymakers:
+    get:
+      operationId: listPolicymakers
+      summary: List designated City policymakers
+      tags: [Policymakers]
+      parameters:
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: calendarYear
+          in: query
+          schema: { type: integer }
+        - name: month
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of policymakers.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/policymaker.json' } }
+
+  /legal-defense-trust-transactions:
+    get:
+      operationId: listLegalDefenseTrustTransactions
+      summary: Search legal defense trust donations, refunds, and expenditures
+      tags: [LegalDefenseTrusts]
+      parameters:
+        - name: transactionType
+          in: query
+          schema: { type: string, enum: [Donation, RefundedDonation, Expenditure] }
+        - name: trustName
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of legal defense trust transactions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/legal-defense-trust-transaction.json' } }
+
+  /advisory-opinions:
+    get:
+      operationId: listAdvisoryOpinions
+      summary: List / search published advisory opinions
+      tags: [AdvisoryOpinions]
+      parameters:
+        - name: charterSection
+          in: query
+          schema: { type: string }
+        - name: topic
+          in: query
+          schema: { type: string }
+        - name: year
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of advisory opinions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/advisory-opinion.json' } }
+  /advisory-opinions/{opinionNumber}:
+    get:
+      operationId: getAdvisoryOpinion
+      summary: Get a published advisory opinion
+      tags: [AdvisoryOpinions]
+      parameters:
+        - name: opinionNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The advisory opinion.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/advisory-opinion.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /financial-disclosure-filings:
+    get:
+      operationId: listFinancialDisclosureFilings
+      summary: List the authenticated filer's financial disclosure filings
+      description: Reads the filer's own annual disclosure reports and their status — today only visible inside the login-gated COIB filing website.
+      tags: [FinancialDisclosure]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: reportingYear
+          in: query
+          schema: { type: integer }
+        - name: status
+          in: query
+          schema: { type: string, enum: [Draft, Submitted, Amended, Late, Waived, Under Review, Accepted] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the filer's financial disclosure filings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/financial-disclosure-filing.json' } }
+    post:
+      operationId: createFinancialDisclosureFiling
+      summary: File an annual financial disclosure report
+      description: >-
+        The net-new write surface — an API for submitting an annual financial disclosure report,
+        replacing the filing-website-only workflow. The filer must attest the report is true and
+        complete (`attestation.certified` = true). Reported financial interests are confidential
+        except for elected officials.
+      tags: [FinancialDisclosure]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/financial-disclosure-filing.json' }
+      responses:
+        '201':
+          description: Financial disclosure filing submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/financial-disclosure-filing.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /financial-disclosure-filings/{filingId}:
+    get:
+      operationId: getFinancialDisclosureFiling
+      summary: Get a financial disclosure filing
+      tags: [FinancialDisclosure]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: filingId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The financial disclosure filing.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/financial-disclosure-filing.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    EnforcementDisposition: { $ref: '../schemas/enforcement-disposition.json' }
+    Policymaker: { $ref: '../schemas/policymaker.json' }
+    AgencyDonation: { $ref: '../schemas/agency-donation.json' }
+    LegalDefenseTrustTransaction: { $ref: '../schemas/legal-defense-trust-transaction.json' }
+    AdvisoryOpinion: { $ref: '../schemas/advisory-opinion.json' }
+    FinancialDisclosureFiling: { $ref: '../schemas/financial-disclosure-filing.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

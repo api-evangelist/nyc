@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/taxcommission/schemas/assessment-action.json",
+  "title": "AssessmentAction",
+  "description": "A published Tax Commission action reducing an assessment or reclassifying a property — the outcome record. Canonical schema reconciling the 'Assessment Actions' Open Data dataset (4nft-bihw, 8 columns), published under the Office of Administrative Tax Appeals (OATA). Reductions are expressed in total actual assessed value. Keyed on Tax Year + Borough/Block/Lot.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/4nft-bihw"
+  },
+  "properties": {
+    "taxYear": { "type": ["string", "null"], "description": "Assessment year ('Tax Year' / YR)." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "boroughCode": { "$ref": "_common.json#/$defs/BoroughCode" },
+    "block": { "type": ["string", "integer", "null"], "description": "'Block Number'." },
+    "lot": { "type": ["string", "integer", "null"], "description": "'Lot Number'." },
+    "taxClassCode": { "$ref": "_common.json#/$defs/TaxClass" },
+    "propertyAddress": { "type": ["string", "null"], "description": "'Property Address'." },
+    "ownerName": { "type": ["string", "null"], "description": "'Owner Name'." },
+    "grantedReductionAmount": { "type": ["number", "null"], "description": "'Granted Reduction Amount' — total actual assessed-value reduction granted." }
+  },
+  "additionalProperties": false
+}

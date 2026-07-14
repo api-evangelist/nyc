@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/taxcommission/schemas/assessment-appeal.json",
+  "title": "AssessmentAppeal",
+  "description": "A property-tax assessment appeal filed with the NYC Tax Commission — an 'Application for Correction' of DOF's tentative assessed value and/or tax class. NET-NEW: there is NO public API for filing an appeal; today owners and their representatives file PDF forms (TC101 for Class 2/4, TC108 for Class 1, TC109 for condo units, TC106 for exemptions, plus income & expense statements TC201/TC203/TC208/TC214 and — for AV of $5.4M or more — the accountant's certification TC309) by hand or through the Tax Commission's online filing system. This schema serves both the read surface (list/get an applicant's own appeals) and the write surface (file an appeal). Deadline is typically March 15/16; a $175 fee applies when the assessed value is $2M or more (unless review is waived).",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/taxcommission/about/challenging-notice-of-property-value.page",
+    "forms": "https://www.nyc.gov/site/taxcommission/forms/forms.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application / appeal number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Received", "Under Review", "Hearing Scheduled", "Offer Made", "Determined", "Withdrawn", null],
+      "description": "Lifecycle status. Set by the Tax Commission, not the applicant.",
+      "readOnly": true
+    },
+    "taxYear": { "type": "string", "description": "Assessment / tax year being appealed." },
+    "property": { "$ref": "_common.json#/$defs/TaxLot" },
+    "ownerName": { "type": ["string", "null"], "description": "Property owner of record." },
+    "applicantType": {
+      "type": ["string", "null"],
+      "enum": ["Owner", "Representative", null],
+      "description": "Who is filing."
+    },
+    "form": { "$ref": "_common.json#/$defs/ApplicationForm" },
+    "claimType": { "$ref": "_common.json#/$defs/ClaimType" },
+    "currentAssessedValue": { "$ref": "_common.json#/$defs/Money" },
+    "claimedValue": { "$ref": "_common.json#/$defs/Money" },
+    "requestedReduction": { "$ref": "_common.json#/$defs/Money" },
+    "requestedTaxClass": { "$ref": "_common.json#/$defs/TaxClass" },
+    "representative": { "$ref": "representative.json" },
+    "incomeExpense": {
+      "type": "object",
+      "description": "Income & expense statement for income-producing property (TC201/TC203/TC208/TC214).",
+      "properties": {
+        "filed": { "type": ["boolean", "null"] },
+        "form": { "type": ["string", "null"], "description": "Which income & expense form (TC201 rental, TC203 co-op, TC208 hotel/etc.)." },
+        "reportedIncome": { "$ref": "_common.json#/$defs/Money" },
+        "reportedExpenses": { "$ref": "_common.json#/$defs/Money" },
+        "accountantCertificationTC309": { "type": ["boolean", "null"], "description": "TC309 accountant's certification — required when assessed value is $5.4M or more." }
+      },
+      "additionalProperties": false
+    },
+    "fee": {
+      "type": "object",
+      "description": "Application fee — $175 when the assessed value is $2M or more (NYC Administrative Code); no fee if the applicant waives review before scheduling.",
+      "properties": {
+        "amount": { "$ref": "_common.json#/$defs/Money" },
+        "paid": { "type": ["boolean", "null"] },
+        "reviewWaived": { "type": ["boolean", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "groupFiling": { "type": ["boolean", "null"], "description": "Whether this application is part of a group filing." },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "filedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["taxYear", "property"],
+  "additionalProperties": false
+}

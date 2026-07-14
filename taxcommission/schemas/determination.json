@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/taxcommission/schemas/determination.json",
+  "title": "Determination",
+  "description": "The Tax Commission's determination on an assessment appeal — the hearing result and any offer of relief. After review (with or without a hearing) the Commission may offer a reduction in assessed value, reclassify the property, or make no change. NET-NEW at the per-application level: there is NO public API and NO Open Data twin for an individual determination/offer (it lives in the online filing system); the aggregate published record of granted reductions is the Assessment Actions dataset (4nft-bihw), which this schema mirrors.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/taxcommission/about/challenging-notice-of-property-value.page",
+    "opendata_assessment_actions": "https://data.cityofnewyork.us/d/4nft-bihw",
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": { "type": ["string", "null"], "description": "The AssessmentAppeal this determination resolves." },
+    "taxYear": { "type": ["string", "null"], "description": "Assessment / tax year." },
+    "property": { "$ref": "_common.json#/$defs/TaxLot" },
+    "action": {
+      "type": ["string", "null"],
+      "enum": ["Offer", "Reduction Granted", "Reclassification", "No Change", "Denied", "Not Reviewed", "Withdrawn", null],
+      "description": "The Commission's action on the application."
+    },
+    "hearingHeld": { "type": ["boolean", "null"], "description": "Whether a hearing was held (some applications are decided on the papers)." },
+    "offered": { "type": ["boolean", "null"], "description": "Whether an offer of relief was made." },
+    "offerAccepted": { "type": ["boolean", "null"], "description": "Whether the applicant accepted the offer." },
+    "grantedReductionAmount": { "$ref": "_common.json#/$defs/Money" },
+    "revisedAssessedValue": { "$ref": "_common.json#/$defs/Money" },
+    "revisedTaxClass": { "$ref": "_common.json#/$defs/TaxClass" },
+    "reviewedBy": { "type": ["string", "null"], "description": "Commissioner or hearing officer of record." },
+    "determinationDate": { "type": ["string", "null"], "format": "date", "readOnly": true }
+  },
+  "additionalProperties": false
+}

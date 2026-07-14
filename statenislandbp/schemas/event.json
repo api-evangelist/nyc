@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandbp/schemas/event.json",
+  "title": "Event",
+  "description": "A community event promoted by the Staten Island Borough President — the borough community calendar, the 'Sounds of Summer' concert series, and civic events. NET-NEW as data: events are published only as HTML/embedded calendars on statenislandusa.com (community-events.html, summerconcerts.html) — no iCal feed, dataset, or API. Modeled from the published calendar pages.",
+  "type": "object",
+  "x-source": {
+    "site_calendar": "https://www.statenislandusa.com/community-events.html",
+    "site_concerts": "https://www.statenislandusa.com/summerconcerts.html",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "eventId": { "type": ["string", "null"], "description": "Event identifier.", "readOnly": true },
+    "title": { "type": "string", "description": "Event name." },
+    "category": {
+      "type": ["string", "null"],
+      "enum": ["Concert", "Community Meeting", "Cultural", "Health & Wellness", "Recreation", "Civic / Government", "Holiday", "Other", null]
+    },
+    "description": { "type": ["string", "null"] },
+    "startDateTime": { "type": ["string", "null"], "format": "date-time" },
+    "endDateTime": { "type": ["string", "null"], "format": "date-time" },
+    "allDay": { "type": ["boolean", "null"] },
+    "venueName": { "type": ["string", "null"] },
+    "address": { "type": ["string", "null"] },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "cost": { "type": ["string", "null"], "description": "Free-text cost (e.g. 'Free', '$10')." },
+    "organizer": { "$ref": "_common.json#/$defs/ContactInfo" },
+    "url": { "type": ["string", "null"], "format": "uri" }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

@@ -1,0 +1,123 @@
+{
+  "domain": "manhattanbp",
+  "agency": "Office of the Manhattan Borough President (MBPO)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — manhattanbp.nyc.gov/robots.txt disallows nothing). Fingerprinted manhattanbp.nyc.gov from response headers and page markup (Cloudflare edge + WP Engine managed hosting + WordPress with the Divi theme + Forminator forms + Google Site Kit). The site's only API is the default WordPress REST API (wp-json: wp/v2 + plugin namespaces forminator/v1, divi/v1). Verified the NYC Open Data agency label 'Manhattan Borough President (MBPO)' via the Socrata Discovery API and pulled all 21 assets with column schemas. The brief anticipated ZERO Socrata datasets; that was wrong — the office publishes 21, but fragmented by program and fiscal year.",
+  "related_domains": ["data.cityofnewyork.us", "www.nyc.gov/site/planning", "www.brooklynbp.nyc.gov", "bronxboropres.nyc.gov", "queensbp.org", "www.statenislandusa.com"],
+  "headline_findings": [
+    "Contrary to the hypothesis, the Manhattan BP is not a data desert: it publishes 21 NYC Open Data datasets (agency label 'Manhattan Borough President (MBPO)') covering ULURP recommendations, appointments, community-board leadership, constituent services, and years of funding awards.",
+    "But the data is FRAGMENTED — one dataset per program per fiscal year. Capital Grant Awards alone is FIVE separate datasets (2014, 2015, 2016, 2017, 2018), and discretionary funding is further split across Tourism Grants, Community Grants, MCAP, and Police-Community Relations Awards.",
+    "The public site (manhattanbp.nyc.gov) is a generic off-the-shelf WordPress/Divi build on WP Engine behind Cloudflare; its only API is the default WordPress REST API, with nothing purpose-built for the office's civic work.",
+    "The flagship citizen action — applying to serve on a community board — is a WordPress/Forminator web form (or a downloadable PDF) with no machine-readable contract and no Open Data twin. That is the net-new WRITE surface.",
+    "All five borough presidents run near-identical thin sites and publish the same shapes of data under parallel Socrata labels (BPBK, BPBX, QBP, BPSI) — a candidate for ONE federated Borough President API deployed per office rather than five one-off builds. See tech-stack.md and apis-observed.md."
+  ],
+  "meta": {
+    "short": "Manhattan Borough President",
+    "verb": "federate",
+    "platform": "WordPress (Divi theme) on WP Engine, behind Cloudflare; only API is the default WordPress REST API + Forminator forms",
+    "netnew": "CommunityBoardApplication — apply to serve on a Manhattan community board (today a Forminator web form / PDF, no API)",
+    "accent": "#b04a4a",
+    "tagline": "The Manhattan BP's civic data is already open — just fragmented across 21 one-off datasets, wrapped in a generic WordPress template, and missing any API for the one thing residents most want to do: serve on a community board.",
+    "headline": "Five near-identical borough president offices should share one federated API — not five thin WordPress sites over scattered per-year datasets."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 1,
+    "openData": 3,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Managed WordPress/Divi on WP Engine + Cloudflare — modern hosting but a generic marketing CMS, not a civic platform.",
+    "siteApi": "Only the default WordPress REST API (wp/v2 + Forminator) — real but generic, nothing purpose-built for the office.",
+    "openData": "21 agency-labeled Socrata datasets covering the office's real outputs — genuinely open.",
+    "coreData": "Core entities are published, but fragmented into per-year/per-program datasets and ULURP/legislation substance is only a PDF or external link.",
+    "writeApi": "The flagship action (apply to a community board) is a Forminator form / PDF — no machine-readable write contract.",
+    "agent": "No agent-native surface of any kind.",
+    "ownership": "The office owns almost none of its stack — WP Engine + Divi plugins for the site, city-run Socrata for the data."
+  },
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "21 MBPO datasets; SODA /resource/<id>.json endpoints. The one real, open MBPO data API — but fragmented into one dataset per program per fiscal year." },
+    { "endpoint": "manhattanbp.nyc.gov/wp-json/", "type": "WordPress REST API", "owner": "MBPO (WordPress / WP Engine)", "public": "generic", "note": "Default WP REST surface (wp/v2 pages/posts) plus plugin namespaces (forminator/v1, divi/v1, redirection/v1, google-site-kit/v1). No purpose-built endpoint for the office's civic entities." },
+    { "endpoint": "Forminator forms (forminator/v1)", "type": "web form plugin", "owner": "MBPO (WPMU DEV Forminator)", "public": "form UI, no API", "note": "The community-board application and other intake live as Forminator forms or downloadable PDFs — HTML forms, no machine-readable write contract." },
+    { "endpoint": "www.manhattanbp.nyc.gov", "type": "informational site", "owner": "MBPO (WordPress + Divi theme on WP Engine)", "public": "html", "note": "Content only; Cloudflare edge, WP Engine hosting, Google Site Kit RUM/SEO. Off-the-shelf Divi build." }
+  ],
+  "fruit": [
+    {
+      "name": "Community Boards (12)",
+      "type": "directory + map",
+      "entity": "CommunityBoard",
+      "url": "https://www.manhattanbp.nyc.gov/community-boards/",
+      "count": "12 boards",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Community Board Leadership 3gkd-ddzn (26c)"],
+      "notes": "Manhattan's 12 advisory districts — chair, district manager, meeting schedule, office location, and full geography spine. The BP appoints their members."
+    },
+    {
+      "name": "ULURP Recommendations",
+      "type": "advisory records (PDF-linked)",
+      "entity": "LandUseRecommendation",
+      "url": "https://www.manhattanbp.nyc.gov/land-use/",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["ULURP Recommendations gt5i-dmde (4c)"],
+      "opendata_gap": false,
+      "notes": "The BP's statutory land-use role — advisory recommendations on ULURP applications. Only 4 columns: date, application number, project, and a PDF link. The recommendation SUBSTANCE is a PDF, not structured data."
+    },
+    {
+      "name": "BP Appointments",
+      "type": "data table",
+      "entity": "BoardAppointment",
+      "url": "https://www.manhattanbp.nyc.gov/community-boards/",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["BP Appointments nr9n-yqxr (3c)"],
+      "notes": "People the Borough President has appointed to boards, councils, and commissions (community boards, CECs, HHC CABs). The eventual output of the community-board application workflow."
+    },
+    {
+      "name": "Funding Awards (capital / tourism / community / MCAP)",
+      "type": "data tables (fragmented)",
+      "entity": "FundingAward",
+      "url": "https://www.manhattanbp.nyc.gov/funding/",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Capital Grant Awards 2014 9umc-3b2y", "Capital Grant Awards 2015 6wee-b7wf", "Capital Grant Awards 2016 83z6-smyr", "Capital Grant Awards 2017 k84j-firu", "Capital Grant Awards 2018 66yh-nemi", "Tourism Grants x4ud-jhxu", "Manhattan Community Grants - Historical rsnd-bbih", "MCAP y3ea-en4q", "Police-Community Relations Awards 2016 w38c-pyzq"],
+      "notes": "The office's largest recurring public output — discretionary and capital funding. The fragmentation is the finding: five separate Capital Grant Awards datasets (one per year) plus four other award programs, all with near-identical shapes. Unify into one FundingAward resource."
+    },
+    {
+      "name": "Legislation / policy positions",
+      "type": "data table (link-out)",
+      "entity": "Legislation",
+      "url": "https://www.manhattanbp.nyc.gov/policy/",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Legislation uf8p-ervp (4c)"],
+      "opendata_gap": false,
+      "notes": "Bills and policy positions the office advocates — name, subject, status, and an external URL. The substance links out to state/city legislative sites."
+    },
+    {
+      "name": "Constituent Services",
+      "type": "data table (de-identified)",
+      "entity": "ConstituentCase",
+      "url": "https://data.cityofnewyork.us/d/39qw-754y",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Constituent Services 39qw-754y (13c)", "Constituent Services - Historical kpjg-ubxi (10c)"],
+      "notes": "Resident requests for help handled by the office — published as case type/subject/status/geography only. De-identified by design; no constituent identity is ever exposed."
+    },
+    {
+      "name": "Apply to serve on a community board",
+      "type": "sign-up / application workflow",
+      "entity": "CommunityBoardApplication",
+      "url": "https://www.manhattanbp.nyc.gov/community-boards/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The office's flagship citizen action — applying to serve on one of Manhattan's 12 community boards. Today a WordPress/Forminator web form or a downloadable PDF; no API, no OpenAPI, no Open Data twin (only the resulting appointments surface, in aggregate, in nr9n-yqxr). The net-new WRITE surface for this domain."
+    }
+  ]
+}

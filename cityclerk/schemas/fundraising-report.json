@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cityclerk/schemas/fundraising-report.json",
+  "title": "FundraisingReport",
+  "description": "A lobbyist fundraising and political-consulting report filed with the Office of the City Clerk's Lobbying Bureau — disclosing fundraising and political-consulting activity by a lobbyist on behalf of a candidate. Canonical schema reconciling the 'Lobbyists' Fundraising and Political Consulting Reports' dataset (7arw-dbem, 24 columns). Filed inside e-Lobbyist (apps.nyc.gov/elobbyist); reported data is published to Open Data.",
+  "type": "object",
+  "x-source": {
+    "filing_system": "https://apps.nyc.gov/elobbyist/",
+    "opendata": "https://data.cityofnewyork.us/d/7arw-dbem"
+  },
+  "properties": {
+    "reportId": { "type": ["string", "null"], "description": "'Report ID'." },
+    "filingYear": { "type": ["integer", "string", "null"], "description": "'Filing Year'." },
+    "filingPeriod": { "type": ["string", "null"], "description": "'Filing Period'." },
+    "reportType": { "type": ["string", "null"], "description": "'Report Type'." },
+    "periodStartDate": { "type": ["string", "null"], "format": "date", "description": "'Period Start Date'." },
+    "periodEndDate": { "type": ["string", "null"], "format": "date", "description": "'Period End Date'." },
+    "entityName": { "type": ["string", "null"], "description": "'Entity Name' — the reporting lobbyist / firm." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "phoneNumber": { "type": ["string", "null"], "description": "'Phone Number'." },
+    "lobbyistEmployees": { "type": ["integer", "string", "null"], "description": "'Lobbyist Employees'." },
+    "principal": {
+      "type": "object",
+      "description": "The reporting entity's principal ('Principal First Name' / 'Principal Last Name').",
+      "properties": {
+        "firstName": { "type": ["string", "null"] },
+        "lastName": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "candidate": {
+      "type": "object",
+      "description": "The candidate the fundraising / consulting benefited ('Candidate First/Last Name', 'Candidate Type', 'Target Office').",
+      "properties": {
+        "firstName": { "type": ["string", "null"] },
+        "lastName": { "type": ["string", "null"] },
+        "candidateType": { "type": ["string", "null"], "description": "'Candidate Type'." },
+        "targetOffice": { "type": ["string", "null"], "description": "'Target Office' — office sought." }
+      },
+      "additionalProperties": false
+    },
+    "politicalCommittee": { "type": ["string", "null"], "description": "'Political Committee'." },
+    "thirdParty": { "type": ["string", "null"], "description": "'Third Party'." },
+    "totalRaised": { "$ref": "_common.json#/$defs/Money" },
+    "totalExpenses": { "$ref": "_common.json#/$defs/Money" },
+    "compensationOwed": { "$ref": "_common.json#/$defs/Money" }
+  },
+  "required": ["reportId"],
+  "additionalProperties": false
+}

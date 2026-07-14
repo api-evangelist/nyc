@@ -1,0 +1,135 @@
+{
+  "domain": "coib",
+  "agency": "NYC Conflicts of Interest Board (COIB)",
+  "assessment_date": "2026-07-13",
+  "meta": {
+    "short": "NYC Conflicts of Interest Board (COIB)",
+    "verb": "attest",
+    "platform": "NYC.gov shared 'Livesite' chassis (Akamai + nginx + Dynatrace) for the informational site, plus a separate login-gated Annual Financial Disclosure electronic filing website",
+    "netnew": "FinancialDisclosureFiling — a public servant files/attests an annual financial disclosure report, today locked inside the login-only COIB filing website with no API",
+    "accent": "#6a6a8a",
+    "tagline": "COIB publishes its enforcement and transparency data openly, but the core compliance act — filing an annual financial disclosure — is trapped behind a login-only filing website with no API.",
+    "headline": "A transparency-out, attestation-in agency: 8 open datasets on the way out, but the annual disclosure filing on the way in has no machine-readable contract."
+  },
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov/robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/coib (Akamai + nginx + NYC.gov 'Livesite' platform v22 + Dynatrace) and read the Annual Disclosure pages, which describe filing 'electronically through COIB's filing website' — a login-gated electronic system with no public API. Verified the NYC Open Data agency label 'Conflicts of Interest Board (COIB)' via the Socrata Discovery API and pulled all 8 assets with column schemas.",
+  "related_domains": ["data.cityofnewyork.us", "www.nyc.gov/site/coib", "nyc.gov (Livesite chassis)", "nycvotes.org (Campaign Finance Board — candidate matching funds)"],
+  "headline_findings": [
+    "COIB is a transparency-out / attestation-in agency: its enforcement and transparency OUTPUTS are genuinely open (8 NYC Open Data datasets), but its core compliance INPUT — the annual financial disclosure filing — is locked in a login-gated filing website with no API.",
+    "The 8 open datasets cover enforcement dispositions/fines (Enforcement Fines, the most-viewed asset), donations to agencies and to elected-official-affiliated non-profits, the monthly Policymakers List, and legal defense trust donations/refunds/expenditures.",
+    "The Annual Disclosure system is the real transaction layer: 'file electronically through COIB's filing website' with a 4-week filing window each spring, but it is login-only, produces no Open Data twin, and elected officials' reports surface only as PDFs on request.",
+    "Advisory opinions (Charter Chapter 68 interpretations) and ethics-training records are published only as PDFs / behind the training site — reference corpora with no machine-readable index.",
+    "Net-new write surface: file an annual financial disclosure report (FinancialDisclosureFiling) — the single most consequential COIB resident-of-government transaction, with no API today. See tech-stack.md and apis-observed.md."
+  ],
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 2,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov 'Livesite' CMS for content + a separate login-gated filing website; commodity chassis, closed transaction system.",
+    "siteApi": "No content or search API on nyc.gov/site/coib.",
+    "openData": "8 real, columnar datasets published to NYC Open Data — solid transparency, but narrow (enforcement + donations + trusts), no filing data.",
+    "coreData": "Enforcement dispositions are open, but the core mission data — financial disclosure filings — is not published (elected reports are PDF-on-request; others confidential).",
+    "writeApi": "None — the annual disclosure filing exists only as a login-only web form.",
+    "agent": "No MCP, no agent-native surface of any kind.",
+    "ownership": "COIB owns and regularly publishes its enforcement/donation/trust data to Open Data; the filing website is a system it runs, though a black box externally."
+  },
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "8 COIB datasets; SODA /resource/<id>.json endpoints. The one real, open COIB API — enforcement dispositions, donations, policymakers, and legal defense trusts." },
+    { "endpoint": "COIB Annual Financial Disclosure filing website", "type": "e-filing system", "owner": "COIB", "public": "login-walled, no API", "note": "'File electronically through COIB's filing website' — the annual disclosure transaction. Login-gated, no JSON/OpenAPI, no Open Data twin; elected officials' reports posted only as PDFs on request." },
+    { "endpoint": "www.nyc.gov/site/coib", "type": "informational site", "owner": "NYC.gov shared platform (Livesite v22)", "public": "html", "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API. Advisory opinions and annual reports are PDFs." },
+    { "endpoint": "maps.googleapis.com", "type": "maps embed", "owner": "Google", "public": "vendor", "note": "Google Maps embed on the informational site." },
+    { "endpoint": "go-mpulse.net", "type": "RUM beacon", "owner": "Akamai mPulse", "public": "vendor", "note": "Akamai mPulse real-user-monitoring beacon." }
+  ],
+  "fruit": [
+    {
+      "name": "Enforcement Dispositions (Fines)",
+      "type": "data table",
+      "entity": "EnforcementDisposition",
+      "url": "https://data.cityofnewyork.us/d/p39r-nm7f",
+      "count": "COIB's most-viewed dataset",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Enforcement Fines p39r-nm7f (13c)"],
+      "notes": "Resolved conflicts-of-interest cases with fine paid to COIB / to agency / imposed-but-unpaid, other penalties, suspension days, and a narrative explanation. Keyed on Case Number. The core enforcement output."
+    },
+    {
+      "name": "Agency & Affiliated-NFP Donations",
+      "type": "data table",
+      "entity": "AgencyDonation",
+      "url": "https://data.cityofnewyork.us/d/dx8z-6nev",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Donations to Not-for-Profit Organizations Affiliated with Elected Officials dx8z-6nev (12c)", "Donations Received by City Agencies aqs7-v55z (5c)", "Official Fundraising by City Agencies basd-2jwn (3c)"],
+      "notes": "Three parallel transparency datasets: gifts to agencies, official fundraising, and donations to non-profits affiliated with elected officials (Charter § 2604 / Local Law 181)."
+    },
+    {
+      "name": "Policymakers List",
+      "type": "data table",
+      "entity": "Policymaker",
+      "url": "https://data.cityofnewyork.us/d/wf8t-6cqt",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Policymakers List wf8t-6cqt (7c)"],
+      "notes": "Monthly list of public servants designated policymakers (Board Rules § 1-02) — one of the roles that triggers the annual financial disclosure obligation. The bridge between the open data and the locked filing system."
+    },
+    {
+      "name": "Legal Defense Trusts",
+      "type": "data table",
+      "entity": "LegalDefenseTrustTransaction",
+      "url": "https://data.cityofnewyork.us/d/mhyv-6iza",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Legal Defense Trust Expenditures mhyv-6iza (20c)", "Legal Defense Trust Donations jsiv-zh9r (10c)", "Legal Defense Trust Refunded Donations t3pj-3dgu (11c)"],
+      "notes": "Donations into, refunds out of, and expenditures from public servants' legal defense trusts (Board Rules Ch. 7). Expenditures carry the full NYC geography spine (Council District, BBL/BIN, NTA, lat/long)."
+    },
+    {
+      "name": "Advisory Opinions",
+      "type": "document library (PDF)",
+      "entity": "AdvisoryOpinion",
+      "url": "https://www.nyc.gov/site/coib/public-documents/public-documents.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Board's formal interpretations of Charter Chapter 68 — published only as PDFs, no machine-readable index. A read-reference gap."
+    },
+    {
+      "name": "Ethics Training",
+      "type": "workflow (training site)",
+      "entity": "FinancialDisclosureFiling",
+      "url": "https://www.nyc.gov/site/coib/the-law/get-legal-advice.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Mandatory ethics training / seminars for public servants — delivered online with no completion API or Open Data twin. A locked service-layer transaction alongside the disclosure filing."
+    },
+    {
+      "name": "Get a Waiver / Get Legal Advice",
+      "type": "workflow (form)",
+      "entity": "FinancialDisclosureFiling",
+      "url": "https://www.nyc.gov/site/coib/contact/get-a-waiver.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Request a Charter § 2604 waiver or written legal advice — handled by web/email forms, no API. Another Siebel-style locked transaction."
+    },
+    {
+      "name": "File Annual Financial Disclosure",
+      "type": "attestation workflow (filing website)",
+      "entity": "FinancialDisclosureFiling",
+      "url": "https://www.nyc.gov/site/coib/annual-disclosure/annual-disclosure.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most consequential COIB transaction — every senior public servant files/attests an annual financial disclosure report during a 4-week spring window. Lives only in the login-gated COIB filing website; no API, no Open Data twin. The net-new WRITE surface for this domain."
+    }
+  ]
+}

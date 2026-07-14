@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynbp/schemas/land-use-recommendation.json",
+  "title": "LandUseRecommendation",
+  "description": "A Brooklyn Borough President advisory recommendation on a Uniform Land Use Review Procedure (ULURP) application — the office's signature statutory power in the city land-use process. Canonical schema reconciling the 'Uniform Land Use Review Procedure (ULURP) Recommendations' dataset (4j6i-9rmr, 6 columns) and the /land-use and /uniform-land-use-review-procedure site sections. Keyed on ULURP Number(s).",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/4j6i-9rmr",
+    "site": "https://www.brooklynbp.nyc.gov/uniform-land-use-review-procedure/"
+  },
+  "properties": {
+    "ulurpNumbers": { "type": "string", "description": "ULURP application number(s) ('ULURP Number(s)') — one record may carry several space-separated numbers (e.g. '210033 ZMK M 210034 LDK')." },
+    "applicationName": { "type": "string", "description": "ULURP application name / project ('ULURP Application Name')." },
+    "recommendation": {
+      "type": ["string", "null"],
+      "description": "The Borough President's recommendation ('Borough President Recommendation').",
+      "enum": ["Approved", "Approved with Conditions", "Approved with Modifications", "Disapproved", "Disapproved with Conditions", "No Recommendation", null]
+    },
+    "recommendationDate": { "type": ["string", "null"], "format": "date", "description": "'Recommendation Date'." },
+    "communityBoards": { "type": ["string", "null"], "description": "Affected Brooklyn community board(s) ('Community Board(s)') — may be a list." },
+    "councilDistricts": { "type": ["string", "null"], "description": "Affected NYC Council district(s) ('Council District(s)') — may be a list." }
+  },
+  "required": ["ulurpNumbers", "applicationName"],
+  "additionalProperties": false
+}

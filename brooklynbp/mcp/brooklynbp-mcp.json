@@ -1,0 +1,163 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Brooklyn Borough President's open data (ULURP recommendations, community boards, board appointments, funding awards, publications) and the live events feed, and adds apply_to_community_board — the net-new write workflow that today exists only as an unstructured web form. Designed to be templated across all five NYC Borough Presidents.",
+    "openapi": "../openapi/brooklynbp.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.brooklynbp",
+    "title": "Brooklyn Borough President",
+    "version": "0.1.0",
+    "description": "Agent-native access to the Office of the Brooklyn Borough President — ULURP land-use recommendations, Brooklyn's 18 community boards and the members the BP appoints to boards and councils, discretionary/capital/tourism funding awards, publications (legislation, reports, testimony, press releases), and public events — from NYC Open Data (agency 'Brooklyn Borough President (BPBK)') and the current brooklynbp.nyc.gov site, plus the net-new ability to apply to serve on a community board.",
+    "instructions": "Use find_land_use_recommendations / get_land_use_recommendation for the office's ULURP advisory record (search by recommendation, community board, council district, or date). find_community_boards covers Brooklyn's 18 boards and their chairs/district managers/contacts; find_appointments covers people the BP has appointed to boards and councils (CECs, HHC CABs, BPL board, BIDs, SWAB, DYCD NABs). find_funding_awards answers capital / discretionary / tourism grant questions — note several award and appointment datasets are historical snapshots (2015-2018) and may be stale. find_reports covers legislation, reports, testimony, op-eds, and press releases. find_events reads the live Events Calendar feed (hearings, borough board meetings). apply_to_community_board (net-new) submits an application to serve on a community board; it mutates state and collects an applicant's contact details — confirm board preference and statement of interest with the user before submitting. get_application_status reads back a submitted application by id."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_land_use_recommendations",
+      "title": "Find Land Use Recommendations",
+      "description": "Search Brooklyn BP ULURP land-use recommendations by recommendation, community board, council district, date range, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "recommendation": { "type": "string", "enum": ["Approved", "Approved with Conditions", "Approved with Modifications", "Disapproved", "Disapproved with Conditions", "No Recommendation"] },
+          "communityBoard": { "type": "string" },
+          "councilDistrict": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/land-use-recommendation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLandUseRecommendations"
+    },
+    {
+      "name": "get_land_use_recommendation",
+      "title": "Get Land Use Recommendation",
+      "description": "Fetch a single ULURP land-use recommendation by its ULURP application number.",
+      "inputSchema": { "type": "object", "properties": { "ulurpNumber": { "type": "string" } }, "required": ["ulurpNumber"] },
+      "outputSchema": { "$ref": "../schemas/land-use-recommendation.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getLandUseRecommendation"
+    },
+    {
+      "name": "find_community_boards",
+      "title": "Find Community Boards",
+      "description": "List Brooklyn's community boards with chair, district manager, contact, and meeting details, by board number, council district, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "boardNumber": { "type": "string" },
+          "councilDistrict": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-board.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCommunityBoards"
+    },
+    {
+      "name": "find_appointments",
+      "title": "Find Board Appointments",
+      "description": "Search people the Brooklyn BP has appointed to boards and councils (CECs, HHC CABs, BPL board, BIDs, SWAB, DYCD NABs, miscellaneous) by board type, board, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "boardType": { "type": "string", "enum": ["Community Education Council", "HHC Community Advisory Board", "Brooklyn Public Library Board", "DYCD Neighborhood Advisory Board", "Business Improvement District", "Solid Waste Advisory Board", "Miscellaneous Board"] },
+          "board": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/board-appointment.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listBoardAppointments"
+    },
+    {
+      "name": "find_funding_awards",
+      "title": "Find Funding Awards",
+      "description": "Search Brooklyn BP discretionary, capital, and tourism funding awards by award type, fiscal year, organization, or community board. Note some datasets are historical snapshots (2015-2018).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "awardType": { "type": "string", "enum": ["Capital", "Discretionary Contract", "Tourism Grant", "Expense", "Other"] },
+          "fiscalYear": { "type": "string" },
+          "organization": { "type": "string" },
+          "communityBoard": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/funding-award.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listFundingAwards"
+    },
+    {
+      "name": "find_reports",
+      "title": "Find Publications",
+      "description": "Search Brooklyn BP publications — passed legislation, resolutions, reports, testimony, op-eds, and press releases — by type, subject, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["Legislation", "Resolution", "Report", "Testimony", "Op-Ed", "Press Release"] },
+          "subject": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/report.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listReports"
+    },
+    {
+      "name": "find_events",
+      "title": "Find Events",
+      "description": "List upcoming Brooklyn BP events, ULURP public hearings, and borough board meetings from the live Events Calendar feed, by date range, category, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "category": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/event.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listEvents"
+    },
+    {
+      "name": "apply_to_community_board",
+      "title": "Apply to a Community Board",
+      "description": "Submit an application to serve on a Brooklyn community board (or other BP-appointed body). NET-NEW workflow with no public API today — it lives only in an unstructured web form. Mutates state and collects the applicant's contact details — confirm board preference and statement of interest with the user before submitting.",
+      "inputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "outputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createCommunityBoardApplication",
+      "x-auth": "user"
+    },
+    {
+      "name": "get_application_status",
+      "title": "Get Application Status",
+      "description": "Read back the status of a submitted community board application by its reference id.",
+      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
+      "outputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCommunityBoardApplication",
+      "x-auth": "user"
+    }
+  ]
+}

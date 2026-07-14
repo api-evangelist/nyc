@@ -1,0 +1,168 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Manhattan Borough President's open reference data (community boards, ULURP recommendations, appointments, funding awards, legislation, constituent cases) and adds apply_to_community_board — the net-new write workflow that today exists only as a WordPress/Forminator form.",
+    "openapi": "../openapi/manhattanbp.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.manhattanbp",
+    "title": "Manhattan Borough President (MBPO)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the Office of the Manhattan Borough President — the borough's 12 community boards, ULURP land-use recommendations, Borough President appointments, discretionary/capital funding awards (the per-year Socrata datasets unified), legislation, and de-identified constituent-service cases from NYC Open Data, plus the net-new ability to apply to serve on a community board — an action that today lives only in a WordPress form.",
+    "instructions": "Use find_community_boards / get_community_board to locate Manhattan's 12 boards (chair, district manager, meeting schedule, office). find_land_use_recommendations returns the BP's ULURP advisory recommendations (the recommendation body is a linked PDF). find_board_appointments lists people the BP has appointed to boards and councils. find_funding_awards answers 'who did the Manhattan BP fund?' across capital, tourism, community, MCAP, and police-community award programs and every fiscal year in one query — the underlying Open Data is split into one dataset per program per year. find_legislation covers policy positions; find_constituent_cases returns DE-IDENTIFIED case data only (never a constituent's identity). apply_to_community_board (net-new) submits an application to serve on a community board; it requires an authenticated applicant and mutates state — confirm the preferred district, connection to the district, and statement of interest with the user before submitting."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_community_boards",
+      "title": "Find Community Boards",
+      "description": "List Manhattan's 12 community boards with chair, district manager, meeting schedule, and office location.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-board.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCommunityBoards"
+    },
+    {
+      "name": "get_community_board",
+      "title": "Get Community Board",
+      "description": "Fetch a single Manhattan community board by district number (1–12).",
+      "inputSchema": { "type": "object", "properties": { "district": { "type": "integer", "minimum": 1, "maximum": 12 } }, "required": ["district"] },
+      "outputSchema": { "$ref": "../schemas/community-board.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getCommunityBoard"
+    },
+    {
+      "name": "find_land_use_recommendations",
+      "title": "Find Land Use Recommendations",
+      "description": "Search the Borough President's ULURP advisory recommendations by application number, project, or date. The recommendation body is a linked PDF.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ulurpApplicationNumber": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/land-use-recommendation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLandUseRecommendations"
+    },
+    {
+      "name": "find_board_appointments",
+      "title": "Find Board Appointments",
+      "description": "List people the Manhattan Borough President has appointed to boards, councils, and commissions, by board category or organization.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "boardCategory": { "type": "string" },
+          "organization": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/board-appointment.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listBoardAppointments"
+    },
+    {
+      "name": "find_funding_awards",
+      "title": "Find Funding Awards",
+      "description": "Search the Manhattan BP's discretionary, capital, tourism, community, MCAP, and police-community funding awards across every fiscal year in one query — the Open Data is split into one dataset per program per year.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "program": { "type": "string", "enum": ["Capital Grant", "Tourism Grant", "Community Grant", "MCAP", "Police-Community Relations Award"] },
+          "fiscalYear": { "type": "string" },
+          "organization": { "type": "string" },
+          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/funding-award.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listFundingAwards"
+    },
+    {
+      "name": "find_legislation",
+      "title": "Find Legislation",
+      "description": "List legislation and policy positions the Manhattan Borough President advocates, by status or subject.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "subject": { "type": "string" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/legislation.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLegislation"
+    },
+    {
+      "name": "find_constituent_cases",
+      "title": "Find Constituent Cases",
+      "description": "Search DE-IDENTIFIED constituent-service cases (type, subject, status, geography) handled by the office. Never returns a constituent's identity.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "caseType": { "type": "string" },
+          "caseStatus": { "type": "string" },
+          "councilMember": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/constituent-case.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listConstituentCases"
+    },
+    {
+      "name": "list_my_applications",
+      "title": "List My Applications",
+      "description": "List the authenticated applicant's own community-board applications and their status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["Submitted", "Under Review", "Interview", "Appointed", "Waitlisted", "Declined"] },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-board-application.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listCommunityBoardApplications",
+      "x-auth": "user"
+    },
+    {
+      "name": "apply_to_community_board",
+      "title": "Apply to a Community Board",
+      "description": "Submit an application to serve on a Manhattan community board. NET-NEW workflow with no public API today — it lives only in a WordPress/Forminator web form or a downloadable PDF. Requires an authenticated applicant. Mutates state — confirm the preferred district, connection to the district, and statement of interest first.",
+      "inputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "outputSchema": { "$ref": "../schemas/community-board-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createCommunityBoardApplication",
+      "x-auth": "user"
+    }
+  ]
+}

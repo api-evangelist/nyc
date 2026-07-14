@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxbp/schemas/press-release.json",
+  "title": "PressRelease",
+  "description": "A newsroom item published by the Office of the Bronx Borough President — a press release, statement, letter, or testimony. NET GAP: there is NO Open Data twin and NO API; each item is a server-rendered Revize CMS page (news_detail_T4_R<n>.php) with no machine-readable feed. This schema is reverse-engineered from those pages so the newsroom can be published as a clean resource.",
+  "type": "object",
+  "x-source": {
+    "site": "https://bronxboropres.nyc.gov/newsroom/index.php",
+    "releases": "https://bronxboropres.nyc.gov/newsroom/releases_statements.php",
+    "letters_testimonies": "https://bronxboropres.nyc.gov/newsroom/letters___testimonies.php",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "id": { "type": ["string", "null"], "description": "Newsroom record id (Revize 'R<n>' in news_detail_T4_R<n>.php)." },
+    "title": { "type": "string", "description": "Headline." },
+    "category": {
+      "type": ["string", "null"],
+      "enum": ["Press Release", "Statement", "Letter", "Testimony", "Video", null],
+      "description": "Newsroom item type."
+    },
+    "publishedDate": { "type": ["string", "null"], "format": "date", "description": "Publication date." },
+    "summary": { "type": ["string", "null"], "description": "Short summary / dek." },
+    "body": { "type": ["string", "null"], "description": "Full text (HTML stripped)." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical page URL." },
+    "attachments": {
+      "type": "array",
+      "description": "Linked PDFs or documents.",
+      "items": { "type": "string", "format": "uri" }
+    }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

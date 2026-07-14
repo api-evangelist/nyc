@@ -1,0 +1,118 @@
+{
+  "domain": "pubadvocate",
+  "agency": "New York City Public Advocate (Office of the Public Advocate)",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting). Attempted to fingerprint www.pubadvocate.nyc.gov / advocate.nyc.gov — the site 301-redirects pubadvocate.nyc.gov -> advocate.nyc.gov and, during the crawl, returned HTTP 502 Bad Gateway from a self-hosted nginx/1.18.0 (Ubuntu) origin (the Office runs its own server, NOT the NYC.gov shared 'Livesite' platform, and it was down at assessment time). Verified against the Socrata Discovery API that NO NYC Open Data assets carry a Public Advocate agency label (tested 'Public Advocate (PA)', 'Office of the Public Advocate', 'Public Advocate', 'Office of the Public Advocate (PA)' — all zero; and a q=advocate scan surfaced only CFB/NYCC/CCRB/DOE/DOP/OCC). Fingerprinted the flagship product, the Worst Landlord Watchlist (landlordwatchlist.com), as a Next.js/React app on Vercel and discovered an undocumented JSON endpoint /api/landlords returning 99 ranked landlords.",
+  "related_domains": ["landlordwatchlist.com", "council.nyc.gov", "legistar.council.nyc.gov", "data.cityofnewyork.us", "www.nyc.gov/site/hpd"],
+  "headline_findings": [
+    "The Public Advocate publishes ZERO datasets to NYC Open Data. Unlike NYCHA (24 datasets), the city's ombudsman has no machine-readable reference data at all — its output is reports/PDFs, its own website, and one product (the Worst Landlord Watchlist).",
+    "The main site is self-hosted and fragile. advocate.nyc.gov runs on the Office's own nginx/1.18.0 (Ubuntu) origin — not the shared NYC.gov 'Livesite' platform every other agency uses — and returned 502 Bad Gateway throughout the crawl. The city's watchdog site was literally down.",
+    "The one modern, data-backed surface is an orphan. The Worst Landlord Watchlist (landlordwatchlist.com) is a separate Next.js/React app on Vercel with an UNDOCUMENTED /api/landlords JSON endpoint (99 landlords: org, officer, buildings, units, DOB violations, avg open HPD violations, tax liens, evictions, rank) — real data, no docs, no OpenAPI, on infrastructure disconnected from the main site.",
+    "The core ombudsman function has no intake API. 'Help with a city agency' — the Public Advocate's constitutional reason for existing — is a web form / phone / email only. There is no machine-readable way to file or track an OmbudsmanComplaint.",
+    "Legislation the PA sponsors lives in someone else's system. The Public Advocate introduces bills through the City Council; those files live in Council's Legistar, owned by NYCC, not the PA. See tech-stack.md and apis-observed.md.",
+    "Net-new write surface: file a complaint against a city agency (OmbudsmanComplaint) — the single most common resident interaction with the office, with no API today."
+  ],
+  "apis_observed": [
+    { "endpoint": "landlordwatchlist.com/api/landlords", "type": "undocumented JSON API", "owner": "NYC Public Advocate (app on Vercel)", "public": "reachable, undocumented", "note": "The one real API observed. Returns { results: [ { landlordid, org, officer, buildings, UNIT, dob, tax_lien, evictions, num_avg, rank } ×99 ] } — the Worst Landlord Watchlist. No docs, no OpenAPI, no versioning; a Next.js data route, not a governed contract." },
+    { "endpoint": "advocate.nyc.gov (self-hosted)", "type": "informational site", "owner": "NYC Public Advocate", "public": "html (502 during crawl)", "note": "Self-run nginx/1.18.0 (Ubuntu). NOT the NYC.gov shared 'Livesite' chassis. Returned 502 Bad Gateway; reports, help-with-a-city-agency, and public-interest content are HTML/PDF only, no content API." },
+    { "endpoint": "legistar.council.nyc.gov (Legistar)", "type": "legislative system", "owner": "City Council (NYCC) / Granicus", "public": "web + Legistar Web API", "note": "Where the PA's sponsored bills actually live. Owned by the Council, not the Public Advocate — the PA is a sponsor, not the system of record." },
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "The underlying HPD housing-maintenance violations / DOB / registration data that the Watchlist is derived from is open here — but NONE of it is published under a Public Advocate label; the PA contributes zero assets." },
+    { "endpoint": "Vercel edge", "type": "hosting/CDN", "owner": "Vercel", "public": "vendor", "note": "server: Vercel, x-vercel-cache, x-vercel-id on landlordwatchlist.com — the flagship product is hosted off-platform on a commercial PaaS." }
+  ],
+  "fruit": [
+    {
+      "name": "Worst Landlord Watchlist",
+      "type": "ranked data product + API",
+      "entity": "WorstLandlord",
+      "url": "https://www.landlordwatchlist.com/",
+      "count": "~99 landlords (Top 100)",
+      "machine_readable": "undocumented JSON (/api/landlords)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The PA's flagship. A Next.js/Vercel app that ranks NYC's worst landlords on HPD/DOB violation data. Undocumented /api/landlords returns org, officer, buildings, units, DOB violations, avg open HPD violations, tax liens, evictions, rank. Real data, no contract, no Open Data twin under a PA label."
+    },
+    {
+      "name": "Watchlist Buildings",
+      "type": "building-level violation records",
+      "entity": "WatchlistBuilding",
+      "url": "https://www.landlordwatchlist.com/",
+      "machine_readable": "derived (HPD/DOB open data, not exposed per-building via PA)",
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Each landlord aggregates many buildings (BBL/BIN, address, open violations). The underlying HPD Housing Maintenance Code Violations data is open citywide, but the PA does not publish the per-building watchlist rollup as data."
+    },
+    {
+      "name": "Sponsored Legislation",
+      "type": "bills / intros",
+      "entity": "Legislation",
+      "url": "https://legistar.council.nyc.gov/",
+      "machine_readable": "Legistar Web API (owned by Council)",
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Public Advocate introduces legislation through the City Council. Those files (Intro #, title, status, sponsors) live in the Council's Legistar system — reachable, but owned by NYCC, not the PA. No PA-owned legislation feed."
+    },
+    {
+      "name": "Reports & Investigations",
+      "type": "publications (PDF/HTML)",
+      "entity": "Report",
+      "url": "https://advocate.nyc.gov/reports/",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The office's investigative output — reports, data briefs, agency report cards — published as PDFs / HTML pages on the self-hosted site (502 during crawl). No index API, no structured metadata, no Open Data."
+    },
+    {
+      "name": "Public Interest Requests",
+      "type": "records-access / oversight demands",
+      "entity": "PublicInterestRequest",
+      "url": "https://advocate.nyc.gov/",
+      "machine_readable": false,
+      "verified": false,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Public Advocate can compel city agencies to produce information in the public interest. These demands and their responses have no machine-readable surface; they live in correspondence and reports."
+    },
+    {
+      "name": "Help with a city agency (file a complaint)",
+      "type": "ombudsman intake workflow",
+      "entity": "OmbudsmanComplaint",
+      "url": "https://advocate.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common resident interaction with the office — ask the ombudsman to intervene with a city agency (housing, benefits, education, immigration, etc.). Web form / phone / email only. No API to file or track a case. The net-new WRITE surface for this domain."
+    }
+  ],
+  "meta": {
+    "short": "NYC Public Advocate",
+    "verb": "Respond",
+    "platform": "Self-hosted nginx/1.18.0 (Ubuntu) main site (502/down during crawl) + an orphan Next.js/Vercel product (the Worst Landlord Watchlist)",
+    "netnew": "OmbudsmanComplaint — file and track a 'help with a city agency' case against a NYC agency",
+    "accent": "#3a7aa0",
+    "tagline": "The city's ombudsman publishes zero open data, runs a fragile self-hosted site, and takes complaints only by web form or phone — give it an owned API to respond.",
+    "headline": "NYC's watchdog has no machine-readable intake and no open data — only one orphan Watchlist API and a main site that was down during the crawl."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 1,
+    "openData": 0,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Self-run nginx/Ubuntu main site, 502 during crawl; one modern but orphan Vercel/Next.js product",
+    "siteApi": "Only an undocumented /api/landlords JSON route — no docs, no OpenAPI, no versioning",
+    "openData": "Zero NYC Open Data assets under any Public Advocate label (verified)",
+    "coreData": "Watchlist data exists but undocumented; reports are PDFs; legislation lives in Council's Legistar",
+    "writeApi": "Ombudsman intake is web-form/phone/email only — no API to file or track a complaint",
+    "agent": "No MCP, no agent-native surface of any kind",
+    "ownership": "Flagship product on Vercel; source data is HPD/DOB/Council — the PA owns little machine-readable of its own"
+  }
+}

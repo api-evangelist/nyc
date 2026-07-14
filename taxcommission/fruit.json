@@ -1,0 +1,115 @@
+{
+  "domain": "taxcommission",
+  "agency": "New York City Tax Commission",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov/robots.txt only disallows /html/misc/). Fingerprinted www.nyc.gov/site/taxcommission (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace + mPulse/Boomerang RUM + AWS ALB). Read the appeal process pages and the forms index — the appeal is an 'Application for Correction' filed on PDF forms (TC101 Class 2/4, TC108 Class 1, TC109 condos, TC106 exemptions, income & expense TC201/TC203/TC208/TC214, TC309 accountant certification at $5.4M+) or through the Commission's online filing system; a $175 fee applies at $2M+ assessed value. Queried the Socrata Discovery API: there is NO 'Tax Commission (TC)' agency label — the two relevant assets are published under 'Office of Administrative Tax Appeals (OATA)' and were pulled with column schemas.",
+  "related_domains": ["data.cityofnewyork.us", "nyc.gov/site/finance", "Office of Administrative Tax Appeals (OATA)", "NY State Supreme Court (Article 7)"],
+  "headline_findings": [
+    "There is NO 'Tax Commission (TC)' agency in NYC Open Data; the Tax Commission's two datasets are published under 'Office of Administrative Tax Appeals (OATA)', the umbrella that now houses it.",
+    "The open data is thin and OUTCOME-ONLY: Assessment Actions (4nft-bihw, granted reductions/reclassifications) and Open Article 7 Petitions (aht6-vxai, judicial escalation to NY Supreme Court). Neither describes the appeal process itself.",
+    "The core transaction — filing an assessment appeal (Application for Correction) — has no machine-readable contract. It lives only in PDF forms (TC101/TC108/TC109/TC106/TC201…) and the Commission's online filing system, with a March 15/16 deadline and a $175 fee at $2M+ assessed value.",
+    "The domain sits on the shared NYC.gov 'Livesite' chassis (Akamai/nginx/Dynatrace/mPulse/AWS ALB); the Tax Commission has no distinct platform of its own and no content or filing API.",
+    "Relationship: DOF SETS the tentative assessment (Notice of Property Value); the Tax Commission HEARS the appeal. Net-new write surface: file a property-tax assessment appeal (AssessmentAppeal). See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler), OATA label", "public": true, "note": "2 datasets under 'Office of Administrative Tax Appeals (OATA)': Assessment Actions (4nft-bihw) and Open Article 7 Petitions (aht6-vxai). SODA /resource/<id>.json endpoints. The only real, open API here — outcome data only." },
+    { "endpoint": "www.nyc.gov/site/taxcommission online filing system", "type": "appeal filing portal", "owner": "NYC Tax Commission", "public": "web UI, no API", "note": "Application for Correction (TC101/TC108/TC109/TC106 + income & expense TC201/203/208/214 + TC309). No JSON/OpenAPI surface; PDF forms and a browser-only filing flow." },
+    { "endpoint": "www.nyc.gov/site/taxcommission/", "type": "informational site", "owner": "NYC.gov shared platform (Livesite)", "public": "html", "note": "About, how-to-appeal, forms, rules, guidelines, annual reports. No content API." },
+    { "endpoint": "Akamai edge", "type": "CDN API", "owner": "Akamai", "public": "vendor", "note": "server-timing ak_p, alt-svc h3 on the informational site." },
+    { "endpoint": "Dynatrace RUM + mPulse/Boomerang", "type": "monitoring beacons", "owner": "Dynatrace / Akamai mPulse", "public": "vendor", "note": "x-oneagent-js-injection; BOOMR mPulse snippet in page markup." }
+  ],
+  "fruit": [
+    {
+      "name": "Assessment Actions (granted reductions / reclassifications)",
+      "type": "data table",
+      "entity": "AssessmentAction",
+      "url": "https://data.cityofnewyork.us/d/4nft-bihw",
+      "count": "~10.5k views",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Assessment Actions 4nft-bihw (8c) — OATA label"],
+      "notes": "The Tax Commission's published actions reducing assessments or reclassifying property. Keyed on Tax Year + Borough Code/Block/Lot + Tax Class Code, with Granted Reduction Amount (total actual AV). Outcomes only — no application-level detail."
+    },
+    {
+      "name": "Open Article 7 Petitions (judicial escalation)",
+      "type": "data table",
+      "entity": "Article7Petition",
+      "url": "https://data.cityofnewyork.us/d/aht6-vxai",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Open Article 7 Petitions aht6-vxai (10c) — OATA label"],
+      "notes": "Open petitions challenging assessments in NY State Supreme Court under Article 7 of the RPTL: index number/year, petitioner, attorney (name + identifier), note-of-issue codes. The escalation that follows a Tax Commission determination."
+    },
+    {
+      "name": "Property / tax lot (subject of appeal)",
+      "type": "reference lookup",
+      "entity": "Property",
+      "url": "https://www.nyc.gov/site/taxcommission/about/challenging-notice-of-property-value.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The Borough-Block-Lot (BBL) tax lot being appealed. DOF sets its tentative assessed value (Notice of Property Value); no Tax-Commission-owned property API. Property fields appear only inside the Assessment Actions outcome rows."
+    },
+    {
+      "name": "Representative (attorney / agent)",
+      "type": "form section",
+      "entity": "Representative",
+      "url": "https://www.nyc.gov/site/taxcommission/forms/forms.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["partial — attorney name/identifier in Open Article 7 Petitions aht6-vxai"],
+      "opendata_gap": true,
+      "notes": "The attorney or agent filing on the owner's behalf. Captured on the application forms; only the litigation attorney surfaces in the Article 7 dataset."
+    },
+    {
+      "name": "Determination / offer (hearing result)",
+      "type": "workflow (portal)",
+      "entity": "Determination",
+      "url": "https://www.nyc.gov/site/taxcommission/about/challenging-notice-of-property-value.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": ["aggregate only — Assessment Actions 4nft-bihw"],
+      "opendata_gap": true,
+      "notes": "The Commission's decision on an application — an offer of reduction, reclassification, or no change. Per-application detail lives only in the online filing system; the aggregate published record is Assessment Actions."
+    },
+    {
+      "name": "File an assessment appeal (Application for Correction)",
+      "type": "sign-up / filing workflow",
+      "entity": "AssessmentAppeal",
+      "url": "https://www.nyc.gov/site/taxcommission/forms/forms.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most important transaction — challenge DOF's tentative assessed value and/or tax class for a tax year. No API and no Open Data twin; lives only in PDF forms (TC101/TC108/TC109/TC106 + income & expense TC201/203/208/214 + TC309 at $5.4M+) and the online filing system. March 15/16 deadline; $175 fee at $2M+ AV. The net-new WRITE surface for this domain."
+    }
+  ],
+  "meta": {
+    "short": "NYC Tax Commission",
+    "verb": "digitize",
+    "platform": "NYC.gov shared 'Livesite' CMS (Akamai + nginx + Dynatrace + mPulse/Boomerang + AWS ALB) plus a browser-only online filing system; no distinct Tax Commission platform.",
+    "netnew": "AssessmentAppeal — file a property-tax assessment appeal (Application for Correction).",
+    "accent": "#5a7a6a",
+    "tagline": "An independent property-tax appeals body whose intake is PDF forms and whose only open data is a thin trail of outcomes.",
+    "headline": "DOF sets the assessment; the Tax Commission hears the appeal — but that appeal is filed on paper forms with no API, while the two open datasets show only the reductions granted and the court petitions that follow."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 1,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov Livesite chassis + a browser-only filing system; nothing Tax-Commission-specific.",
+    "siteApi": "No content or filing API — PDF forms and a web-only online filing flow.",
+    "openData": "Two thin, outcome-only datasets, published under the OATA label, not a Tax Commission label.",
+    "coreData": "Core process entities (application, determination, property, representative) are absent from open data; only outcomes appear.",
+    "writeApi": "No write API; the appeal is filed by PDF form or online filing system with a $175 fee and a hard deadline.",
+    "agent": "No agent-native surface of any kind.",
+    "ownership": "The Commission does publish two of its own datasets, but on shared infrastructure it does not control."
+  }
+}

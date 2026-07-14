@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/schemas/event.json",
+  "title": "Event",
+  "description": "A public event hosted or convened by the Queens Borough President — Land Use Public Hearings, Borough Board and Borough Cabinet meetings, town halls, expos, and webinars. Announced as HTML pages on queensbp.nyc.gov (e.g. the Newsroom); there is NO structured events feed or Open Data twin. Note: the WordPress REST API (wp/v2) is enabled on the site but exposes 0 posts and 0 'project' entries — events are authored as Divi page-builder pages, not as structured content the API returns.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.queensbp.nyc.gov/newsroom/",
+    "wp_rest": "https://www.queensbp.nyc.gov/wp-json/wp/v2/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "title": { "type": "string", "description": "Event title." },
+    "eventType": {
+      "type": ["string", "null"],
+      "enum": ["Land Use Public Hearing", "Borough Board Meeting", "Borough Cabinet Meeting", "Town Hall", "Expo", "Webinar", "Ceremony", "Other", null],
+      "description": "Type of event."
+    },
+    "description": { "type": ["string", "null"], "description": "Event summary." },
+    "startDateTime": { "type": ["string", "null"], "format": "date-time", "description": "Event start." },
+    "endDateTime": { "type": ["string", "null"], "format": "date-time", "description": "Event end." },
+    "location": { "type": ["string", "null"], "description": "Physical location (e.g. Queens Borough Hall) or 'Virtual (Zoom)'." },
+    "virtual": { "type": ["boolean", "null"], "description": "Whether the event is held (or also offered) virtually." },
+    "registrationRequired": { "type": ["boolean", "null"], "description": "Whether pre-registration is required (e.g. to testify virtually at a hearing)." },
+    "registrationUrl": { "type": ["string", "null"], "format": "uri", "description": "Registration / RSVP link." },
+    "communityBoard": { "$ref": "_common.json#/$defs/CommunityBoardReference" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical page for the event." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandbp/schemas/community-board-application.json",
+  "title": "CommunityBoardApplication",
+  "description": "An application to serve on one of Staten Island's three community boards — the NET-NEW write surface for this domain. Today this is a Weebly-generated web form (statenislandusa.com/cbapplication.html) that posts to weebly.com/apps/formSubmit.php with opaque field names; there is NO API, NO structured submission endpoint, and NO Open Data twin. This schema gives that intake a clean, machine-readable, agent-fillable contract. On success it becomes a candidate for a CommunityBoardAppointment.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.statenislandusa.com/cbapplication.html",
+    "current_mechanism": "Weebly form -> //www.weebly.com/weebly/apps/formSubmit.php",
+    "office": "Community Boards",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": { "type": ["string", "null"], "description": "Server-assigned application number. Omit on create.", "readOnly": true },
+    "applicant": { "$ref": "_common.json#/$defs/ContactInfo" },
+    "residenceAddress": { "type": "string", "description": "The applicant's Staten Island home address (must be a NYC resident of the district or have a compelling interest there)." },
+    "requestedCommunityBoard": { "$ref": "_common.json#/$defs/CommunityBoardRef" },
+    "isResident": { "type": "boolean", "description": "Applicant certifies they live, work, or have a significant interest in the community district." },
+    "occupation": { "type": ["string", "null"] },
+    "employer": { "type": ["string", "null"] },
+    "communityInvolvement": { "type": ["string", "null"], "description": "Civic / community organizations and involvement." },
+    "areasOfInterest": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Policy areas of interest (land use, transportation, parks, etc.)."
+    },
+    "priorBoardService": { "type": ["boolean", "null"], "description": "Has the applicant served on a board before." },
+    "statementOfInterest": { "type": ["string", "null"], "description": "Why the applicant wants to serve." },
+    "resumeUrl": { "type": ["string", "null"], "format": "uri", "description": "Optional link to a resume/CV." },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Under Review", "Interview", "Appointed", "Waitlisted", "Declined", null],
+      "description": "Set by the office, not the applicant.",
+      "readOnly": true
+    }
+  },
+  "required": ["applicant", "residenceAddress", "requestedCommunityBoard", "isResident"],
+  "additionalProperties": false
+}

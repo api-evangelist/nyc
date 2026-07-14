@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandbp/schemas/constituent-request.json",
+  "title": "ConstituentRequest",
+  "description": "A quality-of-life request submitted through 'BP Assist', the Borough President's Help Line intake tool (statenislandusa.com/bpassist.html) — potholes, litter, graffiti, and similar issues that are relayed to the relevant city agency. This is the office's one transactional surface. The ONLY related Open Data is the 'BP Assist Helpline Requests' dataset (3fes-huds), which publishes AGGREGATE annual complaint COUNTS by request type — never the individual request. This schema serves both the read surface (list/aggregate) and the write surface (report a new issue).",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.statenislandusa.com/bpassist.html",
+    "office": "Constituent Services / BP Assist Help Line",
+    "opendata_aggregate": "https://data.cityofnewyork.us/d/3fes-huds",
+    "opendata_individual": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "requestId": { "type": ["string", "null"], "description": "Server-assigned request / ticket number. Omit on create.", "readOnly": true },
+    "requestType": {
+      "type": "string",
+      "description": "Quality-of-life issue category (mirrors the 'Request Type' dimension of the BP Assist Helpline Requests dataset).",
+      "enum": ["Pothole", "Litter / Sanitation", "Graffiti", "Street Condition", "Traffic / Parking", "Parks / Trees", "Noise", "Housing", "Water / Sewer", "Other"]
+    },
+    "description": { "type": "string", "description": "Free-text description of the issue." },
+    "address": { "type": ["string", "null"], "description": "Location of the issue." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "referredToAgency": { "type": ["string", "null"], "description": "City agency the request was relayed to (e.g. DSNY, DOT, NYC311)." },
+    "contact": { "$ref": "_common.json#/$defs/ContactInfo" },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Received", "Referred", "In Progress", "Resolved", "Closed", null],
+      "description": "Set by the office, not the requester.",
+      "readOnly": true
+    },
+    "createdDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "fiscalYearCount": {
+      "type": ["integer", "null"],
+      "description": "Aggregate read only: number of complaints of this request type in a fiscal year, as published in dataset 3fes-huds. Present on aggregate rows, absent on an individual request."
+    },
+    "fiscalYear": { "type": ["string", "null"], "description": "Fiscal year for an aggregate count row (e.g. 'FY20')." }
+  },
+  "required": ["requestType", "description"],
+  "additionalProperties": false
+}

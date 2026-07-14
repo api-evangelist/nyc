@@ -1,0 +1,378 @@
+openapi: 3.1.0
+info:
+  title: Staten Island Borough President API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the Office of the Staten Island Borough President — giving the
+    borough president's charter functions (land-use / ULURP recommendations, community board
+    appointments, discretionary budget awards, borough board resolutions, community events, and the
+    BP Assist help line) a machine-readable contract they do not have today, plus the net-new write
+    surface for the Community Board membership application.
+  description: >-
+    Proposed API-first surface for the Office of the Staten Island Borough President (BPSI), from the NYC
+    Modernization low-hanging-fruit assessment of statenislandusa.com.
+
+
+    This is the thinnest domain assessed so far. The public surface is a **Weebly brochure site**
+    (`statenislandusa.com`, Cloudflare-fronted, `x-host: *.weebly.net`) with **no API of any kind**, and
+    just **two trivial NYC Open Data assets** — an aggregate BP-Assist complaint tally that stops at FY20
+    (`3fes-huds`) and a zero-column "Category Master File" (`mmut-uup9`). None of the office's actual
+    charter work — reviewing land-use applications, appointing community board members, allocating capital
+    and expense budget, or issuing borough board resolutions — is captured as data anywhere it owns.
+
+
+    The office's one transactional surface, **BP Assist**, relays quality-of-life issues to a help line;
+    its one intake form, the **Community Board Membership Application**, is a Weebly form that posts to
+    `weebly.com/apps/formSubmit.php` with opaque field names. Both deserve a clean contract.
+
+
+    Crucially, all five NYC borough-president offices are **near-identical thin sites** with the same
+    charter functions. The right modernization is not five bespoke APIs but **one shared Borough President
+    API** that this office instantiates for Staten Island. Every resource schema is an individual JSON
+    Schema file referenced by `$ref`; the `borough` field is kept citywide precisely so the contract can
+    federate. See `../schemas/`, `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.statenislandusa.com/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: LandUse
+    description: Borough President recommendations on ULURP / land-use applications.
+  - name: CommunityBoards
+    description: Community board appointments and the net-new membership application intake.
+  - name: Budget
+    description: Discretionary capital and expense funding awards.
+  - name: BoroughBoard
+    description: Borough Board resolutions, reports, and minutes.
+  - name: Events
+    description: Community calendar and the Sounds of Summer concert series.
+  - name: Constituent
+    description: BP Assist help line — report and track quality-of-life issues (read + net-new write).
+
+paths:
+  /land-use-recommendations:
+    get:
+      operationId: listLandUseRecommendations
+      summary: List / search Borough President land-use (ULURP) recommendations
+      tags: [LandUse]
+      parameters:
+        - name: communityBoard
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 3 }
+        - name: applicationType
+          in: query
+          schema: { type: string }
+        - name: recommendation
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of land-use recommendations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/land-use-recommendation.json' } }
+  /land-use-recommendations/{applicationId}:
+    get:
+      operationId: getLandUseRecommendation
+      summary: Get a land-use recommendation by application number
+      tags: [LandUse]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The land-use recommendation.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/land-use-recommendation.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /community-board-appointments:
+    get:
+      operationId: listCommunityBoardAppointments
+      summary: List community board members / appointments
+      tags: [CommunityBoards]
+      parameters:
+        - name: communityBoard
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 3 }
+        - name: role
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [Active, Expired, Resigned, Pending] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of appointments.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/community-board-appointment.json' } }
+
+  /community-board-applications:
+    get:
+      operationId: listCommunityBoardApplications
+      summary: List the authenticated applicant's community board applications
+      description: Reads an applicant's own membership applications and their status.
+      tags: [CommunityBoards]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Under Review, Interview, Appointed, Waitlisted, Declined] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the applicant's applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/community-board-application.json' } }
+    post:
+      operationId: createCommunityBoardApplication
+      summary: Apply to serve on a Staten Island community board (net-new)
+      description: >-
+        The net-new write surface — a clean contract for the Community Board Membership Application that
+        today is only a Weebly form posting to weebly.com/apps/formSubmit.php with opaque field names.
+        The applicant must be a NYC resident of (or have a significant interest in) the community district.
+      tags: [CommunityBoards]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/community-board-application.json' }
+      responses:
+        '201':
+          description: Application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/community-board-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+  /discretionary-funding-awards:
+    get:
+      operationId: listDiscretionaryFundingAwards
+      summary: List Borough President discretionary capital / expense funding awards
+      tags: [Budget]
+      parameters:
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - name: fundingType
+          in: query
+          schema: { type: string, enum: [Capital, Expense] }
+        - name: recipientType
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of funding awards.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/discretionary-funding-award.json' } }
+
+  /resolutions:
+    get:
+      operationId: listResolutions
+      summary: List Borough Board resolutions, reports, and minutes
+      tags: [BoroughBoard]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [Resolution, Report, Minutes, Testimony, Statement] }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of resolutions/reports.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/resolution.json' } }
+
+  /events:
+    get:
+      operationId: listEvents
+      summary: List community events and concerts
+      tags: [Events]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of events.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/event.json' } }
+
+  /constituent-requests:
+    get:
+      operationId: listConstituentRequests
+      summary: List / aggregate BP Assist help line requests
+      description: >-
+        Reads BP Assist quality-of-life requests. The only existing Open Data (dataset 3fes-huds) is
+        AGGREGATE annual counts by request type; individual requests have no public source today.
+      tags: [Constituent]
+      parameters:
+        - name: requestType
+          in: query
+          schema: { type: string }
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - name: aggregate
+          in: query
+          description: When true, returns aggregate counts by request type (mirrors dataset 3fes-huds).
+          schema: { type: boolean, default: false }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of constituent requests (individual or aggregate rows).
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/constituent-request.json' } }
+    post:
+      operationId: createConstituentRequest
+      summary: Report a quality-of-life issue to BP Assist (net-new)
+      description: >-
+        The second net-new write surface — an API for BP Assist, which today is a web widget that relays
+        potholes, litter, and graffiti to the Borough President's help line and on to the relevant city
+        agency. No API or structured intake exists today.
+      tags: [Constituent]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/constituent-request.json' }
+      responses:
+        '201':
+          description: Request received.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/constituent-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LandUseRecommendation: { $ref: '../schemas/land-use-recommendation.json' }
+    CommunityBoardAppointment: { $ref: '../schemas/community-board-appointment.json' }
+    CommunityBoardApplication: { $ref: '../schemas/community-board-application.json' }
+    DiscretionaryFundingAward: { $ref: '../schemas/discretionary-funding-award.json' }
+    Resolution: { $ref: '../schemas/resolution.json' }
+    Event: { $ref: '../schemas/event.json' }
+    ConstituentRequest: { $ref: '../schemas/constituent-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

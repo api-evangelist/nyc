@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxbp/schemas/land-use-recommendation.json",
+  "title": "LandUseRecommendation",
+  "description": "A Bronx Borough President advisory recommendation on a land-use application moving through ULURP (the Uniform Land Use Review Procedure). Issuing a written recommendation on every ULURP application in the borough is a charter-mandated duty of the Borough President. NET GAP: there is NO Open Data twin and NO API — today these recommendations are published only as PDFs in the site's Revize 'document center' (bronxboropres.nyc.gov/services/planning_development/ulurp.php). This schema is reverse-engineered from those documents and from the citywide ZAP/ULURP model; it is a read surface for what the office already produces.",
+  "type": "object",
+  "x-source": {
+    "site": "https://bronxboropres.nyc.gov/services/planning_development/ulurp.php",
+    "document_center": true,
+    "opendata": null,
+    "opendata_gap": true,
+    "related_citywide": "https://a002-ceqraccess.nyc.gov / CPC ZAP application registry (DCP)"
+  },
+  "properties": {
+    "applicationId": { "type": ["string", "null"], "description": "ULURP / ZAP application number (e.g. 'C 240123 ZMX', 'N 230456 ZRX')." },
+    "title": { "type": "string", "description": "Project / application title." },
+    "applicant": { "type": ["string", "null"], "description": "Applicant of record." },
+    "actionType": { "type": ["string", "null"], "description": "Land-use action, e.g. Zoning Map Amendment, Zoning Text Amendment, Special Permit, Disposition, City Map Change." },
+    "recommendation": {
+      "type": ["string", "null"],
+      "enum": ["Approve", "Approve with Conditions", "Approve with Modifications", "Disapprove", "Disapprove with Conditions", "No Objection", "No Recommendation", null],
+      "description": "The Borough President's advisory disposition on the application."
+    },
+    "recommendationDate": { "type": ["string", "null"], "format": "date", "description": "Date the recommendation was issued." },
+    "conditions": { "type": ["string", "null"], "description": "Conditions or modifications attached to the recommendation." },
+    "communityBoard": { "$ref": "_common.json#/$defs/CommunityBoardReference" },
+    "communityBoardRecommendation": { "type": ["string", "null"], "description": "The affected community board's prior recommendation, if noted." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "documentUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the recommendation PDF in the site's document center." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

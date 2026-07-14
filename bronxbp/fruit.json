@@ -1,0 +1,128 @@
+{
+  "domain": "bronxbp",
+  "agency": "Office of the Bronx Borough President",
+  "assessment_date": "2026-07-13",
+  "method": "Outside-in crawl (browser UA; the site serves no real robots.txt — the path returns a 404 CMS page). Fingerprinted bronxboropres.nyc.gov (resolves to an Oracle Cloud IP, 129.153.208.86) as a Revize government SaaS CMS: PHP front end (index.php, news_detail_T4_R<n>.php, calendar.php), Revize plugins (revize_calendar importing two Google Calendars 'Events'+'Meetings'; document_center serving ULURP PDFs), Bootstrap 4.6 + jQuery 3.7.1, with a JSP CMS admin at cms2.revize.com/revize/security. Third parties observed: Curator.io social wall, Constant Contact newsletter (enotify), UserWay accessibility widget, Google Tag Manager / GA4 (G-DMD6JC0H5S), Font Awesome. The nyc.gov/site/bronxbp path 404s — the office is NOT on the shared NYC.gov 'Livesite' platform. Verified NYC Open Data: the agency label is 'Bronx Borough President (BPBX)' and returns exactly 2 datasets, both pulled with columns.",
+  "related_domains": ["manhattanbp.nyc.gov", "brooklyn-usa.org", "queensbp.org", "statenislandusa.com", "data.cityofnewyork.us", "nyc.gov/site/planning"],
+  "headline_findings": [
+    "The Bronx Borough President site (bronxboropres.nyc.gov) is a thin brochure site on the Revize government SaaS CMS — PHP front end, JSP CMS back end, hosted on Oracle Cloud, NOT on the shared NYC.gov 'Livesite' platform. It exposes no API and no OpenAPI.",
+    "Only TWO of the office's entities are machine-readable at all — as NYC Open Data datasets under the label 'Bronx Borough President (BPBX)': Bronx Borough President Capital Funding (mdgu-ar69, 20 columns) and Bronx Community Boards (wbau-xy7g, 7 columns).",
+    "The office's charter-mandated work is otherwise trapped in unstructured surfaces: ULURP land-use recommendations are PDFs in a Revize 'document center', the newsroom (releases, statements, letters, testimonies) is server-rendered PHP pages, and events live in two imported Google Calendars.",
+    "Constituent-facing intake is analog: applying to serve on a community board is a downloadable PDF / email; there is no structured application and no way to check status. That is the net-new WRITE surface.",
+    "All FIVE Borough President offices carry the same NYC Charter duties (ULURP advisory recommendations, community-board appointments, a share of discretionary capital/expense funding, chairing the borough board) and run near-identical thin sites on assorted vendor CMSes. This is a candidate for ONE shared, templatable Borough President API instantiated per borough — not five bespoke builds. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    { "endpoint": "data.cityofnewyork.us (SODA)", "type": "open data API", "owner": "NYC (Socrata/Tyler)", "public": true, "note": "Exactly 2 datasets under 'Bronx Borough President (BPBX)': Capital Funding (mdgu-ar69) and Bronx Community Boards (wbau-xy7g). SODA /resource/<id>.json endpoints. The only real, open API surface this office has." },
+    { "endpoint": "bronxboropres.nyc.gov", "type": "brochure website (Revize CMS)", "owner": "Office of the Bronx BP (on Revize SaaS)", "public": "html only, no API", "note": "PHP front end (index.php, news_detail_T4_R<n>.php, calendar.php), Revize document_center (ULURP PDFs) + revize_calendar plugins; JSP CMS admin at cms2.revize.com/revize/security. No JSON/OpenAPI. Hosted on Oracle Cloud (129.153.208.86)." },
+    { "endpoint": "Google Calendar (via revize_calendar)", "type": "events source", "owner": "Google / office", "public": "embedded feed", "note": "Two imported calendars — 'Events' and 'Meetings' — surfaced through the Revize calendar plugin on calendar.php. Not an owned API." },
+    { "endpoint": "cdn.curator.io", "type": "social media aggregator", "owner": "Curator.io (vendor)", "public": "widget", "note": "Social wall embedded on the homepage." },
+    { "endpoint": "visitor.r20.constantcontact.com", "type": "newsletter / email signup", "owner": "Constant Contact (vendor)", "public": "widget", "note": "eNotifications signup (enotify)." },
+    { "endpoint": "googletagmanager.com (GA4 G-DMD6JC0H5S) + userway.org", "type": "analytics / accessibility widgets", "owner": "Google / UserWay (vendors)", "public": "beacon/widget", "note": "GA4 analytics and the UserWay accessibility overlay." }
+  ],
+  "fruit": [
+    {
+      "name": "Discretionary Funding Awards (Capital Funding)",
+      "type": "data table",
+      "entity": "DiscretionaryFundingAward",
+      "url": "https://data.cityofnewyork.us/d/mdgu-ar69",
+      "count": "one row per award",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Bronx Borough President Capital Funding mdgu-ar69 (20c)"],
+      "notes": "The BP's share of city budget directed to organizations/projects — Organization, Purpose, Funding, Type, Fiscal Year, Project Location + full NYC geography spine. One of only two machine-readable entities."
+    },
+    {
+      "name": "Community Board Appointments",
+      "type": "data table",
+      "entity": "CommunityBoardAppointment",
+      "url": "https://data.cityofnewyork.us/d/wbau-xy7g",
+      "count": "12 boards",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": ["Bronx Community Boards wbau-xy7g (7c)"],
+      "notes": "Members appointed to the twelve Bronx community boards — First/Last name, Community Board, Recommending Official, Term expires, Year, Zip Code of Application. A charter duty of the BP. One of only two machine-readable entities."
+    },
+    {
+      "name": "Land-Use / ULURP Recommendations",
+      "type": "document center (PDFs)",
+      "entity": "LandUseRecommendation",
+      "url": "https://bronxboropres.nyc.gov/services/planning_development/ulurp.php",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The BP's charter-mandated written advisory recommendations on every ULURP application in the borough — published only as PDFs in a Revize 'document center' (315 document_center references, 40+ PDFs on the page). No Open Data twin, no API."
+    },
+    {
+      "name": "Newsroom (Releases, Statements, Letters, Testimonies)",
+      "type": "server-rendered PHP pages",
+      "entity": "PressRelease",
+      "url": "https://bronxboropres.nyc.gov/newsroom/index.php",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Dozens of news_detail_T4_R<n>.php pages (Releases & Statements, Letters & Testimonies, Videos). No feed, no API, no machine-readable shape."
+    },
+    {
+      "name": "Events & Meetings",
+      "type": "calendar (Google Calendar import)",
+      "entity": "Event",
+      "url": "https://bronxboropres.nyc.gov/calendar.php",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Two Google Calendars ('Events' and 'Meetings') surfaced via the Revize calendar plugin. No owned API; the office does not control the contract."
+    },
+    {
+      "name": "Apply to a Community Board",
+      "type": "sign-up / application workflow",
+      "entity": "CommunityBoardApplication",
+      "url": "https://bronxboropres.nyc.gov/community/community_boards.php",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Residents apply to serve on a community board via a downloadable PDF / email — no structured intake, no confirmation, no status check. The net-new WRITE surface; the natural inbound counterpart to the published appointment data (wbau-xy7g even records the applicant's 'Zip Code of Application')."
+    },
+    {
+      "name": "Constituent Services / Advisory Councils",
+      "type": "brochure pages",
+      "entity": "CommunityBoardApplication",
+      "url": "https://bronxboropres.nyc.gov/services/constituent_services.php",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Constituent help, plus advisory councils & task forces (African Advisory Council, Disability Task Force, Veterans, LGBTQIA+, NYCHA, Muslim Leadership Roundtable). All static pages — no intake, no data. A second candidate for the net-new write surface (a generic constituent request)."
+    }
+  ],
+  "meta": {
+    "short": "Bronx Borough President",
+    "verb": "templatize",
+    "platform": "Revize government SaaS CMS (PHP front end + JSP admin at cms2.revize.com), on Oracle Cloud; NOT the shared NYC.gov 'Livesite' platform. Events on Google Calendar; Curator.io + Constant Contact + UserWay + GA4 widgets.",
+    "netnew": "CommunityBoardApplication — apply to serve on one of the Bronx's twelve community boards (today a PDF/email; no structured intake or status).",
+    "accent": "#5a9a4a",
+    "tagline": "A thin brochure site on a vendor CMS where only two of the office's charter entities are machine-readable — and where the fix is one shared Borough President API, not a bespoke Bronx build.",
+    "headline": "The Bronx Borough President runs a Revize brochure site with no API and just two Open Data datasets; because all five BP offices share the same charter duties, the low-hanging fruit is one templatable Borough President API."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 1,
+    "coreData": 1,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Proprietary Revize SaaS CMS (PHP/JSP) on Oracle Cloud; managed but wholly vendor-owned, no API surface.",
+    "siteApi": "No site API at all — no JSON, no OpenAPI; content is PHP pages + document-center PDFs.",
+    "openData": "Exactly two small Socrata datasets (Capital Funding, Community Boards) — real but thin.",
+    "coreData": "Two of ~six core entities are machine-readable; ULURP recommendations, newsroom, and events are not.",
+    "writeApi": "None — applying to a community board or requesting help is a PDF/email; no structured intake.",
+    "agent": "No agent-native surface of any kind.",
+    "ownership": "Site content locked in a vendor CMS; events in Google Calendar, social in Curator.io, email in Constant Contact — only the two Open Data datasets sit on city-owned infrastructure."
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mome/schemas/film-permit-application.json",
+  "title": "FilmPermitApplication",
+  "description": "An application to the MOME Film Office for a film/photography location permit — the everyday production transaction. NET-NEW: there is NO public API for applying. Today an applicant applies only inside the login-walled 'MOME E-Apply' ASP.NET portal (nyceventpermits.nyc.gov/film) or via a Letter in Lieu of Permit by email. The Film Permits Open Data (tg4x-b46p) publishes the OUTPUT (issued permits) but never the intake. This schema serves both the read surface (an applicant's own applications and their status) and the write surface (apply for a permit).",
+  "type": "object",
+  "x-source": {
+    "portal": "https://nyceventpermits.nyc.gov/film/",
+    "instructions": "https://www.nyc.gov/site/mome/permits/permits.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application number. Omit on create; returned on the created resource. Becomes the FilmPermit EventID when issued.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Draft", "Submitted", "Under Review", "Insurance Pending", "Approved", "Permit Issued", "Denied", "Cancelled", null],
+      "description": "Lifecycle status. Set by the Film Office, not the applicant.",
+      "readOnly": true
+    },
+    "productionCompany": { "$ref": "production-company.json" },
+    "category": { "$ref": "_common.json#/$defs/ProductionCategory" },
+    "subCategoryName": { "type": ["string", "null"], "description": "Production sub-category (Feature, Episodic series, Commercial, Documentary, Student, ...)." },
+    "eventType": { "$ref": "_common.json#/$defs/PermitEventType" },
+    "startDateTime": { "type": "string", "format": "date-time", "description": "Requested shoot start." },
+    "endDateTime": { "type": "string", "format": "date-time", "description": "Requested shoot end." },
+    "locations": {
+      "type": "array",
+      "description": "The street segments / held locations being requested (ScreenActivity to be granted).",
+      "items": { "$ref": "screen-activity.json" }
+    },
+    "parkingHeld": { "type": ["string", "null"], "description": "Free-text description of parking/street holds requested, if not itemized in locations." },
+    "insuranceOnFile": { "type": ["boolean", "null"], "description": "Whether the required certificate of insurance is on file (a prerequisite for issuance)." },
+    "feeWaiverRequested": { "type": ["boolean", "null"], "default": false, "description": "Whether a fee waiver is requested (evaluated case-by-case; base fee is $500 per 14-day period)." },
+    "letterInLieu": { "type": ["boolean", "null"], "default": false, "description": "Request a 'Letter in Lieu of Permit' instead of a full permit (exterior public property, low-impact shoots)." },
+    "studentProduction": { "type": ["boolean", "null"], "default": false, "description": "Student production track." },
+    "notes": { "type": ["string", "null"], "description": "Free-text notes to the Film Office." },
+    "submittedOn": { "type": ["string", "null"], "format": "date-time", "readOnly": true },
+    "issuedPermitEventId": { "type": ["string", "null"], "description": "EventID of the issued FilmPermit, once approved.", "readOnly": true }
+  },
+  "required": ["productionCompany", "category", "startDateTime", "endDateTime"],
+  "additionalProperties": false
+}

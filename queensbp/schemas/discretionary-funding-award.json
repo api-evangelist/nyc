@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/schemas/discretionary-funding-award.json",
+  "title": "DiscretionaryFundingAward",
+  "description": "A discretionary funding award made by the Queens Borough President — tens of millions of dollars each year in capital funding and programmatic (expense) funding to city agencies, nonprofits, cultural institutions, and public/charter schools serving Queens. NO public API and NO QBP Open Data twin today; the application and award live only as HTML on queensbp.nyc.gov/budget (citywide rollups exist elsewhere in Checkbook NYC / Council discretionary data under other labels).",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.queensbp.nyc.gov/budget/",
+    "site_major_allocations": "https://www.queensbp.nyc.gov/major-budget/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "fiscalYear": { "type": ["string", "integer", "null"], "description": "City fiscal year of the award (e.g. 'FY2026')." },
+    "recipient": { "type": "string", "description": "Organization or institution receiving the award." },
+    "recipientType": {
+      "type": ["string", "null"],
+      "enum": ["Nonprofit", "Cultural Institution", "Public School", "Charter School", "City Agency", "Other", null],
+      "description": "Type of recipient eligible for QBP discretionary funding."
+    },
+    "fundingType": {
+      "type": ["string", "null"],
+      "enum": ["Capital", "Expense", null],
+      "description": "Capital (physical projects) vs. expense/programmatic funding."
+    },
+    "purpose": { "type": ["string", "null"], "description": "What the funding is for (project or program description)." },
+    "amount": { "$ref": "_common.json#/$defs/Money" },
+    "communityBoard": { "$ref": "_common.json#/$defs/CommunityBoardReference" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["recipient"],
+  "additionalProperties": false
+}

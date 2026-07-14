@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mome/schemas/screen-activity.json",
+  "title": "ScreenActivity",
+  "description": "A single held location / street segment of screen activity within a film permit — the on-the-ground unit of a shoot. Derived from the Film Permits 'ParkingHeld' field (tg4x-b46p) exploded into individual street closures, enriched with the DOT filming-permit street view (c2az-nhru). One FilmPermit holds many ScreenActivity locations across boroughs, precincts, and community boards.",
+  "type": "object",
+  "x-source": {
+    "opendata_permits": "https://data.cityofnewyork.us/d/tg4x-b46p",
+    "opendata_dot": "https://data.cityofnewyork.us/d/c2az-nhru"
+  },
+  "properties": {
+    "eventId": { "type": ["string", "null"], "description": "Parent FilmPermit EventID." },
+    "streetName": { "type": ["string", "null"], "description": "Street being held ('STREETNAME' on DOT twin)." },
+    "fromStreet": { "type": ["string", "null"], "description": "Cross street the closure starts at (parsed from 'ParkingHeld' / 'STREETNUMBERFROM')." },
+    "toStreet": { "type": ["string", "null"], "description": "Cross street the closure ends at (parsed from 'ParkingHeld' / 'STREETNUMBERTO')." },
+    "placement": { "type": ["string", "null"], "description": "Side/placement of the hold ('PLACEMENT' on DOT twin)." },
+    "streetClosure": { "type": ["boolean", "string", "null"], "description": "Whether the street is fully closed ('STREETCLOSURE')." },
+    "workType": { "type": ["string", "null"], "description": "Type of street activity ('WORKTYPE' / 'WORKTYPEDESCRIPTION')." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

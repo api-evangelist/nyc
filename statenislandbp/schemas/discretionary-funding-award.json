@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandbp/schemas/discretionary-funding-award.json",
+  "title": "DiscretionaryFundingAward",
+  "description": "A capital or expense budget allocation made by the Staten Island Borough President. Under the NYC Charter the BP receives a share of the city capital and expense budget to allocate to agencies, institutions, and community organizations in the borough. NET-NEW as data: requests are accepted only 'via mail or email' (statenislandusa.com/budget.html) and awards appear only inside the adopted citywide budget / Schedule C — there is no BPSI award dataset or API. Modeled from the office's charter role.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.statenislandusa.com/budget.html",
+    "office": "Budget & Capital",
+    "citywide_system": "NYC Adopted Budget — Schedule C (expense) / capital commitment plan",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "awardId": { "type": ["string", "null"], "description": "Internal / Schedule C line identifier.", "readOnly": true },
+    "fiscalYear": { "type": ["string", "integer", "null"], "description": "City fiscal year of the allocation (e.g. 2026)." },
+    "fundingType": {
+      "type": ["string", "null"],
+      "enum": ["Capital", "Expense", null],
+      "description": "Capital (physical improvements) or expense (programs/services)."
+    },
+    "recipient": { "$ref": "_common.json#/$defs/ContactInfo" },
+    "recipientType": {
+      "type": ["string", "null"],
+      "enum": ["City Agency", "Nonprofit Organization", "Cultural Institution", "School", "Library", "Park", "Other", null]
+    },
+    "purpose": { "type": ["string", "null"], "description": "Description of the funded project or program." },
+    "amount": { "type": ["number", "null"], "description": "Award amount in US dollars." },
+    "sponsoringAgency": { "type": ["string", "null"], "description": "The city agency administering the funds." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Requested", "Allocated", "Adopted", "Committed", "Withdrawn", null]
+    }
+  },
+  "required": ["fiscalYear"],
+  "additionalProperties": false
+}

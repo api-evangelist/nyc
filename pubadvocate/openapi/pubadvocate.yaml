@@ -1,0 +1,355 @@
+openapi: 3.1.0
+info:
+  title: NYC Public Advocate API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the New York City Public Advocate — publishing the office's
+    scattered, undocumented, and PDF-bound output (the Worst Landlord Watchlist, sponsored legislation,
+    reports, public interest demands) as coherent resources, and adding the missing write surface: a
+    machine-readable way to ask the city's ombudsman for help with a city agency (an OmbudsmanComplaint).
+  description: >-
+    Proposed API-first surface for the New York City Public Advocate (Office of the Public Advocate),
+    from the NYC Modernization low-hanging-fruit assessment of advocate.nyc.gov and the Worst Landlord
+    Watchlist.
+
+
+    The Public Advocate is the city's ombudsman, yet it is the least machine-readable domain assessed so
+    far. It publishes **zero** datasets to NYC Open Data. Its main site (`advocate.nyc.gov`) is a
+    **self-hosted nginx/Ubuntu origin** — not the shared NYC.gov platform — and returned **502 Bad
+    Gateway** throughout the crawl. Its one modern, data-backed product, the **Worst Landlord Watchlist**
+    (`landlordwatchlist.com`), is an orphan Next.js/Vercel app with an **undocumented** `/api/landlords`
+    JSON endpoint. And the office's core function — helping a resident with a city agency — has no intake
+    API at all; it is a web form, a phone call, or an email.
+
+
+    This contract does two things: (1) presents the office's existing output — the Watchlist, sponsored
+    legislation, reports, and public interest requests — as one clean, documented resource model, and
+    (2) adds the one net-new **write** workflow — filing and tracking an **OmbudsmanComplaint** (help with
+    a city agency) — that today has no machine-readable surface.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.advocate.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Watchlist
+    description: The Worst Landlord Watchlist — ranked landlords and their buildings.
+  - name: Legislation
+    description: Legislation sponsored by the Public Advocate (sourced from Council Legistar).
+  - name: Reports
+    description: Reports, investigations, and agency report cards.
+  - name: PublicInterest
+    description: Public interest demands issued to city agencies.
+  - name: Complaints
+    description: Help with a city agency — file and track an ombudsman complaint (read + write). The net-new surface, today web-form/phone/email only.
+
+paths:
+  /worst-landlords:
+    get:
+      operationId: listWorstLandlords
+      summary: List / search the Worst Landlord Watchlist
+      tags: [Watchlist]
+      parameters:
+        - name: q
+          in: query
+          description: Free-text search over organization / officer name.
+          schema: { type: string }
+        - name: minRank
+          in: query
+          schema: { type: integer, minimum: 1 }
+        - name: maxRank
+          in: query
+          schema: { type: integer, minimum: 1 }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of ranked landlords.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/worst-landlord.json' } }
+  /worst-landlords/{landlordId}:
+    get:
+      operationId: getWorstLandlord
+      summary: Get a landlord from the Watchlist
+      tags: [Watchlist]
+      parameters:
+        - name: landlordId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The landlord.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/worst-landlord.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /worst-landlords/{landlordId}/buildings:
+    get:
+      operationId: getWorstLandlordBuildings
+      summary: List the buildings in a Watchlist landlord's portfolio
+      tags: [Watchlist]
+      parameters:
+        - name: landlordId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The landlord's buildings.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/watchlist-building.json' } }
+
+  /watchlist-buildings:
+    get:
+      operationId: listWatchlistBuildings
+      summary: Search Watchlist buildings
+      tags: [Watchlist]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: bin
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - name: zipCode
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of watchlist buildings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/watchlist-building.json' } }
+
+  /legislation:
+    get:
+      operationId: listLegislation
+      summary: List legislation sponsored by the Public Advocate
+      tags: [Legislation]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Introduced, In Committee, Hearing Held, Passed, Enacted, Vetoed, Failed, Withdrawn] }
+        - name: committee
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of legislation.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/legislation.json' } }
+
+  /reports:
+    get:
+      operationId: listReports
+      summary: List Public Advocate reports and investigations
+      tags: [Reports]
+      parameters:
+        - name: topic
+          in: query
+          schema: { type: string }
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of reports.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/report.json' } }
+
+  /public-interest-requests:
+    get:
+      operationId: listPublicInterestRequests
+      summary: List public interest demands issued to city agencies
+      tags: [PublicInterest]
+      parameters:
+        - name: agency
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [Issued, Acknowledged, Partially Answered, Answered, Refused, Escalated] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of public interest requests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/public-interest-request.json' } }
+
+  /ombudsman-complaints:
+    get:
+      operationId: listOmbudsmanComplaints
+      summary: List the authenticated resident's ombudsman complaints
+      description: Reads the resident's own 'help with a city agency' cases — today untrackable by machine.
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, In Review, Agency Contacted, Awaiting Resident, Resolved, Closed, Referred] }
+        - name: category
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the resident's complaints.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/ombudsman-complaint.json' } }
+    post:
+      operationId: createOmbudsmanComplaint
+      summary: File a complaint (ask the ombudsman for help with a city agency)
+      description: >-
+        The net-new write surface — an API for asking the Public Advocate to intervene with a NYC agency,
+        replacing the web-form / phone / email-only intake. Set consentToContactAgency so the office may
+        contact the agency on the resident's behalf.
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/ombudsman-complaint.json' }
+      responses:
+        '201':
+          description: Complaint filed.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/ombudsman-complaint.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /ombudsman-complaints/{complaintId}:
+    get:
+      operationId: getOmbudsmanComplaint
+      summary: Get an ombudsman complaint
+      tags: [Complaints]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: complaintId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The complaint.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/ombudsman-complaint.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    WorstLandlord: { $ref: '../schemas/worst-landlord.json' }
+    WatchlistBuilding: { $ref: '../schemas/watchlist-building.json' }
+    Legislation: { $ref: '../schemas/legislation.json' }
+    Report: { $ref: '../schemas/report.json' }
+    PublicInterestRequest: { $ref: '../schemas/public-interest-request.json' }
+    OmbudsmanComplaint: { $ref: '../schemas/ombudsman-complaint.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

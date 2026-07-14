@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mome/schemas/film-permit.json",
+  "title": "FilmPermit",
+  "description": "An issued NYC film/photography location permit — one row of the famous 'Film Permits' dataset (tg4x-b46p), one of the most-viewed assets in NYC Open Data (~530k views, updated daily). The public record of a shoot the Mayor's Office of Media & Entertainment Film Office greenlit: what type of production, when, and which streets it holds. Keyed on EventID.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/tg4x-b46p",
+    "opendata_dot_twin": "https://data.cityofnewyork.us/d/c2az-nhru",
+    "site": "https://www.nyc.gov/site/mome/permits/permits.page"
+  },
+  "properties": {
+    "eventId": { "type": "string", "description": "Permit event identifier ('EventID') — primary key." },
+    "eventType": { "$ref": "_common.json#/$defs/PermitEventType" },
+    "eventAgency": { "type": ["string", "null"], "description": "Issuing agency ('EventAgency') — 'Mayor's Office of Film, Theatre & Broadcasting'." },
+    "category": { "$ref": "_common.json#/$defs/ProductionCategory" },
+    "subCategoryName": { "type": ["string", "null"], "description": "Production sub-category ('SubCategoryName') — e.g. Feature, Episodic series, Cable-episodic, Signed Not Aired, Commercial, Documentary." },
+    "startDateTime": { "type": ["string", "null"], "format": "date-time", "description": "Permit start ('StartDateTime')." },
+    "endDateTime": { "type": ["string", "null"], "format": "date-time", "description": "Permit end ('EndDateTime')." },
+    "enteredOn": { "type": ["string", "null"], "format": "date-time", "description": "When the permit was entered ('EnteredOn')." },
+    "parkingHeld": { "type": ["string", "null"], "description": "The exact street segments reserved for the shoot ('ParkingHeld') — the ScreenActivity location detail, e.g. 'VARICK STREET between CANAL STREET and LAIGHT STREET'." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "required": ["eventId"],
+  "additionalProperties": false
+}

@@ -5655,6 +5655,601 @@
    ]
   },
   {
+   "id": "bronxbp",
+   "agency": "Office of the Bronx Borough President",
+   "short": "Bronx Borough President",
+   "verb": "templatize",
+   "platform": "Revize government SaaS CMS (PHP front end + JSP admin at cms2.revize.com), on Oracle Cloud; NOT the shared NYC.gov 'Livesite' platform. Events on Google Calendar; Curator.io + Constant Contact + UserWay + GA4 widgets.",
+   "tagline": "A thin brochure site on a vendor CMS where only two of the office's charter entities are machine-readable \u2014 and where the fix is one shared Borough President API, not a bespoke Bronx build.",
+   "accent": "#5a9a4a",
+   "netnew": "CommunityBoardApplication \u2014 apply to serve on one of the Bronx's twelve community boards (today a PDF/email; no structured intake or status).",
+   "findings": [
+    "The Bronx Borough President site (bronxboropres.nyc.gov) is a thin brochure site on the Revize government SaaS CMS \u2014 PHP front end, JSP CMS back end, hosted on Oracle Cloud, NOT on the shared NYC.gov 'Livesite' platform. It exposes no API and no OpenAPI.",
+    "Only TWO of the office's entities are machine-readable at all \u2014 as NYC Open Data datasets under the label 'Bronx Borough President (BPBX)': Bronx Borough President Capital Funding (mdgu-ar69, 20 columns) and Bronx Community Boards (wbau-xy7g, 7 columns).",
+    "The office's charter-mandated work is otherwise trapped in unstructured surfaces: ULURP land-use recommendations are PDFs in a Revize 'document center', the newsroom (releases, statements, letters, testimonies) is server-rendered PHP pages, and events live in two imported Google Calendars.",
+    "Constituent-facing intake is analog: applying to serve on a community board is a downloadable PDF / email; there is no structured application and no way to check status. That is the net-new WRITE surface.",
+    "All FIVE Borough President offices carry the same NYC Charter duties (ULURP advisory recommendations, community-board appointments, a share of discretionary capital/expense funding, chairing the borough board) and run near-identical thin sites on assorted vendor CMSes. This is a candidate for ONE shared, templatable Borough President API instantiated per borough \u2014 not five bespoke builds. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Exactly 2 datasets under 'Bronx Borough President (BPBX)': Capital Funding (mdgu-ar69) and Bronx Community Boards (wbau-xy7g). SODA /resource/<id>.json endpoints. The only real, open API surface this office has."
+    },
+    {
+     "endpoint": "bronxboropres.nyc.gov",
+     "type": "brochure website (Revize CMS)",
+     "owner": "Office of the Bronx BP (on Revize SaaS)",
+     "public": "html only, no API",
+     "note": "PHP front end (index.php, news_detail_T4_R<n>.php, calendar.php), Revize document_center (ULURP PDFs) + revize_calendar plugins; JSP CMS admin at cms2.revize.com/revize/security. No JSON/OpenAPI. Hosted on Oracle Cloud (129.153.208.86)."
+    },
+    {
+     "endpoint": "Google Calendar (via revize_calendar)",
+     "type": "events source",
+     "owner": "Google / office",
+     "public": "embedded feed",
+     "note": "Two imported calendars \u2014 'Events' and 'Meetings' \u2014 surfaced through the Revize calendar plugin on calendar.php. Not an owned API."
+    },
+    {
+     "endpoint": "cdn.curator.io",
+     "type": "social media aggregator",
+     "owner": "Curator.io (vendor)",
+     "public": "widget",
+     "note": "Social wall embedded on the homepage."
+    },
+    {
+     "endpoint": "visitor.r20.constantcontact.com",
+     "type": "newsletter / email signup",
+     "owner": "Constant Contact (vendor)",
+     "public": "widget",
+     "note": "eNotifications signup (enotify)."
+    },
+    {
+     "endpoint": "googletagmanager.com (GA4 G-DMD6JC0H5S) + userway.org",
+     "type": "analytics / accessibility widgets",
+     "owner": "Google / UserWay (vendors)",
+     "public": "beacon/widget",
+     "note": "GA4 analytics and the UserWay accessibility overlay."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 2,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "DiscretionaryFundingAward",
+    "CommunityBoardAppointment",
+    "LandUseRecommendation",
+    "PressRelease",
+    "Event",
+    "CommunityBoardApplication"
+   ],
+   "files": {
+    "fruit": "bronxbp/fruit.json",
+    "opendata": "bronxbp/opendata-bronxbp.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-bronxbp.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/bronxbp.yaml",
+    "mcp": "mcp/bronxbp-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Bronx Borough President \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across Office of the Bronx Borough President object schemas. Reconciles fields common to the two NYC"
+    },
+    {
+     "file": "schemas/community-board-application.json",
+     "title": "CommunityBoardApplication",
+     "shared": false,
+     "desc": "A resident's application to serve on one of the Bronx's twelve community boards \u2014 the net-new WRITE surface for this domain. The Borough Pre"
+    },
+    {
+     "file": "schemas/community-board-appointment.json",
+     "title": "CommunityBoardAppointment",
+     "shared": false,
+     "desc": "An appointment of a member to one of the Bronx's twelve community boards. Appointing/recommending community-board members is a core NYC Char"
+    },
+    {
+     "file": "schemas/discretionary-funding-award.json",
+     "title": "DiscretionaryFundingAward",
+     "shared": false,
+     "desc": "A capital (and expense) funding award allocated by the Bronx Borough President to an organization or project. The Borough President receives"
+    },
+    {
+     "file": "schemas/event.json",
+     "title": "Event",
+     "shared": false,
+     "desc": "A public event or meeting hosted or promoted by the Office of the Bronx Borough President. NET GAP: there is no owned API; the calendar (bro"
+    },
+    {
+     "file": "schemas/land-use-recommendation.json",
+     "title": "LandUseRecommendation",
+     "shared": false,
+     "desc": "A Bronx Borough President advisory recommendation on a land-use application moving through ULURP (the Uniform Land Use Review Procedure). Is"
+    },
+    {
+     "file": "schemas/press-release.json",
+     "title": "PressRelease",
+     "shared": false,
+     "desc": "A newsroom item published by the Office of the Bronx Borough President \u2014 a press release, statement, letter, or testimony. NET GAP: there is"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/land-use-recommendations",
+     "op": "listLandUseRecommendations",
+     "summary": "List / search Borough President land-use (ULURP) recommendations",
+     "tags": [
+      "LandUse"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/land-use-recommendations/{applicationId}",
+     "op": "getLandUseRecommendation",
+     "summary": "Get a land-use recommendation by ULURP/ZAP application number",
+     "tags": [
+      "LandUse"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-board-appointments",
+     "op": "listCommunityBoardAppointments",
+     "summary": "List community-board member appointments",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/discretionary-funding-awards",
+     "op": "listDiscretionaryFundingAwards",
+     "summary": "Search Borough President discretionary funding awards",
+     "tags": [
+      "Funding"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/press-releases",
+     "op": "listPressReleases",
+     "summary": "List newsroom items (releases, statements, letters, testimonies)",
+     "tags": [
+      "Newsroom"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/press-releases/{id}",
+     "op": "getPressRelease",
+     "summary": "Get a newsroom item",
+     "tags": [
+      "Newsroom"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/events",
+     "op": "listEvents",
+     "summary": "List public events and meetings",
+     "tags": [
+      "Events"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-board-applications",
+     "op": "listCommunityBoardApplications",
+     "summary": "List the authenticated applicant's community-board applications",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/community-board-applications",
+     "op": "createCommunityBoardApplication",
+     "summary": "Apply to serve on a community board (submit an application)",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/community-board-applications/{applicationId}",
+     "op": "getCommunityBoardApplication",
+     "summary": "Get a community-board application",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_land_use_recommendations",
+     "title": "Find Land-Use Recommendations",
+     "desc": "Search the Borough President's ULURP / land-use advisory recommendations by community board, disposition, action type, date range, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_land_use_recommendation",
+     "title": "Get Land-Use Recommendation",
+     "desc": "Fetch a single Borough President land-use recommendation by its ULURP/ZAP application number.",
+     "write": false
+    },
+    {
+     "name": "find_community_board_appointments",
+     "title": "Find Community Board Appointments",
+     "desc": "List appointments to the twelve Bronx community boards by board number, year, or recommending official. Backed by NYC Open Data (wbau-xy7g).",
+     "write": false
+    },
+    {
+     "name": "find_discretionary_funding",
+     "title": "Find Discretionary Funding",
+     "desc": "Search the Borough President's discretionary capital / expense funding awards by fiscal year, type, community board, or council district. Backed by NYC Open Dat",
+     "write": false
+    },
+    {
+     "name": "find_press_releases",
+     "title": "Find Newsroom Items",
+     "desc": "List newsroom items (press releases, statements, letters, testimonies) by category, date range, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_press_release",
+     "title": "Get Newsroom Item",
+     "desc": "Fetch a single newsroom item (release, statement, letter, or testimony) by id.",
+     "write": false
+    },
+    {
+     "name": "find_events",
+     "title": "Find Events",
+     "desc": "List the Borough President's public events and meetings by calendar (Events or Meetings) and date range.",
+     "write": false
+    },
+    {
+     "name": "list_my_community_board_applications",
+     "title": "List My Community Board Applications",
+     "desc": "List the authenticated applicant's own applications to serve on a Bronx community board, and their status \u2014 today there is no way to check this at all.",
+     "write": false
+    },
+    {
+     "name": "apply_to_community_board",
+     "title": "Apply to a Community Board",
+     "desc": "Submit a resident's application to serve on one of the Bronx's twelve community boards. NET-NEW workflow with no API today \u2014 currently a downloadable PDF or an ",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "brooklynbp",
+   "agency": "Office of the Brooklyn Borough President (BPBK)",
+   "short": "Brooklyn Borough President",
+   "verb": "template",
+   "platform": "Headless WordPress on WP Engine + Next.js, behind Cloudflare (www.brooklynbp.nyc.gov) \u2014 after the office let its former primary domain brooklyn-usa.org lapse (now redirecting offsite to batman-news.com).",
+   "tagline": "A thin borough office with real but scattered open data, a generic CMS API, and a lapsed domain \u2014 the fruit is one templated Borough President API reused across all five boroughs.",
+   "accent": "#4a7ab0",
+   "netnew": "CommunityBoardApplication \u2014 apply to serve on a Brooklyn community board (net-new write; today only a web form).",
+   "findings": [
+    "The office LET ITS OWN DOMAIN GO: brooklyn-usa.org now 301-redirects to batman-news.com (WordPress 'Redirection'/'Permalink Manager' plugins on WPX Cloud, bm-*-api migration namespaces). The live office site is www.brooklynbp.nyc.gov \u2014 headless WordPress on WP Engine + Next.js, behind Cloudflare.",
+    "Contrary to the brief's guess of zero, there ARE 21 NYC Open Data datasets under 'Brooklyn Borough President (BPBK)': ULURP land-use recommendations, a community-board contact list, a dozen 'BP Appointments' tables, and capital/discretionary/tourism award tables.",
+    "But the open data is fragmented and uneven: 21 single-purpose Socrata IDs, many thin (3-6 columns), several stale snapshots (Cornerstone Awards 2015-2017, Discretionary Contract Awards 2017-2018). Nothing is an owned, purpose-built BP API.",
+    "The one real, live, purpose-shaped read API is generic CMS plumbing: the WordPress REST API (wp/v2/posts, 315 posts) and The Events Calendar (tribe/events/v1/events) \u2014 machine-readable but not a Borough-President contract.",
+    "There is no write surface for the constituent action that matters most each year \u2014 applying to serve on a community board \u2014 which today is only an unstructured web form. That is the net-new WRITE object (CommunityBoardApplication).",
+    "All five NYC Borough Presidents run near-identical thin offices with the same powers (ULURP advice, board appointments, discretionary funding, community-board coordination) \u2014 the fruit is ONE shared, templated Borough President API, not five bespoke ones. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "21 BPBK datasets; SODA /resource/<id>.json endpoints. Real, open, machine-readable \u2014 but scattered across 21 single-purpose IDs, several thin/stale."
+    },
+    {
+     "endpoint": "www.brooklynbp.nyc.gov/wp-json/tribe/events/v1",
+     "type": "events API (The Events Calendar plugin)",
+     "owner": "Brooklyn BP (via WP Engine WordPress)",
+     "public": true,
+     "note": "Live, purpose-shaped read API for events/hearings/board meetings; 6 upcoming events at assessment. The one BP-specific live API surface."
+    },
+    {
+     "endpoint": "www.brooklynbp.nyc.gov/wp-json/wp/v2",
+     "type": "WordPress REST API",
+     "owner": "Brooklyn BP (WP Engine)",
+     "public": true,
+     "note": "Generic CMS content API \u2014 315 posts (press releases/news), 74+ pages. Machine-readable but not a purpose-built BP contract; only /wp-admin/ is disallowed in robots.txt."
+    },
+    {
+     "endpoint": "www.brooklynbp.nyc.gov",
+     "type": "site (headless WordPress + Next.js)",
+     "owner": "Brooklyn BP (WP Engine, Cloudflare)",
+     "public": "html",
+     "note": "x-powered-by: WP Engine; _next front-end; Tribe Events, Wordfence, wp-statistics plugins."
+    },
+    {
+     "endpoint": "brooklyn-usa.org",
+     "type": "LAPSED / repurposed domain",
+     "owner": "third party (WPX Cloud)",
+     "public": "redirects offsite",
+     "note": "301-redirects to batman-news.com; bm-bulker-api/bm-migration-api namespaces = domain-flip. The office no longer controls its former primary domain."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 21,
+    "schemas": 7,
+    "openapiOps": 11,
+    "mcpTools": 9,
+    "entities": 7
+   },
+   "entities": [
+    "LandUseRecommendation",
+    "CommunityBoard",
+    "BoardAppointment",
+    "FundingAward",
+    "Report",
+    "Event",
+    "CommunityBoardApplication"
+   ],
+   "files": {
+    "fruit": "brooklynbp/fruit.json",
+    "opendata": "brooklynbp/opendata-brooklynbp.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-brooklynbp.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/brooklynbp.yaml",
+    "mcp": "mcp/brooklynbp-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Brooklyn Borough President \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across Office of the Brooklyn Borough President (BPBK) object schemas. Reconciles fields common to t"
+    },
+    {
+     "file": "schemas/board-appointment.json",
+     "title": "BoardAppointment",
+     "shared": false,
+     "desc": "A person the Brooklyn Borough President has appointed to (or designated as a representative on) a board, council, or advisory body \u2014 the off"
+    },
+    {
+     "file": "schemas/community-board-application.json",
+     "title": "CommunityBoardApplication",
+     "shared": false,
+     "desc": "An application from a Brooklyn resident to be appointed to a community board (or other body the Borough President appoints to) \u2014 the single "
+    },
+    {
+     "file": "schemas/community-board.json",
+     "title": "CommunityBoard",
+     "shared": false,
+     "desc": "A Brooklyn community board \u2014 one of the 18 local advisory bodies the Borough President appoints members to and coordinates with. Canonical s"
+    },
+    {
+     "file": "schemas/event.json",
+     "title": "Event",
+     "shared": false,
+     "desc": "A public event hosted or convened by the Office of the Brooklyn Borough President \u2014 ULURP public hearings, borough board meetings, community"
+    },
+    {
+     "file": "schemas/funding-award.json",
+     "title": "FundingAward",
+     "shared": false,
+     "desc": "A discretionary funding award made by the Brooklyn Borough President \u2014 capital allocations, expense/discretionary contract awards, and touri"
+    },
+    {
+     "file": "schemas/land-use-recommendation.json",
+     "title": "LandUseRecommendation",
+     "shared": false,
+     "desc": "A Brooklyn Borough President advisory recommendation on a Uniform Land Use Review Procedure (ULURP) application \u2014 the office's signature sta"
+    },
+    {
+     "file": "schemas/report.json",
+     "title": "Report",
+     "shared": false,
+     "desc": "A published position of the Office of the Brooklyn Borough President \u2014 a resolution/legislation, report, testimony, op-ed, or press release."
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/land-use-recommendations",
+     "op": "listLandUseRecommendations",
+     "summary": "List / search ULURP land-use recommendations",
+     "tags": [
+      "LandUse"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/land-use-recommendations/{ulurpNumber}",
+     "op": "getLandUseRecommendation",
+     "summary": "Get a ULURP recommendation by application number",
+     "tags": [
+      "LandUse"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-boards",
+     "op": "listCommunityBoards",
+     "summary": "List Brooklyn community boards and contacts",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-boards/{boardNumber}",
+     "op": "getCommunityBoard",
+     "summary": "Get a Brooklyn community board by number",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/appointments",
+     "op": "listBoardAppointments",
+     "summary": "List / search Borough President board appointments",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/funding-awards",
+     "op": "listFundingAwards",
+     "summary": "List / search discretionary, capital, and tourism funding awards",
+     "tags": [
+      "Funding"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/reports",
+     "op": "listReports",
+     "summary": "List / search publications \u2014 legislation, reports, testimony, op-eds, press releases",
+     "tags": [
+      "Publications"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/events",
+     "op": "listEvents",
+     "summary": "List upcoming Borough President events, hearings, and board meetings",
+     "tags": [
+      "Events"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/events/{eventId}",
+     "op": "getEvent",
+     "summary": "Get an event by id",
+     "tags": [
+      "Events"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/community-board-applications",
+     "op": "createCommunityBoardApplication",
+     "summary": "Apply to serve on a community board (submit an application)",
+     "tags": [
+      "Applications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/community-board-applications/{applicationId}",
+     "op": "getCommunityBoardApplication",
+     "summary": "Get the status of a submitted community board application",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_land_use_recommendations",
+     "title": "Find Land Use Recommendations",
+     "desc": "Search Brooklyn BP ULURP land-use recommendations by recommendation, community board, council district, date range, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_land_use_recommendation",
+     "title": "Get Land Use Recommendation",
+     "desc": "Fetch a single ULURP land-use recommendation by its ULURP application number.",
+     "write": false
+    },
+    {
+     "name": "find_community_boards",
+     "title": "Find Community Boards",
+     "desc": "List Brooklyn's community boards with chair, district manager, contact, and meeting details, by board number, council district, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_appointments",
+     "title": "Find Board Appointments",
+     "desc": "Search people the Brooklyn BP has appointed to boards and councils (CECs, HHC CABs, BPL board, BIDs, SWAB, DYCD NABs, miscellaneous) by board type, board, or fr",
+     "write": false
+    },
+    {
+     "name": "find_funding_awards",
+     "title": "Find Funding Awards",
+     "desc": "Search Brooklyn BP discretionary, capital, and tourism funding awards by award type, fiscal year, organization, or community board. Note some datasets are histo",
+     "write": false
+    },
+    {
+     "name": "find_reports",
+     "title": "Find Publications",
+     "desc": "Search Brooklyn BP publications \u2014 passed legislation, resolutions, reports, testimony, op-eds, and press releases \u2014 by type, subject, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_events",
+     "title": "Find Events",
+     "desc": "List upcoming Brooklyn BP events, ULURP public hearings, and borough board meetings from the live Events Calendar feed, by date range, category, or free text.",
+     "write": false
+    },
+    {
+     "name": "apply_to_community_board",
+     "title": "Apply to a Community Board",
+     "desc": "Submit an application to serve on a Brooklyn community board (or other BP-appointed body). NET-NEW workflow with no public API today \u2014 it lives only in an unstr",
+     "write": true
+    },
+    {
+     "name": "get_application_status",
+     "title": "Get Application Status",
+     "desc": "Read back the status of a submitted community board application by its reference id.",
+     "write": false
+    }
+   ]
+  },
+  {
    "id": "bsa",
    "agency": "NYC Board of Standards & Appeals (BSA)",
    "short": "NYC Standards & Appeals (BSA)",
@@ -6767,6 +7362,552 @@
      "name": "file_disclosure",
      "title": "File a Disclosure Statement",
      "desc": "Submit a NYC campaign-finance disclosure statement (file). NET-NEW workflow with no public API today \u2014 it lives only in the login-walled C-SMART disclosure appl",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "cityclerk",
+   "agency": "New York City Office of the City Clerk (OCC)",
+   "short": "NYC City Clerk",
+   "verb": "contract",
+   "platform": "cityclerk.nyc.gov on the NYC.gov Content API (AWS ALB + Akamai + nginx + Dynatrace, jQuery/Bootstrap, WebTrends); Project Cupid marriage system on the rented Unqork no-code platform (Angular SPA); e-Lobbyist Java filing app behind SAP CDC / Gigya SSO; Lobbyist Search JS SPA over a .do Java backend",
+   "tagline": "The City Clerk rents the machinery of the city's two most personal civic transactions \u2014 getting married and registering to lobby \u2014 and owns no API contract over either.",
+   "accent": "#b06f8a",
+   "netnew": "MarriageLicenseApplication \u2014 a couple applies for a NYC marriage license (today only via Project Cupid's Unqork screens)",
+   "findings": [
+    "The City Clerk runs two bureaus on rented, agent-invisible platforms: the Marriage Bureau's Project Cupid is a no-code application on the rented Unqork platform, and the Lobbying Bureau's e-Lobbyist is a login-walled Java app behind rented SAP CDC / Gigya SSO.",
+    "The flagship citizen transaction \u2014 applying for a marriage license \u2014 has NO API and NO Open Data twin at all. It lives only inside Project Cupid's Unqork screens; NYC's most personal civic transaction is outsourced to a no-code vendor.",
+    "The Lobbying Bureau is the more open half: registration and periodic filing happen in e-Lobbyist, but the reported data IS published \u2014 two NYC Open Data datasets (City Clerk eLobbyist Data fmf3-knd8, 28c; Lobbyists' Fundraising & Political Consulting Reports 7arw-dbem, 24c) plus a public Lobbyist Search.",
+    "Marriage records are NOT the City Clerk's on Open Data \u2014 only DORIS publishes historical vital-records indexes (j62e-7maa, d8dr-nyhw). The live marriage side is entirely closed.",
+    "The informational site was quietly modernized onto the NYC.gov Content API (apps.nyc.gov/content-api/v1) \u2014 a real JSON backend serving content and navigation \u2014 but it is undocumented, shared, and read-only.",
+    "Net-new write surface: apply for a marriage license (MarriageLicenseApplication) \u2014 the single most common Marriage Bureau transaction, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "apps.nyc.gov/content-api/v1/content/cityclerk + /v2/nav/cityclerk",
+     "type": "content API",
+     "owner": "NYC (OTI) shared platform",
+     "public": "json, undocumented",
+     "note": "Real JSON backend that drives cityclerk.nyc.gov (content + navigation). Read-only, undocumented, shared across NYC.gov agency sites. Content only \u2014 no transactions."
+    },
+    {
+     "endpoint": "projectcupid.cityofnewyork.us/app/cupidceremony",
+     "type": "marriage-license / appointment system",
+     "owner": "NYC City Clerk (on Unqork)",
+     "public": "login-walled SPA, no API",
+     "note": "Online marriage-license application, appointment scheduling, and ceremony booking. Built on the rented Unqork no-code platform (polyfill.unqork.io, /fbu/ uapi, Angular SPA). No documented API, no OpenAPI, no Open Data output. The net-new write surface (MarriageLicenseApplication)."
+    },
+    {
+     "endpoint": "apps.nyc.gov/elobbyist",
+     "type": "lobbyist filing application",
+     "owner": "NYC City Clerk (Java)",
+     "public": "login-walled, no API",
+     "note": "e-Lobbyist registration and periodic filing. Java servlet app (JSESSIONID, .do) fronted by SAP CDC / Gigya SAML SSO (fidm.us1.gigya.com). No public API; reported data is published to Open Data."
+    },
+    {
+     "endpoint": "lobbyistsearch.nyc.gov",
+     "type": "public lobbyist search database",
+     "owner": "NYC City Clerk",
+     "public": "public SPA, no documented API",
+     "note": "Lobbyist Search public database \u2014 JS SPA (webpack bundle) over a .do Java backend. Public but no documented/OpenAPI contract."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "2 City Clerk datasets (lobbyist filing + fundraising reports), each a SODA /resource/<id>.json endpoint. The only open, machine-readable City Clerk API \u2014 and only for the lobbying side."
+    },
+    {
+     "endpoint": "cityclerkforms.nyc.gov/cityclerkformsonline",
+     "type": "forms application",
+     "owner": "NYC City Clerk (Java)",
+     "public": "html forms, no API",
+     "note": "City Clerk Forms Online (officiant registration, records requests). Server-rendered Java forms app; no API."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 2,
+    "schemas": 6,
+    "openapiOps": 8,
+    "mcpTools": 8,
+    "entities": 6
+   },
+   "entities": [
+    "MarriageLicenseApplication",
+    "Ceremony",
+    "MarriageLicense",
+    "LobbyistRegistration",
+    "LobbyistFiling",
+    "FundraisingReport"
+   ],
+   "files": {
+    "fruit": "cityclerk/fruit.json",
+    "opendata": "cityclerk/opendata-cityclerk.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-cityclerk.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/cityclerk.yaml",
+    "mcp": "mcp/cityclerk-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "City Clerk \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Office of the City Clerk (OCC) object schemas. Reconciles fields common to the two City C"
+    },
+    {
+     "file": "schemas/ceremony.json",
+     "title": "Ceremony",
+     "shared": false,
+     "desc": "A civil marriage ceremony or domestic-partnership ceremony performed by the Office of the City Clerk, together with its appointment slot. Sc"
+    },
+    {
+     "file": "schemas/fundraising-report.json",
+     "title": "FundraisingReport",
+     "shared": false,
+     "desc": "A lobbyist fundraising and political-consulting report filed with the Office of the City Clerk's Lobbying Bureau \u2014 disclosing fundraising an"
+    },
+    {
+     "file": "schemas/lobbyist-filing.json",
+     "title": "LobbyistFiling",
+     "shared": false,
+     "desc": "A periodic lobbying report filed with the Office of the City Clerk's Lobbying Bureau under the NYC Lobbying Law \u2014 the compensation, expense,"
+    },
+    {
+     "file": "schemas/lobbyist-registration.json",
+     "title": "LobbyistRegistration",
+     "shared": false,
+     "desc": "A lobbyist (and its client) registered with the Office of the City Clerk's Lobbying Bureau under the NYC Lobbying Law. Registration and fili"
+    },
+    {
+     "file": "schemas/marriage-license-application.json",
+     "title": "MarriageLicenseApplication",
+     "shared": false,
+     "desc": "An application for a NYC marriage license submitted to the Office of the City Clerk's Marriage Bureau \u2014 the single highest-value citizen tra"
+    },
+    {
+     "file": "schemas/marriage-license.json",
+     "title": "MarriageLicense",
+     "shared": false,
+     "desc": "A New York City marriage license issued by the Office of the City Clerk's Marriage Bureau \u2014 the record produced once a MarriageLicenseApplic"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/appointments",
+     "op": "listAppointments",
+     "summary": "Find available City Clerk appointment slots (ceremonies, license appointments)",
+     "tags": [
+      "Marriage"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/marriage-license-applications",
+     "op": "createMarriageLicenseApplication",
+     "summary": "Apply for a marriage license (net-new write)",
+     "tags": [
+      "Marriage"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/marriage-license-applications/{applicationId}",
+     "op": "getMarriageLicenseApplication",
+     "summary": "Get the status of a marriage-license application",
+     "tags": [
+      "Marriage"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/marriage-licenses/{licenseId}",
+     "op": "getMarriageLicense",
+     "summary": "Get an issued marriage license",
+     "tags": [
+      "Marriage"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/lobbyist-registrations",
+     "op": "listLobbyistRegistrations",
+     "summary": "Search lobbyist registrations (public Lobbyist Search)",
+     "tags": [
+      "Lobbying"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/lobbyist-registrations/{registrationId}",
+     "op": "getLobbyistRegistration",
+     "summary": "Get a lobbyist registration",
+     "tags": [
+      "Lobbying"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/lobbyist-filings",
+     "op": "listLobbyistFilings",
+     "summary": "Search periodic lobbying reports (eLobbyist Data)",
+     "tags": [
+      "Lobbying"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/fundraising-reports",
+     "op": "listFundraisingReports",
+     "summary": "Search lobbyist fundraising & political-consulting reports",
+     "tags": [
+      "Lobbying"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_appointments",
+     "title": "Find Appointments",
+     "desc": "Find available City Clerk appointment slots for marriage licenses, marriage ceremonies, and domestic partnership registrations/ceremonies \u2014 today reachable only",
+     "write": false
+    },
+    {
+     "name": "apply_for_marriage_license",
+     "title": "Apply for a Marriage License",
+     "desc": "Submit a NYC marriage-license application (net-new write). No public API today \u2014 it lives only in the Unqork-hosted Project Cupid system. Requires an authentica",
+     "write": true
+    },
+    {
+     "name": "get_marriage_license_application",
+     "title": "Get Marriage License Application",
+     "desc": "Check the status of a marriage-license application by id \u2014 today visible only inside Project Cupid.",
+     "write": false
+    },
+    {
+     "name": "get_marriage_license",
+     "title": "Get Marriage License",
+     "desc": "Fetch an issued NYC marriage license by id.",
+     "write": false
+    },
+    {
+     "name": "find_lobbyist_registrations",
+     "title": "Find Lobbyist Registrations",
+     "desc": "Search the public Lobbyist Search database of registered lobbyists and their clients by lobbyist name, client, industry, or year.",
+     "write": false
+    },
+    {
+     "name": "get_lobbyist_registration",
+     "title": "Get Lobbyist Registration",
+     "desc": "Fetch a single lobbyist registration (registrant + client) by registration id.",
+     "write": false
+    },
+    {
+     "name": "find_lobbyist_filings",
+     "title": "Find Lobbyist Filings",
+     "desc": "Search periodic lobbying reports (eLobbyist Data) \u2014 compensation, expenses, activities, and targets per reporting period \u2014 by lobbyist, client, year, or period.",
+     "write": false
+    },
+    {
+     "name": "find_fundraising_reports",
+     "title": "Find Fundraising Reports",
+     "desc": "Search lobbyist fundraising and political-consulting reports by reporting entity, candidate, target office, or year.",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "coib",
+   "agency": "NYC Conflicts of Interest Board (COIB)",
+   "short": "NYC Conflicts of Interest Board (COIB)",
+   "verb": "attest",
+   "platform": "NYC.gov shared 'Livesite' chassis (Akamai + nginx + Dynatrace) for the informational site, plus a separate login-gated Annual Financial Disclosure electronic filing website",
+   "tagline": "COIB publishes its enforcement and transparency data openly, but the core compliance act \u2014 filing an annual financial disclosure \u2014 is trapped behind a login-only filing website with no API.",
+   "accent": "#6a6a8a",
+   "netnew": "FinancialDisclosureFiling \u2014 a public servant files/attests an annual financial disclosure report, today locked inside the login-only COIB filing website with no API",
+   "findings": [
+    "COIB is a transparency-out / attestation-in agency: its enforcement and transparency OUTPUTS are genuinely open (8 NYC Open Data datasets), but its core compliance INPUT \u2014 the annual financial disclosure filing \u2014 is locked in a login-gated filing website with no API.",
+    "The 8 open datasets cover enforcement dispositions/fines (Enforcement Fines, the most-viewed asset), donations to agencies and to elected-official-affiliated non-profits, the monthly Policymakers List, and legal defense trust donations/refunds/expenditures.",
+    "The Annual Disclosure system is the real transaction layer: 'file electronically through COIB's filing website' with a 4-week filing window each spring, but it is login-only, produces no Open Data twin, and elected officials' reports surface only as PDFs on request.",
+    "Advisory opinions (Charter Chapter 68 interpretations) and ethics-training records are published only as PDFs / behind the training site \u2014 reference corpora with no machine-readable index.",
+    "Net-new write surface: file an annual financial disclosure report (FinancialDisclosureFiling) \u2014 the single most consequential COIB resident-of-government transaction, with no API today. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "8 COIB datasets; SODA /resource/<id>.json endpoints. The one real, open COIB API \u2014 enforcement dispositions, donations, policymakers, and legal defense trusts."
+    },
+    {
+     "endpoint": "COIB Annual Financial Disclosure filing website",
+     "type": "e-filing system",
+     "owner": "COIB",
+     "public": "login-walled, no API",
+     "note": "'File electronically through COIB's filing website' \u2014 the annual disclosure transaction. Login-gated, no JSON/OpenAPI, no Open Data twin; elected officials' reports posted only as PDFs on request."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/coib",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite v22)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM. No content API. Advisory opinions and annual reports are PDFs."
+    },
+    {
+     "endpoint": "maps.googleapis.com",
+     "type": "maps embed",
+     "owner": "Google",
+     "public": "vendor",
+     "note": "Google Maps embed on the informational site."
+    },
+    {
+     "endpoint": "go-mpulse.net",
+     "type": "RUM beacon",
+     "owner": "Akamai mPulse",
+     "public": "vendor",
+     "note": "Akamai mPulse real-user-monitoring beacon."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 8,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 8,
+    "entities": 6
+   },
+   "entities": [
+    "EnforcementDisposition",
+    "AgencyDonation",
+    "Policymaker",
+    "LegalDefenseTrustTransaction",
+    "AdvisoryOpinion",
+    "FinancialDisclosureFiling"
+   ],
+   "files": {
+    "fruit": "coib/fruit.json",
+    "opendata": "coib/opendata-coib.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-coib.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/coib.yaml",
+    "mcp": "mcp/coib-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "COIB \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Conflicts of Interest Board (COIB) object schemas. Reconciles fields common to the COIB O"
+    },
+    {
+     "file": "schemas/advisory-opinion.json",
+     "title": "AdvisoryOpinion",
+     "shared": false,
+     "desc": "A published COIB advisory opinion \u2014 the Board's formal interpretation of the City's conflicts-of-interest law (Charter Chapter 68). NO Open "
+    },
+    {
+     "file": "schemas/agency-donation.json",
+     "title": "AgencyDonation",
+     "shared": false,
+     "desc": "A donation subject to COIB oversight \u2014 either a gift solicited by or made to a City agency, or a donation to a not-for-profit affiliated wit"
+    },
+    {
+     "file": "schemas/enforcement-disposition.json",
+     "title": "EnforcementDisposition",
+     "shared": false,
+     "desc": "A resolved COIB enforcement action \u2014 the outcome of a conflicts-of-interest case, including the fine and any other penalty. Canonical schema"
+    },
+    {
+     "file": "schemas/financial-disclosure-filing.json",
+     "title": "FinancialDisclosureFiling",
+     "shared": false,
+     "desc": "An annual financial disclosure report filed by a City public servant under the NYC Annual Disclosure Law (Admin. Code \u00a7 12-110). NET-NEW: th"
+    },
+    {
+     "file": "schemas/legal-defense-trust-transaction.json",
+     "title": "LegalDefenseTrustTransaction",
+     "shared": false,
+     "desc": "A single financial transaction on a public servant's Legal Defense Trust \u2014 a donation into, refund out of, or expenditure from a trust estab"
+    },
+    {
+     "file": "schemas/policymaker.json",
+     "title": "Policymaker",
+     "shared": false,
+     "desc": "A City public servant designated a 'policymaker' (Board Rules \u00a7 1-02) \u2014 a role that, among other things, triggers the annual financial discl"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/enforcement-dispositions",
+     "op": "listEnforcementDispositions",
+     "summary": "List / search resolved enforcement actions",
+     "tags": [
+      "Enforcement"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/enforcement-dispositions/{caseNumber}",
+     "op": "getEnforcementDisposition",
+     "summary": "Get an enforcement disposition by case number",
+     "tags": [
+      "Enforcement"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/agency-donations",
+     "op": "listAgencyDonations",
+     "summary": "Search donations to agencies and to elected-official-affiliated non-profits",
+     "tags": [
+      "Donations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/policymakers",
+     "op": "listPolicymakers",
+     "summary": "List designated City policymakers",
+     "tags": [
+      "Policymakers"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/legal-defense-trust-transactions",
+     "op": "listLegalDefenseTrustTransactions",
+     "summary": "Search legal defense trust donations, refunds, and expenditures",
+     "tags": [
+      "LegalDefenseTrusts"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/advisory-opinions",
+     "op": "listAdvisoryOpinions",
+     "summary": "List / search published advisory opinions",
+     "tags": [
+      "AdvisoryOpinions"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/advisory-opinions/{opinionNumber}",
+     "op": "getAdvisoryOpinion",
+     "summary": "Get a published advisory opinion",
+     "tags": [
+      "AdvisoryOpinions"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/financial-disclosure-filings",
+     "op": "listFinancialDisclosureFilings",
+     "summary": "List the authenticated filer's financial disclosure filings",
+     "tags": [
+      "FinancialDisclosure"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/financial-disclosure-filings",
+     "op": "createFinancialDisclosureFiling",
+     "summary": "File an annual financial disclosure report",
+     "tags": [
+      "FinancialDisclosure"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/financial-disclosure-filings/{filingId}",
+     "op": "getFinancialDisclosureFiling",
+     "summary": "Get a financial disclosure filing",
+     "tags": [
+      "FinancialDisclosure"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_enforcement_dispositions",
+     "title": "Find Enforcement Dispositions",
+     "desc": "Search resolved COIB enforcement actions by agency, date range, minimum fine, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_enforcement_disposition",
+     "title": "Get Enforcement Disposition",
+     "desc": "Fetch a single resolved enforcement action (fine, penalty, explanation) by COIB case number.",
+     "write": false
+    },
+    {
+     "name": "find_agency_donations",
+     "title": "Find Agency Donations",
+     "desc": "Search donations to City agencies and to non-profits affiliated with elected officials, by stream, agency, elected official, year, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_policymakers",
+     "title": "Find Policymakers",
+     "desc": "List designated City policymakers (the roles that must file annual financial disclosure) by agency, calendar year, or month.",
+     "write": false
+    },
+    {
+     "name": "find_legal_defense_trust_transactions",
+     "title": "Find Legal Defense Trust Transactions",
+     "desc": "Search legal defense trust donations, refunds, and expenditures by transaction type, trust name, borough, or date range.",
+     "write": false
+    },
+    {
+     "name": "find_advisory_opinions",
+     "title": "Find Advisory Opinions",
+     "desc": "Search the Board's published advisory opinions interpreting Charter Chapter 68, by charter section, topic, year, or free text.",
+     "write": false
+    },
+    {
+     "name": "list_my_financial_disclosure_filings",
+     "title": "List My Financial Disclosure Filings",
+     "desc": "List the authenticated filer's own annual financial disclosure reports and their status \u2014 today visible only inside the login-gated COIB filing website.",
+     "write": false
+    },
+    {
+     "name": "file_financial_disclosure",
+     "title": "File Financial Disclosure",
+     "desc": "Submit an annual financial disclosure report (NYC Annual Disclosure Law). NET-NEW workflow with no public API today \u2014 it lives only in the login-gated COIB Annu",
      "write": true
     }
    ]
@@ -12022,6 +13163,291 @@
    ]
   },
   {
+   "id": "manhattanbp",
+   "agency": "Office of the Manhattan Borough President (MBPO)",
+   "short": "Manhattan Borough President",
+   "verb": "federate",
+   "platform": "WordPress (Divi theme) on WP Engine, behind Cloudflare; only API is the default WordPress REST API + Forminator forms",
+   "tagline": "The Manhattan BP's civic data is already open \u2014 just fragmented across 21 one-off datasets, wrapped in a generic WordPress template, and missing any API for the one thing residents most want to do: serve on a community board.",
+   "accent": "#b04a4a",
+   "netnew": "CommunityBoardApplication \u2014 apply to serve on a Manhattan community board (today a Forminator web form / PDF, no API)",
+   "findings": [
+    "Contrary to the hypothesis, the Manhattan BP is not a data desert: it publishes 21 NYC Open Data datasets (agency label 'Manhattan Borough President (MBPO)') covering ULURP recommendations, appointments, community-board leadership, constituent services, and years of funding awards.",
+    "But the data is FRAGMENTED \u2014 one dataset per program per fiscal year. Capital Grant Awards alone is FIVE separate datasets (2014, 2015, 2016, 2017, 2018), and discretionary funding is further split across Tourism Grants, Community Grants, MCAP, and Police-Community Relations Awards.",
+    "The public site (manhattanbp.nyc.gov) is a generic off-the-shelf WordPress/Divi build on WP Engine behind Cloudflare; its only API is the default WordPress REST API, with nothing purpose-built for the office's civic work.",
+    "The flagship citizen action \u2014 applying to serve on a community board \u2014 is a WordPress/Forminator web form (or a downloadable PDF) with no machine-readable contract and no Open Data twin. That is the net-new WRITE surface.",
+    "All five borough presidents run near-identical thin sites and publish the same shapes of data under parallel Socrata labels (BPBK, BPBX, QBP, BPSI) \u2014 a candidate for ONE federated Borough President API deployed per office rather than five one-off builds. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "21 MBPO datasets; SODA /resource/<id>.json endpoints. The one real, open MBPO data API \u2014 but fragmented into one dataset per program per fiscal year."
+    },
+    {
+     "endpoint": "manhattanbp.nyc.gov/wp-json/",
+     "type": "WordPress REST API",
+     "owner": "MBPO (WordPress / WP Engine)",
+     "public": "generic",
+     "note": "Default WP REST surface (wp/v2 pages/posts) plus plugin namespaces (forminator/v1, divi/v1, redirection/v1, google-site-kit/v1). No purpose-built endpoint for the office's civic entities."
+    },
+    {
+     "endpoint": "Forminator forms (forminator/v1)",
+     "type": "web form plugin",
+     "owner": "MBPO (WPMU DEV Forminator)",
+     "public": "form UI, no API",
+     "note": "The community-board application and other intake live as Forminator forms or downloadable PDFs \u2014 HTML forms, no machine-readable write contract."
+    },
+    {
+     "endpoint": "www.manhattanbp.nyc.gov",
+     "type": "informational site",
+     "owner": "MBPO (WordPress + Divi theme on WP Engine)",
+     "public": "html",
+     "note": "Content only; Cloudflare edge, WP Engine hosting, Google Site Kit RUM/SEO. Off-the-shelf Divi build."
+    }
+   ],
+   "counts": {
+    "fruit": 7,
+    "opendata": 21,
+    "schemas": 7,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 7
+   },
+   "entities": [
+    "CommunityBoard",
+    "LandUseRecommendation",
+    "BoardAppointment",
+    "FundingAward",
+    "Legislation",
+    "ConstituentCase",
+    "CommunityBoardApplication"
+   ],
+   "files": {
+    "fruit": "manhattanbp/fruit.json",
+    "opendata": "manhattanbp/opendata-manhattanbp.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-manhattanbp.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/manhattanbp.yaml",
+    "mcp": "mcp/manhattanbp-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Manhattan Borough President \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across the Office of the Manhattan Borough President (MBPO) object schemas. Reconciles fields common"
+    },
+    {
+     "file": "schemas/board-appointment.json",
+     "title": "BoardAppointment",
+     "shared": false,
+     "desc": "An appointment made by the Manhattan Borough President to a board, commission, or community body \u2014 community boards, HHC Community Advisory "
+    },
+    {
+     "file": "schemas/community-board-application.json",
+     "title": "CommunityBoardApplication",
+     "shared": false,
+     "desc": "An application to serve as a volunteer member of a Manhattan community board \u2014 the office's flagship citizen-facing action, and the NET-NEW "
+    },
+    {
+     "file": "schemas/community-board.json",
+     "title": "CommunityBoard",
+     "shared": false,
+     "desc": "A Manhattan community board \u2014 one of the borough's 12 advisory districts, whose members the Borough President appoints. Canonical schema rec"
+    },
+    {
+     "file": "schemas/constituent-case.json",
+     "title": "ConstituentCase",
+     "shared": false,
+     "desc": "A constituent service case handled by the Manhattan Borough President's office \u2014 a resident request for help or referral, published in de-id"
+    },
+    {
+     "file": "schemas/funding-award.json",
+     "title": "FundingAward",
+     "shared": false,
+     "desc": "A discretionary funding or capital grant award made by the Manhattan Borough President \u2014 the office's largest recurring public output. ONE c"
+    },
+    {
+     "file": "schemas/land-use-recommendation.json",
+     "title": "LandUseRecommendation",
+     "shared": false,
+     "desc": "A Manhattan Borough President advisory recommendation on a Uniform Land Use Review Procedure (ULURP) application \u2014 the office's statutory la"
+    },
+    {
+     "file": "schemas/legislation.json",
+     "title": "Legislation",
+     "shared": false,
+     "desc": "A piece of legislation, resolution, or policy position the Manhattan Borough President supports or advocates for \u2014 the office's policy/repor"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/community-boards",
+     "op": "listCommunityBoards",
+     "summary": "List Manhattan community boards",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-boards/{district}",
+     "op": "getCommunityBoard",
+     "summary": "Get a Manhattan community board by district number",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/land-use-recommendations",
+     "op": "listLandUseRecommendations",
+     "summary": "List / search ULURP advisory recommendations",
+     "tags": [
+      "LandUse"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/appointments",
+     "op": "listBoardAppointments",
+     "summary": "List Borough President appointments",
+     "tags": [
+      "Appointments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/funding-awards",
+     "op": "listFundingAwards",
+     "summary": "Search discretionary, capital, tourism, and community funding awards",
+     "tags": [
+      "Funding"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/legislation",
+     "op": "listLegislation",
+     "summary": "List legislation and policy positions",
+     "tags": [
+      "Legislation"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/constituent-cases",
+     "op": "listConstituentCases",
+     "summary": "Search de-identified constituent-service cases",
+     "tags": [
+      "Constituents"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-board-applications",
+     "op": "listCommunityBoardApplications",
+     "summary": "List the authenticated applicant's community-board applications",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/community-board-applications",
+     "op": "createCommunityBoardApplication",
+     "summary": "Apply to serve on a community board",
+     "tags": [
+      "Applications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/community-board-applications/{applicationId}",
+     "op": "getCommunityBoardApplication",
+     "summary": "Get a community-board application",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_community_boards",
+     "title": "Find Community Boards",
+     "desc": "List Manhattan's 12 community boards with chair, district manager, meeting schedule, and office location.",
+     "write": false
+    },
+    {
+     "name": "get_community_board",
+     "title": "Get Community Board",
+     "desc": "Fetch a single Manhattan community board by district number (1\u201312).",
+     "write": false
+    },
+    {
+     "name": "find_land_use_recommendations",
+     "title": "Find Land Use Recommendations",
+     "desc": "Search the Borough President's ULURP advisory recommendations by application number, project, or date. The recommendation body is a linked PDF.",
+     "write": false
+    },
+    {
+     "name": "find_board_appointments",
+     "title": "Find Board Appointments",
+     "desc": "List people the Manhattan Borough President has appointed to boards, councils, and commissions, by board category or organization.",
+     "write": false
+    },
+    {
+     "name": "find_funding_awards",
+     "title": "Find Funding Awards",
+     "desc": "Search the Manhattan BP's discretionary, capital, tourism, community, MCAP, and police-community funding awards across every fiscal year in one query \u2014 the Open",
+     "write": false
+    },
+    {
+     "name": "find_legislation",
+     "title": "Find Legislation",
+     "desc": "List legislation and policy positions the Manhattan Borough President advocates, by status or subject.",
+     "write": false
+    },
+    {
+     "name": "find_constituent_cases",
+     "title": "Find Constituent Cases",
+     "desc": "Search DE-IDENTIFIED constituent-service cases (type, subject, status, geography) handled by the office. Never returns a constituent's identity.",
+     "write": false
+    },
+    {
+     "name": "list_my_applications",
+     "title": "List My Applications",
+     "desc": "List the authenticated applicant's own community-board applications and their status.",
+     "write": false
+    },
+    {
+     "name": "apply_to_community_board",
+     "title": "Apply to a Community Board",
+     "desc": "Submit an application to serve on a Manhattan community board. NET-NEW workflow with no public API today \u2014 it lives only in a WordPress/Forminator web form or a",
+     "write": true
+    }
+   ]
+  },
+  {
    "id": "mocj",
    "agency": "NYC Mayor's Office of Criminal Justice (MOCJ)",
    "short": "NYC Criminal Justice (MOCJ)",
@@ -12300,6 +13726,282 @@
      "title": "Get Referral",
      "desc": "Fetch a program referral and its status. Requires an authenticated referrer; returns sensitive data.",
      "write": false
+    }
+   ]
+  },
+  {
+   "id": "mome",
+   "agency": "NYC Mayor's Office of Media & Entertainment (MOME)",
+   "short": "NYC Media & Entertainment (MOME)",
+   "verb": "greenlight",
+   "platform": "NYC.gov 'Livesite' informational site (Akamai/nginx/Dynatrace) + a login-walled ASP.NET Core 'MOME E-Apply' film-permit portal on the shared nyceventpermits.nyc.gov event-permitting platform",
+   "tagline": "The output is the most-viewed dataset in the city; the application is trapped behind a portal login.",
+   "accent": "#c25a8a",
+   "netnew": "FilmPermitApplication \u2014 apply for a film/photography permit via API instead of the login-walled E-Apply portal",
+   "findings": [
+    "MOME is a split domain: an informational NYC.gov/Livesite site (Akamai/nginx/Dynatrace) plus a film-permit application system \u2014 'MOME E-Apply', an ASP.NET Core app at nyceventpermits.nyc.gov/film \u2014 that is login-walled with no API.",
+    "The flagship OUTPUT is heroically open: 'Film Permits' (tg4x-b46p) is one of the most-viewed datasets in all of NYC Open Data (~530k lifetime views), automated and updated daily \u2014 every location shoot the Film Office greenlights, as a public geography record.",
+    "But the INTAKE is closed: applying for a permit (the everyday production transaction) lives only inside the E-Apply portal or a Letter-in-Lieu email. The applicant / production company is never published \u2014 only the issued permit is.",
+    "MOME's Open Data footprint is unusually narrow: just 2 assets under its label \u2014 Film Permits and MARCH nightlife inspections (b84a-xy2t, via the Office of Nightlife). The rest of MOME (Made in NY, workforce, Public Access Media) is HTML only.",
+    "Net-new write surface: apply_for_film_permit (FilmPermitApplication) \u2014 the one transaction that turns MOME's open output into an owned, agent-native front door. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "2 MOME datasets; SODA /resource/<id>.json endpoints. Film Permits (tg4x-b46p) is the flagship, daily-automated feed of issued permits \u2014 the one real, open MOME API. MARCH inspections (b84a-xy2t) is the other."
+    },
+    {
+     "endpoint": "nyceventpermits.nyc.gov/film",
+     "type": "film-permit application portal (E-Apply)",
+     "owner": "MOME (ASP.NET Core app on shared event-permit platform)",
+     "public": "login-walled UI, no API",
+     "note": "'MOME E-Apply' \u2014 Microsoft-IIS/10.0, X-Powered-By ASP.NET, .AspNetCore.Antiforgery cookie, /Web/Login redirect. Where productions actually apply for permits; no JSON/OpenAPI. Shared platform also serves CECM/DOT event permits."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/mome",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "content only; Akamai edge, nginx, Dynatrace RUM. Permit instructions, programs, Public Access Media, Nightlife. No content API."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (DOT twin)",
+     "type": "open data API",
+     "owner": "NYC DOT",
+     "public": true,
+     "note": "'Filming Permits - Transportation Department' (c2az-nhru, ~90k views) \u2014 the same permits from DOT's street-work angle, WITH applicant contacts, fees, milestones, and lat/long that MOME's own feed omits."
+    },
+    {
+     "endpoint": "Akamai edge",
+     "type": "CDN API",
+     "owner": "Akamai",
+     "public": "vendor",
+     "note": "x-akamai-transformed on the informational site."
+    },
+    {
+     "endpoint": "Dynatrace RUM",
+     "type": "monitoring beacon",
+     "owner": "Dynatrace",
+     "public": "vendor",
+     "note": "x-oneagent-js-injection real-user monitoring."
+    }
+   ],
+   "counts": {
+    "fruit": 9,
+    "opendata": 2,
+    "schemas": 6,
+    "openapiOps": 9,
+    "mcpTools": 8,
+    "entities": 6
+   },
+   "entities": [
+    "FilmPermit",
+    "ScreenActivity",
+    "MarchInspection",
+    "MediaProgram",
+    "ProductionCompany",
+    "FilmPermitApplication"
+   ],
+   "files": {
+    "fruit": "mome/fruit.json",
+    "opendata": "mome/opendata-mome.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-mome.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/mome.yaml",
+    "mcp": "mcp/mome-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "MOME \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Mayor's Office of Media & Entertainment (MOME) object schemas. Reconciles fields common t"
+    },
+    {
+     "file": "schemas/film-permit-application.json",
+     "title": "FilmPermitApplication",
+     "shared": false,
+     "desc": "An application to the MOME Film Office for a film/photography location permit \u2014 the everyday production transaction. NET-NEW: there is NO pu"
+    },
+    {
+     "file": "schemas/film-permit.json",
+     "title": "FilmPermit",
+     "shared": false,
+     "desc": "An issued NYC film/photography location permit \u2014 one row of the famous 'Film Permits' dataset (tg4x-b46p), one of the most-viewed assets in "
+    },
+    {
+     "file": "schemas/march-inspection.json",
+     "title": "MarchInspection",
+     "shared": false,
+     "desc": "A Multi-Agency Response to Community Hotspots (MARCH) inspection \u2014 a joint NYPD/FDNY/DOB/DOHMH/DEP enforcement visit to a nightlife establis"
+    },
+    {
+     "file": "schemas/media-program.json",
+     "title": "MediaProgram",
+     "shared": false,
+     "desc": "A MOME program, initiative, or designated resource beyond film permitting \u2014 'Made in NY' marketing/discount programs, the Office of Nightlif"
+    },
+    {
+     "file": "schemas/production-company.json",
+     "title": "ProductionCompany",
+     "shared": false,
+     "desc": "A production company / applicant / permittee \u2014 the party that applies for and holds a NYC film permit. GAP: MOME never publishes the applica"
+    },
+    {
+     "file": "schemas/screen-activity.json",
+     "title": "ScreenActivity",
+     "shared": false,
+     "desc": "A single held location / street segment of screen activity within a film permit \u2014 the on-the-ground unit of a shoot. Derived from the Film P"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/film-permits",
+     "op": "listFilmPermits",
+     "summary": "List / search issued film permits",
+     "tags": [
+      "FilmPermits"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/film-permits/{eventId}",
+     "op": "getFilmPermit",
+     "summary": "Get a film permit by EventID",
+     "tags": [
+      "FilmPermits"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/film-permits/{eventId}/locations",
+     "op": "getFilmPermitLocations",
+     "summary": "List the held screen-activity locations in a permit",
+     "tags": [
+      "ScreenActivity"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/screen-activity",
+     "op": "listScreenActivity",
+     "summary": "Search held film locations across permits",
+     "tags": [
+      "ScreenActivity"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/programs",
+     "op": "listPrograms",
+     "summary": "List MOME programs and designated resources",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/march-inspections",
+     "op": "listMarchInspections",
+     "summary": "Search MARCH nightlife inspections",
+     "tags": [
+      "Nightlife"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/permit-applications",
+     "op": "listPermitApplications",
+     "summary": "List the authenticated applicant's film-permit applications",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/permit-applications",
+     "op": "createPermitApplication",
+     "summary": "Apply for a film/photography permit",
+     "tags": [
+      "Applications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/permit-applications/{applicationId}",
+     "op": "getPermitApplication",
+     "summary": "Get a film-permit application",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_film_permits",
+     "title": "Find Film Permits",
+     "desc": "Search issued NYC film/photography permits by borough, production category, event type, sub-category, date range, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_film_permit",
+     "title": "Get Film Permit",
+     "desc": "Fetch a single issued film permit (type, production category, dates, held streets, geography) by EventID.",
+     "write": false
+    },
+    {
+     "name": "get_film_permit_locations",
+     "title": "Get Film Permit Locations",
+     "desc": "List the held screen-activity street segments within a film permit (the permit's ParkingHeld exploded).",
+     "write": false
+    },
+    {
+     "name": "find_screen_activity",
+     "title": "Find Screen Activity",
+     "desc": "Search held film locations across all permits \u2014 where is filming happening, by street, borough, or date.",
+     "write": false
+    },
+    {
+     "name": "find_programs",
+     "title": "Find Programs",
+     "desc": "List MOME programs and designated resources \u2014 Made in NY, Office of Nightlife, workforce/training, press credentials, and Public Access Media providers.",
+     "write": false
+    },
+    {
+     "name": "find_march_inspections",
+     "title": "Find MARCH Inspections",
+     "desc": "Search Office of Nightlife MARCH multi-agency inspections by borough, council district, or date.",
+     "write": false
+    },
+    {
+     "name": "list_my_permit_applications",
+     "title": "List My Permit Applications",
+     "desc": "List the authenticated applicant's own film-permit applications and their status \u2014 today visible only inside the MOME E-Apply portal.",
+     "write": false
+    },
+    {
+     "name": "apply_for_film_permit",
+     "title": "Apply for a Film Permit",
+     "desc": "Submit a NYC film/photography permit application. NET-NEW workflow with no public API today \u2014 it lives only in the login-walled 'MOME E-Apply' ASP.NET portal or",
+     "write": true
     }
    ]
   },
@@ -13440,6 +15142,616 @@
    ]
   },
   {
+   "id": "pubadvocate",
+   "agency": "New York City Public Advocate (Office of the Public Advocate)",
+   "short": "NYC Public Advocate",
+   "verb": "Respond",
+   "platform": "Self-hosted nginx/1.18.0 (Ubuntu) main site (502/down during crawl) + an orphan Next.js/Vercel product (the Worst Landlord Watchlist)",
+   "tagline": "The city's ombudsman publishes zero open data, runs a fragile self-hosted site, and takes complaints only by web form or phone \u2014 give it an owned API to respond.",
+   "accent": "#3a7aa0",
+   "netnew": "OmbudsmanComplaint \u2014 file and track a 'help with a city agency' case against a NYC agency",
+   "findings": [
+    "The Public Advocate publishes ZERO datasets to NYC Open Data. Unlike NYCHA (24 datasets), the city's ombudsman has no machine-readable reference data at all \u2014 its output is reports/PDFs, its own website, and one product (the Worst Landlord Watchlist).",
+    "The main site is self-hosted and fragile. advocate.nyc.gov runs on the Office's own nginx/1.18.0 (Ubuntu) origin \u2014 not the shared NYC.gov 'Livesite' platform every other agency uses \u2014 and returned 502 Bad Gateway throughout the crawl. The city's watchdog site was literally down.",
+    "The one modern, data-backed surface is an orphan. The Worst Landlord Watchlist (landlordwatchlist.com) is a separate Next.js/React app on Vercel with an UNDOCUMENTED /api/landlords JSON endpoint (99 landlords: org, officer, buildings, units, DOB violations, avg open HPD violations, tax liens, evictions, rank) \u2014 real data, no docs, no OpenAPI, on infrastructure disconnected from the main site.",
+    "The core ombudsman function has no intake API. 'Help with a city agency' \u2014 the Public Advocate's constitutional reason for existing \u2014 is a web form / phone / email only. There is no machine-readable way to file or track an OmbudsmanComplaint.",
+    "Legislation the PA sponsors lives in someone else's system. The Public Advocate introduces bills through the City Council; those files live in Council's Legistar, owned by NYCC, not the PA. See tech-stack.md and apis-observed.md.",
+    "Net-new write surface: file a complaint against a city agency (OmbudsmanComplaint) \u2014 the single most common resident interaction with the office, with no API today."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "landlordwatchlist.com/api/landlords",
+     "type": "undocumented JSON API",
+     "owner": "NYC Public Advocate (app on Vercel)",
+     "public": "reachable, undocumented",
+     "note": "The one real API observed. Returns { results: [ { landlordid, org, officer, buildings, UNIT, dob, tax_lien, evictions, num_avg, rank } \u00d799 ] } \u2014 the Worst Landlord Watchlist. No docs, no OpenAPI, no versioning; a Next.js data route, not a governed contract."
+    },
+    {
+     "endpoint": "advocate.nyc.gov (self-hosted)",
+     "type": "informational site",
+     "owner": "NYC Public Advocate",
+     "public": "html (502 during crawl)",
+     "note": "Self-run nginx/1.18.0 (Ubuntu). NOT the NYC.gov shared 'Livesite' chassis. Returned 502 Bad Gateway; reports, help-with-a-city-agency, and public-interest content are HTML/PDF only, no content API."
+    },
+    {
+     "endpoint": "legistar.council.nyc.gov (Legistar)",
+     "type": "legislative system",
+     "owner": "City Council (NYCC) / Granicus",
+     "public": "web + Legistar Web API",
+     "note": "Where the PA's sponsored bills actually live. Owned by the Council, not the Public Advocate \u2014 the PA is a sponsor, not the system of record."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "The underlying HPD housing-maintenance violations / DOB / registration data that the Watchlist is derived from is open here \u2014 but NONE of it is published under a Public Advocate label; the PA contributes zero assets."
+    },
+    {
+     "endpoint": "Vercel edge",
+     "type": "hosting/CDN",
+     "owner": "Vercel",
+     "public": "vendor",
+     "note": "server: Vercel, x-vercel-cache, x-vercel-id on landlordwatchlist.com \u2014 the flagship product is hosted off-platform on a commercial PaaS."
+    }
+   ],
+   "counts": {
+    "fruit": 6,
+    "opendata": 0,
+    "schemas": 6,
+    "openapiOps": 10,
+    "mcpTools": 10,
+    "entities": 6
+   },
+   "entities": [
+    "WorstLandlord",
+    "WatchlistBuilding",
+    "Legislation",
+    "Report",
+    "PublicInterestRequest",
+    "OmbudsmanComplaint"
+   ],
+   "files": {
+    "fruit": "pubadvocate/fruit.json",
+    "opendata": "pubadvocate/opendata-pubadvocate.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-pubadvocate.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/pubadvocate.yaml",
+    "mcp": "mcp/pubadvocate-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Public Advocate \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Public Advocate (Office of the Public Advocate) object schemas. Reconciles fields common "
+    },
+    {
+     "file": "schemas/legislation.json",
+     "title": "Legislation",
+     "shared": false,
+     "desc": "A piece of legislation introduced or sponsored by the NYC Public Advocate. The Public Advocate is a non-voting member of the City Council wi"
+    },
+    {
+     "file": "schemas/ombudsman-complaint.json",
+     "title": "OmbudsmanComplaint",
+     "shared": false,
+     "desc": "A 'help with a city agency' request to the NYC Public Advocate \u2014 the office's constitutional ombudsman function and the most common resident"
+    },
+    {
+     "file": "schemas/public-interest-request.json",
+     "title": "PublicInterestRequest",
+     "shared": false,
+     "desc": "A Public Interest demand issued by the NYC Public Advocate \u2014 the office's charter power to compel a city agency to produce information or ta"
+    },
+    {
+     "file": "schemas/report.json",
+     "title": "Report",
+     "shared": false,
+     "desc": "A report, investigation, data brief, or agency report card published by the NYC Public Advocate. Today these are HTML pages and PDFs on the "
+    },
+    {
+     "file": "schemas/watchlist-building.json",
+     "title": "WatchlistBuilding",
+     "shared": false,
+     "desc": "A single building beneath a Worst Landlord Watchlist landlord \u2014 the building-level record that the ranking aggregates. Proposed schema: the "
+    },
+    {
+     "file": "schemas/worst-landlord.json",
+     "title": "WorstLandlord",
+     "shared": false,
+     "desc": "A landlord on the NYC Public Advocate's Worst Landlord Watchlist \u2014 the office's flagship data product. Canonical schema reverse-engineered f"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/worst-landlords",
+     "op": "listWorstLandlords",
+     "summary": "List / search the Worst Landlord Watchlist",
+     "tags": [
+      "Watchlist"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/worst-landlords/{landlordId}",
+     "op": "getWorstLandlord",
+     "summary": "Get a landlord from the Watchlist",
+     "tags": [
+      "Watchlist"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/worst-landlords/{landlordId}/buildings",
+     "op": "getWorstLandlordBuildings",
+     "summary": "List the buildings in a Watchlist landlord's portfolio",
+     "tags": [
+      "Watchlist"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/watchlist-buildings",
+     "op": "listWatchlistBuildings",
+     "summary": "Search Watchlist buildings",
+     "tags": [
+      "Watchlist"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/legislation",
+     "op": "listLegislation",
+     "summary": "List legislation sponsored by the Public Advocate",
+     "tags": [
+      "Legislation"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/reports",
+     "op": "listReports",
+     "summary": "List Public Advocate reports and investigations",
+     "tags": [
+      "Reports"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/public-interest-requests",
+     "op": "listPublicInterestRequests",
+     "summary": "List public interest demands issued to city agencies",
+     "tags": [
+      "PublicInterest"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/ombudsman-complaints",
+     "op": "listOmbudsmanComplaints",
+     "summary": "List the authenticated resident's ombudsman complaints",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/ombudsman-complaints",
+     "op": "createOmbudsmanComplaint",
+     "summary": "File a complaint (ask the ombudsman for help with a city agency)",
+     "tags": [
+      "Complaints"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/ombudsman-complaints/{complaintId}",
+     "op": "getOmbudsmanComplaint",
+     "summary": "Get an ombudsman complaint",
+     "tags": [
+      "Complaints"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_worst_landlords",
+     "title": "Find Worst Landlords",
+     "desc": "Search the NYC Public Advocate's Worst Landlord Watchlist by organization/officer name or rank range.",
+     "write": false
+    },
+    {
+     "name": "get_worst_landlord",
+     "title": "Get Worst Landlord",
+     "desc": "Fetch a single landlord from the Worst Landlord Watchlist (portfolio size, units, violations, evictions, rank) by landlord id.",
+     "write": false
+    },
+    {
+     "name": "get_worst_landlord_buildings",
+     "title": "Get Worst Landlord Buildings",
+     "desc": "List the buildings in a Watchlist landlord's portfolio, with open HPD/DOB violations.",
+     "write": false
+    },
+    {
+     "name": "find_watchlist_buildings",
+     "title": "Find Watchlist Buildings",
+     "desc": "Search Worst Landlord Watchlist buildings by borough, BIN, BBL, ZIP, or free text.",
+     "write": false
+    },
+    {
+     "name": "find_legislation",
+     "title": "Find Legislation",
+     "desc": "List legislation the Public Advocate sponsors (Intro #, title, status, committee) \u2014 sourced from the City Council's Legistar system.",
+     "write": false
+    },
+    {
+     "name": "find_reports",
+     "title": "Find Reports",
+     "desc": "List Public Advocate reports, investigations, and agency report cards by topic, agency, or date.",
+     "write": false
+    },
+    {
+     "name": "find_public_interest_requests",
+     "title": "Find Public Interest Requests",
+     "desc": "List public interest demands the Public Advocate has issued to city agencies, and their status.",
+     "write": false
+    },
+    {
+     "name": "list_my_complaints",
+     "title": "List My Complaints",
+     "desc": "List the authenticated resident's own ombudsman 'help with a city agency' complaints and their status \u2014 today untrackable by machine.",
+     "write": false
+    },
+    {
+     "name": "file_complaint",
+     "title": "File a Complaint",
+     "desc": "File an ombudsman complaint asking the NYC Public Advocate for help with a city agency. NET-NEW workflow with no public API today \u2014 it lives only as a web form,",
+     "write": true
+    },
+    {
+     "name": "get_complaint",
+     "title": "Get Complaint",
+     "desc": "Get the status and detail of one ombudsman complaint by case number.",
+     "write": false
+    }
+   ]
+  },
+  {
+   "id": "queensbp",
+   "agency": "Office of the Queens Borough President (QBP)",
+   "short": "Queens Borough President",
+   "verb": "standardize",
+   "platform": "WordPress (Divi + Elementor) on WP Engine behind Cloudflare; Yoast + Wordfence; queensbp.org 301s to www.queensbp.nyc.gov",
+   "tagline": "A thin WordPress brochure with its REST API switched on but empty, and almost no open data \u2014 the fix is one shared Borough President API, not a fifth one-off.",
+   "accent": "#d98a2a",
+   "netnew": "CommunityBoardApplication \u2014 apply to serve on a Queens community board (today an HTML/PDF form)",
+   "findings": [
+    "queensbp.org 301-redirects to www.queensbp.nyc.gov \u2014 a WordPress/Divi brochure site on WP Engine behind Cloudflare (Yoast, Wordfence, Google Language Translator). A fifth distinct platform after Parks (Smarty/PHP), DOE (Sitefinity/.NET), Council (WordPress), and NYCHA (NYC.gov Livesite + Oracle Siebel).",
+    "The WordPress REST API (/wp-json/wp/v2) is switched ON but effectively EMPTY: 0 posts and 0 'project' custom-post-type entries. The one machine-readable surface the platform already ships is dormant because content is authored as Divi page-builder Pages, not structured posts.",
+    "Open Data is nearly absent but NOT zero: exactly TWO datasets attributed to 'Queens Borough President (QBP)', both about community boards \u2014 Queens Community Board Members (rps4-dwwk, 4 cols) and Queens Community Board District Managers and Chairs (8z5h-tzdr, 20 cols).",
+    "The core borough-president acts have NO machine-readable contract: advisory land-use (ULURP) recommendations, tens of millions in annual discretionary funding to nonprofits/schools/cultural groups, events, and press releases all live only as HTML.",
+    "Net-new write surface: apply to serve on a community board (CommunityBoardApplication) \u2014 the QBP's flagship participatory act ('2026 Queens Community Board Application Process'), today only an HTML/PDF form. See tech-stack.md and apis-observed.md.",
+    "Reframe: all five borough presidents run near-identical thin sites. The real low-hanging fruit is ONE shared Borough President API standard implemented per borough, not five one-off builds."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "www.queensbp.nyc.gov/wp-json/wp/v2",
+     "type": "WordPress REST API",
+     "owner": "QBP (WordPress/Divi on WP Engine)",
+     "public": true,
+     "note": "Enabled and publicly reachable, returns valid JSON for pages, but X-WP-Total=0 for posts and the 'project' custom post type. A real API surface carrying almost no structured content. Namespaces include wp/v2, oembed, yoast/v1, divi/v1, wpe/cache-plugin, wordfence/v1."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Two QBP-attributed datasets (rps4-dwwk community board members; 8z5h-tzdr district managers and chairs). SODA /resource/<id>.json endpoints. The only substantive machine-readable QBP data \u2014 both about community boards."
+    },
+    {
+     "endpoint": "www.queensbp.nyc.gov",
+     "type": "informational site",
+     "owner": "QBP (WordPress/Divi, WP Engine, Cloudflare)",
+     "public": "html",
+     "note": "Land use, community boards, budget/major allocations, constituent services, newsroom \u2014 all Divi page-builder Pages; content only, no content API in practice."
+    },
+    {
+     "endpoint": "queensbp.org",
+     "type": "legacy domain redirect",
+     "owner": "QBP",
+     "public": "301",
+     "note": "301-redirects to www.queensbp.nyc.gov (Cloudflare); the office has migrated onto the nyc.gov domain."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 2,
+    "schemas": 7,
+    "openapiOps": 12,
+    "mcpTools": 11,
+    "entities": 7
+   },
+   "entities": [
+    "CommunityBoard",
+    "CommunityBoardAppointment",
+    "LandUseRecommendation",
+    "DiscretionaryFundingAward",
+    "Event",
+    "PressRelease",
+    "CommunityBoardApplication"
+   ],
+   "files": {
+    "fruit": "queensbp/fruit.json",
+    "opendata": "queensbp/opendata-queensbp.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-queensbp.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/queensbp.yaml",
+    "mcp": "mcp/queensbp-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Queens Borough President \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across Office of the Queens Borough President (QBP) object schemas. Reconciles fields common to the "
+    },
+    {
+     "file": "schemas/community-board-application.json",
+     "title": "CommunityBoardApplication",
+     "shared": false,
+     "desc": "An application from a Queens resident to be appointed to a community board \u2014 the QBP's flagship participatory act (the '2026 Queens Communit"
+    },
+    {
+     "file": "schemas/community-board-appointment.json",
+     "title": "CommunityBoardAppointment",
+     "shared": false,
+     "desc": "An appointment of an individual to serve on a Queens community board. Under the City Charter the Queens Borough President appoints all Queen"
+    },
+    {
+     "file": "schemas/community-board.json",
+     "title": "CommunityBoard",
+     "shared": false,
+     "desc": "One of Queens' 14 community boards \u2014 the local advisory body whose members the Borough President appoints. Canonical schema reconciling the "
+    },
+    {
+     "file": "schemas/discretionary-funding-award.json",
+     "title": "DiscretionaryFundingAward",
+     "shared": false,
+     "desc": "A discretionary funding award made by the Queens Borough President \u2014 tens of millions of dollars each year in capital funding and programmat"
+    },
+    {
+     "file": "schemas/event.json",
+     "title": "Event",
+     "shared": false,
+     "desc": "A public event hosted or convened by the Queens Borough President \u2014 Land Use Public Hearings, Borough Board and Borough Cabinet meetings, to"
+    },
+    {
+     "file": "schemas/land-use-recommendation.json",
+     "title": "LandUseRecommendation",
+     "shared": false,
+     "desc": "The Queens Borough President's advisory recommendation on a land-use application under the city's Uniform Land Use Review Procedure (ULURP)."
+    },
+    {
+     "file": "schemas/press-release.json",
+     "title": "PressRelease",
+     "shared": false,
+     "desc": "A press release, statement, or report published by the Office of the Queens Borough President in the Newsroom. Ironically the site runs Word"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/community-boards",
+     "op": "listCommunityBoards",
+     "summary": "List Queens community boards",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-boards/{board}",
+     "op": "getCommunityBoard",
+     "summary": "Get a community board by number",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-boards/{board}/members",
+     "op": "listCommunityBoardMembers",
+     "summary": "List the appointed members of a community board",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/appointments",
+     "op": "listCommunityBoardAppointments",
+     "summary": "Search community board appointments across Queens",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/land-use-recommendations",
+     "op": "listLandUseRecommendations",
+     "summary": "List / search Borough President land-use (ULURP) recommendations",
+     "tags": [
+      "LandUse"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/land-use-recommendations/{ulurpNumber}",
+     "op": "getLandUseRecommendation",
+     "summary": "Get a land-use recommendation by ULURP number",
+     "tags": [
+      "LandUse"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/discretionary-funding",
+     "op": "listDiscretionaryFundingAwards",
+     "summary": "Search Borough President discretionary funding awards",
+     "tags": [
+      "Budget"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/events",
+     "op": "listEvents",
+     "summary": "List public events hosted by the Borough President",
+     "tags": [
+      "Newsroom"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/press-releases",
+     "op": "listPressReleases",
+     "summary": "List Newsroom press releases, statements, and reports",
+     "tags": [
+      "Newsroom"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/press-releases/{id}",
+     "op": "getPressRelease",
+     "summary": "Get a newsroom item",
+     "tags": [
+      "Newsroom"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/community-board-applications",
+     "op": "createCommunityBoardApplication",
+     "summary": "Apply to serve on a community board (submit an application)",
+     "tags": [
+      "Applications"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/community-board-applications/{applicationId}",
+     "op": "getCommunityBoardApplication",
+     "summary": "Get the status of a community board application",
+     "tags": [
+      "Applications"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_community_boards",
+     "title": "Find Community Boards",
+     "desc": "List Queens' community boards with their district manager, chair, office, and monthly meeting.",
+     "write": false
+    },
+    {
+     "name": "get_community_board",
+     "title": "Get Community Board",
+     "desc": "Fetch one Queens community board by number.",
+     "write": false
+    },
+    {
+     "name": "find_community_board_members",
+     "title": "Find Community Board Members",
+     "desc": "List the appointed members (and chair / district manager) of a specific community board.",
+     "write": false
+    },
+    {
+     "name": "find_appointments",
+     "title": "Find Appointments",
+     "desc": "Search Queens community board appointments across all boards by board, role, or year appointed.",
+     "write": false
+    },
+    {
+     "name": "find_land_use_recommendations",
+     "title": "Find Land Use Recommendations",
+     "desc": "Search the Borough President's advisory ULURP land-use recommendations by board, recommendation, or action type.",
+     "write": false
+    },
+    {
+     "name": "get_land_use_recommendation",
+     "title": "Get Land Use Recommendation",
+     "desc": "Fetch a single land-use recommendation by ULURP number.",
+     "write": false
+    },
+    {
+     "name": "find_discretionary_funding",
+     "title": "Find Discretionary Funding",
+     "desc": "Search Borough President discretionary funding awards by fiscal year, recipient type, or capital/expense funding type.",
+     "write": false
+    },
+    {
+     "name": "find_events",
+     "title": "Find Events",
+     "desc": "List public events hosted by the Borough President \u2014 land use hearings, borough board/cabinet meetings, town halls, expos, and webinars.",
+     "write": false
+    },
+    {
+     "name": "find_press_releases",
+     "title": "Find Press Releases",
+     "desc": "List Newsroom press releases, statements, and reports by type, topic, or free text.",
+     "write": false
+    },
+    {
+     "name": "apply_to_community_board",
+     "title": "Apply to a Community Board",
+     "desc": "Submit a Queens community board application (net-new). No public API today \u2014 it lives only as an HTML/PDF form. Requires an authenticated resident. Mutates stat",
+     "write": true
+    },
+    {
+     "name": "get_community_board_application",
+     "title": "Get Community Board Application",
+     "desc": "Check the status of a submitted community board application by its confirmation number.",
+     "write": false
+    }
+   ]
+  },
+  {
    "id": "sbs",
    "agency": "NYC Department of Small Business Services (SBS)",
    "short": "NYC Small Business Services (SBS)",
@@ -13737,6 +16049,573 @@
      "title": "Apply for M/WBE Certification",
      "desc": "Submit an SBS M/WBE / EBE / LBE certification application. NET-NEW workflow with no public API today \u2014 it lives only in the MyCity Business portal. Requires an ",
      "write": true
+    }
+   ]
+  },
+  {
+   "id": "statenislandbp",
+   "agency": "Office of the Staten Island Borough President (BPSI)",
+   "short": "Staten Island Borough President",
+   "verb": "federate",
+   "platform": "Weebly brochure site behind Cloudflare (Weebly Forms + Constant Contact); no CMS of record, no API",
+   "tagline": "The thinnest domain yet: a Weebly brochure site, two trivial datasets, and none of the borough president's charter work available as data.",
+   "accent": "#7a5aa0",
+   "netnew": "CommunityBoardApplication \u2014 apply to serve on a Staten Island community board (today an opaque Weebly form)",
+   "findings": [
+    "The Office of the Staten Island Borough President has the thinnest technical footprint assessed so far: a Weebly brochure site (statenislandusa.com) behind Cloudflare, with no CMS of record, no application, and no API.",
+    "Only two NYC Open Data assets carry the agency label 'Staten Island Borough President (BPSI)': 'BP Assist Helpline Requests' (3fes-huds), an aggregate count-by-request-type table that ends at FY20, and 'Category Master File' (mmut-uup9), a zero-column blob.",
+    "None of the borough president's actual NYC Charter functions \u2014 advisory ULURP land-use recommendations, community board appointments, discretionary capital/expense funding, and Borough Board resolutions \u2014 is published as data anywhere the office owns; they exist only as PDFs, HTML, or inside other agencies' systems (City Planning ZAP, the adopted budget Schedule C).",
+    "The office's two real transactions are un-contracted: BP Assist (report a pothole/litter/graffiti issue) is a web widget, and the Community Board Membership Application is an opaque Weebly form posting to weebly.com/apps/formSubmit.php.",
+    "Net-new write surface: apply to a community board (CommunityBoardApplication), plus a BP Assist constituent request. The strategic finding is that all five NYC borough-president offices are near-identical thin sites, making this a candidate for one shared, federated Borough President API keyed by borough \u2014 not five bespoke builds."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "Only 2 BPSI assets: 3fes-huds (aggregate BP Assist counts, ends FY20) and mmut-uup9 (zero-column file). A SODA /resource/3fes-huds.json endpoint exists but the office does not consume it."
+    },
+    {
+     "endpoint": "weebly.com/weebly/apps/formSubmit.php",
+     "type": "form-relay endpoint",
+     "owner": "Weebly (Square)",
+     "public": "vendor",
+     "note": "Where the Community Board Membership Application posts. Opaque _u\u2026 field names; not an API, not documented, not agent-usable."
+    },
+    {
+     "endpoint": "lp.constantcontactpages.com/su/wWLrBxD/sibp",
+     "type": "email sign-up",
+     "owner": "Constant Contact",
+     "public": "vendor",
+     "note": "Newsletter capture."
+    },
+    {
+     "endpoint": "www.statenislandusa.com/apps/search",
+     "type": "site search",
+     "owner": "Weebly",
+     "public": "vendor",
+     "note": "Weebly built-in site search; no JSON contract."
+    },
+    {
+     "endpoint": "www.statenislandusa.com",
+     "type": "brochure site",
+     "owner": "Weebly behind Cloudflare",
+     "public": "html",
+     "note": "Content only; no content API, no JSON, no OpenAPI."
+    }
+   ],
+   "counts": {
+    "fruit": 8,
+    "opendata": 2,
+    "schemas": 7,
+    "openapiOps": 10,
+    "mcpTools": 9,
+    "entities": 7
+   },
+   "entities": [
+    "LandUseRecommendation",
+    "CommunityBoardAppointment",
+    "DiscretionaryFundingAward",
+    "Resolution",
+    "Event",
+    "ConstituentRequest",
+    "CommunityBoardApplication"
+   ],
+   "files": {
+    "fruit": "statenislandbp/fruit.json",
+    "opendata": "statenislandbp/opendata-statenislandbp.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-statenislandbp.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/statenislandbp.yaml",
+    "mcp": "mcp/statenislandbp-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "Staten Island Borough President \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across Office of the Staten Island Borough President (BPSI) object schemas. There is almost no machi"
+    },
+    {
+     "file": "schemas/community-board-application.json",
+     "title": "CommunityBoardApplication",
+     "shared": false,
+     "desc": "An application to serve on one of Staten Island's three community boards \u2014 the NET-NEW write surface for this domain. Today this is a Weebly"
+    },
+    {
+     "file": "schemas/community-board-appointment.json",
+     "title": "CommunityBoardAppointment",
+     "shared": false,
+     "desc": "A membership appointment to one of Staten Island's three community boards. Under the NYC Charter the borough president appoints (and reappoi"
+    },
+    {
+     "file": "schemas/constituent-request.json",
+     "title": "ConstituentRequest",
+     "shared": false,
+     "desc": "A quality-of-life request submitted through 'BP Assist', the Borough President's Help Line intake tool (statenislandusa.com/bpassist.html) \u2014"
+    },
+    {
+     "file": "schemas/discretionary-funding-award.json",
+     "title": "DiscretionaryFundingAward",
+     "shared": false,
+     "desc": "A capital or expense budget allocation made by the Staten Island Borough President. Under the NYC Charter the BP receives a share of the cit"
+    },
+    {
+     "file": "schemas/event.json",
+     "title": "Event",
+     "shared": false,
+     "desc": "A community event promoted by the Staten Island Borough President \u2014 the borough community calendar, the 'Sounds of Summer' concert series, a"
+    },
+    {
+     "file": "schemas/land-use-recommendation.json",
+     "title": "LandUseRecommendation",
+     "shared": false,
+     "desc": "A Staten Island Borough President recommendation on a land-use application under the Uniform Land Use Review Procedure (ULURP) or a related "
+    },
+    {
+     "file": "schemas/resolution.json",
+     "title": "Resolution",
+     "shared": false,
+     "desc": "A resolution, report, or set of minutes produced by the Staten Island Borough Board or the Borough President's office. The Borough Board (th"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/land-use-recommendations",
+     "op": "listLandUseRecommendations",
+     "summary": "List / search Borough President land-use (ULURP) recommendations",
+     "tags": [
+      "LandUse"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/land-use-recommendations/{applicationId}",
+     "op": "getLandUseRecommendation",
+     "summary": "Get a land-use recommendation by application number",
+     "tags": [
+      "LandUse"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-board-appointments",
+     "op": "listCommunityBoardAppointments",
+     "summary": "List community board members / appointments",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/community-board-applications",
+     "op": "listCommunityBoardApplications",
+     "summary": "List the authenticated applicant's community board applications",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/community-board-applications",
+     "op": "createCommunityBoardApplication",
+     "summary": "Apply to serve on a Staten Island community board (net-new)",
+     "tags": [
+      "CommunityBoards"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/discretionary-funding-awards",
+     "op": "listDiscretionaryFundingAwards",
+     "summary": "List Borough President discretionary capital / expense funding awards",
+     "tags": [
+      "Budget"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/resolutions",
+     "op": "listResolutions",
+     "summary": "List Borough Board resolutions, reports, and minutes",
+     "tags": [
+      "BoroughBoard"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/events",
+     "op": "listEvents",
+     "summary": "List community events and concerts",
+     "tags": [
+      "Events"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/constituent-requests",
+     "op": "listConstituentRequests",
+     "summary": "List / aggregate BP Assist help line requests",
+     "tags": [
+      "Constituent"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/constituent-requests",
+     "op": "createConstituentRequest",
+     "summary": "Report a quality-of-life issue to BP Assist (net-new)",
+     "tags": [
+      "Constituent"
+     ],
+     "write": true
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_land_use_recommendations",
+     "title": "Find Land-Use Recommendations",
+     "desc": "Search Borough President recommendations on ULURP / land-use applications by community board, application type, disposition, or period.",
+     "write": false
+    },
+    {
+     "name": "get_land_use_recommendation",
+     "title": "Get Land-Use Recommendation",
+     "desc": "Fetch a single Borough President land-use recommendation by its ULURP / City Planning application number.",
+     "write": false
+    },
+    {
+     "name": "find_community_board_appointments",
+     "title": "Find Community Board Appointments",
+     "desc": "List members / appointments across Staten Island's three community boards, filtered by board, role, or status.",
+     "write": false
+    },
+    {
+     "name": "find_discretionary_funding_awards",
+     "title": "Find Discretionary Funding Awards",
+     "desc": "Search the Borough President's discretionary capital and expense funding awards by fiscal year, funding type, or recipient type.",
+     "write": false
+    },
+    {
+     "name": "find_resolutions",
+     "title": "Find Resolutions",
+     "desc": "List Staten Island Borough Board resolutions, reports, and minutes by type or period.",
+     "write": false
+    },
+    {
+     "name": "find_events",
+     "title": "Find Events",
+     "desc": "List Staten Island community events and Sounds of Summer concerts by category or date range.",
+     "write": false
+    },
+    {
+     "name": "find_constituent_requests",
+     "title": "Find Constituent Requests",
+     "desc": "Read BP Assist help line quality-of-life requests. The only existing Open Data (3fes-huds) is AGGREGATE annual counts by request type \u2014 set aggregate=true for t",
+     "write": false
+    },
+    {
+     "name": "report_quality_of_life_issue",
+     "title": "Report a Quality-of-Life Issue (BP Assist)",
+     "desc": "File a BP Assist help line request (pothole, litter, graffiti, and similar) to be relayed to the relevant city agency. NET-NEW write workflow with no API today.",
+     "write": true
+    },
+    {
+     "name": "apply_to_community_board",
+     "title": "Apply to a Community Board",
+     "desc": "Submit a Staten Island community board membership application \u2014 the NET-NEW write surface that today is only an opaque Weebly form. Mutates state. The applicant",
+     "write": true
+    }
+   ]
+  },
+  {
+   "id": "taxcommission",
+   "agency": "New York City Tax Commission",
+   "short": "NYC Tax Commission",
+   "verb": "digitize",
+   "platform": "NYC.gov shared 'Livesite' CMS (Akamai + nginx + Dynatrace + mPulse/Boomerang + AWS ALB) plus a browser-only online filing system; no distinct Tax Commission platform.",
+   "tagline": "An independent property-tax appeals body whose intake is PDF forms and whose only open data is a thin trail of outcomes.",
+   "accent": "#5a7a6a",
+   "netnew": "AssessmentAppeal \u2014 file a property-tax assessment appeal (Application for Correction).",
+   "findings": [
+    "There is NO 'Tax Commission (TC)' agency in NYC Open Data; the Tax Commission's two datasets are published under 'Office of Administrative Tax Appeals (OATA)', the umbrella that now houses it.",
+    "The open data is thin and OUTCOME-ONLY: Assessment Actions (4nft-bihw, granted reductions/reclassifications) and Open Article 7 Petitions (aht6-vxai, judicial escalation to NY Supreme Court). Neither describes the appeal process itself.",
+    "The core transaction \u2014 filing an assessment appeal (Application for Correction) \u2014 has no machine-readable contract. It lives only in PDF forms (TC101/TC108/TC109/TC106/TC201\u2026) and the Commission's online filing system, with a March 15/16 deadline and a $175 fee at $2M+ assessed value.",
+    "The domain sits on the shared NYC.gov 'Livesite' chassis (Akamai/nginx/Dynatrace/mPulse/AWS ALB); the Tax Commission has no distinct platform of its own and no content or filing API.",
+    "Relationship: DOF SETS the tentative assessment (Notice of Property Value); the Tax Commission HEARS the appeal. Net-new write surface: file a property-tax assessment appeal (AssessmentAppeal). See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler), OATA label",
+     "public": true,
+     "note": "2 datasets under 'Office of Administrative Tax Appeals (OATA)': Assessment Actions (4nft-bihw) and Open Article 7 Petitions (aht6-vxai). SODA /resource/<id>.json endpoints. The only real, open API here \u2014 outcome data only."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/taxcommission online filing system",
+     "type": "appeal filing portal",
+     "owner": "NYC Tax Commission",
+     "public": "web UI, no API",
+     "note": "Application for Correction (TC101/TC108/TC109/TC106 + income & expense TC201/203/208/214 + TC309). No JSON/OpenAPI surface; PDF forms and a browser-only filing flow."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/taxcommission/",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "About, how-to-appeal, forms, rules, guidelines, annual reports. No content API."
+    },
+    {
+     "endpoint": "Akamai edge",
+     "type": "CDN API",
+     "owner": "Akamai",
+     "public": "vendor",
+     "note": "server-timing ak_p, alt-svc h3 on the informational site."
+    },
+    {
+     "endpoint": "Dynatrace RUM + mPulse/Boomerang",
+     "type": "monitoring beacons",
+     "owner": "Dynatrace / Akamai mPulse",
+     "public": "vendor",
+     "note": "x-oneagent-js-injection; BOOMR mPulse snippet in page markup."
+    }
+   ],
+   "counts": {
+    "fruit": 6,
+    "opendata": 2,
+    "schemas": 6,
+    "openapiOps": 9,
+    "mcpTools": 9,
+    "entities": 6
+   },
+   "entities": [
+    "AssessmentAction",
+    "Article7Petition",
+    "Property",
+    "Representative",
+    "Determination",
+    "AssessmentAppeal"
+   ],
+   "files": {
+    "fruit": "taxcommission/fruit.json",
+    "opendata": "taxcommission/opendata-taxcommission.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-taxcommission.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/taxcommission.yaml",
+    "mcp": "mcp/taxcommission-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "NYC Tax Commission \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Tax Commission object schemas. Reconciles fields common to the Tax Commission process on "
+    },
+    {
+     "file": "schemas/article7-petition.json",
+     "title": "Article7Petition",
+     "shared": false,
+     "desc": "An open petition challenging a real-property tax assessment in NY State Supreme Court under Article 7 of the Real Property Tax Law \u2014 the jud"
+    },
+    {
+     "file": "schemas/assessment-action.json",
+     "title": "AssessmentAction",
+     "shared": false,
+     "desc": "A published Tax Commission action reducing an assessment or reclassifying a property \u2014 the outcome record. Canonical schema reconciling the "
+    },
+    {
+     "file": "schemas/assessment-appeal.json",
+     "title": "AssessmentAppeal",
+     "shared": false,
+     "desc": "A property-tax assessment appeal filed with the NYC Tax Commission \u2014 an 'Application for Correction' of DOF's tentative assessed value and/o"
+    },
+    {
+     "file": "schemas/determination.json",
+     "title": "Determination",
+     "shared": false,
+     "desc": "The Tax Commission's determination on an assessment appeal \u2014 the hearing result and any offer of relief. After review (with or without a hea"
+    },
+    {
+     "file": "schemas/property.json",
+     "title": "Property",
+     "shared": false,
+     "desc": "A NYC property / tax lot as it enters the Tax Commission \u2014 the thing being appealed. The Department of Finance (DOF) SETS the tentative asse"
+    },
+    {
+     "file": "schemas/representative.json",
+     "title": "Representative",
+     "shared": false,
+     "desc": "The attorney, agent, or authorized person filing an assessment appeal on behalf of a property owner before the Tax Commission. Reverse-engin"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/properties",
+     "op": "listProperties",
+     "summary": "Search NYC properties / tax lots",
+     "tags": [
+      "Properties"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/properties/{bbl}",
+     "op": "getProperty",
+     "summary": "Get a property by BBL",
+     "tags": [
+      "Properties"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/assessment-actions",
+     "op": "listAssessmentActions",
+     "summary": "Search published assessment actions (granted reductions / reclassifications)",
+     "tags": [
+      "AssessmentActions"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/article7-petitions",
+     "op": "listArticle7Petitions",
+     "summary": "Search open Article 7 petitions (judicial assessment challenges)",
+     "tags": [
+      "Article7Petitions"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/article7-petitions/{indexNumber}",
+     "op": "getArticle7Petition",
+     "summary": "Get an open Article 7 petition by index number",
+     "tags": [
+      "Article7Petitions"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/appeals",
+     "op": "listAssessmentAppeals",
+     "summary": "List the authenticated applicant's assessment appeals",
+     "tags": [
+      "Appeals"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/appeals",
+     "op": "createAssessmentAppeal",
+     "summary": "File a property-tax assessment appeal (Application for Correction)",
+     "tags": [
+      "Appeals"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/appeals/{applicationId}",
+     "op": "getAssessmentAppeal",
+     "summary": "Get an assessment appeal",
+     "tags": [
+      "Appeals"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/appeals/{applicationId}/determination",
+     "op": "getDetermination",
+     "summary": "Get the Tax Commission's determination / offer on an appeal",
+     "tags": [
+      "Appeals"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_properties",
+     "title": "Find Properties",
+     "desc": "Search NYC properties / tax lots (the subject of an appeal) by borough, block, tax class, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_property",
+     "title": "Get Property",
+     "desc": "Fetch a NYC property / tax lot (address, owner, tax class, tentative assessed value) by BBL.",
+     "write": false
+    },
+    {
+     "name": "find_assessment_actions",
+     "title": "Find Assessment Actions",
+     "desc": "Search the Tax Commission's published actions reducing assessments or reclassifying property (Assessment Actions, 4nft-bihw) by tax year, borough, block, or tax",
+     "write": false
+    },
+    {
+     "name": "find_article7_petitions",
+     "title": "Find Article 7 Petitions",
+     "desc": "Search open petitions challenging assessments in NY State Supreme Court (Open Article 7 Petitions, aht6-vxai) by borough, petition year, or attorney.",
+     "write": false
+    },
+    {
+     "name": "get_article7_petition",
+     "title": "Get Article 7 Petition",
+     "desc": "Fetch a single open Article 7 petition by its index number.",
+     "write": false
+    },
+    {
+     "name": "file_appeal",
+     "title": "File an Assessment Appeal",
+     "desc": "File a NYC property-tax assessment appeal (Application for Correction). NET-NEW workflow with no public API today \u2014 it lives only in PDF forms (TC101/TC108/TC10",
+     "write": true
+    },
+    {
+     "name": "list_my_appeals",
+     "title": "List My Appeals",
+     "desc": "List the authenticated applicant's own assessment appeals and their status \u2014 today visible only inside the online filing system.",
+     "write": false
+    },
+    {
+     "name": "get_appeal",
+     "title": "Get Appeal",
+     "desc": "Fetch one of the authenticated applicant's assessment appeals by application id.",
+     "write": false
+    },
+    {
+     "name": "get_determination",
+     "title": "Get Determination",
+     "desc": "Fetch the Tax Commission's determination / offer on an appeal (granted reduction, reclassification, or no change).",
+     "write": false
     }
    ]
   }

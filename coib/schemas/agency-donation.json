@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/coib/schemas/agency-donation.json",
+  "title": "AgencyDonation",
+  "description": "A donation subject to COIB oversight — either a gift solicited by or made to a City agency, or a donation to a not-for-profit affiliated with an elected official (Local Law 181 / Charter § 2604). One canonical schema reconciling three parallel Open Data datasets: 'Donations to Not-for-Profit Organizations Affiliated with Elected Officials' (dx8z-6nev, 12 columns), 'Donations Received by City Agencies' (aqs7-v55z, 5 columns), and 'Official Fundraising by City Agencies' (basd-2jwn, 3 columns).",
+  "type": "object",
+  "x-source": {
+    "opendata_nfp_affiliated": "https://data.cityofnewyork.us/d/dx8z-6nev",
+    "opendata_agency_received": "https://data.cityofnewyork.us/d/aqs7-v55z",
+    "opendata_official_fundraising": "https://data.cityofnewyork.us/d/basd-2jwn"
+  },
+  "properties": {
+    "donationId": { "type": ["string", "null"], "description": "'Donation ID' (NFP-affiliated dataset)." },
+    "stream": {
+      "type": "string",
+      "enum": ["NFPAffiliatedWithElectedOfficial", "ReceivedByAgency", "OfficialFundraising"],
+      "description": "Which of the three parallel donation datasets this row comes from."
+    },
+    "donationValue": { "$ref": "_common.json#/$defs/Money", "description": "'Donation Value' / 'Value of Donation'." },
+    "moneyOrInKind": { "type": ["string", "null"], "enum": ["Money", "In-Kind", null], "description": "'Money/In-Kind Donation' / 'Type of Donation'." },
+    "inKindDescription": { "type": ["string", "null"], "description": "'Description of In-Kind Donation'." },
+    "restrictedOrUnrestricted": { "type": ["string", "null"], "enum": ["Restricted", "Unrestricted", null], "description": "'Restricted or Unrestricted'." },
+    "donorName": { "type": ["string", "null"], "description": "'Donor Name' / 'Name of Donor (Individual or Firm)'." },
+    "donorLocation": { "$ref": "_common.json#/$defs/PostalAddress" },
+    "organizationName": { "type": ["string", "null"], "description": "'Organization Name' / 'Name of Not-For-Profit' — the recipient NFP." },
+    "electedOfficial": { "type": ["string", "null"], "description": "'Elected Official' the NFP is affiliated with." },
+    "agency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "dateOfDonation": { "type": ["string", "null"], "format": "date", "description": "'Date of Donation'." },
+    "year": { "type": ["integer", "null"], "description": "'Year' / 'Year of Donation'." }
+  },
+  "required": ["stream"],
+  "additionalProperties": false
+}

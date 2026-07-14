@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynbp/schemas/event.json",
+  "title": "Event",
+  "description": "A public event hosted or convened by the Office of the Brooklyn Borough President — ULURP public hearings, borough board meetings, community programs, and Borough Hall events. Canonical schema reconciling 'The Events Calendar' plugin REST API on the current site (wp-json/tribe/events/v1/events), which is the one real, live, purpose-shaped read API observed on brooklynbp.nyc.gov. Venue/organizer mirror the plugin's tribe_venue / tribe_organizer objects.",
+  "type": "object",
+  "x-source": {
+    "events_api": "https://www.brooklynbp.nyc.gov/wp-json/tribe/events/v1/events",
+    "site": "https://www.brooklynbp.nyc.gov/events/"
+  },
+  "properties": {
+    "id": { "type": ["string", "integer", "null"], "description": "Event id in The Events Calendar." },
+    "title": { "type": "string", "description": "Event title." },
+    "description": { "type": ["string", "null"], "description": "Event description / excerpt." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Canonical event URL." },
+    "startDate": { "type": ["string", "null"], "format": "date-time", "description": "Start date/time ('start_date')." },
+    "endDate": { "type": ["string", "null"], "format": "date-time", "description": "End date/time ('end_date')." },
+    "allDay": { "type": ["boolean", "null"], "description": "Whether the event is all-day." },
+    "venue": {
+      "type": "object",
+      "description": "Event venue (tribe_venue).",
+      "properties": {
+        "name": { "type": ["string", "null"], "description": "Venue name (e.g. Brooklyn Borough Hall)." },
+        "address": { "type": ["string", "null"] },
+        "geography": { "$ref": "_common.json#/$defs/Geography" },
+        "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+      },
+      "additionalProperties": false
+    },
+    "organizer": {
+      "type": ["string", "null"],
+      "description": "Organizer name (tribe_organizer)."
+    },
+    "categories": { "type": ["array", "null"], "items": { "type": "string" }, "description": "Event categories (tribe_events_cat)." }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

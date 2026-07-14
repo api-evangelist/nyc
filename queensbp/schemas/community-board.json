@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/schemas/community-board.json",
+  "title": "CommunityBoard",
+  "description": "One of Queens' 14 community boards — the local advisory body whose members the Borough President appoints. Canonical schema reconciling the 'Queens Community Board District Managers and Chairs' Open Data dataset (8z5h-tzdr, 20 columns) with the /community-boards page on queensbp.nyc.gov. Carries the board office (district manager, chair, address, monthly meeting) and the NYC geography spine.",
+  "type": "object",
+  "x-source": {
+    "opendata_managers_chairs": "https://data.cityofnewyork.us/d/8z5h-tzdr",
+    "site": "https://www.queensbp.nyc.gov/community-boards/"
+  },
+  "properties": {
+    "board": { "type": ["string", "integer"], "description": "Community board number ('Board' / 'Community Board') — primary key within Queens." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "districtManager": { "$ref": "_common.json#/$defs/Person" },
+    "chair": {
+      "allOf": [{ "$ref": "_common.json#/$defs/Person" }],
+      "description": "Community board chair ('CB Chair - First Name' / 'CB Chair - Last Name')."
+    },
+    "email": { "type": ["string", "null"], "format": "email", "description": "Board office e-mail ('E-Mail')." },
+    "phone": { "type": ["string", "null"], "description": "Board office phone ('Phone Number')." },
+    "address": { "type": ["string", "null"], "description": "Board office address ('Address')." },
+    "city": { "type": ["string", "null"], "description": "'City'." },
+    "monthlyMeeting": { "type": ["string", "null"], "description": "When the board holds its monthly full membership meeting ('Monthly Meeting')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["board"],
+  "additionalProperties": false
+}

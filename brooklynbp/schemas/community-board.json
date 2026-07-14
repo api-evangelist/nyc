@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynbp/schemas/community-board.json",
+  "title": "CommunityBoard",
+  "description": "A Brooklyn community board — one of the 18 local advisory bodies the Borough President appoints members to and coordinates with. Canonical schema reconciling the 'Community Board Contact List' dataset (dy27-rrad, 16 columns) and the /community-boards and /community-boards-hub site sections. Keyed on Board Number.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/dy27-rrad",
+    "site": "https://www.brooklynbp.nyc.gov/community-boards/"
+  },
+  "properties": {
+    "boardNumber": { "type": ["string", "integer", "null"], "description": "Community board number ('Board Number') — 1-18 in Brooklyn." },
+    "communityBoard": { "type": ["string", "null"], "description": "Community board label ('Community Board')." },
+    "chair": { "type": ["string", "null"], "description": "Board chair ('Chair')." },
+    "districtManager": { "type": ["string", "null"], "description": "District manager ('District Manager')." },
+    "email": { "type": ["string", "null"], "format": "email", "description": "Board contact email ('Email')." },
+    "address": { "type": ["string", "null"], "description": "Board office address ('Address')." },
+    "meetingDate": { "type": ["string", "null"], "description": "Typical monthly meeting date ('Meeting Date')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["boardNumber"],
+  "additionalProperties": false
+}

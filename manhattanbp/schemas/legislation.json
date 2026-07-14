@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanbp/schemas/legislation.json",
+  "title": "Legislation",
+  "description": "A piece of legislation, resolution, or policy position the Manhattan Borough President supports or advocates for — the office's policy/report output. Canonical schema reconciling the 'Legislation' dataset (uf8p-ervp, 4 columns): name, subject, status, and a link. The linked document is external (state/city legislative sites), so the substance is a URL rather than structured text.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/uf8p-ervp",
+    "site": "https://www.manhattanbp.nyc.gov/policy/"
+  },
+  "properties": {
+    "name": { "type": "string", "description": "Bill / legislation name or number ('Name')." },
+    "subject": { "type": ["string", "null"], "description": "Subject / policy area ('Subject')." },
+    "status": { "type": ["string", "null"], "description": "Current status ('Status'), e.g. Introduced, Passed, Signed." },
+    "url": { "type": ["string", "null"], "format": "uri", "description": "Link to the bill / document ('URL')." }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

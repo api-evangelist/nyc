@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxbp/schemas/community-board-appointment.json",
+  "title": "CommunityBoardAppointment",
+  "description": "An appointment of a member to one of the Bronx's twelve community boards. Appointing/recommending community-board members is a core NYC Charter duty of the Borough President (half directly, half on the recommendation of the district's Council Members). Canonical schema reconciling the 'Bronx Community Boards' Open Data dataset (wbau-xy7g, 7 columns). This is one of only two entities the office currently publishes as machine-readable data.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/wbau-xy7g",
+    "site": "https://bronxboropres.nyc.gov/community/community_boards.php"
+  },
+  "properties": {
+    "communityBoard": { "$ref": "_common.json#/$defs/CommunityBoardReference" },
+    "firstName": { "type": ["string", "null"], "description": "'First name'." },
+    "lastName": { "type": ["string", "null"], "description": "'Last Name'." },
+    "recommendingOfficial": { "type": ["string", "null"], "description": "Official who recommended the appointment — the Borough President or the district Council Member ('Recommending Official')." },
+    "termExpires": { "type": ["string", "null"], "description": "Term expiry ('Term expires')." },
+    "year": { "type": ["string", "integer", "null"], "description": "Year of appointment ('Year')." },
+    "applicationZipCode": { "type": ["string", "null"], "description": "ZIP code on the member's application ('Zip Code of Application')." }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandbp/schemas/land-use-recommendation.json",
+  "title": "LandUseRecommendation",
+  "description": "A Staten Island Borough President recommendation on a land-use application under the Uniform Land Use Review Procedure (ULURP) or a related review. Under the NYC Charter the borough president holds an advisory review step: after the affected community board, the BP issues a written recommendation to the City Planning Commission. NET-NEW as data: these recommendations are published today only as PDFs / notices on statenislandusa.com (the Office of Land Use, Planning & Infrastructure) and in the City Planning ZAP system — there is no BPSI API or Open Data twin. Modeled from the office's charter role, not from an existing dataset.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.statenislandusa.com/notices.html",
+    "office": "Office of Land Use, Planning & Infrastructure",
+    "citywide_system": "NYC Dept. of City Planning ZAP (Zoning Application Portal)",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "applicationId": { "type": "string", "description": "ULURP / City Planning application number (e.g. 'C 240123 ZMR')." },
+    "title": { "type": ["string", "null"], "description": "Project or application title." },
+    "applicationType": {
+      "type": ["string", "null"],
+      "description": "Type of land-use action.",
+      "enum": ["Zoning Map Amendment", "Zoning Text Amendment", "Special Permit", "Disposition of City Property", "Acquisition", "Site Selection", "City Map Change", "Franchise", "Landmark", "Other", null]
+    },
+    "communityBoard": { "$ref": "_common.json#/$defs/CommunityBoardRef" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "applicant": { "$ref": "_common.json#/$defs/ContactInfo" },
+    "recommendation": {
+      "type": ["string", "null"],
+      "description": "The Borough President's disposition.",
+      "enum": ["Approve", "Approve with Conditions", "Approve with Modifications", "Disapprove", "Disapprove with Conditions", "No Objection", "No Recommendation", null]
+    },
+    "recommendationDate": { "type": ["string", "null"], "format": "date", "description": "Date the BP recommendation was issued." },
+    "communityBoardRecommendation": { "type": ["string", "null"], "description": "The prior community board vote/recommendation, if noted." },
+    "conditions": { "type": ["string", "null"], "description": "Any conditions or modifications attached to the recommendation." },
+    "documentUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the published recommendation letter (PDF)." },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Under Review", "Recommendation Issued", "Referred to CPC", "Closed", null]
+    }
+  },
+  "required": ["applicationId"],
+  "additionalProperties": false
+}

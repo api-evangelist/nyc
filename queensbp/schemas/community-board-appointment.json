@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/schemas/community-board-appointment.json",
+  "title": "CommunityBoardAppointment",
+  "description": "An appointment of an individual to serve on a Queens community board. Under the City Charter the Queens Borough President appoints all Queens community board members, half nominated by the local Council Member. Canonical schema reconciling the 'Queens Community Board Members' Open Data dataset (rps4-dwwk, 4 columns) with the chair/district-manager roles in 8z5h-tzdr. Keyed on person + board + term.",
+  "type": "object",
+  "x-source": {
+    "opendata_members": "https://data.cityofnewyork.us/d/rps4-dwwk",
+    "opendata_managers_chairs": "https://data.cityofnewyork.us/d/8z5h-tzdr",
+    "site": "https://www.queensbp.nyc.gov/community-boards/"
+  },
+  "properties": {
+    "person": { "$ref": "_common.json#/$defs/Person" },
+    "board": { "$ref": "_common.json#/$defs/CommunityBoardReference" },
+    "role": {
+      "type": ["string", "null"],
+      "enum": ["Member", "Chair", "District Manager", null],
+      "description": "Role on the board. 'Member' (rps4-dwwk); 'Chair' / 'District Manager' (8z5h-tzdr)."
+    },
+    "yearAppointed": { "type": ["integer", "string", "null"], "description": "Year the member was appointed ('Year Appointed')." },
+    "nominatedByCouncilMember": { "type": ["boolean", "null"], "description": "Whether this seat was nominated by the local Council Member (half of appointments), per City Charter." }
+  },
+  "required": ["board"],
+  "additionalProperties": false
+}

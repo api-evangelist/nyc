@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/taxcommission/schemas/article7-petition.json",
+  "title": "Article7Petition",
+  "description": "An open petition challenging a real-property tax assessment in NY State Supreme Court under Article 7 of the Real Property Tax Law — the judicial escalation that can follow a Tax Commission determination. Canonical schema reconciling the 'Open Article 7 Petitions' Open Data dataset (aht6-vxai, 10 columns), published under the Office of Administrative Tax Appeals (OATA). Keyed on Petition Index Number + Petition Year.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/aht6-vxai"
+  },
+  "properties": {
+    "petitionIndexNumber": { "type": ["string", "null"], "description": "Index number assigned when the petition was commenced ('Petition Index Number')." },
+    "petitionYear": { "type": ["string", "integer", "null"], "description": "Year the petition was commenced ('Petition Year')." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "boroughCode": { "$ref": "_common.json#/$defs/BoroughCode" },
+    "block": { "type": ["string", "integer", "null"], "description": "'Block Number'." },
+    "lot": { "type": ["string", "integer", "null"], "description": "'Lot Number'." },
+    "condominiumHighLotNumber": { "type": ["string", "integer", "null"], "description": "'Condominium High Lot Number' — high lot of a condo lot range." },
+    "petitionerName": { "type": ["string", "null"], "description": "'Petitioner Name'." },
+    "attorneyName": { "type": ["string", "null"], "description": "'Attorney Name' — attorney for the petitioner." },
+    "attorneyIdentifier": { "type": ["string", "null"], "description": "'Attorney Identifier'." },
+    "noticeOfIssuanceCode": { "type": ["string", "null"], "description": "'Notice Of Issuance Code' — note-of-issue status code." }
+  },
+  "additionalProperties": false
+}

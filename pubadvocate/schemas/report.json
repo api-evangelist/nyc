@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pubadvocate/schemas/report.json",
+  "title": "Report",
+  "description": "A report, investigation, data brief, or agency report card published by the NYC Public Advocate. Today these are HTML pages and PDFs on the self-hosted advocate.nyc.gov site (which returned 502 during the crawl); there is no index API, no structured metadata, and no Open Data. Proposed schema for a machine-readable catalog of the office's investigative output.",
+  "type": "object",
+  "x-source": {
+    "site": "https://advocate.nyc.gov/reports/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "reportId": { "type": ["string", "null"], "description": "Stable identifier / slug for the report." },
+    "title": { "type": "string", "description": "Report title." },
+    "summary": { "type": ["string", "null"], "description": "Abstract / key findings." },
+    "topic": { "type": ["string", "null"], "description": "Subject area (housing, education, health, transparency, etc.)." },
+    "agenciesReferenced": {
+      "type": "array",
+      "items": { "$ref": "_common.json#/$defs/AgencyReference" },
+      "description": "City agencies the report investigates or grades."
+    },
+    "publishedDate": { "type": ["string", "null"], "format": "date", "description": "Publication date." },
+    "documentUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the PDF/HTML report." },
+    "pressReleaseUrl": { "type": ["string", "null"], "format": "uri" }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanbp/schemas/community-board-application.json",
+  "title": "CommunityBoardApplication",
+  "description": "An application to serve as a volunteer member of a Manhattan community board — the office's flagship citizen-facing action, and the NET-NEW write surface. Today this is a plain WordPress/Forminator web form (or a downloadable PDF) at manhattanbp.nyc.gov with NO public API and NO Open Data twin; the resulting appointments only ever surface, in aggregate, in the 'BP Appointments' dataset. This schema serves both the read surface (an applicant's own submissions) and the write surface (submit an application).",
+  "type": "object",
+  "x-source": {
+    "form": "https://www.manhattanbp.nyc.gov/community-boards/",
+    "opendata": null,
+    "opendata_gap": true,
+    "appointment_twin": "https://data.cityofnewyork.us/d/nr9n-yqxr"
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned application number. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Under Review", "Interview", "Appointed", "Waitlisted", "Declined", null],
+      "description": "Lifecycle status. Set by the office, not the applicant.",
+      "readOnly": true
+    },
+    "applicantName": { "type": "string", "description": "Full name of the applicant." },
+    "contact": {
+      "type": "object",
+      "description": "Applicant contact details.",
+      "properties": {
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "residenceAddress": { "type": ["string", "null"], "description": "Home address in Manhattan (community-board members must live, work, or have significant interest in the district)." },
+    "preferredCommunityBoard": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12,
+      "description": "Preferred Manhattan community board district (1–12)."
+    },
+    "alternateCommunityBoard": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "maximum": 12,
+      "description": "Second-choice community board district."
+    },
+    "connectionToDistrict": {
+      "type": "string",
+      "enum": ["Resident", "Works in district", "Owns business", "Significant interest", "Other"],
+      "description": "Basis for eligibility to serve on the chosen district's board."
+    },
+    "areasOfInterest": {
+      "type": ["array", "null"],
+      "items": { "type": "string" },
+      "description": "Policy areas the applicant wants to work on (e.g. Land Use, Transportation, Parks, Housing, Budget)."
+    },
+    "occupation": { "type": ["string", "null"], "description": "Applicant occupation / employer." },
+    "affiliations": { "type": ["string", "null"], "description": "Community, civic, or professional affiliations." },
+    "statementOfInterest": { "type": "string", "description": "Why the applicant wants to serve." },
+    "resumeUrl": { "type": ["string", "null"], "format": "uri", "description": "Optional link to an uploaded resume." },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["applicantName", "preferredCommunityBoard", "connectionToDistrict", "statementOfInterest"],
+  "additionalProperties": false
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanbp/schemas/funding-award.json",
+  "title": "FundingAward",
+  "description": "A discretionary funding or capital grant award made by the Manhattan Borough President — the office's largest recurring public output. ONE canonical schema reconciling the many parallel, per-fiscal-year Open Data datasets that the office publishes as separate assets: Capital Grant Awards 2014/2015/2016/2017/2018 (9umc-3b2y, 6wee-b7wf, 83z6-smyr, k84j-firu, 66yh-nemi), Tourism Grants (x4ud-jhxu), Manhattan Community Grants – Historical (rsnd-bbih), Manhattan Community Award Program / MCAP (y3ea-en4q), and Police-Community Relations Awards 2016 (w38c-pyzq). The fragmentation into one dataset per year per program is itself a finding — see crosswalk.md.",
+  "type": "object",
+  "x-source": {
+    "opendata_capital_2014": "https://data.cityofnewyork.us/d/9umc-3b2y",
+    "opendata_capital_2015": "https://data.cityofnewyork.us/d/6wee-b7wf",
+    "opendata_capital_2016": "https://data.cityofnewyork.us/d/83z6-smyr",
+    "opendata_capital_2017": "https://data.cityofnewyork.us/d/k84j-firu",
+    "opendata_capital_2018": "https://data.cityofnewyork.us/d/66yh-nemi",
+    "opendata_tourism": "https://data.cityofnewyork.us/d/x4ud-jhxu",
+    "opendata_community_grants": "https://data.cityofnewyork.us/d/rsnd-bbih",
+    "opendata_mcap": "https://data.cityofnewyork.us/d/y3ea-en4q",
+    "opendata_police_community": "https://data.cityofnewyork.us/d/w38c-pyzq"
+  },
+  "properties": {
+    "program": {
+      "type": "string",
+      "description": "Which award program / dataset this row comes from.",
+      "enum": ["Capital Grant", "Tourism Grant", "Community Grant", "MCAP", "Police-Community Relations Award"]
+    },
+    "fiscalYear": { "$ref": "_common.json#/$defs/FiscalYear" },
+    "organization": { "$ref": "_common.json#/$defs/OrganizationReference" },
+    "projectTitle": { "type": ["string", "null"], "description": "Project title ('Project Title' / 'PROJECT TITLE')." },
+    "projectDescription": { "type": ["string", "null"], "description": "Project description ('Project Description' / 'Brief Program Description'), where published." },
+    "projectAddress": { "type": ["string", "null"], "description": "Project address ('Project Address' / 'Organization Address' / 'Address')." },
+    "fundedAmount": { "$ref": "_common.json#/$defs/Money" },
+    "amountRequested": { "$ref": "_common.json#/$defs/Money" },
+    "schoolNumber": { "type": ["string", "null"], "description": "School number for education projects ('School Number'), capital awards only." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["program"],
+  "additionalProperties": false
+}

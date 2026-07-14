@@ -1,0 +1,138 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the City Clerk's open Lobbying Bureau data (registrations, periodic filings, fundraising reports) and adds apply_for_marriage_license — the net-new write workflow locked today inside the rented Project Cupid (Unqork) marriage system.",
+    "openapi": "../openapi/cityclerk.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.cityclerk",
+    "title": "NYC Office of the City Clerk",
+    "version": "0.1.0",
+    "description": "Agent-native access to the New York City Office of the City Clerk — the Lobbying Bureau's open registration, periodic filing, and fundraising data from NYC Open Data and Lobbyist Search, plus the net-new ability to find an appointment and apply for a marriage license, which today lives only inside the Unqork-hosted Project Cupid system.",
+    "instructions": "Use find_lobbyist_registrations to search the public Lobbyist Search database by lobbyist, client, or industry, and get_lobbyist_registration to drill into one. find_lobbyist_filings returns periodic lobbying reports (compensation, expenses, activities, targets) from the eLobbyist Data dataset; find_fundraising_reports covers lobbyist fundraising and political-consulting reports. For the Marriage Bureau: find_appointments lists available marriage-license, ceremony, and domestic-partnership slots; apply_for_marriage_license (net-new) submits a marriage-license application — it requires an authenticated applicant and mutates state, so confirm both applicants' names, residences, and prior-marriage counts with the user before submitting. get_marriage_license_application checks an application's status, and get_marriage_license fetches an issued license."
+  },
+  "capabilities": { "tools": { "listChanged": false } },
+  "tools": [
+    {
+      "name": "find_appointments",
+      "title": "Find Appointments",
+      "description": "Find available City Clerk appointment slots for marriage licenses, marriage ceremonies, and domestic partnership registrations/ceremonies — today reachable only through Project Cupid.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ceremonyType": { "type": "string", "enum": ["Marriage Ceremony", "Domestic Partnership Ceremony", "Marriage License Appointment", "Domestic Partnership Registration"] },
+          "office": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/ceremony.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listAppointments"
+    },
+    {
+      "name": "apply_for_marriage_license",
+      "title": "Apply for a Marriage License",
+      "description": "Submit a NYC marriage-license application (net-new write). No public API today — it lives only in the Unqork-hosted Project Cupid system. Requires an authenticated applicant. Mutates state — confirm both applicants' names, residences, and prior-marriage counts before submitting.",
+      "inputSchema": { "$ref": "../schemas/marriage-license-application.json" },
+      "outputSchema": { "$ref": "../schemas/marriage-license-application.json" },
+      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "x-openapi-operation": "createMarriageLicenseApplication",
+      "x-auth": "user"
+    },
+    {
+      "name": "get_marriage_license_application",
+      "title": "Get Marriage License Application",
+      "description": "Check the status of a marriage-license application by id — today visible only inside Project Cupid.",
+      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
+      "outputSchema": { "$ref": "../schemas/marriage-license-application.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getMarriageLicenseApplication",
+      "x-auth": "user"
+    },
+    {
+      "name": "get_marriage_license",
+      "title": "Get Marriage License",
+      "description": "Fetch an issued NYC marriage license by id.",
+      "inputSchema": { "type": "object", "properties": { "licenseId": { "type": "string" } }, "required": ["licenseId"] },
+      "outputSchema": { "$ref": "../schemas/marriage-license.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getMarriageLicense",
+      "x-auth": "user"
+    },
+    {
+      "name": "find_lobbyist_registrations",
+      "title": "Find Lobbyist Registrations",
+      "description": "Search the public Lobbyist Search database of registered lobbyists and their clients by lobbyist name, client, industry, or year.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "lobbyistName": { "type": "string" },
+          "clientName": { "type": "string" },
+          "clientIndustry": { "type": "string" },
+          "reportYear": { "type": "integer" },
+          "q": { "type": "string" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/lobbyist-registration.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLobbyistRegistrations"
+    },
+    {
+      "name": "get_lobbyist_registration",
+      "title": "Get Lobbyist Registration",
+      "description": "Fetch a single lobbyist registration (registrant + client) by registration id.",
+      "inputSchema": { "type": "object", "properties": { "registrationId": { "type": "string" } }, "required": ["registrationId"] },
+      "outputSchema": { "$ref": "../schemas/lobbyist-registration.json" },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "getLobbyistRegistration"
+    },
+    {
+      "name": "find_lobbyist_filings",
+      "title": "Find Lobbyist Filings",
+      "description": "Search periodic lobbying reports (eLobbyist Data) — compensation, expenses, activities, and targets per reporting period — by lobbyist, client, year, or period.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "lobbyistName": { "type": "string" },
+          "clientName": { "type": "string" },
+          "reportYear": { "type": "integer" },
+          "period": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/lobbyist-filing.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listLobbyistFilings"
+    },
+    {
+      "name": "find_fundraising_reports",
+      "title": "Find Fundraising Reports",
+      "description": "Search lobbyist fundraising and political-consulting reports by reporting entity, candidate, target office, or year.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entityName": { "type": "string" },
+          "candidateLastName": { "type": "string" },
+          "targetOffice": { "type": "string" },
+          "filingYear": { "type": "integer" },
+          "page": { "type": "integer", "minimum": 1, "default": 1 },
+          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+        }
+      },
+      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/fundraising-report.json" } } } },
+      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "x-openapi-operation": "listFundraisingReports"
+    }
+  ]
+}

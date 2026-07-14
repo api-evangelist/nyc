@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pubadvocate/schemas/watchlist-building.json",
+  "title": "WatchlistBuilding",
+  "description": "A single building beneath a Worst Landlord Watchlist landlord — the building-level record that the ranking aggregates. Proposed schema: the Public Advocate does NOT publish the per-building watchlist rollup as data, though the underlying HPD Housing Maintenance Code Violations data is open citywide on NYC Open Data. Keyed on BBL/BIN and joined to a WorstLandlord.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.landlordwatchlist.com/",
+    "underlying_opendata": "https://data.cityofnewyork.us (HPD Housing Maintenance Code Violations / Registrations; not published under a PA label)",
+    "opendata_gap": true
+  },
+  "properties": {
+    "landlordId": { "type": ["integer", "string", "null"], "description": "The WorstLandlord this building belongs to." },
+    "address": { "type": ["string", "null"], "description": "Building street address." },
+    "houseNumber": { "type": ["string", "null"] },
+    "street": { "type": ["string", "null"] },
+    "zipCode": { "type": ["string", "null"] },
+    "units": { "type": ["integer", "null"], "description": "Residential units in the building." },
+    "openViolations": { "type": ["integer", "null"], "description": "Open HPD Housing Maintenance Code violations." },
+    "classCViolations": { "type": ["integer", "null"], "description": "Open Class C (immediately hazardous) violations." },
+    "dobViolations": { "type": ["integer", "null"], "description": "Open Department of Buildings violations." },
+    "registrationExpired": { "type": ["boolean", "string", "null"], "description": "Whether the HPD building registration has lapsed." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "additionalProperties": false
+}

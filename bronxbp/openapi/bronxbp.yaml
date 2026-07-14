@@ -1,0 +1,366 @@
+openapi: 3.1.0
+info:
+  title: Bronx Borough President API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the Office of the Bronx Borough President — publishing the
+    office's charter work (land-use / ULURP recommendations, community-board appointments, discretionary
+    funding awards, newsroom, and events) as coherent resources, and adding the missing write surface:
+    applying to serve on a community board.
+  description: >-
+    Proposed API-first surface for the Office of the Bronx Borough President, from the NYC Modernization
+    low-hanging-fruit assessment of bronxboropres.nyc.gov.
+
+
+    The Bronx BP site is a thin brochure site on a Revize SaaS CMS (PHP front end, JSP CMS back end),
+    with events on Google Calendar, land-use recommendations published as PDFs in a document center,
+    and a newsroom of server-rendered pages. It exposes **no API and no OpenAPI**. Only **two** entities
+    are machine-readable at all — as NYC Open Data datasets under the agency label
+    'Bronx Borough President (BPBX)': Capital Funding (`mdgu-ar69`) and Bronx Community Boards
+    (`wbau-xy7g`).
+
+
+    Critically, all **five** Borough President offices carry the *same* NYC Charter duties (ULURP
+    advisory recommendations, community-board appointments, a share of discretionary capital/expense
+    funding, chairing the borough board) and run near-identical thin sites. This contract is therefore
+    written to be **templatable across all five boroughs** — one shared Borough President API,
+    instantiated per office — rather than as a one-off for the Bronx.
+
+
+    This contract does two things: (1) presents the office's core work as one clean resource model
+    (publishing the two open datasets cleanly and giving the currently-PDF/HTML surfaces —
+    recommendations, newsroom, events — a machine-readable shape), and (2) adds the one net-new
+    **write** workflow — submitting an application to serve on a community board — which today is a
+    downloadable PDF or an email.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.bronxboropres.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: LandUse
+    description: Borough President ULURP / land-use advisory recommendations.
+  - name: CommunityBoards
+    description: Community-board appointments and applications to serve.
+  - name: Funding
+    description: Discretionary capital / expense funding awards.
+  - name: Newsroom
+    description: Press releases, statements, letters, and testimonies.
+  - name: Events
+    description: Public events and meetings.
+
+paths:
+  /land-use-recommendations:
+    get:
+      operationId: listLandUseRecommendations
+      summary: List / search Borough President land-use (ULURP) recommendations
+      tags: [LandUse]
+      parameters:
+        - name: communityBoard
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 12 }
+        - name: recommendation
+          in: query
+          schema: { type: string }
+        - name: actionType
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of land-use recommendations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/land-use-recommendation.json' } }
+  /land-use-recommendations/{applicationId}:
+    get:
+      operationId: getLandUseRecommendation
+      summary: Get a land-use recommendation by ULURP/ZAP application number
+      tags: [LandUse]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The land-use recommendation.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/land-use-recommendation.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /community-board-appointments:
+    get:
+      operationId: listCommunityBoardAppointments
+      summary: List community-board member appointments
+      tags: [CommunityBoards]
+      parameters:
+        - name: communityBoard
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 12 }
+        - name: year
+          in: query
+          schema: { type: integer }
+        - name: recommendingOfficial
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of community-board appointments.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/community-board-appointment.json' } }
+
+  /discretionary-funding-awards:
+    get:
+      operationId: listDiscretionaryFundingAwards
+      summary: Search Borough President discretionary funding awards
+      tags: [Funding]
+      parameters:
+        - name: fiscalYear
+          in: query
+          schema: { type: string }
+        - name: type
+          in: query
+          schema: { type: string }
+        - name: communityBoard
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 12 }
+        - name: councilDistrict
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 51 }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of funding awards.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/discretionary-funding-award.json' } }
+
+  /press-releases:
+    get:
+      operationId: listPressReleases
+      summary: List newsroom items (releases, statements, letters, testimonies)
+      tags: [Newsroom]
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string, enum: [Press Release, Statement, Letter, Testimony, Video] }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of newsroom items.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/press-release.json' } }
+  /press-releases/{id}:
+    get:
+      operationId: getPressRelease
+      summary: Get a newsroom item
+      tags: [Newsroom]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The newsroom item.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/press-release.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /events:
+    get:
+      operationId: listEvents
+      summary: List public events and meetings
+      tags: [Events]
+      parameters:
+        - name: calendar
+          in: query
+          schema: { type: string, enum: [Events, Meetings] }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of events.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/event.json' } }
+
+  /community-board-applications:
+    get:
+      operationId: listCommunityBoardApplications
+      summary: List the authenticated applicant's community-board applications
+      description: Reads the applicant's own submissions — today there is no way to check status at all.
+      tags: [CommunityBoards]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Under Review, Interview Scheduled, Appointed, Waitlisted, Declined, Withdrawn] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the applicant's community-board applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/community-board-application.json' } }
+    post:
+      operationId: createCommunityBoardApplication
+      summary: Apply to serve on a community board (submit an application)
+      description: >-
+        The net-new write surface — an API for applying to serve on one of the Bronx's twelve community
+        boards, replacing today's downloadable PDF / email form. The requested community board and the
+        applicant's name are required; the office sets status and returns a confirmation number.
+      tags: [CommunityBoards]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/community-board-application.json' }
+      responses:
+        '201':
+          description: Application submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/community-board-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /community-board-applications/{applicationId}:
+    get:
+      operationId: getCommunityBoardApplication
+      summary: Get a community-board application
+      tags: [CommunityBoards]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The community-board application.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/community-board-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LandUseRecommendation: { $ref: '../schemas/land-use-recommendation.json' }
+    CommunityBoardAppointment: { $ref: '../schemas/community-board-appointment.json' }
+    DiscretionaryFundingAward: { $ref: '../schemas/discretionary-funding-award.json' }
+    PressRelease: { $ref: '../schemas/press-release.json' }
+    Event: { $ref: '../schemas/event.json' }
+    CommunityBoardApplication: { $ref: '../schemas/community-board-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
