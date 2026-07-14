@@ -28,6 +28,7 @@ function mdToHtml(md){
   const inline = s => esc(s)
     .replace(/`([^`]+)`/g,'<code>$1</code>')
     .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g,'<img alt="$1" src="$2" loading="lazy" style="max-width:100%;height:auto;border-radius:12px;border:1px solid var(--border);display:block;margin:1em 0">')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>');
   while(i<lines.length){
     let line=lines[i];

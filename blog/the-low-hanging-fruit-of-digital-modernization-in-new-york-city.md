@@ -1,5 +1,7 @@
 # The Low Hanging Fruit of Digital Modernization in New York City
 
+![skyline line drawing of New York City](blog/images/the-low-hanging-fruit-of-digital-modernization-in-new-york-city.svg)
+
 *By Kin Lane ([API Evangelist](https://apievangelist.com)) · July 14, 2026*
 
 In 2013 I went to work for the Obama administration. I was positioned at the Department of Veterans Affairs, but because of my work on APIs, I was used across multiple agencies, inventorying open data assets to support Obama's open data mandate. This work has continued beyond my [Presidential Innovation Fellowship](https://apievangelist.com/2013/08/11/my-first-day-in-washington-dc-as-presidential-innovation-fellow/), with a [landscape analysis at the Department of Veterans Affairs](https://skylight-hq.github.io/va-api-landscape/report/), and ongoing inventorying of federal government API efforts.
