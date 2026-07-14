@@ -25,16 +25,16 @@ Data liberation was step one, and it half-happened. This is step two: **making t
 
 This repo doubles as an explorable, data-driven website (**[nyc.apievangelist.com](https://nyc.apievangelist.com)**, GitHub Pages):
 
-- `index.html` — project overview: thesis, cross-domain stats, the four-verb pattern, the method, and domain cards.
+- `index.html` — project overview: thesis, cross-domain stats, the five verb families, the method, and cards for all 67 domains.
 - `domain.html?d=<domain>` — per-domain explorer: interactive fruit index, searchable Open Data index, JSON Schema browser, OpenAPI operations, MCP tools, and rendered docs.
 - `docs.html?f=…` — in-browser Markdown viewer (also serves the [CHANGELOG](CHANGELOG.md)).
-- `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain (see the generator in the project history).
+- `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain: `python3 scripts/build-manifest.py && python3 scripts/build-scorecard.py`.
 
 The site is dependency-free static HTML/CSS/JS — no build step.
 
 **Enabling Pages:** Settings → Pages → *Deploy from a branch* → `main` / root. The custom domain is set via the `CNAME` file (`nyc.apievangelist.com`); add a DNS `CNAME` record `nyc → api-evangelist.github.io`. `.nojekyll` is present so files serve as-is.
 
-See the **[CHANGELOG](CHANGELOG.md)** for the full project history, and the **[cross-domain SYNTHESIS](SYNTHESIS.md)** (interactive: `synthesis.html`) for the four-verb taxonomy, eight cross-cutting findings, and the maturity scorecard.
+See the **[CHANGELOG](CHANGELOG.md)** for the full project history, and the **[cross-domain SYNTHESIS](SYNTHESIS.md)** (interactive: `synthesis.html`) for the five-family taxonomy, the twelve cross-cutting findings, and the aggregate maturity scorecard.
 
 ## Method (per domain)
 
@@ -47,6 +47,8 @@ See the **[CHANGELOG](CHANGELOG.md)** for the full project history, and the **[c
 7. **MCP** — expose the same resources as agent tools (design artifact, not a deployment).
 
 ## Contents
+
+> **All 67 assessed domains are browsable at [nyc.apievangelist.com](https://nyc.apievangelist.com)** — this Contents list highlights the first five deep-dives; every other agency folder follows the identical structure.
 
 - [domains.md](domains.md) — master inventory of NYC government domains (umbrella `nyc.gov`, distinct-domain agencies, `aNNN-*.nyc.gov` app hosts, public authorities, adjacent state/regional).
 - [nycgovparks.org/](nycgovparks.org/) — **first domain, taken through the full method:**
@@ -87,7 +89,7 @@ See the **[CHANGELOG](CHANGELOG.md)** for the full project history, and the **[c
 
 ## Status
 
-**Fifteen domains assessed** (~1,700 Open Data assets mapped, 95 JSON Schemas, 142 MCP tools). The verb taxonomy expanded from five to a broader set — but everything clusters on one meta-finding: **the reporting data is largely open; the service/transaction layer is missing, hidden, or vendor-locked.** Across all fifteen, the transactional (write) API is absent in 14 of 15, and agent-readiness is zero everywhere. See the [cross-domain SYNTHESIS](SYNTHESIS.md) and the interactive [scorecard](https://nyc.apievangelist.com/synthesis.html).
+**Sixty-seven domains assessed** — the full NYC government surface (2,666 Open Data assets mapped, 422 JSON Schemas, 721 API operations, 624 MCP tools). One flat truth: open data is broad, but **60 of 67 domains have no transactional write API and 64 of 67 have no agent surface.** The ~40 modernization verbs collapse into five families — Digitize · Expose · Unify/Federate · Transact · Standardize. Full analysis in the [cross-domain SYNTHESIS](SYNTHESIS.md) and the interactive [aggregate scorecard](https://nyc.apievangelist.com/synthesis.html). Every domain is explorable at [nyc.apievangelist.com](https://nyc.apievangelist.com).
 
 The first five, five distinct verbs:
 

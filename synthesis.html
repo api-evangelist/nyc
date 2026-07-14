@@ -4,18 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cross-Domain Synthesis — NYC Modernization</title>
-<meta name="description" content="What 15 NYC government domains reveal about citywide API modernization — an expanding verb taxonomy, cross-cutting findings, and a maturity scorecard.">
+<meta name="description" content="What 67 NYC government domains reveal about citywide API modernization — five verb families, an aggregate maturity scorecard, and the two flat columns.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
 <style>
-.heat td.cell{text-align:center;font-weight:700;color:#0e1319;cursor:default;min-width:70px}
-.heat td.dim{font-weight:600;white-space:normal;min-width:210px}
-.heat th{white-space:normal}
-.legend{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 0;font-size:.82rem;color:var(--fg-soft)}
+.dist{display:flex;height:26px;border-radius:6px;overflow:hidden;border:1px solid var(--border)}
+.dist span{display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#0e1319;min-width:0}
+.dimrow{display:grid;grid-template-columns:230px 1fr;gap:14px;align-items:center;margin:9px 0}
+.dimrow .lab{font-weight:600;font-size:.9rem}
+.dimrow .lab small{display:block;font-weight:400;color:var(--fg-soft)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0 0;font-size:.82rem;color:var(--fg-soft)}
 .legend .sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:5px}
-.finding{border-left:3px solid var(--brand);padding:2px 0 2px 16px;margin:16px 0}
-.finding h3{font-size:1.05rem;margin:0 0 .2em}
+.fam{border-left:4px solid var(--brand);padding:4px 0 4px 16px;margin:16px 0}
+.fam h3{font-size:1.1rem;margin:0 0 .2em}
+.fam .v{font-family:ui-monospace,Menlo,monospace;font-size:.8rem;color:var(--fg-soft)}
+.finding{border-left:3px solid var(--border);padding:2px 0 2px 16px;margin:14px 0}
+.finding h3{font-size:1.02rem;margin:0 0 .2em}
 .pill{display:inline-block;background:var(--bg-soft);border:1px solid var(--border);border-radius:20px;padding:4px 12px;margin:3px;font-size:.85rem}
+@media(max-width:640px){.dimrow{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -24,41 +30,42 @@
 <div class="hero" style="padding:52px 0 30px">
   <div class="wrap">
     <div class="eyebrow">Cross-domain synthesis</div>
-    <h1 style="font-size:2.3rem;max-width:22ch">Fifteen domains, one playbook</h1>
-    <p class="lead">What fifteen NYC agencies — from Parks, Schools, and 311 to Buildings, Police, Sanitation, and Housing — reveal when you assess them the same way, and what a citywide API modernization would actually take.</p>
+    <h1 style="font-size:2.3rem;max-width:24ch">Sixty-seven domains, one flat truth</h1>
+    <p class="lead">Assessed the same way, every NYC government domain publishes data but almost none is programmable. Two capabilities score zero across the entire city: <strong>transactional APIs</strong> and <strong>agent-readiness</strong>.</p>
     <div class="cta"><a class="btn" href="docs.html?f=SYNTHESIS.md">Read the full synthesis</a></div>
+    <div class="stats" style="margin-top:30px" id="tot"></div>
   </div>
 </div>
 
-<section class="plain"><div class="wrap">
-  <div class="section-head"><div class="k">The taxonomy</div><h2>Fifteen domains, an expanding taxonomy of verbs</h2>
-  <p class="muted">Assessing each domain the same way surfaces a one-word verb — the dominant shape of its gap. A diagnostic that classifies any NYC domain in one pass. The first five domains yielded five verbs; the next ten expanded the set — and clustered around one theme.</p></div>
-  <div class="grid cols-4" id="verb-cards"></div>
-</div></section>
-
 <section><div class="wrap">
-  <div class="section-head"><div class="k">The evidence</div><h2>Maturity scorecard</h2>
-  <p class="muted">Each domain scored 0–3 across seven dimensions. Hover a cell for the reasoning. Two rows are effectively all zeros — the citywide gaps.</p></div>
-  <div class="tablewrap"><table class="heat" id="heat"></table></div>
+  <div class="section-head"><div class="k">The evidence</div><h2>Aggregate maturity — all 67 domains</h2>
+  <p class="muted">How many domains score 0–3 on each dimension. Open data is broad; the write layer and agent layer are empty citywide.</p></div>
+  <div id="dist"></div>
   <div class="legend" id="legend"></div>
 </div></section>
 
 <section><div class="wrap">
-  <div class="section-head"><div class="k">The universal gap</div><h2>Every domain has one un-API'd citizen action</h2>
-  <p class="muted">Open data liberated reporting; it never touched transactions. <strong>Fourteen of fifteen</strong> domains have a citizen action with no API — the highest-value net-new work. (The fifteenth, City Planning, is a reference agency with no citizen transaction.)</p></div>
+  <div class="section-head"><div class="k">The taxonomy</div><h2>~40 verbs, five families</h2>
+  <p class="muted">The method assigns each domain a one-word modernization verb. Sixty-seven produced roughly forty — but they collapse into five plays.</p></div>
+  <div id="families"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The universal gap</div><h2>A citizen action with no API — in nearly every domain</h2>
+  <p class="muted">Open data liberated reporting; it never touched transactions. <span id="nncount">66</span> net-new write objects across the corpus — permits, enrollments, ballots, licenses, marriage licenses, film permits, work orders, tips, holds.</p></div>
   <div class="grid cols-4" id="netnew"></div>
 </div></section>
 
 <section><div class="wrap">
-  <div class="section-head"><div class="k">The latent model</div><h2>A shared geography spine already recurs everywhere</h2>
-  <p class="muted">Writing one <code>_common.json</code> per domain surfaced the same fields over and over — a citywide data model hiding in plain sight, and the key to cross-domain interoperability.</p></div>
+  <div class="section-head"><div class="k">The latent model</div><h2>A shared geography spine recurs in all 67</h2></div>
   <div id="spine"></div>
 </div></section>
 
 <section><div class="wrap">
-  <div class="section-head"><div class="k">The findings</div><h2>Patterns that hold across all fifteen</h2></div>
+  <div class="section-head"><div class="k">The findings</div><h2>Twelve patterns across the corpus</h2></div>
   <div id="findings"></div>
-  <p style="margin-top:1.4em"><a class="btn" href="docs.html?f=SYNTHESIS.md">Full synthesis, with recommendations →</a></p>
+  <p style="margin-top:1.4em"><a class="btn" href="docs.html?f=SYNTHESIS.md">Full synthesis, with recommendations →</a>
+  <a class="btn sec" href="./#domains">Explore all 67 domains →</a></p>
 </div></section>
 
 <div id="footer"></div>
@@ -68,52 +75,70 @@
   document.getElementById("nav").innerHTML=navBar();
   document.getElementById("footer").innerHTML=footer();
   const sc=await getJSON("data/scorecard.json");
-
-  // verb cards
-  document.getElementById("verb-cards").innerHTML=sc.domains.map(d=>`
-    <a class="card" href="domain.html?d=${encodeURIComponent(d.id)}">
-      <span class="verb" style="background:${d.accent}">${esc(d.verb)}</span>
-      <h3 style="font-size:1.1rem">${esc(d.short)}</h3>
-      <div class="dom">${esc(d.id)}</div>
-    </a>`).join("");
-
-  // heatmap
+  const m=await getJSON("data/manifest.json");
+  const N=sc.domains.length;
   const colorFor=s=>["#c0504d","#d6923a","#8bbf6b","#2e9e6b"][s];
-  const doms=sc.domains;
-  let html="<thead><tr><th>Dimension</th>"+doms.map(d=>`<th>${esc(d.short)}<br><span class="muted small" style="font-weight:400">${esc(d.verb)}</span></th>`).join("")+"</tr></thead><tbody>";
-  sc.dimensions.forEach(dim=>{
-    html+=`<tr><td class="dim">${esc(dim.label)}<br><span class="muted small" style="font-weight:400">${esc(dim.desc)}</span></td>`;
-    doms.forEach(d=>{const s=d.scores[dim.key];html+=`<td class="cell" style="background:${colorFor(s)}" title="${esc(d.notes[dim.key])}">${s}</td>`;});
-    html+="</tr>";
-  });
-  html+="</tbody>";
-  document.getElementById("heat").innerHTML=html;
-  document.getElementById("legend").innerHTML=sc.scale.map((lbl,i)=>`<span><span class="sw" style="background:${colorFor(i)}"></span>${i} · ${esc(lbl)}</span>`).join("");
 
-  // net-new
-  document.getElementById("netnew").innerHTML=sc.netNew.map(n=>`
+  // totals
+  const tot=[[N,"domains assessed"],
+    [m.domains.reduce((s,d)=>s+d.counts.opendata,0).toLocaleString(),"Open Data assets"],
+    [m.domains.reduce((s,d)=>s+d.counts.schemas,0),"JSON Schemas"],
+    [m.domains.reduce((s,d)=>s+d.counts.openapiOps,0),"API operations"],
+    [m.domains.reduce((s,d)=>s+d.counts.mcpTools,0),"MCP tools"]];
+  document.getElementById("tot").innerHTML=tot.map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+
+  // distribution per dimension
+  const dist=document.getElementById("dist");
+  dist.innerHTML=sc.dimensions.map(dim=>{
+    const counts=[0,0,0,0];
+    sc.domains.forEach(d=>counts[d.scores[dim.key]]++);
+    const flat=(counts[0]>=N-4)?' style="color:var(--gap);font-weight:700"':'';
+    const bar=counts.map((c,i)=>c?`<span style="background:${colorFor(i)};flex:${c}" title="${c} domains score ${i}">${c>2?c:""}</span>`:"").join("");
+    return `<div class="dimrow"><div class="lab"${flat}>${esc(dim.label)}<small>${esc(dim.desc)}</small></div><div class="dist">${bar}</div></div>`;
+  }).join("");
+  document.getElementById("legend").innerHTML=sc.scale.map((l,i)=>`<span><span class="sw" style="background:${colorFor(i)}"></span>${i} · ${esc(l)}</span>`).join("")
+    +` &nbsp; <span style="color:var(--gap)">■ red rows = flat at zero across the city</span>`;
+
+  // families
+  const fams=[
+    ["Digitize","the data isn't machine-readable at all","digitize · structure · instrument","Elections, DOI, OCME, Tax Commission, BSA, CCHR, the DAs — results, appeals, complaints trapped in PDFs, Power BI iframes, or prose."],
+    ["Expose","a private / hidden / undocumented API already exists — publish it","expose · surface · formalize · document · retrieve","HPD (WSO2), IBO (Content API), CFB, DSNY, NYPD — plus dozens of accidental WordPress REST & Drupal JSON:APIs. The dominant move is Expose, not Build."],
+    ["Unify / Federate","fragmented sources or near-identical offices — one shared contract","unify · consolidate · bind · federate · template · standardize","Council's 3 APIs; DOT's 267 datasets; and the 5 Borough Presidents, 5 DAs, 3 libraries — each bespoke for identical functions."],
+    ["Transact","reporting data is open, the citizen transaction is locked — build the write API","transact · front · unlock · connect · onboard · contract","The largest family — DOB, DOHMH, DEP, NYCHA, FDNY, City Clerk, MOME, SBS, HRA. Locked in Accela, Salesforce, Siebel, Unqork, Dynamics, PeopleSoft."],
+    ["Standardize / Lead","an open or industry standard exists — adopt, extend, model","standardize · extend · lead · productize · anchor","311 → revive Open311; H+H → extend FHIR; DCP → geography anchor; OTI → the gateway; NYPL → already leads with 3 public APIs."],
+  ];
+  document.getElementById("families").innerHTML=fams.map((f,i)=>`
+    <div class="fam"><h3>${i+1}. ${esc(f[0])} <span class="muted" style="font-weight:400;font-size:.9rem">— ${esc(f[1])}</span></h3>
+    <div class="v">${esc(f[2])}</div><p class="muted small" style="margin:.4em 0 0">${esc(f[3])}</p></div>`).join("");
+
+  // net-new sample
+  document.getElementById("nncount").textContent=sc.netNew.length;
+  const sample=sc.netNew.slice(0,12);
+  document.getElementById("netnew").innerHTML=sample.map(n=>`
     <div class="card"><div class="muted small">${esc(n.domain)}</div>
-    <h3 style="font-size:1rem;margin:.2em 0 0"><code>${esc(n.object)}</code></h3>
-    <span class="badge write" style="margin-top:8px;display:inline-block">no API today</span></div>`).join("");
+    <h3 style="font-size:.95rem;margin:.2em 0 0"><code>${esc(n.object)}</code></h3>
+    <span class="badge write" style="margin-top:8px;display:inline-block">no API today</span></div>`).join("")
+    +`<div class="card" style="display:flex;align-items:center;justify-content:center"><div class="muted">+ ${sc.netNew.length-sample.length} more across the corpus</div></div>`;
 
   // spine
   document.getElementById("spine").innerHTML=sc.sharedSpine.map(f=>`<span class="pill"><code>${esc(f)}</code></span>`).join("")+
-    `<p class="muted small" style="margin-top:12px">Present in Parks facilities, DOE schools, Council funding, and BOE poll sites alike. Proposed as a reusable <code>nyc-commons</code> schema set every agency <code>$ref</code>s.</p>`;
+    `<p class="muted small" style="margin-top:12px">Present in every one of the 67 domains' <code>_common.json</code>. City Planning is its authoritative source — the basis for a shared <code>nyc-commons</code>.</p>`;
 
-  // findings (condensed)
   const findings=[
-    ["Fifteen agencies, ~ten platforms, zero shared API layer","Smarty/PHP, Sitefinity, WordPress, Drupal, Dynamics 365, Oracle WebCenter Sites, Angular SPAs, Siebel CRM, Accela — every agency its own stack, none exposing a consistent API. Consistency must be imposed above the platforms."],
-    ["The website and the open data are two worlds","Where Open Data exists it is flattened snapshots the site never consumes; the front door renders parallel HTML. The defect is disconnect, not absence."],
-    ["Open Data coverage is uneven and unrelated to stakes","From 2 assets (Elections) to 638 (DOE) — ~1,700 mapped in all. DOT publishes 267, Elections 2. Adoption was opportunistic, not strategic."],
-    ["The service layer is the universal gap, not the data","Reporting data is largely open; the transactional service layer is missing, hidden, or vendor-locked almost everywhere. This is the meta-finding of the 15-domain sweep."],
-    ["A citizen write-workflow with no API — 14 of 15","Permit, enrollment, testimony, ballot, 311 request, vital record, bulk pickup, work order, claim, license… only City Planning (a reference agency) lacks one."],
-    ["Many agencies ALREADY have a private/undocumented API","HPD (WSO2 REST), DSNY (pickup/scheduling backends), NYPD (Azure Gov), Comptroller (Checkbook), Council (Legistar), DCP (geocoder). The move is often Expose, not Build."],
-    ["Agent-readiness is zero — all fifteen","Not one domain exposes an MCP or agent-native surface. Every MCP artifact in this project is net-new."],
-    ["Capability outsourcing is pervasive and uncoordinated","HawkSearch, Legistar/Granicus, Accela, Siebel, Dynamics 365, CARTO, Imperva — different vendors per agency, no shared strategy; sometimes the vendor IS the API."],
-    ["A shared geography spine recurs in every schema","Borough, Community Board, Council District, Census Tract/NTA, BBL/BIN — present in every domain. City Planning is its authoritative source, and the basis for a shared nyc-commons."],
+    ["The service layer is the universal gap, not the data","Reporting data is broadly open; the transactional service layer is missing, hidden, or vendor-locked almost everywhere."],
+    ["A citizen write-workflow with no API — nearly every domain","66 net-new write objects; 60 of 67 have no transactional API at all."],
+    ["Agent-readiness is essentially zero — 64 of 67","Not one domain ships a meaningful agent surface. Every MCP artifact here is net-new."],
+    ["Accidental APIs are everywhere","Dozens of agencies unknowingly expose a WordPress REST or Drupal JSON:API; several run real private APIs. The surface often already exists — undocumented."],
+    ["Near-identical offices multiply cost","5 Borough Presidents, 5 DAs, 3 libraries, ~25 CUNY campuses — each bespoke. Shared, templated APIs are the clearest efficiency win."],
+    ["Vendor sprawl, uncoordinated","Accela, Salesforce, Siebel, Unqork, Dynamics, Epic, BiblioCommons, PeopleSoft, Struts — different SaaS per agency; sometimes the vendor IS the only API."],
+    ["Platform sprawl — ~20 stacks, zero shared API layer","Smarty, Sitefinity, WordPress, Drupal, Dynamics, Oracle WebCenter, DotNetNuke, Weebly, Revize, Next.js… consistency must be imposed above them."],
+    ["The standards made for NYC's problems go unadopted","Open311 (lapsed at 311), FHIR (read-only at H+H), the geography spine (no shared schema). The city keeps declining the standards built for exactly this."],
+    ["The counter-examples prove it's achievable","NYPL runs 3 public APIs; H+H has live FHIR; OTI runs the gateway; DCP the geocoder. The pattern exists in-house."],
+    ["Digital assets are decaying","brooklyn-usa.org lapsed (redirects off-site); the Public Advocate site 502'd; rcda.nyc.gov is dead."],
+    ["A shared geography spine recurs in all 67","Borough, Community Board, Council District, Census Tract/NTA, BBL/BIN — the basis for nyc-commons."],
+    ["No cross-domain identity","Every domain has its own join key; a resident is the same person across all 67, but nothing links them."],
   ];
-  document.getElementById("findings").innerHTML=findings.map((f,i)=>`
-    <div class="finding"><h3>${i+1}. ${esc(f[0])}</h3><p class="muted" style="margin:0">${esc(f[1])}</p></div>`).join("");
+  document.getElementById("findings").innerHTML=findings.map((f,i)=>`<div class="finding"><h3>${i+1}. ${esc(f[0])}</h3><p class="muted" style="margin:0">${esc(f[1])}</p></div>`).join("");
 })();
 </script>
 </body>
