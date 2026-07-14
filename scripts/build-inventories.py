@@ -30,10 +30,11 @@ for d in DOMAINS:
         if t:
             titles.append(t)
             by_entity[t].append(did)
-    by_domain_ent[did] = titles
+    by_domain_ent[did] = sorted(titles, key=str.lower)
 
+# Alphabetical by entity name (case-insensitive).
 ent_rows = sorted(([e, doms] for e, doms in by_entity.items()),
-                  key=lambda x: (-len(x[1]), x[0].lower()))
+                  key=lambda x: x[0].lower())
 entities_json = {
     "generated_from": "schemas/*.json titles across all domains",
     "total_entities": sum(len(v) for v in by_domain_ent.values()),
@@ -189,7 +190,7 @@ tech_json = {
     "categories": [{"name": c, "techs": [
         {"tech": t, "category": c, "count": len(by_tech[t]),
          "domains": [{"id": x, "short": short[x]} for x in by_tech[t]]}
-        for t in sorted(cats[c], key=lambda t: -len(by_tech[t]))]} for c in cats if cats[c]],
+        for t in sorted(cats[c], key=str.lower)]} for c in cats if cats[c]],
     "byDomain": [{"id": d["id"], "short": d["short"], "platform": platform.get(d["id"], ""),
                   "techs": by_domain_tech[d["id"]]} for d in DOMAINS],
 }
