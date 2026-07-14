@@ -31,7 +31,7 @@ A growing library of the sources behind the NYC Modernization strategy — **14 
 *The same method, run before at other institutions.*
 
 - [An Outside-In Approach to Jumpstarting an API Effort at the University of Oklahoma](https://apievangelist.com/2014/10/12/an-outsidein-approach-to-jumpstarting-an-api-effort-at-the-university-of-oklahoma/) — API Evangelist · 2014-10-12
-- [Department of Veterans Affairs API Landscape Analysis](https://api-evangelist.github.io/va-api-landscape/report/) — API Evangelist
+- [Department of Veterans Affairs API Landscape Analysis](https://skylight-hq.github.io/va-api-landscape/report/) — API Evangelist
   - A federal-agency application of the same landscape method.
 
 ## Standards & tooling this project publishes

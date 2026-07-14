@@ -2,7 +2,7 @@
 
 Mapping the digital surface of New York City government — every public table, form, dataset, and portal — and turning it into an **API-first, agent-native** layer: individual JSON Schema per object, an OpenAPI contract that `$ref`s those objects, and an MCP server so the same resources are usable by both applications and AI agents.
 
-This is the working project. It grew out of an [API Evangelist low-hanging-fruit assessment](https://apievangelist.com/2016/04/13/formalizing-my-approach-to-identifying-the-low-hanging-api-fruit/) — the same outside-in method used for the [University of Oklahoma](https://apievangelist.com/2014/10/12/an-outsidein-approach-to-jumpstarting-an-api-effort-at-the-university-of-oklahoma/) and the [Department of Veterans Affairs](https://api-evangelist.github.io/va-api-landscape/report/).
+This is the working project. It grew out of an [API Evangelist low-hanging-fruit assessment](https://apievangelist.com/2016/04/13/formalizing-my-approach-to-identifying-the-low-hanging-api-fruit/) — the same outside-in method used for the [University of Oklahoma](https://apievangelist.com/2014/10/12/an-outsidein-approach-to-jumpstarting-an-api-effort-at-the-university-of-oklahoma/) and the [Department of Veterans Affairs](https://skylight-hq.github.io/va-api-landscape/report/).
 
 ## Why this is *not* another data-liberation project
 

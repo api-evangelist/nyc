@@ -1,6 +1,6 @@
 # nycgovparks.org — Low-Hanging Fruit Assessment
 
-An outside-in [low-hanging-fruit assessment](https://apievangelist.com/2016/04/13/formalizing-my-approach-to-identifying-the-low-hanging-api-fruit/) of the NYC Department of Parks & Recreation web domain — the first domain profiled for the [NYC Modernization](../README.md) research. Same method used for the [University of Oklahoma](https://apievangelist.com/2014/10/12/an-outsidein-approach-to-jumpstarting-an-api-effort-at-the-university-of-oklahoma/) and the [Department of Veterans Affairs](https://api-evangelist.github.io/va-api-landscape/report/): if it's already published to the website as a table, list, form, or file, it should also be an API.
+An outside-in [low-hanging-fruit assessment](https://apievangelist.com/2016/04/13/formalizing-my-approach-to-identifying-the-low-hanging-api-fruit/) of the NYC Department of Parks & Recreation web domain — the first domain profiled for the [NYC Modernization](../README.md) research. Same method used for the [University of Oklahoma](https://apievangelist.com/2014/10/12/an-outsidein-approach-to-jumpstarting-an-api-effort-at-the-university-of-oklahoma/) and the [Department of Veterans Affairs](https://skylight-hq.github.io/va-api-landscape/report/): if it's already published to the website as a table, list, form, or file, it should also be an API.
 
 ## Files
 
