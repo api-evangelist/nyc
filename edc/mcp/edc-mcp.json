@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces EDC's core-but-unpublished portfolio (development projects, EDC-managed real estate, solicitations), presents its few real open datasets (Mapped In NY, NYC Ferry ridership, WiredNYC), and adds submit_rfp_response — the net-new write workflow that today lives only in email and manual document submission.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces EDC's core-but-unpublished portfolio (development projects, EDC-managed real estate, solicitations), presents its few real open datasets (Mapped In NY, NYC Ferry ridership, WiredNYC), and adds submit_rfp_response \u2014 the net-new write workflow that today lives only in email and manual document submission.",
     "openapi": "../openapi/edc.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.edc",
     "title": "NYC Economic Development Corporation (EDC)",
     "version": "0.1.0",
-    "description": "Agent-native access to the New York City Economic Development Corporation — development projects, EDC-managed real-estate assets, and open solicitations (RFPs/RFEIs) modeled from edc.nyc, plus the few real open datasets (Mapped In NY companies, NYC Ferry ridership, WiredNYC broadband buildings) from NYC Open Data, and the net-new ability to respond to a solicitation. EDC is a public benefit corporation, so most of this portfolio is not otherwise machine-readable.",
-    "instructions": "Use find_projects / get_project to explore EDC development and capital projects, and find_properties / get_property for EDC-managed real estate (industrial parks, markets, piers, campuses). find_solicitations / get_solicitation cover open RFPs/RFEIs/RFQs/RFIs. find_mapped_companies searches the Mapped In NY marketing directory; find_ferry_ridership answers NYC Ferry demand questions by route/stop/day; find_wired_buildings covers WiredNYC broadband certification. submit_rfp_response (net-new) responds to a solicitation — from a lightweight notice of interest to a full proposal; it requires an authenticated respondent and mutates state, so confirm the solicitation, organization, and intent with the user before submitting. Note: projects, properties, and solicitations are MODELED from edc.nyc — EDC does not publish them to Open Data — so treat them as an owned-API proposal, not a live feed."
+    "description": "Agent-native access to the New York City Economic Development Corporation \u2014 development projects, EDC-managed real-estate assets, and open solicitations (RFPs/RFEIs) modeled from edc.nyc, plus the few real open datasets (Mapped In NY companies, NYC Ferry ridership, WiredNYC broadband buildings) from NYC Open Data, and the net-new ability to respond to a solicitation. EDC is a public benefit corporation, so most of this portfolio is not otherwise machine-readable.",
+    "instructions": "Use find_projects / get_project to explore EDC development and capital projects, and find_properties / get_property for EDC-managed real estate (industrial parks, markets, piers, campuses). find_solicitations / get_solicitation cover open RFPs/RFEIs/RFQs/RFIs. find_mapped_companies searches the Mapped In NY marketing directory; find_ferry_ridership answers NYC Ferry demand questions by route/stop/day; find_wired_buildings covers WiredNYC broadband certification. submit_rfp_response (net-new) responds to a solicitation \u2014 from a lightweight notice of interest to a full proposal; it requires an authenticated respondent and mutates state, so confirm the solicitation, organization, and intent with the user before submitting. Note: projects, properties, and solicitations are MODELED from edc.nyc \u2014 EDC does not publish them to Open Data \u2014 so treat them as an owned-API proposal, not a live feed."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_projects",
@@ -23,27 +27,83 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "category": { "type": "string" },
-          "status": { "type": "string" },
-          "neighborhood": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "category": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "neighborhood": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/development-project.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listProjects"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/development-project.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listProjects",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_project",
       "title": "Get Project",
       "description": "Fetch a single EDC development project by its identifier.",
-      "inputSchema": { "type": "object", "properties": { "projectId": { "type": "string" } }, "required": ["projectId"] },
-      "outputSchema": { "$ref": "../schemas/development-project.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getProject"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/development-project.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getProject",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_properties",
@@ -52,27 +112,83 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "assetType": { "type": "string" },
-          "neighborhood": { "type": "string" },
-          "status": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "assetType": {
+            "type": "string"
+          },
+          "neighborhood": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/property-asset.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listProperties"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/property-asset.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listProperties",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_property",
       "title": "Get Property",
       "description": "Fetch a single EDC-managed property asset by its identifier.",
-      "inputSchema": { "type": "object", "properties": { "assetId": { "type": "string" } }, "required": ["assetId"] },
-      "outputSchema": { "$ref": "../schemas/property-asset.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getProperty"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assetId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "assetId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/property-asset.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getProperty",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_solicitations",
@@ -81,26 +197,86 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "enum": ["RFP", "RFEI", "RFQ", "RFI", "Other"] },
-          "status": { "type": "string", "enum": ["Open", "Closed", "Awarded", "Cancelled"] },
-          "category": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "type": {
+            "type": "string",
+            "enum": [
+              "RFP",
+              "RFEI",
+              "RFQ",
+              "RFI",
+              "Other"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Open",
+              "Closed",
+              "Awarded",
+              "Cancelled"
+            ]
+          },
+          "category": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/solicitation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listSolicitations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/solicitation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listSolicitations",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_solicitation",
       "title": "Get Solicitation",
       "description": "Fetch a single EDC solicitation by its identifier.",
-      "inputSchema": { "type": "object", "properties": { "solicitationId": { "type": "string" } }, "required": ["solicitationId"] },
-      "outputSchema": { "$ref": "../schemas/solicitation.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getSolicitation"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "solicitationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "solicitationId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/solicitation.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getSolicitation",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_mapped_companies",
@@ -109,85 +285,252 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "category": { "type": "string" },
-          "hiring": { "type": "boolean" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "category": {
+            "type": "string"
+          },
+          "hiring": {
+            "type": "boolean"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/mapped-company.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listMappedCompanies"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/mapped-company.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listMappedCompanies",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_ferry_ridership",
       "title": "Find Ferry Ridership",
-      "description": "Search NYC Ferry ridership (boardings by route, stop, hour, and day type) — the ferry system EDC operates.",
+      "description": "Search NYC Ferry ridership (boardings by route, stop, hour, and day type) \u2014 the ferry system EDC operates.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "route": { "type": "string" },
-          "stop": { "type": "string" },
-          "typeDay": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "route": {
+            "type": "string"
+          },
+          "stop": {
+            "type": "string"
+          },
+          "typeDay": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/ferry-ridership.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listFerryRidership"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/ferry-ridership.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listFerryRidership",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_wired_buildings",
       "title": "Find WiredNYC Buildings",
-      "description": "Search WiredNYC broadband-readiness buildings by borough, cohort, certification class, or BBL — EDC's telecom-infrastructure certification program.",
+      "description": "Search WiredNYC broadband-readiness buildings by borough, cohort, certification class, or BBL \u2014 EDC's telecom-infrastructure certification program.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "cohort": { "type": "string", "enum": ["All", "Participating", "Certified"] },
-          "certificationClass": { "type": "string" },
-          "bbl": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "cohort": {
+            "type": "string",
+            "enum": [
+              "All",
+              "Participating",
+              "Certified"
+            ]
+          },
+          "certificationClass": {
+            "type": "string"
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/wired-building.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listWiredBuildings"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/wired-building.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listWiredBuildings",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "list_my_rfp_responses",
       "title": "List My Solicitation Responses",
-      "description": "List the authenticated respondent's own solicitation responses and their status — today tracked only in email threads.",
+      "description": "List the authenticated respondent's own solicitation responses and their status \u2014 today tracked only in email threads.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "solicitationId": { "type": "string" },
-          "status": { "type": "string", "enum": ["Received", "Under Review", "Shortlisted", "Not Selected", "Awarded", "Withdrawn"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "solicitationId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Received",
+              "Under Review",
+              "Shortlisted",
+              "Not Selected",
+              "Awarded",
+              "Withdrawn"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/rfp-response.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/rfp-response.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listRfpResponses",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "submit_rfp_response",
       "title": "Respond to a Solicitation",
-      "description": "Submit a response to an EDC solicitation (register interest, submit a proposal, request documents, or ask a question). NET-NEW workflow with no public API today — responding lives only in email, pre-submission conferences, or manual document submission. Requires an authenticated respondent. Mutates state — confirm the solicitation, organization, and intent first.",
-      "inputSchema": { "$ref": "../schemas/rfp-response.json" },
-      "outputSchema": { "$ref": "../schemas/rfp-response.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit a response to an EDC solicitation (register interest, submit a proposal, request documents, or ask a question). NET-NEW workflow with no public API today \u2014 responding lives only in email, pre-submission conferences, or manual document submission. Requires an authenticated respondent. Mutates state \u2014 confirm the solicitation, organization, and intent first.",
+      "inputSchema": {
+        "$ref": "../schemas/rfp-response.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/rfp-response.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createRfpResponse",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "register-or-enroll"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

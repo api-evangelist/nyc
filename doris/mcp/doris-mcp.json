@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DORIS's open indexes (archival collections, digitized items, historical vital records, government publications, honorary street names) and adds request_record — the net-new write workflow (retrieve/order a record) locked today behind the Historical Vital Records portal, the Preservica DAMS, an Archives email/form, or the OpenRecords FOIL system.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DORIS's open indexes (archival collections, digitized items, historical vital records, government publications, honorary street names) and adds request_record \u2014 the net-new write workflow (retrieve/order a record) locked today behind the Historical Vital Records portal, the Preservica DAMS, an Archives email/form, or the OpenRecords FOIL system.",
     "openapi": "../openapi/doris.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.doris",
     "title": "NYC Records & Information Services (DORIS)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Department of Records & Information Services — the Municipal Archives collections and digitized objects, the historical vital-record indexes (birth, death, marriage), the City Hall Library and government publications, and honorary street names from NYC Open Data, plus the net-new ability to request (retrieve/order) a record: a certified vital-record copy, an archival reproduction, or a FOIL request that today lives only behind separate portals and forms.",
-    "instructions": "Use find_collections / get_collection to locate Municipal Archives collections (finding aids) and find_digital_items / get_digital_item to search digitized photographs, maps, films, and record pages — the metadata is open but the image asset lives in the Preservica DAMS (formerly LUNA Imaging). find_vital_records searches the pre-1949 birth/death/marriage INDEXES; it returns index entries only — to obtain the certificate itself, use request_record. find_publications covers the City Hall Library catalog, government publications, and required reports. find_honorary_street_names covers council-enacted co-named streets. request_record (net-new) submits a retrieval order — a certified vital-record copy, an archival reproduction, a library publication, or a FOIL request; it requires an authenticated requester and mutates state, so confirm the record identity, request type, and delivery format with the user before submitting, and note that restricted vital records require proof of relationship handled offline."
+    "description": "Agent-native access to the NYC Department of Records & Information Services \u2014 the Municipal Archives collections and digitized objects, the historical vital-record indexes (birth, death, marriage), the City Hall Library and government publications, and honorary street names from NYC Open Data, plus the net-new ability to request (retrieve/order) a record: a certified vital-record copy, an archival reproduction, or a FOIL request that today lives only behind separate portals and forms.",
+    "instructions": "Use find_collections / get_collection to locate Municipal Archives collections (finding aids) and find_digital_items / get_digital_item to search digitized photographs, maps, films, and record pages \u2014 the metadata is open but the image asset lives in the Preservica DAMS (formerly LUNA Imaging). find_vital_records searches the pre-1949 birth/death/marriage INDEXES; it returns index entries only \u2014 to obtain the certificate itself, use request_record. find_publications covers the City Hall Library catalog, government publications, and required reports. find_honorary_street_names covers council-enacted co-named streets. request_record (net-new) submits a retrieval order \u2014 a certified vital-record copy, an archival reproduction, a library publication, or a FOIL request; it requires an authenticated requester and mutates state, so confirm the record identity, request type, and delivery format with the user before submitting, and note that restricted vital records require proof of relationship handled offline."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_collections",
@@ -23,52 +27,142 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "level": { "type": "string" },
-          "hasDigitalObject": { "type": "boolean" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "level": {
+            "type": "string"
+          },
+          "hasDigitalObject": {
+            "type": "boolean"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/archival-collection.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCollections"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/archival-collection.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCollections",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_collection",
       "title": "Get Archival Collection",
       "description": "Fetch a Municipal Archives collection (finding aid, accession, and instance/container metadata) by identifier.",
-      "inputSchema": { "type": "object", "properties": { "identifier": { "type": "string" } }, "required": ["identifier"] },
-      "outputSchema": { "$ref": "../schemas/archival-collection.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getCollection"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "identifier"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/archival-collection.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getCollection",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_digital_items",
       "title": "Find Digital Items",
-      "description": "Search digitized Municipal Archives objects (photographs, maps, films, record pages) by object type, parent resource, or free text. Metadata only — the asset itself lives in the Preservica DAMS.",
+      "description": "Search digitized Municipal Archives objects (photographs, maps, films, record pages) by object type, parent resource, or free text. Metadata only \u2014 the asset itself lives in the Preservica DAMS.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "objectType": { "type": "string" },
-          "resourceIdentifier": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "objectType": {
+            "type": "string"
+          },
+          "resourceIdentifier": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/digital-item.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listDigitalItems"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/digital-item.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listDigitalItems",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_digital_item",
       "title": "Get Digital Item",
       "description": "Fetch a single digitized Municipal Archives object by identifier, including its provenance link into the DAMS.",
-      "inputSchema": { "type": "object", "properties": { "identifier": { "type": "string" } }, "required": ["identifier"] },
-      "outputSchema": { "$ref": "../schemas/digital-item.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getDigitalItem"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "identifier"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/digital-item.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getDigitalItem",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_vital_records",
@@ -77,20 +171,70 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "recordType": { "type": "string", "enum": ["Birth Certificate", "Death Certificate", "Marriage Certificate", "Marriage License"] },
-          "lastName": { "type": "string" },
-          "firstName": { "type": "string" },
-          "soundex": { "type": "string" },
-          "county": { "type": "string", "enum": ["New York", "Bronx", "Kings", "Queens", "Richmond"] },
-          "year": { "type": "integer" },
-          "certificateNumber": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Birth Certificate",
+              "Death Certificate",
+              "Marriage Certificate",
+              "Marriage License"
+            ]
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "soundex": {
+            "type": "string"
+          },
+          "county": {
+            "type": "string",
+            "enum": [
+              "New York",
+              "Bronx",
+              "Kings",
+              "Queens",
+              "Richmond"
+            ]
+          },
+          "year": {
+            "type": "integer"
+          },
+          "certificateNumber": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/historical-vital-record.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listVitalRecords"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/historical-vital-record.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listVitalRecords",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_publications",
@@ -99,18 +243,51 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "agency": { "type": "string" },
-          "reportType": { "type": "string" },
-          "subject": { "type": "string" },
-          "year": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "agency": {
+            "type": "string"
+          },
+          "reportType": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/government-publication.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPublications"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/government-publication.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPublications",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_honorary_street_names",
@@ -119,45 +296,139 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "category": { "type": "string" },
-          "enactmentYear": { "type": "integer" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "category": {
+            "type": "string"
+          },
+          "enactmentYear": {
+            "type": "integer"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/honorary-street-name.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listHonoraryStreetNames"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/honorary-street-name.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listHonoraryStreetNames",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_records_requests",
       "title": "List My Records Requests",
-      "description": "List the authenticated requester's own records requests — vital-record orders, archival reproductions, and FOIL requests — and their status, today scattered across separate portals.",
+      "description": "List the authenticated requester's own records requests \u2014 vital-record orders, archival reproductions, and FOIL requests \u2014 and their status, today scattered across separate portals.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Submitted", "Received", "In Progress", "Additional Info Required", "Fulfilled", "Denied", "Closed"] },
-          "requestType": { "type": "string", "enum": ["VitalRecordCopy", "ArchivalReproduction", "LibraryPublication", "FOIL"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Submitted",
+              "Received",
+              "In Progress",
+              "Additional Info Required",
+              "Fulfilled",
+              "Denied",
+              "Closed"
+            ]
+          },
+          "requestType": {
+            "type": "string",
+            "enum": [
+              "VitalRecordCopy",
+              "ArchivalReproduction",
+              "LibraryPublication",
+              "FOIL"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/records-request.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/records-request.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listRecordsRequests",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "request_record",
       "title": "Request a Record",
-      "description": "Submit a DORIS records request (retrieve/order a record): a certified copy of a historical vital record, an archival reproduction, a library publication, or a FOIL request. NET-NEW workflow with no public API today — it lives only behind the Historical Vital Records portal, an Archives email/form, or the OpenRecords FOIL system. Requires an authenticated requester. Mutates state — confirm the record identity, request type, and delivery format first; restricted vital records require proof of relationship handled offline.",
-      "inputSchema": { "$ref": "../schemas/records-request.json" },
-      "outputSchema": { "$ref": "../schemas/records-request.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit a DORIS records request (retrieve/order a record): a certified copy of a historical vital record, an archival reproduction, a library publication, or a FOIL request. NET-NEW workflow with no public API today \u2014 it lives only behind the Historical Vital Records portal, an Archives email/form, or the OpenRecords FOIL system. Requires an authenticated requester. Mutates state \u2014 confirm the record identity, request type, and delivery format first; restricted vital records require proof of relationship handled offline.",
+      "inputSchema": {
+        "$ref": "../schemas/records-request.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/records-request.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createRecordsRequest",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

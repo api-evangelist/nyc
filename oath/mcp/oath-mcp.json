@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces OATH's open adjudication data (ECB summonses, hearings, decisions, Trials Division cases) and adds dispute_summons — the net-new write workflow locked today inside the legacy Apache Struts ECB Ticket Finder portal.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces OATH's open adjudication data (ECB summonses, hearings, decisions, Trials Division cases) and adds dispute_summons \u2014 the net-new write workflow locked today inside the legacy Apache Struts ECB Ticket Finder portal.",
     "openapi": "../openapi/oath.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.oath",
     "title": "NYC Administrative Trials & Hearings (OATH)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Office of Administrative Trials & Hearings — look up ECB summonses (tickets), their charges, hearings, decisions, penalties, and balances, plus OATH Trials Division cases, from NYC Open Data; and the net-new ability to respond to / dispute a summons (request a hearing) that today lives only in the legacy ECB Ticket Finder portal.",
-    "instructions": "Use find_summonses / get_summons to locate ECB summonses by ticket number, issuing agency, respondent, borough, status, or date, and get_summons_hearing / get_summons_decision to drill into the hearing and disposition. find_trial_cases / get_trial_case cover the OATH Trials Division. dispute_summons (net-new) submits a response to a summons — dispute it, request or reschedule a hearing, submit a defense, or reopen a default; it requires an authenticated respondent or authorized representative and mutates state, so confirm the ticket number, request type, and defense with the user before submitting. list_my_disputes / get_dispute_status read the respondent's own requests. OATH adjudicates but does not issue summonses; note that penalties and docketed judgments are ultimately collected by the Department of Finance."
+    "description": "Agent-native access to the NYC Office of Administrative Trials & Hearings \u2014 look up ECB summonses (tickets), their charges, hearings, decisions, penalties, and balances, plus OATH Trials Division cases, from NYC Open Data; and the net-new ability to respond to / dispute a summons (request a hearing) that today lives only in the legacy ECB Ticket Finder portal.",
+    "instructions": "Use find_summonses / get_summons to locate ECB summonses by ticket number, issuing agency, respondent, borough, status, or date, and get_summons_hearing / get_summons_decision to drill into the hearing and disposition. find_trial_cases / get_trial_case cover the OATH Trials Division. dispute_summons (net-new) submits a response to a summons \u2014 dispute it, request or reschedule a hearing, submit a defense, or reopen a default; it requires an authenticated respondent or authorized representative and mutates state, so confirm the ticket number, request type, and defense with the user before submitting. list_my_disputes / get_dispute_status read the respondent's own requests. OATH adjudicates but does not issue summonses; note that penalties and docketed judgments are ultimately collected by the Department of Finance."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_summonses",
@@ -23,48 +27,144 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "ticketNumber": { "type": "string" },
-          "issuingAgency": { "type": "string" },
-          "respondentName": { "type": "string" },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "hearingStatus": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "ticketNumber": {
+            "type": "string"
+          },
+          "issuingAgency": {
+            "type": "string"
+          },
+          "respondentName": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "hearingStatus": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/summons.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listSummonses"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/summons.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listSummonses",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_summons",
       "title": "Get Summons",
       "description": "Fetch a single ECB summons (charges, respondent, violation location, penalty, balance) by ticket number.",
-      "inputSchema": { "type": "object", "properties": { "ticketNumber": { "type": "string" } }, "required": ["ticketNumber"] },
-      "outputSchema": { "$ref": "../schemas/summons.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getSummons"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ticketNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticketNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/summons.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getSummons",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_summons_hearing",
       "title": "Get Summons Hearing",
       "description": "Get the scheduled hearing (date, time, location, result) for a summons.",
-      "inputSchema": { "type": "object", "properties": { "ticketNumber": { "type": "string" } }, "required": ["ticketNumber"] },
-      "outputSchema": { "$ref": "../schemas/hearing.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getSummonsHearing"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ticketNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticketNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/hearing.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getSummonsHearing",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_summons_decision",
       "title": "Get Summons Decision",
       "description": "Get the decision / disposition (hearing result, penalty imposed, docketed judgment, balance due) for a summons.",
-      "inputSchema": { "type": "object", "properties": { "ticketNumber": { "type": "string" } }, "required": ["ticketNumber"] },
-      "outputSchema": { "$ref": "../schemas/decision.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getSummonsDecision"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ticketNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticketNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/decision.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getSummonsDecision",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_trial_cases",
@@ -73,63 +173,165 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "type": { "type": "string" },
-          "category": { "type": "string" },
-          "filingAgencyCaseId": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "type": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "filingAgencyCaseId": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/trial-case.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listTrialCases"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/trial-case.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listTrialCases",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_trial_case",
       "title": "Get Trial Case",
       "description": "Fetch a single OATH Trials Division case by case number.",
-      "inputSchema": { "type": "object", "properties": { "caseNumber": { "type": "string" } }, "required": ["caseNumber"] },
-      "outputSchema": { "$ref": "../schemas/trial-case.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getTrialCase"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "caseNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "caseNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/trial-case.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getTrialCase",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_disputes",
       "title": "List My Disputes",
-      "description": "List the authenticated respondent's own summons disputes / hearing requests and their status — today visible only inside the ECB Ticket Finder portal.",
+      "description": "List the authenticated respondent's own summons disputes / hearing requests and their status \u2014 today visible only inside the ECB Ticket Finder portal.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/summons-dispute.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/summons-dispute.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listSummonsDisputes",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_dispute_status",
       "title": "Get Dispute Status",
       "description": "Get the status of a submitted summons dispute by dispute/confirmation number.",
-      "inputSchema": { "type": "object", "properties": { "disputeId": { "type": "string" } }, "required": ["disputeId"] },
-      "outputSchema": { "$ref": "../schemas/summons-dispute.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "disputeId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "disputeId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/summons-dispute.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getSummonsDispute",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "check-application-or-case-status"
     },
     {
       "name": "dispute_summons",
       "title": "Dispute a Summons",
-      "description": "Respond to an ECB summons — dispute it, request or reschedule a hearing, submit a written defense, or reopen a default. NET-NEW workflow with no public API today — it lives only in the legacy Apache Struts ECB Ticket Finder portal or by mail/in person. Requires an authenticated respondent or authorized representative. Mutates state — confirm the ticket number, request type, and defense first.",
-      "inputSchema": { "$ref": "../schemas/summons-dispute.json" },
-      "outputSchema": { "$ref": "../schemas/summons-dispute.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Respond to an ECB summons \u2014 dispute it, request or reschedule a hearing, submit a written defense, or reopen a default. NET-NEW workflow with no public API today \u2014 it lives only in the legacy Apache Struts ECB Ticket Finder portal or by mail/in person. Requires an authenticated respondent or authorized representative. Mutates state \u2014 confirm the ticket number, request type, and defense first.",
+      "inputSchema": {
+        "$ref": "../schemas/summons-dispute.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/summons-dispute.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createSummonsDispute",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "dispute-or-appeal"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

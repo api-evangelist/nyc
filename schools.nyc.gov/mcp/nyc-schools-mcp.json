@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId so the REST and agent contracts stay in lockstep.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId so the REST and agent contracts stay in lockstep.",
     "openapi": "../openapi/nyc-schools.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.schools",
     "title": "NYC Public Schools",
     "version": "0.1.0",
-    "description": "Agent-native access to NYC Public Schools — school directory, demographics, test results, calendar, and enrollment applications. Unifies data split today between schools.nyc.gov (JS pages + vendor search), an internal /CustomApi, and NYC Open Data; adds the net-new enrollment-application workflow.",
-    "instructions": "Use find_schools / get_school to locate schools (DBN is the key). get_school_demographics and get_school_test_results add detail. find_calendar_events answers school-year date questions. Enrollment tools (submit/get/list_enrollment_application) require an authenticated guardian (NYC Schools Account) and mutate state — confirm details with the user before submitting."
+    "description": "Agent-native access to NYC Public Schools \u2014 school directory, demographics, test results, calendar, and enrollment applications. Unifies data split today between schools.nyc.gov (JS pages + vendor search), an internal /CustomApi, and NYC Open Data; adds the net-new enrollment-application workflow.",
+    "instructions": "Use find_schools / get_school to locate schools (DBN is the key). get_school_demographics and get_school_test_results add detail. find_calendar_events answers school-year date questions. Enrollment tools (submit/get/list_enrollment_application) require an authenticated guardian (NYC Schools Account) and mutate state \u2014 confirm details with the user before submitting."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_schools",
@@ -23,45 +27,163 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "district": { "type": "integer" },
-          "schoolType": { "type": "string" },
-          "grade": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "district": {
+            "type": "integer"
+          },
+          "schoolType": {
+            "type": "string"
+          },
+          "grade": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/school.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listSchools"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/school.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listSchools",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_school",
       "title": "Get School",
       "description": "Fetch a single school by DBN (District-Borough-Number, e.g. 15K261).",
-      "inputSchema": { "type": "object", "properties": { "dbn": { "type": "string" } }, "required": ["dbn"] },
-      "outputSchema": { "$ref": "../schemas/school.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getSchool"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "dbn": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dbn"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/school.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getSchool",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_school_demographics",
       "title": "Get School Demographics",
       "description": "Get demographic snapshots (enrollment by grade/race/gender/poverty/ELL/SWD, ENI) for a school, optionally by year.",
-      "inputSchema": { "type": "object", "properties": { "dbn": { "type": "string" }, "year": { "type": "string" } }, "required": ["dbn"] },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/school-demographics.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getSchoolDemographics"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "dbn": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dbn"
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/school-demographics.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getSchoolDemographics",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_school_test_results",
       "title": "Get School Test Results",
       "description": "Get school-level assessment results (SAT, AP, Regents, SHSAT) for a school.",
-      "inputSchema": { "type": "object", "properties": { "dbn": { "type": "string" }, "examType": { "type": "string", "enum": ["SAT", "AP", "Regents", "State ELA", "State Math", "SHSAT"] } }, "required": ["dbn"] },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/test-result.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getSchoolTestResults"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "dbn": {
+            "type": "string"
+          },
+          "examType": {
+            "type": "string",
+            "enum": [
+              "SAT",
+              "AP",
+              "Regents",
+              "State ELA",
+              "State Math",
+              "SHSAT"
+            ]
+          }
+        },
+        "required": [
+          "dbn"
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/test-result.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getSchoolTestResults",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_calendar_events",
@@ -70,35 +192,85 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "schoolYear": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "category": { "type": "string" }
+          "schoolYear": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "category": {
+            "type": "string"
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/calendar-event.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCalendarEvents"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/calendar-event.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCalendarEvents",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "submit_enrollment_application",
       "title": "Submit Enrollment Application",
-      "description": "Submit a new NYC schools admissions/enrollment application (3K, PreK, K, G&T, Middle, High School, Specialized). NET-NEW workflow (MySchools) with no equivalent today. Requires an authenticated guardian. Mutates state — confirm details with the user first.",
-      "inputSchema": { "$ref": "../schemas/enrollment-application.json" },
-      "outputSchema": { "$ref": "../schemas/enrollment-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit a new NYC schools admissions/enrollment application (3K, PreK, K, G&T, Middle, High School, Specialized). NET-NEW workflow (MySchools) with no equivalent today. Requires an authenticated guardian. Mutates state \u2014 confirm details with the user first.",
+      "inputSchema": {
+        "$ref": "../schemas/enrollment-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/enrollment-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createEnrollmentApplication",
-      "x-auth": "guardian"
+      "x-auth": "guardian",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     },
     {
       "name": "check_application_status",
       "title": "Check Application Status",
       "description": "Fetch the status and offer of an enrollment application by id (draft, submitted, offer-made, waitlisted, not-matched...).",
-      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
-      "outputSchema": { "$ref": "../schemas/enrollment-application.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "applicationId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/enrollment-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getEnrollmentApplication",
-      "x-auth": "guardian"
+      "x-auth": "guardian",
+      "x-agent-skill": "check-application-or-case-status"
     },
     {
       "name": "list_enrollment_applications",
@@ -107,26 +279,67 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string" },
-          "admissionsProcess": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string"
+          },
+          "admissionsProcess": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/enrollment-application.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/enrollment-application.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listEnrollmentApplications",
-      "x-auth": "guardian"
+      "x-auth": "guardian",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "update_enrollment_application",
       "title": "Update Enrollment Application",
-      "description": "Update or withdraw a draft/submitted application (e.g. re-rank school choices). Requires an authenticated guardian. Mutates state — confirm with the user first.",
-      "inputSchema": { "$ref": "../schemas/enrollment-application.json" },
-      "outputSchema": { "$ref": "../schemas/enrollment-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true },
+      "description": "Update or withdraw a draft/submitted application (e.g. re-rank school choices). Requires an authenticated guardian. Mutates state \u2014 confirm with the user first.",
+      "inputSchema": {
+        "$ref": "../schemas/enrollment-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/enrollment-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "updateEnrollmentApplication",
-      "x-auth": "guardian"
+      "x-auth": "guardian",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

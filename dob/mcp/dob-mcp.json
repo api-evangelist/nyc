@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Fronts the DOB legacy application layer (BIS Web, DOB NOW, eFiling) and its nightly Socrata batch dump with one agent contract, and adds the net-new write workflow: filing a DOB NOW permit application.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Fronts the DOB legacy application layer (BIS Web, DOB NOW, eFiling) and its nightly Socrata batch dump with one agent contract, and adds the net-new write workflow: filing a DOB NOW permit application.",
     "openapi": "../openapi/dob.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.dob",
     "title": "NYC Department of Buildings",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Department of Buildings — buildings (BIN/BBL), job filings, permits, DOB & ECB violations, complaints, and certificates of occupancy. Consolidates the browser-only legacy app layer (BIS Web, DOB NOW, eFiling) and the nightly NYC Open Data extract behind one owned surface, and adds a write workflow to file and track a DOB NOW permit application.",
-    "instructions": "Use find_buildings / get_building to resolve a property by BIN, BBL, or address — the building is the join spine for everything else. find_job_filings and get_job_filing cover DOB job applications; find_permits covers issued work permits; find_violations spans both DOB (BIS) and ECB (OATH) violations (filter by violationClass); find_complaints covers 311-sourced building complaints; find_certificates_of_occupancy returns C of O records. All read tools are backed by a nightly batch extract, so data can lag the live BIS/DOB NOW systems by up to a day. file_permit_application and submit_permit_application (net-new) mutate state and require an authenticated user — confirm all filing details with the user before creating or submitting."
+    "description": "Agent-native access to the NYC Department of Buildings \u2014 buildings (BIN/BBL), job filings, permits, DOB & ECB violations, complaints, and certificates of occupancy. Consolidates the browser-only legacy app layer (BIS Web, DOB NOW, eFiling) and the nightly NYC Open Data extract behind one owned surface, and adds a write workflow to file and track a DOB NOW permit application.",
+    "instructions": "Use find_buildings / get_building to resolve a property by BIN, BBL, or address \u2014 the building is the join spine for everything else. find_job_filings and get_job_filing cover DOB job applications; find_permits covers issued work permits; find_violations spans both DOB (BIS) and ECB (OATH) violations (filter by violationClass); find_complaints covers 311-sourced building complaints; find_certificates_of_occupancy returns C of O records. All read tools are backed by a nightly batch extract, so data can lag the live BIS/DOB NOW systems by up to a day. file_permit_application and submit_permit_application (net-new) mutate state and require an authenticated user \u2014 confirm all filing details with the user before creating or submitting."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_buildings",
@@ -23,27 +27,83 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "bbl": { "type": "string" },
-          "block": { "type": "string" },
-          "lot": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "block": {
+            "type": "string"
+          },
+          "lot": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/building.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listBuildings"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/building.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listBuildings",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_building",
       "title": "Get Building",
       "description": "Fetch a building by BIN (Building Identification Number), with its geography spine and tax lot.",
-      "inputSchema": { "type": "object", "properties": { "bin": { "type": "string" } }, "required": ["bin"] },
-      "outputSchema": { "$ref": "../schemas/building.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getBuilding"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bin": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bin"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/building.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getBuilding",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_job_filings",
@@ -52,29 +112,91 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "bin": { "type": "string" },
-          "jobType": { "type": "string" },
-          "jobStatus": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "bin": {
+            "type": "string"
+          },
+          "jobType": {
+            "type": "string"
+          },
+          "jobStatus": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/job-filing.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listJobFilings"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/job-filing.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listJobFilings",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_job_filing",
       "title": "Get Job Filing",
       "description": "Fetch a single DOB job application filing by job number.",
-      "inputSchema": { "type": "object", "properties": { "jobNumber": { "type": "string" } }, "required": ["jobNumber"] },
-      "outputSchema": { "$ref": "../schemas/job-filing.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getJobFiling"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "jobNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "jobNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/job-filing.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getJobFiling",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_permits",
@@ -83,20 +205,66 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "bin": { "type": "string" },
-          "jobNumber": { "type": "string" },
-          "permitType": { "type": "string" },
-          "permitStatus": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "bin": {
+            "type": "string"
+          },
+          "jobNumber": {
+            "type": "string"
+          },
+          "permitType": {
+            "type": "string"
+          },
+          "permitStatus": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/permit.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPermits"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/permit.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPermits",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_violations",
@@ -105,19 +273,67 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "bin": { "type": "string" },
-          "violationClass": { "type": "string", "enum": ["DOB", "ECB"] },
-          "status": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "bin": {
+            "type": "string"
+          },
+          "violationClass": {
+            "type": "string",
+            "enum": [
+              "DOB",
+              "ECB"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/violation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listViolations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/violation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listViolations",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_complaints",
@@ -126,18 +342,53 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "bin": { "type": "string" },
-          "status": { "type": "string" },
-          "complaintCategory": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "bin": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "complaintCategory": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/complaint.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listComplaints"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/complaint.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listComplaints",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_certificates_of_occupancy",
@@ -146,44 +397,115 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "bin": { "type": "string" },
-          "jobNumber": { "type": "string" },
-          "issueType": { "type": "string", "enum": ["Final", "Temporary"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "bin": {
+            "type": "string"
+          },
+          "jobNumber": {
+            "type": "string"
+          },
+          "issueType": {
+            "type": "string",
+            "enum": [
+              "Final",
+              "Temporary"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/certificate-of-occupancy.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCertificatesOfOccupancy"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/certificate-of-occupancy.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCertificatesOfOccupancy",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "file_permit_application",
       "title": "File Permit Application",
-      "description": "File a new DOB NOW: Build permit application as a draft. NET-NEW workflow with no equivalent today (DOB NOW is browser-only). Requires an authenticated user. Mutates state — confirm all details with the user first.",
-      "inputSchema": { "$ref": "../schemas/permit-application.json" },
-      "outputSchema": { "$ref": "../schemas/permit-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "File a new DOB NOW: Build permit application as a draft. NET-NEW workflow with no equivalent today (DOB NOW is browser-only). Requires an authenticated user. Mutates state \u2014 confirm all details with the user first.",
+      "inputSchema": {
+        "$ref": "../schemas/permit-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/permit-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createPermitApplication",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     },
     {
       "name": "submit_permit_application",
       "title": "Submit Permit Application",
-      "description": "Update a draft permit application or advance it to 'Submitted' to lodge the DOB NOW filing for review. Requires an authenticated user. Mutates state — confirm with the user before submitting.",
+      "description": "Update a draft permit application or advance it to 'Submitted' to lodge the DOB NOW filing for review. Requires an authenticated user. Mutates state \u2014 confirm with the user before submitting.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "applicationId": { "type": "string" },
-          "application": { "$ref": "../schemas/permit-application.json" }
+          "applicationId": {
+            "type": "string"
+          },
+          "application": {
+            "$ref": "../schemas/permit-application.json"
+          }
         },
-        "required": ["applicationId", "application"]
+        "required": [
+          "applicationId",
+          "application"
+        ]
       },
-      "outputSchema": { "$ref": "../schemas/permit-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "$ref": "../schemas/permit-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "submitPermitApplication",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

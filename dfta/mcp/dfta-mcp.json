@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces NYC Aging's open provider network (providers, older adult centers, activities, service units, participation) and adds make_referral — the net-new write workflow locked today inside the phone-based Aging Connect intake.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces NYC Aging's open provider network (providers, older adult centers, activities, service units, participation) and adds make_referral \u2014 the net-new write workflow locked today inside the phone-based Aging Connect intake.",
     "openapi": "../openapi/dfta.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.dfta",
     "title": "NYC Aging (DFTA)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Department for the Aging (DFTA / 'NYC Aging') — DFTA-funded service providers, older adult centers (senior centers) and their activities, contract service units, and aggregate participation from NYC Open Data, plus the net-new ability to make and track a service referral that today lives only in the phone-based Aging Connect intake.",
-    "instructions": "Use find_providers / get_provider to locate DFTA-funded providers by borough, provider type (older adult center, case management, home-delivered meals, caregiver, NORC, legal, transportation), or council district. find_older_adult_centers returns senior centers with Local Law 140 operating profiles (utilization, meals, staffing). find_activities lists what is happening at older adult centers. find_service_units answers contract budget/performance questions; find_participation returns AGGREGATE unduplicated client counts only — DFTA never exposes an individual older adult. make_referral (net-new) connects an older adult to services; it requires an authenticated user and mutates state — confirm the service, the older adult's borough/ZIP, and the details with the user before submitting, and set urgent=true for suspected elder abuse, no food, or an unsafe-at-home situation so it routes immediately to Aging Connect / Adult Protective Services."
+    "description": "Agent-native access to the NYC Department for the Aging (DFTA / 'NYC Aging') \u2014 DFTA-funded service providers, older adult centers (senior centers) and their activities, contract service units, and aggregate participation from NYC Open Data, plus the net-new ability to make and track a service referral that today lives only in the phone-based Aging Connect intake.",
+    "instructions": "Use find_providers / get_provider to locate DFTA-funded providers by borough, provider type (older adult center, case management, home-delivered meals, caregiver, NORC, legal, transportation), or council district. find_older_adult_centers returns senior centers with Local Law 140 operating profiles (utilization, meals, staffing). find_activities lists what is happening at older adult centers. find_service_units answers contract budget/performance questions; find_participation returns AGGREGATE unduplicated client counts only \u2014 DFTA never exposes an individual older adult. make_referral (net-new) connects an older adult to services; it requires an authenticated user and mutates state \u2014 confirm the service, the older adult's borough/ZIP, and the details with the user before submitting, and set urgent=true for suspected elder abuse, no food, or an unsafe-at-home situation so it routes immediately to Aging Connect / Adult Protective Services."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_providers",
@@ -23,45 +27,139 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "providerType": { "type": "string" },
-          "dftaFunded": { "type": "boolean" },
-          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "providerType": {
+            "type": "string"
+          },
+          "dftaFunded": {
+            "type": "boolean"
+          },
+          "councilDistrict": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 51
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-provider.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listProviders"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/service-provider.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listProviders",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_provider",
       "title": "Get Provider",
       "description": "Fetch a DFTA-funded service provider (sponsor, type, hours, address, geography) by DFTA ID.",
-      "inputSchema": { "type": "object", "properties": { "dftaId": { "type": "string" } }, "required": ["dftaId"] },
-      "outputSchema": { "$ref": "../schemas/service-provider.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getProvider"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "dftaId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dftaId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/service-provider.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getProvider",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_older_adult_centers",
       "title": "Find Older Adult Centers",
-      "description": "List older adult centers (senior centers) with their Local Law 140 operating profiles — utilization, meals, staffing — by borough or site type.",
+      "description": "List older adult centers (senior centers) with their Local Law 140 operating profiles \u2014 utilization, meals, staffing \u2014 by borough or site type.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "siteType": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "siteType": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/older-adult-center.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listOlderAdultCenters"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/older-adult-center.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listOlderAdultCenters",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_activities",
@@ -70,18 +168,58 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "eventType": { "type": "string" },
-          "dftaId": { "type": "string" },
-          "isVirtual": { "type": "boolean" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "dftaId": {
+            "type": "string"
+          },
+          "isVirtual": {
+            "type": "boolean"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/program-activity.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listActivities"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/program-activity.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listActivities",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_service_units",
@@ -90,63 +228,180 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "dftaId": { "type": "string" },
-          "providerType": { "type": "string" },
-          "serviceName": { "type": "string" },
-          "contractYear": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "dftaId": {
+            "type": "string"
+          },
+          "providerType": {
+            "type": "string"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "contractYear": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-unit.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listServiceUnits"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/service-unit.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listServiceUnits",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_participation",
       "title": "Find Participation",
-      "description": "Return AGGREGATE participation — unduplicated client counts — by program/site, program type, fiscal year, or borough. Never returns individual older adults.",
+      "description": "Return AGGREGATE participation \u2014 unduplicated client counts \u2014 by program/site, program type, fiscal year, or borough. Never returns individual older adults.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "dftaId": { "type": "string" },
-          "programType": { "type": "string" },
-          "fiscalYear": { "type": "string" },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "dftaId": {
+            "type": "string"
+          },
+          "programType": {
+            "type": "string"
+          },
+          "fiscalYear": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/participation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listParticipation"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/participation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listParticipation",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_referrals",
       "title": "List My Referrals",
-      "description": "List the authenticated user's own service referrals and their status — today trackable only by phone to Aging Connect.",
+      "description": "List the authenticated user's own service referrals and their status \u2014 today trackable only by phone to Aging Connect.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Submitted", "Screening", "Referred", "Enrolled", "Waitlisted", "Closed", "Declined"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Submitted",
+              "Screening",
+              "Referred",
+              "Enrolled",
+              "Waitlisted",
+              "Closed",
+              "Declined"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-referral.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/service-referral.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listReferrals",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "make_referral",
       "title": "Make a Referral",
-      "description": "Create a NYC Aging service referral (connect an older adult to services). NET-NEW workflow with no public API today — it lives only in the phone-based Aging Connect intake (212-AGING-NYC) or a 311 call. Requires an authenticated user. Mutates state — confirm the service, the older adult's borough/ZIP, and the details first; set urgent=true for suspected elder abuse, no food, or an unsafe-at-home situation.",
-      "inputSchema": { "$ref": "../schemas/service-referral.json" },
-      "outputSchema": { "$ref": "../schemas/service-referral.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Create a NYC Aging service referral (connect an older adult to services). NET-NEW workflow with no public API today \u2014 it lives only in the phone-based Aging Connect intake (212-AGING-NYC) or a 311 call. Requires an authenticated user. Mutates state \u2014 confirm the service, the older adult's borough/ZIP, and the details first; set urgent=true for suspected elder abuse, no food, or an unsafe-at-home situation.",
+      "inputSchema": {
+        "$ref": "../schemas/service-referral.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/service-referral.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createReferral",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

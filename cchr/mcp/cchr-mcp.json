@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the NYC Commission on Human Rights — the protected classes and legal guidance of the NYC Human Rights Law, trainings/outreach, and the three aggregate operational datasets — and adds report_discrimination, the net-new write workflow that today lives only in an untyped Report Discrimination HTML form.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the NYC Commission on Human Rights \u2014 the protected classes and legal guidance of the NYC Human Rights Law, trainings/outreach, and the three aggregate operational datasets \u2014 and adds report_discrimination, the net-new write workflow that today lives only in an untyped Report Discrimination HTML form.",
     "openapi": "../openapi/cchr.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.cchr",
     "title": "NYC Commission on Human Rights (CCHR)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Commission on Human Rights — the protected classes and legal enforcement guidance of the NYC Human Rights Law, trainings and community outreach, and aggregate operational statistics (inquiries, mediations, pre-complaint resolutions) from NYC Open Data — plus the net-new ability to report discrimination (file a complaint) that today lives only in an untyped web form or a phone call.",
-    "instructions": "Use find_protected_classes and find_legal_guidance to answer 'is X protected?' and 'what does the law/guidance say?' about the NYC Human Rights Law across employment, housing, public accommodations, lending, discriminatory harassment, and bias-based profiling. find_training_events lists workshops and the Stop Sexual Harassment Act training. find_inquiry_statistics and find_resolution_statistics return AGGREGATE operational counts only — CCHR never publishes individual complaints. report_discrimination (net-new) files a discrimination complaint; it mutates state and may carry sensitive personal information — confirm the category, the basis (protected class), the respondent, and the description with the user before submitting, note that a report can be filed whether or not they want a formal complaint, and that anonymous reports are accepted. Use list_my_complaints / get_complaint (authenticated) to check the status of a report already filed."
+    "description": "Agent-native access to the NYC Commission on Human Rights \u2014 the protected classes and legal enforcement guidance of the NYC Human Rights Law, trainings and community outreach, and aggregate operational statistics (inquiries, mediations, pre-complaint resolutions) from NYC Open Data \u2014 plus the net-new ability to report discrimination (file a complaint) that today lives only in an untyped web form or a phone call.",
+    "instructions": "Use find_protected_classes and find_legal_guidance to answer 'is X protected?' and 'what does the law/guidance say?' about the NYC Human Rights Law across employment, housing, public accommodations, lending, discriminatory harassment, and bias-based profiling. find_training_events lists workshops and the Stop Sexual Harassment Act training. find_inquiry_statistics and find_resolution_statistics return AGGREGATE operational counts only \u2014 CCHR never publishes individual complaints. report_discrimination (net-new) files a discrimination complaint; it mutates state and may carry sensitive personal information \u2014 confirm the category, the basis (protected class), the respondent, and the description with the user before submitting, note that a report can be filed whether or not they want a formal complaint, and that anonymous reports are accepted. Use list_my_complaints / get_complaint (authenticated) to check the status of a report already filed."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_protected_classes",
@@ -23,12 +27,36 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "protectedArea": { "type": "string", "enum": ["Employment", "Housing", "Public Accommodations", "Lending Practices", "Discriminatory Harassment", "Bias-Based Profiling"] }
+          "protectedArea": {
+            "type": "string",
+            "enum": [
+              "Employment",
+              "Housing",
+              "Public Accommodations",
+              "Lending Practices",
+              "Discriminatory Harassment",
+              "Bias-Based Profiling"
+            ]
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/protected-class.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listProtectedClasses"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/protected-class.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listProtectedClasses",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_legal_guidance",
@@ -37,17 +65,56 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "protectedClass": { "type": "string" },
-          "protectedArea": { "type": "string", "enum": ["Employment", "Housing", "Public Accommodations", "Lending Practices", "Discriminatory Harassment", "Bias-Based Profiling"] },
-          "type": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "protectedClass": {
+            "type": "string"
+          },
+          "protectedArea": {
+            "type": "string",
+            "enum": [
+              "Employment",
+              "Housing",
+              "Public Accommodations",
+              "Lending Practices",
+              "Discriminatory Harassment",
+              "Bias-Based Profiling"
+            ]
+          },
+          "type": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/legal-guidance.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listLegalGuidance"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/legal-guidance.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listLegalGuidance",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_training_events",
@@ -56,18 +123,60 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "type": { "type": "string" },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "type": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/training-event.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listTrainingEvents"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/training-event.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listTrainingEvents",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_inquiry_statistics",
@@ -76,68 +185,201 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "fiscalYear": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "fiscalYear": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/inquiry-statistic.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listInquiryStatistics"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/inquiry-statistic.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listInquiryStatistics",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_resolution_statistics",
       "title": "Find Resolution Statistics",
-      "description": "Return AGGREGATE monthly counts of matters resolved short of litigation — Office of Mediation settlements closed, and pre-complaint resolutions — by type and year. Never returns individual cases.",
+      "description": "Return AGGREGATE monthly counts of matters resolved short of litigation \u2014 Office of Mediation settlements closed, and pre-complaint resolutions \u2014 by type and year. Never returns individual cases.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "resolutionType": { "type": "string", "enum": ["Mediation", "Pre-Complaint Resolution"] },
-          "year": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "resolutionType": {
+            "type": "string",
+            "enum": [
+              "Mediation",
+              "Pre-Complaint Resolution"
+            ]
+          },
+          "year": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/resolution-statistic.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listResolutionStatistics"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/resolution-statistic.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listResolutionStatistics",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_complaints",
       "title": "List My Complaints",
-      "description": "List the authenticated filer's own discrimination complaints and their case status — today not visible on the public web at all.",
+      "description": "List the authenticated filer's own discrimination complaints and their case status \u2014 today not visible on the public web at all.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Received", "Under Review", "Pre-Complaint Inquiry", "Mediation", "Complaint Filed", "Investigation", "Resolved", "Closed", "Referred"] },
-          "category": { "type": "string", "enum": ["Employment", "Housing", "Public Accommodations", "Lending Practices", "Discriminatory Harassment", "Bias-Based Profiling", "Not Sure"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Received",
+              "Under Review",
+              "Pre-Complaint Inquiry",
+              "Mediation",
+              "Complaint Filed",
+              "Investigation",
+              "Resolved",
+              "Closed",
+              "Referred"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "Employment",
+              "Housing",
+              "Public Accommodations",
+              "Lending Practices",
+              "Discriminatory Harassment",
+              "Bias-Based Profiling",
+              "Not Sure"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/discrimination-complaint.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/discrimination-complaint.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listComplaints",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_complaint",
       "title": "Get Complaint",
       "description": "Fetch a single discrimination complaint and its case status by complaint/report number.",
-      "inputSchema": { "type": "object", "properties": { "complaintId": { "type": "string" } }, "required": ["complaintId"] },
-      "outputSchema": { "$ref": "../schemas/discrimination-complaint.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "complaintId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "complaintId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/discrimination-complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getComplaint",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "check-application-or-case-status"
     },
     {
       "name": "report_discrimination",
       "title": "Report Discrimination",
-      "description": "File a discrimination complaint with the NYC Commission on Human Rights (report discrimination). NET-NEW workflow with no public API today — it lives only in the untyped 'Report Discrimination' HTML form or a phone call to the Law Enforcement Bureau. Mutates state and may carry sensitive personal data — confirm the category, the basis (protected class), the respondent, and the description first; note a report can be filed whether or not the person pursues a formal complaint, and anonymous reports are accepted.",
-      "inputSchema": { "$ref": "../schemas/discrimination-complaint.json" },
-      "outputSchema": { "$ref": "../schemas/discrimination-complaint.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
-      "x-openapi-operation": "createComplaint"
+      "description": "File a discrimination complaint with the NYC Commission on Human Rights (report discrimination). NET-NEW workflow with no public API today \u2014 it lives only in the untyped 'Report Discrimination' HTML form or a phone call to the Law Enforcement Bureau. Mutates state and may carry sensitive personal data \u2014 confirm the category, the basis (protected class), the respondent, and the description first; note a report can be filed whether or not the person pursues a formal complaint, and anonymous reports are accepted.",
+      "inputSchema": {
+        "$ref": "../schemas/discrimination-complaint.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/discrimination-complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "createComplaint",
+      "x-agent-skill": "report-a-problem-or-file-a-complaint"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

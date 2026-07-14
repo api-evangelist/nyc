@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the NYC Law Department's thin open reference data (civil-litigation index, legal divisions, publications, M/WBE statistics, pro bono Public Service Program) and adds submit_internship_application — the one net-new write workflow, the single transaction a member of the public actually initiates with this agency-facing legal office.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the NYC Law Department's thin open reference data (civil-litigation index, legal divisions, publications, M/WBE statistics, pro bono Public Service Program) and adds submit_internship_application \u2014 the one net-new write workflow, the single transaction a member of the public actually initiates with this agency-facing legal office.",
     "openapi": "../openapi/law.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.law",
     "title": "NYC Law Department (Corporation Counsel)",
     "version": "0.1.0",
-    "description": "Agent-native access to the New York City Law Department — the City's in-house law firm. Exposes its seven Open Data sets (a civil-litigation case index, legal divisions, press releases / speeches / columns, M/WBE contracting statistics, and the pro bono Public Service Program) as clean resources, plus the net-new ability to submit a legal internship / fellowship application, the one transaction a member of the public actually performs with this agency.",
-    "instructions": "This is an AGENCY-FACING legal office with almost no citizen transactions and thin, stale (annual, manually-updated) Open Data. Use find_cases / get_case to browse the Law Department's own civil-litigation index by division, court, disposition, or date. IMPORTANT: this index is the litigation-side view; the authoritative ledger of claims filed against the City and settlement dollars paid is published separately by the Office of the Comptroller (dataset ex6k-ym48) — direct users there for claims/settlement totals. find_divisions lists practice divisions; find_publications covers press releases, speeches, and columns; find_mwbe_statistics and find_public_service_program cover contracting/pro bono. submit_internship_application (net-new) creates a legal internship/fellowship application; it requires an authenticated applicant and mutates state — confirm program, contact, and materials with the user before submitting."
+    "description": "Agent-native access to the New York City Law Department \u2014 the City's in-house law firm. Exposes its seven Open Data sets (a civil-litigation case index, legal divisions, press releases / speeches / columns, M/WBE contracting statistics, and the pro bono Public Service Program) as clean resources, plus the net-new ability to submit a legal internship / fellowship application, the one transaction a member of the public actually performs with this agency.",
+    "instructions": "This is an AGENCY-FACING legal office with almost no citizen transactions and thin, stale (annual, manually-updated) Open Data. Use find_cases / get_case to browse the Law Department's own civil-litigation index by division, court, disposition, or date. IMPORTANT: this index is the litigation-side view; the authoritative ledger of claims filed against the City and settlement dollars paid is published separately by the Office of the Comptroller (dataset ex6k-ym48) \u2014 direct users there for claims/settlement totals. find_divisions lists practice divisions; find_publications covers press releases, speeches, and columns; find_mwbe_statistics and find_public_service_program cover contracting/pro bono. submit_internship_application (net-new) creates a legal internship/fellowship application; it requires an authenticated applicant and mutates state \u2014 confirm program, contact, and materials with the user before submitting."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_cases",
@@ -23,28 +27,81 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "division": { "type": "string" },
-          "court": { "type": "string" },
-          "disposition": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "division": {
+            "type": "string"
+          },
+          "court": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/legal-case.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCases"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/legal-case.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCases",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_case",
       "title": "Get Litigation Case",
       "description": "Fetch a single civil-litigation matter by its docket/index number.",
-      "inputSchema": { "type": "object", "properties": { "docketIndex": { "type": "string" } }, "required": ["docketIndex"] },
-      "outputSchema": { "$ref": "../schemas/legal-case.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getCase"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "docketIndex": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "docketIndex"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/legal-case.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getCase",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_divisions",
@@ -53,14 +110,39 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/legal-division.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listDivisions"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/legal-division.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listDivisions",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_publications",
@@ -69,17 +151,55 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "publicationType": { "type": "string", "enum": ["Press Release", "Speech", "Published Column"] },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "publicationType": {
+            "type": "string",
+            "enum": [
+              "Press Release",
+              "Speech",
+              "Published Column"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/publication.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPublications"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/publication.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPublications",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_mwbe_statistics",
@@ -88,14 +208,39 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "mwbeType": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "mwbeType": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/mwbe-statistic.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listMwbeStatistics"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/mwbe-statistic.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listMwbeStatistics",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_public_service_program",
@@ -104,41 +249,113 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/public-service-program.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPublicServiceProgram"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/public-service-program.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPublicServiceProgram",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_internship_applications",
       "title": "List My Internship Applications",
-      "description": "List the authenticated applicant's own legal internship / fellowship applications and their status — no API exists today.",
+      "description": "List the authenticated applicant's own legal internship / fellowship applications and their status \u2014 no API exists today.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Submitted", "Under Review", "Interview", "Offer", "Declined", "Withdrawn"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Submitted",
+              "Under Review",
+              "Interview",
+              "Offer",
+              "Declined",
+              "Withdrawn"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/law-internship-application.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/law-internship-application.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listInternshipApplications",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "submit_internship_application",
       "title": "Submit Internship Application",
-      "description": "Submit a legal internship / fellowship application to the NYC Law Department. NET-NEW workflow with no public API today — the Careers page points applicants to email/PDF. Requires an authenticated applicant. Mutates state — confirm program, contact details, and materials before submitting.",
-      "inputSchema": { "$ref": "../schemas/law-internship-application.json" },
-      "outputSchema": { "$ref": "../schemas/law-internship-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit a legal internship / fellowship application to the NYC Law Department. NET-NEW workflow with no public API today \u2014 the Careers page points applicants to email/PDF. Requires an authenticated applicant. Mutates state \u2014 confirm program, contact details, and materials before submitting.",
+      "inputSchema": {
+        "$ref": "../schemas/law-internship-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/law-internship-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createInternshipApplication",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

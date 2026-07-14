@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Programmable City — NYC APIs · MCP · Skills</title>
+<meta name="description" content="Every NYC government API, MCP server, and Agent Skill in one place — the REST operation → MCP tool → Agent Skill chain across all 67 agencies, organized by common government process.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.chain{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin:8px 0 4px}
+.chain .step{flex:1;min-width:190px;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;background:var(--bg-card)}
+.chain .step .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--fg-soft);font-weight:700}
+.chain .arrow{display:flex;align-items:center;color:var(--fg-soft);font-size:1.4rem}
+.skill{border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:var(--radius);padding:15px 17px;background:var(--bg-card)}
+.skill h3{margin:0 0 .25em;font-size:1.06rem}
+.skill .meta{font-size:.78rem;color:var(--fg-soft);margin-top:10px;display:flex;gap:14px;flex-wrap:wrap}
+.grp{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 9px;border-radius:20px;background:var(--bg-soft);border:1px solid var(--border)}
+.chip{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:20px;margin:2px;background:var(--bg-soft);border:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit}
+.chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.apirow{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;background:var(--bg-card);overflow:hidden}
+.apihead{display:flex;align-items:center;gap:12px;padding:11px 15px;cursor:pointer}
+.apihead:hover{background:var(--bg-soft)}
+.apihead h3{margin:0;font-size:1rem;flex:1}
+.apihead .c{font-size:.78rem;color:var(--fg-soft);white-space:nowrap}
+.opgrid{border-top:1px solid var(--border);padding:6px 15px 12px}
+.op{display:grid;grid-template-columns:56px 1fr auto;gap:10px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--border);font-size:.85rem}
+.op:last-child{border-bottom:none}
+.m{font-family:ui-monospace,Menlo,monospace;font-size:.68rem;font-weight:700;padding:2px 6px;border-radius:5px;text-align:center;color:#fff}
+.m.get{background:#3098d8}.m.post{background:#2e9e6b}.m.put{background:#d6923a}.m.patch{background:#b5701f}.m.delete{background:#c0504d}
+.op code{font-size:.82rem}
+.op .to{font-size:.76rem;color:var(--fg-soft);white-space:nowrap}
+.dot{color:var(--fg-soft);padding:0 4px}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+<div class="hero" style="padding:52px 0 28px">
+  <div class="wrap">
+    <div class="eyebrow">The programmable city</div>
+    <h1 style="font-size:2.3rem;max-width:22ch">Every NYC API, MCP tool, and Skill — in one place</h1>
+    <p class="lead">Sixty-seven agencies, one chain: every <strong>REST operation</strong> has an <strong>MCP tool</strong>, and every tool serves one of ten <strong>common government processes</strong> — apply, report, request records, schedule, register, dispute, pay, look up. This is the whole agent-native surface the city could have, rendered from design-first artifacts.</p>
+    <div class="cta">
+      <a class="btn" href="experience/nyc-openapi.json">Unified OpenAPI</a>
+      <a class="btn sec" href="experience/nyc-mcp.json">NYC MCP</a>
+      <a class="btn sec" href="experience/nyc.apis.json">APIs.json</a>
+      <a class="btn sec" href="https://experience.apicommons.org/?url=https://raw.githubusercontent.com/api-evangelist/nyc/main/experience/nyc.apis.json">Open in API Experience ↗</a>
+    </div>
+    <div class="stats" style="margin-top:28px" id="tot"></div>
+  </div>
+</div>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The chain</div><h2>REST operation → MCP tool → Agent Skill</h2>
+  <p class="muted">The developer and the agent move through the same three layers. An operation is one API call; an MCP tool makes it agent-callable; an Agent Skill orchestrates tools across agencies to finish a real citizen task.</p></div>
+  <div class="chain">
+    <div class="step"><div class="k">REST operation</div><p style="margin:.3em 0 0" id="c1"></p></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="k">MCP tool</div><p style="margin:.3em 0 0" id="c2"></p></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="k">Agent Skill</div><p style="margin:.3em 0 0" id="c3"></p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The point</div><h2>Ten common government processes</h2>
+  <p class="muted">The 721 operations collapse into ten things residents actually do. Each is an <strong>Agent Skill</strong> that resolves the right agency and drives its tools. Click a process to filter the agencies below.</p></div>
+  <div id="skills"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="grid cols-2">
+    <div>
+      <div class="section-head"><div class="k">Cross-agency</div><h2 style="font-size:1.3rem">MCP prompts</h2>
+      <p class="muted small">Whole-task entry points that span agencies.</p></div>
+      <div id="prompts"></div>
+    </div>
+    <div>
+      <div class="section-head"><div class="k">Cross-agency</div><h2 style="font-size:1.3rem">MCP resources</h2>
+      <p class="muted small">Shared context, anchored on the nyc-commons geography spine.</p></div>
+      <div id="resources"></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The surface</div><h2>All 67 agencies, operation by operation</h2></div>
+  <div class="toolbar">
+    <input id="q" placeholder="Filter agency, operation, or tool…">
+    <span class="count-pill" id="filterpill" style="display:none"></span>
+    <span class="count-pill" id="count"></span>
+  </div>
+  <div id="apis"></div>
+</div></section>
+
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const X=await getJSON("data/experience.json");
+  const T=X.totals;
+  document.getElementById("tot").innerHTML=[
+    [T.apis,"agency APIs"],[T.operations,"REST operations"],[T.tools,"MCP tools"],
+    [T.prompts+T.resources,"prompts + resources"],[T.skills,"government-process skills"]
+  ].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  document.getElementById("c1").innerHTML=`<strong>${T.operations}</strong> operations across ${T.apis} agencies — the REST surface, mostly design-first.`;
+  document.getElementById("c2").innerHTML=`<strong>${T.tools}</strong> tools make those operations agent-callable, 1:1 where a tool exists.`;
+  document.getElementById("c3").innerHTML=`<strong>${T.skills}</strong> skills + ${T.prompts} prompts orchestrate tools into finished citizen tasks.`;
+
+  const skillById={}; X.skills.forEach(s=>skillById[s.id]=s);
+  let activeSkill=null;
+  const skillsWrap=document.getElementById("skills");
+  function drawSkills(){
+    const groups=["Act","Know"];
+    skillsWrap.innerHTML=groups.map(g=>{
+      const items=X.skills.filter(s=>s.group===g);
+      return `<h3 style="margin:1.1em 0 .5em;font-size:1rem;color:var(--fg-soft)">${g==="Act"?"Act — do a transaction":"Know — read the city"}</h3>
+      <div class="grid cols-3">`+items.map(s=>`
+        <div class="skill" style="border-left-color:${s.accent};cursor:pointer;${activeSkill===s.id?'box-shadow:0 0 0 2px '+s.accent:''}" data-s="${s.id}">
+          <span class="grp">${esc(s.primitive)}</span>
+          <h3 style="margin-top:8px">${esc(s.name)}</h3>
+          <p class="muted small" style="margin:0">${esc(s.desc)}</p>
+          <div class="meta"><span><b>${s.domainCount}</b> agencies</span><span><b>${s.operationCount}</b> operations</span>
+          <a href="docs.html?f=experience/skills/${s.id}.md">skill →</a></div>
+        </div>`).join("")+`</div>`;
+    }).join("");
+    skillsWrap.querySelectorAll(".skill").forEach(el=>el.onclick=e=>{
+      if(e.target.tagName==="A")return;
+      activeSkill=(activeSkill===el.dataset.s)?null:el.dataset.s; drawSkills(); apply();
+    });
+  }
+  drawSkills();
+
+  document.getElementById("prompts").innerHTML=X.prompts.map(p=>`
+    <div class="apirow"><div style="padding:10px 14px"><code>${esc(p.name)}</code>
+    <span class="chip" style="cursor:default">→ ${esc((p.uses||[]).map(u=>skillById[u]?skillById[u].name:u).join(", "))}</span>
+    <p class="muted small" style="margin:.3em 0 0">${esc(p.description)}</p></div></div>`).join("");
+  document.getElementById("resources").innerHTML=X.resources.map(r=>`
+    <div class="apirow"><div style="padding:10px 14px"><code>${esc(r.uri)}</code>${r.template?' <span class="chip" style="cursor:default">templated</span>':''}
+    <p class="muted small" style="margin:.3em 0 0">${esc(r.description)}</p></div></div>`).join("");
+
+  const wrap=document.getElementById("apis");
+  const mcls=m=>`m ${m}`;
+  function apply(){
+    const q=document.getElementById("q").value.toLowerCase();
+    const fp=document.getElementById("filterpill");
+    if(activeSkill){fp.style.display="";fp.textContent="process: "+skillById[activeSkill].name+" ✕";fp.style.cursor="pointer";fp.onclick=()=>{activeSkill=null;drawSkills();apply();};}
+    else fp.style.display="none";
+    let shown=0;
+    wrap.innerHTML=X.apis.map(a=>{
+      let ops=a.operations;
+      if(activeSkill) ops=ops.filter(o=>o.skill===activeSkill);
+      if(q) ops=ops.filter(o=>(o.operationId||"").toLowerCase().includes(q)||(o.summary||"").toLowerCase().includes(q)||(o.path||"").toLowerCase().includes(q)||(o.mcpTool||"").toLowerCase().includes(q));
+      const nameHit=!q||a.short.toLowerCase().includes(q);
+      if(activeSkill && !ops.length) return "";
+      if(q && !ops.length && !nameHit) return "";
+      if(q && nameHit && !activeSkill) ops=a.operations;
+      shown++;
+      const chips=a.skills.map(sid=>`<span class="chip ${activeSkill===sid?'on':''}" style="cursor:default">${esc(skillById[sid]?skillById[sid].primitive:sid)}</span>`).join("");
+      const open=(activeSkill||q)?"":"hidden";
+      return `<div class="apirow"><div class="apihead" data-id="${a.id}">
+          <h3>${esc(a.short)} <span class="muted" style="font-weight:400;font-size:.82rem">${esc(a.verb)}</span></h3>
+          <span class="c">${a.operationCount} ops · ${a.toolCount} tools</span></div>
+        <div class="opgrid" ${open==="hidden"?'style="display:none"':""}>
+          ${ops.map(o=>`<div class="op"><span class="${mcls(o.method)}">${o.method.toUpperCase()}</span>
+            <span><code>${esc(o.path)}</code><span class="dot">·</span><span class="muted">${esc(o.summary||"")}</span></span>
+            <span class="to">${o.mcpTool?`🔧 <code>${esc(o.mcpTool)}</code>`:'<span style="color:var(--gap)">no tool</span>'} <span class="dot">→</span> ${esc(skillById[o.skill]?skillById[o.skill].primitive:o.skill)}</span></div>`).join("")}
+        </div></div>`;
+    }).join("");
+    wrap.querySelectorAll(".apihead").forEach(h=>h.onclick=()=>{const g=h.nextElementSibling;g.style.display=g.style.display==="none"?"":"none";});
+    document.getElementById("count").textContent=shown+" / "+X.apis.length+" agencies";
+  }
+  document.getElementById("q").oninput=apply; apply();
+})();
+</script>
+</body>
+</html>

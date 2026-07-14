@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Bronx DA's HTML-only content and Power-BI-locked aggregate statistics (press releases, case statistics, programs/bureaus, community resources, victim services) and adds submit_tip — the net-new write workflow that today is only a phone call or an email. Written generically so it could back one shared District Attorney API across all five NYC borough offices.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Bronx DA's HTML-only content and Power-BI-locked aggregate statistics (press releases, case statistics, programs/bureaus, community resources, victim services) and adds submit_tip \u2014 the net-new write workflow that today is only a phone call or an email. Written generically so it could back one shared District Attorney API across all five NYC borough offices.",
     "openapi": "../openapi/bronxda.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.bronxda",
     "title": "Bronx District Attorney",
     "version": "0.1.0",
-    "description": "Agent-native access to the Office of the Bronx District Attorney (Darcel D. Clark) — press releases, aggregate prosecution statistics (arrests, charging decisions, case outcomes, defendant demographics), prosecutorial bureaus and public programs, community resources, and crime-victim services, none of which has an API or Open Data today. Adds the net-new ability to submit a crime tip, a Civilian Complaint Unit complaint, or a FOIL records request.",
-    "instructions": "The Bronx DA publishes NO Open Data and has NO API; everything here is reverse-engineered from the office's legacy .shtml site and its embedded Power BI dashboards. Use find_press_releases / get_press_release for newsroom items (indictments, sentencings, initiatives). find_case_statistics returns AGGREGATE prosecution metrics only — the numbers currently locked inside Power BI iframes — never an individual case or defendant. find_programs covers bureaus/divisions and outreach programs; find_community_resources covers record sealing (CPL 160.59), BronxCAMS, immigrant affairs, and important numbers; find_victim_services covers Crime Victims Assistance Bureau help. submit_tip (net-new) files a crime tip, a civilian complaint of police misconduct, or a FOIL request; it mutates state and today has no structured intake (a call to 718-590-2300 or an email to FOILREQUEST@BRONXDA.NYC.GOV) — confirm the type, subject, and details with the user before submitting, and warn that anonymous submissions cannot be tracked. check_submission returns the status of a non-anonymous submission by tracking number."
+    "description": "Agent-native access to the Office of the Bronx District Attorney (Darcel D. Clark) \u2014 press releases, aggregate prosecution statistics (arrests, charging decisions, case outcomes, defendant demographics), prosecutorial bureaus and public programs, community resources, and crime-victim services, none of which has an API or Open Data today. Adds the net-new ability to submit a crime tip, a Civilian Complaint Unit complaint, or a FOIL records request.",
+    "instructions": "The Bronx DA publishes NO Open Data and has NO API; everything here is reverse-engineered from the office's legacy .shtml site and its embedded Power BI dashboards. Use find_press_releases / get_press_release for newsroom items (indictments, sentencings, initiatives). find_case_statistics returns AGGREGATE prosecution metrics only \u2014 the numbers currently locked inside Power BI iframes \u2014 never an individual case or defendant. find_programs covers bureaus/divisions and outreach programs; find_community_resources covers record sealing (CPL 160.59), BronxCAMS, immigrant affairs, and important numbers; find_victim_services covers Crime Victims Assistance Bureau help. submit_tip (net-new) files a crime tip, a civilian complaint of police misconduct, or a FOIL request; it mutates state and today has no structured intake (a call to 718-590-2300 or an email to FOILREQUEST@BRONXDA.NYC.GOV) \u2014 confirm the type, subject, and details with the user before submitting, and warn that anonymous submissions cannot be tracked. check_submission returns the status of a non-anonymous submission by tracking number."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_press_releases",
@@ -23,44 +27,133 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "year": { "type": "integer" },
-          "category": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "year": {
+            "type": "integer"
+          },
+          "category": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/press-release.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPressReleases"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/press-release.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPressReleases",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_press_release",
       "title": "Get Press Release",
       "description": "Fetch a single Bronx DA press release by id.",
-      "inputSchema": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] },
-      "outputSchema": { "$ref": "../schemas/press-release.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getPressRelease"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/press-release.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getPressRelease",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_case_statistics",
       "title": "Find Case Statistics",
-      "description": "Search AGGREGATE prosecution statistics (arrests, charging decisions, case outcomes, defendant demographics) — the figures locked today inside the office's Power BI dashboards. Never returns individual cases or defendants.",
+      "description": "Search AGGREGATE prosecution statistics (arrests, charging decisions, case outcomes, defendant demographics) \u2014 the figures locked today inside the office's Power BI dashboards. Never returns individual cases or defendants.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "dashboard": { "type": "string", "enum": ["Arrests", "Charging Decisions", "Case Outcomes", "Defendant Demographics", "Other"] },
-          "decisionPoint": { "type": "string" },
-          "chargeCategory": { "type": "string", "enum": ["Felony", "Misdemeanor", "Violation", "All"] },
-          "period": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "dashboard": {
+            "type": "string",
+            "enum": [
+              "Arrests",
+              "Charging Decisions",
+              "Case Outcomes",
+              "Defendant Demographics",
+              "Other"
+            ]
+          },
+          "decisionPoint": {
+            "type": "string"
+          },
+          "chargeCategory": {
+            "type": "string",
+            "enum": [
+              "Felony",
+              "Misdemeanor",
+              "Violation",
+              "All"
+            ]
+          },
+          "period": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/case-statistic.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCaseStatistics"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/case-statistic.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCaseStatistics",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_programs",
@@ -69,32 +162,94 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "kind": { "type": "string", "enum": ["Division", "Bureau", "Unit", "Outreach Program", "Diversion Program", "Initiative"] },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "kind": {
+            "type": "string",
+            "enum": [
+              "Division",
+              "Bureau",
+              "Unit",
+              "Outreach Program",
+              "Diversion Program",
+              "Initiative"
+            ]
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/program.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPrograms"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/program.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPrograms",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_community_resources",
       "title": "Find Community Resources",
-      "description": "List Bronx DA community resources and services — record sealing (CPL 160.59), BronxCAMS, immigrant affairs, court navigation, important numbers — by category or free text.",
+      "description": "List Bronx DA community resources and services \u2014 record sealing (CPL 160.59), BronxCAMS, immigrant affairs, court navigation, important numbers \u2014 by category or free text.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "category": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "category": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-resource.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCommunityResources"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/community-resource.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCommunityResources",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_victim_services",
@@ -103,34 +258,91 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "serviceType": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "serviceType": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/victim-service.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listVictimServices"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/victim-service.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listVictimServices",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "submit_tip",
       "title": "Submit a Tip / Complaint / FOIL Request",
-      "description": "Create a submission to the Bronx DA — a crime tip, a Civilian Complaint Unit complaint of police misconduct/brutality, a witness contact, or a FOIL records request. NET-NEW workflow with no structured intake today (a call to 718-590-2300 or an email to FOILREQUEST@BRONXDA.NYC.GOV). Mutates state — confirm type, subject, and details first; warn the user that anonymous submissions cannot be tracked.",
-      "inputSchema": { "$ref": "../schemas/tip-submission.json" },
-      "outputSchema": { "$ref": "../schemas/tip-submission.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
-      "x-openapi-operation": "createSubmission"
+      "description": "Create a submission to the Bronx DA \u2014 a crime tip, a Civilian Complaint Unit complaint of police misconduct/brutality, a witness contact, or a FOIL records request. NET-NEW workflow with no structured intake today (a call to 718-590-2300 or an email to FOILREQUEST@BRONXDA.NYC.GOV). Mutates state \u2014 confirm type, subject, and details first; warn the user that anonymous submissions cannot be tracked.",
+      "inputSchema": {
+        "$ref": "../schemas/tip-submission.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/tip-submission.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "createSubmission",
+      "x-agent-skill": "report-a-problem-or-file-a-complaint"
     },
     {
       "name": "check_submission",
       "title": "Check Submission Status",
       "description": "Retrieve a non-anonymous submission and its status by tracking number.",
-      "inputSchema": { "type": "object", "properties": { "submissionId": { "type": "string" } }, "required": ["submissionId"] },
-      "outputSchema": { "$ref": "../schemas/tip-submission.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "submissionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "submissionId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/tip-submission.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getSubmission",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "check-application-or-case-status"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

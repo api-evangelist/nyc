@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces LPC's open landmark data (landmarks, designated buildings, historic districts, designation reports, permit history, violations) bound under one LP_NUMBER-keyed model, and adds file_permit_application — the net-new write workflow locked today inside the Salesforce Portico portal.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces LPC's open landmark data (landmarks, designated buildings, historic districts, designation reports, permit history, violations) bound under one LP_NUMBER-keyed model, and adds file_permit_application \u2014 the net-new write workflow locked today inside the Salesforce Portico portal.",
     "openapi": "../openapi/lpc.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.lpc",
     "title": "NYC Landmarks Preservation Commission (LPC)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Landmarks Preservation Commission — individual/interior/scenic landmarks, the designated-building database (architect, style, materials, dates), historic districts, designation and archaeology reports, issued permit history, and landmark violations from NYC Open Data, plus the net-new ability to file a landmark permit application (Certificate of Appropriateness / No Effect) that today lives only in the Salesforce Portico portal.",
-    "instructions": "Use find_landmarks / get_landmark (and get_landmark_buildings) to locate designations by borough, type, historic district, or LP number and drill into their buildings. find_buildings searches the architectural building database by architect, style, or lot. find_historic_districts covers area designations. find_designation_reports returns designation and archaeology reports. find_permits searches the OPEN, issued permit history (Certificates of Appropriateness / No Effect). find_violations covers landmark complaints and violations. file_permit_application (net-new) files a new LPC permit application; it requires an authenticated applicant and mutates state — confirm the property (address/BBL/LP number), permit type, and scope of work with the user before submitting, and note that Certificate of Appropriateness filings go to a public hearing."
+    "description": "Agent-native access to the NYC Landmarks Preservation Commission \u2014 individual/interior/scenic landmarks, the designated-building database (architect, style, materials, dates), historic districts, designation and archaeology reports, issued permit history, and landmark violations from NYC Open Data, plus the net-new ability to file a landmark permit application (Certificate of Appropriateness / No Effect) that today lives only in the Salesforce Portico portal.",
+    "instructions": "Use find_landmarks / get_landmark (and get_landmark_buildings) to locate designations by borough, type, historic district, or LP number and drill into their buildings. find_buildings searches the architectural building database by architect, style, or lot. find_historic_districts covers area designations. find_designation_reports returns designation and archaeology reports. find_permits searches the OPEN, issued permit history (Certificates of Appropriateness / No Effect). find_violations covers landmark complaints and violations. file_permit_application (net-new) files a new LPC permit application; it requires an authenticated applicant and mutates state \u2014 confirm the property (address/BBL/LP number), permit type, and scope of work with the user before submitting, and note that Certificate of Appropriateness filings go to a public hearing."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_landmarks",
@@ -23,37 +27,126 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "landmarkType": { "type": "string", "enum": ["Individual Landmark", "Interior Landmark", "Scenic Landmark", "Historic District", "Historic District Extension"] },
-          "siteStatus": { "type": "string" },
-          "historicDistrict": { "type": "string" },
-          "bbl": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "landmarkType": {
+            "type": "string",
+            "enum": [
+              "Individual Landmark",
+              "Interior Landmark",
+              "Scenic Landmark",
+              "Historic District",
+              "Historic District Extension"
+            ]
+          },
+          "siteStatus": {
+            "type": "string"
+          },
+          "historicDistrict": {
+            "type": "string"
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/landmark.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listLandmarks"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/landmark.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listLandmarks",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_landmark",
       "title": "Get Landmark",
       "description": "Fetch a landmark designation (status, dates, address, geography) by LP number.",
-      "inputSchema": { "type": "object", "properties": { "lpNumber": { "type": "string" } }, "required": ["lpNumber"] },
-      "outputSchema": { "$ref": "../schemas/landmark.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getLandmark"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "lpNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "lpNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/landmark.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getLandmark",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_landmark_buildings",
       "title": "Get Landmark Buildings",
       "description": "List the designated buildings (with architect, style, materials, dates) within a landmark or historic district.",
-      "inputSchema": { "type": "object", "properties": { "lpNumber": { "type": "string" } }, "required": ["lpNumber"] },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/designated-building.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getLandmarkBuildings"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "lpNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "lpNumber"
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/designated-building.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getLandmarkBuildings",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_buildings",
@@ -62,19 +155,61 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "historicDistrict": { "type": "string" },
-          "architect": { "type": "string" },
-          "style": { "type": "string" },
-          "bbl": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "historicDistrict": {
+            "type": "string"
+          },
+          "architect": {
+            "type": "string"
+          },
+          "style": {
+            "type": "string"
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/designated-building.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listBuildings"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/designated-building.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listBuildings",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_historic_districts",
@@ -83,16 +218,52 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "siteStatus": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "siteStatus": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/historic-district.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listHistoricDistricts"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/historic-district.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listHistoricDistricts",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_designation_reports",
@@ -101,17 +272,59 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "reportType": { "type": "string", "enum": ["Designation Report", "Archaeology Report"] },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "lpNumber": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "reportType": {
+            "type": "string",
+            "enum": [
+              "Designation Report",
+              "Archaeology Report"
+            ]
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "lpNumber": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/designation-report.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listDesignationReports"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/designation-report.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listDesignationReports",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_permits",
@@ -120,20 +333,66 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "regulationType": { "type": "string" },
-          "workType": { "type": "string" },
-          "bbl": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "regulationType": {
+            "type": "string"
+          },
+          "workType": {
+            "type": "string"
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/permit-application.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPermitApplications"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/permit-application.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPermitApplications",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_violations",
@@ -142,44 +401,125 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "recordType": { "type": "string", "enum": ["Complaint", "Violation"] },
-          "status": { "type": "string" },
-          "bbl": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "recordType": {
+            "type": "string",
+            "enum": [
+              "Complaint",
+              "Violation"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/violation-order.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listViolations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/violation-order.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listViolations",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "list_my_permit_applications",
       "title": "List My Permit Applications",
-      "description": "List the authenticated applicant's own LPC permit applications and their status — today visible only inside the Salesforce Portico portal.",
+      "description": "List the authenticated applicant's own LPC permit applications and their status \u2014 today visible only inside the Salesforce Portico portal.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/landmark-permit-application.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/landmark-permit-application.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listMyPermitApplications",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "file_permit_application",
       "title": "File a Permit Application",
-      "description": "File an LPC landmark permit application (Certificate of Appropriateness, Certificate of No Effect, or Permit for Minor Work). NET-NEW workflow with no public API today — it lives only in the Salesforce Portico portal (portico.lpc.nyc.gov). Requires an authenticated applicant. Mutates state — confirm the property (address/BBL/LP number), permit type, and scope of work first; Certificate of Appropriateness filings go to a public hearing.",
-      "inputSchema": { "$ref": "../schemas/landmark-permit-application.json" },
-      "outputSchema": { "$ref": "../schemas/landmark-permit-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "File an LPC landmark permit application (Certificate of Appropriateness, Certificate of No Effect, or Permit for Minor Work). NET-NEW workflow with no public API today \u2014 it lives only in the Salesforce Portico portal (portico.lpc.nyc.gov). Requires an authenticated applicant. Mutates state \u2014 confirm the property (address/BBL/LP number), permit type, and scope of work first; Certificate of Appropriateness filings go to a public hearing.",
+      "inputSchema": {
+        "$ref": "../schemas/landmark-permit-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/landmark-permit-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createPermitApplication",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

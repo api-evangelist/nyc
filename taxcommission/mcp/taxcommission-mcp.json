@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Tax Commission's open outcome data (assessment actions, open Article 7 petitions) and adds file_appeal — the net-new write workflow locked today inside PDF forms and the online filing system.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Tax Commission's open outcome data (assessment actions, open Article 7 petitions) and adds file_appeal \u2014 the net-new write workflow locked today inside PDF forms and the online filing system.",
     "openapi": "../openapi/taxcommission.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.taxcommission",
     "title": "NYC Tax Commission",
     "version": "0.1.0",
-    "description": "Agent-native access to the New York City Tax Commission — the City's independent body for reviewing property-tax assessments. Search published assessment actions (granted reductions / reclassifications) and open Article 7 court petitions from NYC Open Data, look up a property / tax lot, and — net-new — file and track a property-tax assessment appeal (Application for Correction) that today lives only in PDF forms and the Commission's online filing system.",
-    "instructions": "The Department of Finance (DOF) SETS the tentative assessment; the Tax Commission HEARS the appeal of it. Use find_properties / get_property to locate a tax lot by BBL, borough, or block. find_assessment_actions searches the Commission's published reductions and reclassifications (outcomes only); find_article7_petitions / get_article7_petition cover the judicial escalation into NY State Supreme Court. file_appeal (net-new) files an Application for Correction; it requires an authenticated applicant and mutates state — confirm the tax year, tax lot (BBL), claim type, and any income & expense figures with the user before submitting, note the March 15/16 deadline, the $175 fee when assessed value is $2M or more, and the TC309 accountant's certification required at $5.4M or more. Use list_my_appeals / get_appeal to track status and get_determination for the Commission's offer or decision."
+    "description": "Agent-native access to the New York City Tax Commission \u2014 the City's independent body for reviewing property-tax assessments. Search published assessment actions (granted reductions / reclassifications) and open Article 7 court petitions from NYC Open Data, look up a property / tax lot, and \u2014 net-new \u2014 file and track a property-tax assessment appeal (Application for Correction) that today lives only in PDF forms and the Commission's online filing system.",
+    "instructions": "The Department of Finance (DOF) SETS the tentative assessment; the Tax Commission HEARS the appeal of it. Use find_properties / get_property to locate a tax lot by BBL, borough, or block. find_assessment_actions searches the Commission's published reductions and reclassifications (outcomes only); find_article7_petitions / get_article7_petition cover the judicial escalation into NY State Supreme Court. file_appeal (net-new) files an Application for Correction; it requires an authenticated applicant and mutates state \u2014 confirm the tax year, tax lot (BBL), claim type, and any income & expense figures with the user before submitting, note the March 15/16 deadline, the $175 fee when assessed value is $2M or more, and the TC309 accountant's certification required at $5.4M or more. Use list_my_appeals / get_appeal to track status and get_determination for the Commission's offer or decision."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_properties",
@@ -23,26 +27,80 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "block": { "type": "string" },
-          "taxClass": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "block": {
+            "type": "string"
+          },
+          "taxClass": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/property.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listProperties"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/property.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listProperties",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_property",
       "title": "Get Property",
       "description": "Fetch a NYC property / tax lot (address, owner, tax class, tentative assessed value) by BBL.",
-      "inputSchema": { "type": "object", "properties": { "bbl": { "type": "string" } }, "required": ["bbl"] },
-      "outputSchema": { "$ref": "../schemas/property.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getProperty"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bbl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bbl"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/property.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getProperty",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_assessment_actions",
@@ -51,18 +109,58 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "taxYear": { "type": "string" },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "block": { "type": "string" },
-          "taxClass": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "taxYear": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "block": {
+            "type": "string"
+          },
+          "taxClass": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/assessment-action.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listAssessmentActions"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/assessment-action.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listAssessmentActions",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_article7_petitions",
@@ -71,74 +169,209 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "petitionYear": { "type": "string" },
-          "attorney": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "petitionYear": {
+            "type": "string"
+          },
+          "attorney": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/article7-petition.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listArticle7Petitions"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/article7-petition.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listArticle7Petitions",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_article7_petition",
       "title": "Get Article 7 Petition",
       "description": "Fetch a single open Article 7 petition by its index number.",
-      "inputSchema": { "type": "object", "properties": { "indexNumber": { "type": "string" } }, "required": ["indexNumber"] },
-      "outputSchema": { "$ref": "../schemas/article7-petition.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getArticle7Petition"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "indexNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "indexNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/article7-petition.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getArticle7Petition",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "file_appeal",
       "title": "File an Assessment Appeal",
-      "description": "File a NYC property-tax assessment appeal (Application for Correction). NET-NEW workflow with no public API today — it lives only in PDF forms (TC101/TC108/TC109/TC106, income & expense TC201/203/208, TC309) and the Commission's online filing system. Requires an authenticated applicant. Mutates state — confirm tax year, tax lot (BBL), claim type, and income & expense figures first; note the March 15/16 deadline, the $175 fee at $2M+ assessed value, and the TC309 certification required at $5.4M+.",
-      "inputSchema": { "$ref": "../schemas/assessment-appeal.json" },
-      "outputSchema": { "$ref": "../schemas/assessment-appeal.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "File a NYC property-tax assessment appeal (Application for Correction). NET-NEW workflow with no public API today \u2014 it lives only in PDF forms (TC101/TC108/TC109/TC106, income & expense TC201/203/208, TC309) and the Commission's online filing system. Requires an authenticated applicant. Mutates state \u2014 confirm tax year, tax lot (BBL), claim type, and income & expense figures first; note the March 15/16 deadline, the $175 fee at $2M+ assessed value, and the TC309 certification required at $5.4M+.",
+      "inputSchema": {
+        "$ref": "../schemas/assessment-appeal.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/assessment-appeal.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createAssessmentAppeal",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "dispute-or-appeal"
     },
     {
       "name": "list_my_appeals",
       "title": "List My Appeals",
-      "description": "List the authenticated applicant's own assessment appeals and their status — today visible only inside the online filing system.",
+      "description": "List the authenticated applicant's own assessment appeals and their status \u2014 today visible only inside the online filing system.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Received", "Under Review", "Hearing Scheduled", "Offer Made", "Determined", "Withdrawn"] },
-          "taxYear": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Received",
+              "Under Review",
+              "Hearing Scheduled",
+              "Offer Made",
+              "Determined",
+              "Withdrawn"
+            ]
+          },
+          "taxYear": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/assessment-appeal.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/assessment-appeal.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listAssessmentAppeals",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_appeal",
       "title": "Get Appeal",
       "description": "Fetch one of the authenticated applicant's assessment appeals by application id.",
-      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
-      "outputSchema": { "$ref": "../schemas/assessment-appeal.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "applicationId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/assessment-appeal.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getAssessmentAppeal",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_determination",
       "title": "Get Determination",
       "description": "Fetch the Tax Commission's determination / offer on an appeal (granted reduction, reclassification, or no change).",
-      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
-      "outputSchema": { "$ref": "../schemas/determination.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "applicationId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/determination.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getDetermination",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

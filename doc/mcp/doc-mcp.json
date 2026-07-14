@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DOC's open accountability data (people in custody, facilities, daily population/security indicators, incidents) and adds schedule_visit and file_complaint — the net-new write workflows that today have no digital contract.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DOC's open accountability data (people in custody, facilities, daily population/security indicators, incidents) and adds schedule_visit and file_complaint \u2014 the net-new write workflows that today have no digital contract.",
     "openapi": "../openapi/doc.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.doc",
     "title": "NYC Department of Correction (DOC)",
     "version": "0.1.0",
-    "description": "Agent-native access to the New York City Department of Correction — people in custody (the daily in-custody snapshot and the live P.I.C. lookup), facilities, daily population and Local Law 33/85 security indicators, and safety/security incidents from NYC Open Data, plus the net-new ability to schedule a visit and file a complaint or records request that today have no public API.",
-    "instructions": "Use find_people_in_custody / get_person_in_custody to search the daily in-custody population or look up a person by NYSID, Book & Case number, or DOC inmate id (the live Inmate Lookup / 'P.I.C. Lookup'). find_facilities lists DOC jails (mostly on Rikers Island). find_daily_population answers population and security-indicator questions (Local Law 33 rates per 100 ADP, Article 730 waitlist, medical non-production). find_incidents covers deaths, slashings/stabbings, fights, assaults on staff, staff injuries, and lock-ins. schedule_visit (net-new) requests a visit with a person in custody and mutates state — confirm the person, facility, date, and visitor identity with the user before submitting. file_complaint (net-new) files a complaint, grievance, or records/FOIL request and also mutates state — confirm the type, subject, and description first. Handle all person-in-custody data as sensitive."
+    "description": "Agent-native access to the New York City Department of Correction \u2014 people in custody (the daily in-custody snapshot and the live P.I.C. lookup), facilities, daily population and Local Law 33/85 security indicators, and safety/security incidents from NYC Open Data, plus the net-new ability to schedule a visit and file a complaint or records request that today have no public API.",
+    "instructions": "Use find_people_in_custody / get_person_in_custody to search the daily in-custody population or look up a person by NYSID, Book & Case number, or DOC inmate id (the live Inmate Lookup / 'P.I.C. Lookup'). find_facilities lists DOC jails (mostly on Rikers Island). find_daily_population answers population and security-indicator questions (Local Law 33 rates per 100 ADP, Article 730 waitlist, medical non-production). find_incidents covers deaths, slashings/stabbings, fights, assaults on staff, staff injuries, and lock-ins. schedule_visit (net-new) requests a visit with a person in custody and mutates state \u2014 confirm the person, facility, date, and visitor identity with the user before submitting. file_complaint (net-new) files a complaint, grievance, or records/FOIL request and also mutates state \u2014 confirm the type, subject, and description first. Handle all person-in-custody data as sensitive."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_people_in_custody",
@@ -23,27 +27,76 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "nysid": { "type": "string" },
-          "bookAndCaseNumber": { "type": "string" },
-          "custodyLevel": { "type": "string" },
-          "facility": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "nysid": {
+            "type": "string"
+          },
+          "bookAndCaseNumber": {
+            "type": "string"
+          },
+          "custodyLevel": {
+            "type": "string"
+          },
+          "facility": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/person-in-custody.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPeopleInCustody"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/person-in-custody.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPeopleInCustody",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_person_in_custody",
       "title": "Get Person In Custody",
       "description": "Fetch a person in DOC custody (demographics, custody level, top charge, facility, admission/discharge) by DOC inmate id.",
-      "inputSchema": { "type": "object", "properties": { "inmateId": { "type": "string" } }, "required": ["inmateId"] },
-      "outputSchema": { "$ref": "../schemas/person-in-custody.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getPersonInCustody"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "inmateId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "inmateId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/person-in-custody.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getPersonInCustody",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_facilities",
@@ -52,16 +105,52 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "type": { "type": "string" },
-          "onRikersIsland": { "type": "boolean" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "type": {
+            "type": "string"
+          },
+          "onRikersIsland": {
+            "type": "boolean"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/facility.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listFacilities"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/facility.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listFacilities",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_daily_population",
@@ -70,72 +159,202 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "metric": { "type": "string" },
-          "facility": { "type": "string" },
-          "year": { "type": "integer" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "metric": {
+            "type": "string"
+          },
+          "facility": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/daily-population.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listDailyPopulation"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/daily-population.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listDailyPopulation",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_incidents",
       "title": "Find Incidents",
-      "description": "Search DOC safety/security incidents — deaths, slashings/stabbings, fights, assaults on staff, staff injuries, and emergency lock-ins — by type, facility, or date range.",
+      "description": "Search DOC safety/security incidents \u2014 deaths, slashings/stabbings, fights, assaults on staff, staff injuries, and emergency lock-ins \u2014 by type, facility, or date range.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "incidentType": { "type": "string", "enum": ["Death", "Slashing", "Stabbing", "Inmate Fight", "Assault on Staff", "Staff Injury (Class A)", "Use of Force", "Emergency Lock-In", "Other"] },
-          "facility": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "incidentType": {
+            "type": "string",
+            "enum": [
+              "Death",
+              "Slashing",
+              "Stabbing",
+              "Inmate Fight",
+              "Assault on Staff",
+              "Staff Injury (Class A)",
+              "Use of Force",
+              "Emergency Lock-In",
+              "Other"
+            ]
+          },
+          "facility": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/incident-report.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listIncidents"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/incident-report.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listIncidents",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_visits",
       "title": "List My Visits",
-      "description": "List the authenticated visitor's own scheduled visits and their status — today arranged only offline or through vendor portals.",
+      "description": "List the authenticated visitor's own scheduled visits and their status \u2014 today arranged only offline or through vendor portals.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Requested", "Confirmed", "Waitlisted", "Denied", "Cancelled", "Completed"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Requested",
+              "Confirmed",
+              "Waitlisted",
+              "Denied",
+              "Cancelled",
+              "Completed"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/visit.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/visit.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listVisits",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "schedule_visit",
       "title": "Schedule a Visit",
-      "description": "Request a visit with a person in DOC custody (report the person by NYSID, Book & Case number, or inmate id). NET-NEW workflow with no public API today — visits are arranged by phone, in person, or through vendor portals. Requires an authenticated visitor. Mutates state — confirm the person, facility, date, and visitor identity first.",
-      "inputSchema": { "$ref": "../schemas/visit.json" },
-      "outputSchema": { "$ref": "../schemas/visit.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Request a visit with a person in DOC custody (report the person by NYSID, Book & Case number, or inmate id). NET-NEW workflow with no public API today \u2014 visits are arranged by phone, in person, or through vendor portals. Requires an authenticated visitor. Mutates state \u2014 confirm the person, facility, date, and visitor identity first.",
+      "inputSchema": {
+        "$ref": "../schemas/visit.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/visit.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createVisit",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "schedule-or-reserve"
     },
     {
       "name": "file_complaint",
       "title": "File a Complaint or Records Request",
-      "description": "File a complaint, grievance, or records/FOIL request with DOC and receive a tracking number. NET-NEW workflow with no public API today — filed only by phone, mail, in person, or the citywide OpenRecords portal. Requires an authenticated user. Mutates state — confirm the type, subject, and description first.",
-      "inputSchema": { "$ref": "../schemas/complaint.json" },
-      "outputSchema": { "$ref": "../schemas/complaint.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "File a complaint, grievance, or records/FOIL request with DOC and receive a tracking number. NET-NEW workflow with no public API today \u2014 filed only by phone, mail, in person, or the citywide OpenRecords portal. Requires an authenticated user. Mutates state \u2014 confirm the type, subject, and description first.",
+      "inputSchema": {
+        "$ref": "../schemas/complaint.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createComplaint",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "report-a-problem-or-file-a-complaint"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

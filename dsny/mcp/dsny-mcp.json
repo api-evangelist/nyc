@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Exposes DSNY's already-existing but undocumented first-party APIs (collection-schedule geocoder, ePickups pickup-request API, CFC appointment API) plus the 51 DSNY Open Data datasets behind one agent contract.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Exposes DSNY's already-existing but undocumented first-party APIs (collection-schedule geocoder, ePickups pickup-request API, CFC appointment API) plus the 51 DSNY Open Data datasets behind one agent contract.",
     "openapi": "../openapi/dsny.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.dsny",
     "title": "NYC Sanitation (DSNY)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Department of Sanitation — collection schedules, districts and frequencies, drop-off sites (e-waste, food scrap, special waste, recycling bins), litter baskets, and monthly tonnage. Documents DSNY's hidden first-party APIs (the collection-schedule geocoder, the ePickups pickup-request API, the CFC appointment API) behind one owned surface; adds a bulk-pickup scheduling contract.",
-    "instructions": "Use get_collection_schedule for 'when is my trash/recycling/compost collected?' (fronts the DSNY geocoder). find_districts / get_district cover DSNY operational districts and collection frequencies. find_drop_off_sites answers 'where can I drop off electronics / food scraps / batteries?'. find_litter_baskets queries the corner-basket inventory. find_tonnage answers 'how much did my district recycle?' from Open Data. schedule_bulk_pickup (net-new) requires an authenticated user and mutates state — confirm items, address, and date with the user before submitting."
+    "description": "Agent-native access to the NYC Department of Sanitation \u2014 collection schedules, districts and frequencies, drop-off sites (e-waste, food scrap, special waste, recycling bins), litter baskets, and monthly tonnage. Documents DSNY's hidden first-party APIs (the collection-schedule geocoder, the ePickups pickup-request API, the CFC appointment API) behind one owned surface; adds a bulk-pickup scheduling contract.",
+    "instructions": "Use get_collection_schedule for 'when is my trash/recycling/compost collected?' (fronts the DSNY geocoder). find_districts / get_district cover DSNY operational districts and collection frequencies. find_drop_off_sites answers 'where can I drop off electronics / food scraps / batteries?'. find_litter_baskets queries the corner-basket inventory. find_tonnage answers 'how much did my district recycle?' from Open Data. schedule_bulk_pickup (net-new) requires an authenticated user and mutates state \u2014 confirm items, address, and date with the user before submitting."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "get_collection_schedule",
@@ -23,14 +27,33 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "address": { "type": "string" },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] }
+          "address": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          }
         },
-        "required": ["address"]
+        "required": [
+          "address"
+        ]
       },
-      "outputSchema": { "$ref": "../schemas/collection-schedule.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getCollectionSchedule"
+      "outputSchema": {
+        "$ref": "../schemas/collection-schedule.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getCollectionSchedule",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_districts",
@@ -39,23 +62,71 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/sanitation-district.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listSanitationDistricts"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/sanitation-district.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listSanitationDistricts",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_district",
       "title": "Get Sanitation District",
       "description": "Get a DSNY district (e.g. 'MN01') and its collection frequencies by code.",
-      "inputSchema": { "type": "object", "properties": { "district": { "type": "string" } }, "required": ["district"] },
-      "outputSchema": { "$ref": "../schemas/sanitation-district.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getSanitationDistrict"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "district": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "district"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/sanitation-district.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getSanitationDistrict",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_drop_off_sites",
@@ -64,17 +135,64 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "materialType": { "type": "string", "enum": ["Electronics", "Food Scrap / Compost", "Special Waste", "Public Recycling Bin", "Textiles", "Reuse / Donation", "Other"] },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "district": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "materialType": {
+            "type": "string",
+            "enum": [
+              "Electronics",
+              "Food Scrap / Compost",
+              "Special Waste",
+              "Public Recycling Bin",
+              "Textiles",
+              "Reuse / Donation",
+              "Other"
+            ]
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "district": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/drop-off-site.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listDropOffSites"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/drop-off-site.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listDropOffSites",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_litter_baskets",
@@ -83,15 +201,42 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "section": { "type": "string" },
-          "basketType": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "section": {
+            "type": "string"
+          },
+          "basketType": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/litter-basket.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listLitterBaskets"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/litter-basket.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listLitterBaskets",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_tonnage",
@@ -100,27 +245,79 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "communityDistrict": { "type": "string" },
-          "from": { "type": "string" },
-          "to": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "communityDistrict": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/tonnage.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listTonnage"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/tonnage.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listTonnage",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "schedule_bulk_pickup",
       "title": "Schedule Bulk Pickup",
-      "description": "Schedule a bulk / large-item, CFC-appliance, electronics, or special-waste pickup appointment. NET-NEW owned contract over the existing but undocumented ePickups backend. Requires an authenticated user. Mutates state — confirm items, address, and date with the user first.",
-      "inputSchema": { "$ref": "../schemas/bulk-pickup-request.json" },
-      "outputSchema": { "$ref": "../schemas/bulk-pickup-request.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Schedule a bulk / large-item, CFC-appliance, electronics, or special-waste pickup appointment. NET-NEW owned contract over the existing but undocumented ePickups backend. Requires an authenticated user. Mutates state \u2014 confirm items, address, and date with the user first.",
+      "inputSchema": {
+        "$ref": "../schemas/bulk-pickup-request.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/bulk-pickup-request.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createBulkPickupRequest",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "schedule-or-reserve"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

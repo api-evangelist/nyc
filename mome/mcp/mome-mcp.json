@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces MOME's flagship open data (Film Permits, the ScreenActivity held locations inside them, MARCH nightlife inspections, and MOME programs) and adds apply_for_film_permit — the net-new write workflow locked today inside the login-walled 'MOME E-Apply' ASP.NET portal.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces MOME's flagship open data (Film Permits, the ScreenActivity held locations inside them, MARCH nightlife inspections, and MOME programs) and adds apply_for_film_permit \u2014 the net-new write workflow locked today inside the login-walled 'MOME E-Apply' ASP.NET portal.",
     "openapi": "../openapi/mome.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.mome",
     "title": "NYC Mayor's Office of Media & Entertainment (MOME)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Mayor's Office of Media & Entertainment — the famous Film Permits open dataset (every location shoot the Film Office greenlights, updated daily), the held street locations inside each permit, MARCH nightlife inspections, and MOME's programs (Made in NY, Office of Nightlife, Public Access Media) — plus the net-new ability to apply for and track a film/photography permit that today lives only in the login-walled MOME E-Apply portal.",
-    "instructions": "Use find_film_permits / get_film_permit to search issued permits by borough, production category, or date, and get_film_permit_locations (or find_screen_activity) to see exactly which streets a shoot holds. find_march_inspections covers Office of Nightlife MARCH enforcement. find_programs enumerates MOME's non-permit surface (Made in NY, workforce, Public Access Media). apply_for_film_permit (net-new) submits a film-permit application; it requires an authenticated applicant and mutates state — confirm the production, category, dates, and locations with the user before submitting, and note that insurance must be on file before a permit is issued (or set letterInLieu for low-impact exterior shoots)."
+    "description": "Agent-native access to the NYC Mayor's Office of Media & Entertainment \u2014 the famous Film Permits open dataset (every location shoot the Film Office greenlights, updated daily), the held street locations inside each permit, MARCH nightlife inspections, and MOME's programs (Made in NY, Office of Nightlife, Public Access Media) \u2014 plus the net-new ability to apply for and track a film/photography permit that today lives only in the login-walled MOME E-Apply portal.",
+    "instructions": "Use find_film_permits / get_film_permit to search issued permits by borough, production category, or date, and get_film_permit_locations (or find_screen_activity) to see exactly which streets a shoot holds. find_march_inspections covers Office of Nightlife MARCH enforcement. find_programs enumerates MOME's non-permit surface (Made in NY, workforce, Public Access Media). apply_for_film_permit (net-new) submits a film-permit application; it requires an authenticated applicant and mutates state \u2014 confirm the production, category, dates, and locations with the user before submitting, and note that insurance must be on file before a permit is issued (or set letterInLieu for low-impact exterior shoots)."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_film_permits",
@@ -23,74 +27,250 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "category": { "type": "string", "enum": ["Film", "Television", "Commercial", "Still Photography", "WEB", "Music Video", "Theater", "Documentary", "Student", "Red Carpet/Premiere", "Other"] },
-          "eventType": { "type": "string" },
-          "subCategoryName": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "Film",
+              "Television",
+              "Commercial",
+              "Still Photography",
+              "WEB",
+              "Music Video",
+              "Theater",
+              "Documentary",
+              "Student",
+              "Red Carpet/Premiere",
+              "Other"
+            ]
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "subCategoryName": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/film-permit.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listFilmPermits"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/film-permit.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listFilmPermits",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_film_permit",
       "title": "Get Film Permit",
       "description": "Fetch a single issued film permit (type, production category, dates, held streets, geography) by EventID.",
-      "inputSchema": { "type": "object", "properties": { "eventId": { "type": "string" } }, "required": ["eventId"] },
-      "outputSchema": { "$ref": "../schemas/film-permit.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getFilmPermit"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "eventId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/film-permit.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getFilmPermit",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_film_permit_locations",
       "title": "Get Film Permit Locations",
       "description": "List the held screen-activity street segments within a film permit (the permit's ParkingHeld exploded).",
-      "inputSchema": { "type": "object", "properties": { "eventId": { "type": "string" } }, "required": ["eventId"] },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/screen-activity.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getFilmPermitLocations"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "eventId"
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/screen-activity.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getFilmPermitLocations",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_screen_activity",
       "title": "Find Screen Activity",
-      "description": "Search held film locations across all permits — where is filming happening, by street, borough, or date.",
+      "description": "Search held film locations across all permits \u2014 where is filming happening, by street, borough, or date.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "streetName": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "streetName": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/screen-activity.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listScreenActivity"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/screen-activity.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listScreenActivity",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_programs",
       "title": "Find Programs",
-      "description": "List MOME programs and designated resources — Made in NY, Office of Nightlife, workforce/training, press credentials, and Public Access Media providers.",
+      "description": "List MOME programs and designated resources \u2014 Made in NY, Office of Nightlife, workforce/training, press credentials, and Public Access Media providers.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "programType": { "type": "string", "enum": ["Made in NY", "Workforce/Training", "Nightlife", "Public Access Media", "Press Credentials", "Marketing/Discount", "Grant/Funding", "Other"] },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "programType": {
+            "type": "string",
+            "enum": [
+              "Made in NY",
+              "Workforce/Training",
+              "Nightlife",
+              "Public Access Media",
+              "Press Credentials",
+              "Marketing/Discount",
+              "Grant/Funding",
+              "Other"
+            ]
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/media-program.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPrograms"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/media-program.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPrograms",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_march_inspections",
@@ -99,44 +279,135 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "councilDistrict": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 51
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/march-inspection.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listMarchInspections"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/march-inspection.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listMarchInspections",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_permit_applications",
       "title": "List My Permit Applications",
-      "description": "List the authenticated applicant's own film-permit applications and their status — today visible only inside the MOME E-Apply portal.",
+      "description": "List the authenticated applicant's own film-permit applications and their status \u2014 today visible only inside the MOME E-Apply portal.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Draft", "Submitted", "Under Review", "Insurance Pending", "Approved", "Permit Issued", "Denied", "Cancelled"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Draft",
+              "Submitted",
+              "Under Review",
+              "Insurance Pending",
+              "Approved",
+              "Permit Issued",
+              "Denied",
+              "Cancelled"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/film-permit-application.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/film-permit-application.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listPermitApplications",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "apply_for_film_permit",
       "title": "Apply for a Film Permit",
-      "description": "Submit a NYC film/photography permit application. NET-NEW workflow with no public API today — it lives only in the login-walled 'MOME E-Apply' ASP.NET portal or a Letter-in-Lieu email. Requires an authenticated applicant. Mutates state — confirm production, category, dates, and held locations first; insurance must be on file before a permit is issued.",
-      "inputSchema": { "$ref": "../schemas/film-permit-application.json" },
-      "outputSchema": { "$ref": "../schemas/film-permit-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit a NYC film/photography permit application. NET-NEW workflow with no public API today \u2014 it lives only in the login-walled 'MOME E-Apply' ASP.NET portal or a Letter-in-Lieu email. Requires an authenticated applicant. Mutates state \u2014 confirm production, category, dates, and held locations first; insurance must be on file before a permit is issued.",
+      "inputSchema": {
+        "$ref": "../schemas/film-permit-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/film-permit-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createPermitApplication",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

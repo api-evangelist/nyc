@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DVS's open reference and de-identified service data (resource map, veteran-owned businesses, assistance requests, cases, aggregate client statistics) and adds make_referral — the net-new write workflow locked today inside the third-party VetConnectNYC portal (Combined Arms).",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DVS's open reference and de-identified service data (resource map, veteran-owned businesses, assistance requests, cases, aggregate client statistics) and adds make_referral \u2014 the net-new write workflow locked today inside the third-party VetConnectNYC portal (Combined Arms).",
     "openapi": "../openapi/dvs.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.dvs",
     "title": "NYC Department of Veterans' Services (DVS)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Department of Veterans' Services — the DVS Resource Map, NYC veteran-owned businesses, de-identified assistance requests, cases, and aggregate client demographics from NYC Open Data, plus the net-new ability to make and track a VetConnectNYC care-coordination referral (connect a veteran to services) that today lives only in the third-party Combined Arms portal.",
-    "instructions": "Use find_veteran_resources / get_veteran_resource to locate veteran-serving resources in the DVS Resource Map by borough, service, or walk-in availability, and find_veteran_owned_businesses to search the veteran-owned business directory. find_assistance_requests, find_cases, and find_client_statistics answer analytics questions over DVS's de-identified service data — find_client_statistics returns AGGREGATE demographics only, never an identifiable veteran. make_referral (net-new) creates a VetConnectNYC care-coordination referral; it requires an authenticated user and mutates state — confirm the service needed, the veteran's borough/branch, and the details with the user before submitting, and set urgent=true for imminent homelessness, no food, or crisis so it escalates to a Veteran Resource Center instead of the standard 3-5 business-day queue."
+    "description": "Agent-native access to the NYC Department of Veterans' Services \u2014 the DVS Resource Map, NYC veteran-owned businesses, de-identified assistance requests, cases, and aggregate client demographics from NYC Open Data, plus the net-new ability to make and track a VetConnectNYC care-coordination referral (connect a veteran to services) that today lives only in the third-party Combined Arms portal.",
+    "instructions": "Use find_veteran_resources / get_veteran_resource to locate veteran-serving resources in the DVS Resource Map by borough, service, or walk-in availability, and find_veteran_owned_businesses to search the veteran-owned business directory. find_assistance_requests, find_cases, and find_client_statistics answer analytics questions over DVS's de-identified service data \u2014 find_client_statistics returns AGGREGATE demographics only, never an identifiable veteran. make_referral (net-new) creates a VetConnectNYC care-coordination referral; it requires an authenticated user and mutates state \u2014 confirm the service needed, the veteran's borough/branch, and the details with the user before submitting, and set urgent=true for imminent homelessness, no food, or crisis so it escalates to a Veteran Resource Center instead of the standard 3-5 business-day queue."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_veteran_resources",
@@ -23,26 +27,80 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "service": { "type": "string" },
-          "walkIn": { "type": "boolean" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "service": {
+            "type": "string"
+          },
+          "walkIn": {
+            "type": "boolean"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/veteran-resource.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listVeteranResources"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/veteran-resource.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listVeteranResources",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_veteran_resource",
       "title": "Get Veteran Resource",
       "description": "Fetch a single DVS Resource Map entry by its DVS_RES_ID.",
-      "inputSchema": { "type": "object", "properties": { "dvsResId": { "type": "string" } }, "required": ["dvsResId"] },
-      "outputSchema": { "$ref": "../schemas/veteran-resource.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getVeteranResource"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "dvsResId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "dvsResId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/veteran-resource.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getVeteranResource",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_veteran_owned_businesses",
@@ -51,18 +109,60 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "service": { "type": "string" },
-          "certifications": { "type": "string" },
-          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "service": {
+            "type": "string"
+          },
+          "certifications": {
+            "type": "string"
+          },
+          "councilDistrict": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 51
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/veteran-owned-business.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listVeteranOwnedBusinesses"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/veteran-owned-business.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listVeteranOwnedBusinesses",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_assistance_requests",
@@ -71,18 +171,58 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "fiscalYear": { "type": "string" },
-          "issueReason": { "type": "string" },
-          "vetConnectNyc": { "type": "boolean" },
-          "branch": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "fiscalYear": {
+            "type": "string"
+          },
+          "issueReason": {
+            "type": "string"
+          },
+          "vetConnectNyc": {
+            "type": "boolean"
+          },
+          "branch": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/assistance-request.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listAssistanceRequests"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/assistance-request.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listAssistanceRequests",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_cases",
@@ -91,16 +231,45 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "serviceType": { "type": "string" },
-          "caseStatus": { "type": "string" },
-          "calendarYear": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "serviceType": {
+            "type": "string"
+          },
+          "caseStatus": {
+            "type": "string"
+          },
+          "calendarYear": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/case.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCases"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/case.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCases",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_client_statistics",
@@ -109,43 +278,120 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "calendarYear": { "type": "string" },
-          "branch": { "type": "string" },
-          "serviceEra": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "calendarYear": {
+            "type": "string"
+          },
+          "branch": {
+            "type": "string"
+          },
+          "serviceEra": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/client-statistics.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listClientStatistics"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/client-statistics.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listClientStatistics",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_referrals",
       "title": "List My Referrals",
-      "description": "List the authenticated veteran's own VetConnectNYC care-coordination referrals and their status — today visible only inside the Combined Arms portal.",
+      "description": "List the authenticated veteran's own VetConnectNYC care-coordination referrals and their status \u2014 today visible only inside the Combined Arms portal.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Submitted", "Received", "In Coordination", "Referred", "Enrolled", "Closed", "Declined"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Submitted",
+              "Received",
+              "In Coordination",
+              "Referred",
+              "Enrolled",
+              "Closed",
+              "Declined"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-referral.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/service-referral.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listReferrals",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "make_referral",
       "title": "Make a Referral",
-      "description": "Create a VetConnectNYC care-coordination referral (connect a veteran to services). NET-NEW workflow with no public API today — it lives only in the third-party Combined Arms 'Military Resource Portal' and a manual 3-5 business-day DVS Care Coordinator queue. Requires an authenticated user. Mutates state — confirm the service needed, the veteran's borough/branch, and the details first; set urgent=true for imminent homelessness, no food, or crisis.",
-      "inputSchema": { "$ref": "../schemas/service-referral.json" },
-      "outputSchema": { "$ref": "../schemas/service-referral.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Create a VetConnectNYC care-coordination referral (connect a veteran to services). NET-NEW workflow with no public API today \u2014 it lives only in the third-party Combined Arms 'Military Resource Portal' and a manual 3-5 business-day DVS Care Coordinator queue. Requires an authenticated user. Mutates state \u2014 confirm the service needed, the veteran's borough/branch, and the details first; set urgent=true for imminent homelessness, no food, or crisis.",
+      "inputSchema": {
+        "$ref": "../schemas/service-referral.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/service-referral.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createReferral",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

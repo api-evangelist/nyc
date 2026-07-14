@@ -4,6 +4,9 @@ Where the NYC — API & Agent Modernization project is headed. Derived from the 
 
 ## Now / next
 
+### 🟢 The Programmable City — API · MCP · Skills experience layer — **shipped**
+The design-first payoff, assembled: the **REST operation → MCP tool → Agent Skill** chain across all 67 agencies in one place ([experience.html](https://nyc.apievangelist.com/experience.html)), built on the [API Experience](https://experience.apicommons.org) model. **721 operations, 624 MCP tools**, mapped to **ten common government processes** (Apply, Report, Request-records, Schedule, Register, Dispute, Pay + look-up-a-place, check-status, search-data), plus **7 cross-agency MCP prompts** and **7 resources** anchored on nyc-commons. Machine artifacts (`experience/`): one unified OpenAPI with `x-mcp-tool`/`x-agent-skill` on every operation, a NYC-wide MCP definition, an APIs.json descriptor (opens in experience.apicommons.org), and the ten Agent Skills. `scripts/build-experience.py` regenerates it all. **Next:** deepen per-domain MCP prompts/resources; deploy a live reference gateway for one process end-to-end (e.g. *look up a place*).
+
 ### 🟢 `nyc-commons` — the shared schema set (HIGH priority) — **shipped v0.1.0**
 The synthesis's clearest structural finding: writing one `_common.json` per domain surfaced the **same fields in every domain** — `Borough` (all 67), `Coordinates` (all 67), a geography spine (56), `Address` (15), `Money` (13). Parks facilities, DOE schools, Council funding, and BOE poll sites all carry them.
 

@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Exposes HPD's already-existing-but-private backend (mspwvw-hpdleov3.nyc.gov/hpdonline.api) and the 47 Open Data datasets behind one agent contract; adds housing lottery application and maintenance complaint writes.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Exposes HPD's already-existing-but-private backend (mspwvw-hpdleov3.nyc.gov/hpdonline.api) and the 47 Open Data datasets behind one agent contract; adds housing lottery application and maintenance complaint writes.",
     "openapi": "../openapi/hpd.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.hpd",
     "title": "NYC Housing (HPD)",
     "version": "0.1.0",
-    "description": "Agent-native access to NYC Housing Preservation & Development — buildings, Housing Maintenance Code violations, complaints, owner registrations, housing litigation, and affordable-housing production. Exposes the private HPD Online backend and the 47 HPD Open Data datasets behind one owned surface; adds affordable-housing lottery applications and maintenance complaints as writes.",
-    "instructions": "Use find_buildings / get_building to locate a property (by address, BBL, BIN, or Building ID), then get_building_violations and get_building_complaints for its conditions record. find_violations and find_complaints search citywide. find_registrations answers 'who owns / manages this building?'. find_litigation covers HPD housing-court cases and harassment findings. find_affordable_housing covers Housing New York production by building/project. file_complaint and apply_to_lottery (net-new) mutate state and carry PII — confirm every field with the user before submitting, and never invent applicant details."
+    "description": "Agent-native access to NYC Housing Preservation & Development \u2014 buildings, Housing Maintenance Code violations, complaints, owner registrations, housing litigation, and affordable-housing production. Exposes the private HPD Online backend and the 47 HPD Open Data datasets behind one owned surface; adds affordable-housing lottery applications and maintenance complaints as writes.",
+    "instructions": "Use find_buildings / get_building to locate a property (by address, BBL, BIN, or Building ID), then get_building_violations and get_building_complaints for its conditions record. find_violations and find_complaints search citywide. find_registrations answers 'who owns / manages this building?'. find_litigation covers HPD housing-court cases and harassment findings. find_affordable_housing covers Housing New York production by building/project. file_complaint and apply_to_lottery (net-new) mutate state and carry PII \u2014 confirm every field with the user before submitting, and never invent applicant details."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_buildings",
@@ -23,29 +27,91 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "bbl": { "type": "string" },
-          "bin": { "type": "string" },
-          "block": { "type": "string" },
-          "lot": { "type": "string" },
-          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "bin": {
+            "type": "string"
+          },
+          "block": {
+            "type": "string"
+          },
+          "lot": {
+            "type": "string"
+          },
+          "councilDistrict": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 51
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/building.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listBuildings"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/building.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listBuildings",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_building",
       "title": "Get Building",
       "description": "Fetch a building by HPD Building ID.",
-      "inputSchema": { "type": "object", "properties": { "buildingId": { "type": "string" } }, "required": ["buildingId"] },
-      "outputSchema": { "$ref": "../schemas/building.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getBuilding"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "buildingId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "buildingId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/building.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getBuilding",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_building_violations",
@@ -54,24 +120,80 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "buildingId": { "type": "string" },
-          "status": { "type": "string", "enum": ["Open", "Close"] },
-          "class": { "type": "string", "enum": ["A", "B", "C", "I"] }
+          "buildingId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Open",
+              "Close"
+            ]
+          },
+          "class": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "I"
+            ]
+          }
         },
-        "required": ["buildingId"]
+        "required": [
+          "buildingId"
+        ]
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/violation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getBuildingViolations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/violation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getBuildingViolations",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_building_complaints",
       "title": "Get Building Complaints",
       "description": "List a building's tenant complaints and their problems.",
-      "inputSchema": { "type": "object", "properties": { "buildingId": { "type": "string" } }, "required": ["buildingId"] },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/complaint.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getBuildingComplaints"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "buildingId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "buildingId"
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/complaint.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getBuildingComplaints",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_violations",
@@ -80,19 +202,66 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "buildingId": { "type": "string" },
-          "bbl": { "type": "string" },
-          "class": { "type": "string", "enum": ["A", "B", "C", "I"] },
-          "status": { "type": "string", "enum": ["Open", "Close"] },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "buildingId": {
+            "type": "string"
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "I"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Open",
+              "Close"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/violation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listViolations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/violation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listViolations",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_complaints",
@@ -101,18 +270,57 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "buildingId": { "type": "string" },
-          "status": { "type": "string", "enum": ["OPEN", "CLOSE"] },
-          "majorCategory": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "buildingId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "CLOSE"
+            ]
+          },
+          "majorCategory": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/complaint.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listComplaints"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/complaint.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listComplaints",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_registrations",
@@ -121,16 +329,52 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "buildingId": { "type": "string" },
-          "bbl": { "type": "string" },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "buildingId": {
+            "type": "string"
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/registration.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listRegistrations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/registration.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listRegistrations",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_litigation",
@@ -139,17 +383,57 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "buildingId": { "type": "string" },
-          "caseType": { "type": "string" },
-          "caseStatus": { "type": "string", "enum": ["PENDING", "CLOSED"] },
-          "findingOfHarassment": { "type": "string", "enum": ["Yes", "No", "Pending"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "buildingId": {
+            "type": "string"
+          },
+          "caseType": {
+            "type": "string"
+          },
+          "caseStatus": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "CLOSED"
+            ]
+          },
+          "findingOfHarassment": {
+            "type": "string",
+            "enum": [
+              "Yes",
+              "No",
+              "Pending"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/litigation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listLitigation"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/litigation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listLitigation",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_affordable_housing",
@@ -158,39 +442,109 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
-          "reportingConstructionType": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "councilDistrict": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 51
+          },
+          "reportingConstructionType": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/affordable-housing-project.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listAffordableHousingProjects"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/affordable-housing-project.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listAffordableHousingProjects",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "file_complaint",
       "title": "File Maintenance Complaint",
-      "description": "File an HPD maintenance complaint against a building. NET-NEW write with no public API today (only 311 / web UI). Requires an authenticated user and mutates state — confirm details first.",
-      "inputSchema": { "$ref": "../schemas/complaint.json" },
-      "outputSchema": { "$ref": "../schemas/complaint.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "File an HPD maintenance complaint against a building. NET-NEW write with no public API today (only 311 / web UI). Requires an authenticated user and mutates state \u2014 confirm details first.",
+      "inputSchema": {
+        "$ref": "../schemas/complaint.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createComplaint",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "report-a-problem-or-file-a-complaint"
     },
     {
       "name": "apply_to_lottery",
       "title": "Apply to Housing Lottery",
-      "description": "Submit an NYC Housing Connect affordable-housing lottery application. NET-NEW workflow — Housing Connect has no public API today. Requires an authenticated household; carries PII and mutates state — confirm every field with the user and never invent applicant details.",
-      "inputSchema": { "$ref": "../schemas/housing-lottery-application.json" },
-      "outputSchema": { "$ref": "../schemas/housing-lottery-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit an NYC Housing Connect affordable-housing lottery application. NET-NEW workflow \u2014 Housing Connect has no public API today. Requires an authenticated household; carries PII and mutates state \u2014 confirm every field with the user and never invent applicant details.",
+      "inputSchema": {
+        "$ref": "../schemas/housing-lottery-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/housing-lottery-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createLotteryApplication",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

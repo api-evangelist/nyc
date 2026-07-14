@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces CCRB's open accountability data (complaints, allegations, accused officers, penalties) and adds file_misconduct_complaint — the net-new write workflow that today lives only in the online web form or a 311 call.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces CCRB's open accountability data (complaints, allegations, accused officers, penalties) and adds file_misconduct_complaint \u2014 the net-new write workflow that today lives only in the online web form or a 311 call.",
     "openapi": "../openapi/ccrb.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.ccrb",
     "title": "NYC Civilian Complaint Review Board (CCRB)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Civilian Complaint Review Board — closed misconduct complaints, per-allegation FADO records, accused-officer complaint histories, and discipline/penalty outcomes from CCRB's Data Transparency Initiative and NYC Open Data, plus the net-new ability to file a police-misconduct complaint against an officer, which today lives only in the online web form.",
-    "instructions": "Use find_complaints / get_complaint (and get_complaint_allegations) to search closed NYPD-misconduct complaints by borough, precinct, disposition, or date and drill into their allegations. find_allegations searches the finest-grain FADO records (Force, Abuse of Authority, Discourtesy, Offensive Language) with CCRB/NYPD dispositions. find_officers / get_officer return accused-officer complaint histories keyed on Tax ID; find_penalties returns discipline outcomes for substantiated cases (APU + NYPD). file_misconduct_complaint (net-new) files a new complaint against an officer; it mutates state — confirm the incident description, FADO category, location, and any officer identification with the user before submitting, and note that complaints may be filed anonymously but CCRB cannot follow up without contact information. check_complaint_status reads a filed complaint's status by tracking number."
+    "description": "Agent-native access to the NYC Civilian Complaint Review Board \u2014 closed misconduct complaints, per-allegation FADO records, accused-officer complaint histories, and discipline/penalty outcomes from CCRB's Data Transparency Initiative and NYC Open Data, plus the net-new ability to file a police-misconduct complaint against an officer, which today lives only in the online web form.",
+    "instructions": "Use find_complaints / get_complaint (and get_complaint_allegations) to search closed NYPD-misconduct complaints by borough, precinct, disposition, or date and drill into their allegations. find_allegations searches the finest-grain FADO records (Force, Abuse of Authority, Discourtesy, Offensive Language) with CCRB/NYPD dispositions. find_officers / get_officer return accused-officer complaint histories keyed on Tax ID; find_penalties returns discipline outcomes for substantiated cases (APU + NYPD). file_misconduct_complaint (net-new) files a new complaint against an officer; it mutates state \u2014 confirm the incident description, FADO category, location, and any officer identification with the user before submitting, and note that complaints may be filed anonymously but CCRB cannot follow up without contact information. check_complaint_status reads a filed complaint's status by tracking number."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_complaints",
@@ -23,37 +27,121 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "precinct": { "type": "string" },
-          "disposition": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "precinct": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/complaint.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listComplaints"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/complaint.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listComplaints",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_complaint",
       "title": "Get Complaint",
       "description": "Fetch a single misconduct complaint (incident, disposition, evidence flags, geography) by Complaint Id.",
-      "inputSchema": { "type": "object", "properties": { "complaintId": { "type": "string" } }, "required": ["complaintId"] },
-      "outputSchema": { "$ref": "../schemas/complaint.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getComplaint"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "complaintId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "complaintId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getComplaint",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_complaint_allegations",
       "title": "Get Complaint Allegations",
       "description": "List the individual FADO allegations recorded within a complaint.",
-      "inputSchema": { "type": "object", "properties": { "complaintId": { "type": "string" } }, "required": ["complaintId"] },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/allegation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getComplaintAllegations"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "complaintId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "complaintId"
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/allegation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getComplaintAllegations",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_allegations",
@@ -62,18 +150,57 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "fadoType": { "type": "string", "enum": ["Force", "Abuse of Authority", "Discourtesy", "Offensive Language"] },
-          "allegation": { "type": "string" },
-          "ccrbAllegationDisposition": { "type": "string" },
-          "taxId": { "type": "string" },
-          "complaintId": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "fadoType": {
+            "type": "string",
+            "enum": [
+              "Force",
+              "Abuse of Authority",
+              "Discourtesy",
+              "Offensive Language"
+            ]
+          },
+          "allegation": {
+            "type": "string"
+          },
+          "ccrbAllegationDisposition": {
+            "type": "string"
+          },
+          "taxId": {
+            "type": "string"
+          },
+          "complaintId": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/allegation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listAllegations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/allegation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listAllegations",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_officers",
@@ -82,27 +209,78 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "command": { "type": "string" },
-          "rank": { "type": "string" },
-          "minComplaints": { "type": "integer", "minimum": 0 },
-          "minSubstantiated": { "type": "integer", "minimum": 0 },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "command": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "string"
+          },
+          "minComplaints": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minSubstantiated": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/police-officer.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listOfficers"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/police-officer.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listOfficers",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_officer",
       "title": "Get Officer",
       "description": "Fetch an accused officer's complaint profile (rank, command, total and substantiated complaints) by NYPD Tax ID.",
-      "inputSchema": { "type": "object", "properties": { "taxId": { "type": "string" } }, "required": ["taxId"] },
-      "outputSchema": { "$ref": "../schemas/police-officer.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getOfficer"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "taxId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "taxId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/police-officer.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getOfficer",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_penalties",
@@ -111,35 +289,96 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "taxId": { "type": "string" },
-          "complaintId": { "type": "string" },
-          "apuCaseStatus": { "type": "string" },
-          "isApu": { "type": "boolean" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "taxId": {
+            "type": "string"
+          },
+          "complaintId": {
+            "type": "string"
+          },
+          "apuCaseStatus": {
+            "type": "string"
+          },
+          "isApu": {
+            "type": "boolean"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/penalty.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPenalties"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/penalty.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPenalties",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "file_misconduct_complaint",
       "title": "File a Misconduct Complaint",
-      "description": "File a complaint of NYPD misconduct against an officer (report an incident). NET-NEW workflow with no public API today — it lives only in the online web form, a 311 call, mail, or in person. Mutates state — confirm the incident description, FADO category, location, and any officer identification first; complaints may be filed anonymously but CCRB cannot follow up without contact information.",
-      "inputSchema": { "$ref": "../schemas/misconduct-complaint.json" },
-      "outputSchema": { "$ref": "../schemas/misconduct-complaint.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
-      "x-openapi-operation": "fileMisconductComplaint"
+      "description": "File a complaint of NYPD misconduct against an officer (report an incident). NET-NEW workflow with no public API today \u2014 it lives only in the online web form, a 311 call, mail, or in person. Mutates state \u2014 confirm the incident description, FADO category, location, and any officer identification first; complaints may be filed anonymously but CCRB cannot follow up without contact information.",
+      "inputSchema": {
+        "$ref": "../schemas/misconduct-complaint.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/misconduct-complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "fileMisconductComplaint",
+      "x-agent-skill": "report-a-problem-or-file-a-complaint"
     },
     {
       "name": "check_complaint_status",
       "title": "Check Complaint Status",
-      "description": "Read the processing status of a filed complaint by its tracking number — today checked only through the Complaint Status Lookup app.",
-      "inputSchema": { "type": "object", "properties": { "trackingNumber": { "type": "string" } }, "required": ["trackingNumber"] },
-      "outputSchema": { "$ref": "../schemas/misconduct-complaint.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getMisconductComplaintStatus"
+      "description": "Read the processing status of a filed complaint by its tracking number \u2014 today checked only through the Complaint Status Lookup app.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "trackingNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "trackingNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/misconduct-complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getMisconductComplaintStatus",
+      "x-agent-skill": "check-application-or-case-status"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

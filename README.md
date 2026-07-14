@@ -28,11 +28,12 @@ This repo doubles as an explorable, data-driven website (**[nyc.apievangelist.co
 - `index.html` — project overview: thesis, cross-domain stats, the five verb families, the method, and cards for all 67 domains.
 - `domain.html?d=<domain>` — per-domain explorer: interactive fruit index, searchable Open Data index, JSON Schema browser, OpenAPI operations, MCP tools, and rendered docs.
 - `opportunity.html` · `linkage.html` · `transactions.html` — the assessment layer: priority ranking (demand×gap×feasibility), the cross-domain join-key graph, and the citizen-transaction taxonomy.
+- `experience.html` — **the Programmable City**: the REST operation → MCP tool → Agent Skill chain across all 67 agencies, organized by ten common government processes, with cross-agency MCP prompts + resources. Machine artifacts under `experience/` (unified OpenAPI with `x-` extensions, NYC-wide MCP, [APIs.json](https://apisjson.org) descriptor, Skills).
 - `commons.html` — the **[`nyc-commons`](nyc-commons/README.md)** shared schema set: 21 canonical definitions (borough, BBL, address, place, party, dollar), the per-definition adoption report, and the cross-agency key registry.
 - `standards.html` · `qa.html` — the standards NYC agencies should adopt (and the standards this project is built on), and the verification pass (66/67 high confidence).
 - `entities.html` · `technology.html` — master cross-domain inventories.
 - `docs.html?f=…` — in-browser Markdown viewer (also serves the [CHANGELOG](CHANGELOG.md)).
-- `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain: `python3 scripts/build-manifest.py && python3 scripts/build-scorecard.py` (and `build-commons.py` after touching any `_common.json`).
+- `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain: `python3 scripts/build-manifest.py && python3 scripts/build-scorecard.py` (and `build-commons.py` after touching any `_common.json`; `build-experience.py` rebuilds the experience layer).
 
 The site is dependency-free static HTML/CSS/JS — no build step.
 

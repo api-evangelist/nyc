@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces SBS's open program data (certified businesses, BIDs, Workforce1 events and jobs, service centers, incentives) and adds apply_for_mwbe_certification — the net-new write workflow locked today inside the MyCity Business portal.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces SBS's open program data (certified businesses, BIDs, Workforce1 events and jobs, service centers, incentives) and adds apply_for_mwbe_certification \u2014 the net-new write workflow locked today inside the MyCity Business portal.",
     "openapi": "../openapi/sbs.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.sbs",
     "title": "NYC Small Business Services (SBS)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Department of Small Business Services — SBS-certified M/WBE businesses, Business Improvement Districts, Workforce1 recruitment events and job listings, NYC Business Solutions / Workforce1 service centers, and business-incentive records from NYC Open Data, plus the net-new ability to apply for and track M/WBE certification, which today lives only in the MyCity Business portal.",
-    "instructions": "Use find_certified_businesses / get_certified_business to locate SBS-certified vendors by borough, certification type, NAICS industry, or free text. find_business_improvement_districts / get_business_improvement_district cover BIDs and their trends. find_workforce_events and find_job_listings surface Workforce1 hiring events and open positions; find_service_locations returns Business Solutions Centers and Workforce1 Career Centers. find_incentives answers questions about SBS-administered benefits (energy cost savings, ICAP abatement, acceleration). apply_for_mwbe_certification (net-new) submits an M/WBE / EBE / LBE certification application; it requires an authenticated business owner and mutates state — confirm the legal business name, ownership, industry, and certification requested with the user before submitting. Approved applicants later appear in the public certified business list."
+    "description": "Agent-native access to the NYC Department of Small Business Services \u2014 SBS-certified M/WBE businesses, Business Improvement Districts, Workforce1 recruitment events and job listings, NYC Business Solutions / Workforce1 service centers, and business-incentive records from NYC Open Data, plus the net-new ability to apply for and track M/WBE certification, which today lives only in the MyCity Business portal.",
+    "instructions": "Use find_certified_businesses / get_certified_business to locate SBS-certified vendors by borough, certification type, NAICS industry, or free text. find_business_improvement_districts / get_business_improvement_district cover BIDs and their trends. find_workforce_events and find_job_listings surface Workforce1 hiring events and open positions; find_service_locations returns Business Solutions Centers and Workforce1 Career Centers. find_incentives answers questions about SBS-administered benefits (energy cost savings, ICAP abatement, acceleration). apply_for_mwbe_certification (net-new) submits an M/WBE / EBE / LBE certification application; it requires an authenticated business owner and mutates state \u2014 confirm the legal business name, ownership, industry, and certification requested with the user before submitting. Approved applicants later appear in the public certified business list."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_certified_businesses",
@@ -23,27 +27,92 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "certification": { "type": "string", "enum": ["MBE", "WBE", "MWBE", "EBE", "LBE", "DBE", "EO50"] },
-          "naicsCode": { "type": "string" },
-          "ethnicity": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "certification": {
+            "type": "string",
+            "enum": [
+              "MBE",
+              "WBE",
+              "MWBE",
+              "EBE",
+              "LBE",
+              "DBE",
+              "EO50"
+            ]
+          },
+          "naicsCode": {
+            "type": "string"
+          },
+          "ethnicity": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/certified-business.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCertifiedBusinesses"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/certified-business.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCertifiedBusinesses",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_certified_business",
       "title": "Get Certified Business",
       "description": "Fetch a single SBS-certified business (certification, industry, capacity, contact, geography) by its SBS account number.",
-      "inputSchema": { "type": "object", "properties": { "accountNumber": { "type": "string" } }, "required": ["accountNumber"] },
-      "outputSchema": { "$ref": "../schemas/certified-business.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getCertifiedBusiness"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "accountNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "accountNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/certified-business.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getCertifiedBusiness",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_business_improvement_districts",
@@ -52,25 +121,77 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "neighborhood": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "neighborhood": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/business-improvement-district.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listBusinessImprovementDistricts"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/business-improvement-district.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listBusinessImprovementDistricts",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_business_improvement_district",
       "title": "Get Business Improvement District",
       "description": "Fetch a single Business Improvement District (profile, finances, geography) by its organization id.",
-      "inputSchema": { "type": "object", "properties": { "orgId": { "type": "string" } }, "required": ["orgId"] },
-      "outputSchema": { "$ref": "../schemas/business-improvement-district.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getBusinessImprovementDistrict"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "orgId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "orgId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/business-improvement-district.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getBusinessImprovementDistrict",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_workforce_events",
@@ -79,17 +200,57 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "jobFamily": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "jobFamily": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/workforce-event.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listWorkforceEvents"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/workforce-event.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listWorkforceEvents",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_job_listings",
@@ -98,17 +259,55 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "sector": { "type": "string" },
-          "positionType": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "sector": {
+            "type": "string"
+          },
+          "positionType": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/job-listing.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listJobListings"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/job-listing.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listJobListings",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_service_locations",
@@ -117,15 +316,49 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "locationType": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "locationType": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-location.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listServiceLocations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/service-location.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listServiceLocations",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_incentives",
@@ -134,44 +367,136 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "program": { "type": "string", "enum": ["Energy Cost Savings Program", "Industrial & Commercial Abatement Program", "Business Acceleration", "Other"] },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "industry": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "program": {
+            "type": "string",
+            "enum": [
+              "Energy Cost Savings Program",
+              "Industrial & Commercial Abatement Program",
+              "Business Acceleration",
+              "Other"
+            ]
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "industry": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/business-incentive.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listBusinessIncentives"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/business-incentive.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listBusinessIncentives",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_mwbe_applications",
       "title": "List My Certification Applications",
-      "description": "List the authenticated business owner's own M/WBE certification applications and their status — today visible only inside the MyCity Business portal.",
+      "description": "List the authenticated business owner's own M/WBE certification applications and their status \u2014 today visible only inside the MyCity Business portal.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Draft", "Submitted", "Under Review", "Additional Info Requested", "Approved", "Denied", "Withdrawn"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Draft",
+              "Submitted",
+              "Under Review",
+              "Additional Info Requested",
+              "Approved",
+              "Denied",
+              "Withdrawn"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/mwbe-certification-application.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/mwbe-certification-application.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listMwbeApplications",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "apply_for_mwbe_certification",
       "title": "Apply for M/WBE Certification",
-      "description": "Submit an SBS M/WBE / EBE / LBE certification application. NET-NEW workflow with no public API today — it lives only in the MyCity Business portal. Requires an authenticated business owner. Mutates state — confirm the legal business name, ownership, industry, and certification requested first. Approved applicants appear in the public certified business list.",
-      "inputSchema": { "$ref": "../schemas/mwbe-certification-application.json" },
-      "outputSchema": { "$ref": "../schemas/mwbe-certification-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit an SBS M/WBE / EBE / LBE certification application. NET-NEW workflow with no public API today \u2014 it lives only in the MyCity Business portal. Requires an authenticated business owner. Mutates state \u2014 confirm the legal business name, ownership, industry, and certification requested first. Approved applicants appear in the public certified business list.",
+      "inputSchema": {
+        "$ref": "../schemas/mwbe-certification-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/mwbe-certification-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createMwbeApplication",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

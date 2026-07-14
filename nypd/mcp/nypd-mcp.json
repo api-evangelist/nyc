@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Exposes the NYPD's flattened Open Data snapshots and the app-trapped operational record (CompStat 2.0, Officer Profile) behind one agent contract, and adds a net-new records/FOIL request workflow.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Exposes the NYPD's flattened Open Data snapshots and the app-trapped operational record (CompStat 2.0, Officer Profile) behind one agent contract, and adds a net-new records/FOIL request workflow.",
     "openapi": "../openapi/nypd.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.nypd",
     "title": "NYPD",
     "version": "0.1.0",
-    "description": "Agent-native access to the New York City Police Department — reported complaints, arrests, shooting incidents, patrol precincts (with neighborhood coordination officers), and officer profiles with disciplinary history. Exposes the NYPD's flattened Open Data snapshots and the operational record trapped inside the CompStat 2.0 and Officer Profile single-page apps behind one owned surface; adds police-report / FOIL request submission.",
-    "instructions": "Use find_complaints / get_complaint for reported incidents, find_arrests for arrests, and find_shooting_incidents for shootings — all filterable by borough, precinct, offense, and date range. find_precincts / get_precinct answer 'which precinct covers this area and who are its neighborhood coordination officers?'. find_officers / get_officer front the nypdonline.org Officer Profile transparency app (rank, command, arrests, disciplinary history). request_police_report (net-new) requires an authenticated user and mutates state — confirm details with the user before submitting. Crime data are periodic snapshots; do not treat counts as real-time."
+    "description": "Agent-native access to the New York City Police Department \u2014 reported complaints, arrests, shooting incidents, patrol precincts (with neighborhood coordination officers), and officer profiles with disciplinary history. Exposes the NYPD's flattened Open Data snapshots and the operational record trapped inside the CompStat 2.0 and Officer Profile single-page apps behind one owned surface; adds police-report / FOIL request submission.",
+    "instructions": "Use find_complaints / get_complaint for reported incidents, find_arrests for arrests, and find_shooting_incidents for shootings \u2014 all filterable by borough, precinct, offense, and date range. find_precincts / get_precinct answer 'which precinct covers this area and who are its neighborhood coordination officers?'. find_officers / get_officer front the nypdonline.org Officer Profile transparency app (rank, command, arrests, disciplinary history). request_police_report (net-new) requires an authenticated user and mutates state \u2014 confirm details with the user before submitting. Crime data are periodic snapshots; do not treat counts as real-time."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_complaints",
@@ -23,29 +27,98 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "precinct": { "type": "integer", "minimum": 1, "maximum": 123 },
-          "offense": { "type": "string" },
-          "lawCategory": { "type": "string", "enum": ["FELONY", "MISDEMEANOR", "VIOLATION"] },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "precinct": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 123
+          },
+          "offense": {
+            "type": "string"
+          },
+          "lawCategory": {
+            "type": "string",
+            "enum": [
+              "FELONY",
+              "MISDEMEANOR",
+              "VIOLATION"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/complaint.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listComplaints"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/complaint.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listComplaints",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_complaint",
       "title": "Get Complaint",
       "description": "Fetch a single reported complaint by its complaint number (CMPLNT_NUM).",
-      "inputSchema": { "type": "object", "properties": { "complaintNumber": { "type": "string" } }, "required": ["complaintNumber"] },
-      "outputSchema": { "$ref": "../schemas/complaint.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getComplaint"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "complaintNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "complaintNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getComplaint",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_arrests",
@@ -54,19 +127,63 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "precinct": { "type": "integer", "minimum": 1, "maximum": 123 },
-          "offense": { "type": "string" },
-          "lawCategory": { "type": "string", "enum": ["FELONY", "MISDEMEANOR", "VIOLATION"] },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "precinct": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 123
+          },
+          "offense": {
+            "type": "string"
+          },
+          "lawCategory": {
+            "type": "string",
+            "enum": [
+              "FELONY",
+              "MISDEMEANOR",
+              "VIOLATION"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/arrest.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listArrests"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/arrest.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listArrests",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_shooting_incidents",
@@ -75,36 +192,126 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "precinct": { "type": "integer", "minimum": 1, "maximum": 123 },
-          "murderFlag": { "type": "boolean" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "precinct": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 123
+          },
+          "murderFlag": {
+            "type": "boolean"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/shooting-incident.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listShootingIncidents"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/shooting-incident.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listShootingIncidents",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_precincts",
       "title": "Find Precincts",
       "description": "List NYPD patrol precincts, optionally by borough.",
-      "inputSchema": { "type": "object", "properties": { "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] } } },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/precinct.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPrecincts"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/precinct.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPrecincts",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_precinct",
       "title": "Get Precinct",
       "description": "Get a precinct (1-123) with its sectors and neighborhood coordination officers (NCOs).",
-      "inputSchema": { "type": "object", "properties": { "precinct": { "type": "integer", "minimum": 1, "maximum": 123 } }, "required": ["precinct"] },
-      "outputSchema": { "$ref": "../schemas/precinct.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getPrecinct"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "precinct": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 123
+          }
+        },
+        "required": [
+          "precinct"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/precinct.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getPrecinct",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_officers",
@@ -113,35 +320,94 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "command": { "type": "string" },
-          "rank": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "name": {
+            "type": "string"
+          },
+          "command": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/officer.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listOfficers"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/officer.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listOfficers",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_officer",
       "title": "Get Officer",
       "description": "Fetch an officer profile by profile id, including rank, command, arrests, and disciplinary history.",
-      "inputSchema": { "type": "object", "properties": { "profileId": { "type": "string" } }, "required": ["profileId"] },
-      "outputSchema": { "$ref": "../schemas/officer.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getOfficer"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "profileId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/officer.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getOfficer",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "request_police_report",
       "title": "Request a Police Report / FOIL",
-      "description": "Request a copy of an NYPD record — an incident report, a collision/accident report, or a FOIL request. NET-NEW workflow with no equivalent API today. Requires an authenticated user. Mutates state — confirm details with the user first.",
-      "inputSchema": { "$ref": "../schemas/police-report-request.json" },
-      "outputSchema": { "$ref": "../schemas/police-report-request.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Request a copy of an NYPD record \u2014 an incident report, a collision/accident report, or a FOIL request. NET-NEW workflow with no equivalent API today. Requires an authenticated user. Mutates state \u2014 confirm details with the user first.",
+      "inputSchema": {
+        "$ref": "../schemas/police-report-request.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/police-report-request.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createPoliceReportRequest",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "report-a-problem-or-file-a-complaint"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

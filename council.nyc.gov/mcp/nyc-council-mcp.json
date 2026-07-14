@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Consolidates three existing APIs (Legistar, WordPress REST, Open Data SODA) behind one agent contract.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Consolidates three existing APIs (Legistar, WordPress REST, Open Data SODA) behind one agent contract.",
     "openapi": "../openapi/nyc-council.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.council",
     "title": "NYC Council",
     "version": "0.1.0",
-    "description": "Agent-native access to the New York City Council — members, districts, committees, legislation, hearings, and discretionary funding. Consolidates the vendor Legistar API, the WordPress REST API, and NYC Open Data behind one owned surface; adds hearing testimony registration.",
-    "instructions": "Use find_members / get_member (and get_member_legislation) for who represents whom and what they sponsor. find_legislation / get_legislation front the Legistar record of bills and local laws. find_meetings covers hearings (with video links). find_discretionary_funding answers 'what funding went to my district?'. register_testimony (net-new) requires an authenticated user and mutates state — confirm details with the user before submitting."
+    "description": "Agent-native access to the New York City Council \u2014 members, districts, committees, legislation, hearings, and discretionary funding. Consolidates the vendor Legistar API, the WordPress REST API, and NYC Open Data behind one owned surface; adds hearing testimony registration.",
+    "instructions": "Use find_members / get_member (and get_member_legislation) for who represents whom and what they sponsor. find_legislation / get_legislation front the Legistar record of bills and local laws. find_meetings covers hearings (with video links). find_discretionary_funding answers 'what funding went to my district?'. register_testimony (net-new) requires an authenticated user and mutates state \u2014 confirm details with the user before submitting."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_members",
@@ -23,53 +27,179 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "district": { "type": "integer", "minimum": 1, "maximum": 51 },
-          "current": { "type": "boolean" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "district": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 51
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/council-member.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listMembers"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/council-member.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listMembers",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_member",
       "title": "Get Council Member",
       "description": "Fetch a council member (offices, committees, caucuses) by id.",
-      "inputSchema": { "type": "object", "properties": { "councilMemberId": { "type": "string" } }, "required": ["councilMemberId"] },
-      "outputSchema": { "$ref": "../schemas/council-member.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getMember"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "councilMemberId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "councilMemberId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/council-member.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getMember",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_member_legislation",
       "title": "Get Member's Legislation",
       "description": "List the legislation a council member has sponsored.",
-      "inputSchema": { "type": "object", "properties": { "councilMemberId": { "type": "string" } }, "required": ["councilMemberId"] },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/legislation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getMemberLegislation"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "councilMemberId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "councilMemberId"
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/legislation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getMemberLegislation",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_district",
       "title": "Get District",
       "description": "Get a council district (1-51) and its current member.",
-      "inputSchema": { "type": "object", "properties": { "district": { "type": "integer", "minimum": 1, "maximum": 51 } }, "required": ["district"] },
-      "outputSchema": { "$ref": "../schemas/district.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getDistrict"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "district": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 51
+          }
+        },
+        "required": [
+          "district"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/district.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getDistrict",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_committees",
       "title": "Find Committees",
       "description": "List NYC Council committees, subcommittees, and caucuses, optionally filtered by type.",
-      "inputSchema": { "type": "object", "properties": { "type": { "type": "string", "enum": ["Committee", "Subcommittee", "Caucus", "Task Force", "Commission"] } } },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/committee.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCommittees"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Committee",
+              "Subcommittee",
+              "Caucus",
+              "Task Force",
+              "Commission"
+            ]
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/committee.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCommittees",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_legislation",
@@ -78,29 +208,91 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string" },
-          "type": { "type": "string", "enum": ["Introduction", "Resolution", "Local Law", "Land Use Application", "Oversight"] },
-          "sponsor": { "type": "string" },
-          "committee": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Introduction",
+              "Resolution",
+              "Local Law",
+              "Land Use Application",
+              "Oversight"
+            ]
+          },
+          "sponsor": {
+            "type": "string"
+          },
+          "committee": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/legislation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listLegislation"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/legislation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listLegislation",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_legislation",
       "title": "Get Legislation",
       "description": "Fetch a legislative matter by file number (e.g. 'Int 0123-2024').",
-      "inputSchema": { "type": "object", "properties": { "fileNumber": { "type": "string" } }, "required": ["fileNumber"] },
-      "outputSchema": { "$ref": "../schemas/legislation.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getLegislation"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fileNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fileNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/legislation.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getLegislation",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_meetings",
@@ -109,16 +301,47 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "body": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "body": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/meeting.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listMeetings"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/meeting.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listMeetings",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_discretionary_funding",
@@ -127,26 +350,69 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "fiscalYear": { "type": "integer" },
-          "councilDistrict": { "type": "integer" },
-          "councilMember": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "fiscalYear": {
+            "type": "integer"
+          },
+          "councilDistrict": {
+            "type": "integer"
+          },
+          "councilMember": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/discretionary-funding.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listDiscretionaryFunding"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/discretionary-funding.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listDiscretionaryFunding",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "register_testimony",
       "title": "Register to Testify",
-      "description": "Register to testify (in-person, remote, or written) at a Council hearing. NET-NEW workflow with no equivalent today. Requires an authenticated user. Mutates state — confirm details with the user first.",
-      "inputSchema": { "$ref": "../schemas/testimony-registration.json" },
-      "outputSchema": { "$ref": "../schemas/testimony-registration.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Register to testify (in-person, remote, or written) at a Council hearing. NET-NEW workflow with no equivalent today. Requires an authenticated user. Mutates state \u2014 confirm details with the user first.",
+      "inputSchema": {
+        "$ref": "../schemas/testimony-registration.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/testimony-registration.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createTestimonyRegistration",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "register-or-enroll"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

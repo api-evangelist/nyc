@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the little OCME data that can responsibly be public (performance indicators, AGGREGATE case statistics, forensic services, family services centers, NamUs missing-persons listings) and adds request_record — the net-new, dignified write workflow that today lives only on paper forms and NYC 311.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the little OCME data that can responsibly be public (performance indicators, AGGREGATE case statistics, forensic services, family services centers, NamUs missing-persons listings) and adds request_record \u2014 the net-new, dignified write workflow that today lives only on paper forms and NYC 311.",
     "openapi": "../openapi/ocme.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.ocme",
     "title": "NYC Office of Chief Medical Examiner (OCME)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Office of Chief Medical Examiner — performance indicators, aggregate (non-identifying) death-investigation statistics, the forensic-service catalog, family services centers, and NamUs missing-persons listings, plus the net-new ability to request and track a decedent's medical-examiner casefile record, which today exists only as paper forms and a NYC 311 request.",
-    "instructions": "This is a bereavement- and privacy-sensitive domain — respond with care. find_case_statistics returns AGGREGATE counts only (by manner of death, borough, period); OCME never exposes an individual death investigation or any decedent's clinical findings, and neither does this server. find_missing_persons surfaces public NamUs listings meant to aid identification. list_indicators covers the one OCME Open Data asset (performance indicators). find_services and find_family_services_centers are directory lookups. request_record (net-new) submits a death record request for a decedent's casefile — it requires an authenticated requester and mutates state; confirm eligibility (next of kin or authorized party), the case reference, and which records are wanted before submitting, warn the requester that fulfillment can take three to six months or more, and note that third-party delivery requires notarization. Never ask for or store the contents of a casefile record."
+    "description": "Agent-native access to the NYC Office of Chief Medical Examiner \u2014 performance indicators, aggregate (non-identifying) death-investigation statistics, the forensic-service catalog, family services centers, and NamUs missing-persons listings, plus the net-new ability to request and track a decedent's medical-examiner casefile record, which today exists only as paper forms and a NYC 311 request.",
+    "instructions": "This is a bereavement- and privacy-sensitive domain \u2014 respond with care. find_case_statistics returns AGGREGATE counts only (by manner of death, borough, period); OCME never exposes an individual death investigation or any decedent's clinical findings, and neither does this server. find_missing_persons surfaces public NamUs listings meant to aid identification. list_indicators covers the one OCME Open Data asset (performance indicators). find_services and find_family_services_centers are directory lookups. request_record (net-new) submits a death record request for a decedent's casefile \u2014 it requires an authenticated requester and mutates state; confirm eligibility (next of kin or authorized party), the case reference, and which records are wanted before submitting, warn the requester that fulfillment can take three to six months or more, and note that third-party delivery requires notarization. Never ask for or store the contents of a casefile record."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "list_indicators",
@@ -23,48 +27,142 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/monthly-indicator.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listIndicators"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/monthly-indicator.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listIndicators",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_case_statistics",
       "title": "Find Case Statistics",
-      "description": "Return AGGREGATE, non-identifying death-investigation statistics — counts of cases by period, borough, and manner of death (Natural/Accident/Homicide/Suicide/Undetermined). Never returns an individual case or any decedent detail.",
+      "description": "Return AGGREGATE, non-identifying death-investigation statistics \u2014 counts of cases by period, borough, and manner of death (Natural/Accident/Homicide/Suicide/Undetermined). Never returns an individual case or any decedent detail.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "period": { "type": "string" },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "mannerOfDeath": { "type": "string", "enum": ["Natural", "Accident", "Homicide", "Suicide", "Undetermined", "Pending"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "period": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "mannerOfDeath": {
+            "type": "string",
+            "enum": [
+              "Natural",
+              "Accident",
+              "Homicide",
+              "Suicide",
+              "Undetermined",
+              "Pending"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/case-statistics.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCaseStatistics"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/case-statistics.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCaseStatistics",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_services",
       "title": "Find Forensic Services",
-      "description": "List OCME forensic services and disciplines — Forensic Pathology, Forensic Biology (DNA), Forensic Toxicology, Forensic Anthropology, Identification / Missing Persons, and Emergency Management.",
+      "description": "List OCME forensic services and disciplines \u2014 Forensic Pathology, Forensic Biology (DNA), Forensic Toxicology, Forensic Anthropology, Identification / Missing Persons, and Emergency Management.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "category": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "category": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/forensic-service.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listServices"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/forensic-service.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listServices",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_family_services_centers",
@@ -73,15 +171,49 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "type": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "type": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/family-services-center.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listFamilyServicesCenters"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/family-services-center.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listFamilyServicesCenters",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_missing_persons",
@@ -90,53 +222,165 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "caseType": { "type": "string", "enum": ["Missing Person", "Unidentified Person", "Unclaimed Person"] },
-          "status": { "type": "string", "enum": ["Open", "Identified", "Resolved", "Closed"] },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "caseType": {
+            "type": "string",
+            "enum": [
+              "Missing Person",
+              "Unidentified Person",
+              "Unclaimed Person"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Open",
+              "Identified",
+              "Resolved",
+              "Closed"
+            ]
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/missing-person.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listMissingPersons"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/missing-person.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listMissingPersons",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_record_requests",
       "title": "List My Record Requests",
-      "description": "List the authenticated requester's own death record requests and their status — today only trackable by phone or mail.",
+      "description": "List the authenticated requester's own death record requests and their status \u2014 today only trackable by phone or mail.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Submitted", "Verifying Eligibility", "Awaiting Notarization", "In Progress", "Case Not Finalized", "Fulfilled", "Denied", "Cancelled"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Submitted",
+              "Verifying Eligibility",
+              "Awaiting Notarization",
+              "In Progress",
+              "Case Not Finalized",
+              "Fulfilled",
+              "Denied",
+              "Cancelled"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/death-record-request.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/death-record-request.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listRecordRequests",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_record_request",
       "title": "Get Record Request",
       "description": "Fetch a single death record request and its current status by tracking number.",
-      "inputSchema": { "type": "object", "properties": { "requestId": { "type": "string" } }, "required": ["requestId"] },
-      "outputSchema": { "$ref": "../schemas/death-record-request.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "requestId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/death-record-request.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getRecordRequest",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "request_record",
       "title": "Request a Casefile Record",
-      "description": "Submit a request for a decedent's OCME medical-examiner casefile record (autopsy report, cause of death, toxicology, or full casefile). NET-NEW workflow with no public API today — it lives only in paper forms, notarization, and NYC 311. Requires an authenticated requester and mutates state. Confirm eligibility (next of kin or authorized party), the case reference, and which records are wanted before submitting; warn that fulfillment can take three to six months or more, and that third-party delivery requires notarization.",
-      "inputSchema": { "$ref": "../schemas/death-record-request.json" },
-      "outputSchema": { "$ref": "../schemas/death-record-request.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit a request for a decedent's OCME medical-examiner casefile record (autopsy report, cause of death, toxicology, or full casefile). NET-NEW workflow with no public API today \u2014 it lives only in paper forms, notarization, and NYC 311. Requires an authenticated requester and mutates state. Confirm eligibility (next of kin or authorized party), the case reference, and which records are wanted before submitting; warn that fulfillment can take three to six months or more, and that third-party delivery requires notarization.",
+      "inputSchema": {
+        "$ref": "../schemas/death-record-request.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/death-record-request.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createRecordRequest",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "request-public-records"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

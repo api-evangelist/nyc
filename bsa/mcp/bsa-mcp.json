@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces BSA's open case data (applications, resolutions, the legacy calendar index, pre-application meetings), publishes the hearing calendar that has no dataset today, and adds file_variance_application — the net-new write workflow that today is a paper PDF-form intake with no online portal.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces BSA's open case data (applications, resolutions, the legacy calendar index, pre-application meetings), publishes the hearing calendar that has no dataset today, and adds file_variance_application \u2014 the net-new write workflow that today is a paper PDF-form intake with no online portal.",
     "openapi": "../openapi/bsa.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.bsa",
     "title": "NYC Board of Standards & Appeals (BSA)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Board of Standards & Appeals — zoning applications and their status, written resolutions, the public hearing calendar, pre-application meetings, and the property/zoning-lot index (back to 1916) from NYC Open Data and nyc.gov, plus the net-new ability to file and track a variance / special permit / extension / appeal that today is a paper PDF-form process with no online portal.",
-    "instructions": "Use find_applications / get_application to locate BSA cases by borough, application type (BZ variance/special-permit, BZY extension, SOC amendment, Appeal), status, zoning district, council district, or BBL, and get_application_resolution or find_resolutions to reach the written decision (today a linked PDF). find_hearings publishes the public hearing calendar that has no Open Data twin. find_pre_application_meetings covers the pre-filing consultation log. find_zoning_lots looks up a property's BSA history including legacy cases back to 1916. file_variance_application (net-new) files a new case; it requires an authenticated filer and mutates state — confirm the relief sought, the ZR/GCL section, the premises, the applicant, and the required exhibits with the user before submitting. BSA assigns the calendar number."
+    "description": "Agent-native access to the NYC Board of Standards & Appeals \u2014 zoning applications and their status, written resolutions, the public hearing calendar, pre-application meetings, and the property/zoning-lot index (back to 1916) from NYC Open Data and nyc.gov, plus the net-new ability to file and track a variance / special permit / extension / appeal that today is a paper PDF-form process with no online portal.",
+    "instructions": "Use find_applications / get_application to locate BSA cases by borough, application type (BZ variance/special-permit, BZY extension, SOC amendment, Appeal), status, zoning district, council district, or BBL, and get_application_resolution or find_resolutions to reach the written decision (today a linked PDF). find_hearings publishes the public hearing calendar that has no Open Data twin. find_pre_application_meetings covers the pre-filing consultation log. find_zoning_lots looks up a property's BSA history including legacy cases back to 1916. file_variance_application (net-new) files a new case; it requires an authenticated filer and mutates state \u2014 confirm the relief sought, the ZR/GCL section, the premises, the applicant, and the required exhibits with the user before submitting. BSA assigns the calendar number."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_applications",
@@ -23,40 +27,140 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "application": { "type": "string", "enum": ["BZ", "BZY", "SOC", "Appeal", "S", "Compliance", "Other"] },
-          "status": { "type": "string", "enum": ["Granted", "Denied", "Withdrawn", "Dismissed", "Pending"] },
-          "zoningDistrict": { "type": "string" },
-          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
-          "bbl": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "application": {
+            "type": "string",
+            "enum": [
+              "BZ",
+              "BZY",
+              "SOC",
+              "Appeal",
+              "S",
+              "Compliance",
+              "Other"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Granted",
+              "Denied",
+              "Withdrawn",
+              "Dismissed",
+              "Pending"
+            ]
+          },
+          "zoningDistrict": {
+            "type": "string"
+          },
+          "councilDistrict": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 51
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/application.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listApplications"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/application.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listApplications",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_application",
       "title": "Get Application",
       "description": "Fetch a single BSA application / case (type, section, premises, status, decision) by its calendar number.",
-      "inputSchema": { "type": "object", "properties": { "calendar": { "type": "string" } }, "required": ["calendar"] },
-      "outputSchema": { "$ref": "../schemas/application.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getApplication"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "calendar": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "calendar"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/application.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getApplication",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_application_resolution",
       "title": "Get Application Resolution",
       "description": "Fetch the written resolution / decision for a BSA case by its calendar number (today a linked PDF).",
-      "inputSchema": { "type": "object", "properties": { "calendar": { "type": "string" } }, "required": ["calendar"] },
-      "outputSchema": { "$ref": "../schemas/resolution.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getApplicationResolution"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "calendar": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "calendar"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/resolution.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getApplicationResolution",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_resolutions",
@@ -65,103 +169,334 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Granted", "Denied", "Withdrawn", "Dismissed"] },
-          "application": { "type": "string", "enum": ["BZ", "BZY", "SOC", "Appeal", "S"] },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Granted",
+              "Denied",
+              "Withdrawn",
+              "Dismissed"
+            ]
+          },
+          "application": {
+            "type": "string",
+            "enum": [
+              "BZ",
+              "BZY",
+              "SOC",
+              "Appeal",
+              "S"
+            ]
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/resolution.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listResolutions"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/resolution.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listResolutions",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_hearings",
       "title": "Find Hearings",
-      "description": "List the BSA public hearing calendar (date, session type, virtual/in-person, webinar link) — data that today exists only as HTML/PDF on nyc.gov.",
+      "description": "List the BSA public hearing calendar (date, session type, virtual/in-person, webinar link) \u2014 data that today exists only as HTML/PDF on nyc.gov.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "session": { "type": "string", "enum": ["Public Hearing", "Continued Hearing", "Decision", "Special Order Calendar"] },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "session": {
+            "type": "string",
+            "enum": [
+              "Public Hearing",
+              "Continued Hearing",
+              "Decision",
+              "Special Order Calendar"
+            ]
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/hearing.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listHearings"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/hearing.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listHearings",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_pre_application_meetings",
       "title": "Find Pre-Application Meetings",
-      "description": "List BSA pre-application meetings (applicant, date, application type, premises) — the pre-filing consultation log.",
+      "description": "List BSA pre-application meetings (applicant, date, application type, premises) \u2014 the pre-filing consultation log.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/pre-application-meeting.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPreApplicationMeetings"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/pre-application-meeting.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPreApplicationMeetings",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_zoning_lots",
       "title": "Find Zoning Lots",
-      "description": "Look up a property / zoning lot and its BSA case history by BBL, BIN, or block/lot — including legacy cases back to 1916.",
+      "description": "Look up a property / zoning lot and its BSA case history by BBL, BIN, or block/lot \u2014 including legacy cases back to 1916.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "bbl": { "type": "string" },
-          "bin": { "type": "string" },
-          "block": { "type": "string" },
-          "lot": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "bin": {
+            "type": "string"
+          },
+          "block": {
+            "type": "string"
+          },
+          "lot": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/zoning-lot.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listZoningLots"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/zoning-lot.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listZoningLots",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "list_my_variance_applications",
       "title": "List My Variance Applications",
-      "description": "List the authenticated filer's own submitted BSA applications and their status — today only trackable by contacting BSA, since there is no online portal.",
+      "description": "List the authenticated filer's own submitted BSA applications and their status \u2014 today only trackable by contacting BSA, since there is no online portal.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Submitted", "Under Review", "Deficient", "Accepted", "Calendared", "Granted", "Denied", "Withdrawn", "Dismissed"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Submitted",
+              "Under Review",
+              "Deficient",
+              "Accepted",
+              "Calendared",
+              "Granted",
+              "Denied",
+              "Withdrawn",
+              "Dismissed"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/variance-application.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/variance-application.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listVarianceApplications",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "file_variance_application",
       "title": "File a Variance Application",
-      "description": "File a new BSA case — a zoning variance, special permit, extension of time, or appeal of a DOB determination. NET-NEW workflow with no online portal today — filing is a paper PDF-form process. Requires an authenticated filer. Mutates state — confirm the relief sought, the ZR/GCL section, the premises, the applicant, and the required exhibits before submitting. BSA assigns the calendar number.",
-      "inputSchema": { "$ref": "../schemas/variance-application.json" },
-      "outputSchema": { "$ref": "../schemas/variance-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "File a new BSA case \u2014 a zoning variance, special permit, extension of time, or appeal of a DOB determination. NET-NEW workflow with no online portal today \u2014 filing is a paper PDF-form process. Requires an authenticated filer. Mutates state \u2014 confirm the relief sought, the ZR/GCL section, the premises, the applicant, and the required exhibits before submitting. BSA assigns the calendar number.",
+      "inputSchema": {
+        "$ref": "../schemas/variance-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/variance-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createVarianceApplication",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "dispute-or-appeal"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

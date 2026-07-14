@@ -1,0 +1,498 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first NYC-wide MCP surface. Aggregates the 67 per-agency MCP servers behind one contract, adds cross-agency prompts and resources, and exposes the ten common government-process Agent Skills. Not a running server."
+  },
+  "server": {
+    "name": "io.nyc.gateway",
+    "title": "NYC \u2014 Programmable City (gateway)",
+    "version": "0.1.0",
+    "description": "One agent-native surface over all 67 NYC government domains \u2014 every REST operation has an MCP tool, every tool maps to one of ten common government-process Agent Skills, plus cross-agency prompts and resources anchored on the nyc-commons geography spine.",
+    "instructions": "Start from a resource (nyc://catalog to find the right agency, nyc://commons/geography or nyc://place/{bbl} to anchor a location). Use a prompt for a whole task (who_represents_this_address, how_do_i_apply_for, report_a_problem_at). Each agency's tools live in its own MCP server (see nyc://catalog); this gateway routes and orchestrates them by government process."
+  },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
+    }
+  },
+  "x-tool-index": {
+    "count": 624,
+    "note": "624 tools across 67 per-agency MCP servers; see each agency's mcp/*.json (indexed at nyc://catalog).",
+    "byAgency": [
+      {
+        "id": "nycgovparks.org",
+        "server": "io.nyc.parks",
+        "tools": 15
+      },
+      {
+        "id": "schools.nyc.gov",
+        "server": "io.nyc.schools",
+        "tools": 9
+      },
+      {
+        "id": "council.nyc.gov",
+        "server": "io.nyc.council",
+        "tools": 10
+      },
+      {
+        "id": "vote.nyc",
+        "server": "io.nyc.elections",
+        "tools": 7
+      },
+      {
+        "id": "nyc311",
+        "server": "io.nyc.311",
+        "tools": 6
+      },
+      {
+        "id": "dob",
+        "server": "io.nyc.dob",
+        "tools": 10
+      },
+      {
+        "id": "hpd",
+        "server": "io.nyc.hpd",
+        "tools": 11
+      },
+      {
+        "id": "dot",
+        "server": "io.nyc.dot",
+        "tools": 10
+      },
+      {
+        "id": "dohmh",
+        "server": "io.nyc.dohmh",
+        "tools": 10
+      },
+      {
+        "id": "dsny",
+        "server": "io.nyc.dsny",
+        "tools": 7
+      },
+      {
+        "id": "nypd",
+        "server": "io.nyc.nypd",
+        "tools": 9
+      },
+      {
+        "id": "tlc",
+        "server": "io.nyc.tlc",
+        "tools": 10
+      },
+      {
+        "id": "dcp",
+        "server": "io.nyc.dcp",
+        "tools": 10
+      },
+      {
+        "id": "comptroller.nyc.gov",
+        "server": "io.nyc.comptroller",
+        "tools": 9
+      },
+      {
+        "id": "nycha",
+        "server": "io.nyc.nycha",
+        "tools": 9
+      },
+      {
+        "id": "acs",
+        "server": "io.nyc.acs",
+        "tools": 9
+      },
+      {
+        "id": "bic",
+        "server": "io.nyc.bic",
+        "tools": 10
+      },
+      {
+        "id": "bklynlibrary",
+        "server": "io.nyc.bklynlibrary",
+        "tools": 13
+      },
+      {
+        "id": "bronxbp",
+        "server": "io.nyc.bronxbp",
+        "tools": 9
+      },
+      {
+        "id": "bronxda",
+        "server": "io.nyc.bronxda",
+        "tools": 8
+      },
+      {
+        "id": "brooklynbp",
+        "server": "io.nyc.brooklynbp",
+        "tools": 9
+      },
+      {
+        "id": "brooklynda",
+        "server": "io.nyc.brooklynda",
+        "tools": 9
+      },
+      {
+        "id": "bsa",
+        "server": "io.nyc.bsa",
+        "tools": 9
+      },
+      {
+        "id": "cchr",
+        "server": "io.nyc.cchr",
+        "tools": 8
+      },
+      {
+        "id": "ccrb",
+        "server": "io.nyc.ccrb",
+        "tools": 9
+      },
+      {
+        "id": "cfb",
+        "server": "io.nyc.cfb",
+        "tools": 9
+      },
+      {
+        "id": "cityclerk",
+        "server": "io.nyc.cityclerk",
+        "tools": 8
+      },
+      {
+        "id": "coib",
+        "server": "io.nyc.coib",
+        "tools": 8
+      },
+      {
+        "id": "cuny",
+        "server": "io.nyc.cuny",
+        "tools": 9
+      },
+      {
+        "id": "dcas",
+        "server": "io.nyc.dcas",
+        "tools": 11
+      },
+      {
+        "id": "dcla",
+        "server": "io.nyc.dcla",
+        "tools": 9
+      },
+      {
+        "id": "dcwp",
+        "server": "io.nyc.dcwp",
+        "tools": 10
+      },
+      {
+        "id": "ddc",
+        "server": "io.nyc.ddc",
+        "tools": 10
+      },
+      {
+        "id": "dep",
+        "server": "io.nyc.dep",
+        "tools": 11
+      },
+      {
+        "id": "dfta",
+        "server": "io.nyc.dfta",
+        "tools": 8
+      },
+      {
+        "id": "dhs",
+        "server": "io.nyc.dhs",
+        "tools": 9
+      },
+      {
+        "id": "doc",
+        "server": "io.nyc.doc",
+        "tools": 8
+      },
+      {
+        "id": "dof",
+        "server": "io.nyc.dof",
+        "tools": 9
+      },
+      {
+        "id": "doi",
+        "server": "io.nyc.doi",
+        "tools": 8
+      },
+      {
+        "id": "doris",
+        "server": "io.nyc.doris",
+        "tools": 9
+      },
+      {
+        "id": "dvs",
+        "server": "io.nyc.dvs",
+        "tools": 8
+      },
+      {
+        "id": "dycd",
+        "server": "io.nyc.dycd",
+        "tools": 10
+      },
+      {
+        "id": "edc",
+        "server": "io.nyc.edc",
+        "tools": 11
+      },
+      {
+        "id": "fdny",
+        "server": "io.nyc.fdny",
+        "tools": 10
+      },
+      {
+        "id": "hhc",
+        "server": "io.nyc.hhc",
+        "tools": 9
+      },
+      {
+        "id": "hra",
+        "server": "io.nyc.hra",
+        "tools": 9
+      },
+      {
+        "id": "ibo",
+        "server": "io.nyc.ibo",
+        "tools": 10
+      },
+      {
+        "id": "law",
+        "server": "io.nyc.law",
+        "tools": 8
+      },
+      {
+        "id": "lpc",
+        "server": "io.nyc.lpc",
+        "tools": 10
+      },
+      {
+        "id": "manhattanbp",
+        "server": "io.nyc.manhattanbp",
+        "tools": 9
+      },
+      {
+        "id": "manhattanda",
+        "server": "io.nyc.manhattanda",
+        "tools": 9
+      },
+      {
+        "id": "mocj",
+        "server": "io.nyc.mocj",
+        "tools": 9
+      },
+      {
+        "id": "mome",
+        "server": "io.nyc.mome",
+        "tools": 8
+      },
+      {
+        "id": "nycem",
+        "server": "io.nyc.nycem",
+        "tools": 9
+      },
+      {
+        "id": "nypl",
+        "server": "io.nyc.nypl",
+        "tools": 11
+      },
+      {
+        "id": "oath",
+        "server": "io.nyc.oath",
+        "tools": 9
+      },
+      {
+        "id": "ocme",
+        "server": "io.nyc.ocme",
+        "tools": 8
+      },
+      {
+        "id": "oti",
+        "server": "io.nyc.oti",
+        "tools": 11
+      },
+      {
+        "id": "pubadvocate",
+        "server": "io.nyc.pubadvocate",
+        "tools": 10
+      },
+      {
+        "id": "queensbp",
+        "server": "io.nyc.queensbp",
+        "tools": 11
+      },
+      {
+        "id": "queensda",
+        "server": "io.nyc.queensda",
+        "tools": 9
+      },
+      {
+        "id": "queenslibrary",
+        "server": "io.nyc.queenslibrary",
+        "tools": 9
+      },
+      {
+        "id": "sbs",
+        "server": "io.nyc.sbs",
+        "tools": 10
+      },
+      {
+        "id": "sca",
+        "server": "io.nyc.sca",
+        "tools": 9
+      },
+      {
+        "id": "statenislandbp",
+        "server": "io.nyc.statenislandbp",
+        "tools": 9
+      },
+      {
+        "id": "statenislandda",
+        "server": "io.nyc.statenislandda",
+        "tools": 9
+      },
+      {
+        "id": "taxcommission",
+        "server": "io.nyc.taxcommission",
+        "tools": 9
+      }
+    ]
+  },
+  "prompts": [
+    {
+      "name": "who_represents_this_address",
+      "description": "Given a NYC address, return the council member, community board, borough, and every district that represents it.",
+      "uses": [
+        "look-up-a-property-or-place"
+      ],
+      "arguments": [
+        "address"
+      ]
+    },
+    {
+      "name": "everything_about_this_place",
+      "description": "Everything the city knows about a BBL/BIN/address across agencies \u2014 buildings, housing, environment, complaints, landmarks.",
+      "uses": [
+        "look-up-a-property-or-place",
+        "search-city-data-and-records"
+      ],
+      "arguments": [
+        "address_or_bbl"
+      ]
+    },
+    {
+      "name": "how_do_i_apply_for",
+      "description": "Explain how to apply for a given permit, license, or benefit and start the application with the owning agency.",
+      "uses": [
+        "apply-for-a-permit-license-or-benefit"
+      ],
+      "arguments": [
+        "what"
+      ]
+    },
+    {
+      "name": "report_a_problem_at",
+      "description": "File a 311-style report or complaint for a location and route it to the owning agency.",
+      "uses": [
+        "report-a-problem-or-file-a-complaint"
+      ],
+      "arguments": [
+        "problem",
+        "location"
+      ]
+    },
+    {
+      "name": "whats_the_status_of_my",
+      "description": "Look up the status of an application, permit, complaint, or case across agencies by its id.",
+      "uses": [
+        "check-application-or-case-status"
+      ],
+      "arguments": [
+        "case_id"
+      ]
+    },
+    {
+      "name": "what_agency_handles",
+      "description": "Identify which NYC agency owns a given task or record and hand off to its tools.",
+      "uses": [
+        "search-city-data-and-records"
+      ],
+      "arguments": [
+        "task"
+      ]
+    },
+    {
+      "name": "find_a_service_near_me",
+      "description": "Find city services or facilities near a location (parks, libraries, clinics, offices).",
+      "uses": [
+        "look-up-a-property-or-place"
+      ],
+      "arguments": [
+        "location",
+        "service_type"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://catalog",
+      "name": "NYC API catalog",
+      "description": "All 67 agency APIs with their OpenAPI, MCP server, and Agent Skills.",
+      "mimeType": "application/json",
+      "backing": "data/manifest.json"
+    },
+    {
+      "uri": "nyc://commons/geography",
+      "name": "nyc-commons geography spine",
+      "description": "The shared Borough / BBL / BIN / district vocabulary every place resolves to.",
+      "mimeType": "application/schema+json",
+      "backing": "nyc-commons/geography.json"
+    },
+    {
+      "uri": "nyc://transactions",
+      "name": "Citizen-transaction taxonomy",
+      "description": "The common government processes (Apply, Report, Request-records, Schedule, Register, Dispute, Pay) and the domains behind each.",
+      "mimeType": "application/json",
+      "backing": "data/transactions.json"
+    },
+    {
+      "uri": "nyc://linkage",
+      "name": "Cross-agency key registry",
+      "description": "The join keys (BBL, BIN, council district, ...) that link one agency's records to another's.",
+      "mimeType": "application/json",
+      "backing": "data/linkage.json"
+    },
+    {
+      "uri": "nyc://skills",
+      "name": "Government-process skills index",
+      "description": "The ten common government-process Agent Skills and the operations each orchestrates.",
+      "mimeType": "application/json",
+      "backing": "experience/skills/index.json"
+    },
+    {
+      "uri": "nyc://place/{bbl}",
+      "name": "Resolved place (templated)",
+      "description": "A nyc-commons Place for a BBL \u2014 its geography spine plus the agencies keyed on it.",
+      "mimeType": "application/json",
+      "template": true
+    },
+    {
+      "uri": "nyc://agency/{slug}",
+      "name": "Agency profile (templated)",
+      "description": "One agency's API + MCP + skills profile.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "count": 10
+  }
+}

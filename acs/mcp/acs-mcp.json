@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces ACS's thin machine-readable footprint (the Community Partner provider directory and its aggregate child-welfare, prevention, foster-care, and youth-justice reports) and adds report_child_care_concern — the net-new write workflow ACS delegates today to NYC 311. Case data stays confidential; suspected abuse is always redirected to the NY State Central Register.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces ACS's thin machine-readable footprint (the Community Partner provider directory and its aggregate child-welfare, prevention, foster-care, and youth-justice reports) and adds report_child_care_concern \u2014 the net-new write workflow ACS delegates today to NYC 311. Case data stays confidential; suspected abuse is always redirected to the NY State Central Register.",
     "openapi": "../openapi/acs.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.acs",
     "title": "NYC Administration for Children's Services (ACS)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Administration for Children's Services — the ACS Community Partner provider directory plus aggregate accountability statistics on child welfare, preventive services, foster care, and youth & family justice from NYC Open Data, plus the net-new ability to submit and track a complaint about a child care provider that today is delegated to NYC 311. ACS data is confidential by statute: only aggregates are exposed, never an individual case, child, or family.",
-    "instructions": "Use find_providers / get_provider to locate ACS Community Partner programs (family support, prevention, enrichment) by borough, service type, or council district — this is the only address-level ACS data. find_child_welfare_indicators, find_prevention_services, find_foster_care_statistics, and find_juvenile_justice_statistics return AGGREGATE counts and rates by reporting period and geography ONLY — ACS never exposes an individual investigation, foster child, or youth. report_child_care_concern (net-new) submits a complaint about a child care PROVIDER; it models the provider concern, not case data. CRITICAL: if the user describes a child being abused or neglected, do NOT collect case details here — direct them to call the NY State Central Register at 1-800-342-3720 (911 if a child is in immediate danger). Confirm the provider, category, and description before submitting a complaint."
+    "description": "Agent-native access to the NYC Administration for Children's Services \u2014 the ACS Community Partner provider directory plus aggregate accountability statistics on child welfare, preventive services, foster care, and youth & family justice from NYC Open Data, plus the net-new ability to submit and track a complaint about a child care provider that today is delegated to NYC 311. ACS data is confidential by statute: only aggregates are exposed, never an individual case, child, or family.",
+    "instructions": "Use find_providers / get_provider to locate ACS Community Partner programs (family support, prevention, enrichment) by borough, service type, or council district \u2014 this is the only address-level ACS data. find_child_welfare_indicators, find_prevention_services, find_foster_care_statistics, and find_juvenile_justice_statistics return AGGREGATE counts and rates by reporting period and geography ONLY \u2014 ACS never exposes an individual investigation, foster child, or youth. report_child_care_concern (net-new) submits a complaint about a child care PROVIDER; it models the provider concern, not case data. CRITICAL: if the user describes a child being abused or neglected, do NOT collect case details here \u2014 direct them to call the NY State Central Register at 1-800-342-3720 (911 if a child is in immediate danger). Confirm the provider, category, and description before submitting a complaint."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_providers",
@@ -23,27 +27,85 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "serviceType": { "type": "string" },
-          "active": { "type": "boolean" },
-          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "serviceType": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "councilDistrict": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 51
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/provider.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listProviders"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/provider.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listProviders",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_provider",
       "title": "Get Provider",
       "description": "Fetch a single ACS Community Partner provider (program, agency, address, hours, contact, geography) by program code.",
-      "inputSchema": { "type": "object", "properties": { "programCode": { "type": "string" } }, "required": ["programCode"] },
-      "outputSchema": { "$ref": "../schemas/provider.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getProvider"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "programCode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "programCode"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/provider.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getProvider",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_child_welfare_indicators",
@@ -52,17 +114,55 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "category": { "type": "string" },
-          "indicator": { "type": "string" },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "year": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "category": {
+            "type": "string"
+          },
+          "indicator": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "year": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/child-welfare-indicator.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listChildWelfareIndicators"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/child-welfare-indicator.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listChildWelfareIndicators",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_prevention_services",
@@ -71,16 +171,59 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "metric": { "type": "string", "enum": ["Children Served", "New Cases", "Utilization", "Cases Closed", "Closure Outcome"] },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "year": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "metric": {
+            "type": "string",
+            "enum": [
+              "Children Served",
+              "New Cases",
+              "Utilization",
+              "Cases Closed",
+              "Closure Outcome"
+            ]
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "year": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/prevention-service.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPreventionServices"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/prevention-service.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPreventionServices",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_foster_care_statistics",
@@ -89,16 +232,61 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "metric": { "type": "string", "enum": ["Children in 24-hour Foster Care", "Foster Care Placements", "Permanency Outcome", "High School Graduation Rate", "Educational Continuity", "Government-Issued ID", "Psychiatric Medication"] },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "year": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "metric": {
+            "type": "string",
+            "enum": [
+              "Children in 24-hour Foster Care",
+              "Foster Care Placements",
+              "Permanency Outcome",
+              "High School Graduation Rate",
+              "Educational Continuity",
+              "Government-Issued ID",
+              "Psychiatric Medication"
+            ]
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "year": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/foster-care-statistics.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listFosterCareStatistics"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/foster-care-statistics.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listFosterCareStatistics",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_juvenile_justice_statistics",
@@ -107,52 +295,158 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "metric": { "type": "string", "enum": ["Detention Admissions", "Detention & Placement Demographics", "Incident Reports", "Preplacement", "Abuse Allegation Detention & Placement"] },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "year": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "metric": {
+            "type": "string",
+            "enum": [
+              "Detention Admissions",
+              "Detention & Placement Demographics",
+              "Incident Reports",
+              "Preplacement",
+              "Abuse Allegation Detention & Placement"
+            ]
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "year": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/juvenile-justice-statistics.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listJuvenileJusticeStatistics"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/juvenile-justice-statistics.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listJuvenileJusticeStatistics",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_complaints",
       "title": "List My Complaints",
-      "description": "List the authenticated submitter's own child care provider complaints and their status — today handled outside ACS by NYC 311.",
+      "description": "List the authenticated submitter's own child care provider complaints and their status \u2014 today handled outside ACS by NYC 311.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Submitted", "Routed to 311", "Under Review", "Referred to Regulator", "Resolved", "Closed"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Submitted",
+              "Routed to 311",
+              "Under Review",
+              "Referred to Regulator",
+              "Resolved",
+              "Closed"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/child-care-complaint.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/child-care-complaint.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listChildCareComplaints",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_complaint",
       "title": "Get Complaint",
       "description": "Fetch a single child care provider complaint by id.",
-      "inputSchema": { "type": "object", "properties": { "complaintId": { "type": "string" } }, "required": ["complaintId"] },
-      "outputSchema": { "$ref": "../schemas/child-care-complaint.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "complaintId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "complaintId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/child-care-complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getChildCareComplaint",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "report_child_care_concern",
       "title": "Report a Child Care Concern",
-      "description": "Submit a complaint about a CHILD CARE PROVIDER (health, safety, staffing, licensing, quality). NET-NEW workflow with no ACS-owned API today — it is delegated to NYC 311. This models a provider concern, not case data. CRITICAL: this is NOT for reporting child abuse or neglect — if a child is being harmed, redirect the user to the NY State Central Register at 1-800-342-3720 (or 911 for immediate danger) and set childInvolved=true to trigger that redirect. Mutates state — confirm provider, category, and description first.",
-      "inputSchema": { "$ref": "../schemas/child-care-complaint.json" },
-      "outputSchema": { "$ref": "../schemas/child-care-complaint.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
-      "x-openapi-operation": "createChildCareComplaint"
+      "description": "Submit a complaint about a CHILD CARE PROVIDER (health, safety, staffing, licensing, quality). NET-NEW workflow with no ACS-owned API today \u2014 it is delegated to NYC 311. This models a provider concern, not case data. CRITICAL: this is NOT for reporting child abuse or neglect \u2014 if a child is being harmed, redirect the user to the NY State Central Register at 1-800-342-3720 (or 911 for immediate danger) and set childInvolved=true to trigger that redirect. Mutates state \u2014 confirm provider, category, and description first.",
+      "inputSchema": {
+        "$ref": "../schemas/child-care-complaint.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/child-care-complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "createChildCareComplaint",
+      "x-agent-skill": "report-a-problem-or-file-a-complaint"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

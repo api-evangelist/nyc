@@ -1,0 +1,1664 @@
+{
+ "specificationVersion": "0.21",
+ "aid": "nyc-programmable-city",
+ "name": "NYC \u2014 Programmable City",
+ "description": "Every New York City government API, MCP server, and Agent Skill in one place \u2014 67 agency APIs, 721 operations, 624 MCP tools, 7 prompts, 7 resources, and 10 common government-process skills. Design-first artifacts from the NYC Modernization assessment.",
+ "image": "https://nyc.apievangelist.com/assets/social.png",
+ "url": "https://nyc.apievangelist.com/experience/nyc.apis.json",
+ "tags": [
+  "NYC",
+  "Government",
+  "API",
+  "MCP",
+  "Agent Skills",
+  "APIs.json",
+  "Programmable City"
+ ],
+ "apis": [
+  {
+   "aid": "nyc:gateway",
+   "name": "NYC \u2014 Programmable City (unified)",
+   "description": "The unified surface across all 67 agencies \u2014 every operation mapped to an MCP tool and a government-process Agent Skill.",
+   "humanURL": "https://nyc.apievangelist.com/experience.html",
+   "baseURL": "https://api.nyc.gov",
+   "tags": [
+    "NYC",
+    "Gateway",
+    "MCP",
+    "Agent Skills"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/experience/nyc-openapi.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/experience.html"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/experience/nyc-mcp.json"
+    },
+    {
+     "type": "AgentSkills",
+     "url": "https://nyc.apievangelist.com/experience/skills/index.json"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:nycgovparks.org",
+   "name": "NYC Parks API (proposed)",
+   "description": "A resource-oriented API unifying NYC Parks data that today is split between HTML on nycgovparks.org and per-dataset endpoints on NYC Open Data.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=nycgovparks.org",
+   "tags": [
+    "NYC Parks & Recreation",
+    "Replatform"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycgovparks.org/openapi/nyc-parks.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycgovparks.org/mcp/nyc-parks-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=nycgovparks.org"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:schools.nyc.gov",
+   "name": "NYC Public Schools API (proposed)",
+   "description": "A resource-oriented, DBN-keyed API unifying NYC Public Schools data that today is split between JS-rendered pages on schools.nyc.gov, a vendor search (HawkSearch), an internal /CustomApi, and per-dataset endpoints on NYC Open Data.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=schools.nyc.gov",
+   "tags": [
+    "NYC Public Schools (DOE)",
+    "Reclaim"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/schools.nyc.gov/openapi/nyc-schools.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/schools.nyc.gov/mcp/nyc-schools-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=schools.nyc.gov"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:council.nyc.gov",
+   "name": "NYC Council API (proposed)",
+   "description": "One owned, resource-oriented API consolidating the NYC Council's three existing-but-fragmented APIs \u2014 the Legistar Web API (vendor), the WordPress REST API (content), and NYC Open Data (SODA) \u2014 into a single agent-native contract.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=council.nyc.gov",
+   "tags": [
+    "NYC Council",
+    "Consolidate & Own"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/openapi/nyc-council.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/council.nyc.gov/mcp/nyc-council-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=council.nyc.gov"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:vote.nyc",
+   "name": "NYC Elections API (proposed)",
+   "description": "The machine-readable elections API that does not exist today \u2014 poll sites, elections, contests, candidates, and results (incl. ranked-choice), plus mail-ballot request/tracking \u2014 for a Board of Elections whose data is otherwise PDFs and a legacy viewer.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=vote.nyc",
+   "tags": [
+    "NYC Board of Elections",
+    "Digitize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/openapi/nyc-elections.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/vote.nyc/mcp/nyc-elections-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=vote.nyc"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:nyc311",
+   "name": "NYC311 API (proposed \u2014 Open311 GeoReport v2, revived)",
+   "description": "A modern, owned revival of the Open311 GeoReport v2 contract for NYC's flagship civic service \u2014 backed by the existing 311 record (erm2-nwe9) and hostable on the existing api.nyc.gov gateway.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=nyc311",
+   "tags": [
+    "NYC311",
+    "Standardize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc311/openapi/nyc-311.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc311/mcp/nyc-311-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=nyc311"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dob",
+   "name": "NYC Department of Buildings API (proposed)",
+   "description": "One owned, resource-oriented, agent-native API for the NYC Department of Buildings \u2014 exposing the transactional application layer (BIS Web, DOB NOW, eFiling) that today has no public API and emits only a nightly Open Data batch dump.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dob",
+   "tags": [
+    "NYC Buildings (DOB)",
+    "Transact"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dob/openapi/dob.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dob/mcp/dob-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dob"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:hpd",
+   "name": "NYC HPD API (proposed)",
+   "description": "One owned, documented, agent-native API for the NYC Department of Housing Preservation & Development \u2014 exposing the building/violation/complaint/registration/litigation record that already flows through HPD's private backend, plus the net-new affordable-housing lottery application write.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=hpd",
+   "tags": [
+    "NYC Housing (HPD)",
+    "Expose"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hpd/openapi/hpd.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hpd/mcp/hpd-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=hpd"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dot",
+   "name": "NYC DOT Street Network API (proposed)",
+   "description": "One owned, resource-oriented API unifying the NYC Department of Transportation's scattered street assets \u2014 bike routes, traffic signals, parking regulations, speed humps, plazas, bridges, and street-work permits \u2014 around the LION street-segment spine, into a single agent-native contract.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dot",
+   "tags": [
+    "NYC Transportation (DOT)",
+    "Unify"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/openapi/dot.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dot/mcp/dot-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dot"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dohmh",
+   "name": "NYC Health (DOHMH) API (proposed)",
+   "description": "One owned, resource-oriented, agent-native API for the NYC Department of Health and Mental Hygiene \u2014 turning the city's most-consumed open data (restaurant inspections, rodent inspections, childcare, complaints) plus its siloed legacy service portals (ABC Eats, eVital, Accela) into a single contract that lets you both query health data AND transact \u2014 including ordering a birth/death certificate.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dohmh",
+   "tags": [
+    "NYC Health (DOHMH)",
+    "Transact"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dohmh/openapi/dohmh.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dohmh/mcp/dohmh-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dohmh"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dsny",
+   "name": "NYC DSNY API (proposed)",
+   "description": "One owned, documented, agent-native contract over the NYC Department of Sanitation's already-existing but hidden first-party APIs \u2014 the collection-schedule geocoder, the ePickups pickup-request API, the CFC appointment API \u2014 plus the 51 DSNY Open Data datasets.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dsny",
+   "tags": [
+    "NYC Sanitation (DSNY)",
+    "Expose"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dsny/openapi/dsny.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dsny/mcp/dsny-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dsny"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:nypd",
+   "name": "NYPD API (proposed)",
+   "description": "One owned, resource-oriented API that exposes the NYPD's richest-in-the-city open data as a live, queryable contract \u2014 and unlocks the operational record trapped inside the CompStat 2.0 and Officer Profile apps \u2014 behind a single agent-native surface.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=nypd",
+   "tags": [
+    "NYPD",
+    "Expose"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypd/openapi/nypd.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypd/mcp/nypd-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=nypd"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:tlc",
+   "name": "NYC TLC API (proposed)",
+   "description": "One owned, resource-oriented, agent-native API for the NYC Taxi & Limousine Commission \u2014 turning the world-famous but batch-only TLC open data (monthly parquet trip files + flat Socrata license snapshots) into a live, queryable, transactional surface.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=tlc",
+   "tags": [
+    "NYC Taxi & Limousine (TLC)",
+    "Operationalize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/tlc/openapi/tlc.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/tlc/mcp/tlc-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=tlc"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dcp",
+   "name": "NYC City Planning (DCP) API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of City Planning \u2014 the authoritative source of the citywide geography spine (BBL, community districts, NTAs, census tracts, zoning) that every other agency references.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dcp",
+   "tags": [
+    "NYC City Planning (DCP)",
+    "Anchor"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/openapi/dcp.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcp/mcp/dcp-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dcp"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:comptroller.nyc.gov",
+   "name": "NYC Comptroller API (proposed)",
+   "description": "One owned, resource-oriented API consolidating NYC's fiscal record \u2014 the existing Checkbook NYC spending API (XML-first, vendor Drupal app), the Office of the Comptroller's NYC Open Data assets, and the site's audits/claims content \u2014 into a single agent-native contract, plus the net-new eClaim filing workflow.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=comptroller.nyc.gov",
+   "tags": [
+    "NYC Comptroller",
+    "Consolidate & Own"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/comptroller.nyc.gov/openapi/comptroller.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/comptroller.nyc.gov/mcp/comptroller-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=comptroller.nyc.gov"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:nycha",
+   "name": "NYCHA API (proposed)",
+   "description": "One owned, resource-oriented API for the New York City Housing Authority \u2014 publishing its already-open reference data (developments, addresses, facilities, utility metering, resident statistics) as coherent resources, and adding the missing write surface locked inside the Oracle Siebel Self Service Portal \u2014 reporting a repair (work order).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=nycha",
+   "tags": [
+    "NYC Housing Authority (NYCHA)",
+    "Unlock"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycha/openapi/nycha.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycha/mcp/nycha-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=nycha"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:acs",
+   "name": "ACS API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Administration for Children's Services \u2014 publishing its thin machine-readable surface (the Community Partner / provider directory and its aggregate accountability reports on child welfare, prevention, foster care, and youth justice) as coherent resources, and adding the one missing write surface it delegates today to NYC 311 \u2014 submitting a complaint about a child care provider. Case data stays confidential by design.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=acs",
+   "tags": [
+    "NYC Children's Services (ACS)",
+    "insource"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/acs/openapi/acs.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/acs/mcp/acs-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=acs"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:bic",
+   "name": "NYC BIC API (proposed)",
+   "description": "One owned, resource-oriented API for the New York City Business Integrity Commission \u2014 publishing its already-open regulatory registry (trade waste licensees, registrants, wholesale-market businesses, fleet vehicles, issued violations, complaints) as coherent resources, and adding the missing write surface locked inside the Salesforce Experience Cloud licensing portal \u2014 applying for a trade waste license (application).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=bic",
+   "tags": [
+    "NYC Business Integrity Commission (BIC)",
+    "transact"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bic/openapi/bic.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bic/mcp/bic-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=bic"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:bklynlibrary",
+   "name": "Brooklyn Public Library API (proposed)",
+   "description": "One owned, documented, resource-oriented API for Brooklyn Public Library \u2014 formalizing the content that BPL already exposes through an accidental, public Drupal JSON:API (branches, events, digital collections, electronic resources) and adding the catalog transactions locked inside the BiblioCommons ILS: searching the catalog, applying for a library card, and \u2014 the net-new write \u2014 placing a hold on a book.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=bklynlibrary",
+   "tags": [
+    "Brooklyn Public Library (BPL)",
+    "formalize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bklynlibrary/openapi/bklynlibrary.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bklynlibrary/mcp/bklynlibrary-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=bklynlibrary"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:bronxbp",
+   "name": "Bronx Borough President API (proposed)",
+   "description": "One owned, resource-oriented API for the Office of the Bronx Borough President \u2014 publishing the office's charter work (land-use / ULURP recommendations, community-board appointments, discretionary funding awards, newsroom, and events) as coherent resources, and adding the missing write surface: applying to serve on a community board.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=bronxbp",
+   "tags": [
+    "Bronx Borough President",
+    "templatize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxbp/openapi/bronxbp.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxbp/mcp/bronxbp-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=bronxbp"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:bronxda",
+   "name": "Bronx District Attorney API (proposed)",
+   "description": "One owned, resource-oriented API for the Office of the Bronx District Attorney \u2014 publishing the content and aggregate prosecution data that today exist only as legacy SHTML pages and Power BI iframes (press releases, case statistics, bureaus/programs, community resources, victim services), and adding the missing write surface: submitting a crime tip, a Civilian Complaint Unit complaint, or a FOIL records request.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=bronxda",
+   "tags": [
+    "Bronx District Attorney",
+    "standardize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxda/openapi/bronxda.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bronxda/mcp/bronxda-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=bronxda"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:brooklynbp",
+   "name": "Brooklyn Borough President API (proposed)",
+   "description": "One owned, resource-oriented API for the Office of the Brooklyn Borough President \u2014 publishing its existing open data (ULURP land-use recommendations, board appointments, community boards, discretionary/capital/tourism funding awards, reports, and events) as coherent resources, and adding the missing constituent write surface \u2014 applying to serve on a community board.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=brooklynbp",
+   "tags": [
+    "Brooklyn Borough President",
+    "template"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynbp/openapi/brooklynbp.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynbp/mcp/brooklynbp-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=brooklynbp"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:brooklynda",
+   "name": "Brooklyn District Attorney API (proposed)",
+   "description": "One owned, resource-oriented API for the Kings County (Brooklyn) District Attorney's Office \u2014 turning a WordPress brochure site with an accidental content API into a designed contract for press releases, programs, community resources, victim services, and aggregate case statistics, and adding the missing inbound write surface: submitting a confidential tip.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=brooklynda",
+   "tags": [
+    "Brooklyn District Attorney",
+    "template"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynda/openapi/brooklynda.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/brooklynda/mcp/brooklynda-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=brooklynda"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:bsa",
+   "name": "BSA API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Board of Standards & Appeals \u2014 publishing its already-open case data (applications, resolutions, the legacy calendar index, pre-application meetings) as coherent resources, adding the hearing calendar that has no dataset today, and adding the missing write surface: filing a zoning variance / appeal, which today is a paper PDF-form process with no online portal.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=bsa",
+   "tags": [
+    "NYC Standards & Appeals (BSA)",
+    "digitize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bsa/openapi/bsa.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/bsa/mcp/bsa-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=bsa"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:cchr",
+   "name": "CCHR API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Commission on Human Rights \u2014 giving the untyped \"Report Discrimination\" intake a real write contract (filing a discrimination complaint), and turning the NYC Human Rights Law's protected classes, legal guidance, training/outreach, and the Commission's three aggregate operational datasets into clean, machine-readable resources.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=cchr",
+   "tags": [
+    "NYC Human Rights (CCHR)",
+    "structure"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cchr/openapi/cchr.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cchr/mcp/cchr-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=cchr"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:ccrb",
+   "name": "CCRB API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Civilian Complaint Review Board \u2014 turning its model-grade transparency data (complaints, allegations, accused officers, penalties) from dashboards-and-CSV into a queryable contract, and adding the missing write surface: filing a misconduct complaint against an officer.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=ccrb",
+   "tags": [
+    "NYC Civilian Complaint Review (CCRB)",
+    "expose"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ccrb/openapi/ccrb.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ccrb/mcp/ccrb-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=ccrb"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:cfb",
+   "name": "NYC Campaign Finance Board API (proposed)",
+   "description": "One owned, documented, resource-oriented API for the New York City Campaign Finance Board \u2014 formalizing the real-but-undocumented Follow the Money search backend and the open campaign-finance datasets (candidates, committees, contributions, expenditures, public matching-funds payments) as coherent resources, and adding the missing write surface locked inside the C-SMART disclosure application \u2014 submitting a disclosure statement (filing).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=cfb",
+   "tags": [
+    "NYC Campaign Finance Board (CFB)",
+    "document"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cfb/openapi/cfb.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cfb/mcp/cfb-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=cfb"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:cityclerk",
+   "name": "NYC City Clerk API (proposed)",
+   "description": "One owned, resource-oriented API for the New York City Office of the City Clerk \u2014 publishing its open lobbyist-registration and filing data as coherent resources, and adding the missing write surface locked inside the rented Project Cupid (Unqork) marriage system: applying for a marriage license.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=cityclerk",
+   "tags": [
+    "NYC City Clerk",
+    "contract"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cityclerk/openapi/cityclerk.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cityclerk/mcp/cityclerk-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=cityclerk"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:coib",
+   "name": "COIB API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Conflicts of Interest Board \u2014 publishing its already-open transparency data (enforcement dispositions, agency donations, policymaker lists, legal defense trusts) as coherent resources, and adding the missing write surface locked inside the login-only Annual Financial Disclosure filing website \u2014 filing an annual disclosure report.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=coib",
+   "tags": [
+    "NYC Conflicts of Interest Board (COIB)",
+    "attest"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/coib/openapi/coib.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/coib/mcp/coib-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=coib"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:cuny",
+   "name": "CUNY API (proposed)",
+   "description": "One owned, resource-oriented API for the City University of New York \u2014 federating its ~25 campuses' reference data (campuses, degree programs, courses, aggregate enrollment, faculty/research) behind a single contract, and adding the missing write surface locked inside CUNYfirst (Oracle PeopleSoft) \u2014 submitting a CUNY admissions application.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=cuny",
+   "tags": [
+    "City University of New York (CUNY)",
+    "federate"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cuny/openapi/cuny.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/cuny/mcp/cuny-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=cuny"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dcas",
+   "name": "DCAS API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Citywide Administrative Services \u2014 publishing its already-open civil-service reference data (job postings, titles, eligible lists, exam schedules, public buildings, fleet) as coherent resources, and adding the missing write surface locked inside the aNNN application layer \u2014 registering for a civil-service exam.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dcas",
+   "tags": [
+    "NYC Citywide Admin Services (DCAS)",
+    "Transact"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcas/openapi/dcas.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcas/mcp/dcas-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dcas"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dcla",
+   "name": "DCLA API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Cultural Affairs \u2014 publishing its open funding and cultural-sector reference data (cultural organizations, program and capital grants, Cultural Institutions Group support, Percent for Art public artworks, Materials for the Arts) as coherent resources, and adding the missing write surface locked inside the Salesforce Grants Management System \u2014 applying for a grant (grant application).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dcla",
+   "tags": [
+    "NYC Cultural Affairs (DCLA)",
+    "open"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/openapi/dcla.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcla/mcp/dcla-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dcla"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dcwp",
+   "name": "DCWP API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Consumer and Worker Protection \u2014 binding its already-open regulatory lifecycle (licenses, applications, inspections, charges, consumer complaints, worker-protection matters) into a single model keyed on Business Unique ID, and adding the two citizen write surfaces locked in the NYC Business portal and 311: applying for a license and filing a consumer complaint.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dcwp",
+   "tags": [
+    "NYC Consumer & Worker Protection (DCWP)",
+    "bind"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcwp/openapi/dcwp.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dcwp/mcp/dcwp-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dcwp"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:ddc",
+   "name": "DDC API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Design and Construction \u2014 surfacing its capital construction portfolio (projects, awarded contracts, vendors, divisions) as coherent, live resources instead of stale Open Data snapshots, and fronting the citywide vendor-onboarding flow (PASSPort/MOCS) with the one net-new write surface DDC could own: vendor prequalification.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=ddc",
+   "tags": [
+    "NYC Design & Construction (DDC)",
+    "surface"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ddc/openapi/ddc.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ddc/mcp/ddc-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=ddc"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dep",
+   "name": "NYC DEP API (proposed)",
+   "description": "One owned, resource-oriented API for the New York City Department of Environmental Protection \u2014 publishing its already-open environmental reference data (reservoir levels, water quality, water consumption, green infrastructure, hydrants, permits) as coherent, well-typed resources, and adding the missing transactional surface today split between NYC311 and the login-walled My DEP Account (uMAX) portal \u2014 reporting a water or sewer problem (water service request).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dep",
+   "tags": [
+    "NYC Environmental Protection (DEP)",
+    "Transact"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dep/openapi/dep.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dep/mcp/dep-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dep"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dfta",
+   "name": "NYC Aging (DFTA) API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department for the Aging (DFTA / \"NYC Aging\") \u2014 publishing its already-open provider network (older adult centers, contracted providers, activities, service units, participation) as coherent resources, and adding the missing write surface locked inside the phone-based Aging Connect intake \u2014 making a service referral.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dfta",
+   "tags": [
+    "NYC Aging (DFTA)",
+    "connect"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dfta/openapi/dfta.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dfta/mcp/dfta-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dfta"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dhs",
+   "name": "DHS API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Homeless Services \u2014 publishing its already-open reference data (the daily shelter census, drop-in centers, shelter facilities and repair scorecard, DHS contacts/intake centers, and aggregate street-homeless counts) as coherent resources, and adding the missing write surface that today exists only as a NYC311 phone call \u2014 requesting street outreach for a person experiencing homelessness.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dhs",
+   "tags": [
+    "NYC Homeless Services (DHS)",
+    "connect"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dhs/openapi/dhs.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dhs/mcp/dhs-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dhs"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:doc",
+   "name": "NYC DOC API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Correction \u2014 publishing its already-open accountability data (people in custody, incidents, security indicators) and the live Inmate Lookup as coherent resources, and adding the missing write surfaces that today have no digital contract at all \u2014 scheduling a visit and filing a complaint / records request.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=doc",
+   "tags": [
+    "NYC Correction (DOC)",
+    "expose"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doc/openapi/doc.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doc/mcp/doc-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=doc"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dof",
+   "name": "NYC Department of Finance API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Finance \u2014 publishing its already-open reference data (property valuation & assessment, exemptions, tax-charge balances, ACRIS recorded documents, parking violations) as coherent resources, and adding the missing write surface locked inside the legacy CityPay app \u2014 paying a parking ticket.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dof",
+   "tags": [
+    "NYC Finance (DOF)",
+    "modernize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dof/openapi/dof.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dof/mcp/dof-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dof"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:doi",
+   "name": "NYC DOI API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Investigation \u2014 publishing its structured Open Data (evictions and City Marshal oversight, policy recommendations, performance indicators) and an index of its PDF-only public reports as coherent resources, and adding the missing write surface locked inside the third-party Kaseware intake portal \u2014 filing a corruption complaint.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=doi",
+   "tags": [
+    "NYC Investigation (DOI)",
+    "Digitize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doi/openapi/doi.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doi/mcp/doi-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=doi"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:doris",
+   "name": "NYC DORIS API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Records & Information Services (DORIS) \u2014 publishing its already-open archival, vital-record, publication, and honorary-street-name indexes as coherent resources, and adding the missing write surface: requesting (retrieving/ordering) a record that today lives only behind the Historical Vital Records portal, the vendor DAMS, or a FOIL form.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=doris",
+   "tags": [
+    "NYC Records (DORIS)",
+    "retrieve"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doris/openapi/doris.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/doris/mcp/doris-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=doris"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dvs",
+   "name": "NYC DVS API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Veterans' Services \u2014 publishing its already-open reference and de-identified service data (resource map, veteran-owned businesses, assistance requests, cases, client statistics) as coherent resources, and adding the missing write surface locked inside the third-party VetConnectNYC portal \u2014 making a care-coordination referral (ServiceReferral).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dvs",
+   "tags": [
+    "NYC Veterans' Services (DVS)",
+    "coordinate"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dvs/openapi/dvs.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dvs/mcp/dvs-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dvs"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:dycd",
+   "name": "DYCD API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Youth and Community Development \u2014 surfacing the program-finder that already exists inside DiscoverDYCD, publishing DYCD's open supply-side data (programs, program sites, providers, contracts, service areas, participant demographics) as coherent resources, and adding the missing write surface: applying to a program.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=dycd",
+   "tags": [
+    "NYC Youth & Community Dev (DYCD)",
+    "surface"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dycd/openapi/dycd.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/dycd/mcp/dycd-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=dycd"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:edc",
+   "name": "NYC EDC API (proposed)",
+   "description": "One owned, resource-oriented API for the New York City Economic Development Corporation \u2014 surfacing its core-but-unpublished portfolio (development projects, EDC-managed real estate assets, and open solicitations), presenting its few real open datasets (Mapped In NY companies, NYC Ferry ridership, WiredNYC buildings) as coherent resources, and adding the missing write surface: responding to an EDC solicitation (RFP/RFEI).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=edc",
+   "tags": [
+    "NYC Economic Development (EDC)",
+    "surface"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/edc/openapi/edc.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/edc/mcp/edc-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=edc"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:fdny",
+   "name": "FDNY API (proposed)",
+   "description": "One owned, resource-oriented API for the Fire Department of the City of New York \u2014 publishing its already-open reference and operational data (firehouses, fire and EMS incident dispatch, inspections, violations, certificates of fitness) as coherent resources, and adding the missing write surface locked inside the rented FDNY Business permitting cloud \u2014 applying for a fire permit.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=fdny",
+   "tags": [
+    "NYC Fire (FDNY)",
+    "front"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/fdny/openapi/fdny.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/fdny/mcp/fdny-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=fdny"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:hhc",
+   "name": "NYC Health + Hospitals API (proposed)",
+   "description": "One owned, resource-oriented API for NYC Health + Hospitals \u2014 publishing an open facility, service, provider, pharmacy, and financial-assistance directory the system does not offer today, and adding the missing write surface: requesting / booking an appointment. It is designed to sit on top of the live Epic FHIR R4 standard H+H already runs, extending it where the standard stops (booking).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=hhc",
+   "tags": [
+    "NYC Health + Hospitals",
+    "extend"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/openapi/hhc.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hhc/mcp/hhc-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=hhc"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:hra",
+   "name": "HRA / DSS API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Human Resources Administration / Department of Social Services \u2014 publishing its already-open reference and caseload data (benefit programs, application centers, caseload statistics, case actions) as coherent resources, exposing the open-source ACCESS NYC eligibility rules as a screening endpoint, and adding the missing write surface locked inside the ACCESS HRA portal: submitting a benefits application.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=hra",
+   "tags": [
+    "NYC Social Services (HRA)",
+    "connect"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hra/openapi/hra.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hra/mcp/hra-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=hra"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:ibo",
+   "name": "NYC Independent Budget Office (IBO) API (proposed)",
+   "description": "One owned, documented, resource-oriented API for the New York City Independent Budget Office \u2014 formalizing IBO's already-live but undocumented NYC.gov Content API (1,145 publications) and its 20 wide, Excel-shaped Open Data fiscal tables into clean resources, and adding the one missing citizen write surface: submitting an \"Ask IBO\" data / analysis request.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=ibo",
+   "tags": [
+    "NYC Independent Budget Office (IBO)",
+    "formalize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ibo/openapi/ibo.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ibo/mcp/ibo-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=ibo"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:law",
+   "name": "NYC Law Department API (proposed)",
+   "description": "One owned, resource-oriented API for the New York City Law Department (Office of the Corporation Counsel) \u2014 publishing its thin, scattered Open Data (civil-litigation index, legal divisions, press releases / speeches / columns, M/WBE statistics, and the pro bono Public Service Program) as coherent resources, and adding the one net-new write surface a member of the public actually initiates with the Department: applying to its legal internship / fellowship program.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=law",
+   "tags": [
+    "NYC Law Department",
+    "catalog"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/law/openapi/law.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/law/mcp/law-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=law"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:lpc",
+   "name": "NYC Landmarks (LPC) API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Landmarks Preservation Commission \u2014 binding its already-open landmark data (individual/scenic landmarks, designated buildings, historic districts, designation reports, permit history, and violations) into a single LP_NUMBER-keyed contract, and adding the missing write surface locked inside the Salesforce Portico portal \u2014 filing a permit application (Certificate of Appropriateness / No Effect).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=lpc",
+   "tags": [
+    "NYC Landmarks (LPC)",
+    "bind"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/lpc/openapi/lpc.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/lpc/mcp/lpc-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=lpc"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:manhattanbp",
+   "name": "Manhattan Borough President API (proposed)",
+   "description": "One owned, resource-oriented API for the Office of the Manhattan Borough President \u2014 publishing its already-open reference data (community boards, land-use/ULURP recommendations, board appointments, discretionary funding awards, legislation, and constituent-service cases) as coherent resources, and adding the missing write surface that today lives only in a WordPress web form: applying to serve on a Manhattan community board.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=manhattanbp",
+   "tags": [
+    "Manhattan Borough President",
+    "federate"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanbp/openapi/manhattanbp.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanbp/mcp/manhattanbp-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=manhattanbp"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:manhattanda",
+   "name": "Manhattan DA API (proposed)",
+   "description": "One owned, resource-oriented API for the Manhattan District Attorney's Office (New York County District Attorney) \u2014 publishing the newsroom that is already machine-readable through WordPress as clean resources, turning the Our Work / Victim Resources / office pages into structured objects, and adding the missing write surface: submitting a tip to a DA bureau.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=manhattanda",
+   "tags": [
+    "Manhattan District Attorney",
+    "standardize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanda/openapi/manhattanda.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/manhattanda/mcp/manhattanda-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=manhattanda"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:mocj",
+   "name": "MOCJ API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Mayor's Office of Criminal Justice \u2014 publishing its programs, publications/data reports, procurement solicitations, the single Supervised Release Dockets dataset, and the system indicators it analyzes (jail population, re-arrest) as coherent resources, and adding the missing write surface a coordination office needs \u2014 making a program referral.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=mocj",
+   "tags": [
+    "NYC Criminal Justice (MOCJ)",
+    "route"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mocj/openapi/mocj.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mocj/mcp/mocj-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=mocj"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:mome",
+   "name": "MOME API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Mayor's Office of Media & Entertainment \u2014 publishing its flagship open data (Film Permits, MARCH nightlife inspections) as coherent resources, exposing MOME's non-permit programs, and adding the missing write surface locked inside the 'MOME E-Apply' portal: applying for a film/photography permit.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=mome",
+   "tags": [
+    "NYC Media & Entertainment (MOME)",
+    "greenlight"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mome/openapi/mome.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/mome/mcp/mome-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=mome"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:nycem",
+   "name": "NYC Emergency Management (NYCEM) API (proposed)",
+   "description": "One owned, resource-oriented API for NYC Emergency Management \u2014 publishing its already-open reference data (emergency incidents, hurricane evacuation zones and centers, hazard-mitigation actions, preparedness resources) and the real-time Notify NYC alert stream as coherent resources, and adding the missing write surface locked inside the rented Everbridge platform \u2014 subscribing to Notify NYC alerts.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=nycem",
+   "tags": [
+    "NYC Emergency Management (NYCEM)",
+    "syndicate"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/openapi/nycem.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nycem/mcp/nycem-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=nycem"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:nypl",
+   "name": "NYPL API (proposed unification)",
+   "description": "One owned, agent-native contract that unifies the New York Public Library's already-real public APIs \u2014 Digital Collections, Locations, and the Research Catalog \u2014 under a single resource model, and adds the one gap: a clean, documented write surface for placing a hold (reservation) on a catalog item.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=nypl",
+   "tags": [
+    "New York Public Library (NYPL)",
+    "lead"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypl/openapi/nypl.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nypl/mcp/nypl-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=nypl"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:oath",
+   "name": "OATH API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Office of Administrative Trials & Hearings (OATH) \u2014 publishing its already-open adjudication data (ECB summonses, hearings, decisions, and Trials Division cases) as coherent resources, and adding the missing write surface locked inside the legacy ECB Ticket Finder portal \u2014 responding to / disputing a summons (request a hearing).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=oath",
+   "tags": [
+    "NYC Admin Trials & Hearings (OATH)",
+    "respond"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oath/openapi/oath.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oath/mcp/oath-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=oath"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:ocme",
+   "name": "OCME API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Office of Chief Medical Examiner \u2014 publishing the little OCME data that can responsibly be public (performance indicators, aggregate casework statistics, forensic services, family services centers, NamUs missing-persons listings) as coherent resources, and adding the missing, dignified write surface that today lives only on paper and NYC 311: requesting a decedent's medical-examiner casefile record.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=ocme",
+   "tags": [
+    "NYC Medical Examiner (OCME)",
+    "instrument"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ocme/openapi/ocme.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/ocme/mcp/ocme-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=ocme"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:oti",
+   "name": "NYC OTI Platform API (proposed)",
+   "description": "One owned, resource-oriented API for the citywide platform the NYC Office of Technology & Innovation (OTI) already operates \u2014 the NYC Open Data catalog, the api.nyc.gov gateway (GeoClient/GeoSearch), LinkNYC, municipal broadband, public Wi-Fi, and 311 \u2014 presented as a single unified gateway + catalog contract, with write surfaces to register a dataset and request a gateway key.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=oti",
+   "tags": [
+    "NYC Technology & Innovation (OTI)",
+    "productize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oti/openapi/oti.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/oti/mcp/oti-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=oti"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:pubadvocate",
+   "name": "NYC Public Advocate API (proposed)",
+   "description": "One owned, resource-oriented API for the New York City Public Advocate \u2014 publishing the office's scattered, undocumented, and PDF-bound output (the Worst Landlord Watchlist, sponsored legislation, reports, public interest demands) as coherent resources, and adding the missing write surface: a machine-readable way to ask the city's ombudsman for help with a city agency (an OmbudsmanComplaint).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=pubadvocate",
+   "tags": [
+    "NYC Public Advocate",
+    "Respond"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pubadvocate/openapi/pubadvocate.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pubadvocate/mcp/pubadvocate-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=pubadvocate"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:queensbp",
+   "name": "Queens Borough President API (proposed)",
+   "description": "One owned, resource-oriented API for the Office of the Queens Borough President \u2014 publishing the borough-president functions (community boards and appointments, land-use/ULURP recommendations, discretionary funding, events, and press releases) as coherent resources, and adding the missing write surface the office actually runs on paper: applying to serve on a community board.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=queensbp",
+   "tags": [
+    "Queens Borough President",
+    "standardize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/openapi/queensbp.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensbp/mcp/queensbp-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=queensbp"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:queensda",
+   "name": "Queens District Attorney API (proposed)",
+   "description": "One owned, resource-oriented API for the Queens County District Attorney \u2014 turning the office's prolific press-release narrative into structured resources (press releases, cases, cold cases, programs, resources, victim services) and adding the missing inbound write surface: submitting a tip, a cold-case lead, or a FOIL records request.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=queensda",
+   "tags": [
+    "Queens District Attorney",
+    "structure"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensda/openapi/queensda.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queensda/mcp/queensda-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=queensda"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:queenslibrary",
+   "name": "Queens Public Library API (proposed)",
+   "description": "One owned, resource-oriented API for Queens Public Library (QPL) \u2014 federating the branch directory, catalog, events, and digital collections that today live in separate vendor SaaS platforms, and adding the missing write surface locked inside the BiblioCommons account: placing a hold (book hold) and applying for a library card.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=queenslibrary",
+   "tags": [
+    "Queens Public Library (QPL)",
+    "federate"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queenslibrary/openapi/queenslibrary.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/queenslibrary/mcp/queenslibrary-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=queenslibrary"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:sbs",
+   "name": "NYC SBS API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Department of Small Business Services \u2014 publishing its already-open program data (certified businesses, business improvement districts, Workforce1 events and job listings, service centers, business incentives) as coherent resources, and adding the missing write surface locked inside the MyCity Business portal \u2014 applying for M/WBE certification.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=sbs",
+   "tags": [
+    "NYC Small Business Services (SBS)",
+    "navigate"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/openapi/sbs.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sbs/mcp/sbs-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=sbs"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:sca",
+   "name": "NYC School Construction Authority API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC School Construction Authority \u2014 publishing its already-open capital-plan and procurement reference data (capital projects, upcoming contracts, RFP solicitations, prequalified firms, enrollment/capacity, inspections) as coherent resources, and adding the missing vendor write surface locked inside the bidset SharePoint portal \u2014 applying to become a prequalified vendor.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=sca",
+   "tags": [
+    "NYC School Construction Authority (SCA)",
+    "onboard"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sca/openapi/sca.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/sca/mcp/sca-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=sca"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:statenislandbp",
+   "name": "Staten Island Borough President API (proposed)",
+   "description": "One owned, resource-oriented API for the Office of the Staten Island Borough President \u2014 giving the borough president's charter functions (land-use / ULURP recommendations, community board appointments, discretionary budget awards, borough board resolutions, community events, and the BP Assist help line) a machine-readable contract they do not have today, plus the net-new write surface for the Community Board membership application.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=statenislandbp",
+   "tags": [
+    "Staten Island Borough President",
+    "federate"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandbp/openapi/statenislandbp.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandbp/mcp/statenislandbp-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=statenislandbp"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:statenislandda",
+   "name": "Staten Island DA API (proposed)",
+   "description": "One owned, resource-oriented API for the Office of the District Attorney, Richmond County (Staten Island DA) \u2014 publishing the office's press releases, programs, victim services, and community/scam advisories as clean resources, proposing an aggregate prosecution-statistics surface for its dark case data, and adding the missing write surface: submitting a confidential tip (today only a Contact Form 7 email form).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=statenislandda",
+   "tags": [
+    "Staten Island District Attorney",
+    "surface"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandda/openapi/statenislandda.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/statenislandda/mcp/statenislandda-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=statenislandda"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:taxcommission",
+   "name": "NYC Tax Commission API (proposed)",
+   "description": "One owned, resource-oriented API for the New York City Tax Commission \u2014 publishing its outcome data (assessment actions, open Article 7 petitions) as coherent resources, and adding the missing write surface that today lives only in PDF forms and the online filing system: filing a property-tax assessment appeal (Application for Correction).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=taxcommission",
+   "tags": [
+    "NYC Tax Commission",
+    "digitize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/taxcommission/openapi/taxcommission.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/taxcommission/mcp/taxcommission-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=taxcommission"
+    }
+   ]
+  }
+ ],
+ "maintainers": [
+  {
+   "FN": "Kin Lane",
+   "email": "info@apievangelist.com"
+  }
+ ]
+}

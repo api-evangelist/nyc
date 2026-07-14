@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the content BPL already exposes through its accidental public Drupal JSON:API (branches, events, digital collections, electronic resources), fronts the BiblioCommons catalog (search + item detail), and adds place_hold — the net-new write locked today inside the BiblioCommons catalog — plus apply_for_library_card.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the content BPL already exposes through its accidental public Drupal JSON:API (branches, events, digital collections, electronic resources), fronts the BiblioCommons catalog (search + item detail), and adds place_hold \u2014 the net-new write locked today inside the BiblioCommons catalog \u2014 plus apply_for_library_card.",
     "openapi": "../openapi/bklynlibrary.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.bklynlibrary",
     "title": "Brooklyn Public Library (BPL)",
     "version": "0.1.0",
-    "description": "Agent-native access to Brooklyn Public Library — branches, events and programs, digital collections, and licensed electronic resources (from BPL's public Drupal JSON:API), plus catalog search and item availability (from the BiblioCommons ILS), and the net-new ability to apply for a library card and place a hold on a book that today live only behind vendor logins.",
-    "instructions": "Use find_branches / get_branch to locate library branches by holds-pickup, region, hours, or free text. find_events searches programs and story times (registration workflow included). search_catalog / get_catalog_item query the BiblioCommons bibliographic catalog and availability. find_digital_collections covers digitized assets, feature collections, and archival finding aids; find_electronic_resources lists licensed databases. get_my_library_card and list_my_holds require an authenticated patron. apply_for_library_card and place_hold (net-new) mutate state — confirm the item, pickup branch, and patron details with the user before submitting. Note: BPL is one of three separate NYC library systems (NYPL, BPL, Queens); this server covers BPL only."
+    "description": "Agent-native access to Brooklyn Public Library \u2014 branches, events and programs, digital collections, and licensed electronic resources (from BPL's public Drupal JSON:API), plus catalog search and item availability (from the BiblioCommons ILS), and the net-new ability to apply for a library card and place a hold on a book that today live only behind vendor logins.",
+    "instructions": "Use find_branches / get_branch to locate library branches by holds-pickup, region, hours, or free text. find_events searches programs and story times (registration workflow included). search_catalog / get_catalog_item query the BiblioCommons bibliographic catalog and availability. find_digital_collections covers digitized assets, feature collections, and archival finding aids; find_electronic_resources lists licensed databases. get_my_library_card and list_my_holds require an authenticated patron. apply_for_library_card and place_hold (net-new) mutate state \u2014 confirm the item, pickup branch, and patron details with the user before submitting. Note: BPL is one of three separate NYC library systems (NYPL, BPL, Queens); this server covers BPL only."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_branches",
@@ -23,26 +27,73 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "holdsPickup": { "type": "boolean" },
-          "region": { "type": "string" },
-          "openNow": { "type": "boolean" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "holdsPickup": {
+            "type": "boolean"
+          },
+          "region": {
+            "type": "string"
+          },
+          "openNow": {
+            "type": "boolean"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/branch.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listBranches"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/branch.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listBranches",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_branch",
       "title": "Get Branch",
       "description": "Fetch a BPL branch (address, hours, geography, services) by Branch ID.",
-      "inputSchema": { "type": "object", "properties": { "branchId": { "type": "string" } }, "required": ["branchId"] },
-      "outputSchema": { "$ref": "../schemas/branch.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getBranch"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "branchId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "branchId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/branch.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getBranch",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_events",
@@ -51,57 +102,173 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "branchId": { "type": "string" },
-          "programType": { "type": "string" },
-          "audience": { "type": "string" },
-          "virtual": { "type": "boolean" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "branchId": {
+            "type": "string"
+          },
+          "programType": {
+            "type": "string"
+          },
+          "audience": {
+            "type": "string"
+          },
+          "virtual": {
+            "type": "boolean"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/event.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listEvents"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/event.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listEvents",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_event",
       "title": "Get Event",
       "description": "Fetch a BPL event / program by id, including its registration details.",
-      "inputSchema": { "type": "object", "properties": { "eventId": { "type": "string" } }, "required": ["eventId"] },
-      "outputSchema": { "$ref": "../schemas/event.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getEvent"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "eventId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/event.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getEvent",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "search_catalog",
       "title": "Search Catalog",
-      "description": "Search the BiblioCommons bibliographic catalog by keyword, format, author, or availability — today reachable only through the vendor UI.",
+      "description": "Search the BiblioCommons bibliographic catalog by keyword, format, author, or availability \u2014 today reachable only through the vendor UI.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "q": { "type": "string" },
-          "format": { "type": "string", "enum": ["Book", "eBook", "Audiobook", "eAudiobook", "DVD", "Blu-ray", "Music CD", "Magazine", "Large Print", "Graphic Novel", "Streaming Video", "Other"] },
-          "author": { "type": "string" },
-          "availableOnly": { "type": "boolean" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "q": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "Book",
+              "eBook",
+              "Audiobook",
+              "eAudiobook",
+              "DVD",
+              "Blu-ray",
+              "Music CD",
+              "Magazine",
+              "Large Print",
+              "Graphic Novel",
+              "Streaming Video",
+              "Other"
+            ]
+          },
+          "author": {
+            "type": "string"
+          },
+          "availableOnly": {
+            "type": "boolean"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/catalog-item.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "searchCatalog"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/catalog-item.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "searchCatalog",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_catalog_item",
       "title": "Get Catalog Item",
       "description": "Fetch a catalog item and its availability across branches by item id.",
-      "inputSchema": { "type": "object", "properties": { "itemId": { "type": "string" } }, "required": ["itemId"] },
-      "outputSchema": { "$ref": "../schemas/catalog-item.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getCatalogItem"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "itemId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/catalog-item.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getCatalogItem",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_digital_collections",
@@ -110,16 +277,50 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "kind": { "type": "string", "enum": ["DigitalAsset", "FeatureCollection", "FindingAid"] },
-          "creator": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "kind": {
+            "type": "string",
+            "enum": [
+              "DigitalAsset",
+              "FeatureCollection",
+              "FindingAid"
+            ]
+          },
+          "creator": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/digital-collection.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listDigitalCollections"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/digital-collection.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listDigitalCollections",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_electronic_resources",
@@ -128,72 +329,185 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "vendor": { "type": "string" },
-          "language": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "vendor": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/electronic-resource.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listElectronicResources"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/electronic-resource.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listElectronicResources",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_my_library_card",
       "title": "Get My Library Card",
-      "description": "Return the authenticated patron's own library card — status, expiry, and fines. Today visible only inside the BiblioCommons account.",
-      "inputSchema": { "type": "object", "properties": {} },
-      "outputSchema": { "$ref": "../schemas/library-card.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "description": "Return the authenticated patron's own library card \u2014 status, expiry, and fines. Today visible only inside the BiblioCommons account.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "$ref": "../schemas/library-card.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getMyLibraryCard",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "apply_for_library_card",
       "title": "Apply for a Library Card",
-      "description": "Apply for a BPL library card. NET-NEW workflow with no owned public API today — it lives only in a Drupal webform. Mutates state — confirm the applicant details with the user before submitting.",
-      "inputSchema": { "$ref": "../schemas/library-card.json" },
-      "outputSchema": { "$ref": "../schemas/library-card.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
-      "x-openapi-operation": "applyForLibraryCard"
+      "description": "Apply for a BPL library card. NET-NEW workflow with no owned public API today \u2014 it lives only in a Drupal webform. Mutates state \u2014 confirm the applicant details with the user before submitting.",
+      "inputSchema": {
+        "$ref": "../schemas/library-card.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/library-card.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "applyForLibraryCard",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     },
     {
       "name": "list_my_holds",
       "title": "List My Holds",
-      "description": "List the authenticated patron's own holds and their status — today visible only inside the BiblioCommons catalog.",
+      "description": "List the authenticated patron's own holds and their status \u2014 today visible only inside the BiblioCommons catalog.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Pending", "Active", "In Transit", "Ready for Pickup", "Suspended", "Fulfilled", "Cancelled", "Expired"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Pending",
+              "Active",
+              "In Transit",
+              "Ready for Pickup",
+              "Suspended",
+              "Fulfilled",
+              "Cancelled",
+              "Expired"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/book-hold.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/book-hold.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listMyHolds",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "place_hold",
       "title": "Place a Hold",
-      "description": "Place a hold / reservation on a BPL catalog item and choose a pickup branch. NET-NEW workflow with no public API today — it lives only in the BiblioCommons catalog behind a login. Requires an authenticated patron. Mutates state — confirm the item and pickup branch first.",
-      "inputSchema": { "$ref": "../schemas/book-hold.json" },
-      "outputSchema": { "$ref": "../schemas/book-hold.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Place a hold / reservation on a BPL catalog item and choose a pickup branch. NET-NEW workflow with no public API today \u2014 it lives only in the BiblioCommons catalog behind a login. Requires an authenticated patron. Mutates state \u2014 confirm the item and pickup branch first.",
+      "inputSchema": {
+        "$ref": "../schemas/book-hold.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/book-hold.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "placeHold",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "schedule-or-reserve"
     },
     {
       "name": "get_hold",
       "title": "Get Hold",
       "description": "Fetch a single hold by id, including queue position and pickup status.",
-      "inputSchema": { "type": "object", "properties": { "holdId": { "type": "string" } }, "required": ["holdId"] },
-      "outputSchema": { "$ref": "../schemas/book-hold.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "holdId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "holdId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/book-hold.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getHold",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

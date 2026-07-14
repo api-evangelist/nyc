@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DOI's structured Open Data (evictions and marshal-revenue oversight, policy recommendations, performance indicators) and an index over its PDF-only public reports, and adds file_complaint — the net-new write workflow locked today inside the third-party Kaseware intake portal.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DOI's structured Open Data (evictions and marshal-revenue oversight, policy recommendations, performance indicators) and an index over its PDF-only public reports, and adds file_complaint \u2014 the net-new write workflow locked today inside the third-party Kaseware intake portal.",
     "openapi": "../openapi/doi.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.doi",
     "title": "NYC Department of Investigation (DOI)",
     "version": "0.1.0",
-    "description": "Agent-native access to New York City's Inspector General — DOI public investigation reports and policy recommendations, City Marshal oversight (executed evictions and marshal revenue), and monthly performance indicators from NYC Open Data, plus the net-new ability to file and track a fraud/waste/corruption complaint that today lives only in the third-party Kaseware intake portal.",
-    "instructions": "Use find_reports to search DOI's public investigation reports (these are PDFs — results carry metadata and a pdfUrl, not structured findings). find_recommendations queries the Policy & Procedure Recommendations tracker (what DOI told agencies to fix and whether they did). find_evictions and find_marshal_revenue cover DOI's City Marshal oversight — evictions is DOI's most-viewed dataset. find_performance_indicators returns monthly operational metrics. file_complaint (net-new) reports fraud, waste, or corruption; it mutates state — confirm the allegation type, subject agency, and narrative with the user before submitting, support anonymous filing, and note that City employees have an Executive Order 16 obligation to report and may invoke Whistleblower Law protection."
+    "description": "Agent-native access to New York City's Inspector General \u2014 DOI public investigation reports and policy recommendations, City Marshal oversight (executed evictions and marshal revenue), and monthly performance indicators from NYC Open Data, plus the net-new ability to file and track a fraud/waste/corruption complaint that today lives only in the third-party Kaseware intake portal.",
+    "instructions": "Use find_reports to search DOI's public investigation reports (these are PDFs \u2014 results carry metadata and a pdfUrl, not structured findings). find_recommendations queries the Policy & Procedure Recommendations tracker (what DOI told agencies to fix and whether they did). find_evictions and find_marshal_revenue cover DOI's City Marshal oversight \u2014 evictions is DOI's most-viewed dataset. find_performance_indicators returns monthly operational metrics. file_complaint (net-new) reports fraud, waste, or corruption; it mutates state \u2014 confirm the allegation type, subject agency, and narrative with the user before submitting, support anonymous filing, and note that City employees have an Executive Order 16 obligation to report and may invoke Whistleblower Law protection."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_reports",
@@ -23,26 +27,81 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "year": { "type": "integer" },
-          "reportType": { "type": "string", "enum": ["Investigation", "Annual Report", "OIG-NYPD Report", "Policy/Systemic", "Press Release", "Other"] },
-          "subjectAgency": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "year": {
+            "type": "integer"
+          },
+          "reportType": {
+            "type": "string",
+            "enum": [
+              "Investigation",
+              "Annual Report",
+              "OIG-NYPD Report",
+              "Policy/Systemic",
+              "Press Release",
+              "Other"
+            ]
+          },
+          "subjectAgency": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/public-report.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listReports"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/public-report.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listReports",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_report",
       "title": "Get Report",
       "description": "Fetch a single DOI public report (title, release date, subject agency, unit, pdfUrl) by id.",
-      "inputSchema": { "type": "object", "properties": { "reportId": { "type": "string" } }, "required": ["reportId"] },
-      "outputSchema": { "$ref": "../schemas/public-report.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getReport"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reportId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "reportId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/public-report.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getReport",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_recommendations",
@@ -51,17 +110,48 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "agency": { "type": "string" },
-          "acceptanceStatus": { "type": "string" },
-          "implementationStatus": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "agency": {
+            "type": "string"
+          },
+          "acceptanceStatus": {
+            "type": "string"
+          },
+          "implementationStatus": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/policy-recommendation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listRecommendations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/policy-recommendation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listRecommendations",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_evictions",
@@ -70,37 +160,116 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "residentialCommercial": { "type": "string", "enum": ["Residential", "Commercial"] },
-          "marshalLastName": { "type": "string" },
-          "councilDistrict": { "type": "integer", "minimum": 1, "maximum": 51 },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "residentialCommercial": {
+            "type": "string",
+            "enum": [
+              "Residential",
+              "Commercial"
+            ]
+          },
+          "marshalLastName": {
+            "type": "string"
+          },
+          "councilDistrict": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 51
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/eviction.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listEvictions"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/eviction.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listEvictions",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_marshal_revenue",
       "title": "Find Marshal Revenue",
-      "description": "List City Marshal annual fee, poundage, and net-income figures by marshal or year — DOI's financial oversight of the marshals it appoints.",
+      "description": "List City Marshal annual fee, poundage, and net-income figures by marshal or year \u2014 DOI's financial oversight of the marshals it appoints.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "marshalLastName": { "type": "string" },
-          "year": { "type": "integer" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "marshalLastName": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/marshal-revenue.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listMarshalRevenue"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/marshal-revenue.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listMarshalRevenue",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_performance_indicators",
@@ -109,41 +278,115 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "indicatorName": { "type": "string" },
-          "reportMonth": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "indicatorName": {
+            "type": "string"
+          },
+          "reportMonth": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/performance-indicator.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPerformanceIndicators"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/performance-indicator.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPerformanceIndicators",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_complaints",
       "title": "List My Complaints",
-      "description": "List the authenticated reporter's own fraud/waste/corruption complaints and their status — today visible only inside the Kaseware intake portal.",
+      "description": "List the authenticated reporter's own fraud/waste/corruption complaints and their status \u2014 today visible only inside the Kaseware intake portal.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Received", "Under Review", "Referred", "Investigation Opened", "Closed - No Action", "Closed - Resolved"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Received",
+              "Under Review",
+              "Referred",
+              "Investigation Opened",
+              "Closed - No Action",
+              "Closed - Resolved"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/corruption-complaint.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/corruption-complaint.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listComplaints",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "file_complaint",
       "title": "File a Corruption Complaint",
-      "description": "File a fraud/waste/corruption complaint with DOI. NET-NEW workflow with no public API today — it lives only in the third-party Kaseware intake portal or a phone call. Mutates state — confirm the allegation type, subject agency, and narrative first; supports anonymous filing and Whistleblower Law protection. City employees have an Executive Order 16 obligation to report.",
-      "inputSchema": { "$ref": "../schemas/corruption-complaint.json" },
-      "outputSchema": { "$ref": "../schemas/corruption-complaint.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
-      "x-openapi-operation": "createComplaint"
+      "description": "File a fraud/waste/corruption complaint with DOI. NET-NEW workflow with no public API today \u2014 it lives only in the third-party Kaseware intake portal or a phone call. Mutates state \u2014 confirm the allegation type, subject agency, and narrative first; supports anonymous filing and Whistleblower Law protection. City employees have an Executive Order 16 obligation to report.",
+      "inputSchema": {
+        "$ref": "../schemas/corruption-complaint.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/corruption-complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "createComplaint",
+      "x-agent-skill": "report-a-problem-or-file-a-complaint"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

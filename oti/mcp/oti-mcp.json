@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the citywide platform OTI already operates — the NYC Open Data catalog, the api.nyc.gov gateway (GeoClient/GeoSearch), LinkNYC, municipal broadband, public Wi-Fi, and 311 — and adds register_dataset and request_api_key, the net-new write workflows that would productize OTI's operator role into one owned, agent-native gateway + catalog API.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the citywide platform OTI already operates \u2014 the NYC Open Data catalog, the api.nyc.gov gateway (GeoClient/GeoSearch), LinkNYC, municipal broadband, public Wi-Fi, and 311 \u2014 and adds register_dataset and request_api_key, the net-new write workflows that would productize OTI's operator role into one owned, agent-native gateway + catalog API.",
     "openapi": "../openapi/oti.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.oti",
     "title": "NYC Office of Technology & Innovation (OTI)",
     "version": "0.1.0",
-    "description": "Agent-native access to the citywide platform the NYC Office of Technology & Innovation operates — search and register NYC Open Data datasets, discover services on the api.nyc.gov gateway and request keys, geocode addresses via GeoClient/GeoSearch, and query LinkNYC kiosks, municipal-broadband assets, public Wi-Fi hotspots, and 311 service requests.",
-    "instructions": "OTI is the city's platform operator, so this server is the natural front door to the whole corpus. Use search_datasets / get_dataset to discover any of the 2,300+ NYC Open Data assets in the catalog OTI runs, and register_dataset to submit a new one (write — confirm agency, name, and description first). Use list_gateway_services / get_gateway_service to see what is published on api.nyc.gov (GeoClient, GeoSearch, ...) and request_api_key to obtain a subscription key (write — collect applicant email and use case, api.nyc.gov returns 401 until a key is granted). geocode resolves a NYC address to coordinates and the geography spine (BBL/BIN/borough/council district). find_linknyc_kiosks covers kiosk locations and live Wi-Fi/tablet/phone status; find_broadband_assets covers fiber/wireless readiness in target neighborhoods; find_wifi_hotspots covers the public Wi-Fi inventory; find_service_requests queries the 311 pipeline (the single most-viewed dataset in the city). The two write tools mutate state and require an authenticated caller."
+    "description": "Agent-native access to the citywide platform the NYC Office of Technology & Innovation operates \u2014 search and register NYC Open Data datasets, discover services on the api.nyc.gov gateway and request keys, geocode addresses via GeoClient/GeoSearch, and query LinkNYC kiosks, municipal-broadband assets, public Wi-Fi hotspots, and 311 service requests.",
+    "instructions": "OTI is the city's platform operator, so this server is the natural front door to the whole corpus. Use search_datasets / get_dataset to discover any of the 2,300+ NYC Open Data assets in the catalog OTI runs, and register_dataset to submit a new one (write \u2014 confirm agency, name, and description first). Use list_gateway_services / get_gateway_service to see what is published on api.nyc.gov (GeoClient, GeoSearch, ...) and request_api_key to obtain a subscription key (write \u2014 collect applicant email and use case, api.nyc.gov returns 401 until a key is granted). geocode resolves a NYC address to coordinates and the geography spine (BBL/BIN/borough/council district). find_linknyc_kiosks covers kiosk locations and live Wi-Fi/tablet/phone status; find_broadband_assets covers fiber/wireless readiness in target neighborhoods; find_wifi_hotspots covers the public Wi-Fi inventory; find_service_requests queries the 311 pipeline (the single most-viewed dataset in the city). The two write tools mutate state and require an authenticated caller."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "search_datasets",
@@ -23,98 +27,256 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "agency": { "type": "string" },
-          "category": { "type": "string" },
-          "type": { "type": "string", "enum": ["dataset", "map", "chart", "file", "href", "filter", "calendar", "story"] },
-          "releaseStatus": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "agency": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "dataset",
+              "map",
+              "chart",
+              "file",
+              "href",
+              "filter",
+              "calendar",
+              "story"
+            ]
+          },
+          "releaseStatus": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/open-dataset.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listDatasets"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/open-dataset.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listDatasets",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_dataset",
       "title": "Get Dataset",
       "description": "Fetch a NYC Open Data catalog record by its Socrata four-by-four UID (e.g. 'erm2-nwe9').",
-      "inputSchema": { "type": "object", "properties": { "uid": { "type": "string" } }, "required": ["uid"] },
-      "outputSchema": { "$ref": "../schemas/open-dataset.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getDataset"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "uid"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/open-dataset.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getDataset",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "register_dataset",
       "title": "Register Dataset",
-      "description": "Register / publish a new data asset to the OTI-operated catalog (LL251 inventory). NET-NEW write workflow with no public API today. Mutates state and requires an authenticated caller — confirm agency, name, and description with the user before submitting.",
-      "inputSchema": { "$ref": "../schemas/open-dataset.json" },
-      "outputSchema": { "$ref": "../schemas/open-dataset.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Register / publish a new data asset to the OTI-operated catalog (LL251 inventory). NET-NEW write workflow with no public API today. Mutates state and requires an authenticated caller \u2014 confirm agency, name, and description with the user before submitting.",
+      "inputSchema": {
+        "$ref": "../schemas/open-dataset.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/open-dataset.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "registerDataset",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "register-or-enroll"
     },
     {
       "name": "list_gateway_services",
       "title": "List Gateway Services",
-      "description": "List services published on the api.nyc.gov gateway (Azure API Management) OTI operates — GeoClient, GeoSearch, and other agency APIs — by agency, category, or status.",
+      "description": "List services published on the api.nyc.gov gateway (Azure API Management) OTI operates \u2014 GeoClient, GeoSearch, and other agency APIs \u2014 by agency, category, or status.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "agency": { "type": "string" },
-          "category": { "type": "string" },
-          "status": { "type": "string", "enum": ["active", "deprecated", "beta", "retired"] },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "agency": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "deprecated",
+              "beta",
+              "retired"
+            ]
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/api-gateway-service.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listGatewayServices"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/api-gateway-service.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listGatewayServices",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_gateway_service",
       "title": "Get Gateway Service",
       "description": "Fetch one api.nyc.gov gateway service by id (e.g. 'geoclient', 'geosearch'), including auth type and how to obtain a key.",
-      "inputSchema": { "type": "object", "properties": { "serviceId": { "type": "string" } }, "required": ["serviceId"] },
-      "outputSchema": { "$ref": "../schemas/api-gateway-service.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getGatewayService"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "serviceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "serviceId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/api-gateway-service.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getGatewayService",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "request_api_key",
       "title": "Request API Key",
-      "description": "Request an api.nyc.gov gateway subscription key for a service. NET-NEW write workflow — today keys are provisioned through a developer portal, not an API, and api.nyc.gov returns 401 until one is granted. Mutates state and requires an authenticated caller — collect applicant email and use case first.",
+      "description": "Request an api.nyc.gov gateway subscription key for a service. NET-NEW write workflow \u2014 today keys are provisioned through a developer portal, not an API, and api.nyc.gov returns 401 until one is granted. Mutates state and requires an authenticated caller \u2014 collect applicant email and use case first.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "serviceId": { "type": "string" },
+          "serviceId": {
+            "type": "string"
+          },
           "applicant": {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
-              "email": { "type": "string", "format": "email" },
-              "organization": { "type": "string" }
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "organization": {
+                "type": "string"
+              }
             },
-            "required": ["email"]
+            "required": [
+              "email"
+            ]
           },
-          "useCase": { "type": "string" }
+          "useCase": {
+            "type": "string"
+          }
         },
-        "required": ["serviceId", "applicant"]
+        "required": [
+          "serviceId",
+          "applicant"
+        ]
       },
       "outputSchema": {
         "type": "object",
         "properties": {
-          "requestId": { "type": "string" },
-          "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
-          "subscriptionKey": { "type": ["string", "null"] }
+          "requestId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ]
+          },
+          "subscriptionKey": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "requestApiKey",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     },
     {
       "name": "geocode",
@@ -123,10 +285,23 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "text": { "type": "string" },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] }
+          "text": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          }
         },
-        "required": ["text"]
+        "required": [
+          "text"
+        ]
       },
       "outputSchema": {
         "type": "object",
@@ -136,16 +311,26 @@
             "items": {
               "type": "object",
               "properties": {
-                "label": { "type": "string" },
-                "coordinates": { "$ref": "../schemas/_common.json#/$defs/Coordinates" },
-                "geography": { "$ref": "../schemas/_common.json#/$defs/Geography" }
+                "label": {
+                  "type": "string"
+                },
+                "coordinates": {
+                  "$ref": "../schemas/_common.json#/$defs/Coordinates"
+                },
+                "geography": {
+                  "$ref": "../schemas/_common.json#/$defs/Geography"
+                }
               }
             }
           }
         }
       },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "geocode"
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "geocode",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_linknyc_kiosks",
@@ -154,17 +339,55 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "installationStatus": { "type": "string" },
-          "plannedKioskType": { "type": "string" },
-          "wifiStatus": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "installationStatus": {
+            "type": "string"
+          },
+          "plannedKioskType": {
+            "type": "string"
+          },
+          "wifiStatus": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/linknyc-kiosk.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listKiosks"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/linknyc-kiosk.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listKiosks",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_broadband_assets",
@@ -173,18 +396,58 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "assetClass": { "type": "string" },
-          "connectedToFiber": { "type": "boolean" },
-          "targetNeighborhood": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "assetClass": {
+            "type": "string"
+          },
+          "connectedToFiber": {
+            "type": "boolean"
+          },
+          "targetNeighborhood": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/broadband-asset.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listBroadbandAssets"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/broadband-asset.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listBroadbandAssets",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_wifi_hotspots",
@@ -193,17 +456,55 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "provider": { "type": "string" },
-          "type": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "provider": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/wifi-hotspot.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listWifiHotspots"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/wifi-hotspot.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listWifiHotspots",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_service_requests",
@@ -212,20 +513,77 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "agency": { "type": "string" },
-          "problem": { "type": "string" },
-          "status": { "type": "string" },
-          "openDataChannelType": { "type": "string", "enum": ["PHONE", "ONLINE", "MOBILE", "OTHER", "UNKNOWN"] },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "agency": {
+            "type": "string"
+          },
+          "problem": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "openDataChannelType": {
+            "type": "string",
+            "enum": [
+              "PHONE",
+              "ONLINE",
+              "MOBILE",
+              "OTHER",
+              "UNKNOWN"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/service-request.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listServiceRequests"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/service-request.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listServiceRequests",
+      "x-agent-skill": "search-city-data-and-records"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

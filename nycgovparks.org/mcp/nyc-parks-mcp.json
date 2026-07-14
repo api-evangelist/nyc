@@ -4,7 +4,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only. This describes the MCP server's tool surface — it is NOT a running server. Tool input/output schemas $ref the same object schemas used by the OpenAPI; each tool maps to an OpenAPI operationId so the REST contract and the agent contract stay in lockstep.",
+    "note": "Design-first artifact only. This describes the MCP server's tool surface \u2014 it is NOT a running server. Tool input/output schemas $ref the same object schemas used by the OpenAPI; each tool maps to an OpenAPI operationId so the REST contract and the agent contract stay in lockstep.",
     "openapi": "../openapi/nyc-parks.yaml",
     "schemas": "../schemas/"
   },
@@ -12,10 +12,14 @@
     "name": "io.nyc.parks",
     "title": "NYC Parks",
     "version": "0.1.0",
-    "description": "Agent-native access to NYC Department of Parks & Recreation resources — parks, facilities, events, monuments, trees, capital projects, and permit applications. Unifies data today split between nycgovparks.org HTML and NYC Open Data, plus the net-new permit-application workflow.",
-    "instructions": "Use the find_* tools to search resources and the get_* tools to fetch one by id. Parks are the root entity; a park's gisPropNum joins it to its facilities, events, monuments, and capital projects. Read tools are open/anonymous. Permit tools (submit/get/list/update_permit_application) require an authenticated applicant token and mutate state — confirm intent with the user before submitting."
+    "description": "Agent-native access to NYC Department of Parks & Recreation resources \u2014 parks, facilities, events, monuments, trees, capital projects, and permit applications. Unifies data today split between nycgovparks.org HTML and NYC Open Data, plus the net-new permit-application workflow.",
+    "instructions": "Use the find_* tools to search resources and the get_* tools to fetch one by id. Parks are the root entity; a park's gisPropNum joins it to its facilities, events, monuments, and capital projects. Read tools are open/anonymous. Permit tools (submit/get/list/update_permit_application) require an authenticated applicant token and mutate state \u2014 confirm intent with the user before submitting."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_parks",
@@ -24,18 +28,50 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"] },
-          "q": { "type": "string", "description": "Free-text search over park name/location." },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Bronx",
+              "Brooklyn",
+              "Manhattan",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "q": {
+            "type": "string",
+            "description": "Free-text search over park name/location."
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
       "outputSchema": {
         "type": "object",
-        "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/park.json" } } }
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/park.json"
+            }
+          }
+        }
       },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listParks"
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listParks",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_park",
@@ -43,12 +79,25 @@
       "description": "Fetch a single park by its GIS property number (gisPropNum).",
       "inputSchema": {
         "type": "object",
-        "properties": { "gisPropNum": { "type": "string", "description": "e.g. 'B073'." } },
-        "required": ["gisPropNum"]
+        "properties": {
+          "gisPropNum": {
+            "type": "string",
+            "description": "e.g. 'B073'."
+          }
+        },
+        "required": [
+          "gisPropNum"
+        ]
       },
-      "outputSchema": { "$ref": "../schemas/park.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getPark"
+      "outputSchema": {
+        "$ref": "../schemas/park.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getPark",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "list_park_facilities",
@@ -57,14 +106,35 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "gisPropNum": { "type": "string" },
-          "type": { "type": "string", "description": "Facility type slug (see facility.json enum)." }
+          "gisPropNum": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Facility type slug (see facility.json enum)."
+          }
         },
-        "required": ["gisPropNum"]
+        "required": [
+          "gisPropNum"
+        ]
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/facility.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listParkFacilities"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/facility.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listParkFacilities",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_facilities",
@@ -73,16 +143,53 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "description": "Facility type slug." },
-          "borough": { "type": "string", "enum": ["Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"] },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "type": {
+            "type": "string",
+            "description": "Facility type slug."
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Bronx",
+              "Brooklyn",
+              "Manhattan",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/facility.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listFacilities"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/facility.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listFacilities",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_events",
@@ -91,26 +198,82 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"] },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "category": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Bronx",
+              "Brooklyn",
+              "Manhattan",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "category": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/event.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listEvents"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/event.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listEvents",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_event",
       "title": "Get Event",
       "description": "Fetch a single event by id.",
-      "inputSchema": { "type": "object", "properties": { "eventId": { "type": "string" } }, "required": ["eventId"] },
-      "outputSchema": { "$ref": "../schemas/event.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getEvent"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "eventId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/event.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getEvent",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_monuments",
@@ -119,24 +282,74 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"] },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Bronx",
+              "Brooklyn",
+              "Manhattan",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/monument.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listMonuments"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/monument.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listMonuments",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_monument",
       "title": "Get Monument",
       "description": "Fetch a single monument / historical sign by id.",
-      "inputSchema": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] },
-      "outputSchema": { "$ref": "../schemas/monument.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getMonument"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/monument.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getMonument",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_trees",
@@ -145,16 +358,57 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"] },
-          "species": { "type": "string" },
-          "status": { "type": "string", "enum": ["Alive", "Dead", "Stump"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Bronx",
+              "Brooklyn",
+              "Manhattan",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "species": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Alive",
+              "Dead",
+              "Stump"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/tree.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listTrees"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/tree.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listTrees",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_capital_projects",
@@ -163,44 +417,127 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"] },
-          "phase": { "type": "string", "enum": ["Design", "Procurement", "Construction", "Completed", "On Hold"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Bronx",
+              "Brooklyn",
+              "Manhattan",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "phase": {
+            "type": "string",
+            "enum": [
+              "Design",
+              "Procurement",
+              "Construction",
+              "Completed",
+              "On Hold"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/capital-project.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCapitalProjects"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/capital-project.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCapitalProjects",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_capital_project",
       "title": "Get Capital Project",
       "description": "Fetch a single capital project by tracker id.",
-      "inputSchema": { "type": "object", "properties": { "trackerId": { "type": "string" } }, "required": ["trackerId"] },
-      "outputSchema": { "$ref": "../schemas/capital-project.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getCapitalProject"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "trackerId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "trackerId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/capital-project.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getCapitalProject",
+      "x-agent-skill": "check-application-or-case-status"
     },
     {
       "name": "submit_permit_application",
       "title": "Submit Permit Application",
-      "description": "Submit a new NYC Parks permit application (field-and-court, tennis, special-event, film-photo, research, etc.). NET-NEW workflow with no equivalent today. Requires an authenticated applicant. Mutates state — confirm details with the user first.",
-      "inputSchema": { "$ref": "../schemas/permit-application.json" },
-      "outputSchema": { "$ref": "../schemas/permit-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit a new NYC Parks permit application (field-and-court, tennis, special-event, film-photo, research, etc.). NET-NEW workflow with no equivalent today. Requires an authenticated applicant. Mutates state \u2014 confirm details with the user first.",
+      "inputSchema": {
+        "$ref": "../schemas/permit-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/permit-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createPermitApplication",
-      "x-auth": "applicant"
+      "x-auth": "applicant",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     },
     {
       "name": "check_permit_status",
       "title": "Check Permit Status",
       "description": "Fetch the status and details of a permit application by id (draft, submitted, under-review, approved, denied, issued...).",
-      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
-      "outputSchema": { "$ref": "../schemas/permit-application.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "applicationId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/permit-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getPermitApplication",
-      "x-auth": "applicant"
+      "x-auth": "applicant",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_permit_applications",
@@ -209,26 +546,67 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string" },
-          "permitType": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string"
+          },
+          "permitType": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/permit-application.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/permit-application.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listPermitApplications",
-      "x-auth": "applicant"
+      "x-auth": "applicant",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "update_permit_application",
       "title": "Update Permit Application",
-      "description": "Update or withdraw a draft/submitted permit application. Requires an authenticated applicant. Mutates state — confirm with the user first.",
-      "inputSchema": { "$ref": "../schemas/permit-application.json" },
-      "outputSchema": { "$ref": "../schemas/permit-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true },
+      "description": "Update or withdraw a draft/submitted permit application. Requires an authenticated applicant. Mutates state \u2014 confirm with the user first.",
+      "inputSchema": {
+        "$ref": "../schemas/permit-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/permit-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "updatePermitApplication",
-      "x-auth": "applicant"
+      "x-auth": "applicant",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

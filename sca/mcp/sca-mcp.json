@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces SCA's open capital-plan and procurement data (capital projects, upcoming contracts, RFP solicitations, prequalified vendors, enrollment/capacity, inspections) and adds apply_for_prequalification — the net-new vendor write workflow locked today inside the bidset SharePoint portal.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces SCA's open capital-plan and procurement data (capital projects, upcoming contracts, RFP solicitations, prequalified vendors, enrollment/capacity, inspections) and adds apply_for_prequalification \u2014 the net-new vendor write workflow locked today inside the bidset SharePoint portal.",
     "openapi": "../openapi/sca.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.sca",
     "title": "NYC School Construction Authority (SCA)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC School Construction Authority — school-construction capital projects, upcoming CIP/CAP contracts, RFP solicitations, the prequalified/disqualified vendor roster, enrollment and capacity, and construction inspections from NYC Open Data, plus the net-new ability to apply to become a prequalified vendor — a workflow that today lives only in PDF forms and the bidset SharePoint portal.",
-    "instructions": "Use find_capital_projects / get_capital_project to locate school-construction projects by borough, geographic (school) district, type, or status and drill into schedules, budgets, and capacity. find_upcoming_contracts and find_solicitations cover the forward procurement pipeline (CIP/CAP awards and current/anticipated RFPs) vendors watch. find_vendors searches the prequalified vendor roster (filter by trade code or M/WBE/local certifications, or disqualified=true for barred firms). find_enrollment_capacity returns the demand signal behind the capital plan; find_inspections covers field inspection requests and observations. apply_for_prequalification (net-new) submits a vendor prequalification application; it requires an authenticated firm and mutates state — confirm the firm name, request type, and trade code with the user before submitting. list_my_prequalifications tracks an authenticated firm's own applications."
+    "description": "Agent-native access to the NYC School Construction Authority \u2014 school-construction capital projects, upcoming CIP/CAP contracts, RFP solicitations, the prequalified/disqualified vendor roster, enrollment and capacity, and construction inspections from NYC Open Data, plus the net-new ability to apply to become a prequalified vendor \u2014 a workflow that today lives only in PDF forms and the bidset SharePoint portal.",
+    "instructions": "Use find_capital_projects / get_capital_project to locate school-construction projects by borough, geographic (school) district, type, or status and drill into schedules, budgets, and capacity. find_upcoming_contracts and find_solicitations cover the forward procurement pipeline (CIP/CAP awards and current/anticipated RFPs) vendors watch. find_vendors searches the prequalified vendor roster (filter by trade code or M/WBE/local certifications, or disqualified=true for barred firms). find_enrollment_capacity returns the demand signal behind the capital plan; find_inspections covers field inspection requests and observations. apply_for_prequalification (net-new) submits a vendor prequalification application; it requires an authenticated firm and mutates state \u2014 confirm the firm name, request type, and trade code with the user before submitting. list_my_prequalifications tracks an authenticated firm's own applications."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_capital_projects",
@@ -23,27 +27,83 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "geographicDistrict": { "type": "string" },
-          "projectType": { "type": "string" },
-          "status": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "geographicDistrict": {
+            "type": "string"
+          },
+          "projectType": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/capital-project.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCapitalProjects"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/capital-project.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCapitalProjects",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_capital_project",
       "title": "Get Capital Project",
       "description": "Fetch an SCA capital project (schedule, budget, capacity, geography) by Building ID.",
-      "inputSchema": { "type": "object", "properties": { "buildingId": { "type": "string" } }, "required": ["buildingId"] },
-      "outputSchema": { "$ref": "../schemas/capital-project.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getCapitalProject"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "buildingId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "buildingId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/capital-project.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getCapitalProject",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_upcoming_contracts",
@@ -52,18 +112,62 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "program": { "type": "string", "enum": ["CIP", "CAP"] },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "geographicDistrict": { "type": "string" },
-          "category": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "program": {
+            "type": "string",
+            "enum": [
+              "CIP",
+              "CAP"
+            ]
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "geographicDistrict": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/upcoming-contract.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listUpcomingContracts"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/upcoming-contract.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listUpcomingContracts",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_solicitations",
@@ -72,16 +176,49 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "stage": { "type": "string", "enum": ["Anticipated", "Current"] },
-          "department": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "stage": {
+            "type": "string",
+            "enum": [
+              "Anticipated",
+              "Current"
+            ]
+          },
+          "department": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/solicitation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listSolicitations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/solicitation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listSolicitations",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_vendors",
@@ -90,37 +227,101 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "tradeCode": { "type": "string" },
-          "minorityBusiness": { "type": "boolean" },
-          "womenBusiness": { "type": "boolean" },
-          "localBusiness": { "type": "boolean" },
-          "disqualified": { "type": "boolean" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "tradeCode": {
+            "type": "string"
+          },
+          "minorityBusiness": {
+            "type": "boolean"
+          },
+          "womenBusiness": {
+            "type": "boolean"
+          },
+          "localBusiness": {
+            "type": "boolean"
+          },
+          "disqualified": {
+            "type": "boolean"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/prequalified-firm.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listVendors"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/prequalified-firm.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listVendors",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_enrollment_capacity",
       "title": "Find Enrollment & Capacity",
-      "description": "Search enrollment, capacity, and utilization records — the demand signal behind SCA's capital plan — by geographic district, building, or organization.",
+      "description": "Search enrollment, capacity, and utilization records \u2014 the demand signal behind SCA's capital plan \u2014 by geographic district, building, or organization.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "geographicDistrict": { "type": "string" },
-          "buildingId": { "type": "string" },
-          "orgId": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "geographicDistrict": {
+            "type": "string"
+          },
+          "buildingId": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/enrollment-capacity.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listEnrollmentCapacity"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/enrollment-capacity.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listEnrollmentCapacity",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_inspections",
@@ -129,45 +330,134 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "schoolCode": { "type": "string" },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "category": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "schoolCode": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "category": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/inspection.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listInspections"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/inspection.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listInspections",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_prequalifications",
       "title": "List My Prequalifications",
-      "description": "List the authenticated firm's own vendor prequalification applications and their status — today trackable only inside the bidset SharePoint portal.",
+      "description": "List the authenticated firm's own vendor prequalification applications and their status \u2014 today trackable only inside the bidset SharePoint portal.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Submitted", "Under Review", "Additional Info Requested", "Approved", "Denied", "Withdrawn"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Submitted",
+              "Under Review",
+              "Additional Info Requested",
+              "Approved",
+              "Denied",
+              "Withdrawn"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/vendor-prequalification.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/vendor-prequalification.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listPrequalifications",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "apply_for_prequalification",
       "title": "Apply for Prequalification",
-      "description": "Submit an SCA vendor prequalification application (become a prequalified firm). NET-NEW workflow with no public API today — it lives only as PDF forms and the bidset SharePoint portal. Requires an authenticated firm. Mutates state — confirm firm name, request type, and trade code first.",
-      "inputSchema": { "$ref": "../schemas/vendor-prequalification.json" },
-      "outputSchema": { "$ref": "../schemas/vendor-prequalification.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit an SCA vendor prequalification application (become a prequalified firm). NET-NEW workflow with no public API today \u2014 it lives only as PDF forms and the bidset SharePoint portal. Requires an authenticated firm. Mutates state \u2014 confirm firm name, request type, and trade code first.",
+      "inputSchema": {
+        "$ref": "../schemas/vendor-prequalification.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/vendor-prequalification.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createPrequalification",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

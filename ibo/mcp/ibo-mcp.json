@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces IBO's already-live reference material (publications via the NYC.gov Content API v2, and 20 fiscal tables via NYC Open Data) as clean agent tools, and adds ask_ibo — the net-new write workflow for IBO's single citizen transaction, today only a web form / email.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces IBO's already-live reference material (publications via the NYC.gov Content API v2, and 20 fiscal tables via NYC Open Data) as clean agent tools, and adds ask_ibo \u2014 the net-new write workflow for IBO's single citizen transaction, today only a web form / email.",
     "openapi": "../openapi/ibo.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.ibo",
     "title": "NYC Independent Budget Office (IBO)",
     "version": "0.1.0",
-    "description": "Agent-native access to the New York City Independent Budget Office — the city's nonpartisan budget watchdog. Search IBO publications (reports, testimony, letters, budget options, explainers, interactives), query long-form fiscal data (revenue, spending, capital, debt, positions), school spending, and distributional tax/income data, and submit an 'Ask IBO' data request — IBO's one citizen transaction, today a form/email only.",
-    "instructions": "Use find_publications / get_publication to locate IBO analysis by topic, publication type, or fiscal year (this reads IBO's undocumented NYC.gov Content API, ~1,145 publications). find_data_tables / get_data_table catalog IBO's 20 Open Data fiscal tables; note most are WIDE (one column per fiscal year). find_fiscal_series returns those tables pivoted to long-form (series, lineItem, fiscalYear, value) for revenue, spending, capital, debt, and positions. find_school_spending covers education spending/indicators; find_tax_distribution covers income and tax by AGI band. ask_ibo (net-new) submits a data/analysis question to IBO — it is the only write, mutates state by creating a request, so confirm the question and contact details with the user before submitting; IBO answers by email or a published response, not instantly."
+    "description": "Agent-native access to the New York City Independent Budget Office \u2014 the city's nonpartisan budget watchdog. Search IBO publications (reports, testimony, letters, budget options, explainers, interactives), query long-form fiscal data (revenue, spending, capital, debt, positions), school spending, and distributional tax/income data, and submit an 'Ask IBO' data request \u2014 IBO's one citizen transaction, today a form/email only.",
+    "instructions": "Use find_publications / get_publication to locate IBO analysis by topic, publication type, or fiscal year (this reads IBO's undocumented NYC.gov Content API, ~1,145 publications). find_data_tables / get_data_table catalog IBO's 20 Open Data fiscal tables; note most are WIDE (one column per fiscal year). find_fiscal_series returns those tables pivoted to long-form (series, lineItem, fiscalYear, value) for revenue, spending, capital, debt, and positions. find_school_spending covers education spending/indicators; find_tax_distribution covers income and tax by AGI band. ask_ibo (net-new) submits a data/analysis question to IBO \u2014 it is the only write, mutates state by creating a request, so confirm the question and contact details with the user before submitting; IBO answers by email or a published response, not instantly."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_publications",
@@ -23,28 +27,91 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "publicationType": { "type": "string", "enum": ["Report", "Interactive", "Testimony", "Letter", "Press Release", "Budget Options", "Explainer", "Dataset"] },
-          "topic": { "type": "string" },
-          "fiscalYear": { "type": "integer" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "publicationType": {
+            "type": "string",
+            "enum": [
+              "Report",
+              "Interactive",
+              "Testimony",
+              "Letter",
+              "Press Release",
+              "Budget Options",
+              "Explainer",
+              "Dataset"
+            ]
+          },
+          "topic": {
+            "type": "string"
+          },
+          "fiscalYear": {
+            "type": "integer"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/publication.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPublications"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/publication.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPublications",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_publication",
       "title": "Get Publication",
       "description": "Fetch a single IBO publication by its URL slug.",
-      "inputSchema": { "type": "object", "properties": { "slug": { "type": "string" } }, "required": ["slug"] },
-      "outputSchema": { "$ref": "../schemas/publication.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getPublication"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/publication.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getPublication",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_data_tables",
@@ -53,46 +120,148 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "enum": ["dataset", "file", "map", "chart"] },
-          "shape": { "type": "string", "enum": ["wide-fiscal-year", "distribution-by-agi", "long", "other"] },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "type": {
+            "type": "string",
+            "enum": [
+              "dataset",
+              "file",
+              "map",
+              "chart"
+            ]
+          },
+          "shape": {
+            "type": "string",
+            "enum": [
+              "wide-fiscal-year",
+              "distribution-by-agi",
+              "long",
+              "other"
+            ]
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/fiscal-data-table.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listDataTables"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/fiscal-data-table.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listDataTables",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_data_table",
       "title": "Get Data Table",
       "description": "Fetch one IBO Open Data table catalog entry (columns, shape, update cadence) by Socrata ID.",
-      "inputSchema": { "type": "object", "properties": { "id": { "type": "string" } }, "required": ["id"] },
-      "outputSchema": { "$ref": "../schemas/fiscal-data-table.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getDataTable"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/fiscal-data-table.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getDataTable",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_fiscal_series",
       "title": "Find Fiscal Series",
-      "description": "Query long-form fiscal observations — the pivoted view of IBO's wide tables: revenue & spending, non-tax revenue, categorical aid, agency expenditures, full-time positions, capital expenditures, debt outstanding, and debt service — by series, line item, agency, or fiscal-year range.",
+      "description": "Query long-form fiscal observations \u2014 the pivoted view of IBO's wide tables: revenue & spending, non-tax revenue, categorical aid, agency expenditures, full-time positions, capital expenditures, debt outstanding, and debt service \u2014 by series, line item, agency, or fiscal-year range.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "series": { "type": "string", "enum": ["Revenue and Spending Summary", "Non-Tax Revenues", "State and Federal Categorical Aid", "Agency Expenditures", "Full-Time Positions", "Capital Expenditures", "Debt Outstanding", "Debt Service"] },
-          "lineItem": { "type": "string" },
-          "agency": { "type": "string" },
-          "fiscalYear": { "type": "integer" },
-          "fromFiscalYear": { "type": "integer" },
-          "toFiscalYear": { "type": "integer" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "series": {
+            "type": "string",
+            "enum": [
+              "Revenue and Spending Summary",
+              "Non-Tax Revenues",
+              "State and Federal Categorical Aid",
+              "Agency Expenditures",
+              "Full-Time Positions",
+              "Capital Expenditures",
+              "Debt Outstanding",
+              "Debt Service"
+            ]
+          },
+          "lineItem": {
+            "type": "string"
+          },
+          "agency": {
+            "type": "string"
+          },
+          "fiscalYear": {
+            "type": "integer"
+          },
+          "fromFiscalYear": {
+            "type": "integer"
+          },
+          "toFiscalYear": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/fiscal-series.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listFiscalSeries"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/fiscal-series.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listFiscalSeries",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_school_spending",
@@ -101,71 +270,194 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "category": { "type": "string" },
-          "year": { "type": "integer" },
-          "fromYear": { "type": "integer" },
-          "toYear": { "type": "integer" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "category": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "fromYear": {
+            "type": "integer"
+          },
+          "toYear": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/school-spending.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listSchoolSpending"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/school-spending.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listSchoolSpending",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_tax_distribution",
       "title": "Find Tax Distribution",
-      "description": "Query distributional tax and income data by AGI band — personal income, income by type, tax liability, EITC/credits, and tax-revenue lines by type.",
+      "description": "Query distributional tax and income data by AGI band \u2014 personal income, income by type, tax liability, EITC/credits, and tax-revenue lines by type.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "agiRange": { "type": "string" },
-          "taxType": { "type": "string" },
-          "fiscalYear": { "type": "integer" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "agiRange": {
+            "type": "string"
+          },
+          "taxType": {
+            "type": "string"
+          },
+          "fiscalYear": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/tax-distribution.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listTaxDistribution"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/tax-distribution.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listTaxDistribution",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_data_requests",
       "title": "List My Ask IBO Requests",
-      "description": "List the authenticated requester's own Ask IBO data requests and their status — a surface that does not exist today (Ask IBO is a one-way form/email).",
+      "description": "List the authenticated requester's own Ask IBO data requests and their status \u2014 a surface that does not exist today (Ask IBO is a one-way form/email).",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Submitted", "Acknowledged", "In Research", "Answered", "Referred", "Closed"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Submitted",
+              "Acknowledged",
+              "In Research",
+              "Answered",
+              "Referred",
+              "Closed"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/data-request.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/data-request.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listDataRequests",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_data_request",
       "title": "Get Ask IBO Request",
       "description": "Fetch a single Ask IBO data request and its status/answer by request ID.",
-      "inputSchema": { "type": "object", "properties": { "requestId": { "type": "string" } }, "required": ["requestId"] },
-      "outputSchema": { "$ref": "../schemas/data-request.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "requestId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/data-request.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getDataRequest",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "ask_ibo",
       "title": "Ask IBO (Submit a Data Request)",
-      "description": "Submit an 'Ask IBO' data / analysis question — IBO's single citizen transaction and the NET-NEW write workflow with no public API today (currently a web form or email to info@ibo.nyc.gov). Mutates state by creating a request; confirm the question, topic, and contact details with the user before submitting. IBO responds by email or a published answer, not instantly.",
-      "inputSchema": { "$ref": "../schemas/data-request.json" },
-      "outputSchema": { "$ref": "../schemas/data-request.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
-      "x-openapi-operation": "createDataRequest"
+      "description": "Submit an 'Ask IBO' data / analysis question \u2014 IBO's single citizen transaction and the NET-NEW write workflow with no public API today (currently a web form or email to info@ibo.nyc.gov). Mutates state by creating a request; confirm the question, topic, and contact details with the user before submitting. IBO responds by email or a published answer, not instantly.",
+      "inputSchema": {
+        "$ref": "../schemas/data-request.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/data-request.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "createDataRequest",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

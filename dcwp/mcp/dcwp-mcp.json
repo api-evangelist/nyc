@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DCWP's open regulatory lifecycle (licenses, applications, inspections, charges, consumer complaints, worker-protection matters) and adds apply_for_license and file_complaint — the two net-new write workflows locked today in the NYC Business portal and 311.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DCWP's open regulatory lifecycle (licenses, applications, inspections, charges, consumer complaints, worker-protection matters) and adds apply_for_license and file_complaint \u2014 the two net-new write workflows locked today in the NYC Business portal and 311.",
     "openapi": "../openapi/dcwp.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.dcwp",
     "title": "NYC Consumer & Worker Protection (DCWP)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Department of Consumer and Worker Protection — issued business licenses, license applications, inspections, charges/violations, consumer complaints, and Office of Labor Policy & Standards worker-protection matters from NYC Open Data, plus the net-new ability to apply for a license and file a consumer complaint that today live only in the Java NYC Business portal or 311.",
-    "instructions": "Use find_licenses / get_license to look up a DCWP-issued business license by type, status, borough, or Business Unique ID. find_applications / get_application track a license application; find_inspections, find_charges, and find_consumer_complaints follow the enforcement lifecycle (an inspection or complaint leads to charges) — all joinable on Business Unique ID and License Number. find_worker_protection_cases returns AGGREGATE OLPS inquiries and enforcement matters (never an individual worker). apply_for_license (net-new) submits a license application; file_complaint (net-new) files a consumer complaint against a business. Both mutate state and require an authenticated user — confirm the business, category/complaint code, and details with the user before submitting."
+    "description": "Agent-native access to the NYC Department of Consumer and Worker Protection \u2014 issued business licenses, license applications, inspections, charges/violations, consumer complaints, and Office of Labor Policy & Standards worker-protection matters from NYC Open Data, plus the net-new ability to apply for a license and file a consumer complaint that today live only in the Java NYC Business portal or 311.",
+    "instructions": "Use find_licenses / get_license to look up a DCWP-issued business license by type, status, borough, or Business Unique ID. find_applications / get_application track a license application; find_inspections, find_charges, and find_consumer_complaints follow the enforcement lifecycle (an inspection or complaint leads to charges) \u2014 all joinable on Business Unique ID and License Number. find_worker_protection_cases returns AGGREGATE OLPS inquiries and enforcement matters (never an individual worker). apply_for_license (net-new) submits a license application; file_complaint (net-new) files a consumer complaint against a business. Both mutate state and require an authenticated user \u2014 confirm the business, category/complaint code, and details with the user before submitting."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_licenses",
@@ -23,27 +27,83 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "licenseType": { "type": "string" },
-          "licenseStatus": { "type": "string" },
-          "businessUniqueId": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "licenseType": {
+            "type": "string"
+          },
+          "licenseStatus": {
+            "type": "string"
+          },
+          "businessUniqueId": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/business-license.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listLicenses"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/business-license.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listLicenses",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_license",
       "title": "Get License",
       "description": "Fetch a DCWP-issued business license by license number.",
-      "inputSchema": { "type": "object", "properties": { "licenseNumber": { "type": "string" } }, "required": ["licenseNumber"] },
-      "outputSchema": { "$ref": "../schemas/business-license.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getLicense"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "licenseNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "licenseNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/business-license.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getLicense",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_applications",
@@ -52,27 +112,83 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "applicationType": { "type": "string" },
-          "applicationStatus": { "type": "string" },
-          "businessUniqueId": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "applicationType": {
+            "type": "string"
+          },
+          "applicationStatus": {
+            "type": "string"
+          },
+          "businessUniqueId": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/license-application.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listApplications"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/license-application.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listApplications",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_application",
       "title": "Get License Application",
       "description": "Fetch a DCWP license application by Application ID.",
-      "inputSchema": { "type": "object", "properties": { "applicationId": { "type": "string" } }, "required": ["applicationId"] },
-      "outputSchema": { "$ref": "../schemas/license-application.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getApplication"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "applicationId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/license-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getApplication",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_inspections",
@@ -81,18 +197,58 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "inspectionType": { "type": "string" },
-          "inspectionStatus": { "type": "string" },
-          "businessUniqueId": { "type": "string" },
-          "dcwpLicenseNumber": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "inspectionType": {
+            "type": "string"
+          },
+          "inspectionStatus": {
+            "type": "string"
+          },
+          "businessUniqueId": {
+            "type": "string"
+          },
+          "dcwpLicenseNumber": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/inspection.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listInspections"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/inspection.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listInspections",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_charges",
@@ -101,16 +257,45 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "businessUniqueId": { "type": "string" },
-          "inspectionNumber": { "type": "string" },
-          "outcome": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "businessUniqueId": {
+            "type": "string"
+          },
+          "inspectionNumber": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/charge.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCharges"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/charge.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCharges",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_consumer_complaints",
@@ -119,17 +304,55 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "complaintCode": { "type": "string" },
-          "businessUniqueId": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "complaintCode": {
+            "type": "string"
+          },
+          "businessUniqueId": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/consumer-complaint.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listConsumerComplaints"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/consumer-complaint.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listConsumerComplaints",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_worker_protection_cases",
@@ -138,36 +361,93 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "caseType": { "type": "string", "enum": ["Enforcement Matter", "Workplace Inquiry"] },
-          "topic": { "type": "string" },
-          "industry": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "caseType": {
+            "type": "string",
+            "enum": [
+              "Enforcement Matter",
+              "Workplace Inquiry"
+            ]
+          },
+          "topic": {
+            "type": "string"
+          },
+          "industry": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/worker-protection-case.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listWorkerProtectionCases"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/worker-protection-case.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listWorkerProtectionCases",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "apply_for_license",
       "title": "Apply for a License",
-      "description": "Submit a DCWP business license application. NET-NEW workflow with no public API today — it lives only in the Java NYC Business portal (nyc-business.nyc.gov). Requires an authenticated applicant. Mutates state — confirm license type, business, and address first.",
-      "inputSchema": { "$ref": "../schemas/license-application.json" },
-      "outputSchema": { "$ref": "../schemas/license-application.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit a DCWP business license application. NET-NEW workflow with no public API today \u2014 it lives only in the Java NYC Business portal (nyc-business.nyc.gov). Requires an authenticated applicant. Mutates state \u2014 confirm license type, business, and address first.",
+      "inputSchema": {
+        "$ref": "../schemas/license-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/license-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createApplication",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
     },
     {
       "name": "file_complaint",
       "title": "File a Consumer Complaint",
-      "description": "File a consumer complaint against a business with DCWP. NET-NEW workflow with no public API today — it lives only in 311 or a DCWP web form. Requires an authenticated complainant. Mutates state — confirm the business, complaint code, and description first.",
-      "inputSchema": { "$ref": "../schemas/consumer-complaint.json" },
-      "outputSchema": { "$ref": "../schemas/consumer-complaint.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "File a consumer complaint against a business with DCWP. NET-NEW workflow with no public API today \u2014 it lives only in 311 or a DCWP web form. Requires an authenticated complainant. Mutates state \u2014 confirm the business, complaint code, and description first.",
+      "inputSchema": {
+        "$ref": "../schemas/consumer-complaint.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/consumer-complaint.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "fileConsumerComplaint",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "report-a-problem-or-file-a-complaint"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

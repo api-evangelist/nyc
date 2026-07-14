@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DHS's open reference data (daily shelter census, drop-in centers, shelter facilities and repair scorecard, DHS contacts/intake centers, aggregate street-homeless counts) and adds request_outreach — the net-new write workflow that today exists only as a NYC311 'Homeless Person Assistance' call.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DHS's open reference data (daily shelter census, drop-in centers, shelter facilities and repair scorecard, DHS contacts/intake centers, aggregate street-homeless counts) and adds request_outreach \u2014 the net-new write workflow that today exists only as a NYC311 'Homeless Person Assistance' call.",
     "openapi": "../openapi/dhs.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.dhs",
     "title": "NYC Department of Homeless Services (DHS)",
     "version": "0.1.0",
-    "description": "Agent-native access to the New York City Department of Homeless Services — the daily shelter census, homeless drop-in centers, shelter facilities and repair scorecard, DHS contacts and intake centers, and aggregate street-homeless counts from NYC Open Data, plus the net-new ability to request street outreach for a person experiencing unsheltered homelessness (which today lives only in a NYC311 phone call).",
-    "instructions": "Use find_shelter_census / get_shelter_census for the daily count of people in the NYC shelter system (the flagship DHS Daily Report) by date range or a specific date. find_drop_in_centers and find_contacts locate 24/7 drop-in centers and DHS offices / intake centers (including where to apply for shelter). find_facilities covers shelter buildings, capacity, and the Shelter Repair Scorecard (open housing-maintenance violations by priority and inspecting agency). find_street_homeless_counts returns AGGREGATE unsheltered counts only — never individual people. request_outreach (net-new) reports a person sleeping on the street so a mobile outreach team responds; it mutates state — confirm the location and observed condition with the user before submitting, set emergency=true for life-safety situations (unresponsive, medical, extreme cold/heat) and remind the user those should also go to 911."
+    "description": "Agent-native access to the New York City Department of Homeless Services \u2014 the daily shelter census, homeless drop-in centers, shelter facilities and repair scorecard, DHS contacts and intake centers, and aggregate street-homeless counts from NYC Open Data, plus the net-new ability to request street outreach for a person experiencing unsheltered homelessness (which today lives only in a NYC311 phone call).",
+    "instructions": "Use find_shelter_census / get_shelter_census for the daily count of people in the NYC shelter system (the flagship DHS Daily Report) by date range or a specific date. find_drop_in_centers and find_contacts locate 24/7 drop-in centers and DHS offices / intake centers (including where to apply for shelter). find_facilities covers shelter buildings, capacity, and the Shelter Repair Scorecard (open housing-maintenance violations by priority and inspecting agency). find_street_homeless_counts returns AGGREGATE unsheltered counts only \u2014 never individual people. request_outreach (net-new) reports a person sleeping on the street so a mobile outreach team responds; it mutates state \u2014 confirm the location and observed condition with the user before submitting, set emergency=true for life-safety situations (unresponsive, medical, extreme cold/heat) and remind the user those should also go to 911."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_shelter_census",
@@ -23,24 +27,70 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/shelter-census.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listShelterCensus"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/shelter-census.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listShelterCensus",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_shelter_census",
       "title": "Get Shelter Census",
       "description": "Fetch the DHS shelter census for a specific date.",
-      "inputSchema": { "type": "object", "properties": { "date": { "type": "string", "format": "date" } }, "required": ["date"] },
-      "outputSchema": { "$ref": "../schemas/shelter-census.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getShelterCensusForDate"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "date"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/shelter-census.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getShelterCensusForDate",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_drop_in_centers",
@@ -49,15 +99,49 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/drop-in-center.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listDropInCenters"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/drop-in-center.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listDropInCenters",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_facilities",
@@ -66,26 +150,80 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "facilityType": { "type": "string" },
-          "month": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "facilityType": {
+            "type": "string"
+          },
+          "month": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/shelter-facility.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listFacilities"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/shelter-facility.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listFacilities",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_facility",
       "title": "Get Facility",
       "description": "Fetch a DHS shelter facility (capacity, landlord, violations, census) by DHS Building ID.",
-      "inputSchema": { "type": "object", "properties": { "buildingId": { "type": "string" } }, "required": ["buildingId"] },
-      "outputSchema": { "$ref": "../schemas/shelter-facility.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getFacility"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "buildingId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "buildingId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/shelter-facility.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getFacility",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_contacts",
@@ -94,15 +232,49 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/dhs-contact.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listContacts"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/dhs-contact.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listContacts",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_street_homeless_counts",
@@ -111,41 +283,123 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "period": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "period": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/street-homeless-count.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listStreetHomelessCounts"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/street-homeless-count.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listStreetHomelessCounts",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "list_my_outreach_requests",
       "title": "List My Outreach Requests",
-      "description": "List the caller's own submitted street-outreach requests and their status — today trackable only as a NYC311 service request.",
+      "description": "List the caller's own submitted street-outreach requests and their status \u2014 today trackable only as a NYC311 service request.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "status": { "type": "string", "enum": ["Submitted", "Assigned", "Outreach In Progress", "Contact Made", "Placed", "Unable To Locate", "Closed"] },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "status": {
+            "type": "string",
+            "enum": [
+              "Submitted",
+              "Assigned",
+              "Outreach In Progress",
+              "Contact Made",
+              "Placed",
+              "Unable To Locate",
+              "Closed"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/outreach-request.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/outreach-request.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "listOutreachRequests",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "request_outreach",
       "title": "Request Street Outreach",
-      "description": "Report a person experiencing unsheltered homelessness so a DHS mobile outreach team responds. NET-NEW workflow with no public API today — it lives only in a NYC311 'Homeless Person Assistance' call. Mutates state — confirm the location and observed condition first; set emergency=true for life-safety situations (unresponsive, medical, extreme cold/heat) and remind the user those should also go to 911.",
-      "inputSchema": { "$ref": "../schemas/outreach-request.json" },
-      "outputSchema": { "$ref": "../schemas/outreach-request.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
-      "x-openapi-operation": "createOutreachRequest"
+      "description": "Report a person experiencing unsheltered homelessness so a DHS mobile outreach team responds. NET-NEW workflow with no public API today \u2014 it lives only in a NYC311 'Homeless Person Assistance' call. Mutates state \u2014 confirm the location and observed condition first; set emergency=true for life-safety situations (unresponsive, medical, extreme cold/heat) and remind the user those should also go to 911.",
+      "inputSchema": {
+        "$ref": "../schemas/outreach-request.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/outreach-request.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "createOutreachRequest",
+      "x-agent-skill": "report-a-problem-or-file-a-complaint"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

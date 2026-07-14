@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Staten Island DA's WordPress content (press releases, programs, victim services, community/scam advisories), proposes an aggregate prosecution-statistics surface for the office's dark case data, and adds submit_tip — the net-new write workflow that today is only a Contact Form 7 email form. Generic on purpose: a template for one shared five-borough DA API.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces the Staten Island DA's WordPress content (press releases, programs, victim services, community/scam advisories), proposes an aggregate prosecution-statistics surface for the office's dark case data, and adds submit_tip \u2014 the net-new write workflow that today is only a Contact Form 7 email form. Generic on purpose: a template for one shared five-borough DA API.",
     "openapi": "../openapi/statenislandda.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.statenislandda",
     "title": "Staten Island District Attorney (Richmond County DA)",
     "version": "0.1.0",
-    "description": "Agent-native access to the Office of the District Attorney, Richmond County (Staten Island DA) — press releases, prosecution programs and community initiatives, victim/witness services, and scam/safety advisories from statenislandda.org, plus a proposed aggregate prosecution-statistics surface and the net-new ability to submit and track a confidential tip that today lives only in a Contact Form 7 email form.",
-    "instructions": "Use find_press_releases / get_press_release for the office's news. find_programs / get_program cover the 'Our Efforts' bureaus, units, and initiatives (Domestic Violence Bureau, Animal Cruelty Prosecution Unit, SI HOPE, Overdose Response, Cash for Guns, Saturday Night Lights, Youth Advisory Council). find_victim_services returns victim/witness support. find_community_resources returns scam alerts and safety advisories. find_prosecution_statistics returns ONLY AGGREGATE caseload counts (proposed — no live source; never an individual case or defendant). submit_tip (net-new) files a confidential drug or scam tip; tips may be fully anonymous, so do NOT require sender identity — set anonymous=true unless the user volunteers contact details, confirm the tip text and any suspect/location details first, and set tipType appropriately. get_tip reads back a submitted tip's status by its confidential reference (authenticated)."
+    "description": "Agent-native access to the Office of the District Attorney, Richmond County (Staten Island DA) \u2014 press releases, prosecution programs and community initiatives, victim/witness services, and scam/safety advisories from statenislandda.org, plus a proposed aggregate prosecution-statistics surface and the net-new ability to submit and track a confidential tip that today lives only in a Contact Form 7 email form.",
+    "instructions": "Use find_press_releases / get_press_release for the office's news. find_programs / get_program cover the 'Our Efforts' bureaus, units, and initiatives (Domestic Violence Bureau, Animal Cruelty Prosecution Unit, SI HOPE, Overdose Response, Cash for Guns, Saturday Night Lights, Youth Advisory Council). find_victim_services returns victim/witness support. find_community_resources returns scam alerts and safety advisories. find_prosecution_statistics returns ONLY AGGREGATE caseload counts (proposed \u2014 no live source; never an individual case or defendant). submit_tip (net-new) files a confidential drug or scam tip; tips may be fully anonymous, so do NOT require sender identity \u2014 set anonymous=true unless the user volunteers contact details, confirm the tip text and any suspect/location details first, and set tipType appropriately. get_tip reads back a submitted tip's status by its confidential reference (authenticated)."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_press_releases",
@@ -23,26 +27,75 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "category": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "category": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/press-release.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPressReleases"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/press-release.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPressReleases",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_press_release",
       "title": "Get Press Release",
       "description": "Fetch a single press release by its WordPress slug.",
-      "inputSchema": { "type": "object", "properties": { "slug": { "type": "string" } }, "required": ["slug"] },
-      "outputSchema": { "$ref": "../schemas/press-release.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getPressRelease"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/press-release.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getPressRelease",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_programs",
@@ -51,24 +104,67 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "category": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "category": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/program.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPrograms"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/program.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPrograms",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_program",
       "title": "Get Program",
       "description": "Fetch a single program / bureau / initiative by its slug.",
-      "inputSchema": { "type": "object", "properties": { "slug": { "type": "string" } }, "required": ["slug"] },
-      "outputSchema": { "$ref": "../schemas/program.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getProgram"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/program.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getProgram",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_victim_services",
@@ -77,15 +173,42 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "serviceType": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "serviceType": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/victim-service.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listVictimServices"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/victim-service.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listVictimServices",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_community_resources",
@@ -94,52 +217,138 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "resourceType": { "type": "string" },
-          "audience": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "resourceType": {
+            "type": "string"
+          },
+          "audience": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/community-resource.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listCommunityResources"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/community-resource.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCommunityResources",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_prosecution_statistics",
       "title": "Find Prosecution Statistics",
-      "description": "Return AGGREGATE caseload statistics by year and offense category (proposed — the office's dark data). Never returns an individual case or defendant.",
+      "description": "Return AGGREGATE caseload statistics by year and offense category (proposed \u2014 the office's dark data). Never returns an individual case or defendant.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "year": { "type": "integer" },
-          "offenseCategory": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "year": {
+            "type": "integer"
+          },
+          "offenseCategory": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/prosecution-statistics.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listProsecutionStatistics"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/prosecution-statistics.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listProsecutionStatistics",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "submit_tip",
       "title": "Submit a Tip",
-      "description": "Submit a confidential drug or scam tip to the Richmond County DA. NET-NEW workflow with no public API today — it lives only in the Contact Form 7 email forms at /drug-tip-form/ and /scam-tip-form/. Mutates state. Tips may be fully anonymous; do not require sender identity. Confirm the tip text, tipType, and any suspect/location details before submitting.",
-      "inputSchema": { "$ref": "../schemas/tip-submission.json" },
-      "outputSchema": { "$ref": "../schemas/tip-submission.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
-      "x-openapi-operation": "submitTip"
+      "description": "Submit a confidential drug or scam tip to the Richmond County DA. NET-NEW workflow with no public API today \u2014 it lives only in the Contact Form 7 email forms at /drug-tip-form/ and /scam-tip-form/. Mutates state. Tips may be fully anonymous; do not require sender identity. Confirm the tip text, tipType, and any suspect/location details before submitting.",
+      "inputSchema": {
+        "$ref": "../schemas/tip-submission.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/tip-submission.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "submitTip",
+      "x-agent-skill": "report-a-problem-or-file-a-complaint"
     },
     {
       "name": "get_tip",
       "title": "Get Tip Status",
       "description": "Read back the status of a previously submitted tip by its confidential reference. Requires the submitter's tip credential.",
-      "inputSchema": { "type": "object", "properties": { "tipId": { "type": "string" } }, "required": ["tipId"] },
-      "outputSchema": { "$ref": "../schemas/tip-submission.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tipId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tipId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/tip-submission.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "getTip",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "check-application-or-case-status"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }

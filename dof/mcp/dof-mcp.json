@@ -3,7 +3,7 @@
     "kind": "mcp-server-definition",
     "designFirst": true,
     "deployed": false,
-    "note": "Design-first artifact only — describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DOF's open reference data (property valuation, exemptions, tax-charge balances, ACRIS documents, parking violations) and adds pay_parking_ticket — the net-new write workflow locked today inside the legacy CityPay app.",
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces DOF's open reference data (property valuation, exemptions, tax-charge balances, ACRIS documents, parking violations) and adds pay_parking_ticket \u2014 the net-new write workflow locked today inside the legacy CityPay app.",
     "openapi": "../openapi/dof.yaml",
     "schemas": "../schemas/"
   },
@@ -11,10 +11,14 @@
     "name": "io.nyc.dof",
     "title": "NYC Department of Finance (DOF)",
     "version": "0.1.0",
-    "description": "Agent-native access to the NYC Department of Finance — property valuation & assessment, exemptions/abatements, property tax-charge balances, the ACRIS recorded-document register (deeds, mortgages, parties, legals), and parking/camera violations from NYC Open Data, plus the net-new ability to pay a parking ticket that today lives only in the legacy CityPay app.",
-    "instructions": "Use find_property_valuations / get_property_valuation to look up a parcel's assessment by borough, tax class, or Borough-Block-Lot (BBL). find_property_exemptions covers STAR/SCHE/J-51/421-a and other benefits; get_property_tax_bill returns a parcel's outstanding charges. find_acris_documents / get_acris_document search recorded real-property documents (deeds, mortgages) and return their parties and affected lots. find_parking_violations / get_parking_violation look up a summons by plate or summons number and return its live balance. pay_parking_ticket (net-new) submits a payment against a summons; it mutates state and moves money — confirm the summons number and amount with the user, accept only a tokenized payment instrument (PayPal/Braintree), and never handle raw card or bank numbers."
+    "description": "Agent-native access to the NYC Department of Finance \u2014 property valuation & assessment, exemptions/abatements, property tax-charge balances, the ACRIS recorded-document register (deeds, mortgages, parties, legals), and parking/camera violations from NYC Open Data, plus the net-new ability to pay a parking ticket that today lives only in the legacy CityPay app.",
+    "instructions": "Use find_property_valuations / get_property_valuation to look up a parcel's assessment by borough, tax class, or Borough-Block-Lot (BBL). find_property_exemptions covers STAR/SCHE/J-51/421-a and other benefits; get_property_tax_bill returns a parcel's outstanding charges. find_acris_documents / get_acris_document search recorded real-property documents (deeds, mortgages) and return their parties and affected lots. find_parking_violations / get_parking_violation look up a summons by plate or summons number and return its live balance. pay_parking_ticket (net-new) submits a payment against a summons; it mutates state and moves money \u2014 confirm the summons number and amount with the user, accept only a tokenized payment instrument (PayPal/Braintree), and never handle raw card or bank numbers."
   },
-  "capabilities": { "tools": { "listChanged": false } },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    }
+  },
   "tools": [
     {
       "name": "find_property_valuations",
@@ -23,27 +27,86 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "taxClass": { "type": "string" },
-          "buildingClass": { "type": "string" },
-          "year": { "type": "string" },
-          "q": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "taxClass": {
+            "type": "string"
+          },
+          "buildingClass": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/property-valuation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPropertyValuations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/property-valuation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPropertyValuations",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_property_valuation",
       "title": "Get Property Valuation",
       "description": "Fetch a parcel's valuation & assessment (market/assessed values, lot dimensions, tax class) by Borough-Block-Lot (BBL).",
-      "inputSchema": { "type": "object", "properties": { "bbl": { "type": "string" }, "year": { "type": "string" } }, "required": ["bbl"] },
-      "outputSchema": { "$ref": "../schemas/property-valuation.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getPropertyValuation"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bbl": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bbl"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/property-valuation.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getPropertyValuation",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_property_exemptions",
@@ -52,26 +115,83 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "exemptionCode": { "type": "string" },
-          "exemptionName": { "type": "string" },
-          "year": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "exemptionCode": {
+            "type": "string"
+          },
+          "exemptionName": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/property-exemption.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listPropertyExemptions"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/property-exemption.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listPropertyExemptions",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "get_property_tax_bill",
       "title": "Get Property Tax Bill",
       "description": "Return the outstanding tax-charge balance (liability, interest, balance due) for a parcel by Borough-Block-Lot (BBL) and tax year.",
-      "inputSchema": { "type": "object", "properties": { "bbl": { "type": "string" }, "taxYear": { "type": "string" } }, "required": ["bbl"] },
-      "outputSchema": { "$ref": "../schemas/property-tax-bill.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getPropertyTaxBill"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bbl": {
+            "type": "string"
+          },
+          "taxYear": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bbl"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/property-tax-bill.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getPropertyTaxBill",
+      "x-agent-skill": "look-up-a-property-or-place"
     },
     {
       "name": "find_acris_documents",
@@ -80,67 +200,190 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "bbl": { "type": "string" },
-          "borough": { "type": "string", "enum": ["Manhattan", "Bronx", "Brooklyn", "Queens", "Staten Island"] },
-          "docType": { "type": "string" },
-          "crfn": { "type": "string" },
-          "from": { "type": "string", "format": "date" },
-          "to": { "type": "string", "format": "date" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "bbl": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "docType": {
+            "type": "string"
+          },
+          "crfn": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/acris-document.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listAcrisDocuments"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/acris-document.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listAcrisDocuments",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_acris_document",
       "title": "Get ACRIS Document",
       "description": "Fetch a recorded ACRIS document with its parties (grantor/grantee) and affected legal lots by document id.",
-      "inputSchema": { "type": "object", "properties": { "documentId": { "type": "string" } }, "required": ["documentId"] },
-      "outputSchema": { "$ref": "../schemas/acris-document.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getAcrisDocument"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "documentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "documentId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/acris-document.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getAcrisDocument",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "find_parking_violations",
       "title": "Find Parking Violations",
-      "description": "Search parking & camera violations by plate, plate state, status, issuing agency, or violation code — returns the live balance for each summons.",
+      "description": "Search parking & camera violations by plate, plate state, status, issuing agency, or violation code \u2014 returns the live balance for each summons.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "plate": { "type": "string" },
-          "plateState": { "type": "string" },
-          "status": { "type": "string" },
-          "issuingAgency": { "type": "string" },
-          "violationCode": { "type": "string" },
-          "page": { "type": "integer", "minimum": 1, "default": 1 },
-          "perPage": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+          "plate": {
+            "type": "string"
+          },
+          "plateState": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "issuingAgency": {
+            "type": "string"
+          },
+          "violationCode": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
         }
       },
-      "outputSchema": { "type": "object", "properties": { "data": { "type": "array", "items": { "$ref": "../schemas/parking-violation.json" } } } },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "listParkingViolations"
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/parking-violation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listParkingViolations",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "get_parking_violation",
       "title": "Get Parking Violation",
       "description": "Fetch a parking/camera violation and its outstanding balance by summons number.",
-      "inputSchema": { "type": "object", "properties": { "summonsNumber": { "type": "string" } }, "required": ["summonsNumber"] },
-      "outputSchema": { "$ref": "../schemas/parking-violation.json" },
-      "annotations": { "readOnlyHint": true, "openWorldHint": true },
-      "x-openapi-operation": "getParkingViolation"
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "summonsNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "summonsNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/parking-violation.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getParkingViolation",
+      "x-agent-skill": "search-city-data-and-records"
     },
     {
       "name": "pay_parking_ticket",
       "title": "Pay a Parking Ticket",
-      "description": "Submit a payment against a parking/camera violation summons (report and settle a ticket). NET-NEW workflow with no public API today — it lives only in the CityPay web app (a836-citypay.nyc.gov) or by mail. Mutates state and moves money — confirm the summons number and amount first, accept only a tokenized instrument (PayPal/Braintree), and never handle raw card or bank numbers.",
-      "inputSchema": { "$ref": "../schemas/parking-ticket-payment.json" },
-      "outputSchema": { "$ref": "../schemas/parking-ticket-payment.json" },
-      "annotations": { "readOnlyHint": false, "destructiveHint": false, "idempotentHint": false, "openWorldHint": true },
+      "description": "Submit a payment against a parking/camera violation summons (report and settle a ticket). NET-NEW workflow with no public API today \u2014 it lives only in the CityPay web app (a836-citypay.nyc.gov) or by mail. Mutates state and moves money \u2014 confirm the summons number and amount first, accept only a tokenized instrument (PayPal/Braintree), and never handle raw card or bank numbers.",
+      "inputSchema": {
+        "$ref": "../schemas/parking-ticket-payment.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/parking-ticket-payment.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
       "x-openapi-operation": "createParkingTicketPayment",
-      "x-auth": "user"
+      "x-auth": "user",
+      "x-agent-skill": "pay-a-city-charge"
     }
-  ]
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  }
 }
