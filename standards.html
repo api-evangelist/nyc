@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Standards — NYC Modernization</title>
+<meta name="description" content="The open/industry standards NYC agencies should adopt (and mostly don't), and the standards this modernization project is built on.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.std{border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;background:var(--bg-card)}
+.std h3{margin:0 0 .1em;font-size:1.15rem}
+.std .cat{font-size:.75rem;color:var(--fg-soft);text-transform:uppercase;letter-spacing:.05em}
+.std .what{margin:.5em 0 .3em}
+.std .why{color:var(--fg-soft);font-size:.92rem}
+.std .doms{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.role{display:inline-block;font-size:.72rem;font-weight:700;background:color-mix(in srgb,var(--brand) 16%,transparent);color:var(--brand-dark);padding:2px 9px;border-radius:20px}
+</style>
+</head>
+<body>
+<div id="nav"></div>
+<div class="dhead"><div class="wrap">
+  <div class="eyebrow" style="color:var(--brand-dark);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase">Assessment</div>
+  <h1>Standards</h1>
+  <p class="muted" style="max-width:76ch">Two views. First, the open &amp; industry <strong>data standards NYC agencies should conform to</strong> — most already exist for exactly what the city builds bespoke, and adoption is nearly zero. Second, the <strong>standards this project itself is built on</strong> — the design-first chain that turns 67 assessments into one coherent, agent-native model.</p>
+  <div class="stats" style="margin-top:14px" id="stats"></div>
+</div></div>
+<div class="wrap">
+  <div class="section-head"><div class="k">Dimension A</div><h2>Standards NYC agencies should conform to</h2>
+  <p class="muted">Sector standards mapped to the domains they apply to, with current conformance (✓ = at least partially live). The city keeps declining the standards made for its own problems.</p></div>
+  <div id="dstd"></div>
+  <div class="section-head" style="margin-top:38px"><div class="k">Dimension B</div><h2>The standards this project is built on</h2>
+  <p class="muted">The modernization is defined by a small stack of open standards — one object contract, one API contract, one agent contract, plus discovery and the existing data source.</p></div>
+  <div id="pstd"></div>
+</div>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const S=await getJSON("data/standards.json");
+  const appl=S.domainStandards.reduce((a,s)=>a+s.applicableCount,0);
+  const adopt=S.domainStandards.reduce((a,s)=>a+s.adoptedCount,0);
+  document.getElementById("stats").innerHTML=[[S.domainStandards.length,"sector standards"],[appl,"applicable domain-slots"],[adopt,"adopted (≥ partial-live)"],[S.projectStandards.length,"project standards"]]
+    .map(([b,x])=>`<div class="stat"><b>${b}</b><span>${x}</span></div>`).join("");
+  document.getElementById("dstd").innerHTML=S.domainStandards.map(s=>`
+    <div class="std"><div class="cat">${esc(s.category)}</div>
+      <h3><a href="${esc(s.spec)}">${esc(s.name)}</a> <span class="muted" style="font-size:.85rem;font-weight:400">· ${s.adoptedCount}/${s.applicableCount} adopted</span></h3>
+      <p class="what">${esc(s.what)}</p><p class="why"><strong>Why it matters:</strong> ${esc(s.why)}</p>
+      <div class="doms">${s.domains.map(d=>`<a href="domain.html?d=${encodeURIComponent(d.id)}" class="badge ${d.conformance>=2?'ok':d.conformance==1?'partial':'neutral'}" style="margin:2px;text-decoration:none">${esc(d.short)}${d.conformance>=2?' ✓':d.conformance==1?' ~':''}</a>`).join(" ")}</div>
+    </div>`).join("");
+  document.getElementById("pstd").innerHTML=S.projectStandards.map(p=>`
+    <div class="std"><span class="role">${esc(p.role)}</span>
+      <h3 style="margin-top:8px"><a href="${esc(p.spec)}">${esc(p.name)}</a>${p.count?` <span class="muted" style="font-size:.82rem;font-weight:400">· ${p.count.toLocaleString()} in this project</span>`:""}</h3>
+      <p class="what">${esc(p.what)}</p><p class="why"><strong>Why it matters:</strong> ${esc(p.why)}</p></div>`).join("");
+})();
+</script>
+</body>
+</html>

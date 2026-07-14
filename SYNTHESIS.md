@@ -8,7 +8,7 @@ Companion to the 67 domain assessments. Interactive version, with the aggregate 
 
 ## The corpus
 
-Sixty-seven NYC government domains — mayoral agencies, elected offices, the five borough presidents, the five district attorneys, oversight boards, public authorities (CUNY, H+H, EDC, SCA), and the three library systems — each run through the identical seven-step method (assess → tech/vendor inventory → APIs-observed → Open Data crosswalk → JSON Schema per object → OpenAPI → MCP). The totals: **2,666 Open Data assets mapped, 422 JSON Schemas, 721 API operations, 624 MCP tools** — all design-first artifacts.
+Sixty-seven NYC government domains — mayoral agencies, elected offices, the five borough presidents, the five district attorneys, oversight boards, public authorities (CUNY, H+H, EDC, SCA), and the three library systems — each run through the identical seven-step method (assess → tech/vendor inventory → APIs-observed → Open Data crosswalk → JSON Schema per object → OpenAPI → MCP). The totals: **2,666 Open Data assets mapped, 422 JSON Schemas, 721 API operations, 624 MCP tools** — all design-first artifacts. Every falsifiable claim was re-verified (**66 of 67 high confidence**; sampled Open Data assets all resolve; one confirmed defect — the Public Advocate's site is down). See [QA / verification](https://nyc.apievangelist.com/qa.html).
 
 ## The definitive finding: two flat columns
 
@@ -40,12 +40,12 @@ The method assigns each domain a one-word *modernization verb*. Sixty-seven asse
 
 1. **The service layer is the universal gap, not the data.** Reporting data is broadly open; the transactional service layer is missing, hidden, or vendor-locked almost everywhere. This is the meta-finding of all 67.
 2. **A citizen write-workflow with no API — in nearly every domain.** 66 net-new write objects across the corpus (permit, enrollment, ballot, 311 request, vital record, marriage license, film permit, work order, tip, hold…). Open data liberated reporting; it never touched transactions.
-3. **Agent-readiness is essentially zero — 64 of 67.** Not one domain ships a meaningful agent surface. Every MCP artifact in this project is net-new.
+3. **Agent-readiness is zero — all 67.** Not one domain ships a meaningful agent surface. Every MCP artifact in this project is net-new.
 4. **"Accidental APIs" are everywhere.** Dozens of agencies unknowingly expose a WordPress REST or Drupal JSON:API; several run real private APIs. The machine-readable surface often already exists — undocumented and unowned.
 5. **Near-identical offices multiply cost.** Five BPs, five DAs, three libraries, ~25 CUNY campuses — each a bespoke build of the same thing. Consolidation into shared, templated APIs is the clearest efficiency win.
 6. **Vendor sprawl, uncoordinated.** Accela, Salesforce, Siebel, Unqork, Kaseware, Dynamics 365, Epic, BiblioCommons, PeopleSoft, Struts, Everbridge, Combined Arms — a different SaaS per agency, no shared strategy; sometimes the vendor *is* the only API (Legistar, Checkbook, FHIR).
 7. **Platform sprawl — ~20 distinct stacks, zero shared API layer.** Smarty, Sitefinity, WordPress, Drupal, Dynamics, Oracle WebCenter, DotNetNuke, Weebly, Revize, Next.js, and more. Consistency must be imposed *above* the platforms.
-8. **The standards made for NYC's problems go unadopted.** NYC pioneered **Open311** and let it lapse; **FHIR** runs at H+H but read-only; the **geography spine** recurs in all 67 but has no shared schema. The city keeps declining the standards built for exactly this.
+8. **The standards made for NYC's problems go unadopted.** NYC pioneered **Open311** and let it lapse; **FHIR** runs at H+H but read-only; the **geography spine** recurs in all 67 but has no shared schema. The city keeps declining the standards built for exactly this: seven sector standards (Open311, FHIR, OpenReferral/HSDS, OCDS, GTFS, iCalendar, Popolo) apply across ~51 domain-slots and **exactly one is adopted** (H+H's FHIR). See [standards](https://nyc.apievangelist.com/standards.html).
 9. **The counter-examples prove it's achievable.** NYPL (three owned public APIs), H+H (live FHIR), OTI (the api.nyc.gov gateway + Open Data), DCP (open-source geocoder). The talent and pattern exist inside the city already.
 10. **Digital assets are decaying.** `brooklyn-usa.org` lapsed and now redirects off-site; the Public Advocate's site returned 502 during the crawl; `rcda.nyc.gov` is dead. Ungoverned surfaces rot.
 11. **The shared geography spine recurs in all 67.** Borough · Community Board · Council District · Census Tract/NTA · BBL/BIN — every schema's `_common.json`. City Planning is its authoritative source: the basis for **`nyc-commons`**.
@@ -54,7 +54,7 @@ The method assigns each domain a one-word *modernization verb*. Sixty-seven asse
 ## Recommendations — the NYC API playbook
 
 1. **Run the five plays, per domain:** *Digitize* the PDF/iframe data; *Expose* the private and accidental APIs; *Unify/Federate* fragmented sources and duplicate offices; *Transact* — build the missing write APIs; *Standardize* on Open311, FHIR, and `nyc-commons`.
-2. **Prioritize the write layer citywide.** 60 of 67 have no transactional API; it is the highest-value, most-uniform gap.
+2. **Prioritize the write layer citywide.** 65 of 67 have no transactional API; it is the highest-value, most-uniform gap.
 3. **Mandate agent-native by default.** Zero of 67 are agent-ready today; make an MCP surface a standard deliverable.
 4. **Build the shared APIs for duplicate offices** — one Borough President API, one District Attorney API, one Library API — instead of 13 bespoke sites.
 5. **Publish `nyc-commons`** (the geography spine + `Address`/`Place` identity) and have every agency `$ref` it. City Planning anchors it.
@@ -72,6 +72,8 @@ Three analyses mine the collected data to move from "what's broken" to "what to 
 **Linkage — the connective tissue** ([linkage.html](https://nyc.apievangelist.com/linkage.html)). The shared join keys, detected across all 67 schemas: **Borough and Coordinates appear in every one of the 67**; Council District (62), Community Board (56), Census Tract / NTA (53). The **property keys — BBL and BIN** — are the real connectors that would stitch Buildings ↔ Finance ↔ Housing ↔ Planning ↔ 311 into one addressable graph. This is the `nyc-commons` case in data.
 
 **Transactions — build these once** ([transactions.html](https://nyc.apievangelist.com/transactions.html)). The 66 net-new write workflows collapse into a handful of primitives: **Apply (30)**, Report/Complain (17), Request-records (5), Schedule/Reserve (4), Register (2), Dispute/File (2), Pay (1). The city doesn't need 66 bespoke builds — it needs one excellent "Apply" pattern (permits, enrollment, benefits, licenses, lottery) and a "Report" pattern (complaints, tips, 311), reused across agencies.
+
+**Standards — adopt what exists** ([standards.html](https://nyc.apievangelist.com/standards.html)). Most of what NYC builds bespoke already has an open standard — Open311 for service requests, FHIR for health, OpenReferral/HSDS for human-service directories, OCDS for procurement, GTFS for mobility, Popolo for legislative people. Adoption is ~1 of 51 applicable slots. And the project's own contracts — **JSON Schema → OpenAPI → MCP → APIs.json** — are the standards that make the whole thing interoperable.
 
 ## Coda
 

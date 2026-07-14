@@ -1,0 +1,2999 @@
+{
+ "method": "Automated verification with a browser UA. site: GET the domain's primary URL (ok=2xx/3xx, gated=401/403/429/503, dead=404/DNS/timeout). datasets: GET up to 3 sampled Socrata asset metadata endpoints. apis: GET up to 3 observed-API endpoints. confidence: high=no issues, medium=gated/partial, low=dead site or a dataset failed to resolve.",
+ "summary": {
+  "confidence": {
+   "high": 66,
+   "low": 1
+  },
+  "site": {
+   "ok": 63,
+   "gated": 3,
+   "dead": 1
+  },
+  "flagged": [
+   "pubadvocate"
+  ]
+ },
+ "manualSample": [
+  {
+   "domain": "H+H",
+   "claim": "live Epic FHIR R4 endpoint",
+   "verdict": "CONFIRMED",
+   "evidence": "epicproxypda.nychhc.org FHIR R4 /metadata \u2192 200 (CapabilityStatement)."
+  },
+  {
+   "domain": "OTI",
+   "claim": "221 Open Data assets (platform operator)",
+   "verdict": "CONFIRMED",
+   "evidence": "Socrata agency facet 'Office of Technology and Innovation (OTI)' \u2192 resultSetSize 221, exact."
+  },
+  {
+   "domain": "DOB",
+   "claim": "transactional core in the aNNN app layer (BIS/DOB NOW)",
+   "verdict": "CONFIRMED",
+   "evidence": "a810-bisweb.nyc.gov \u2192 200; a810-dobnow.nyc.gov \u2192 403 (bot-gated, live)."
+  },
+  {
+   "domain": "NYPL",
+   "claim": "three real public APIs",
+   "verdict": "PARTLY CONFIRMED",
+   "evidence": "Locations API \u2192 200; Digital Collections API \u2192 401 (exists, token-gated); the Research Catalog discovery endpoint did not resolve at the guessed URL (2 of 3 verified live)."
+  },
+  {
+   "domain": "Public Advocate",
+   "claim": "self-hosted site degraded / down",
+   "verdict": "CONFIRMED (defect)",
+   "evidence": "pubadvocate.nyc.gov and advocate.nyc.gov both unreachable (000) \u2014 the office's primary web presence is down."
+  }
+ ],
+ "domains": [
+  {
+   "id": "acs",
+   "short": "NYC Children's Services (ACS)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "9hyh-zkx9",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "rnjn-x48k",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "abgy-h8ag",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "ocfs.ny.gov \u2014 Statewide Central Register (SCR)",
+     "url": "https://ocfs.ny.gov",
+     "code": 0,
+     "class": "dead"
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "url": "https://portal.311.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/acs",
+     "url": "https://www.nyc.gov/site/acs",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "bic",
+   "short": "NYC Business Integrity Commission (BIC)",
+   "site_url": "https://bicportal.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "867j-5pgi",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "cspg-yi7g",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "a8wp-rerh",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "bicportal.nyc.gov",
+     "url": "https://bicportal.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/bic",
+     "url": "https://www.nyc.gov/site/bic",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "url": "https://portal.311.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "bklynlibrary",
+   "short": "Brooklyn Public Library (BPL)",
+   "site_url": "https://www.bklynlibrary.org",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "xmzf-uf2w",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "b7t4-zm44",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.bklynlibrary.org/jsonapi",
+     "url": "https://www.bklynlibrary.org/jsonapi",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "bklynlibrary.bibliocommons.com",
+     "url": "https://bklynlibrary.bibliocommons.com",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "discover.bklynlibrary.org",
+     "url": "https://discover.bklynlibrary.org",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "bronxbp",
+   "short": "Bronx Borough President",
+   "site_url": "https://bronxboropres.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "mdgu-ar69",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "wbau-xy7g",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "bronxboropres.nyc.gov",
+     "url": "https://bronxboropres.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "cdn.curator.io",
+     "url": "https://cdn.curator.io",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "visitor.r20.constantcontact.com",
+     "url": "https://visitor.r20.constantcontact.com",
+     "code": 403,
+     "class": "gated"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "bronxda",
+   "short": "Bronx District Attorney",
+   "site_url": "https://www.bronxda.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [],
+   "datasets_ok": null,
+   "apis": [
+    {
+     "endpoint": "app.powerbigov.us",
+     "url": "https://app.powerbigov.us",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.bronxda.nyc.gov/html/",
+     "url": "https://www.bronxda.nyc.gov/html/",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "s.go-mpulse.net (Boomerang)",
+     "url": "https://s.go-mpulse.net",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "brooklynbp",
+   "short": "Brooklyn Borough President",
+   "site_url": "https://www.brooklynbp.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "avcv-kcyf",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "dy27-rrad",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "4j6i-9rmr",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.brooklynbp.nyc.gov/wp-json/tribe/events/v1",
+     "url": "https://www.brooklynbp.nyc.gov/wp-json/tribe/events/v1",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.brooklynbp.nyc.gov/wp-json/wp/v2",
+     "url": "https://www.brooklynbp.nyc.gov/wp-json/wp/v2",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.brooklynbp.nyc.gov",
+     "url": "https://www.brooklynbp.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "brooklynda",
+   "short": "Brooklyn District Attorney",
+   "site_url": "https://www.brooklynda.org",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [],
+   "datasets_ok": null,
+   "apis": [
+    {
+     "endpoint": "brooklynda.org/wp-json/wp/v2",
+     "url": "https://brooklynda.org/wp-json/wp/v2",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "brooklynda.org (contact form)",
+     "url": "https://brooklynda.org",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.brooklynda.org",
+     "url": "https://www.brooklynda.org",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "bsa",
+   "short": "NYC Standards & Appeals (BSA)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "yvxd-uipr",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "99rv-74dm",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "f72e-3i4c",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "/site/bsa/resolutions/search-for-resolutions.page",
+     "url": "https://search-for-resolutions.page",
+     "code": 0,
+     "class": "dead"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/bsa",
+     "url": "https://www.nyc.gov/site/bsa",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "zola.planning.nyc.gov / gis.nyc.gov ZOLA",
+     "url": "https://zola.planning.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "cchr",
+   "short": "NYC Human Rights (CCHR)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "395v-hkhg",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "tmha-56pf",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "6ayi-8khd",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.nyc.gov/site/cchr/about/report-discrimination.page",
+     "url": "https://www.nyc.gov/site/cchr/about/report-discrimination.page",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "apps.nyc.gov/nyc-mailform/validation",
+     "url": "https://apps.nyc.gov/nyc-mailform/validation",
+     "code": 405,
+     "class": "dead"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/cchr",
+     "url": "https://www.nyc.gov/site/cchr",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "ccrb",
+   "short": "NYC Civilian Complaint Review (CCRB)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "2fir-qns4",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "6xgr-kwjq",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "2mby-ccnw",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.nyc.gov/site/ccrb/complaints/file-a-complaint/file-onlin",
+     "url": "https://www.nyc.gov/site/ccrb/complaints/file-a-complaint/file-online.page",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "apps.nyc.gov/ccrb-status-lookup/",
+     "url": "https://apps.nyc.gov/ccrb-status-lookup/",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/ccrb",
+     "url": "https://www.nyc.gov/site/ccrb",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "cfb",
+   "short": "NYC Campaign Finance Board (CFB)",
+   "site_url": "https://www.nyccfb.info",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "psx2-aqx3",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "rjkp-yttg",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "rixx-fc37",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.nyccfb.info/FTMSearchWebAPI",
+     "url": "https://www.nyccfb.info/FTMSearchWebAPI",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyccfb.info/DataLibrary/*.csv",
+     "url": "https://www.nyccfb.info/DataLibrary/",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "www.nyccfb.info/candidate-services/c-smart-help (C-SMART)",
+     "url": "https://www.nyccfb.info/candidate-services/c-smart-help",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "cityclerk",
+   "short": "NYC City Clerk",
+   "site_url": "https://www.cityclerk.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "fmf3-knd8",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "7arw-dbem",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "apps.nyc.gov/content-api/v1/content/cityclerk + /v2/nav/city",
+     "url": "https://apps.nyc.gov/content-api/v1/content/cityclerk",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "apps.nyc.gov/elobbyist",
+     "url": "https://apps.nyc.gov/elobbyist",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "lobbyistsearch.nyc.gov",
+     "url": "https://lobbyistsearch.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "coib",
+   "short": "NYC Conflicts of Interest Board (COIB)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "p39r-nm7f",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "dx8z-6nev",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "aqs7-v55z",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.nyc.gov/site/coib",
+     "url": "https://www.nyc.gov/site/coib",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "maps.googleapis.com",
+     "url": "https://maps.googleapis.com",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "go-mpulse.net",
+     "url": "https://go-mpulse.net",
+     "code": 0,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "comptroller.nyc.gov",
+   "short": "NYC Comptroller",
+   "site_url": "https://comptroller.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "mxwn-eh3b",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "p3e6-t4zv",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "ex6k-ym48",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "POST checkbooknyc.com/api",
+     "url": "https://checkbooknyc.com/api",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "comptroller.nyc.gov/wp-json (wp/v2)",
+     "url": "https://comptroller.nyc.gov/wp-json",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "facetwp/v1 (comptroller.nyc.gov)",
+     "url": "https://comptroller.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "council.nyc.gov",
+   "short": "NYC Council",
+   "site_url": "https://council.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "4d7f-74pe",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "6ctv-n46c",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "wwhr-5ven",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "webapi.legistar.com/v1/nyc",
+     "url": "https://webapi.legistar.com/v1/nyc",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "council.nyc.gov/wp-json (wp/v2)",
+     "url": "https://council.nyc.gov/wp-json",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "legistar.council.nyc.gov",
+     "url": "https://legistar.council.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "cuny",
+   "short": "City University of New York (CUNY)",
+   "site_url": "https://www.cuny.edu",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "vijr-8gr7",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "wusu-mzmq",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "cssa.cunyfirst.cuny.edu/psc/cnycsprd/GUEST/SA/c/",
+     "url": "https://cssa.cunyfirst.cuny.edu/psc/cnycsprd/GUEST/SA/c/",
+     "code": 0,
+     "class": "dead"
+    },
+    {
+     "endpoint": "www.cuny.edu (wp-json)",
+     "url": "https://www.cuny.edu",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.cuny.edu/academics/programs/",
+     "url": "https://www.cuny.edu/academics/programs/",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dcas",
+   "short": "NYC Citywide Admin Services (DCAS)",
+   "site_url": "https://cityjobs.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "vx8i-nprf",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "a9md-ynri",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "dg92-zbpx",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "cityjobs.nyc.gov (was a127-jobs.nyc.gov)",
+     "url": "https://cityjobs.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "a127-ess.nyc.gov",
+     "url": "https://a127-ess.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "a856-citystore.nyc.gov",
+     "url": "https://a856-citystore.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dcla",
+   "short": "NYC Cultural Affairs (DCLA)",
+   "site_url": "https://dclagms.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "y6fv-k6p7",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "u35m-9t32",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "gzdv-qiga",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "dclagms.nyc.gov/grants/s/",
+     "url": "https://dclagms.nyc.gov/grants/s/",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/dcla",
+     "url": "https://www.nyc.gov/site/dcla",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "maps.googleapis.com",
+     "url": "https://maps.googleapis.com",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dcp",
+   "short": "NYC City Planning (DCP)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "xywu-7bv9",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "64uk-42ks",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "swpk-hqdp",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "api.nyc.gov/geo/geoclient",
+     "url": "https://api.nyc.gov/geo/geoclient",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "planninglabs.carto.com",
+     "url": "https://planninglabs.carto.com",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "zola.planning.nyc.gov",
+     "url": "https://zola.planning.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dcwp",
+   "short": "NYC Consumer & Worker Protection (DCWP)",
+   "site_url": "https://www.nyc.gov/site/dca",
+   "site_code": 404,
+   "site": "ok",
+   "site_note": "agency page under the nyc.gov umbrella (exact path not auto-derived)",
+   "datasets": [
+    {
+     "id": "w7w3-xahh",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "ptev-4hud",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "5fn4-dr26",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "nyc-business.nyc.gov/nycbusiness",
+     "url": "https://nyc-business.nyc.gov/nycbusiness",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "citypay.nyc.gov",
+     "url": "https://citypay.nyc.gov",
+     "code": 403,
+     "class": "gated"
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "url": "https://portal.311.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "ddc",
+   "short": "NYC Design & Construction (DDC)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "rukc-mmqu",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "j7gw-gcxi",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "g9ub-hrve",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "nyc.gov/site/mocs/passport (PASSPort)",
+     "url": "https://nyc.gov/site/mocs/passport",
+     "code": 490,
+     "class": "dead"
+    },
+    {
+     "endpoint": "a856-cityrecord.nyc.gov",
+     "url": "https://a856-cityrecord.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "checkbooknyc.com",
+     "url": "https://checkbooknyc.com",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dep",
+   "short": "NYC Environmental Protection (DEP)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "ia2d-e54m",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "6pui-xhxz",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "zkky-n5j3",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "a826-umax.dep.nyc.gov",
+     "url": "https://a826-umax.dep.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "url": "https://portal.311.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/dep/",
+     "url": "https://www.nyc.gov/site/dep/",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dfta",
+   "short": "NYC Aging (DFTA)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "32cj-z7va",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "cqc8-am9x",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "ygfr-ij6t",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.nyc.gov/site/dfta",
+     "url": "https://www.nyc.gov/site/dfta",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "nyc.gov/311 / access.nyc.gov",
+     "url": "https://nyc.gov/311",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dhs",
+   "short": "NYC Homeless Services (DHS)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "k46n-sa2m",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "cete-9g3v",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "bmxf-3rd4",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "portal.311.nyc.gov / NYC311",
+     "url": "https://portal.311.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/dhs",
+     "url": "https://www.nyc.gov/site/dhs",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dob",
+   "short": "NYC Buildings (DOB)",
+   "site_url": "https://a810-dobnow.nyc.gov",
+   "site_code": 403,
+   "site": "gated",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "ic3t-wcy2",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "ipu4-2q9a",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "rbx6-tga4",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "a810-dobnow.nyc.gov",
+     "url": "https://a810-dobnow.nyc.gov",
+     "code": 403,
+     "class": "gated"
+    },
+    {
+     "endpoint": "a810-bisweb.nyc.gov",
+     "url": "https://a810-bisweb.nyc.gov",
+     "code": 403,
+     "class": "gated"
+    },
+    {
+     "endpoint": "a810-efiling.nyc.gov",
+     "url": "https://a810-efiling.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "doc",
+   "short": "NYC Correction (DOC)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "7479-ugqb",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "f64t-5yiv",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "6teu-xtgp",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "a073-ils-web.nyc.gov/inmatelookup/pages/home/home.jsf",
+     "url": "https://a073-ils-web.nyc.gov/inmatelookup/pages/home/home.jsf",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/doc",
+     "url": "https://www.nyc.gov/site/doc",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "a860-openrecords.nyc.gov",
+     "url": "https://a860-openrecords.nyc.gov",
+     "code": 403,
+     "class": "gated"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dof",
+   "short": "NYC Finance (DOF)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "nc67-uf89",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "bnx9-e6tj",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "9rz4-mjek",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "a836-acris.nyc.gov",
+     "url": "https://a836-acris.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "a836-citypay.nyc.gov",
+     "url": "https://a836-citypay.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "a836-pts-access.nyc.gov",
+     "url": "https://a836-pts-access.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dohmh",
+   "short": "NYC Health (DOHMH)",
+   "site_url": "https://www.nyc.gov/site/doh",
+   "site_code": 404,
+   "site": "ok",
+   "site_note": "agency page under the nyc.gov umbrella (exact path not auto-derived)",
+   "datasets": [
+    {
+     "id": "43nn-pn8j",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "jb7j-dtam",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "rc75-m7u3",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "a816-health.nyc.gov/ABCEatsRestaurants",
+     "url": "https://a816-health.nyc.gov/ABCEatsRestaurants",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "a816-evital.nyc.gov/eVitalVRRTS",
+     "url": "https://a816-evital.nyc.gov/eVitalVRRTS",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "a816-hlst.nyc.gov/CitizenAccess",
+     "url": "https://a816-hlst.nyc.gov/CitizenAccess",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "doi",
+   "short": "NYC Investigation (DOI)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "6z8x-wfk4",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "7ewi-9cdf",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "jstn-jaut",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "app.kaseware.us/public/#NYCDOI/...",
+     "url": "https://app.kaseware.us/public/",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/doi",
+     "url": "https://www.nyc.gov/site/doi",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "url": "https://portal.311.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "doris",
+   "short": "NYC Records (DORIS)",
+   "site_url": "https://a860-historicalvitalrecords.nyc.gov",
+   "site_code": 403,
+   "site": "gated",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "gysc-yn4h",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "797j-9xvg",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "j62e-7maa",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "nycrecords.access.preservica.com/api/content/",
+     "url": "https://nycrecords.access.preservica.com/api/content/",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "nycma.lunaimaging.com",
+     "url": "https://nycma.lunaimaging.com",
+     "code": 0,
+     "class": "dead"
+    },
+    {
+     "endpoint": "a860-historicalvitalrecords.nyc.gov",
+     "url": "https://a860-historicalvitalrecords.nyc.gov",
+     "code": 403,
+     "class": "gated"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dot",
+   "short": "NYC Transportation (DOT)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "wnu3-egq7",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "uiay-nctu",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "7ym2-wayt",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "api.us.socrata.com/api/catalog/v1",
+     "url": "https://api.us.socrata.com/api/catalog/v1",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "nycstreets.net (NYCSTREET)",
+     "url": "https://nycstreets.net",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "nycstreetdesign.info",
+     "url": "https://nycstreetdesign.info",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dsny",
+   "short": "NYC Sanitation (DSNY)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "ebb7-mvp5",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "sxx4-xhzg",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "gaq9-z3hz",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "dsnypublic.nyc.gov/dsny/api (geocoder/DSNYCollection, geocod",
+     "url": "https://dsnypublic.nyc.gov/dsny/api",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "a827-donatenyc.nyc.gov/ePickupsAPI/api (PickupRequest/AddUpd",
+     "url": "https://a827-donatenyc.nyc.gov/ePickupsAPI/api",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "dsnydonate.nyc.gov/cfc/api/appointment",
+     "url": "https://dsnydonate.nyc.gov/cfc/api/appointment",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dvs",
+   "short": "NYC Veterans' Services (DVS)",
+   "site_url": "https://www.nyc.gov/site/veterans",
+   "site_code": 404,
+   "site": "ok",
+   "site_note": "agency page under the nyc.gov umbrella (exact path not auto-derived)",
+   "datasets": [
+    {
+     "id": "ybdk-jmnn",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "jup5-7fik",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "davn-rbxj",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "nyc.veteranportal.combinedarms.us (VetConnectNYC)",
+     "url": "https://nyc.veteranportal.combinedarms.us",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/veterans",
+     "url": "https://www.nyc.gov/site/veterans",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "combinedarms.us",
+     "url": "https://combinedarms.us",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "dycd",
+   "short": "NYC Youth & Community Dev (DYCD)",
+   "site_url": "https://discoverdycd.dycdconnect.nyc",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "ebkm-iyma",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "75e9-fg2t",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "graj-69em",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "discoverdycd.dycdconnect.nyc/api",
+     "url": "https://discoverdycd.dycdconnect.nyc/api",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.dycdconnect.nyc",
+     "url": "https://www.dycdconnect.nyc",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/dycd",
+     "url": "https://www.nyc.gov/site/dycd",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "edc",
+   "short": "NYC Economic Development (EDC)",
+   "site_url": "https://edc.nyc",
+   "site_code": 403,
+   "site": "gated",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "f4yq-wry5",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "t5n6-gx8c",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "a6nj-cfbz",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "edc.nyc",
+     "url": "https://edc.nyc",
+     "code": 403,
+     "class": "gated"
+    },
+    {
+     "endpoint": "nycedc.com",
+     "url": "https://nycedc.com",
+     "code": 403,
+     "class": "gated"
+    },
+    {
+     "endpoint": "www.ferry.nyc",
+     "url": "https://www.ferry.nyc",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "fdny",
+   "short": "NYC Fire (FDNY)",
+   "site_url": "https://fires.fdnycloud.org",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "hc8x-tcnd",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "76xm-jjuj",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "8m42-w767",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "fires.fdnycloud.org/CitizenAccess",
+     "url": "https://fires.fdnycloud.org/CitizenAccess",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/fdny",
+     "url": "https://www.nyc.gov/site/fdny",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "hhc",
+   "short": "NYC Health + Hospitals",
+   "site_url": "https://www.nychealthandhospitals.org",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [],
+   "datasets_ok": null,
+   "apis": [
+    {
+     "endpoint": "epicproxypda.nychhc.org/FHIRProxy/api/FHIR/R4",
+     "url": "https://epicproxypda.nychhc.org/FHIRProxy/api/FHIR/R4",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "mychart.nychhc.org",
+     "url": "https://mychart.nychhc.org",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "open.epic.com/Endpoints/R4",
+     "url": "https://open.epic.com/Endpoints/R4",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "hpd",
+   "short": "NYC Housing (HPD)",
+   "site_url": "https://hpdonline.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "wvxf-dwi5",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "hg8x-zxpr",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "wz6d-d3jb",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "mspwvw-hpdleov3.nyc.gov/hpdonline.api/1.0/api",
+     "url": "https://mspwvw-hpdleov3.nyc.gov/hpdonline.api/1.0/api",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "mspwvw-hpdleov3.nyc.gov/DocService/v1/api",
+     "url": "https://mspwvw-hpdleov3.nyc.gov/DocService/v1/api",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "*.hpdnyc.org:8243",
+     "url": "https://.hpdnyc.org",
+     "code": 0,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "hra",
+   "short": "NYC Social Services (HRA)",
+   "site_url": "https://access.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "ntcm-2w4k",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "5c4s-jwtq",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "9d9t-bmk7",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "github.com/NYCOpportunity/ACCESS-NYC-Rules",
+     "url": "https://github.com/NYCOpportunity/ACCESS-NYC-Rules",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "access.nyc.gov",
+     "url": "https://access.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "a069-access.nyc.gov/accesshra",
+     "url": "https://a069-access.nyc.gov/accesshra",
+     "code": 0,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "ibo",
+   "short": "NYC Independent Budget Office (IBO)",
+   "site_url": "https://www.ibo.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "gffu-ps8j",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "ipc3-2nbm",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "29nk-6u2k",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "apps.nyc.gov/content-api/v2/custom-contents/ibo",
+     "url": "https://apps.nyc.gov/content-api/v2/custom-contents/ibo",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "www.ibo.nyc.gov",
+     "url": "https://www.ibo.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "ibomap.maps.arcgis.com",
+     "url": "https://ibomap.maps.arcgis.com",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "law",
+   "short": "NYC Law Department",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "svyi-maaj",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "pjgc-h7uv",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "4se9-mk53",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.nyc.gov/site/law",
+     "url": "https://www.nyc.gov/site/law",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "lpc",
+   "short": "NYC Landmarks (LPC)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "xbvj-gfnw",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "7mgd-s57w",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "ncre-qhxs",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "nyclpc.maps.arcgis.com",
+     "url": "https://nyclpc.maps.arcgis.com",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "portico.lpc.nyc.gov/s/",
+     "url": "https://portico.lpc.nyc.gov/s/",
+     "code": 0,
+     "class": "dead"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/lpc",
+     "url": "https://www.nyc.gov/site/lpc",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "manhattanbp",
+   "short": "Manhattan Borough President",
+   "site_url": "https://www.manhattanbp.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "5jat-czce",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "w49t-5gha",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "x4ud-jhxu",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "manhattanbp.nyc.gov/wp-json/",
+     "url": "https://manhattanbp.nyc.gov/wp-json/",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.manhattanbp.nyc.gov",
+     "url": "https://www.manhattanbp.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "manhattanda",
+   "short": "Manhattan District Attorney",
+   "site_url": "https://www.manhattanda.org",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [],
+   "datasets_ok": null,
+   "apis": [
+    {
+     "endpoint": "manhattanda.org/wp-json/wp/v2/",
+     "url": "https://manhattanda.org/wp-json/wp/v2/",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "manhattanda.org/wp-json/tribe/events/v1/events",
+     "url": "https://manhattanda.org/wp-json/tribe/events/v1/events",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "jetpack/v4/search (WordPress.com site 137993268)",
+     "url": "https://ress.com",
+     "code": 0,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "mocj",
+   "short": "NYC Criminal Justice (MOCJ)",
+   "site_url": "https://criminaljustice.cityofnewyork.us/",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "atne-2dki",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.nyc.gov/site/criminaljustice",
+     "url": "https://www.nyc.gov/site/criminaljustice",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "mome",
+   "short": "NYC Media & Entertainment (MOME)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "tg4x-b46p",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "b84a-xy2t",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "nyceventpermits.nyc.gov/film",
+     "url": "https://nyceventpermits.nyc.gov/film",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/mome",
+     "url": "https://www.nyc.gov/site/mome",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "nyc311",
+   "short": "NYC311",
+   "site_url": "https://portal.311.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "erm2-nwe9",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "wewp-mm3p",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "3rfa-3xsf",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "api.nyc.gov (Azure APIM)",
+     "url": "https://api.nyc.gov",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "nycem",
+   "short": "NYC Emergency Management (NYCEM)",
+   "site_url": "https://www.nyc.gov/site/em",
+   "site_code": 404,
+   "site": "ok",
+   "site_note": "agency page under the nyc.gov umbrella (exact path not auto-derived)",
+   "datasets": [
+    {
+     "id": "pasr-j7fb",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "ayer-cga7",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "8vv7-7wx3",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "feeds.everbridge.net/feeds/453003085617722/rss/rss.xml",
+     "url": "https://feeds.everbridge.net/feeds/453003085617722/rss/rss.xml",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "a858-nycnotify.nyc.gov/notifynyc",
+     "url": "https://a858-nycnotify.nyc.gov/notifynyc",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/em",
+     "url": "https://www.nyc.gov/site/em",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "nycgovparks.org",
+   "short": "NYC Parks & Recreation",
+   "site_url": "https://www.nycgovparks.org",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "uvpi-gqnh",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "enfh-gkve",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "622h-mkfu",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "Tree Map data API (/cdn/tree, tree-map.nycgovparks.org)",
+     "url": "https://tree-map.nycgovparks.org",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "/search (www.nycgovparks.org)",
+     "url": "https://www.nycgovparks.org",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "/sub_your_park/historical_signs/hs_with_monument.php",
+     "url": "https://monument.php",
+     "code": 0,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "nycha",
+   "short": "NYC Housing Authority (NYCHA)",
+   "site_url": "https://selfserve.nycha.info",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "jr24-e7cr",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "evjd-dqpz",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "5r5y-pvs3",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "selfserve.nycha.info/nycha/app/eservice/enu",
+     "url": "https://selfserve.nycha.info/nycha/app/eservice/enu",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/nycha",
+     "url": "https://www.nyc.gov/site/nycha",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "on1.nyc.gov",
+     "url": "https://on1.nyc.gov",
+     "code": 0,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "nypd",
+   "short": "NYPD",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "h9gi-nx95",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "uip8-fykc",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "qgea-i56i",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "officer.search.azure.us",
+     "url": "https://officer.search.azure.us",
+     "code": 0,
+     "class": "dead"
+    },
+    {
+     "endpoint": "nypdonline.org",
+     "url": "https://nypdonline.org",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "compstat.nypdonline.org",
+     "url": "https://compstat.nypdonline.org",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "nypl",
+   "short": "New York Public Library (NYPL)",
+   "site_url": "https://www.nypl.org",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "p4pf-fyc4",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "3nja-bsch",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "ne9z-skhf",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "api.repo.nypl.org/api/v2",
+     "url": "https://api.repo.nypl.org/api/v2",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "refinery.nypl.org/api/nypl/locations/v1.0/locations",
+     "url": "https://refinery.nypl.org/api/nypl/locations/v1.0/locations",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "github.com/NYPL/discovery-api",
+     "url": "https://github.com/NYPL/discovery-api",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "oath",
+   "short": "NYC Admin Trials & Hearings (OATH)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "jz4z-kudi",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "y3hw-z6bm",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "a820-ecbticketfinder.nyc.gov/searchHome.action",
+     "url": "https://a820-ecbticketfinder.nyc.gov/searchHome.action",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/oath",
+     "url": "https://www.nyc.gov/site/oath",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "on1.nyc.gov",
+     "url": "https://on1.nyc.gov",
+     "code": 0,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "ocme",
+   "short": "NYC Medical Examiner (OCME)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "8r6c-ydwk",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "portal.311.nyc.gov",
+     "url": "https://portal.311.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "namus.nij.ojp.gov",
+     "url": "https://namus.nij.ojp.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/ocme",
+     "url": "https://www.nyc.gov/site/ocme",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "oti",
+   "short": "NYC Technology & Innovation (OTI)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "erm2-nwe9",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "dpc8-z3jc",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "szwg-xci6",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "api.nyc.gov (GeoClient /geo/geoclient/v1, GeoSearch)",
+     "url": "https://api.nyc.gov",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "geosearch.planninglabs.nyc/v2/search",
+     "url": "https://geosearch.planninglabs.nyc/v2/search",
+     "code": 400,
+     "class": "dead"
+    },
+    {
+     "endpoint": "www.nyc.gov/content/oti",
+     "url": "https://www.nyc.gov/content/oti",
+     "code": 490,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "pubadvocate",
+   "short": "NYC Public Advocate",
+   "site_url": "https://www.pubadvocate.nyc.gov/",
+   "site_code": 0,
+   "site": "dead",
+   "site_note": "",
+   "datasets": [],
+   "datasets_ok": null,
+   "apis": [
+    {
+     "endpoint": "landlordwatchlist.com/api/landlords",
+     "url": "https://landlordwatchlist.com/api/landlords",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "advocate.nyc.gov (self-hosted)",
+     "url": "https://advocate.nyc.gov",
+     "code": 0,
+     "class": "dead"
+    },
+    {
+     "endpoint": "legistar.council.nyc.gov (Legistar)",
+     "url": "https://legistar.council.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "low",
+   "issues": [
+    "primary site unreachable (0) \u2014 https://www.pubadvocate.nyc.gov/"
+   ]
+  },
+  {
+   "id": "queensbp",
+   "short": "Queens Borough President",
+   "site_url": "https://www.queensbp.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "rps4-dwwk",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "8z5h-tzdr",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.queensbp.nyc.gov/wp-json/wp/v2",
+     "url": "https://www.queensbp.nyc.gov/wp-json/wp/v2",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.queensbp.nyc.gov",
+     "url": "https://www.queensbp.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "queensbp.org",
+     "url": "https://queensbp.org",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "queensda",
+   "short": "Queens District Attorney",
+   "site_url": "https://queensda.org",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [],
+   "datasets_ok": null,
+   "apis": [
+    {
+     "endpoint": "queensda.org/wp-json/wp/v2",
+     "url": "https://queensda.org/wp-json/wp/v2",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "queensda.org/wp-json/facetwp/v1/fetch",
+     "url": "https://queensda.org/wp-json/facetwp/v1/fetch",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "queensda.org/wp-json/matomo/v1",
+     "url": "https://queensda.org/wp-json/matomo/v1",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "queenslibrary",
+   "short": "Queens Public Library (QPL)",
+   "site_url": "https://www.queenslibrary.org",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "kh3d-xhq7",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "queenslibrary.bibliocommons.com",
+     "url": "https://queenslibrary.bibliocommons.com",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "queens.libnet.info / connect.queenslibrary.org",
+     "url": "https://queens.libnet.info",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "queenslibrary.overdrive.com",
+     "url": "https://queenslibrary.overdrive.com",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "sbs",
+   "short": "NYC Small Business Services (SBS)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "uyj8-7rv5",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "ci93-uc8s",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "9a87-6m4x",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "nyc-business.nyc.gov/nycbusiness",
+     "url": "https://nyc-business.nyc.gov/nycbusiness",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/sbs",
+     "url": "https://www.nyc.gov/site/sbs",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "universal-editor-service.adobe.io",
+     "url": "https://universal-editor-service.adobe.io",
+     "code": 403,
+     "class": "gated"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "sca",
+   "short": "NYC School Construction Authority (SCA)",
+   "site_url": "https://bidset.nycsca.org",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "8586-3zfm",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "tsak-vtv3",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "2xh6-psuq",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "bidset.nycsca.org",
+     "url": "https://bidset.nycsca.org",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nycsca.org/WS/Reports/type/advbids",
+     "url": "https://www.nycsca.org/WS/Reports/type/advbids",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nycsca.org",
+     "url": "https://www.nycsca.org",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "schools.nyc.gov",
+   "short": "NYC Public Schools (DOE)",
+   "site_url": "https://schools.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "f9bf-2cp4",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "ez4e-fazm",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "mnz3-dyi8",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "lusearchapi-na.hawksearch.com/sites/nycdoe",
+     "url": "https://lusearchapi-na.hawksearch.com/sites/nycdoe",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "/CustomApi/* (www.schools.nyc.gov)",
+     "url": "https://www.schools.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "pwsblobprd.schools.nyc/prd-pws/*",
+     "url": "https://pwsblobprd.schools.nyc/prd-pws/",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "statenislandbp",
+   "short": "Staten Island Borough President",
+   "site_url": "https://www.statenislandusa.com",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "3fes-huds",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "mmut-uup9",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "weebly.com/weebly/apps/formSubmit.php",
+     "url": "https://weebly.com/weebly/apps/formSubmit.php",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "lp.constantcontactpages.com/su/wWLrBxD/sibp",
+     "url": "https://lp.constantcontactpages.com/su/wWLrBxD/sibp",
+     "code": 403,
+     "class": "gated"
+    },
+    {
+     "endpoint": "www.statenislandusa.com/apps/search",
+     "url": "https://www.statenislandusa.com/apps/search",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "statenislandda",
+   "short": "Staten Island District Attorney",
+   "site_url": "https://www.statenislandda.org",
+   "site_code": 202,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [],
+   "datasets_ok": null,
+   "apis": [
+    {
+     "endpoint": "statenislandda.org (WordPress /wp-json)",
+     "url": "https://statenislandda.org",
+     "code": 202,
+     "class": "ok"
+    },
+    {
+     "endpoint": "statenislandda.org/drug-tip-form/ + /scam-tip-form/",
+     "url": "https://statenislandda.org/drug-tip-form/",
+     "code": 202,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "taxcommission",
+   "short": "NYC Tax Commission",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "4nft-bihw",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "aht6-vxai",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.nyc.gov/site/taxcommission online filing system",
+     "url": "https://www.nyc.gov/site/taxcommission",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/taxcommission/",
+     "url": "https://www.nyc.gov/site/taxcommission/",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "tlc",
+   "short": "NYC Taxi & Limousine (TLC)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "8wbx-tsch",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "xjfq-wh2d",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "dpec-ucu7",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "d37ci6vzurychx.cloudfront.net/trip-data/",
+     "url": "https://d37ci6vzurychx.cloudfront.net/trip-data/",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "d37ci6vzurychx.cloudfront.net/misc/",
+     "url": "https://d37ci6vzurychx.cloudfront.net/misc/",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "api.us.socrata.com/api/catalog/v1",
+     "url": "https://api.us.socrata.com/api/catalog/v1",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
+   "id": "vote.nyc",
+   "short": "NYC Board of Elections",
+   "site_url": "https://www.vote.nyc",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "mifw-tguq",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "i3a3-qxkf",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "vote.nyc/jsonapi (Drupal JSON:API)",
+     "url": "https://vote.nyc/jsonapi",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "enr.boenyc.gov (+ /rcv/)",
+     "url": "https://enr.boenyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "requestballot.vote.nyc (+ /tracking)",
+     "url": "https://requestballot.vote.nyc",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  }
+ ]
+}

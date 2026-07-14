@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QA / Verification — NYC Modernization</title>
+<meta name="description" content="Automated + manual verification of the NYC modernization assessment — site reachability, Open Data existence, and confidence tags per domain.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<div class="dhead"><div class="wrap">
+  <div class="eyebrow" style="color:var(--brand-dark);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase">Assessment</div>
+  <h1>QA / Verification</h1>
+  <p class="muted" style="max-width:74ch">The assessment was built by ~52 subagents, so its claims are re-checked here. Automated: is each domain's site live, do the crosswalked Open Data assets actually exist on Socrata, are observed-API endpoints reachable. Plus a manual deep-verify of the boldest qualitative claims. Sites returning 401/403/429/503 are "gated" (live but bot/auth-walled), not dead.</p>
+  <div class="stats" style="margin-top:14px" id="stats"></div>
+</div></div>
+<div class="wrap">
+  <div class="section-head"><h2>Deep-verified sample</h2><p class="muted">The boldest claims, re-probed against live sources.</p></div>
+  <div class="tablewrap"><table id="manual"></table></div>
+  <div class="section-head" style="margin-top:30px"><h2>Flagged for review</h2></div>
+  <div id="flagged"></div>
+  <div class="section-head" style="margin-top:30px"><h2>Every domain</h2></div>
+  <div class="toolbar"><input id="q" placeholder="Filter…"><select id="cf"><option value="">All confidence</option><option>high</option><option>medium</option><option>low</option></select><span class="count-pill" id="count"></span></div>
+  <div id="table"></div>
+</div>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const Q=await getJSON("data/qa.json");
+  const c=Q.summary.confidence, s=Q.summary.site;
+  document.getElementById("stats").innerHTML=[[Q.domains.length,"domains checked"],[c.high||0,"high confidence"],[c.medium||0,"medium"],[c.low||0,"low"],[s.dead||0,"sites unreachable"]]
+    .map(([b,x])=>`<div class="stat"><b>${b}</b><span>${x}</span></div>`).join("");
+  document.getElementById("manual").innerHTML="<thead><tr><th>Domain</th><th>Claim</th><th>Verdict</th><th>Evidence</th></tr></thead><tbody>"+
+    Q.manualSample.map(m=>`<tr><td>${esc(m.domain)}</td><td>${esc(m.claim)}</td>
+      <td><span class="badge ${m.verdict.startsWith('CONFIRMED')?'ok':m.verdict.includes('defect')?'gap':'partial'}">${esc(m.verdict)}</span></td>
+      <td class="muted small">${esc(m.evidence)}</td></tr>`).join("")+"</tbody>";
+  const fl=Q.domains.filter(d=>d.issues.length);
+  document.getElementById("flagged").innerHTML=fl.length?`<div class="tablewrap"><table><thead><tr><th>Domain</th><th>Confidence</th><th>Issue</th></tr></thead><tbody>`+
+    fl.map(d=>`<tr><td><a href="domain.html?d=${encodeURIComponent(d.id)}">${esc(d.short)}</a></td><td><span class="badge gap">${d.confidence}</span></td><td class="small">${esc(d.issues.join("; "))}</td></tr>`).join("")+`</tbody></table></div>`
+    :'<p class="muted">None — all domains passed the automated checks.</p>';
+  const badge=c=>`<span class="badge ${c==='high'?'ok':c==='low'?'gap':'partial'}">${c}</span>`;
+  const site=s=>`<span class="badge ${s==='ok'?'ok':s==='dead'?'gap':'partial'}">${s}</span>`;
+  const R=Q.domains;
+  function draw(list){
+    document.getElementById("table").innerHTML=`<div class="tablewrap"><table><thead><tr><th>Domain</th><th>Confidence</th><th>Site</th><th>Datasets sampled</th><th>APIs probed</th></tr></thead><tbody>`+
+      list.map(d=>`<tr><td><a href="domain.html?d=${encodeURIComponent(d.id)}">${esc(d.short)}</a></td>
+        <td>${badge(d.confidence)}</td><td>${site(d.site)} <span class="muted small">${d.site_code}</span></td>
+        <td class="small">${d.datasets.length?d.datasets.map(x=>x.ok?'✓':'✗').join(" "):"—"}</td>
+        <td class="small muted">${d.apis.length?d.apis.map(a=>a.code).join(", "):"—"}</td></tr>`).join("")+`</tbody></table></div>`;
+    document.getElementById("count").textContent=list.length+" / "+R.length;
+  }
+  function apply(){const q=document.getElementById("q").value.toLowerCase(),cf=document.getElementById("cf").value;
+    draw(R.filter(d=>(!cf||d.confidence===cf)&&(!q||d.short.toLowerCase().includes(q))));}
+  document.getElementById("q").oninput=apply;document.getElementById("cf").onchange=apply;draw(R);
+})();
+</script>
+</body>
+</html>

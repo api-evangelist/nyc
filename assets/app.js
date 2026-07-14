@@ -79,6 +79,7 @@ function navBar(active){
     <a class="link" href="./#domains">Domains</a>
     <a class="link" href="./synthesis.html">Synthesis</a>
     <a class="link" href="./opportunity.html">Opportunity</a>
+    <a class="link" href="./standards.html">Standards</a>
     <a class="link" href="./entities.html">Entities</a>
     <a class="link" href="./technology.html">Technology</a>
     <a class="link" href="./docs.html?f=ROADMAP.md">Roadmap</a>
