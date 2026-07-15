@@ -1,6 +1,6 @@
 # References
 
-A growing library of the sources behind the NYC Modernization strategy — **15 references** across 5 groups. Interactive: [references.html](https://nyc.apievangelist.com/references.html). Add entries in [`data/references.json`](data/references.json).
+A growing library of the sources behind the NYC Modernization strategy — **16 references** across 6 groups. Interactive: [references.html](https://nyc.apievangelist.com/references.html). Add entries in [`data/references.json`](data/references.json).
 
 ## The initiative — NYC Public Interest Technology (PIT) Crew
 
@@ -55,6 +55,13 @@ A growing library of the sources behind the NYC Modernization strategy — **15 
 
 - [Mamdani invests in tech capacity to “solve real problems”](https://donmoynihan.substack.com/p/mamdani-invests-in-tech-capacity) — Don Moynihan & Pamela Herd · Can We Still Govern? · 2026-07-14
   - The scholars who named “administrative burden” read PIT Crew as delivering on housing, childcare, and consumer/worker protection by improving the experience of government — “every dead-end portal” erodes trust. The lens behind the project's research notes.
+
+## Data & reports — everyday problems
+
+*Outside diagnoses of New Yorkers' conditions that this project's data can help act on.*
+
+- [Caucus 2025: Important Information for New Yorkers (report library)](https://www.osc.ny.gov/reports/caucus2025) — NY State Comptroller (OSC) · 2025
+  - ~40 reports diagnosing everyday problems — chronic absenteeism, child poverty, child care, housing/homelessness, food insecurity, overdose, domestic violence, mental health, traffic deaths, hate crime, elder care, broadband, cost of living. Mapped to NYC agencies, data, and ideas in research.md.
 
 ---
 *Part of the [NYC Modernization](README.md) study.*
