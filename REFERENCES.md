@@ -1,6 +1,6 @@
 # References
 
-A growing library of the sources behind the NYC Modernization strategy — **14 references** across 4 groups. Interactive: [references.html](https://nyc.apievangelist.com/references.html). Add entries in [`data/references.json`](data/references.json).
+A growing library of the sources behind the NYC Modernization strategy — **15 references** across 5 groups. Interactive: [references.html](https://nyc.apievangelist.com/references.html). Add entries in [`data/references.json`](data/references.json).
 
 ## The initiative — NYC Public Interest Technology (PIT) Crew
 
@@ -48,6 +48,13 @@ A growing library of the sources behind the NYC Modernization strategy — **14 
   - The open standard for 311-style service requests — the write layer NYC pioneered and let lapse.
 - [Model Context Protocol](https://modelcontextprotocol.io/) — Anthropic
   - The open standard making city services agent-native.
+
+## Context & commentary
+
+*Outside analysis that frames why this work matters.*
+
+- [Mamdani invests in tech capacity to “solve real problems”](https://donmoynihan.substack.com/p/mamdani-invests-in-tech-capacity) — Don Moynihan & Pamela Herd · Can We Still Govern? · 2026-07-14
+  - The scholars who named “administrative burden” read PIT Crew as delivering on housing, childcare, and consumer/worker protection by improving the experience of government — “every dead-end portal” erodes trust. The lens behind the project's research notes.
 
 ---
 *Part of the [NYC Modernization](README.md) study.*
