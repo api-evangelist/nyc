@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NYC as a System — NYC Digital Modernization</title>
+<meta name="description" content="Rising above any single agency to see NYC as a system — where open data left a gap, and what a crosswalk of APIs, MCP, and Agent Skills adds to make the city programmable from the outside-in.">
+<link rel="canonical" href="https://nyc.apievangelist.com/blog/nyc-as-a-system.html">
+<meta name="author" content="Kin Lane">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="NYC — Digital Modernization">
+<meta property="og:title" content="NYC as a System">
+<meta property="og:description" content="Rising above any single agency to see NYC as a system — where open data left a gap, and what a crosswalk of APIs, MCP, and Agent Skills adds to make the city programmable from the outside-in.">
+<meta property="og:url" content="https://nyc.apievangelist.com/blog/nyc-as-a-system.html">
+<meta property="og:image" content="https://nyc.apievangelist.com/blog/images/nyc-as-a-system-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NYC as a System">
+<meta property="article:published_time" content="2026-07-15">
+<meta property="article:author" content="Kin Lane">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NYC as a System">
+<meta name="twitter:description" content="Rising above any single agency to see NYC as a system — where open data left a gap, and what a crosswalk of APIs, MCP, and Agent Skills adds to make the city programmable from the outside-in.">
+<meta name="twitter:image" content="https://nyc.apievangelist.com/blog/images/nyc-as-a-system-card.png">
+<link rel="stylesheet" href="/assets/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"NYC as a System","description":"Rising above any single agency to see NYC as a system \u2014 where open data left a gap, and what a crosswalk of APIs, MCP, and Agent Skills adds to make the city programmable from the outside-in.","image":"https://nyc.apievangelist.com/blog/images/nyc-as-a-system-card.png","datePublished":"2026-07-15","author":{"@type":"Person","name":"Kin Lane"},"publisher":{"@type":"Organization","name":"API Evangelist"},"mainEntityOfPage":"https://nyc.apievangelist.com/blog/nyc-as-a-system.html"}
+</script>
+</head>
+<body>
+<div id="nav"></div>
+<section class="plain"><div class="wrap" style="max-width:840px">
+  <p class="small"><a href="/blog.html">← Blog</a></p>
+  <article class="md" id="post"><h1>NYC as a System</h1><p class="muted">Rising above any single agency to see NYC as a system — where open data left a gap, and what a crosswalk of APIs, MCP, and Agent Skills adds to make the city programmable from the outside-in.</p></article>
+  <p class="small" style="margin-top:2em"><a href="/blog.html">← More posts</a></p>
+</div></section>
+<div id="footer"></div>
+<script src="/assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  try{
+    let md=await getText("nyc-as-a-system.md");
+    let h=mdToHtml(md);
+    // make relative resource paths root-absolute so they resolve from /blog/
+    h=h.replace(/(href|src)="(?!https?:\/\/|\/|#|mailto:|data:)([^"]*)"/g,
+      (m,a,p)=>a+'="/'+p.replace(/^(\.\.\/)+/,'').replace(/^\.\//,'')+'"');
+    document.getElementById("post").innerHTML=h;
+    document.title="NYC as a System — NYC Digital Modernization";
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

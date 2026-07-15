@@ -76,15 +76,15 @@ function makeTable(container, columns, rows){
 /* ---- shared chrome ---- */
 function navBar(active){
   return `<div class="nav"><div class="wrap">
-    <a class="brand" href="./"><span class="dot"></span>NYC Modernization</a>
-    <a class="link" href="./#domains">Domains</a>
-    <a class="link" href="./synthesis.html">Synthesis</a>
-    <a class="link" href="./experience.html">Experience</a>
-    <a class="link" href="./standards.html">Standards</a>
-    <a class="link" href="./entities.html">Entities</a>
-    <a class="link" href="./technology.html">Technology</a>
-    <a class="link" href="./docs.html?f=ROADMAP.md">Roadmap</a>
-    <a class="link" href="./blog.html">Blog</a>
+    <a class="brand" href="/"><span class="dot"></span>NYC Modernization</a>
+    <a class="link" href="/#domains">Domains</a>
+    <a class="link" href="/synthesis.html">Synthesis</a>
+    <a class="link" href="/experience.html">Experience</a>
+    <a class="link" href="/standards.html">Standards</a>
+    <a class="link" href="/entities.html">Entities</a>
+    <a class="link" href="/technology.html">Technology</a>
+    <a class="link" href="/docs.html?f=ROADMAP.md">Roadmap</a>
+    <a class="link" href="/blog.html">Blog</a>
     <span class="spacer"></span>
     <a class="link ghost" href="https://github.com/api-evangelist/nyc">GitHub</a>
   </div></div>`;

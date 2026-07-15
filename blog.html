@@ -15,6 +15,21 @@
 .post .meta{font-size:.82rem;color:var(--fg-soft);margin-bottom:.5em}
 .post .sum{color:var(--fg-soft)}
 </style>
+<!--seo:start-->
+<link rel="canonical" href="https://nyc.apievangelist.com/blog.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NYC — Digital Modernization">
+<meta property="og:title" content="Blog — NYC Digital Modernization">
+<meta property="og:description" content="Notes and updates from the NYC Digital Modernization project — telling the story of what&#x27;s possible when the city&#x27;s public data becomes programmable and agent-native.">
+<meta property="og:url" content="https://nyc.apievangelist.com/blog.html">
+<meta property="og:image" content="https://nyc.apievangelist.com/assets/social.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blog — NYC Digital Modernization">
+<meta name="twitter:description" content="Notes and updates from the NYC Digital Modernization project — telling the story of what&#x27;s possible when the city&#x27;s public data becomes programmable and agent-native.">
+<meta name="twitter:image" content="https://nyc.apievangelist.com/assets/social.png">
+<!--seo:end-->
 </head>
 <body>
 <div id="nav"></div>
@@ -37,12 +52,12 @@
   const fmt=d=>{try{return new Date(d+"T12:00:00").toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});}catch(e){return d;}};
   document.getElementById("posts").innerHTML=posts.map(p=>`
     <div class="post">
-      ${p.image?`<a href="docs.html?f=${encodeURIComponent(p.file)}"><img class="banner" src="${esc(p.image)}" alt=""></a>`:""}
+      ${p.image?`<a href="blog/${esc(p.slug)}.html"><img class="banner" src="${esc(p.image)}" alt=""></a>`:""}
       <div class="body">
-        <h2><a href="docs.html?f=${encodeURIComponent(p.file)}">${esc(p.title)}</a></h2>
+        <h2><a href="blog/${esc(p.slug)}.html">${esc(p.title)}</a></h2>
         <div class="meta">${fmt(p.date)}${p.author?" · "+esc(p.author):""}</div>
         <p class="sum">${esc(p.summary||"")}</p>
-        <a href="docs.html?f=${encodeURIComponent(p.file)}">Read the post →</a>
+        <a href="blog/${esc(p.slug)}.html">Read the post →</a>
       </div>
     </div>`).join("");
 })();
