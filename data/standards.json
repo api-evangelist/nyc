@@ -341,7 +341,7 @@
    "role": "Object contract",
    "what": "A vocabulary for describing and validating the shape of a JSON object.",
    "why": "The atom of the whole design \u2014 one canonical, machine-validatable schema per entity (Park, Permit, School\u2026). `$ref` lets schemas reuse shared definitions, which is exactly what makes a citywide `nyc-commons` possible.",
-   "count": 422
+   "count": 439
   },
   {
    "name": "OpenAPI 3.1",
@@ -349,23 +349,31 @@
    "role": "API contract",
    "what": "A standard, language-agnostic description of a REST API \u2014 its paths, operations, and the schemas they read and write.",
    "why": "Turns a pile of schemas into a described, resource-oriented API. It `$ref`s the JSON Schemas and drives docs, mocks, SDKs, and validation \u2014 the lingua franca every API tool speaks.",
-   "count": 721
+   "count": 752
   },
   {
    "name": "Model Context Protocol (MCP)",
    "spec": "https://modelcontextprotocol.io/",
    "role": "Agent contract",
    "what": "An open protocol for exposing tools and resources to AI agents/assistants.",
-   "why": "The agent-native layer. It maps the same resources as callable tools, mapped 1:1 to the OpenAPI operations \u2014 making a government service usable by an AI agent, not just a browser. Zero of 67 domains have this today.",
-   "count": 624
+   "why": "The agent-native layer. It maps the same resources as callable tools, mapped 1:1 to the OpenAPI operations \u2014 making a government service usable by an AI agent, not just a browser. Zero of 70 domains have this today.",
+   "count": 653
   },
   {
    "name": "Agent Skills",
    "spec": "https://code.claude.com/docs/en/skills",
    "role": "Agent task contract",
    "what": "Portable, model-agnostic skill definitions that package a task's instructions, the resources it needs, and the tools it orchestrates for an AI agent.",
-   "why": "The layer above MCP tools: one skill per common government process (apply, report, request records, schedule, pay\u2026) that resolves the right agency and drives its tools to finish a citizen task. Ten are defined across the 67 agencies \u2014 see the Programmable City experience layer.",
+   "why": "The layer above MCP tools: one skill per common government process (apply, report, request records, schedule, pay\u2026) that resolves the right agency and drives its tools to finish a citizen task. Ten are defined across the 70 agencies \u2014 see the Programmable City experience layer.",
    "count": 10
+  },
+  {
+   "name": "Arazzo 1.0",
+   "spec": "https://spec.openapis.org/arazzo/latest.html",
+   "role": "Workflow contract",
+   "what": "The OpenAPI Initiative's standard for describing a sequence of API calls across one or more APIs \u2014 a portable, versionable, testable description of a multi-step process.",
+   "why": "The cross-agency layer: a single government outcome (build affordable housing, open a business) rarely lives in one agency. Arazzo chains the per-agency OpenAPI operations into one machine-readable journey \u2014 the connective tissue for automating approval management across agencies, as an open standard rather than another siloed portal.",
+   "count": 1
   },
   {
    "name": "APIs.json",
@@ -380,8 +388,8 @@
    "spec": "https://dev.socrata.com/",
    "role": "Existing data source",
    "what": "The query API + query language behind NYC Open Data (data.cityofnewyork.us).",
-   "why": "The existing citywide data layer (run by OTI) that this project crosswalks every domain against \u2014 the 2,666 assets we mapped and the read-side many proposed APIs would wrap.",
-   "count": 2666
+   "why": "The existing citywide data layer (run by OTI) that this project crosswalks every domain against \u2014 the 2,681 assets we mapped and the read-side many proposed APIs would wrap.",
+   "count": 2681
   }
  ]
 }

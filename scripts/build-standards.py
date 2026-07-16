@@ -16,6 +16,11 @@ for d in DOM:
     apitext[d["id"]] = " ".join(f"{a.get('endpoint','')} {a.get('type','')} {a.get('note','')}"
                                 for a in fr.get("apis_observed", [])).lower()
 
+# project-wide totals (derived from the manifest so the B-section counts never drift)
+N = len(DOM)
+T = {k: sum(d["counts"].get(k, 0) for d in DOM) for k in ("opendata", "schemas", "openapiOps", "mcpTools")}
+ARAZZO = len(glob.glob("experience/workflows/*.arazzo.yaml"))
+
 # ---- A. domain-facing standards: applicability (curated) + conformance detection ----
 STD = [
  {"name": "Open311 (GeoReport v2)", "spec": "https://www.open311.org/", "cat": "Service requests",
@@ -70,22 +75,25 @@ for s in STD:
 projectStandards = [
  {"name": "JSON Schema (2020-12)", "spec": "https://json-schema.org/", "role": "Object contract",
   "what": "A vocabulary for describing and validating the shape of a JSON object.",
-  "why": "The atom of the whole design — one canonical, machine-validatable schema per entity (Park, Permit, School…). `$ref` lets schemas reuse shared definitions, which is exactly what makes a citywide `nyc-commons` possible.", "count": 422},
+  "why": "The atom of the whole design — one canonical, machine-validatable schema per entity (Park, Permit, School…). `$ref` lets schemas reuse shared definitions, which is exactly what makes a citywide `nyc-commons` possible.", "count": T["schemas"]},
  {"name": "OpenAPI 3.1", "spec": "https://www.openapis.org/", "role": "API contract",
   "what": "A standard, language-agnostic description of a REST API — its paths, operations, and the schemas they read and write.",
-  "why": "Turns a pile of schemas into a described, resource-oriented API. It `$ref`s the JSON Schemas and drives docs, mocks, SDKs, and validation — the lingua franca every API tool speaks.", "count": 721},
+  "why": "Turns a pile of schemas into a described, resource-oriented API. It `$ref`s the JSON Schemas and drives docs, mocks, SDKs, and validation — the lingua franca every API tool speaks.", "count": T["openapiOps"]},
  {"name": "Model Context Protocol (MCP)", "spec": "https://modelcontextprotocol.io/", "role": "Agent contract",
   "what": "An open protocol for exposing tools and resources to AI agents/assistants.",
-  "why": "The agent-native layer. It maps the same resources as callable tools, mapped 1:1 to the OpenAPI operations — making a government service usable by an AI agent, not just a browser. Zero of 67 domains have this today.", "count": 624},
+  "why": f"The agent-native layer. It maps the same resources as callable tools, mapped 1:1 to the OpenAPI operations — making a government service usable by an AI agent, not just a browser. Zero of {N} domains have this today.", "count": T["mcpTools"]},
  {"name": "Agent Skills", "spec": "https://code.claude.com/docs/en/skills", "role": "Agent task contract",
   "what": "Portable, model-agnostic skill definitions that package a task's instructions, the resources it needs, and the tools it orchestrates for an AI agent.",
-  "why": "The layer above MCP tools: one skill per common government process (apply, report, request records, schedule, pay…) that resolves the right agency and drives its tools to finish a citizen task. Ten are defined across the 67 agencies — see the Programmable City experience layer.", "count": 10},
+  "why": f"The layer above MCP tools: one skill per common government process (apply, report, request records, schedule, pay…) that resolves the right agency and drives its tools to finish a citizen task. Ten are defined across the {N} agencies — see the Programmable City experience layer.", "count": 10},
+ {"name": "Arazzo 1.0", "spec": "https://spec.openapis.org/arazzo/latest.html", "role": "Workflow contract",
+  "what": "The OpenAPI Initiative's standard for describing a sequence of API calls across one or more APIs — a portable, versionable, testable description of a multi-step process.",
+  "why": "The cross-agency layer: a single government outcome (build affordable housing, open a business) rarely lives in one agency. Arazzo chains the per-agency OpenAPI operations into one machine-readable journey — the connective tissue for automating approval management across agencies, as an open standard rather than another siloed portal.", "count": ARAZZO},
  {"name": "APIs.json", "spec": "https://apisjson.org/", "role": "Discovery / registry",
   "what": "A machine-readable index that catalogs an organization's APIs and their supporting artifacts (schemas, OpenAPI, docs).",
   "why": "The connective tissue open data never had — a discoverable registry so humans and agents can find every agency's API. The planned citywide index (see roadmap).", "count": None},
  {"name": "Socrata SODA / SoQL", "spec": "https://dev.socrata.com/", "role": "Existing data source",
   "what": "The query API + query language behind NYC Open Data (data.cityofnewyork.us).",
-  "why": "The existing citywide data layer (run by OTI) that this project crosswalks every domain against — the 2,666 assets we mapped and the read-side many proposed APIs would wrap.", "count": 2666},
+  "why": f"The existing citywide data layer (run by OTI) that this project crosswalks every domain against — the {T['opendata']:,} assets we mapped and the read-side many proposed APIs would wrap.", "count": T["opendata"]},
 ]
 
 out = {"note": "Two dimensions: (A) the open/industry data standards NYC domains should conform to (and their current, mostly-zero adoption); (B) the standards this project itself is built on.",

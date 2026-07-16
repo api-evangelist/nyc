@@ -67,6 +67,9 @@ An open protocol for exposing tools and resources to AI agents/assistants. **Why
 ### Agent Skills — Agent task contract (10 in this project)
 Portable, model-agnostic skill definitions that package a task's instructions, the resources it needs, and the tools it orchestrates for an AI agent. **Why it matters:** The layer above MCP tools: one skill per common government process (apply, report, request records, schedule, pay…) that resolves the right agency and drives its tools to finish a citizen task. Ten are defined across the 70 agencies — see the Programmable City experience layer.
 
+### Arazzo 1.0 — Workflow contract (1 in this project)
+The OpenAPI Initiative's standard for describing a sequence of API calls across one or more APIs — a portable, versionable, testable description of a multi-step process. **Why it matters:** The cross-agency layer: a single government outcome (build affordable housing, open a business) rarely lives in one agency. Arazzo chains the per-agency OpenAPI operations into one machine-readable journey — the connective tissue for automating approval management across agencies, as an open standard rather than another siloed portal.
+
 ### APIs.json — Discovery / registry
 A machine-readable index that catalogs an organization's APIs and their supporting artifacts (schemas, OpenAPI, docs). **Why it matters:** The connective tissue open data never had — a discoverable registry so humans and agents can find every agency's API. The planned citywide index (see roadmap).
 
