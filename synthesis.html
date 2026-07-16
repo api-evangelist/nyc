@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cross-Domain Synthesis — NYC Modernization</title>
-<meta name="description" content="What 67 NYC government domains reveal about citywide API modernization — five verb families, an aggregate maturity scorecard, and the two flat columns.">
+<meta name="description" content="What 70 NYC government domains reveal about citywide API modernization — five verb families, an aggregate maturity scorecard, and the two flat columns.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
 <style>
@@ -28,14 +28,14 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="NYC — Digital Modernization">
 <meta property="og:title" content="Cross-Domain Synthesis — NYC Modernization">
-<meta property="og:description" content="What 67 NYC government domains reveal about citywide API modernization — five verb families, an aggregate maturity scorecard, and the two flat columns.">
+<meta property="og:description" content="What 70 NYC government domains reveal about citywide API modernization — five verb families, an aggregate maturity scorecard, and the two flat columns.">
 <meta property="og:url" content="https://nyc.apievangelist.com/synthesis.html">
 <meta property="og:image" content="https://nyc.apievangelist.com/assets/social.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Cross-Domain Synthesis — NYC Modernization">
-<meta name="twitter:description" content="What 67 NYC government domains reveal about citywide API modernization — five verb families, an aggregate maturity scorecard, and the two flat columns.">
+<meta name="twitter:description" content="What 70 NYC government domains reveal about citywide API modernization — five verb families, an aggregate maturity scorecard, and the two flat columns.">
 <meta name="twitter:image" content="https://nyc.apievangelist.com/assets/social.png">
 <!--seo:end-->
 </head>
@@ -45,8 +45,8 @@
 <div class="hero" style="padding:52px 0 30px">
   <div class="wrap">
     <div class="eyebrow">Cross-domain synthesis</div>
-    <h1 style="font-size:2.3rem;max-width:24ch">Sixty-seven domains, one flat truth</h1>
-    <p class="lead">Assessed the same way, every NYC government domain publishes data but almost none is programmable. Two capabilities score zero across the entire city: <strong>transactional APIs</strong> (65/67) and <strong>agent-readiness</strong> (67/67).</p>
+    <h1 style="font-size:2.3rem;max-width:24ch">Seventy domains, one flat truth</h1>
+    <p class="lead">Assessed the same way, every NYC government domain publishes data but almost none is programmable. Two capabilities score zero across the entire city: <strong>transactional APIs</strong> (68/70) and <strong>agent-readiness</strong> (70/70).</p>
     <div class="cta">
       <a class="btn" href="docs.html?f=SYNTHESIS.md">Read the full synthesis</a>
       <a class="btn sec" href="opportunity.html">Opportunity</a>
@@ -61,7 +61,7 @@
 </div>
 
 <section><div class="wrap">
-  <div class="section-head"><div class="k">The evidence</div><h2>Aggregate maturity — all 67 domains</h2>
+  <div class="section-head"><div class="k">The evidence</div><h2>Aggregate maturity — all 70 domains</h2>
   <p class="muted">How many domains score 0–3 on each dimension — scored by one <strong>rule-based function applied uniformly</strong> (not per-subagent self-scores). Open data is broad; the write and agent layers are empty citywide.</p></div>
   <div id="dist"></div>
   <div class="legend" id="legend"></div>
@@ -69,18 +69,18 @@
 
 <section><div class="wrap">
   <div class="section-head"><div class="k">The taxonomy</div><h2>~40 verbs, five families</h2>
-  <p class="muted">The method assigns each domain a one-word modernization verb. Sixty-seven produced roughly forty — but they collapse into five plays.</p></div>
+  <p class="muted">The method assigns each domain a one-word modernization verb. Seventy produced roughly forty — but they collapse into five plays.</p></div>
   <div id="families"></div>
 </div></section>
 
 <section><div class="wrap">
   <div class="section-head"><div class="k">The universal gap</div><h2>A citizen action with no API — in nearly every domain</h2>
-  <p class="muted">Open data liberated reporting; it never touched transactions. <span id="nncount">66</span> net-new write objects across the corpus — permits, enrollments, ballots, licenses, marriage licenses, film permits, work orders, tips, holds.</p></div>
+  <p class="muted">Open data liberated reporting; it never touched transactions. <span id="nncount">69</span> net-new write objects across the corpus — permits, enrollments, ballots, licenses, marriage licenses, film permits, work orders, tips, holds.</p></div>
   <div class="grid cols-4" id="netnew"></div>
 </div></section>
 
 <section><div class="wrap">
-  <div class="section-head"><div class="k">The latent model</div><h2>A shared geography spine recurs in all 67</h2></div>
+  <div class="section-head"><div class="k">The latent model</div><h2>A shared geography spine recurs in all 70</h2></div>
   <div id="spine"></div>
 </div></section>
 
@@ -88,7 +88,7 @@
   <div class="section-head"><div class="k">The findings</div><h2>Thirteen patterns across the corpus</h2></div>
   <div id="findings"></div>
   <p style="margin-top:1.4em"><a class="btn" href="docs.html?f=SYNTHESIS.md">Full synthesis, with recommendations →</a>
-  <a class="btn sec" href="./#domains">Explore all 67 domains →</a></p>
+  <a class="btn sec" href="./#domains">Explore all 70 domains →</a></p>
 </div></section>
 
 <div id="footer"></div>
@@ -145,12 +145,12 @@
 
   // spine
   document.getElementById("spine").innerHTML=sc.sharedSpine.map(f=>`<span class="pill"><code>${esc(f)}</code></span>`).join("")+
-    `<p class="muted small" style="margin-top:12px">Present in every one of the 67 domains' <code>_common.json</code>. City Planning is its authoritative source — the basis for a shared <code>nyc-commons</code>.</p>`;
+    `<p class="muted small" style="margin-top:12px">Present in every one of the 70 domains' <code>_common.json</code>. City Planning is its authoritative source — the basis for a shared <code>nyc-commons</code>.</p>`;
 
   const findings=[
     ["The service layer is the universal gap, not the data","Reporting data is broadly open; the transactional service layer is missing, hidden, or vendor-locked almost everywhere."],
-    ["A citizen write-workflow with no API — nearly every domain","66 net-new write objects; 65 of 67 have no transactional API at all."],
-    ["Agent-readiness is zero — all 67","Not one domain ships a meaningful agent surface. Every MCP artifact here is net-new."],
+    ["A citizen write-workflow with no API — nearly every domain","69 net-new write objects; 68 of 70 have no transactional API at all."],
+    ["Agent-readiness is zero — all 70","Not one domain ships a meaningful agent surface. Every MCP artifact here is net-new."],
     ["Accidental APIs are everywhere","Dozens of agencies unknowingly expose a WordPress REST or Drupal JSON:API; several run real private APIs. The surface often already exists — undocumented."],
     ["Near-identical offices multiply cost","5 Borough Presidents, 5 DAs, 3 libraries, ~25 CUNY campuses — each bespoke. Shared, templated APIs are the clearest efficiency win."],
     ["Vendor sprawl, uncoordinated","Accela, Salesforce, Siebel, Unqork, Dynamics, Epic, BiblioCommons, PeopleSoft, Struts — different SaaS per agency; sometimes the vendor IS the only API."],
@@ -158,9 +158,9 @@
     ["The standards made for NYC's problems go unadopted","Open311 (lapsed at 311), FHIR (read-only at H+H), the geography spine (no shared schema). The city keeps declining the standards built for exactly this."],
     ["The counter-examples prove it's achievable","NYPL runs 3 public APIs; H+H has live FHIR; OTI runs the gateway; DCP the geocoder. The pattern exists in-house."],
     ["Digital assets are decaying","brooklyn-usa.org lapsed (redirects off-site); the Public Advocate site 502'd; rcda.nyc.gov is dead."],
-    ["A shared geography spine recurs in all 67","Borough, Community Board, Council District, Census Tract/NTA, BBL/BIN — the basis for nyc-commons."],
-    ["No cross-domain identity","Every domain has its own join key; a resident is the same person across all 67, but nothing links them."],
-    ["The stack is majority-proprietary — but the exits exist","78 technologies detected: 57 commercial, 4 open-core, 17 open source; the median domain runs a 71%-proprietary stack and 57/67 are majority-proprietary. Yet all 61 commercial tools have a credible OSS alternative (Socrata→CKAN, ArcGIS→QGIS+PostGIS, Salesforce→SuiteCRM/Odoo, GA→Matomo, APIM→Kong/Tyk). Lock-in is a default, not a constraint."],
+    ["A shared geography spine recurs in all 70","Borough, Community Board, Council District, Census Tract/NTA, BBL/BIN — the basis for nyc-commons."],
+    ["No cross-domain identity","Every domain has its own join key; a resident is the same person across all 70, but nothing links them."],
+    ["The stack is majority-proprietary — but the exits exist","79 technologies detected: 58 commercial, 4 open-core, 17 open source; the median domain runs a 71%-proprietary stack and 60/70 are majority-proprietary. Yet all 62 commercial tools have a credible OSS alternative (Socrata→CKAN, ArcGIS→QGIS+PostGIS, Salesforce→SuiteCRM/Odoo, GA→Matomo, APIM→Kong/Tyk). Lock-in is a default, not a constraint."],
   ];
   document.getElementById("findings").innerHTML=findings.map((f,i)=>`<div class="finding"><h3>${i+1}. ${esc(f[0])}</h3><p class="muted" style="margin:0">${esc(f[1])}</p></div>`).join("");
 })();

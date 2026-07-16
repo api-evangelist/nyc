@@ -42,7 +42,7 @@
   <div class="wrap">
     <div class="eyebrow">Strategy</div>
     <h1 style="font-size:2.3rem;max-width:24ch">A PIT Crew should never start from a blank page</h1>
-    <p class="lead">On July 13, 2026 New York launched the <a href="https://www.nyc.gov/content/pitcrew/pages/">Public Interest Technology (PIT) Crew</a> to <a href="https://www.nyc.gov/mayors-office/news/2026/07/mayor-mamdani-launches--public-interest-technology--pit--crew--t">“rapidly build digital solutions to public problems”</a> — in months, not years. This project is the substrate that makes that speed real: for all 67 agencies the models, contracts, agent tools, and the missing write workflows are already drafted, open, and forkable.</p>
+    <p class="lead">On July 13, 2026 New York launched the <a href="https://www.nyc.gov/content/pitcrew/pages/">Public Interest Technology (PIT) Crew</a> to <a href="https://www.nyc.gov/mayors-office/news/2026/07/mayor-mamdani-launches--public-interest-technology--pit--crew--t">“rapidly build digital solutions to public problems”</a> — in months, not years. This project is the substrate that makes that speed real: for all 70 agencies the models, contracts, agent tools, and the missing write workflows are already drafted, open, and forkable.</p>
     <div class="cta">
       <a class="btn" href="docs.html?f=STRATEGY.md">Read the full case</a>
       <a class="btn sec" href="references.html">References</a>
@@ -58,7 +58,7 @@
   <div class="tl">
     <div class="item"><div class="yr">2011</div><h3><a href="https://apievangelist.com/2011/09/06/every-city-county-and-state-should-have-an-api/">Every City, County, and State Should Have an API</a></h3><p class="muted" style="margin:0">The problem isn't bureaucracy — it's the vendor tooling agencies are handed. “PDF is not Portable Data Format… expect more from the technology purchased with our tax dollars.”</p></div>
     <div class="item"><div class="yr">2012</div><h3><a href="https://apievangelist.com/2012/10/25/apis-can-save-money-and-make-government-more-efficient/">APIs Can Save Money and Make Government More Efficient</a></h3><p class="muted" style="margin:0">The Department of Energy estimated $882,000 saved by bundling one API with a study.</p></div>
-    <div class="item"><div class="yr">2013</div><h3><a href="https://apievangelist.com/2013/09/25/a-huge-need-for-writeable-apis-in-government/">A Huge Need for Writeable APIs in Government</a></h3><p class="muted" style="margin:0">“Huge demand… this could be the thing that changes how government operates.” The write-layer gap, called thirteen years before it was measured across 67 agencies.</p></div>
+    <div class="item"><div class="yr">2013</div><h3><a href="https://apievangelist.com/2013/09/25/a-huge-need-for-writeable-apis-in-government/">A Huge Need for Writeable APIs in Government</a></h3><p class="muted" style="margin:0">“Huge demand… this could be the thing that changes how government operates.” The write-layer gap, called thirteen years before it was measured across 70 agencies.</p></div>
     <div class="item"><div class="yr">2016</div><h3><a href="https://apievangelist.com/2016/04/13/formalizing-my-approach-to-identifying-the-low-hanging-api-fruit/">Formalizing the Low-Hanging-Fruit Method</a></h3><p class="muted" style="margin:0">The outside-in assessment this project runs, agency by agency — after the University of Oklahoma and the Dept. of Veterans Affairs.</p></div>
   </div>
 </div></section>
@@ -98,7 +98,7 @@
 (async function(){
   document.getElementById("nav").innerHTML=navBar();
   document.getElementById("footer").innerHTML=footer();
-  let writeZero=65, agentZero=67, N=67, prop=71;
+  let writeZero=68, agentZero=70, N=70, prop=71;
   try{
     const sc=await getJSON("data/scorecard.json"); N=sc.domains.length;
     writeZero=sc.domains.filter(d=>d.scores.writeApi===0).length;
@@ -109,7 +109,7 @@
     [`${writeZero}/${N}`,"agencies with no write API"],
     [`${agentZero}/${N}`,"agencies not agent-ready"],
     [`${prop}%`,"median proprietary stack"],
-    ["67","agencies already mapped"]
+    [`${N}`,"agencies already mapped"]
   ].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
 
   const OBJ=[
