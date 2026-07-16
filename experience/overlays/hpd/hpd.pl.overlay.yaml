@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: NYC HPD API — Polish (pl) interface localization
+  version: 0.1.0
+x-language: pl
+x-language-name: Polish
+x-language-endonym: Polski
+x-text-direction: ltr
+extends: ../../../hpd/openapi/hpd.yaml
+actions:
+- target: $.info.title
+  update: API NYC HPD (propozycja)
+- target: $.paths['/lottery-applications'].post.summary
+  update: Złóż wniosek do loterii mieszkań przystępnych cenowo (Housing Connect)
+- target: $.paths['/lottery-applications/{applicationId}'].get.summary
+  update: Pobierz wniosek loteryjny
+- target: $.paths['/lottery-applications'].get.summary
+  update: Wyświetl wnioski loteryjne uwierzytelnionego gospodarstwa domowego
+- target: $.paths['/affordable-housing-projects'].get.summary
+  update: Wyszukaj budowę mieszkań przystępnych cenowo (jednostki Housing New York)
+- target: $.paths['/affordable-housing-projects/{projectId}'].get.summary
+  update: Pobierz projekt mieszkań przystępnych cenowo według identyfikatora

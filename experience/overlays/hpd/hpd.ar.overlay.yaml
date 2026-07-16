@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: NYC HPD API — Arabic (ar) interface localization
+  version: 0.1.0
+x-language: ar
+x-language-name: Arabic
+x-language-endonym: العربية
+x-text-direction: rtl
+extends: ../../../hpd/openapi/hpd.yaml
+actions:
+- target: $.info.title
+  update: واجهة برمجة تطبيقات NYC HPD (مقترحة)
+- target: $.paths['/lottery-applications'].post.summary
+  update: التقديم على قرعة السكن الميسور (Housing Connect)
+- target: $.paths['/lottery-applications/{applicationId}'].get.summary
+  update: الحصول على طلب قرعة
+- target: $.paths['/lottery-applications'].get.summary
+  update: عرض طلبات القرعة للأسرة المُوثَّقة
+- target: $.paths['/affordable-housing-projects'].get.summary
+  update: البحث في إنتاج السكن الميسور (وحدات Housing New York)
+- target: $.paths['/affordable-housing-projects/{projectId}'].get.summary
+  update: الحصول على مشروع سكن ميسور حسب المعرّف

@@ -1,0 +1,164 @@
+{
+ "agency": "hpd",
+ "base_openapi": "hpd/openapi/hpd.yaml",
+ "base_mcp": "hpd/mcp/hpd-mcp.json",
+ "spec": "https://spec.openapis.org/overlay/latest.html",
+ "caveat": "These translations are ILLUSTRATIVE — they demonstrate the overlay-driven localization pipeline, not certified copy. In production the City routes interface strings through its existing Local Law 30 certified-translation workflow (the same one that already translates nyc.gov content); the overlay is the mechanism, the translators supply the words. Program/product names (HPD, Housing Connect, Housing New York, NYC) are kept in English by convention, matching nyc.gov practice.",
+ "base_language": {
+  "code": "en",
+  "name": "English",
+  "endonym": "English",
+  "dir": "ltr"
+ },
+ "translated_strings_per_language": 6,
+ "targets": [
+  {
+   "id": "title",
+   "target": "$.info.title",
+   "en": "NYC HPD API (proposed)",
+   "operationId": null
+  },
+  {
+   "id": "createLottery",
+   "target": "$.paths['/lottery-applications'].post.summary",
+   "en": "Apply to an affordable-housing lottery (Housing Connect)",
+   "operationId": "createLotteryApplication"
+  },
+  {
+   "id": "getLottery",
+   "target": "$.paths['/lottery-applications/{applicationId}'].get.summary",
+   "en": "Get a lottery application",
+   "operationId": "getLotteryApplication"
+  },
+  {
+   "id": "listLottery",
+   "target": "$.paths['/lottery-applications'].get.summary",
+   "en": "List the authenticated household's lottery applications",
+   "operationId": "listLotteryApplications"
+  },
+  {
+   "id": "listProjects",
+   "target": "$.paths['/affordable-housing-projects'].get.summary",
+   "en": "Search affordable-housing production (Housing New York units)",
+   "operationId": "listAffordableHousingProjects"
+  },
+  {
+   "id": "getProject",
+   "target": "$.paths['/affordable-housing-projects/{projectId}'].get.summary",
+   "en": "Get an affordable-housing project by ID",
+   "operationId": "getAffordableHousingProject"
+  }
+ ],
+ "languages": [
+  {
+   "code": "es",
+   "name": "Spanish",
+   "endonym": "Español",
+   "dir": "ltr",
+   "overlay": "hpd.es.overlay.yaml",
+   "openapi": "dist/hpd.es.openapi.yaml",
+   "mcp": "dist/hpd.es.mcp.json",
+   "strings": 6,
+   "mcpToolsLocalized": 2
+  },
+  {
+   "code": "zh-Hant",
+   "name": "Chinese (Traditional)",
+   "endonym": "繁體中文",
+   "dir": "ltr",
+   "overlay": "hpd.zh-Hant.overlay.yaml",
+   "openapi": "dist/hpd.zh-Hant.openapi.yaml",
+   "mcp": "dist/hpd.zh-Hant.mcp.json",
+   "strings": 6,
+   "mcpToolsLocalized": 2
+  },
+  {
+   "code": "ru",
+   "name": "Russian",
+   "endonym": "Русский",
+   "dir": "ltr",
+   "overlay": "hpd.ru.overlay.yaml",
+   "openapi": "dist/hpd.ru.openapi.yaml",
+   "mcp": "dist/hpd.ru.mcp.json",
+   "strings": 6,
+   "mcpToolsLocalized": 2
+  },
+  {
+   "code": "bn",
+   "name": "Bengali",
+   "endonym": "বাংলা",
+   "dir": "ltr",
+   "overlay": "hpd.bn.overlay.yaml",
+   "openapi": "dist/hpd.bn.openapi.yaml",
+   "mcp": "dist/hpd.bn.mcp.json",
+   "strings": 6,
+   "mcpToolsLocalized": 2
+  },
+  {
+   "code": "ht",
+   "name": "Haitian Creole",
+   "endonym": "Kreyòl Ayisyen",
+   "dir": "ltr",
+   "overlay": "hpd.ht.overlay.yaml",
+   "openapi": "dist/hpd.ht.openapi.yaml",
+   "mcp": "dist/hpd.ht.mcp.json",
+   "strings": 6,
+   "mcpToolsLocalized": 2
+  },
+  {
+   "code": "ko",
+   "name": "Korean",
+   "endonym": "한국어",
+   "dir": "ltr",
+   "overlay": "hpd.ko.overlay.yaml",
+   "openapi": "dist/hpd.ko.openapi.yaml",
+   "mcp": "dist/hpd.ko.mcp.json",
+   "strings": 6,
+   "mcpToolsLocalized": 2
+  },
+  {
+   "code": "ar",
+   "name": "Arabic",
+   "endonym": "العربية",
+   "dir": "rtl",
+   "overlay": "hpd.ar.overlay.yaml",
+   "openapi": "dist/hpd.ar.openapi.yaml",
+   "mcp": "dist/hpd.ar.mcp.json",
+   "strings": 6,
+   "mcpToolsLocalized": 2
+  },
+  {
+   "code": "ur",
+   "name": "Urdu",
+   "endonym": "اردو",
+   "dir": "rtl",
+   "overlay": "hpd.ur.overlay.yaml",
+   "openapi": "dist/hpd.ur.openapi.yaml",
+   "mcp": "dist/hpd.ur.mcp.json",
+   "strings": 6,
+   "mcpToolsLocalized": 2
+  },
+  {
+   "code": "fr",
+   "name": "French",
+   "endonym": "Français",
+   "dir": "ltr",
+   "overlay": "hpd.fr.overlay.yaml",
+   "openapi": "dist/hpd.fr.openapi.yaml",
+   "mcp": "dist/hpd.fr.mcp.json",
+   "strings": 6,
+   "mcpToolsLocalized": 2
+  },
+  {
+   "code": "pl",
+   "name": "Polish",
+   "endonym": "Polski",
+   "dir": "ltr",
+   "overlay": "hpd.pl.overlay.yaml",
+   "openapi": "dist/hpd.pl.openapi.yaml",
+   "mcp": "dist/hpd.pl.mcp.json",
+   "strings": 6,
+   "mcpToolsLocalized": 2
+  }
+ ]
+}

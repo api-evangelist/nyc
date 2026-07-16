@@ -61,6 +61,9 @@ A vocabulary for describing and validating the shape of a JSON object. **Why it 
 ### OpenAPI 3.1 — API contract (752 in this project)
 A standard, language-agnostic description of a REST API — its paths, operations, and the schemas they read and write. **Why it matters:** Turns a pile of schemas into a described, resource-oriented API. It `$ref`s the JSON Schemas and drives docs, mocks, SDKs, and validation — the lingua franca every API tool speaks.
 
+### OpenAPI Overlays — Interface transformation / localization (10 in this project)
+A separate document of targeted updates (JSONPath actions) applied to a base OpenAPI description, without forking or editing the base. **Why it matters:** The transformation layer. One base contract + N thin overlays = N variants — used here to localize the INTERFACE (titles, summaries, descriptions) into the ten citywide languages of NYC Local Law 30, never touching paths, operationIds, schema fields, or data. Because MCP tools derive 1:1 from OpenAPI operations, the same overlay yields a localized MCP server. 10 language overlays for the HPD worked example — see experience/overlays.
+
 ### Model Context Protocol (MCP) — Agent contract (653 in this project)
 An open protocol for exposing tools and resources to AI agents/assistants. **Why it matters:** The agent-native layer. It maps the same resources as callable tools, mapped 1:1 to the OpenAPI operations — making a government service usable by an AI agent, not just a browser. Zero of 70 domains have this today.
 

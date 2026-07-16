@@ -20,6 +20,7 @@ for d in DOM:
 N = len(DOM)
 T = {k: sum(d["counts"].get(k, 0) for d in DOM) for k in ("opendata", "schemas", "openapiOps", "mcpTools")}
 ARAZZO = len(glob.glob("experience/workflows/*.arazzo.yaml"))
+OVERLAYS = len(glob.glob("experience/overlays/**/*.overlay.yaml", recursive=True))
 
 # ---- A. domain-facing standards: applicability (curated) + conformance detection ----
 STD = [
@@ -79,6 +80,9 @@ projectStandards = [
  {"name": "OpenAPI 3.1", "spec": "https://www.openapis.org/", "role": "API contract",
   "what": "A standard, language-agnostic description of a REST API — its paths, operations, and the schemas they read and write.",
   "why": "Turns a pile of schemas into a described, resource-oriented API. It `$ref`s the JSON Schemas and drives docs, mocks, SDKs, and validation — the lingua franca every API tool speaks.", "count": T["openapiOps"]},
+ {"name": "OpenAPI Overlays", "spec": "https://spec.openapis.org/overlay/latest.html", "role": "Interface transformation / localization",
+  "what": "A separate document of targeted updates (JSONPath actions) applied to a base OpenAPI description, without forking or editing the base.",
+  "why": f"The transformation layer. One base contract + N thin overlays = N variants — used here to localize the INTERFACE (titles, summaries, descriptions) into the ten citywide languages of NYC Local Law 30, never touching paths, operationIds, schema fields, or data. Because MCP tools derive 1:1 from OpenAPI operations, the same overlay yields a localized MCP server. {OVERLAYS} language overlays for the HPD worked example — see experience/overlays.", "count": OVERLAYS},
  {"name": "Model Context Protocol (MCP)", "spec": "https://modelcontextprotocol.io/", "role": "Agent contract",
   "what": "An open protocol for exposing tools and resources to AI agents/assistants.",
   "why": f"The agent-native layer. It maps the same resources as callable tools, mapped 1:1 to the OpenAPI operations — making a government service usable by an AI agent, not just a browser. Zero of {N} domains have this today.", "count": T["mcpTools"]},

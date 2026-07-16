@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: NYC HPD API — Urdu (ur) interface localization
+  version: 0.1.0
+x-language: ur
+x-language-name: Urdu
+x-language-endonym: اردو
+x-text-direction: rtl
+extends: ../../../hpd/openapi/hpd.yaml
+actions:
+- target: $.info.title
+  update: NYC HPD API (تجویز کردہ)
+- target: $.paths['/lottery-applications'].post.summary
+  update: سستے رہائشی لاٹری کے لیے درخواست دیں (Housing Connect)
+- target: $.paths['/lottery-applications/{applicationId}'].get.summary
+  update: لاٹری درخواست حاصل کریں
+- target: $.paths['/lottery-applications'].get.summary
+  update: تصدیق شدہ گھرانے کی لاٹری درخواستوں کی فہرست
+- target: $.paths['/affordable-housing-projects'].get.summary
+  update: سستی رہائش کی تعمیر تلاش کریں (Housing New York یونٹس)
+- target: $.paths['/affordable-housing-projects/{projectId}'].get.summary
+  update: شناختی نمبر کے ذریعے سستا رہائشی منصوبہ حاصل کریں

@@ -2,7 +2,7 @@
 
 *Every NYC government API, MCP server, and Agent Skill in one place — the API → MCP → Agent-Skill chain across all 70 agencies.*
 
-Interactive: **[nyc.apievangelist.com/experience.html](https://nyc.apievangelist.com/experience.html)**. Machine artifacts: [unified OpenAPI](experience/nyc-openapi.json) · [NYC-wide MCP](experience/nyc-mcp.json) · [APIs.json descriptor](experience/nyc.apis.json) · [Skills](experience/skills/).
+Interactive: **[nyc.apievangelist.com/experience.html](https://nyc.apievangelist.com/experience.html)**. Machine artifacts: [unified OpenAPI](experience/nyc-openapi.json) · [NYC-wide MCP](experience/nyc-mcp.json) · [APIs.json descriptor](experience/nyc.apis.json) · [Skills](experience/skills/) · [Cross-agency workflows](experience/workflows/) · [Interface localization](experience/overlays/).
 
 ## The opportunity in one number set
 
@@ -38,6 +38,14 @@ Built on the [API Experience](https://experience.apicommons.org) chain — **RES
 **Prompts** — whole-task entry points: `who_represents_this_address`, `everything_about_this_place`, `how_do_i_apply_for`, `report_a_problem_at`, `whats_the_status_of_my`, `what_agency_handles`, `find_a_service_near_me`.
 
 **Resources** — shared context: `nyc://catalog`, `nyc://commons/geography`, `nyc://transactions`, `nyc://linkage`, `nyc://skills`, `nyc://place/{bbl}`, `nyc://agency/{slug}`.
+
+## Cross-agency workflows (Arazzo)
+
+A single outcome rarely lives in one agency. An [Arazzo](https://spec.openapis.org/arazzo/latest.html) workflow chains the per-agency operations into one machine-readable journey. First worked example — **[Build Affordable Housing in NYC](experience/workflows/build-affordable-housing.arazzo.yaml)**: the ~40-permit chain as **20 steps across 12 agencies**, BBL-keyed on the nyc-commons spine, gated on project shape, phased Planning → Financing → Permitting → Lease-up. See [experience/workflows/](experience/workflows/README.md) and the [housing brief](HOUSING.md). Showcased on [experience.html](https://nyc.apievangelist.com/experience.html).
+
+## Interface localization (OpenAPI Overlays)
+
+NYC **Local Law 30** requires services in ten citywide languages. An [OpenAPI Overlay](https://spec.openapis.org/overlay/latest.html) localizes the **interface** — titles, operation summaries, tool descriptions — from one base contract, **never the data**: paths, `operationId`s, schema fields, and returned records stay in one canonical shape. Because MCP tools derive 1:1 from the operations, the same overlay yields a localized **MCP server**. Worked example — the [HPD](hpd/) Housing Connect lottery localized into all ten languages: **[experience/overlays/](experience/overlays/README.md)** (10 `*.overlay.yaml` + localized OpenAPI + localized MCP per language). Showcased on [experience.html](https://nyc.apievangelist.com/experience.html).
 
 ---
 *Design-first artifacts, not deployments. Part of the [NYC Modernization](README.md) study.*

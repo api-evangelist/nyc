@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: NYC HPD API — Korean (ko) interface localization
+  version: 0.1.0
+x-language: ko
+x-language-name: Korean
+x-language-endonym: 한국어
+x-text-direction: ltr
+extends: ../../../hpd/openapi/hpd.yaml
+actions:
+- target: $.info.title
+  update: NYC HPD API (제안)
+- target: $.paths['/lottery-applications'].post.summary
+  update: 저렴한 주택 추첨 신청 (Housing Connect)
+- target: $.paths['/lottery-applications/{applicationId}'].get.summary
+  update: 추첨 신청 조회
+- target: $.paths['/lottery-applications'].get.summary
+  update: 인증된 가구의 추첨 신청 목록
+- target: $.paths['/affordable-housing-projects'].get.summary
+  update: 저렴한 주택 공급 검색 (Housing New York 세대)
+- target: $.paths['/affordable-housing-projects/{projectId}'].get.summary
+  update: ID로 저렴한 주택 프로젝트 조회

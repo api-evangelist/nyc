@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: NYC HPD API — Haitian Creole (ht) interface localization
+  version: 0.1.0
+x-language: ht
+x-language-name: Haitian Creole
+x-language-endonym: Kreyòl Ayisyen
+x-text-direction: ltr
+extends: ../../../hpd/openapi/hpd.yaml
+actions:
+- target: $.info.title
+  update: API NYC HPD (pwopoze)
+- target: $.paths['/lottery-applications'].post.summary
+  update: Aplike pou yon lotri lojman abòdab (Housing Connect)
+- target: $.paths['/lottery-applications/{applicationId}'].get.summary
+  update: Jwenn yon aplikasyon lotri
+- target: $.paths['/lottery-applications'].get.summary
+  update: Lis aplikasyon lotri fwaye ki otantifye a
+- target: $.paths['/affordable-housing-projects'].get.summary
+  update: Chèche pwodiksyon lojman abòdab (inite Housing New York)
+- target: $.paths['/affordable-housing-projects/{projectId}'].get.summary
+  update: Jwenn yon pwojè lojman abòdab pa ID

@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: NYC HPD API — Russian (ru) interface localization
+  version: 0.1.0
+x-language: ru
+x-language-name: Russian
+x-language-endonym: Русский
+x-text-direction: ltr
+extends: ../../../hpd/openapi/hpd.yaml
+actions:
+- target: $.info.title
+  update: API NYC HPD (предложение)
+- target: $.paths['/lottery-applications'].post.summary
+  update: Подать заявку на лотерею доступного жилья (Housing Connect)
+- target: $.paths['/lottery-applications/{applicationId}'].get.summary
+  update: Получить заявку на лотерею
+- target: $.paths['/lottery-applications'].get.summary
+  update: Список заявок на лотерею аутентифицированного домохозяйства
+- target: $.paths['/affordable-housing-projects'].get.summary
+  update: Поиск строительства доступного жилья (единицы Housing New York)
+- target: $.paths['/affordable-housing-projects/{projectId}'].get.summary
+  update: Получить проект доступного жилья по идентификатору

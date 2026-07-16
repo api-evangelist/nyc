@@ -352,6 +352,14 @@
    "count": 752
   },
   {
+   "name": "OpenAPI Overlays",
+   "spec": "https://spec.openapis.org/overlay/latest.html",
+   "role": "Interface transformation / localization",
+   "what": "A separate document of targeted updates (JSONPath actions) applied to a base OpenAPI description, without forking or editing the base.",
+   "why": "The transformation layer. One base contract + N thin overlays = N variants \u2014 used here to localize the INTERFACE (titles, summaries, descriptions) into the ten citywide languages of NYC Local Law 30, never touching paths, operationIds, schema fields, or data. Because MCP tools derive 1:1 from OpenAPI operations, the same overlay yields a localized MCP server. 10 language overlays for the HPD worked example \u2014 see experience/overlays.",
+   "count": 10
+  },
+  {
    "name": "Model Context Protocol (MCP)",
    "spec": "https://modelcontextprotocol.io/",
    "role": "Agent contract",

@@ -37,7 +37,7 @@ This repo doubles as an explorable, data-driven website (**[nyc.apievangelist.co
 - `standards.html` · `qa.html` — the standards NYC agencies should adopt (and the standards this project is built on), and the verification pass (69/70 high confidence).
 - `entities.html` · `technology.html` — master cross-domain inventories (344 entities; 79 technologies tagged commercial/open-source with an OSS alternative for each proprietary tool).
 - `docs.html?f=…` — in-browser Markdown viewer (also serves the [CHANGELOG](CHANGELOG.md), [SYNTHESIS](SYNTHESIS.md), [STRATEGY](STRATEGY.md), and the per-analysis writeups).
-- `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain: `python3 scripts/build-manifest.py && python3 scripts/build-scorecard.py` (then `build-analysis.py`, `build-inventories.py`, `build-qa.py`, `build-standards.py`; `build-commons.py` after touching any `_common.json`; `build-experience.py` then `build-gateway.py` rebuild the experience layer + reference API; `build-references.py` after editing references).
+- `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain: `python3 scripts/build-manifest.py && python3 scripts/build-scorecard.py` (then `build-analysis.py`, `build-inventories.py`, `build-qa.py`, `build-standards.py`; `build-commons.py` after touching any `_common.json`; `build-experience.py` then `build-gateway.py` rebuild the experience layer + reference API; `build-overlays.py` regenerates the localization overlays; `build-references.py` after editing references).
 
 The site is dependency-free static HTML/CSS/JS — no build step.
 
@@ -120,6 +120,7 @@ Five of the domains, illustrating five distinct verbs:
 - **[The Programmable City](https://nyc.apievangelist.com/experience.html)** — the REST → MCP → Agent-Skill chain across all 70 agencies, ten common government-process skills, per- and cross-agency MCP prompts/resources, a **callable reference API**, and an **installable MCP server** ([`@api-common/nyc-mcp`](experience/mcp-server/)).
 - **[Strategy](STRATEGY.md) + [References](REFERENCES.md)** — the case for the work, aimed at NYC's Public Interest Technology (PIT) Crew.
 - **[Cross-agency workflows](experience/workflows/)** — multi-agency journeys as open [Arazzo](https://spec.openapis.org/arazzo/latest.html) documents, starting with **[Build Affordable Housing in NYC](experience/workflows/build-affordable-housing.arazzo.yaml)** — the ~40-permit chain across twelve agencies as one BBL-keyed thread — and the **[housing brief](HOUSING.md)** on making affordable-housing permitting programmable.
+- **[Interface localization](experience/overlays/)** — [OpenAPI Overlays](https://spec.openapis.org/overlay/latest.html) that translate the API/agent **interface** (not the data) into the **ten citywide languages of Local Law 30**, from one base contract — yielding a localized OpenAPI *and* MCP server per language. Worked example: the HPD Housing Connect lottery in all ten languages.
 
 **Next** — see the [ROADMAP](ROADMAP.md): the DCWP "Click to Cancel" worked example for PIT Crew, a forkable "civic API kit" so other cities can run the method, OSS-migration playbooks, and publishing `@api-common/nyc-mcp` to npm.
 

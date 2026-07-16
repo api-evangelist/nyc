@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: NYC HPD API — Bengali (bn) interface localization
+  version: 0.1.0
+x-language: bn
+x-language-name: Bengali
+x-language-endonym: বাংলা
+x-text-direction: ltr
+extends: ../../../hpd/openapi/hpd.yaml
+actions:
+- target: $.info.title
+  update: NYC HPD API (প্রস্তাবিত)
+- target: $.paths['/lottery-applications'].post.summary
+  update: সাশ্রয়ী আবাসন লটারিতে আবেদন করুন (Housing Connect)
+- target: $.paths['/lottery-applications/{applicationId}'].get.summary
+  update: একটি লটারি আবেদন দেখুন
+- target: $.paths['/lottery-applications'].get.summary
+  update: যাচাইকৃত পরিবারের লটারি আবেদনগুলির তালিকা
+- target: $.paths['/affordable-housing-projects'].get.summary
+  update: সাশ্রয়ী আবাসন নির্মাণ খুঁজুন (Housing New York ইউনিট)
+- target: $.paths['/affordable-housing-projects/{projectId}'].get.summary
+  update: আইডি দিয়ে একটি সাশ্রয়ী আবাসন প্রকল্প দেখুন

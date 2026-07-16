@@ -1,0 +1,102 @@
+{
+ "agency": "hpd",
+ "base_openapi": "hpd/openapi/hpd.yaml",
+ "base_mcp": "hpd/mcp/hpd-mcp.json",
+ "caveat": "These translations are ILLUSTRATIVE — they demonstrate the overlay-driven localization pipeline, not certified copy. In production the City routes interface strings through its existing Local Law 30 certified-translation workflow (the same one that already translates nyc.gov content); the overlay is the mechanism, the translators supply the words. Program/product names (HPD, Housing Connect, Housing New York, NYC) are kept in English by convention, matching nyc.gov practice.",
+ "strings": [
+  {"id": "title", "target": "$.info.title", "operationId": null,
+   "en": "NYC HPD API (proposed)"},
+  {"id": "createLottery", "target": "$.paths['/lottery-applications'].post.summary", "operationId": "createLotteryApplication",
+   "en": "Apply to an affordable-housing lottery (Housing Connect)"},
+  {"id": "getLottery", "target": "$.paths['/lottery-applications/{applicationId}'].get.summary", "operationId": "getLotteryApplication",
+   "en": "Get a lottery application"},
+  {"id": "listLottery", "target": "$.paths['/lottery-applications'].get.summary", "operationId": "listLotteryApplications",
+   "en": "List the authenticated household's lottery applications"},
+  {"id": "listProjects", "target": "$.paths['/affordable-housing-projects'].get.summary", "operationId": "listAffordableHousingProjects",
+   "en": "Search affordable-housing production (Housing New York units)"},
+  {"id": "getProject", "target": "$.paths['/affordable-housing-projects/{projectId}'].get.summary", "operationId": "getAffordableHousingProject",
+   "en": "Get an affordable-housing project by ID"}
+ ],
+ "translations": {
+  "es": {
+   "title": "API de NYC HPD (propuesta)",
+   "createLottery": "Solicitar una lotería de vivienda asequible (Housing Connect)",
+   "getLottery": "Obtener una solicitud de lotería",
+   "listLottery": "Enumerar las solicitudes de lotería del hogar autenticado",
+   "listProjects": "Buscar producción de vivienda asequible (unidades de Housing New York)",
+   "getProject": "Obtener un proyecto de vivienda asequible por su identificador"
+  },
+  "zh-Hant": {
+   "title": "NYC HPD API（提案）",
+   "createLottery": "申請可負擔住房抽籤（Housing Connect）",
+   "getLottery": "取得抽籤申請",
+   "listLottery": "列出已驗證家庭的抽籤申請",
+   "listProjects": "搜尋可負擔住房建設（Housing New York 單位）",
+   "getProject": "依編號取得可負擔住房項目"
+  },
+  "ru": {
+   "title": "API NYC HPD (предложение)",
+   "createLottery": "Подать заявку на лотерею доступного жилья (Housing Connect)",
+   "getLottery": "Получить заявку на лотерею",
+   "listLottery": "Список заявок на лотерею аутентифицированного домохозяйства",
+   "listProjects": "Поиск строительства доступного жилья (единицы Housing New York)",
+   "getProject": "Получить проект доступного жилья по идентификатору"
+  },
+  "bn": {
+   "title": "NYC HPD API (প্রস্তাবিত)",
+   "createLottery": "সাশ্রয়ী আবাসন লটারিতে আবেদন করুন (Housing Connect)",
+   "getLottery": "একটি লটারি আবেদন দেখুন",
+   "listLottery": "যাচাইকৃত পরিবারের লটারি আবেদনগুলির তালিকা",
+   "listProjects": "সাশ্রয়ী আবাসন নির্মাণ খুঁজুন (Housing New York ইউনিট)",
+   "getProject": "আইডি দিয়ে একটি সাশ্রয়ী আবাসন প্রকল্প দেখুন"
+  },
+  "ht": {
+   "title": "API NYC HPD (pwopoze)",
+   "createLottery": "Aplike pou yon lotri lojman abòdab (Housing Connect)",
+   "getLottery": "Jwenn yon aplikasyon lotri",
+   "listLottery": "Lis aplikasyon lotri fwaye ki otantifye a",
+   "listProjects": "Chèche pwodiksyon lojman abòdab (inite Housing New York)",
+   "getProject": "Jwenn yon pwojè lojman abòdab pa ID"
+  },
+  "ko": {
+   "title": "NYC HPD API (제안)",
+   "createLottery": "저렴한 주택 추첨 신청 (Housing Connect)",
+   "getLottery": "추첨 신청 조회",
+   "listLottery": "인증된 가구의 추첨 신청 목록",
+   "listProjects": "저렴한 주택 공급 검색 (Housing New York 세대)",
+   "getProject": "ID로 저렴한 주택 프로젝트 조회"
+  },
+  "ar": {
+   "title": "واجهة برمجة تطبيقات NYC HPD (مقترحة)",
+   "createLottery": "التقديم على قرعة السكن الميسور (Housing Connect)",
+   "getLottery": "الحصول على طلب قرعة",
+   "listLottery": "عرض طلبات القرعة للأسرة المُوثَّقة",
+   "listProjects": "البحث في إنتاج السكن الميسور (وحدات Housing New York)",
+   "getProject": "الحصول على مشروع سكن ميسور حسب المعرّف"
+  },
+  "ur": {
+   "title": "NYC HPD API (تجویز کردہ)",
+   "createLottery": "سستے رہائشی لاٹری کے لیے درخواست دیں (Housing Connect)",
+   "getLottery": "لاٹری درخواست حاصل کریں",
+   "listLottery": "تصدیق شدہ گھرانے کی لاٹری درخواستوں کی فہرست",
+   "listProjects": "سستی رہائش کی تعمیر تلاش کریں (Housing New York یونٹس)",
+   "getProject": "شناختی نمبر کے ذریعے سستا رہائشی منصوبہ حاصل کریں"
+  },
+  "fr": {
+   "title": "API NYC HPD (proposée)",
+   "createLottery": "Postuler à une loterie de logement abordable (Housing Connect)",
+   "getLottery": "Obtenir une demande de loterie",
+   "listLottery": "Lister les demandes de loterie du ménage authentifié",
+   "listProjects": "Rechercher la production de logements abordables (unités Housing New York)",
+   "getProject": "Obtenir un projet de logement abordable par son identifiant"
+  },
+  "pl": {
+   "title": "API NYC HPD (propozycja)",
+   "createLottery": "Złóż wniosek do loterii mieszkań przystępnych cenowo (Housing Connect)",
+   "getLottery": "Pobierz wniosek loteryjny",
+   "listLottery": "Wyświetl wnioski loteryjne uwierzytelnionego gospodarstwa domowego",
+   "listProjects": "Wyszukaj budowę mieszkań przystępnych cenowo (jednostki Housing New York)",
+   "getProject": "Pobierz projekt mieszkań przystępnych cenowo według identyfikatora"
+  }
+ }
+}

@@ -1,0 +1,22 @@
+overlay: 1.0.0
+info:
+  title: NYC HPD API — Chinese (Traditional) (zh-Hant) interface localization
+  version: 0.1.0
+x-language: zh-Hant
+x-language-name: Chinese (Traditional)
+x-language-endonym: 繁體中文
+x-text-direction: ltr
+extends: ../../../hpd/openapi/hpd.yaml
+actions:
+- target: $.info.title
+  update: NYC HPD API（提案）
+- target: $.paths['/lottery-applications'].post.summary
+  update: 申請可負擔住房抽籤（Housing Connect）
+- target: $.paths['/lottery-applications/{applicationId}'].get.summary
+  update: 取得抽籤申請
+- target: $.paths['/lottery-applications'].get.summary
+  update: 列出已驗證家庭的抽籤申請
+- target: $.paths['/affordable-housing-projects'].get.summary
+  update: 搜尋可負擔住房建設（Housing New York 單位）
+- target: $.paths['/affordable-housing-projects/{projectId}'].get.summary
+  update: 依編號取得可負擔住房項目

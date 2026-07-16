@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Programmable City — NYC APIs · MCP · Skills</title>
-<meta name="description" content="Every NYC government API, MCP server, and Agent Skill in one place — the REST operation → MCP tool → Agent Skill chain across all 67 agencies, organized by common government process.">
+<meta name="description" content="Every NYC government API, MCP server, and Agent Skill in one place — the REST operation → MCP tool → Agent Skill chain across all 70 agencies, organized by common government process.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/style.css">
 <style>
@@ -39,14 +39,14 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="NYC — Digital Modernization">
 <meta property="og:title" content="The Programmable City — NYC APIs · MCP · Skills">
-<meta property="og:description" content="Every NYC government API, MCP server, and Agent Skill in one place — the REST operation → MCP tool → Agent Skill chain across all 67 agencies, organized by common government process.">
+<meta property="og:description" content="Every NYC government API, MCP server, and Agent Skill in one place — the REST operation → MCP tool → Agent Skill chain across all 70 agencies, organized by common government process.">
 <meta property="og:url" content="https://nyc.apievangelist.com/experience.html">
 <meta property="og:image" content="https://nyc.apievangelist.com/assets/social.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Programmable City — NYC APIs · MCP · Skills">
-<meta name="twitter:description" content="Every NYC government API, MCP server, and Agent Skill in one place — the REST operation → MCP tool → Agent Skill chain across all 67 agencies, organized by common government process.">
+<meta name="twitter:description" content="Every NYC government API, MCP server, and Agent Skill in one place — the REST operation → MCP tool → Agent Skill chain across all 70 agencies, organized by common government process.">
 <meta name="twitter:image" content="https://nyc.apievangelist.com/assets/social.png">
 <!--seo:end-->
 </head>
@@ -62,7 +62,7 @@
   <div class="wrap">
     <div class="eyebrow">The programmable city</div>
     <h1 style="font-size:2.3rem;max-width:22ch">Every NYC API, MCP tool, and Skill — in one place</h1>
-    <p class="lead">Sixty-seven agencies, one chain: every <strong>REST operation</strong> has an <strong>MCP tool</strong>, and every tool serves one of ten <strong>common government processes</strong> — apply, report, request records, schedule, register, dispute, pay, look up. This is the whole agent-native surface the city could have, rendered from design-first artifacts.</p>
+    <p class="lead">Seventy agencies, one chain: every <strong>REST operation</strong> has an <strong>MCP tool</strong>, and every tool serves one of ten <strong>common government processes</strong> — apply, report, request records, schedule, register, dispute, pay, look up. This is the whole agent-native surface the city could have, rendered from design-first artifacts.</p>
     <div class="cta" style="align-items:center">
       <mcp-install-button server="https://raw.githubusercontent.com/api-evangelist/nyc/main/experience/mcp-server/server.json" label="Install the NYC MCP" color="#3098d8"></mcp-install-button>
       <a class="btn sec" href="experience/nyc-openapi.json">Unified OpenAPI</a>
@@ -110,7 +110,7 @@
 
 <section><div class="wrap">
   <div class="section-head"><div class="k">The point</div><h2>Ten common government processes</h2>
-  <p class="muted">The 721 operations collapse into ten things residents actually do. Each is an <strong>Agent Skill</strong> that resolves the right agency and drives its tools. Click a process to filter the agencies below.</p></div>
+  <p class="muted">The 752 operations collapse into ten things residents actually do. Each is an <strong>Agent Skill</strong> that resolves the right agency and drives its tools. Click a process to filter the agencies below.</p></div>
   <div id="skills"></div>
 </div></section>
 
@@ -129,8 +129,55 @@
   </div>
 </div></section>
 
+<section style="background:var(--bg-soft)"><div class="wrap">
+  <div class="section-head"><div class="k">Across agencies</div><h2>Workflows: chaining agencies into one journey <span class="grp" style="vertical-align:middle">Arazzo</span></h2>
+  <p class="muted">A single outcome rarely lives in one agency. An <a href="https://spec.openapis.org/arazzo/latest.html">Arazzo</a> workflow chains the per-agency operations into one machine-readable journey — the connective tissue for automating approval management across agencies, as an open standard instead of another siloed portal.</p></div>
+  <div class="card" style="border-left:4px solid #3f8f6a">
+    <h3 style="margin:0 0 .3em">Build Affordable Housing in NYC</h3>
+    <p class="muted small" style="margin:0 0 12px">The ~40-permit journey to build one affordable project — <strong>20 steps across 12 agencies</strong>, keyed on the parcel's BBL (the nyc-commons spine), gated on project shape (rezoning · City-owned · landmark · conversion).</p>
+    <div class="chain">
+      <div class="step"><div class="k">1 · Planning</div><p style="margin:.3em 0 0" class="small">geocode (DCP) → parcel (DOF) → ULURP (DCP) → environmental Notice to Proceed (MOER)</p></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="k">2 · Financing</div><p style="margin:.3em 0 0" class="small">bond + subsidy (HDC) → HPD project</p></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="k">3 · Permitting</div><p style="margin:.3em 0 0" class="small">design (PDC) · landmark (LPC) · stormwater + asbestos (DEP) · building (DOB) · fire alarm (FDNY) · street work (DOT) · tree (DPR)</p></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="k">4 · Lease-up</div><p style="margin:.3em 0 0" class="small">Certificate of Occupancy (DOB) → Housing Connect lottery (HPD)</p></div>
+    </div>
+    <div class="cta" style="margin-top:14px">
+      <a class="btn sec" href="experience/workflows/build-affordable-housing.arazzo.yaml">The Arazzo workflow</a>
+      <a class="btn sec" href="docs.html?f=experience/workflows/README.md">How it works</a>
+      <a class="btn sec" href="docs.html?f=HOUSING.md">Housing brief</a>
+    </div>
+  </div>
+</div></section>
+
 <section><div class="wrap">
-  <div class="section-head"><div class="k">The surface</div><h2>All 67 agencies, operation by operation</h2></div>
+  <div class="section-head"><div class="k">In every language</div><h2>One contract, ten languages <span class="grp" style="vertical-align:middle">OpenAPI Overlays</span></h2>
+  <p class="muted">NYC <strong>Local Law 30</strong> requires services in ten citywide languages. An <a href="https://spec.openapis.org/overlay/latest.html">OpenAPI Overlay</a> localizes the <strong>interface</strong> — titles, operation summaries, tool descriptions — from one base contract, <strong>never the data</strong>: paths, <code>operationId</code>s, schema fields, and every returned record stay in one canonical shape. And because MCP tools derive 1:1 from the operations, the same overlay yields a localized <strong>MCP server</strong>. Worked example: the <a href="domain.html?d=hpd">HPD</a> Housing Connect lottery.</p></div>
+  <div class="grid cols-2">
+    <div class="card">
+      <div style="margin-bottom:10px" id="langchips"></div>
+      <div id="locpanel"></div>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 .4em;font-size:1.05rem">How it works</h3>
+      <div class="chain" style="flex-direction:column">
+        <div class="step"><div class="k">1 · base contract</div><p class="small" style="margin:.3em 0 0">one <code>hpd/openapi/hpd.yaml</code></p></div>
+        <div class="step"><div class="k">2 · N overlays</div><p class="small" style="margin:.3em 0 0">one thin <code>overlay: 1.0.0</code> per language — JSONPath <code>update</code> actions on <code>summary</code>/<code>title</code> only</p></div>
+        <div class="step"><div class="k">3 · N localized interfaces</div><p class="small" style="margin:.3em 0 0">localized OpenAPI <em>and</em> MCP — identifiers &amp; data untouched</p></div>
+      </div>
+      <p class="muted small" style="margin:.8em 0 0" id="loccaveat"></p>
+      <div class="cta" style="margin-top:10px">
+        <a class="btn sec" href="docs.html?f=experience/overlays/README.md">How it works</a>
+        <a class="btn sec" href="experience/overlays/index.json">Overlay manifest</a>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="section-head"><div class="k">The surface</div><h2>All 70 agencies, operation by operation</h2></div>
   <div class="toolbar">
     <input id="q" placeholder="Filter agency, operation, or tool…">
     <span class="count-pill" id="filterpill" style="display:none"></span>
@@ -250,6 +297,37 @@
     document.getElementById("count").textContent=shown+" / "+X.apis.length+" agencies";
   }
   document.getElementById("q").oninput=apply; apply();
+})();
+</script>
+<script>
+// ---- Localization showcase: one contract, ten languages (OpenAPI Overlays) ----
+(async function(){
+  let O; try{ O=await getJSON("data/overlays.json"); }catch(e){ return; }
+  const base=O.base_language, langs=[base].concat(O.languages);
+  // manifest carries the English base strings + targets; load translations.json for the localized strings.
+  let TR=null; try{ TR=await getJSON("experience/overlays/"+O.agency+"/translations.json"); }catch(e){ TR=null; }
+  const chips=document.getElementById("langchips");
+  const panel=document.getElementById("locpanel");
+  document.getElementById("loccaveat").textContent=O.caveat;
+  let active=base.code;
+  chips.innerHTML=langs.map(l=>`<span class="chip" data-c="${l.code}" style="cursor:pointer">${esc(l.endonym)}</span>`).join("");
+  function draw(){
+    chips.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.dataset.c===active));
+    const lang=langs.find(l=>l.code===active);
+    const dir=lang.dir||"ltr";
+    const rows=O.targets.map(t=>{
+      let val=t.en;
+      if(active!==base.code && TR && TR.translations[active]) val=TR.translations[active][t.id]||t.en;
+      const label=t.operationId?`<code>${esc(t.operationId)}</code>`:'<span class="muted small">info.title</span>';
+      return `<div class="op" style="grid-template-columns:1fr;gap:2px;padding:8px 0">
+        <div style="font-size:.72rem" class="muted">${label}${t.operationId?' <span class="dot">·</span> unchanged identifier':''}</div>
+        <div dir="${dir}" style="font-weight:500${dir==='rtl'?';text-align:right':''}">${esc(val)}</div></div>`;
+    }).join("");
+    panel.innerHTML=`<div class="muted small" style="margin:0 0 6px">Interface in <strong>${esc(lang.name)}</strong> (<code>${lang.code}</code>${dir==='rtl'?', RTL':''}) — identifiers, paths, and data are identical across every language.</div>${rows}
+      <div class="prbox" style="margin-top:8px;border:none"><span class="prlabel">Also localized</span> the MCP tool descriptions for matching operations (<code>apply_to_lottery</code>, <code>find_affordable_housing</code>).</div>`;
+  }
+  chips.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{active=c.dataset.c;draw();});
+  draw();
 })();
 </script>
 </body>
