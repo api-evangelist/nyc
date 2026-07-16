@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/moer/schemas/cleanup-project.json",
+  "title": "CleanupProject",
+  "description": "A land-cleanup project enrolled in one of OER's two remedial programs — the City Voluntary Cleanup Program (VCP) or the E-Designation/Restrictive Declaration Program. It carries the project through OER's documented remedial process from application/investigation to Notice of Satisfaction. Modeled from the OER Remedial Process (nyc.gov/site/oer/remediation), the 'OER Cleanup Sites' dataset (3279-pp7v), and the login-walled EPIC project portal (a002-epic.nyc.gov). Keyed on OER Project Number.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/oer/remediation/remediation.page",
+    "opendata_cleanup_sites": "https://data.cityofnewyork.us/d/3279-pp7v",
+    "epic_portal": "https://a002-epic.nyc.gov/"
+  },
+  "properties": {
+    "oerProjectNumber": { "type": "string", "description": "OER Project Number — primary key." },
+    "program": { "$ref": "_common.json#/$defs/OERProgram" },
+    "projectName": { "type": ["string", "null"], "description": "Project / site name." },
+    "site": {
+      "$ref": "_common.json#/$defs/PropertyReference",
+      "description": "The property being remediated."
+    },
+    "phase": { "$ref": "_common.json#/$defs/RemedialPhase" },
+    "class": { "$ref": "_common.json#/$defs/SiteClass" },
+    "eDesignation": {
+      "type": ["string", "null"],
+      "description": "The (E)-designation number this cleanup resolves, if the project exists to clear an (E) requirement."
+    },
+    "volunteer": {
+      "$ref": "_common.json#/$defs/PartyContact",
+      "description": "The volunteer / applicant enrolling the site in the program (VCP 'volunteer' or E-Designation owner/developer)."
+    },
+    "environmentalConsultant": { "$ref": "_common.json#/$defs/PartyContact" },
+    "enrolledDate": { "type": ["string", "null"], "format": "date", "description": "Date the site was enrolled in the program." },
+    "noticeToProceedIssued": { "type": ["boolean", "null"], "description": "Whether OER has issued a Notice to Proceed / Decision Document approving the remedial action work plan." },
+    "noticeOfSatisfactionIssued": { "type": ["boolean", "null"], "description": "Whether OER has issued a Notice of Satisfaction / Completion closing out the cleanup." },
+    "documentRepositoryUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the project-specific document repository (EPIC)." }
+  },
+  "required": ["oerProjectNumber"],
+  "additionalProperties": false
+}

@@ -22,7 +22,7 @@ A growing library of the sources behind the NYC Modernization strategy — **16 
 - [The Next Iteration of Government Data](https://apievangelist.com/2013/07/16/the-next-iteration-of-government-data/) — API Evangelist · 2013-07-16
   - Do it “agency by agency, project by project,” with an open, collaborative, forkable process on GitHub.
 - [A Huge Need for Writeable APIs in Government](https://apievangelist.com/2013/09/25/a-huge-need-for-writeable-apis-in-government/) — API Evangelist · 2013-09-25
-  - “There isn’t much in the wild… huge demand… this could be the thing that changes how government operates.” The write-layer gap, called in 2013 — measured across 67 agencies in 2026.
+  - “There isn’t much in the wild… huge demand… this could be the thing that changes how government operates.” The write-layer gap, called in 2013 — measured across 70 agencies in 2026.
 - [Formalizing My Approach to Identifying the Low-Hanging API Fruit](https://apievangelist.com/2016/04/13/formalizing-my-approach-to-identifying-the-low-hanging-api-fruit/) — API Evangelist · 2016-04-13
   - The outside-in assessment method this project runs, agency by agency.
 
@@ -41,7 +41,7 @@ A growing library of the sources behind the NYC Modernization strategy — **16 
 - [nyc-commons — the shared schema set](https://nyc.apievangelist.com/commons.html) — NYC Modernization
   - One canonical borough / BBL / address / place / party / dollar for all of NYC government.
 - [The Programmable City — APIs · MCP · Skills](https://nyc.apievangelist.com/experience.html) — NYC Modernization
-  - The REST → MCP → Agent-Skill chain across 67 agencies, with a callable reference API and installable MCP.
+  - The REST → MCP → Agent-Skill chain across 70 agencies, with a callable reference API and installable MCP.
 - [APIs.json specification](https://apisjson.org) — apisjson.org
   - The discovery format for cataloging the civic API surface.
 - [Open311 (GeoReport v2)](https://www.open311.org/) — Open311

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/moer/schemas/notice-to-proceed.json",
+  "title": "NoticeToProceed",
+  "description": "A Notice to Proceed / Decision Document ISSUED BY OER — the determination, at the 'Notice To Proceed/Decision Document' step of the OER Remedial Process, that a site's Remedial Action Work Plan is approved and remedial construction may begin. This is the READ-side record of an OER determination (distinct from notice-to-proceed-request.json, the net-new WRITE by which an owner/developer requests one). Related OER determinations use the same shape: Notice of No Objection (NNO), Notice of Satisfaction (NOS). Today these documents live only in the EPIC project portal (a002-epic.nyc.gov) and the per-site document repository — there is no OER API.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/oer/remediation/remediation.page",
+    "epic_portal": "https://a002-epic.nyc.gov/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "noticeId": { "type": ["string", "null"], "description": "OER's identifier for the issued determination document." },
+    "type": {
+      "type": ["string", "null"],
+      "enum": ["Notice to Proceed", "Decision Document", "Notice of No Objection", "Notice of Satisfaction", "Notice of Completion", null],
+      "description": "Which OER determination this is."
+    },
+    "site": { "$ref": "_common.json#/$defs/PropertyReference" },
+    "oerProjectNumber": { "type": ["string", "null"], "description": "The OER project this determination belongs to." },
+    "eDesignation": { "type": ["string", "null"], "description": "The (E)-designation number cleared by this determination, if applicable." },
+    "issuedDate": { "type": ["string", "null"], "format": "date", "description": "Date OER issued the determination." },
+    "phaseCleared": { "$ref": "_common.json#/$defs/RemedialPhase" },
+    "documentUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the issued determination document in the OER document repository / EPIC." }
+  },
+  "required": [],
+  "additionalProperties": false
+}

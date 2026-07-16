@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/moer/schemas/_common.json",
+  "title": "MOER/OER — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Mayor's Office of Environmental Remediation (MOER/OER) object schemas. Reconciles fields common to OER's Open Data datasets (data.cityofnewyork.us — notably 'OER Cleanup Sites' 3279-pp7v), nyc.gov/site/oer, the public SPEED map (Searchable Property Environmental E-Designation, speed.cityofnewyork.us, a CARTO/Leaflet app), and the login-walled EPIC project portal (a002-epic.nyc.gov, an OER-owned ASP.NET/AngularJS system). OER data is strongly parcel/BBL-keyed, so the geography spine and BBL/BIN identifiers are $ref'd from nyc-commons. Note: the authoritative (E)-designation inventory is published under the Department of City Planning (DCP) label, not OER — OER administers resolving the (E) requirement.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local. OER records are BBL/BIN-keyed, so nyc-commons BBL is leaned on heavily."
+  },
+  "$defs": {
+    "Borough": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough). Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
+    },
+    "Coordinates": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates)."
+    },
+    "Geography": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine). OER's 'OER Cleanup Sites' dataset (3279-pp7v) carries a full spine — BBL, BIN, Borough, Community Board, Council District, Census Tract, NTA, Postcode — mapped here."
+    },
+    "BBL": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/identifiers.json#/$defs/BBL",
+      "$comment": "Canonical BBL from nyc-commons. OER's core join key: nearly every OER record (cleanup site, e-designation, historic land use, clean soil bank) is keyed to a tax lot (BBL)."
+    },
+    "BIN": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/identifiers.json#/$defs/BIN",
+      "$comment": "Canonical BIN from nyc-commons; carried on OER Cleanup Sites."
+    },
+    "TaxLot": {
+      "type": "object",
+      "description": "NYC Borough-Block-Lot identity carried by nearly every OER record — the join key back to PLUTO/MapPLUTO (DCP) and the rest of city government. OER is a parcel-centric agency: a 'site' is a lot.",
+      "properties": {
+        "bbl": { "$ref": "#/$defs/BBL" },
+        "bin": { "$ref": "#/$defs/BIN" },
+        "block": { "type": ["string", "integer", "null"], "description": "Tax block." },
+        "lot": { "type": ["string", "integer", "null"], "description": "Tax lot." }
+      },
+      "additionalProperties": false
+    },
+    "OERProgram": {
+      "type": ["string", "null"],
+      "description": "Which OER remedial program a site is enrolled in ('OER Program'). The Voluntary Cleanup Program (VCP) and the E-Designation/Restrictive Declaration Program are OER's two land-cleanup programs.",
+      "enum": [
+        "Voluntary Cleanup Program",
+        "E-Designation",
+        "Restrictive Declaration",
+        "City Environmental Quality Review (CEQR)",
+        "Clean Soil Bank",
+        "Brownfield Incentive Grant",
+        "Other",
+        null
+      ]
+    },
+    "EType": {
+      "type": ["string", "null"],
+      "description": "The category of environmental requirement carried by an (E)-designation or Restrictive Declaration. OER manages three: hazardous materials, noise, and air.",
+      "enum": ["Hazardous Materials", "Noise", "Air", null]
+    },
+    "RemedialPhase": {
+      "type": ["string", "null"],
+      "description": "Where a site sits in OER's documented remedial process ('Phase'), from pre-application through Notice of Satisfaction. Mirrors the OER Remedial Process: Application/Investigation → Remedial Plan Development → Notice To Proceed/Decision Document → Remedial Action Implementation → Remedial Closure Report → Notice Of Satisfaction/Completion.",
+      "enum": [
+        "Pre-Application",
+        "Application",
+        "Investigation Work Plan",
+        "Investigation",
+        "Remedial Scoping",
+        "Remedial Action Work Plan",
+        "Notice to Proceed",
+        "Remedial Construction",
+        "Remedial Closure Report",
+        "Notice of Satisfaction",
+        "Completed",
+        "Other",
+        null
+      ]
+    },
+    "SiteClass": {
+      "type": ["string", "null"],
+      "description": "OER site class ('Class') — OER's tracking classification for an enrolled cleanup site.",
+      "enum": ["Active", "Completed", "Enrolled", "Pending", "Withdrawn", "Other", null]
+    },
+    "PropertyReference": {
+      "type": "object",
+      "description": "A reference to an OER-tracked property by its identifiers.",
+      "properties": {
+        "oerProjectNumber": { "type": ["string", "null"], "description": "OER Project Number ('OER Project Numbers') — OER's primary project key." },
+        "bbl": { "$ref": "#/$defs/BBL" },
+        "projectName": { "type": ["string", "null"], "description": "Project / site name ('Project Name')." },
+        "address": { "type": ["string", "null"], "description": "Street address of the site." }
+      },
+      "additionalProperties": false
+    },
+    "PartyContact": {
+      "type": "object",
+      "description": "An owner / developer / applicant contact on an OER matter.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "organization": { "type": ["string", "null"] },
+        "role": { "type": ["string", "null"], "enum": ["Owner", "Developer", "Applicant", "Environmental Consultant", "Volunteer", "Agent", "Other", null] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pdc/schemas/_common.json",
+  "title": "PDC — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across NYC Public Design Commission (PDC) object schemas. Reconciles fields common to the three PDC Open Data datasets (data.cityofnewyork.us — Monthly Design Review tfrc-rjtr, Annual Report 5fsv-ze7v, Outdoor Public Art Inventory 2pg3-gcaa), nyc.gov/site/designcommission, and PDC's Charter Chapter 37 design-review process. Geography/identifier/address/money/party definitions are $ref'd from the canonical nyc-commons set; PDC's own review vocabulary (project type, level of review, action, result) is modeled locally from the datasets' real distinct values.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/address/money/party definitions are $ref'd from the canonical nyc-commons set; agency-specific definitions remain local."
+  },
+  "$defs": {
+    "Borough": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Borough still resolve."
+    },
+    "Coordinates": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Coordinates still resolve."
+    },
+    "Geography": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); migrated from a local definition. Back-compatible: the $defs name is unchanged, so object schemas referencing _common.json#/$defs/Geography still resolve."
+    },
+    "Address": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/address.json#/$defs/Address",
+      "$comment": "Canonical definition provided by nyc-commons (address.json#/$defs/Address); the Outdoor Public Art Inventory carries address/city/state/zip columns."
+    },
+    "BBL": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/identifiers.json#/$defs/BBL",
+      "$comment": "Canonical BBL (Borough-Block-Lot) provided by nyc-commons. The Outdoor Public Art Inventory carries Block + Lot columns that resolve to a BBL for the City-owned parcel an artwork sits on."
+    },
+    "AgencyReference": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/party.json#/$defs/AgencyReference",
+      "$comment": "Canonical AgencyReference provided by nyc-commons. PDC submissions always originate from the City agency with jurisdiction over the property (lead agency), often with a secondary/managing agency."
+    },
+    "Money": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/money.json#/$defs/MoneyUSD",
+      "$comment": "Canonical definition provided by nyc-commons (money.json#/$defs/MoneyUSD)."
+    },
+    "ProjectType": {
+      "type": ["string", "null"],
+      "description": "PDC project type ('PROJECT_TYPE') — the design discipline of the reviewed project. Enum from the distinct values in the Monthly Design Review dataset (tfrc-rjtr).",
+      "enum": [
+        "Architecture",
+        "Landscape architecture",
+        "Artwork",
+        "Signage",
+        "Street furniture",
+        "Newsstand",
+        "Bridge",
+        "Distinctive sidewalk",
+        "Distinctive lighting",
+        "Building systems & Modifications",
+        null
+      ]
+    },
+    "LevelOfReview": {
+      "type": ["string", "null"],
+      "description": "Stage of PDC design review ('LEVEL_OF_REVIEW'). PDC reviews most projects in phases (Conceptual → Preliminary → Final), with 'Amended' resubmissions and combined stages. Enum from the distinct values in the Monthly Design Review dataset (tfrc-rjtr).",
+      "enum": [
+        "Conceptual",
+        "Preliminary",
+        "Final",
+        "Conceptual and Preliminary",
+        "Preliminary and Final",
+        "Amended Conceptual",
+        "Amended Preliminary",
+        "Amended Final",
+        null
+      ]
+    },
+    "ReviewAction": {
+      "type": ["string", "null"],
+      "description": "How a submitted project is calendared for a meeting ('ACTION') — the consent-vs-full-review distinction. Consent items are batch-voted; public hearings get full Commission review. Enum from the distinct values in the Monthly Design Review dataset (tfrc-rjtr).",
+      "enum": [
+        "Calendared for Consent",
+        "Calendared for Committee and Consent",
+        "Calendared for Public Hearing",
+        "Delegation Approval",
+        null
+      ]
+    },
+    "ReviewResult": {
+      "type": ["string", "null"],
+      "description": "Disposition of a project after PDC review ('RESULT'). Enum from the distinct values in the Annual Report dataset (5fsv-ze7v).",
+      "enum": [
+        "Approved",
+        "Approved with conditions",
+        "Approved per delegation",
+        "Commented",
+        "Tabled",
+        "Withdrawn",
+        "Rejected",
+        "Found Incomplete",
+        "No quorum",
+        null
+      ]
+    },
+    "ConstructionType": {
+      "type": ["string", "null"],
+      "description": "Nature of the work under review ('CONSTRUCTION_TYPE'). Enum from the distinct values in the Annual Report dataset (5fsv-ze7v).",
+      "enum": [
+        "Construction",
+        "Design",
+        "Reconstruction",
+        "Renovation",
+        "Rehabilitation",
+        "Restoration",
+        "Conservation",
+        "Stabilization",
+        "Installation of specific elements",
+        "Reinstallation",
+        "Relocation",
+        "Removal",
+        "Demolition",
+        "Redesign",
+        "Replication",
+        "Repainting",
+        "Master plan/Prototype",
+        "Loan",
+        null
+      ]
+    },
+    "PublicPrivate": {
+      "type": ["string", "null"],
+      "description": "Whether the project is on/for public property, privately leased City property, or both ('PUBLIC_PRIVATE'). Normalized from the source datasets' mixed casing.",
+      "enum": ["Public", "Private", "Public and Private", null]
+    },
+    "SubmissionCategory": {
+      "type": ["string", "null"],
+      "description": "The five broad submission categories PDC's application process is organized around, each with its own checklist of submission requirements.",
+      "enum": [
+        "Built Environment",
+        "Limited Scope",
+        "Signage",
+        "Artwork Installation",
+        "Artwork Relocation or Conservation",
+        null
+      ]
+    },
+    "PersonName": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/party.json#/$defs/PersonName",
+      "$comment": "Canonical PersonName provided by nyc-commons. Used for commissioners, artists, and architects."
+    },
+    "Creator": {
+      "type": "object",
+      "description": "A person credited on a work in the City's collection — artist, architect, or landscape architect (from the Outdoor Public Art Inventory's *_first/_middle/_last columns).",
+      "properties": {
+        "role": {
+          "type": ["string", "null"],
+          "enum": ["Artist", "Architect", "Landscape Architect", "Foundry", "Fabricator", "Architecture Firm", null]
+        },
+        "first": { "type": ["string", "null"] },
+        "middle": { "type": ["string", "null"] },
+        "last": { "type": ["string", "null"] },
+        "organization": { "type": ["string", "null"], "description": "Firm / foundry / fabricator name where the credit is an organization." }
+      },
+      "additionalProperties": false
+    }
+  }
+}

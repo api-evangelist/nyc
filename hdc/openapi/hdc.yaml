@@ -1,0 +1,324 @@
+openapi: 3.1.0
+info:
+  title: NYC Housing Development Corporation (HDC) API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the New York City Housing Development Corporation — the City's
+    affordable-housing bond financier — consolidating its dispersed financing record (developments,
+    financing programs/term sheets, and bond issues) into a single contract, and adding the one net-new
+    write surface locked in HDC's Developer Intake Portal: applying for HDC bond + subsidy financing
+    (a FinancingApplication / Developer Intake Form).
+  description: >-
+    Proposed API-first surface for the New York City Housing Development Corporation (HDC), from the NYC
+    Modernization low-hanging-fruit assessment of nychdc.com.
+
+
+    HDC is a public benefit corporation and one of the nation's largest municipal affordable-housing
+    bond issuers. The ownership finding is stark: **HDC owns NO NYC Open Data and NO API of any kind.**
+    Its record is dispersed across systems it does not own — HPD publishes the **LIHTC award datasets**
+    (the 4% awards are precisely HDC's tax-exempt-bond-financed deals), OMB publishes **'Debt Issuance by
+    Issuer'** (HDC appears only as an *Issuer Name* value), and HDC's bond disclosure to investors lives
+    on the **federal MSRB EMMA** platform as documents (Official Statements, financials, SDB annual
+    reports). The programs a developer would apply to (New Construction, ELLA, Mix and Match, Preservation,
+    PACT Preservation, Sustainable Development Bonds) exist only as HTML pages and PDF term sheets.
+
+
+    This contract does two things: (1) **originates** an owned HDC API that binds the dispersed record —
+    developments, financing programs, and bond issues — into one clean, BBL-keyed resource model, and
+    (2) adds the one net-new **write** workflow — **applyForFinancing**, submitting a Developer Intake
+    Form to request HDC bond + subsidy financing — that today lives only in HDC's login/contact-walled
+    Developer Intake Portal with no API. HDC is a lender/financier: it serves developers and investors,
+    not the public, so there is **no citizen write** in this domain — the honest net-new write is B2G.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.nychdc.com/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Developments
+    description: Affordable-housing developments financed by HDC (reconciled from HPD's adjacent LIHTC datasets — no HDC-owned twin).
+  - name: Programs
+    description: HDC financing programs and their term sheets (New Construction, ELLA, Mix and Match, Preservation, PACT).
+  - name: Bonds
+    description: HDC bond issues (Housing Revenue Bonds, Sustainable Development Bonds) — disclosed on federal MSRB EMMA, not a City system.
+  - name: Financing
+    description: Applying for HDC financing (write) and checking status — the net-new surface, today locked in the Developer Intake Portal.
+
+paths:
+  /developments:
+    get:
+      operationId: listDevelopments
+      summary: List / search HDC-financed developments
+      description: >-
+        Reconciled from HPD's 'Low Income Housing Tax Credits Awarded by HPD' project-level datasets —
+        the 4% awards are HDC's tax-exempt-bond-financed deals. There is no HDC-owned dataset.
+      tags: [Developments]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: program
+          in: query
+          schema: { type: string, enum: [New Construction, ELLA, Mix and Match, Preservation, PACT Preservation, Sustainable Development Bond, Homeownership, Other] }
+        - name: constructionType
+          in: query
+          schema: { type: string, enum: [New Construction, Rehabilitation, Preservation, Other] }
+        - name: applicationYear
+          in: query
+          schema: { type: integer }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of developments.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/development.json' } }
+  /developments/{bbl}:
+    get:
+      operationId: getDevelopment
+      summary: Get an HDC-financed development by BBL
+      tags: [Developments]
+      parameters:
+        - name: bbl
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The development.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/development.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /financing-programs:
+    get:
+      operationId: listFinancingPrograms
+      summary: List HDC financing programs
+      description: The term-sheet programs a developer can apply to — today only HTML pages + PDF term sheets, no machine-readable catalog.
+      tags: [Programs]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [New Construction, ELLA, Mix and Match, Preservation, PACT Preservation, Sustainable Development Bond, Homeownership, Other] }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of financing programs.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/financing-program.json' } }
+  /financing-programs/{programId}:
+    get:
+      operationId: getFinancingProgram
+      summary: Get a financing program (and its term sheet) by id
+      tags: [Programs]
+      parameters:
+        - name: programId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The financing program.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/financing-program.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /bond-issues:
+    get:
+      operationId: listBondIssues
+      summary: List HDC bond issues
+      description: >-
+        HDC's bond series (Housing Revenue Bonds, Sustainable Development Bonds). No HDC-owned dataset;
+        the only City open-data trace is OMB 'Debt Issuance by Issuer' (HDC as an Issuer Name value),
+        and primary disclosure is on federal MSRB EMMA.
+      tags: [Bonds]
+      parameters:
+        - name: bondType
+          in: query
+          schema: { type: string, enum: [Tax-Exempt, Taxable, Sustainable Development Bond, Other] }
+        - name: sustainable
+          in: query
+          schema: { type: boolean }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of bond issues.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/bond-issue.json' } }
+  /bond-issues/{seriesId}:
+    get:
+      operationId: getBondIssue
+      summary: Get an HDC bond issue by series id
+      tags: [Bonds]
+      parameters:
+        - name: seriesId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The bond issue.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/bond-issue.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /financing-applications:
+    get:
+      operationId: listMyFinancingApplications
+      summary: List the authenticated developer's financing applications
+      description: Reads the developer's own Developer Intake submissions — today visible only inside HDC's Developer Intake Portal.
+      tags: [Financing]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the developer's financing applications.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/financing-application.json' } }
+    post:
+      operationId: applyForFinancing
+      summary: Apply for HDC bond + subsidy financing
+      description: >-
+        The net-new write surface — submit a Developer Intake Form requesting HDC financing under a
+        program (New Construction, ELLA, Mix and Match, Preservation, PACT), replacing the
+        Developer-Intake-Portal-only workflow. Requires an authenticated developer and mutates state.
+        NOTE: as HDC states, submission does not indicate acceptance of a project proposal. There is
+        NO citizen write in this domain — this is a B2G/developer transaction.
+      tags: [Financing]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/financing-application.json' }
+      responses:
+        '201':
+          description: Financing application (Developer Intake Form) submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/financing-application.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /financing-applications/{applicationId}:
+    get:
+      operationId: getFinancingStatus
+      summary: Get the status of a submitted financing application
+      tags: [Financing]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The financing application and its review status.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/financing-application.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Development: { $ref: '../schemas/development.json' }
+    FinancingProgram: { $ref: '../schemas/financing-program.json' }
+    BondIssue: { $ref: '../schemas/bond-issue.json' }
+    Borrower: { $ref: '../schemas/borrower.json' }
+    FinancingApplication: { $ref: '../schemas/financing-application.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

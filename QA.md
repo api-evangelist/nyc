@@ -1,14 +1,14 @@
 # QA / Verification
 
-Automated re-verification of the falsifiable claims across all **67 domains** — is the site live, do the crosswalked Open Data assets actually exist, are the observed-API endpoints reachable. Interactive: [qa.html](https://nyc.apievangelist.com/qa.html).
+Automated re-verification of the falsifiable claims across all **70 domains** — is the site live, do the crosswalked Open Data assets actually exist, are the observed-API endpoints reachable. Interactive: [qa.html](https://nyc.apievangelist.com/qa.html).
 
-**Confidence:** 66 high · 0 medium · 1 low. **Sites:** 63 ok · 3 gated (live but bot/auth-walled) · 1 unreachable.
+**Confidence:** 69 high · 0 medium · 1 low. **Sites:** 67 ok · 2 gated (live but bot/auth-walled) · 1 unreachable.
 
 ## Flagged for review
 
 | Domain | Confidence | Issue |
 |--|--|--|
-| NYC Public Advocate | low | primary site unreachable (0) — https://www.pubadvocate.nyc.gov/ |
+| NYC City Planning (DCP) | low | primary site unreachable (404) — https://s-media.nyc.gov |
 
 ## Deep-verified sample (manual)
 

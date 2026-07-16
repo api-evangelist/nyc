@@ -1,0 +1,381 @@
+openapi: 3.1.0
+info:
+  title: PDC API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Public Design Commission — surfacing its design-review
+    record (projects reviewed, monthly meeting agendas, the City's public art & monument collection,
+    the commissioners, and the annual design awards) as coherent resources, and digitizing the one
+    net-new write surface PDC could own: an agency submitting a project for design review, which today
+    is a manual PDF-and-email transmittal with no online portal.
+  description: >-
+    Proposed API-first surface for the NYC Public Design Commission (PDC), from the NYC Modernization
+    low-hanging-fruit assessment of nyc.gov/site/designcommission and PDC's design-review pages.
+
+
+    PDC is the City's **design-review agency** (NYC Charter Chapter 37): it has jurisdiction over
+    permanent architecture, landscape architecture, and art proposed **on or over City-owned property**,
+    and it is also caretaker and curator of the City's public art collection and archive. Eleven members
+    serve pro bono and meet monthly to review and vote on projects submitted by City agencies. Two things
+    define the domain. First, the **read is real but partial**: three NYC Open Data datasets publish the
+    monthly review log, the annual roll-up, and a rich outdoor public-art inventory — but the meeting
+    calendar/agendas/minutes, the commissioners, and the design awards are HTML/PDF only. Second, the
+    **write is entirely manual**: a City agency's PDC liaison emails a signed PDF application form,
+    checklist, and drawings by the submission deadline, then delivers hard copies to City Hall. There is
+    **no submission portal and no citizen write** — PDC is agency-facing.
+
+
+    This contract does two things: (1) presents the reviewed-project / meeting / collection / commissioner
+    / award data as one clean resource model, and (2) adds the one net-new **write** workflow PDC could
+    own — submitting a project for design review (`submitDesignReview`) — that today exists only as a
+    manual PDF/email process. The honest write surface is B2G (agency-to-Commission), not citizen.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.designcommission.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Projects
+    description: Projects submitted by City agencies and reviewed by the Commission.
+  - name: Meetings
+    description: Monthly Commission meetings, agendas, and minutes (consent items and public hearings).
+  - name: Collection
+    description: The City's public art & monument collection PDC curates (Outdoor Public Art Inventory).
+  - name: Commissioners
+    description: The 11 pro-bono members of the Commission.
+  - name: Awards
+    description: The Annual Awards for Excellence in Design.
+  - name: Submissions
+    description: Agency design-review submissions (read + write). The net-new surface, today a manual PDF/email transmittal.
+
+paths:
+  /projects:
+    get:
+      operationId: listProjects
+      summary: List / search reviewed projects
+      tags: [Projects]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: projectType
+          in: query
+          schema: { type: string, enum: [Architecture, Landscape architecture, Artwork, Signage, Street furniture, Newsstand, Bridge, Distinctive sidewalk, Distinctive lighting, Building systems & Modifications] }
+        - name: levelOfReview
+          in: query
+          schema: { type: string }
+        - name: action
+          in: query
+          schema: { type: string, enum: [Calendared for Consent, Calendared for Committee and Consent, Calendared for Public Hearing, Delegation Approval] }
+        - name: result
+          in: query
+          schema: { type: string, enum: [Approved, Approved with conditions, Approved per delegation, Commented, Tabled, Withdrawn, Rejected, Found Incomplete, No quorum] }
+        - name: agency
+          in: query
+          description: Lead or secondary City agency (e.g. DPR, DOT, EDC, DDC, DEP).
+          schema: { type: string }
+        - name: year
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of reviewed projects.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/design-project.json' } }
+  /projects/{projectId}:
+    get:
+      operationId: getProject
+      summary: Get a reviewed project by PROJECT_ID
+      tags: [Projects]
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The reviewed project.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/design-project.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /meetings:
+    get:
+      operationId: listMeetings
+      summary: List Commission meetings with agendas
+      description: >-
+        Surfaces the monthly meeting calendar, agendas, and minutes that today are published only as
+        HTML/PDF on the site — there is no Open Data twin for the calendar.
+      tags: [Meetings]
+      parameters:
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - name: kind
+          in: query
+          schema: { type: string, enum: [Committee Meeting, Public Meeting, Public Hearing] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of meetings.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/review-meeting.json' } }
+  /meetings/{meetingId}:
+    get:
+      operationId: getMeeting
+      summary: Get a meeting and its agenda by id (date)
+      tags: [Meetings]
+      parameters:
+        - name: meetingId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The meeting with agenda items.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/review-meeting.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /collection:
+    get:
+      operationId: listCollectionItems
+      summary: Search the City's public art & monument collection
+      description: The Outdoor Public Art Inventory — City-owned monuments, memorials, artworks, and markers on City-owned property.
+      tags: [Collection]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: artworkType
+          in: query
+          schema: { type: string }
+        - name: material
+          in: query
+          schema: { type: string }
+        - name: artist
+          in: query
+          schema: { type: string }
+        - name: managingCityAgency
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of collection items.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/collection-item.json' } }
+  /collection/{title}:
+    get:
+      operationId: getCollectionItem
+      summary: Get a collection item by title
+      tags: [Collection]
+      parameters:
+        - name: title
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The collection item.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/collection-item.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /commissioners:
+    get:
+      operationId: listCommissioners
+      summary: List the Commission's members
+      tags: [Commissioners]
+      responses:
+        '200':
+          description: The 11 Commission members.
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '../schemas/commissioner.json' } }
+
+  /awards:
+    get:
+      operationId: listAwards
+      summary: List Awards for Excellence in Design recipients
+      tags: [Awards]
+      parameters:
+        - name: year
+          in: query
+          schema: { type: integer }
+        - name: cycle
+          in: query
+          schema: { type: integer }
+        - $ref: '#/components/parameters/borough'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of award recipients.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/design-award.json' } }
+
+  /submissions:
+    get:
+      operationId: listSubmissions
+      summary: List the authenticated agency's design-review submissions
+      description: Reads the submitting agency's own design-review submissions and their status — today visible only inside PDC's internal manual intake.
+      tags: [Submissions]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string, enum: [Built Environment, Limited Scope, Signage, Artwork Installation, Artwork Relocation or Conservation] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the agency's submissions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/design-submission.json' } }
+    post:
+      operationId: submitDesignReview
+      summary: Submit a project for Public Design Commission design review
+      description: >-
+        The net-new write surface — a PDC-owned API for a City agency (via its PDC liaison) to submit a
+        project for design review, replacing today's manual PDF application form and email transmittal.
+        This is a B2G (agency-to-Commission) transaction: only a City agency with jurisdiction over the
+        property may submit, and there is NO citizen write in this domain. The submission must be signed
+        by all involved City agencies and list the Community Board(s) and City Council District(s).
+      tags: [Submissions]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/design-submission.json' }
+      responses:
+        '201':
+          description: Design-review submission created.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/design-submission.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /submissions/{submissionId}:
+    get:
+      operationId: getDesignReviewStatus
+      summary: Get the status of a design-review submission
+      description: Reads a single design-review submission and its current status (Submitted → Under Review → Calendared → Approved/…).
+      tags: [Submissions]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The design-review submission.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/design-submission.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    DesignProject: { $ref: '../schemas/design-project.json' }
+    ReviewMeeting: { $ref: '../schemas/review-meeting.json' }
+    CollectionItem: { $ref: '../schemas/collection-item.json' }
+    Commissioner: { $ref: '../schemas/commissioner.json' }
+    DesignAward: { $ref: '../schemas/design-award.json' }
+    DesignSubmission: { $ref: '../schemas/design-submission.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island, Citywide] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

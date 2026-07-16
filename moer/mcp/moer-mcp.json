@@ -1,0 +1,509 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces OER's environmental-site / (E)-designation / cleanup-project data (BBL-keyed) and the remediation status of a cleanup, and adds request_notice_to_proceed \u2014 the net-new B2G write workflow (request a Notice to Proceed or enroll a brownfield site in the Voluntary Cleanup Program) that today runs manually through the login-walled EPIC portal. There is no general citizen write in this domain.",
+    "openapi": "../openapi/moer.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.moer",
+    "title": "NYC Mayor's Office of Environmental Remediation (MOER/OER)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Mayor's Office of Environmental Remediation \u2014 the City's brownfield cleanup office. Look up environmental sites (the daily 'OER Cleanup Sites' feed and the SPEED map), check whether a property carries an (E)-designation (hazmat/noise/air) and whether it's resolved, read Voluntary Cleanup Program and E-Designation Program projects, and get where a cleanup stands in the remedial process. Adds the net-new ability to request a Notice to Proceed \u2014 or enroll a brownfield site in the VCP \u2014 that today runs manually through the login-walled EPIC portal.",
+    "instructions": "Use find_environmental_sites / get_environmental_site to locate OER-tracked parcels by borough, program, phase, BBL, or free text (keyed on OER Project Number and BBL \u2014 OER is parcel-centric). find_e_designations / get_e_designation answers 'Do I have an E?' for a BBL \u2014 NOTE the authoritative (E) inventory is published under the DCP label, OER administers resolving it. find_cleanup_projects / get_cleanup_project cover VCP and E-Designation Program remedial projects. get_remediation_status returns the single 'where does this cleanup stand?' answer \u2014 current phase plus the determinations OER has issued (Notice of No Objection, Notice to Proceed, Notice of Satisfaction) and building-permit / C-of-O eligibility. find_notices lists issued OER determinations. request_notice_to_proceed (net-new) is a property-owner/B2G write \u2014 it requires an authenticated applicant and mutates state; confirm the property (BBL preferred), the request type (VCP enrollment vs. E-Designation/CEQR Notice to Proceed), and any (E)-designation number with the user before submitting. This agency serves owners, developers, and consultants preparing contaminated land for redevelopment: there is no general citizen service or write here."
+  },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
+    }
+  },
+  "tools": [
+    {
+      "name": "find_environmental_sites",
+      "title": "Find Environmental Sites",
+      "description": "Search OER-tracked environmental sites (the daily OER Cleanup Sites feed and the SPEED map) by borough, program, phase, BBL, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "program": {
+            "type": "string",
+            "enum": [
+              "Voluntary Cleanup Program",
+              "E-Designation",
+              "Restrictive Declaration",
+              "City Environmental Quality Review (CEQR)",
+              "Clean Soil Bank",
+              "Brownfield Incentive Grant",
+              "Other"
+            ]
+          },
+          "phase": {
+            "type": "string"
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/environmental-site.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listEnvironmentalSites",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "get_environmental_site",
+      "title": "Get Environmental Site",
+      "description": "Fetch a single OER environmental site (program, phase, address, BBL/BIN, document repository) by OER Project Number.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "oerProjectNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "oerProjectNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/environmental-site.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getEnvironmentalSite",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "find_e_designations",
+      "title": "Find E-Designations",
+      "description": "Answer 'Do I have an E?' \u2014 look up (E)-designations and Restrictive Declarations (hazmat/noise/air) on a property by BBL. NOTE: the authoritative inventory is published under the DCP label; OER administers resolution.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bbl": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "eType": {
+            "type": "string",
+            "enum": [
+              "Hazardous Materials",
+              "Noise",
+              "Air"
+            ]
+          },
+          "resolved": {
+            "type": "boolean"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/e-designation.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listEDesignations",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "get_e_designation",
+      "title": "Get E-Designation",
+      "description": "Fetch a single (E)-designation / Restrictive Declaration by its (E) number.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "eNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "eNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/e-designation.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getEDesignation",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "find_cleanup_projects",
+      "title": "Find Cleanup Projects",
+      "description": "Search OER cleanup projects (Voluntary Cleanup Program and E-Designation Program) by program, phase, borough, BBL, or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "program": {
+            "type": "string",
+            "enum": [
+              "Voluntary Cleanup Program",
+              "E-Designation",
+              "Restrictive Declaration",
+              "City Environmental Quality Review (CEQR)",
+              "Other"
+            ]
+          },
+          "phase": {
+            "type": "string"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/cleanup-project.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCleanupProjects",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "get_cleanup_project",
+      "title": "Get Cleanup Project",
+      "description": "Fetch a single OER cleanup project (program, phase, volunteer/consultant, (E)-designation cleared) by OER Project Number.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "oerProjectNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "oerProjectNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/cleanup-project.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getCleanupProject",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "get_remediation_status",
+      "title": "Get Remediation Status",
+      "description": "Return where a cleanup stands in the OER remedial process \u2014 current phase, the determinations issued (Notice of No Objection, Notice to Proceed, Notice of Satisfaction), and building-permit / certificate-of-occupancy eligibility. Today only reconstructable by reading EPIC portal documents.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "oerProjectNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "oerProjectNumber"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/remediation-status.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getRemediationStatus",
+      "x-agent-skill": "check-application-or-case-status"
+    },
+    {
+      "name": "find_notices",
+      "title": "Find Notices",
+      "description": "List OER determinations issued on sites \u2014 Notice of No Objection, Notice to Proceed / Decision Document, Notice of Satisfaction \u2014 by type, OER Project Number, or BBL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Notice to Proceed",
+              "Decision Document",
+              "Notice of No Objection",
+              "Notice of Satisfaction",
+              "Notice of Completion"
+            ]
+          },
+          "oerProjectNumber": {
+            "type": "string"
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/notice-to-proceed.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listNotices",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "list_my_notice_to_proceed_requests",
+      "title": "List My Notice to Proceed Requests",
+      "description": "List the authenticated applicant's own Notice to Proceed / VCP enrollment requests and their status \u2014 today visible only inside the EPIC portal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "Submitted",
+              "Under Review",
+              "More Info Needed",
+              "Notice to Proceed Issued",
+              "Enrolled",
+              "Declined"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/notice-to-proceed-request.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listNoticeToProceedRequests",
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "request_notice_to_proceed",
+      "title": "Request Notice to Proceed",
+      "description": "Request OER approval to proceed on a site \u2014 enroll a brownfield parcel in the Voluntary Cleanup Program, or request the Notice to Proceed / Decision Document (or Notice of No Objection) that clears an (E)-designation or CEQR requirement so a building permit can be issued. NET-NEW workflow with no OER API today \u2014 it runs manually through the login-walled EPIC portal and email. This is a property-owner/B2G transaction (no general citizen write in this domain). Requires an authenticated applicant. Mutates state \u2014 confirm the property (BBL preferred), request type, and any (E)-designation number first.",
+      "inputSchema": {
+        "$ref": "../schemas/notice-to-proceed-request.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/notice-to-proceed-request.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "requestNoticeToProceed",
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
+    }
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  },
+  "prompts": [
+    {
+      "name": "explore_moer",
+      "domain": "moer",
+      "description": "Search and read NYC Environmental Remediation (OER) records \u2014 Sites, E-Designations, Cleanup Projects, Notices.",
+      "uses": [
+        "find_environmental_sites",
+        "get_environmental_site",
+        "find_e_designations",
+        "get_e_designation"
+      ]
+    },
+    {
+      "name": "apply_for_moer",
+      "domain": "moer",
+      "description": "NoticeToProceedRequest \u2014 an owner/developer requests a Notice to Proceed (or enrolls a brownfield site in the Voluntary Cleanup Program) to proceed on a contaminated or (E)/CEQR-designated parcel. A B2G write, today a ma",
+      "uses": [
+        "request_notice_to_proceed"
+      ]
+    },
+    {
+      "name": "check_moer_status",
+      "domain": "moer",
+      "description": "Check the status of a NYC Environmental Remediation (OER) application, case, or request.",
+      "uses": [
+        "get_remediation_status"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://moer",
+      "name": "NYC Environmental Remediation (OER) \u2014 profile",
+      "description": "NYC Environmental Remediation (OER): 11 operations, 10 tools, verb \u201cexpose\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=moer"
+    },
+    {
+      "uri": "nyc://moer/openapi",
+      "name": "NYC Environmental Remediation (OER) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/moer/openapi/moer.yaml"
+    },
+    {
+      "uri": "nyc://moer/sites/{id}",
+      "name": "Sites record (templated)",
+      "description": "A single NYC Environmental Remediation (OER) Sites record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
+}

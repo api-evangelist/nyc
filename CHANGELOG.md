@@ -4,6 +4,11 @@ All notable work on the NYC — API & Agent Modernization project. Newest first.
 
 The format is loosely [Keep a Changelog](https://keepachangelog.com/). This project began as research and was activated into the [api-evangelist/nyc](https://github.com/api-evangelist/nyc) repository.
 
+## 2026-07-16
+
+### Added — Three domains + cross-agency housing chain
+- 2026-07-16 — added hdc, pdc, moer (67→70 domains); added cross-agency Arazzo workflow + housing brief.
+
 ## 2026-07-13
 
 ### Added — Batch of ten domains (parallel)

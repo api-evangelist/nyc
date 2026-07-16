@@ -10,7 +10,7 @@ The question is anchored to a location ("what's near me?", "who represents this 
 
 ## What it orchestrates
 
-This skill spans **35 agencies** and **93 operations** across the corpus. It resolves the right agency for the task, then calls that agency's MCP tools (each backed by a REST operation) to complete it — anchoring any location on the [nyc-commons](https://nyc.apievangelist.com/commons.html) geography spine.
+This skill spans **36 agencies** and **94 operations** across the corpus. It resolves the right agency for the task, then calls that agency's MCP tools (each backed by a REST operation) to complete it — anchoring any location on the [nyc-commons](https://nyc.apievangelist.com/commons.html) geography spine.
 
 ## Agencies
 
@@ -28,6 +28,7 @@ This skill spans **35 agencies** and **93 operations** across the corpus. It res
 - [NYC Youth & Community Dev (DYCD)](https://nyc.apievangelist.com/domain.html?d=dycd)
 - [NYC Economic Development (EDC)](https://nyc.apievangelist.com/domain.html?d=edc)
 - [NYC Fire (FDNY)](https://nyc.apievangelist.com/domain.html?d=fdny)
+- [NYC Housing Development Corp (HDC)](https://nyc.apievangelist.com/domain.html?d=hdc)
 - [NYC Health + Hospitals](https://nyc.apievangelist.com/domain.html?d=hhc)
 - [NYC Housing (HPD)](https://nyc.apievangelist.com/domain.html?d=hpd)
 - [NYC Landmarks (LPC)](https://nyc.apievangelist.com/domain.html?d=lpc)

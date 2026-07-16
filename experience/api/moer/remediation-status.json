@@ -1,0 +1,75 @@
+{
+ "agency": "NYC Environmental Remediation (OER)",
+ "collection": "RemediationStatus",
+ "schema": "https://raw.githubusercontent.com/api-evangelist/nyc/main/moer/schemas/remediation-status.json",
+ "count": 2,
+ "example": true,
+ "data": [
+  {
+   "oerProjectNumber": "EX-0001-1",
+   "site": {
+    "oerProjectNumber": "EX-0001",
+    "projectName": "Example projectName",
+    "address": "example address"
+   },
+   "program": "Voluntary Cleanup Program",
+   "currentPhase": "Pre-Application",
+   "class": "Active",
+   "eDesignation": "example eDesignation",
+   "noticeToProceedIssued": true,
+   "noticeOfSatisfactionIssued": true,
+   "buildingPermitEligible": true,
+   "certificateOfOccupancyEligible": true,
+   "determinations": [
+    {
+     "noticeId": "EX-0001",
+     "type": "Notice to Proceed",
+     "site": {
+      "oerProjectNumber": "EX-0001",
+      "projectName": "Example projectName",
+      "address": "example address"
+     },
+     "oerProjectNumber": "EX-0001",
+     "eDesignation": "example eDesignation",
+     "issuedDate": "2025-06-01",
+     "phaseCleared": "Pre-Application",
+     "documentUrl": "https://www.nyc.gov"
+    }
+   ],
+   "lastUpdated": "2025-06-01T09:00:00-04:00"
+  },
+  {
+   "oerProjectNumber": "EX-0001-2",
+   "site": {
+    "oerProjectNumber": "EX-0001",
+    "projectName": "Example projectName",
+    "address": "example address"
+   },
+   "program": "Voluntary Cleanup Program",
+   "currentPhase": "Pre-Application",
+   "class": "Active",
+   "eDesignation": "example eDesignation",
+   "noticeToProceedIssued": true,
+   "noticeOfSatisfactionIssued": true,
+   "buildingPermitEligible": true,
+   "certificateOfOccupancyEligible": true,
+   "determinations": [
+    {
+     "noticeId": "EX-0001",
+     "type": "Notice to Proceed",
+     "site": {
+      "oerProjectNumber": "EX-0001",
+      "projectName": "Example projectName",
+      "address": "example address"
+     },
+     "oerProjectNumber": "EX-0001",
+     "eDesignation": "example eDesignation",
+     "issuedDate": "2025-06-01",
+     "phaseCleared": "Pre-Application",
+     "documentUrl": "https://www.nyc.gov"
+    }
+   ],
+   "lastUpdated": "2025-06-01T09:00:00-04:00"
+  }
+ ]
+}

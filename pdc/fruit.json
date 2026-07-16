@@ -1,0 +1,157 @@
+{
+  "domain": "pdc",
+  "agency": "New York City Public Design Commission (PDC)",
+  "assessment_date": "2026-07-16",
+  "method": "Outside-in crawl (browser UA, robots-respecting — nyc.gov robots.txt only disallows /html/misc/). Fingerprinted nyc.gov/site/designcommission (Akamai + nginx + NYC.gov 'Livesite' platform + Dynatrace + AWS ALB; bot UA is 403'd by AkamaiGHost, browser UA is 200) and read the Design Review, Application Process, About, and Meetings pages, which document the manual PDF-and-email submission process, the 11-member pro-bono Commission, and the consent-vs-public-hearing meeting structure. Verified the NYC Open Data attribution 'Public Design Commission (PDC)' via the Socrata Discovery API and pulled all 3 assets with column schemas and real distinct values (level of review, action, result, project/construction type).",
+  "related_domains": [
+    "data.cityofnewyork.us",
+    "nyc.gov/site/designcommission",
+    "a836-acris.nyc.gov",
+    "nyc.gov/site/lpc"
+  ],
+  "headline_findings": [
+    "PDC is the City's design-review agency (NYC Charter Chapter 37) — 11 pro-bono members who meet monthly to review and vote on permanent architecture, landscape architecture, and art proposed on or over City-owned property. It is also caretaker and curator of the City's public art collection and archive.",
+    "PDC is agency-facing, not citizen-facing: only a City agency with jurisdiction over the property may submit a project; an artist or community works through the sponsoring agency (Parks, DOT, EDC, etc.). There is no citizen and no citizen transaction anywhere in the domain.",
+    "PDC exposes NO API of its own. Its only machine-readable data is 3 NYC Open Data datasets (Socrata SODA): the Monthly Design Review log (current to 2026), the Annual Report roll-up, and a rich 43-column Outdoor Public Art Inventory (frozen since 2021).",
+    "The meeting calendar/agendas/minutes, the commissioners, and the Awards for Excellence in Design are published only as HTML/PDF — no Open Data twin.",
+    "The core transaction — submitting a project for design review — is not even a system. It is a signed PDF application form and checklist emailed by the City agency's PDC liaison by the submission deadline, with paper hard copies delivered to City Hall. There is no portal (unlike LPC's Salesforce Portico) and no submission API.",
+    "Net-new write surface: an agency submits a project for design review (DesignSubmission) — a B2G transaction that today is a manual PDF/email transmittal. NOTE: there is no citizen write for this agency. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    {
+      "endpoint": "data.cityofnewyork.us (SODA)",
+      "type": "open data API",
+      "owner": "NYC (Socrata/Tyler)",
+      "public": true,
+      "note": "The 3 PDC-attributed datasets: Monthly Design Review (tfrc-rjtr, 10c, current), Annual Report (5fsv-ze7v, 12c), Outdoor Public Art Inventory (2pg3-gcaa, 43c, frozen at 2021). SODA /resource/<id>.json endpoints. The one real, open PDC data surface."
+    },
+    {
+      "endpoint": "project submission (email + PDF application form)",
+      "type": "manual intake",
+      "owner": "PDC",
+      "public": "not a system — no portal, no API",
+      "note": "A signed PDF application form + category checklist emailed by the City agency's PDC liaison by the 12:00pm deadline; hard copies delivered to City Hall. No upload API, no structured record. The net-new write."
+    },
+    {
+      "endpoint": "www.nyc.gov/site/designcommission",
+      "type": "informational site",
+      "owner": "NYC.gov shared platform (Livesite)",
+      "public": "html",
+      "note": "Content only — About, Design Review, Publications, Awards, Archive. No content API. Akamai edge, nginx, Dynatrace RUM, AWS ALB. Bot UA -> 403 (AkamaiGHost); browser UA -> 200."
+    },
+    {
+      "endpoint": "a836-acris.nyc.gov (ACRIS)",
+      "type": "property records",
+      "owner": "NYC DOF",
+      "public": "public",
+      "note": "Linked from the site so applicants can confirm which agency has jurisdiction over a parcel. Not PDC-owned."
+    },
+    {
+      "endpoint": "youtube.com / MS Teams",
+      "type": "video / conferencing",
+      "owner": "Google / Microsoft",
+      "public": "vendor",
+      "note": "Meetings livestreamed on YouTube; remote participation and testimony via Teams. Not data surfaces."
+    }
+  ],
+  "fruit": [
+    {
+      "name": "Reviewed projects (monthly review log + annual roll-up)",
+      "type": "data table",
+      "entity": "DesignProject",
+      "url": "https://www.nyc.gov/site/designcommission/design-review/design-review.page",
+      "count": "1,000s reviewed (DPR ~1,009; DOT ~316; EDC ~221; DEP ~187 in the monthly log)",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": [
+        "Public Design Commission Monthly Design Review tfrc-rjtr (10c)",
+        "Public Design Commission Annual Report 5fsv-ze7v (12c)"
+      ],
+      "notes": "Core unit of PDC. Keyed on PROJECT_ID; carries project type, level of review (Conceptual/Preliminary/Final + Amended), action (Consent vs. Public Hearing), result (Approved/with conditions/Tabled/Withdrawn/Rejected/…), construction type, lead + secondary agency, borough, meeting date, review cycles."
+    },
+    {
+      "name": "City public art & monument collection",
+      "type": "inventory",
+      "entity": "CollectionItem",
+      "url": "https://data.cityofnewyork.us/d/2pg3-gcaa",
+      "count": "City-owned outdoor monuments, memorials, artworks, and markers",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": [
+        "Public Design Commission Outdoor Public Art Inventory 2pg3-gcaa (43c)"
+      ],
+      "notes": "PDC is caretaker and curator of the City's public art collection. Rich 43-column record — title, artwork type, material, artist/architect/landscape-architect credits, foundry/fabricator, creation & dedication dates, acquisition, inscription, subject keywords, location, managing agency, PDC record refs, address, borough, lat/long, Block/Lot (-> BBL). Frozen since 2021."
+    },
+    {
+      "name": "Monthly meetings / agendas / minutes",
+      "type": "workflow (HTML/PDF)",
+      "entity": "ReviewMeeting",
+      "url": "https://www.nyc.gov/site/designcommission/design-review/meetings/meetings.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "PDC meets monthly — a morning Committee Meeting then a Public Meeting with a batch vote on Consent Items and any Public Hearings, in the City Hall Board Room, livestreamed on YouTube. The calendar, submission deadlines, agendas, and minutes are HTML/PDF only — no Open Data twin. Reverse-engineered from the site."
+    },
+    {
+      "name": "Commissioners (11 pro-bono members)",
+      "type": "reference",
+      "entity": "Commissioner",
+      "url": "https://www.nyc.gov/site/designcommission/about/about.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "Statutory composition: an architect, landscape architect, painter, sculptor, three lay members, and representatives of the Brooklyn Museum, the Metropolitan Museum of Art, the New York Public Library, and the Mayor. Listed only on the About/People page — no dataset."
+    },
+    {
+      "name": "Awards for Excellence in Design",
+      "type": "publication (HTML/PDF)",
+      "entity": "DesignAward",
+      "url": "https://www.nyc.gov/site/designcommission/awards/design-awards-43.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "PDC's Annual Awards for Excellence in Design (43rd cycle published) recognize outstanding City capital projects and public art. Recipients are HTML/PDF only — no dataset."
+    },
+    {
+      "name": "Submit a project for design review",
+      "type": "submit / review workflow (B2G)",
+      "entity": "DesignSubmission",
+      "url": "https://www.nyc.gov/site/designcommission/design-review/application-process/application-process.page",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common act in the domain — a City agency (via its PDC liaison) submits a project for design review across five categories (Built Environment, Limited Scope, Signage, Artwork Installation, Artwork Relocation or Conservation). Today a signed PDF application form + checklist emailed by the deadline, with paper hard copies delivered afterward; no portal, no API. The net-new WRITE surface for this domain. NOTE: PDC is agency-facing — there is NO citizen write anywhere in the domain; the honest write is B2G agency-to-Commission submission."
+    }
+  ],
+  "meta": {
+    "short": "NYC Public Design Commission (PDC)",
+    "verb": "digitize",
+    "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace + AWS ALB) for the informational site; 3 NYC Open Data (Socrata SODA) datasets for the review log and public-art collection; the core transaction — submitting a project for design review — is a manual PDF application form emailed by a City agency liaison, with no portal and no API.",
+    "netnew": "DesignSubmission — a City agency (via its PDC liaison) submits a project for design review (category, requested level of review, lead + secondary agencies, Community Board / Council District, interagency approvals, and attachments). A B2G write; PDC is agency-facing, so there is no citizen write in this domain.",
+    "accent": "#6a5a9a",
+    "tagline": "The City's design-review agency reviews every permanent design and artwork on City-owned property — yet the act of submitting one is still a PDF form and an email.",
+    "headline": "PDC publishes a solid review record and a rich 43-column public-art inventory as three Open Data datasets, but exposes no API of its own — and its core transaction, submitting a project for design review, is a manual PDF-and-email transmittal with no portal and no citizen write."
+  },
+  "scorecard": {
+    "platform": 1,
+    "siteApi": 0,
+    "openData": 2,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 1
+  },
+  "scorecard_notes": {
+    "platform": "Shared NYC.gov Livesite chassis (Akamai + nginx + Dynatrace + AWS ALB); no PDC-owned application platform with an API.",
+    "siteApi": "No site or content API; nothing machine-readable on nyc.gov/site/designcommission.",
+    "openData": "Three Socrata datasets — better than a truly thin agency: the review log is kept current and one is a rich 43-column art inventory — but the inventory is frozen at 2021 and the calendar/agendas/commissioners/awards have no twin.",
+    "coreData": "DesignProject (review log) and CollectionItem (public-art inventory) are well-modeled and open; meetings, commissioners, and awards are reverse-engineered from HTML/PDF with no dataset.",
+    "writeApi": "No write surface at all — submitting a project for design review is a manual PDF form emailed by an agency liaison; no portal, no API; no citizen write exists.",
+    "agent": "No agent-native surface; no MCP, no structured intake an agent could call.",
+    "ownership": "PDC owns its review record and collection data, but publishes them only via Socrata and leaves the calendar/commissioners/awards and the entire submission transaction off any machine-readable surface."
+  }
+}

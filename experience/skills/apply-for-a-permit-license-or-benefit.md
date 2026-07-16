@@ -10,7 +10,7 @@ The resident wants to apply for, enroll in, or file for something the city grant
 
 ## What it orchestrates
 
-This skill spans **35 agencies** and **38 operations** across the corpus. It resolves the right agency for the task, then calls that agency's MCP tools (each backed by a REST operation) to complete it — anchoring any location on the [nyc-commons](https://nyc.apievangelist.com/commons.html) geography spine.
+This skill spans **38 agencies** and **41 operations** across the corpus. It resolves the right agency for the task, then calls that agency's MCP tools (each backed by a REST operation) to complete it — anchoring any location on the [nyc-commons](https://nyc.apievangelist.com/commons.html) geography spine.
 
 ## Agencies
 
@@ -31,6 +31,7 @@ This skill spans **35 agencies** and **38 operations** across the corpus. It res
 - [NYC Veterans' Services (DVS)](https://nyc.apievangelist.com/domain.html?d=dvs)
 - [NYC Youth & Community Dev (DYCD)](https://nyc.apievangelist.com/domain.html?d=dycd)
 - [NYC Fire (FDNY)](https://nyc.apievangelist.com/domain.html?d=fdny)
+- [NYC Housing Development Corp (HDC)](https://nyc.apievangelist.com/domain.html?d=hdc)
 - [NYC Housing (HPD)](https://nyc.apievangelist.com/domain.html?d=hpd)
 - [NYC Social Services (HRA)](https://nyc.apievangelist.com/domain.html?d=hra)
 - [NYC Independent Budget Office (IBO)](https://nyc.apievangelist.com/domain.html?d=ibo)
@@ -38,10 +39,12 @@ This skill spans **35 agencies** and **38 operations** across the corpus. It res
 - [NYC Landmarks (LPC)](https://nyc.apievangelist.com/domain.html?d=lpc)
 - [Manhattan Borough President](https://nyc.apievangelist.com/domain.html?d=manhattanbp)
 - [NYC Criminal Justice (MOCJ)](https://nyc.apievangelist.com/domain.html?d=mocj)
+- [NYC Environmental Remediation (OER)](https://nyc.apievangelist.com/domain.html?d=moer)
 - [NYC Media & Entertainment (MOME)](https://nyc.apievangelist.com/domain.html?d=mome)
 - [NYC Emergency Management (NYCEM)](https://nyc.apievangelist.com/domain.html?d=nycem)
 - [NYC Parks & Recreation](https://nyc.apievangelist.com/domain.html?d=nycgovparks.org)
 - [NYC Technology & Innovation (OTI)](https://nyc.apievangelist.com/domain.html?d=oti)
+- [NYC Public Design Commission (PDC)](https://nyc.apievangelist.com/domain.html?d=pdc)
 - [Queens Borough President](https://nyc.apievangelist.com/domain.html?d=queensbp)
 - [Queens Public Library (QPL)](https://nyc.apievangelist.com/domain.html?d=queenslibrary)
 - [NYC Small Business Services (SBS)](https://nyc.apievangelist.com/domain.html?d=sbs)

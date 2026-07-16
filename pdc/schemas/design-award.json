@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pdc/schemas/design-award.json",
+  "title": "DesignAward",
+  "description": "An Annual Awards for Excellence in Design recipient. Each year the Public Design Commission recognizes outstanding City capital projects and public art with its Awards for Excellence in Design (the 43rd awards cycle is published on the site). There is NO Open Data twin — awardees are published only as HTML/PDF on the Awards pages. Reverse-engineered reference object; an awarded project generally traces back to a reviewed DesignProject.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/designcommission/awards/design-awards-43.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "awardId": { "type": ["string", "null"], "description": "Stable identifier for the award record." },
+    "year": { "type": ["integer", "null"], "description": "Award year." },
+    "cycle": { "type": ["integer", "null"], "description": "Ordinal awards cycle (e.g. 43 for the 43rd Annual Awards for Excellence in Design)." },
+    "projectTitle": { "type": "string", "description": "Title of the recognized project." },
+    "projectId": { "type": ["string", "null"], "description": "PROJECT_ID of the underlying reviewed DesignProject, where the awardee maps to a PDC-reviewed project." },
+    "projectType": { "$ref": "_common.json#/$defs/ProjectType" },
+    "leadAgency": { "$ref": "_common.json#/$defs/AgencyReference" },
+    "designTeam": {
+      "type": "array",
+      "description": "Credited design team members (architects, landscape architects, artists, firms).",
+      "items": { "$ref": "_common.json#/$defs/Creator" }
+    },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "citation": { "type": ["string", "null"], "description": "Award citation / description of why the project was recognized." }
+  },
+  "required": ["projectTitle"],
+  "additionalProperties": false
+}

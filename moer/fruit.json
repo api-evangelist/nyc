@@ -1,0 +1,205 @@
+{
+  "domain": "moer",
+  "agency": "New York City Mayor's Office of Environmental Remediation (MOER/OER)",
+  "assessment_date": "2026-07-16",
+  "method": "Outside-in crawl (browser UA — nyc.gov returns Akamai 403 to non-browser agents). Fingerprinted three surfaces: the informational site nyc.gov/site/oer (Akamai + nginx + NYC.gov 'Livesite' platform + AWS ALB + Dynatrace + Webtrends), the public SPEED map speed.cityofnewyork.us (CARTO/cartodb.js v3.15 + Leaflet, on Google Cloud, JSONP clientData.json feed), and OER's login-walled EPIC project portal a002-epic.nyc.gov (Microsoft-IIS/10.0 + ASP.NET 4.0 + AngularJS). Read the Remediation and E-Designation pages for the OER Remedial Process and determinations (Notice to Proceed, Notice of Satisfaction, Notice of No Objection). Verified the NYC Open Data agency label 'Mayor's Office of Environmental Remediation (OER)' via the Socrata Discovery API and pulled all 10 assets with column schemas; noted the authoritative E-Designation datasets are published under the Department of City Planning (DCP) label.",
+  "related_domains": [
+    "speed.cityofnewyork.us",
+    "a002-epic.nyc.gov",
+    "data.cityofnewyork.us",
+    "nyc.gov/site/planning",
+    "nyc.gov/site/buildings"
+  ],
+  "headline_findings": [
+    "OER's reference data is genuinely open and, at its core, LIVE. The flagship 'OER Cleanup Sites' dataset (3279-pp7v) is updated Daily and carries a full BBL/BIN geography spine, and the public SPEED map (Searchable Property Environmental E-Designation) lets anyone look up a parcel. 10 OER-labeled Open Data datasets in all.",
+    "But there is NO OER-owned REST API. The data reaches consumers only as Socrata dataset IDs plus SPEED, a CARTO/Leaflet map (not a documented API). SPEED fronts a CARTO SQL backend via a JSONP clientData.json feed an agent cannot reliably call.",
+    "The multi-step regulatory workflow is trapped in OER's own login-walled EPIC portal (a002-epic.nyc.gov, Microsoft-IIS/ASP.NET/AngularJS). The OER Remedial Process, the determinations OER issues (Notice to Proceed / Decision Document, Notice of Satisfaction / Completion, Notice of No Objection), and live cleanup status are invisible to machines. Unlike DDC, OER OWNS this system — the gap is that it's a legacy portal with no API.",
+    "The authoritative (E)-designation inventory is published under the DEPARTMENT OF CITY PLANNING (DCP) label (hxm3-23vy, mzjp-98aw, jsrs-ggnx), not OER — even though OER is the office that administers RESOLVING the (E) requirement. The most-viewed E-designation asset (8,989 views) is DCP's.",
+    "Net-new write surface: request a Notice to Proceed / enroll a brownfield site in the Voluntary Cleanup Program (NoticeToProceedRequest) — a B2G / property-owner transaction that today runs manually through the EPIC portal and email with OER project managers. There is no general citizen write in this domain. See tech-stack.md and apis-observed.md."
+  ],
+  "apis_observed": [
+    {
+      "endpoint": "data.cityofnewyork.us (SODA)",
+      "type": "open data API",
+      "owner": "NYC (Socrata/Tyler)",
+      "public": true,
+      "note": "10 OER datasets. Flagship 'OER Cleanup Sites' (3279-pp7v) updated Daily with a full BBL/BIN spine; plus Historic Land Use, Clean Soil Bank, and the six-layer BOA brownfield planning suite. The one strong, live OER data surface — but it is a dataset, not an OER API."
+    },
+    {
+      "endpoint": "speed.cityofnewyork.us (SPEED)",
+      "type": "public map app",
+      "owner": "OER (hosted on Google Cloud)",
+      "public": "public UI, no documented API",
+      "note": "Searchable Property Environmental E-Designation. CARTO (cartodb.js v3.15) + Leaflet front-end; pulls a JSONP /clientData.json?callback=__getData feed carrying a CARTO apiKey. Useful to humans, not callable as an API by an agent."
+    },
+    {
+      "endpoint": "a002-epic.nyc.gov (EPIC)",
+      "type": "project portal",
+      "owner": "OER",
+      "public": "login-walled, no API",
+      "note": "Environmental Project Information Center — Microsoft-IIS/10.0 + ASP.NET 4.0 + AngularJS, authenticated. Where the remedial process, documents, and OER determinations live. OER-owned but no machine-readable surface."
+    },
+    {
+      "endpoint": "data.cityofnewyork.us — E-Designations (hxm3-23vy, mzjp-98aw, jsrs-ggnx)",
+      "type": "open data API",
+      "owner": "NYC Department of City Planning (DCP)",
+      "public": true,
+      "note": "The authoritative (E)-designation inventory — published under the DCP label, updated Monthly. OER administers resolving the (E) requirement but does not own this data."
+    },
+    {
+      "endpoint": "www.nyc.gov/site/oer",
+      "type": "informational site",
+      "owner": "NYC.gov shared platform (Livesite)",
+      "public": "html",
+      "note": "Content only; Akamai edge, nginx, AWS ALB, Dynatrace, Webtrends. No content API. Returns Akamai 403 to non-browser agents."
+    }
+  ],
+  "fruit": [
+    {
+      "name": "Environmental / Cleanup Sites",
+      "type": "data table + map",
+      "entity": "EnvironmentalSite",
+      "url": "https://speed.cityofnewyork.us/",
+      "count": "1,100+ completed cleanups",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": [
+        "OER Cleanup Sites 3279-pp7v (18c, Daily)"
+      ],
+      "notes": "The core unit of OER. Keyed on OER Project Number and BBL; carries OER Program, Class, Phase, full address + BBL/BIN + Borough/CB/Council/CT/NTA + coordinates + a link to the project document repository. Updated Daily and mapped publicly via SPEED — but reachable only as a Socrata dataset + CARTO map, not an OER API."
+    },
+    {
+      "name": "E-Designations / Restrictive Declarations (Do I Have an E?)",
+      "type": "regulatory designation",
+      "entity": "EDesignation",
+      "url": "https://www.nyc.gov/site/oer/remediation/e-designation.page",
+      "machine_readable": "Open Data (SODA, DCP-owned)",
+      "verified": true,
+      "opendata_match": [
+        "E-Designations hxm3-23vy (DCP)",
+        "E Designations: shapefile mzjp-98aw (DCP)",
+        "E-Designations jsrs-ggnx (DCP)"
+      ],
+      "opendata_gap": true,
+      "notes": "A property carrying an (E)-designation has hazmat/noise/air requirements OER must sign off on before DOB issues a building permit. NOTE: the authoritative inventory is published under the DEPARTMENT OF CITY PLANNING label, not OER — OER administers resolution. The most-viewed E asset (mzjp-98aw, 8,989 views) is DCP's."
+    },
+    {
+      "name": "Cleanup Projects (Voluntary Cleanup Program)",
+      "type": "workflow (OER-owned system)",
+      "entity": "CleanupProject",
+      "url": "https://www.nyc.gov/site/oer/remediation/remediation.page",
+      "machine_readable": "partial",
+      "verified": true,
+      "opendata_match": [
+        "phase/class derived from OER Cleanup Sites 3279-pp7v"
+      ],
+      "opendata_gap": true,
+      "notes": "VCP and E-Designation Program remedial projects run through the OER Remedial Process inside the EPIC portal. Only a coarse Phase/Class is published; the detailed workflow has no Open Data twin and no API."
+    },
+    {
+      "name": "OER Determinations (Notice to Proceed, Notice of Satisfaction, NNO)",
+      "type": "workflow document (OER-owned system)",
+      "entity": "NoticeToProceed",
+      "url": "https://a002-epic.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The sign-offs OER issues along the remedial process — Notice of No Objection, Notice to Proceed / Decision Document, Notice of Satisfaction / Completion. Live only in the EPIC portal and per-site document repositories. No API, no Open Data twin."
+    },
+    {
+      "name": "Remediation Status (where does my cleanup stand?)",
+      "type": "derived status",
+      "entity": "RemediationStatus",
+      "url": "https://a002-epic.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single answer that blocks development — current phase + determinations issued + building-permit / C-of-O eligibility. Today reconstructable only by reading EPIC documents. Modeled here as the getRemediationStatus operation."
+    },
+    {
+      "name": "Request a Notice to Proceed / enroll in the VCP",
+      "type": "request / enroll workflow (B2G)",
+      "entity": "NoticeToProceedRequest",
+      "url": "https://a002-epic.nyc.gov/",
+      "machine_readable": false,
+      "verified": true,
+      "opendata_match": [],
+      "opendata_gap": true,
+      "notes": "The single most common act for an owner/developer preparing contaminated land — enroll a brownfield site in the Voluntary Cleanup Program, or request the Notice to Proceed / Decision Document (or NNO) that clears an (E)/CEQR requirement so a building permit can be issued. Today a manual EPIC-portal-and-email intake; no OER API. The net-new WRITE surface. NOTE: OER serves owners/developers/consultants — there is NO general citizen write in this domain; the honest write is B2G."
+    },
+    {
+      "name": "Historic Land Use Data (due diligence)",
+      "type": "data table",
+      "entity": "EnvironmentalSite",
+      "url": "https://data.cityofnewyork.us/d/r9ca-6t4q",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": [
+        "Historic Land Use Data r9ca-6t4q (9c)"
+      ],
+      "notes": "BBL-keyed historic environmental concerns (former gas stations, dry cleaners, etc.) — the due-diligence layer for whether a parcel is likely contaminated. Historical snapshot.",
+      "source": "opendata-sweep"
+    },
+    {
+      "name": "Clean Soil Bank Generating & Receiving Sites",
+      "type": "data table + map",
+      "entity": "EnvironmentalSite",
+      "url": "https://data.cityofnewyork.us/d/b4dv-8mq4",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": [
+        "NYC Clean Soil Bank ... b4dv-8mq4 (21c)",
+        "NYC Clean Soil Bank ... hywf-9b6t (map)"
+      ],
+      "notes": "Sites that generate/receive clean soil under OER's Clean Soil Bank (850,000+ tons recycled). Annual.",
+      "source": "opendata-sweep"
+    },
+    {
+      "name": "Brownfield Opportunity Area (BOA) & Community Planning suite",
+      "type": "geospatial layers",
+      "entity": "EnvironmentalSite",
+      "url": "https://data.cityofnewyork.us/d/22gm-5ceg",
+      "machine_readable": "Open Data (SODA)",
+      "verified": true,
+      "opendata_match": [
+        "22gm-5ceg (parent shapefile/map)",
+        "w5ew-m3sm Designated BOAs",
+        "wnhn-bgpv EPA Area Wide Planning",
+        "mfxb-aygx OER Community Grant Projects",
+        "qj7d-vb9s BOA Studies",
+        "bztk-4g6r OER Existing Conditions Studies"
+      ],
+      "notes": "Six geospatial layers of state/community brownfield planning areas, several carrying an epic_link back to the EPIC portal. Annual.",
+      "source": "opendata-sweep"
+    }
+  ],
+  "meta": {
+    "short": "NYC Environmental Remediation (OER)",
+    "verb": "expose",
+    "platform": "Three surfaces: an informational site on the NYC.gov shared 'Livesite' platform (Akamai + nginx + AWS ALB + Dynatrace + Webtrends); the public SPEED map (CARTO/cartodb.js + Leaflet, on Google Cloud, a JSONP feed rather than an API); and OER's own login-walled EPIC project portal (Microsoft-IIS/10.0 + ASP.NET 4.0 + AngularJS) where the remedial workflow is trapped. Open data is on Socrata; the authoritative (E)-designation inventory is published by DCP, not OER.",
+    "netnew": "NoticeToProceedRequest — an owner/developer requests a Notice to Proceed (or enrolls a brownfield site in the Voluntary Cleanup Program) to proceed on a contaminated or (E)/CEQR-designated parcel. A B2G write, today a manual EPIC-portal-and-email intake; OER serves owners/developers, so there is no general citizen write in this domain.",
+    "accent": "#b56a35",
+    "tagline": "An agency whose cleanup data is open and even daily, but whose whole regulatory workflow is trapped in a login-walled legacy portal — and whose authoritative (E)-designation inventory is published by another agency.",
+    "headline": "OER publishes a daily, BBL-keyed cleanup-sites feed and a public SPEED map, yet exposes no API of its own — the remedial process, the Notice-to-Proceed and Notice-of-Satisfaction determinations, and the intake all live inside the login-walled EPIC portal, while the authoritative (E)-designation data is published by City Planning."
+  },
+  "scorecard": {
+    "platform": 2,
+    "siteApi": 0,
+    "openData": 3,
+    "coreData": 2,
+    "writeApi": 0,
+    "agent": 0,
+    "ownership": 2
+  },
+  "scorecard_notes": {
+    "platform": "Three real surfaces including two OER-run applications (SPEED on CARTO, EPIC on ASP.NET/AngularJS) beyond the shared Livesite site — more platform than DDC — but EPIC is legacy and login-walled and SPEED exposes only a JSONP feed.",
+    "siteApi": "No site or content API; nothing machine-readable on nyc.gov/site/oer, and SPEED is a map app, not a documented API.",
+    "openData": "Strong: 10 OER-labeled Socrata datasets, with the flagship 'OER Cleanup Sites' updated Daily and carrying a full BBL/BIN geography spine, plus Historic Land Use, Clean Soil Bank, and a six-layer BOA planning suite.",
+    "coreData": "EnvironmentalSite is modeled, open, and live (daily); but the (E)-designation inventory is DCP's, cleanup-project status is only coarsely published, and the remedial workflow/determinations have no open twin.",
+    "writeApi": "No write surface — request a Notice to Proceed / VCP enrollment is a manual EPIC-and-email intake; no citizen write exists.",
+    "agent": "No agent-native surface; no MCP, no structured intake an agent could call.",
+    "ownership": "OER owns its systems — the EPIC portal and the SPEED map and the daily cleanup data — unlike DDC; but it does NOT own the authoritative (E)-designation inventory (DCP publishes it), and its owned workflow system has no API."
+  }
+}

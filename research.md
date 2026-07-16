@@ -1,6 +1,6 @@
 # Research & Ideas — Using NYC Modernization Data to Solve Everyday Problems
 
-*A working notebook. What can the [NYC Digital Modernization](README.md) data — 67 agencies assessed, the [citizen-transaction taxonomy](https://nyc.apievangelist.com/transactions.html), the [`nyc-commons`](https://nyc.apievangelist.com/commons.html) spine, and the [API → MCP → Agent-Skill experience layer](https://nyc.apievangelist.com/experience.html) — actually **do** for a New Yorker's everyday problems? This file collects ideas as they come. From [API Evangelist](https://apievangelist.com).*
+*A working notebook. What can the [NYC Digital Modernization](README.md) data — 70 agencies assessed, the [citizen-transaction taxonomy](https://nyc.apievangelist.com/transactions.html), the [`nyc-commons`](https://nyc.apievangelist.com/commons.html) spine, and the [API → MCP → Agent-Skill experience layer](https://nyc.apievangelist.com/experience.html) — actually **do** for a New Yorker's everyday problems? This file collects ideas as they come. From [API Evangelist](https://apievangelist.com).*
 
 ---
 
@@ -16,14 +16,14 @@ That is the everyday problem, named. Not a missing dataset — a **burden**. Her
 - **Compliance costs** — the forms, documents, logins, and re-entry of the same facts across siloed systems.
 - **Psychological costs** — the stress, stigma, and loss of trust from confusing, dead-end experiences.
 
-**The thesis of this project, restated through their lens:** open data (2010–2018) made the city *readable*. It did nothing for burden. **APIs, MCP tools, and Agent Skills reduce all three costs** — because a copilot or agent that can *find the right agency, carry the resident's context across silos, and complete the transaction* is a burden-reduction machine. The 67-agency assessment is the map of where that burden lives; the [experience layer](https://nyc.apievangelist.com/experience.html) is the substrate for cutting it.
+**The thesis of this project, restated through their lens:** open data (2010–2018) made the city *readable*. It did nothing for burden. **APIs, MCP tools, and Agent Skills reduce all three costs** — because a copilot or agent that can *find the right agency, carry the resident's context across silos, and complete the transaction* is a burden-reduction machine. The 70-agency assessment is the map of where that burden lives; the [experience layer](https://nyc.apievangelist.com/experience.html) is the substrate for cutting it.
 
 ## How each layer cuts each cost
 
 | Burden (Herd & Moynihan) | What cuts it | In this project |
 |---|---|---|
-| **Learning** — "who handles this, do I qualify?" | Discovery + routing | `find_agency_for_task`, the [APIs.json catalog](https://nyc.apievangelist.com/experience.html), and the 67-agency map so an agent answers "where do I even start?" |
-| **Compliance** — forms, logins, re-entry | Write APIs + a shared identity/place spine | The **66 net-new write workflows** (permits, applications, complaints) + [`nyc-commons`](https://nyc.apievangelist.com/commons.html) `Place`/`Address` so a BBL or address is entered *once* and reused across agencies |
+| **Learning** — "who handles this, do I qualify?" | Discovery + routing | `find_agency_for_task`, the [APIs.json catalog](https://nyc.apievangelist.com/experience.html), and the 70-agency map so an agent answers "where do I even start?" |
+| **Compliance** — forms, logins, re-entry | Write APIs + a shared identity/place spine | The **69 net-new write workflows** (permits, applications, complaints) + [`nyc-commons`](https://nyc.apievangelist.com/commons.html) `Place`/`Address` so a BBL or address is entered *once* and reused across agencies |
 | **Psychological** — stress, dead-ends, distrust | Agent-native "experience" | The ten [government-process Agent Skills](https://nyc.apievangelist.com/experience.html) (apply, report, request-records, schedule, pay…) that finish the task instead of handing back a portal link |
 
 ## The article's priorities → buildable ideas
@@ -58,7 +58,7 @@ Each maps to agencies already assessed here, a modeled net-new **write** workflo
 
 ## Ten ideas, in one list
 
-1. **"Where do I start?" router** — one `find_agency_for_task` skill over all 67 agencies; the antidote to learning cost.
+1. **"Where do I start?" router** — one `find_agency_for_task` skill over all 70 agencies; the antidote to learning cost.
 2. **One childcare front door** across DYCD / ACS / HRA.
 3. **Housing-lottery copilot** — one profile, every HPD lottery.
 4. **DOB permit-status agent** — front the legacy app layer; the "build housing faster" burden cut.
@@ -71,7 +71,7 @@ Each maps to agencies already assessed here, a modeled net-new **write** workflo
 
 ## Why this is the same argument, sharper
 
-The [assessment](https://nyc.apievangelist.com/synthesis.html) already proved the structural gap: **65 of 67 agencies have no transactional write API, and all 67 have no agent surface.** Read through Herd & Moynihan, that gap *is* administrative burden made measurable. The [experience layer](https://nyc.apievangelist.com/experience.html) — every operation mapped to an MCP tool and a government-process skill — is the tool for paying it down. PIT Crew is the team to spend it.
+The [assessment](https://nyc.apievangelist.com/synthesis.html) already proved the structural gap: **68 of 70 agencies have no transactional write API, and all 70 have no agent surface.** Read through Herd & Moynihan, that gap *is* administrative burden made measurable. The [experience layer](https://nyc.apievangelist.com/experience.html) — every operation mapped to an MCP tool and a government-process skill — is the tool for paying it down. PIT Crew is the team to spend it.
 
 ## The everyday problems, diagnosed: OSC's "Caucus 2025" report library
 

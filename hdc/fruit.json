@@ -1,0 +1,165 @@
+{
+ "domain": "hdc",
+ "agency": "New York City Housing Development Corporation (HDC)",
+ "assessment_date": "2026-07-16",
+ "method": "Outside-in crawl (browser UA). Fingerprinted www.nychdc.com from response headers and page markup (Drupal 10 on Pantheon, Fastly CDN, nginx, Google Tag Manager/GA) and read the Develop and Invest sections (financing programs + term sheets; Debt Issuance / Sustainable Development Bonds / EMMA disclosure). Confirmed via the Socrata Discovery API that ZERO NYC Open Data assets are attributed to HDC, and identified the adjacent datasets that actually carry HDC's record (HPD's LIHTC 4% awards; OMB's Debt Issuance by Issuer). The net-new write (the Developer Intake Portal / Developer Intake Form) is quoted from nychdc.com/develop; its internal workflow is inferred, not scraped behind login.",
+ "related_domains": [
+  "hpd",
+  "data.cityofnewyork.us",
+  "nyc.gov/site/omb",
+  "emma.msrb.org"
+ ],
+ "headline_findings": [
+  "HDC is a public benefit corporation and affordable-housing bond financier — one of the nation's largest municipal housing bond issuers. It lends to developers and borrows from bond investors; there is no citizen and no citizen transaction anywhere in the domain.",
+  "HDC owns NO NYC Open Data and NO API of any kind. Verified via the Socrata Discovery API: zero datasets are attributed to HDC. This is thinner than DDC (which owns four Socrata datasets) — HDC owns none.",
+  "HDC's machine-readable record is dispersed across three owners it does not control: HPD publishes the LIHTC award datasets (the 4% awards ARE HDC's tax-exempt-bond-financed deals), OMB publishes 'Debt Issuance by Issuer' (HDC appears only as an Issuer Name value), and HDC's investor disclosure lives on the FEDERAL MSRB EMMA platform as documents (Official Statements, financials, SDB annual reports).",
+  "HDC's own surfaces publish nothing structured: the website (Drupal 10 on Pantheon, Fastly CDN) is a marketing site with no content API (/developments and /where-we-fund return 404), the financing programs (New Construction, ELLA, Mix and Match, Preservation, PACT Preservation, Sustainable Development Bonds) exist only as HTML pages + PDF term sheets, and the one transaction HDC owns — the Developer Intake Portal — has no API.",
+  "Net-new write surface: apply for HDC bond + subsidy financing (FinancingApplication) by submitting a Developer Intake Form — the transaction that today lives only in HDC's Developer Intake Portal. NOTE: there is no citizen write for this agency; the honest write is B2G/developer, and (per HDC) submission does not indicate acceptance of a project proposal. See tech-stack.md and apis-observed.md."
+ ],
+ "apis_observed": [
+  {
+   "endpoint": "www.nychdc.com",
+   "type": "informational site",
+   "owner": "HDC (Drupal 10 on Pantheon, Fastly CDN)",
+   "public": "html",
+   "note": "Content only — Find / Invest / Develop / Manage. No content API, no JSON. /developments and /where-we-fund return 404 (no map/locator API)."
+  },
+  {
+   "endpoint": "HDC Developer Intake Portal",
+   "type": "proposal submission",
+   "owner": "HDC",
+   "public": "login/contact-walled, no API",
+   "note": "The one HDC-owned transaction: 'All new project proposals must be submitted through HDC Developer Intake Portal.' Emits nothing machine-readable."
+  },
+  {
+   "endpoint": "data.cityofnewyork.us (SODA) — HPD-labeled",
+   "type": "open data API",
+   "owner": "HPD (Socrata/Tyler)",
+   "public": "public; not HDC's",
+   "note": "HPD's LIHTC 4% award datasets (p8i7-ix2s, h9ws-rfd9) are HDC's bond-financed deals, but published under the HPD label, keyed on BBL/BIN."
+  },
+  {
+   "endpoint": "data.cityofnewyork.us (SODA) — OMB-labeled",
+   "type": "open data API",
+   "owner": "OMB",
+   "public": "public; not HDC's",
+   "note": "Debt Issuance by Issuer (n5n4-5k5r) — HDC appears only as an 'Issuer Name' value among many issuers."
+  },
+  {
+   "endpoint": "emma.msrb.org (MSRB EMMA)",
+   "type": "investor disclosure",
+   "owner": "Federal (MSRB)",
+   "public": "public; documents",
+   "note": "HDC's primary disclosure surface — Official Statements, combined financial statements, SDB annual reports — as PDFs on a FEDERAL platform, outside NYC Open Data."
+  },
+  {
+   "endpoint": "googletagmanager.com / google-analytics.com",
+   "type": "analytics / tag management",
+   "owner": "Google",
+   "public": "vendor",
+   "note": "GTM + gtag on the site."
+  }
+ ],
+ "fruit": [
+  {
+   "name": "HDC-Financed Developments",
+   "type": "data table (adjacent)",
+   "entity": "Development",
+   "url": "https://www.nychdc.com/develop",
+   "machine_readable": "Open Data (SODA) — HPD-owned",
+   "verified": true,
+   "opendata_match": [
+    "LIHTC Awarded by HPD: Project-Level (4% Awards) p8i7-ix2s (26c)",
+    "LIHTC Awarded by HPD: Building-Level (4% Awards) h9ws-rfd9 (3c)"
+   ],
+   "opendata_gap": true,
+   "notes": "The core unit of what HDC does — an affordable-housing development it bond-financed. HDC publishes no dataset; the closest record is HPD's LIHTC 4% awards (the 4% credits go 'to projects receiving tax exempt bonds through New York City Housing Development Corporation'), keyed on BBL/BIN with Project Name, Total Units, borough, construction/rehab, and developer as Applicant Name."
+  },
+  {
+   "name": "HDC Financing Programs (term sheets)",
+   "type": "workflow / documents",
+   "entity": "FinancingProgram",
+   "url": "https://www.nychdc.com/develop",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "New Construction, ELLA, Mix and Match, Preservation, and PACT Preservation programs — each defined by a published HDC (or joint HDC/HPD) PDF term sheet setting loan structure, LTV/LTC caps, DSCR, and affordability. No machine-readable program catalog; PDFs only."
+  },
+  {
+   "name": "HDC Bond Issues (Housing Revenue Bonds / Sustainable Development Bonds)",
+   "type": "data table (adjacent) / documents",
+   "entity": "BondIssue",
+   "url": "https://www.nychdc.com/invest",
+   "machine_readable": "Open Data (SODA) — OMB-owned + federal EMMA",
+   "verified": true,
+   "opendata_match": [
+    "Debt Issuance by Issuer n5n4-5k5r (7c) — HDC as an 'Issuer Name' value"
+   ],
+   "opendata_gap": true,
+   "notes": "HDC's bond series (par amounts, series names, ratings AA/Aa2). The only City open-data trace is OMB's Debt Issuance by Issuer; primary disclosure (Official Statements, financials, SDB annual reports) is on the federal MSRB EMMA platform as documents."
+  },
+  {
+   "name": "Developers / Borrowers",
+   "type": "derived directory",
+   "entity": "Borrower",
+   "url": "https://www.nychdc.com/develop",
+   "machine_readable": "derived",
+   "verified": true,
+   "opendata_match": [
+    "derived from HPD LIHTC 'Applicant Name'"
+   ],
+   "opendata_gap": true,
+   "notes": "HDC has no structured borrower dataset; developer identity is derivable only from the 'Applicant Name'/'Applicant Address' fields of HPD's LIHTC 4% project-level dataset."
+  },
+  {
+   "name": "Apply for HDC Financing (Developer Intake Form)",
+   "type": "apply workflow (B2G)",
+   "entity": "FinancingApplication",
+   "url": "https://www.nychdc.com/develop",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "The single most common act for a developer seeking HDC financing — submit a project proposal / Developer Intake Form requesting bond + subsidy financing under a program. Today only in HDC's Developer Intake Portal; no API. The net-new WRITE surface for this domain. NOTE: HDC is financier-facing — there is NO citizen write anywhere in the domain, and submission does not indicate acceptance of a proposal."
+  },
+  {
+   "name": "Debt Issuance / Official Statements (Invest)",
+   "type": "documents",
+   "entity": "BondIssue",
+   "url": "https://www.nychdc.com/invest",
+   "machine_readable": false,
+   "verified": true,
+   "opendata_match": [],
+   "opendata_gap": true,
+   "notes": "Current bond sale information and Official Statements, plus Sustainable Development Bond annual reports and combined financial statements — published as documents and cross-posted to MSRB EMMA. Folded into the BondIssue resource."
+  }
+ ],
+ "meta": {
+  "short": "NYC Housing Development Corp (HDC)",
+  "verb": "originate",
+  "platform": "www.nychdc.com on a commercial stack (Drupal 10 on Pantheon + Fastly CDN + nginx + Google Tag Manager/GA) — NOT the shared NYC.gov Livesite chassis, because HDC is a public benefit corporation. The systems that matter are elsewhere: an HDC Developer Intake Portal (no API), PDF term sheets, HPD's LIHTC datasets, OMB's Debt Issuance by Issuer, and the federal MSRB EMMA disclosure platform.",
+  "netnew": "FinancingApplication — a developer submits a Developer Intake Form requesting HDC bond + subsidy financing under a program (New Construction/ELLA/Mix and Match/Preservation/PACT) for a development. A B2G/developer write; HDC is financier-facing, so there is no citizen write in this domain, and submission does not indicate acceptance.",
+  "accent": "#1f8f9e",
+  "tagline": "A bond financier that owns no Open Data and no API at all — its development record is HPD's, its debt is OMB's, its investor disclosure is the federal MSRB's — while the one transaction it owns is an intake portal with no API.",
+  "headline": "HDC finances billions in affordable housing but publishes zero datasets and exposes no API — its development record is published by HPD, its debt by OMB, and its disclosure by the federal MSRB (EMMA) — and its one owned transaction, the Developer Intake Portal, has no API."
+ },
+ "scorecard": {
+  "platform": 1,
+  "siteApi": 0,
+  "openData": 0,
+  "coreData": 1,
+  "writeApi": 0,
+  "agent": 0,
+  "ownership": 0
+ },
+ "scorecard_notes": {
+  "platform": "Owns a conventional Drupal-on-Pantheon marketing site (Fastly CDN) — but no HDC-owned application platform with an API, and the transaction/disclosure layer is other systems (Developer Intake Portal without an API, HPD/OMB datasets, federal EMMA).",
+  "siteApi": "No site or content API; nothing machine-readable on nychdc.com (and /developments, /where-we-fund 404).",
+  "openData": "ZERO datasets attributed to HDC (verified via the Socrata Discovery API) — thinner than DDC. HDC owns no Open Data at all.",
+  "coreData": "Development and BondIssue are modeled and reconcilable, but only from adjacent datasets HDC does not own (HPD LIHTC 4% awards; OMB Debt Issuance by Issuer) plus federal EMMA documents; programs are PDF term sheets.",
+  "writeApi": "No write surface at all — the Developer Intake Portal is UI-only with no API; no citizen write exists.",
+  "agent": "No agent-native surface; no MCP, no structured intake an agent could call.",
+  "ownership": "HDC owns almost none of its machine-readable surface — its development record is HPD's, its debt trace is OMB's, and its investor disclosure is the federal MSRB's (EMMA); the one thing it owns (Developer Intake) emits nothing structured."
+ }
+}

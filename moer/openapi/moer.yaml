@@ -1,0 +1,388 @@
+openapi: 3.1.0
+info:
+  title: MOER / OER API (proposed)
+  version: 0.1.0
+  summary: >-
+    One owned, resource-oriented API for the NYC Mayor's Office of Environmental Remediation — surfacing
+    its environmental sites, (E)-designations, and Voluntary Cleanup Program projects as coherent,
+    BBL-keyed resources, exposing where any cleanup stands in the remedial process, and digitizing the
+    one net-new write OER could own: an owner/developer's request for a Notice to Proceed (or VCP
+    enrollment) that today runs manually through the login-walled EPIC portal.
+  description: >-
+    Proposed API-first surface for the NYC Mayor's Office of Environmental Remediation (MOER/OER), from
+    the NYC Modernization low-hanging-fruit assessment of nyc.gov/site/oer, the public SPEED map, and the
+    EPIC project portal.
+
+
+    OER is a team of scientists and engineers that run the City's brownfield cleanup: the **City
+    Voluntary Cleanup Program (VCP)** and the **E-Designation / Restrictive Declaration Program**, plus
+    the environmental-review sign-offs (Notice of No Objection, Notice to Proceed, Notice of Satisfaction)
+    that clear a site for a building permit and certificate of occupancy. The domain has two halves.
+    First, OER's **reference data is genuinely open**: the daily-updated **OER Cleanup Sites** dataset
+    (3279-pp7v) carries a full BBL/BIN geography spine, and the public **SPEED** map (Searchable Property
+    Environmental E-Designation, speed.cityofnewyork.us) lets anyone look up a parcel — though it is a
+    CARTO/Leaflet app, not a documented API, and the authoritative (E)-designation inventory is published
+    under the **DCP** label, not OER. Second, the **multi-step regulatory workflow is trapped**: the
+    remedial process, the determinations OER issues, and the intake by which a developer requests them all
+    live inside the login-walled **EPIC** portal (a002-epic.nyc.gov, an OER-owned ASP.NET/AngularJS
+    system) with no API.
+
+
+    This contract does two things: (1) presents environmental sites, (E)-designations, and cleanup
+    projects as one clean, BBL-keyed resource model, with **getRemediationStatus** answering "where does
+    this cleanup stand?"; and (2) adds the one net-new **write** workflow — **requestNoticeToProceed**,
+    an owner/developer requesting the OER sign-off (or VCP enrollment) to proceed on a contaminated or
+    (E)-designated parcel — that today exists only as a manual EPIC/email intake. This is a
+    property-owner/B2G transaction; there is no general citizen write in this domain.
+
+
+    Every resource schema is an individual JSON Schema file referenced by `$ref`. See `../schemas/`,
+    `../crosswalk.md`, `../tech-stack.md`, and `../apis-observed.md`.
+  contact:
+    name: API Evangelist — NYC Modernization
+    url: https://github.com/api-evangelist/nyc
+servers:
+  - url: https://api.oer.nyc.gov/v1
+    description: Proposed production host (illustrative)
+tags:
+  - name: Sites
+    description: Environmental sites OER tracks — parcels in a cleanup program or carrying an environmental requirement.
+  - name: E-Designations
+    description: (E)-designations and Restrictive Declarations (hazmat / noise / air). Authoritative inventory published by DCP; OER administers resolution.
+  - name: Cleanup Projects
+    description: City Voluntary Cleanup Program (VCP) and E-Designation Program remedial projects and their status.
+  - name: Notices
+    description: Determinations OER issues — Notice of No Objection, Notice to Proceed / Decision Document, Notice of Satisfaction.
+  - name: Requests
+    description: Owner/developer requests for a Notice to Proceed or VCP enrollment (read + write). The net-new surface, today a manual EPIC intake.
+
+paths:
+  /sites:
+    get:
+      operationId: listEnvironmentalSites
+      summary: List / search OER environmental sites
+      description: >-
+        Search the parcels OER tracks — the 'OER Cleanup Sites' dataset (daily) and the SPEED map — by
+        borough, program, phase, or free text. Keyed on OER Project Number and BBL.
+      tags: [Sites]
+      parameters:
+        - $ref: '#/components/parameters/borough'
+        - name: program
+          in: query
+          schema: { type: string, enum: [Voluntary Cleanup Program, E-Designation, Restrictive Declaration, City Environmental Quality Review (CEQR), Clean Soil Bank, Brownfield Incentive Grant, Other] }
+        - name: phase
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          description: Filter to a single tax lot (BBL) — OER's parcel key.
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of environmental sites.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/environmental-site.json' } }
+  /sites/{oerProjectNumber}:
+    get:
+      operationId: getEnvironmentalSite
+      summary: Get an environmental site by OER Project Number
+      tags: [Sites]
+      parameters:
+        - name: oerProjectNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The environmental site.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/environmental-site.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /e-designations:
+    get:
+      operationId: listEDesignations
+      summary: List / search (E)-designations and Restrictive Declarations
+      description: >-
+        Look up the environmental requirements carried by a property. NOTE: the authoritative,
+        machine-readable inventory is published on NYC Open Data under the Department of City Planning
+        (DCP) label; OER administers resolving the requirement. Query by BBL to answer "Do I have an E?".
+      tags: [E-Designations]
+      parameters:
+        - name: bbl
+          in: query
+          description: The tax lot to check for an (E)-designation.
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: eType
+          in: query
+          schema: { type: string, enum: [Hazardous Materials, Noise, Air] }
+        - name: resolved
+          in: query
+          schema: { type: boolean }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of (E)-designations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/e-designation.json' } }
+  /e-designations/{eNumber}:
+    get:
+      operationId: getEDesignation
+      summary: Get an (E)-designation by its number
+      tags: [E-Designations]
+      parameters:
+        - name: eNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The (E)-designation.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/e-designation.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /cleanup-projects:
+    get:
+      operationId: listCleanupProjects
+      summary: List / search OER cleanup projects (VCP and E-Designation Program)
+      tags: [Cleanup Projects]
+      parameters:
+        - name: program
+          in: query
+          schema: { type: string, enum: [Voluntary Cleanup Program, E-Designation, Restrictive Declaration, City Environmental Quality Review (CEQR), Other] }
+        - name: phase
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/borough'
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of cleanup projects.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/cleanup-project.json' } }
+  /cleanup-projects/{oerProjectNumber}:
+    get:
+      operationId: getCleanupProject
+      summary: Get a cleanup project by OER Project Number
+      tags: [Cleanup Projects]
+      parameters:
+        - name: oerProjectNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The cleanup project.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/cleanup-project.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /cleanup-projects/{oerProjectNumber}/status:
+    get:
+      operationId: getRemediationStatus
+      summary: Get where a cleanup stands in the remedial process
+      description: >-
+        Returns the single "where does this cleanup stand?" answer — current remedial phase, the
+        determinations OER has issued (NNO / Notice to Proceed / Notice of Satisfaction), and whether the
+        site is far enough along for a building permit or certificate of occupancy. Today this can only be
+        reconstructed by reading documents in the EPIC portal. Referenced by the cross-agency
+        environmental-review workflow.
+      tags: [Cleanup Projects]
+      parameters:
+        - name: oerProjectNumber
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The remediation status.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/remediation-status.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /notices:
+    get:
+      operationId: listNotices
+      summary: List OER determinations (NNO / Notice to Proceed / Notice of Satisfaction)
+      tags: [Notices]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string, enum: [Notice to Proceed, Decision Document, Notice of No Objection, Notice of Satisfaction, Notice of Completion] }
+        - name: oerProjectNumber
+          in: query
+          schema: { type: string }
+        - name: bbl
+          in: query
+          schema: { type: string }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of issued determinations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/notice-to-proceed.json' } }
+
+  /notice-to-proceed-requests:
+    get:
+      operationId: listNoticeToProceedRequests
+      summary: List the authenticated applicant's Notice to Proceed / enrollment requests
+      description: Reads the applicant's own requests — today only visible inside the EPIC portal.
+      tags: [Requests]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [Submitted, Under Review, More Info Needed, Notice to Proceed Issued, Enrolled, Declined] }
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/perPage'
+      responses:
+        '200':
+          description: A page of the applicant's requests.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PageMeta'
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: '../schemas/notice-to-proceed-request.json' } }
+    post:
+      operationId: requestNoticeToProceed
+      summary: Request a Notice to Proceed / enroll a site in the cleanup program
+      description: >-
+        The net-new write surface — an OER-owned, agent-callable intake by which an owner or developer
+        requests OER's approval to proceed on a site: either enrolling a brownfield parcel in the City
+        Voluntary Cleanup Program, or requesting the Notice to Proceed / Decision Document (or Notice of
+        No Objection) that clears an (E)-designation or CEQR requirement so a building permit can be
+        issued. Replaces the manual EPIC-portal-and-email intake. This is a property-owner/B2G
+        transaction (no general citizen write in this domain) and mutates state. Referenced by the
+        cross-agency environmental-review workflow.
+      tags: [Requests]
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '../schemas/notice-to-proceed-request.json' }
+      responses:
+        '201':
+          description: Request submitted.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/notice-to-proceed-request.json' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /notice-to-proceed-requests/{requestId}:
+    get:
+      operationId: getNoticeToProceedRequest
+      summary: Get a Notice to Proceed / enrollment request
+      tags: [Requests]
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: The request.
+          content:
+            application/json:
+              schema: { $ref: '../schemas/notice-to-proceed-request.json' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    EnvironmentalSite: { $ref: '../schemas/environmental-site.json' }
+    EDesignation: { $ref: '../schemas/e-designation.json' }
+    CleanupProject: { $ref: '../schemas/cleanup-project.json' }
+    NoticeToProceed: { $ref: '../schemas/notice-to-proceed.json' }
+    RemediationStatus: { $ref: '../schemas/remediation-status.json' }
+    NoticeToProceedRequest: { $ref: '../schemas/notice-to-proceed-request.json' }
+    PageMeta:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            page: { type: integer }
+            perPage: { type: integer }
+            total: { type: integer }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+      required: [error]
+  parameters:
+    borough:
+      name: borough
+      in: query
+      schema: { type: string, enum: [Manhattan, Bronx, Brooklyn, Queens, Staten Island] }
+    q:
+      name: q
+      in: query
+      description: Free-text search.
+      schema: { type: string }
+    page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    perPage:
+      name: perPage
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }

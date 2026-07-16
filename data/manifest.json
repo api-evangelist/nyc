@@ -13554,6 +13554,281 @@
    ]
   },
   {
+   "id": "hdc",
+   "agency": "New York City Housing Development Corporation (HDC)",
+   "short": "NYC Housing Development Corp (HDC)",
+   "verb": "originate",
+   "platform": "www.nychdc.com on a commercial stack (Drupal 10 on Pantheon + Fastly CDN + nginx + Google Tag Manager/GA) \u2014 NOT the shared NYC.gov Livesite chassis, because HDC is a public benefit corporation. The systems that matter are elsewhere: an HDC Developer Intake Portal (no API), PDF term sheets, HPD's LIHTC datasets, OMB's Debt Issuance by Issuer, and the federal MSRB EMMA disclosure platform.",
+   "tagline": "A bond financier that owns no Open Data and no API at all \u2014 its development record is HPD's, its debt is OMB's, its investor disclosure is the federal MSRB's \u2014 while the one transaction it owns is an intake portal with no API.",
+   "accent": "#1f8f9e",
+   "netnew": "FinancingApplication \u2014 a developer submits a Developer Intake Form requesting HDC bond + subsidy financing under a program (New Construction/ELLA/Mix and Match/Preservation/PACT) for a development. A B2G/developer write; HDC is financier-facing, so there is no citizen write in this domain, and submission does not indicate acceptance.",
+   "findings": [
+    "HDC is a public benefit corporation and affordable-housing bond financier \u2014 one of the nation's largest municipal housing bond issuers. It lends to developers and borrows from bond investors; there is no citizen and no citizen transaction anywhere in the domain.",
+    "HDC owns NO NYC Open Data and NO API of any kind. Verified via the Socrata Discovery API: zero datasets are attributed to HDC. This is thinner than DDC (which owns four Socrata datasets) \u2014 HDC owns none.",
+    "HDC's machine-readable record is dispersed across three owners it does not control: HPD publishes the LIHTC award datasets (the 4% awards ARE HDC's tax-exempt-bond-financed deals), OMB publishes 'Debt Issuance by Issuer' (HDC appears only as an Issuer Name value), and HDC's investor disclosure lives on the FEDERAL MSRB EMMA platform as documents (Official Statements, financials, SDB annual reports).",
+    "HDC's own surfaces publish nothing structured: the website (Drupal 10 on Pantheon, Fastly CDN) is a marketing site with no content API (/developments and /where-we-fund return 404), the financing programs (New Construction, ELLA, Mix and Match, Preservation, PACT Preservation, Sustainable Development Bonds) exist only as HTML pages + PDF term sheets, and the one transaction HDC owns \u2014 the Developer Intake Portal \u2014 has no API.",
+    "Net-new write surface: apply for HDC bond + subsidy financing (FinancingApplication) by submitting a Developer Intake Form \u2014 the transaction that today lives only in HDC's Developer Intake Portal. NOTE: there is no citizen write for this agency; the honest write is B2G/developer, and (per HDC) submission does not indicate acceptance of a project proposal. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "www.nychdc.com",
+     "type": "informational site",
+     "owner": "HDC (Drupal 10 on Pantheon, Fastly CDN)",
+     "public": "html",
+     "note": "Content only \u2014 Find / Invest / Develop / Manage. No content API, no JSON. /developments and /where-we-fund return 404 (no map/locator API)."
+    },
+    {
+     "endpoint": "HDC Developer Intake Portal",
+     "type": "proposal submission",
+     "owner": "HDC",
+     "public": "login/contact-walled, no API",
+     "note": "The one HDC-owned transaction: 'All new project proposals must be submitted through HDC Developer Intake Portal.' Emits nothing machine-readable."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA) \u2014 HPD-labeled",
+     "type": "open data API",
+     "owner": "HPD (Socrata/Tyler)",
+     "public": "public; not HDC's",
+     "note": "HPD's LIHTC 4% award datasets (p8i7-ix2s, h9ws-rfd9) are HDC's bond-financed deals, but published under the HPD label, keyed on BBL/BIN."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us (SODA) \u2014 OMB-labeled",
+     "type": "open data API",
+     "owner": "OMB",
+     "public": "public; not HDC's",
+     "note": "Debt Issuance by Issuer (n5n4-5k5r) \u2014 HDC appears only as an 'Issuer Name' value among many issuers."
+    },
+    {
+     "endpoint": "emma.msrb.org (MSRB EMMA)",
+     "type": "investor disclosure",
+     "owner": "Federal (MSRB)",
+     "public": "public; documents",
+     "note": "HDC's primary disclosure surface \u2014 Official Statements, combined financial statements, SDB annual reports \u2014 as PDFs on a FEDERAL platform, outside NYC Open Data."
+    },
+    {
+     "endpoint": "googletagmanager.com / google-analytics.com",
+     "type": "analytics / tag management",
+     "owner": "Google",
+     "public": "vendor",
+     "note": "GTM + gtag on the site."
+    }
+   ],
+   "counts": {
+    "fruit": 6,
+    "opendata": 0,
+    "schemas": 5,
+    "openapiOps": 9,
+    "mcpTools": 9,
+    "entities": 5
+   },
+   "entities": [
+    "Development",
+    "FinancingProgram",
+    "BondIssue",
+    "Borrower",
+    "FinancingApplication"
+   ],
+   "files": {
+    "fruit": "hdc/fruit.json",
+    "opendata": "hdc/opendata-hdc.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-hdc.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/hdc.yaml",
+    "mcp": "mcp/hdc-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "HDC \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across New York City Housing Development Corporation (HDC) object schemas. HDC is the City's afforda"
+    },
+    {
+     "file": "schemas/bond-issue.json",
+     "title": "BondIssue",
+     "shared": false,
+     "desc": "A series of bonds issued by HDC to fund its lending \u2014 the investor-facing side of the corporation. HDC is one of the nation's largest munici"
+    },
+    {
+     "file": "schemas/borrower.json",
+     "title": "Borrower",
+     "shared": false,
+     "desc": "A developer/borrower doing business with HDC \u2014 the private, nonprofit, or joint-venture entity that borrows HDC bond + subsidy financing to "
+    },
+    {
+     "file": "schemas/development.json",
+     "title": "Development",
+     "shared": false,
+     "desc": "An affordable-housing development financed by HDC \u2014 the core unit of what HDC does. HDC pairs tax-exempt/taxable bonds with as-of-right 4% L"
+    },
+    {
+     "file": "schemas/financing-application.json",
+     "title": "FinancingApplication",
+     "shared": false,
+     "desc": "A developer's request for HDC bond + subsidy financing for an affordable-housing development \u2014 the net-new WRITE surface for this financier "
+    },
+    {
+     "file": "schemas/financing-program.json",
+     "title": "FinancingProgram",
+     "shared": false,
+     "desc": "An HDC financing program a developer can apply to \u2014 each defined by a published HDC (or joint HDC/HPD) term sheet PDF setting the loan struc"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/developments",
+     "op": "listDevelopments",
+     "summary": "List / search HDC-financed developments",
+     "tags": [
+      "Developments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/developments/{bbl}",
+     "op": "getDevelopment",
+     "summary": "Get an HDC-financed development by BBL",
+     "tags": [
+      "Developments"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/financing-programs",
+     "op": "listFinancingPrograms",
+     "summary": "List HDC financing programs",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/financing-programs/{programId}",
+     "op": "getFinancingProgram",
+     "summary": "Get a financing program (and its term sheet) by id",
+     "tags": [
+      "Programs"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/bond-issues",
+     "op": "listBondIssues",
+     "summary": "List HDC bond issues",
+     "tags": [
+      "Bonds"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/bond-issues/{seriesId}",
+     "op": "getBondIssue",
+     "summary": "Get an HDC bond issue by series id",
+     "tags": [
+      "Bonds"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/financing-applications",
+     "op": "listMyFinancingApplications",
+     "summary": "List the authenticated developer's financing applications",
+     "tags": [
+      "Financing"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/financing-applications",
+     "op": "applyForFinancing",
+     "summary": "Apply for HDC bond + subsidy financing",
+     "tags": [
+      "Financing"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/financing-applications/{applicationId}",
+     "op": "getFinancingStatus",
+     "summary": "Get the status of a submitted financing application",
+     "tags": [
+      "Financing"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_developments",
+     "title": "Find Developments",
+     "desc": "Search HDC-financed affordable-housing developments by borough, program, construction type, application year, BBL, or free text. Data reconciled from HPD's LIHT",
+     "write": false
+    },
+    {
+     "name": "get_development",
+     "title": "Get Development",
+     "desc": "Fetch a single HDC-financed development (program, units, affordability, borrower, geography) by BBL.",
+     "write": false
+    },
+    {
+     "name": "find_financing_programs",
+     "title": "Find Financing Programs",
+     "desc": "List HDC financing programs (New Construction, ELLA, Mix and Match, Preservation, PACT Preservation, Sustainable Development Bonds) with their published term sh",
+     "write": false
+    },
+    {
+     "name": "get_financing_program",
+     "title": "Get Financing Program",
+     "desc": "Fetch an HDC financing program and its term-sheet terms (LTV/LTC caps, DSCR, affordability) by program id.",
+     "write": false
+    },
+    {
+     "name": "find_bond_issues",
+     "title": "Find Bond Issues",
+     "desc": "Search HDC bond issues (Housing Revenue Bonds, Sustainable Development Bonds) by type, sustainability flag, or date. Note: primary investor disclosure lives on ",
+     "write": false
+    },
+    {
+     "name": "get_bond_issue",
+     "title": "Get Bond Issue",
+     "desc": "Fetch an HDC bond series (par amounts, ratings, Official Statement / EMMA disclosure links) by series id.",
+     "write": false
+    },
+    {
+     "name": "list_my_financing_applications",
+     "title": "List My Financing Applications",
+     "desc": "List the authenticated developer's own HDC financing applications and their status \u2014 today visible only inside HDC's Developer Intake Portal.",
+     "write": false
+    },
+    {
+     "name": "get_financing_status",
+     "title": "Get Financing Status",
+     "desc": "Get the review status of a submitted HDC financing application (Developer Intake Form) by application id.",
+     "write": false
+    },
+    {
+     "name": "apply_for_financing",
+     "title": "Apply for HDC Financing",
+     "desc": "Submit a Developer Intake Form requesting HDC bond + subsidy financing under a program (New Construction, ELLA, Mix and Match, Preservation, PACT). NET-NEW work",
+     "write": true
+    }
+   ]
+  },
+  {
    "id": "hhc",
    "agency": "NYC Health + Hospitals (H+H)",
    "short": "NYC Health + Hospitals",
@@ -15920,6 +16195,307 @@
    ]
   },
   {
+   "id": "moer",
+   "agency": "New York City Mayor's Office of Environmental Remediation (MOER/OER)",
+   "short": "NYC Environmental Remediation (OER)",
+   "verb": "expose",
+   "platform": "Three surfaces: an informational site on the NYC.gov shared 'Livesite' platform (Akamai + nginx + AWS ALB + Dynatrace + Webtrends); the public SPEED map (CARTO/cartodb.js + Leaflet, on Google Cloud, a JSONP feed rather than an API); and OER's own login-walled EPIC project portal (Microsoft-IIS/10.0 + ASP.NET 4.0 + AngularJS) where the remedial workflow is trapped. Open data is on Socrata; the authoritative (E)-designation inventory is published by DCP, not OER.",
+   "tagline": "An agency whose cleanup data is open and even daily, but whose whole regulatory workflow is trapped in a login-walled legacy portal \u2014 and whose authoritative (E)-designation inventory is published by another agency.",
+   "accent": "#b56a35",
+   "netnew": "NoticeToProceedRequest \u2014 an owner/developer requests a Notice to Proceed (or enrolls a brownfield site in the Voluntary Cleanup Program) to proceed on a contaminated or (E)/CEQR-designated parcel. A B2G write, today a manual EPIC-portal-and-email intake; OER serves owners/developers, so there is no general citizen write in this domain.",
+   "findings": [
+    "OER's reference data is genuinely open and, at its core, LIVE. The flagship 'OER Cleanup Sites' dataset (3279-pp7v) is updated Daily and carries a full BBL/BIN geography spine, and the public SPEED map (Searchable Property Environmental E-Designation) lets anyone look up a parcel. 10 OER-labeled Open Data datasets in all.",
+    "But there is NO OER-owned REST API. The data reaches consumers only as Socrata dataset IDs plus SPEED, a CARTO/Leaflet map (not a documented API). SPEED fronts a CARTO SQL backend via a JSONP clientData.json feed an agent cannot reliably call.",
+    "The multi-step regulatory workflow is trapped in OER's own login-walled EPIC portal (a002-epic.nyc.gov, Microsoft-IIS/ASP.NET/AngularJS). The OER Remedial Process, the determinations OER issues (Notice to Proceed / Decision Document, Notice of Satisfaction / Completion, Notice of No Objection), and live cleanup status are invisible to machines. Unlike DDC, OER OWNS this system \u2014 the gap is that it's a legacy portal with no API.",
+    "The authoritative (E)-designation inventory is published under the DEPARTMENT OF CITY PLANNING (DCP) label (hxm3-23vy, mzjp-98aw, jsrs-ggnx), not OER \u2014 even though OER is the office that administers RESOLVING the (E) requirement. The most-viewed E-designation asset (8,989 views) is DCP's.",
+    "Net-new write surface: request a Notice to Proceed / enroll a brownfield site in the Voluntary Cleanup Program (NoticeToProceedRequest) \u2014 a B2G / property-owner transaction that today runs manually through the EPIC portal and email with OER project managers. There is no general citizen write in this domain. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "10 OER datasets. Flagship 'OER Cleanup Sites' (3279-pp7v) updated Daily with a full BBL/BIN spine; plus Historic Land Use, Clean Soil Bank, and the six-layer BOA brownfield planning suite. The one strong, live OER data surface \u2014 but it is a dataset, not an OER API."
+    },
+    {
+     "endpoint": "speed.cityofnewyork.us (SPEED)",
+     "type": "public map app",
+     "owner": "OER (hosted on Google Cloud)",
+     "public": "public UI, no documented API",
+     "note": "Searchable Property Environmental E-Designation. CARTO (cartodb.js v3.15) + Leaflet front-end; pulls a JSONP /clientData.json?callback=__getData feed carrying a CARTO apiKey. Useful to humans, not callable as an API by an agent."
+    },
+    {
+     "endpoint": "a002-epic.nyc.gov (EPIC)",
+     "type": "project portal",
+     "owner": "OER",
+     "public": "login-walled, no API",
+     "note": "Environmental Project Information Center \u2014 Microsoft-IIS/10.0 + ASP.NET 4.0 + AngularJS, authenticated. Where the remedial process, documents, and OER determinations live. OER-owned but no machine-readable surface."
+    },
+    {
+     "endpoint": "data.cityofnewyork.us \u2014 E-Designations (hxm3-23vy, mzjp-98aw, jsrs-ggnx)",
+     "type": "open data API",
+     "owner": "NYC Department of City Planning (DCP)",
+     "public": true,
+     "note": "The authoritative (E)-designation inventory \u2014 published under the DCP label, updated Monthly. OER administers resolving the (E) requirement but does not own this data."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/oer",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "Content only; Akamai edge, nginx, AWS ALB, Dynatrace, Webtrends. No content API. Returns Akamai 403 to non-browser agents."
+    }
+   ],
+   "counts": {
+    "fruit": 9,
+    "opendata": 12,
+    "schemas": 6,
+    "openapiOps": 11,
+    "mcpTools": 10,
+    "entities": 6
+   },
+   "entities": [
+    "EnvironmentalSite",
+    "EDesignation",
+    "CleanupProject",
+    "NoticeToProceed",
+    "RemediationStatus",
+    "NoticeToProceedRequest"
+   ],
+   "files": {
+    "fruit": "moer/fruit.json",
+    "opendata": "moer/opendata-moer.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-moer.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/moer.yaml",
+    "mcp": "mcp/moer-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "MOER/OER \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Mayor's Office of Environmental Remediation (MOER/OER) object schemas. Reconciles fields "
+    },
+    {
+     "file": "schemas/cleanup-project.json",
+     "title": "CleanupProject",
+     "shared": false,
+     "desc": "A land-cleanup project enrolled in one of OER's two remedial programs \u2014 the City Voluntary Cleanup Program (VCP) or the E-Designation/Restri"
+    },
+    {
+     "file": "schemas/e-designation.json",
+     "title": "EDesignation",
+     "shared": false,
+     "desc": "An (E)-designation (or its Restrictive Declaration equivalent) carried by a property as a consequence of a zoning action or City Environment"
+    },
+    {
+     "file": "schemas/environmental-site.json",
+     "title": "EnvironmentalSite",
+     "shared": false,
+     "desc": "A property tracked by the NYC Mayor's Office of Environmental Remediation \u2014 a parcel enrolled in one of OER's cleanup programs (Voluntary Cl"
+    },
+    {
+     "file": "schemas/notice-to-proceed-request.json",
+     "title": "NoticeToProceedRequest",
+     "shared": false,
+     "desc": "The net-new WRITE surface for OER. An owner or developer requests OER approval to proceed on a site \u2014 either enrolling a brownfield parcel i"
+    },
+    {
+     "file": "schemas/notice-to-proceed.json",
+     "title": "NoticeToProceed",
+     "shared": false,
+     "desc": "A Notice to Proceed / Decision Document ISSUED BY OER \u2014 the determination, at the 'Notice To Proceed/Decision Document' step of the OER Reme"
+    },
+    {
+     "file": "schemas/remediation-status.json",
+     "title": "RemediationStatus",
+     "shared": false,
+     "desc": "The current position of an OER cleanup project within the documented remedial process, plus the determinations issued so far. This is the ob"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/sites",
+     "op": "listEnvironmentalSites",
+     "summary": "List / search OER environmental sites",
+     "tags": [
+      "Sites"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/sites/{oerProjectNumber}",
+     "op": "getEnvironmentalSite",
+     "summary": "Get an environmental site by OER Project Number",
+     "tags": [
+      "Sites"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/e-designations",
+     "op": "listEDesignations",
+     "summary": "List / search (E)-designations and Restrictive Declarations",
+     "tags": [
+      "E-Designations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/e-designations/{eNumber}",
+     "op": "getEDesignation",
+     "summary": "Get an (E)-designation by its number",
+     "tags": [
+      "E-Designations"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/cleanup-projects",
+     "op": "listCleanupProjects",
+     "summary": "List / search OER cleanup projects (VCP and E-Designation Program)",
+     "tags": [
+      "Cleanup Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/cleanup-projects/{oerProjectNumber}",
+     "op": "getCleanupProject",
+     "summary": "Get a cleanup project by OER Project Number",
+     "tags": [
+      "Cleanup Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/cleanup-projects/{oerProjectNumber}/status",
+     "op": "getRemediationStatus",
+     "summary": "Get where a cleanup stands in the remedial process",
+     "tags": [
+      "Cleanup Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/notices",
+     "op": "listNotices",
+     "summary": "List OER determinations (NNO / Notice to Proceed / Notice of Satisfaction)",
+     "tags": [
+      "Notices"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/notice-to-proceed-requests",
+     "op": "listNoticeToProceedRequests",
+     "summary": "List the authenticated applicant's Notice to Proceed / enrollment requests",
+     "tags": [
+      "Requests"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/notice-to-proceed-requests",
+     "op": "requestNoticeToProceed",
+     "summary": "Request a Notice to Proceed / enroll a site in the cleanup program",
+     "tags": [
+      "Requests"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/notice-to-proceed-requests/{requestId}",
+     "op": "getNoticeToProceedRequest",
+     "summary": "Get a Notice to Proceed / enrollment request",
+     "tags": [
+      "Requests"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_environmental_sites",
+     "title": "Find Environmental Sites",
+     "desc": "Search OER-tracked environmental sites (the daily OER Cleanup Sites feed and the SPEED map) by borough, program, phase, BBL, and/or free text.",
+     "write": false
+    },
+    {
+     "name": "get_environmental_site",
+     "title": "Get Environmental Site",
+     "desc": "Fetch a single OER environmental site (program, phase, address, BBL/BIN, document repository) by OER Project Number.",
+     "write": false
+    },
+    {
+     "name": "find_e_designations",
+     "title": "Find E-Designations",
+     "desc": "Answer 'Do I have an E?' \u2014 look up (E)-designations and Restrictive Declarations (hazmat/noise/air) on a property by BBL. NOTE: the authoritative inventory is p",
+     "write": false
+    },
+    {
+     "name": "get_e_designation",
+     "title": "Get E-Designation",
+     "desc": "Fetch a single (E)-designation / Restrictive Declaration by its (E) number.",
+     "write": false
+    },
+    {
+     "name": "find_cleanup_projects",
+     "title": "Find Cleanup Projects",
+     "desc": "Search OER cleanup projects (Voluntary Cleanup Program and E-Designation Program) by program, phase, borough, BBL, or free text.",
+     "write": false
+    },
+    {
+     "name": "get_cleanup_project",
+     "title": "Get Cleanup Project",
+     "desc": "Fetch a single OER cleanup project (program, phase, volunteer/consultant, (E)-designation cleared) by OER Project Number.",
+     "write": false
+    },
+    {
+     "name": "get_remediation_status",
+     "title": "Get Remediation Status",
+     "desc": "Return where a cleanup stands in the OER remedial process \u2014 current phase, the determinations issued (Notice of No Objection, Notice to Proceed, Notice of Satis",
+     "write": false
+    },
+    {
+     "name": "find_notices",
+     "title": "Find Notices",
+     "desc": "List OER determinations issued on sites \u2014 Notice of No Objection, Notice to Proceed / Decision Document, Notice of Satisfaction \u2014 by type, OER Project Number, o",
+     "write": false
+    },
+    {
+     "name": "list_my_notice_to_proceed_requests",
+     "title": "List My Notice to Proceed Requests",
+     "desc": "List the authenticated applicant's own Notice to Proceed / VCP enrollment requests and their status \u2014 today visible only inside the EPIC portal.",
+     "write": false
+    },
+    {
+     "name": "request_notice_to_proceed",
+     "title": "Request Notice to Proceed",
+     "desc": "Request OER approval to proceed on a site \u2014 enroll a brownfield parcel in the Voluntary Cleanup Program, or request the Notice to Proceed / Decision Document (o",
+     "write": true
+    }
+   ]
+  },
+  {
    "id": "mome",
    "agency": "NYC Mayor's Office of Media & Entertainment (MOME)",
    "short": "NYC Media & Entertainment (MOME)",
@@ -17665,6 +18241,308 @@
      "title": "Find 311 Service Requests",
      "desc": "Query the citywide 311 service-request pipeline OTI operates (the single most-viewed dataset in NYC Open Data) by borough, agency, problem type, status, channel",
      "write": false
+    }
+   ]
+  },
+  {
+   "id": "pdc",
+   "agency": "New York City Public Design Commission (PDC)",
+   "short": "NYC Public Design Commission (PDC)",
+   "verb": "digitize",
+   "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace + AWS ALB) for the informational site; 3 NYC Open Data (Socrata SODA) datasets for the review log and public-art collection; the core transaction \u2014 submitting a project for design review \u2014 is a manual PDF application form emailed by a City agency liaison, with no portal and no API.",
+   "tagline": "The City's design-review agency reviews every permanent design and artwork on City-owned property \u2014 yet the act of submitting one is still a PDF form and an email.",
+   "accent": "#6a5a9a",
+   "netnew": "DesignSubmission \u2014 a City agency (via its PDC liaison) submits a project for design review (category, requested level of review, lead + secondary agencies, Community Board / Council District, interagency approvals, and attachments). A B2G write; PDC is agency-facing, so there is no citizen write in this domain.",
+   "findings": [
+    "PDC is the City's design-review agency (NYC Charter Chapter 37) \u2014 11 pro-bono members who meet monthly to review and vote on permanent architecture, landscape architecture, and art proposed on or over City-owned property. It is also caretaker and curator of the City's public art collection and archive.",
+    "PDC is agency-facing, not citizen-facing: only a City agency with jurisdiction over the property may submit a project; an artist or community works through the sponsoring agency (Parks, DOT, EDC, etc.). There is no citizen and no citizen transaction anywhere in the domain.",
+    "PDC exposes NO API of its own. Its only machine-readable data is 3 NYC Open Data datasets (Socrata SODA): the Monthly Design Review log (current to 2026), the Annual Report roll-up, and a rich 43-column Outdoor Public Art Inventory (frozen since 2021).",
+    "The meeting calendar/agendas/minutes, the commissioners, and the Awards for Excellence in Design are published only as HTML/PDF \u2014 no Open Data twin.",
+    "The core transaction \u2014 submitting a project for design review \u2014 is not even a system. It is a signed PDF application form and checklist emailed by the City agency's PDC liaison by the submission deadline, with paper hard copies delivered to City Hall. There is no portal (unlike LPC's Salesforce Portico) and no submission API.",
+    "Net-new write surface: an agency submits a project for design review (DesignSubmission) \u2014 a B2G transaction that today is a manual PDF/email transmittal. NOTE: there is no citizen write for this agency. See tech-stack.md and apis-observed.md."
+   ],
+   "apis_observed": [
+    {
+     "endpoint": "data.cityofnewyork.us (SODA)",
+     "type": "open data API",
+     "owner": "NYC (Socrata/Tyler)",
+     "public": true,
+     "note": "The 3 PDC-attributed datasets: Monthly Design Review (tfrc-rjtr, 10c, current), Annual Report (5fsv-ze7v, 12c), Outdoor Public Art Inventory (2pg3-gcaa, 43c, frozen at 2021). SODA /resource/<id>.json endpoints. The one real, open PDC data surface."
+    },
+    {
+     "endpoint": "project submission (email + PDF application form)",
+     "type": "manual intake",
+     "owner": "PDC",
+     "public": "not a system \u2014 no portal, no API",
+     "note": "A signed PDF application form + category checklist emailed by the City agency's PDC liaison by the 12:00pm deadline; hard copies delivered to City Hall. No upload API, no structured record. The net-new write."
+    },
+    {
+     "endpoint": "www.nyc.gov/site/designcommission",
+     "type": "informational site",
+     "owner": "NYC.gov shared platform (Livesite)",
+     "public": "html",
+     "note": "Content only \u2014 About, Design Review, Publications, Awards, Archive. No content API. Akamai edge, nginx, Dynatrace RUM, AWS ALB. Bot UA -> 403 (AkamaiGHost); browser UA -> 200."
+    },
+    {
+     "endpoint": "a836-acris.nyc.gov (ACRIS)",
+     "type": "property records",
+     "owner": "NYC DOF",
+     "public": "public",
+     "note": "Linked from the site so applicants can confirm which agency has jurisdiction over a parcel. Not PDC-owned."
+    },
+    {
+     "endpoint": "youtube.com / MS Teams",
+     "type": "video / conferencing",
+     "owner": "Google / Microsoft",
+     "public": "vendor",
+     "note": "Meetings livestreamed on YouTube; remote participation and testimony via Teams. Not data surfaces."
+    }
+   ],
+   "counts": {
+    "fruit": 6,
+    "opendata": 3,
+    "schemas": 6,
+    "openapiOps": 11,
+    "mcpTools": 10,
+    "entities": 6
+   },
+   "entities": [
+    "DesignProject",
+    "CollectionItem",
+    "ReviewMeeting",
+    "Commissioner",
+    "DesignAward",
+    "DesignSubmission"
+   ],
+   "files": {
+    "fruit": "pdc/fruit.json",
+    "opendata": "pdc/opendata-pdc.json",
+    "docs": [
+     "apis-observed.md",
+     "crosswalk.md",
+     "low-hanging-fruit.md",
+     "opendata-pdc.md",
+     "tech-stack.md"
+    ],
+    "openapi": "openapi/pdc.yaml",
+    "mcp": "mcp/pdc-mcp.json"
+   },
+   "schemas": [
+    {
+     "file": "schemas/_common.json",
+     "title": "PDC \u2014 Shared Definitions",
+     "shared": true,
+     "desc": "Reusable JSON Schema definitions shared across NYC Public Design Commission (PDC) object schemas. Reconciles fields common to the three PDC "
+    },
+    {
+     "file": "schemas/collection-item.json",
+     "title": "CollectionItem",
+     "shared": false,
+     "desc": "A work in the City's public art and monument collection, of which PDC is caretaker and curator. Canonical schema for the 'Public Design Comm"
+    },
+    {
+     "file": "schemas/commissioner.json",
+     "title": "Commissioner",
+     "shared": false,
+     "desc": "A member of the Public Design Commission. The Commission is made up of 11 members who serve pro bono and meet once a month to review and vot"
+    },
+    {
+     "file": "schemas/design-award.json",
+     "title": "DesignAward",
+     "shared": false,
+     "desc": "An Annual Awards for Excellence in Design recipient. Each year the Public Design Commission recognizes outstanding City capital projects and"
+    },
+    {
+     "file": "schemas/design-project.json",
+     "title": "DesignProject",
+     "shared": false,
+     "desc": "A project submitted by a City agency and reviewed by the Public Design Commission \u2014 the core unit of PDC. Canonical schema reconciling the t"
+    },
+    {
+     "file": "schemas/design-submission.json",
+     "title": "DesignSubmission",
+     "shared": false,
+     "desc": "A City agency (or its design consultant, via the agency's PDC liaison) submitting a project for Public Design Commission design review \u2014 the"
+    },
+    {
+     "file": "schemas/review-meeting.json",
+     "title": "ReviewMeeting",
+     "shared": false,
+     "desc": "A monthly Public Design Commission meeting and its agenda. PDC meets once a month; a typical meeting is a morning Committee Meeting followed"
+    }
+   ],
+   "openapiOps": [
+    {
+     "method": "GET",
+     "path": "/projects",
+     "op": "listProjects",
+     "summary": "List / search reviewed projects",
+     "tags": [
+      "Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/projects/{projectId}",
+     "op": "getProject",
+     "summary": "Get a reviewed project by PROJECT_ID",
+     "tags": [
+      "Projects"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/meetings",
+     "op": "listMeetings",
+     "summary": "List Commission meetings with agendas",
+     "tags": [
+      "Meetings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/meetings/{meetingId}",
+     "op": "getMeeting",
+     "summary": "Get a meeting and its agenda by id (date)",
+     "tags": [
+      "Meetings"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/collection",
+     "op": "listCollectionItems",
+     "summary": "Search the City's public art & monument collection",
+     "tags": [
+      "Collection"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/collection/{title}",
+     "op": "getCollectionItem",
+     "summary": "Get a collection item by title",
+     "tags": [
+      "Collection"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/commissioners",
+     "op": "listCommissioners",
+     "summary": "List the Commission's members",
+     "tags": [
+      "Commissioners"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/awards",
+     "op": "listAwards",
+     "summary": "List Awards for Excellence in Design recipients",
+     "tags": [
+      "Awards"
+     ],
+     "write": false
+    },
+    {
+     "method": "GET",
+     "path": "/submissions",
+     "op": "listSubmissions",
+     "summary": "List the authenticated agency's design-review submissions",
+     "tags": [
+      "Submissions"
+     ],
+     "write": false
+    },
+    {
+     "method": "POST",
+     "path": "/submissions",
+     "op": "submitDesignReview",
+     "summary": "Submit a project for Public Design Commission design review",
+     "tags": [
+      "Submissions"
+     ],
+     "write": true
+    },
+    {
+     "method": "GET",
+     "path": "/submissions/{submissionId}",
+     "op": "getDesignReviewStatus",
+     "summary": "Get the status of a design-review submission",
+     "tags": [
+      "Submissions"
+     ],
+     "write": false
+    }
+   ],
+   "mcpTools": [
+    {
+     "name": "find_projects",
+     "title": "Find Projects",
+     "desc": "Search projects reviewed by the Public Design Commission by borough, project type, level of review, action (consent/public hearing), result, agency, year, and/o",
+     "write": false
+    },
+    {
+     "name": "get_project",
+     "title": "Get Project",
+     "desc": "Fetch a reviewed project (title, type, level of review, action, result, construction type, agencies, meeting date) by PROJECT_ID.",
+     "write": false
+    },
+    {
+     "name": "find_meetings",
+     "title": "Find Meetings",
+     "desc": "List Public Design Commission meetings and their agendas by date range or kind (Committee Meeting, Public Meeting, Public Hearing). Reverse-engineered from the ",
+     "write": false
+    },
+    {
+     "name": "get_meeting",
+     "title": "Get Meeting",
+     "desc": "Fetch a single Commission meeting and its agenda items (consent items and public hearings) by id (date).",
+     "write": false
+    },
+    {
+     "name": "search_collection",
+     "title": "Search Collection",
+     "desc": "Search the City's public art & monument collection PDC curates (Outdoor Public Art Inventory) by borough, artwork type, material, artist, or managing agency.",
+     "write": false
+    },
+    {
+     "name": "get_collection_item",
+     "title": "Get Collection Item",
+     "desc": "Fetch a single work in the City's public art & monument collection (title, creators, material, location, inscription, dates) by title.",
+     "write": false
+    },
+    {
+     "name": "list_commissioners",
+     "title": "List Commissioners",
+     "desc": "List the 11 pro-bono members of the Public Design Commission and the statutory seats they fill (architect, landscape architect, painter, sculptor, lay members, ",
+     "write": false
+    },
+    {
+     "name": "find_awards",
+     "title": "Find Awards",
+     "desc": "List Awards for Excellence in Design recipients by year, cycle, or borough.",
+     "write": false
+    },
+    {
+     "name": "list_my_submissions",
+     "title": "List My Submissions",
+     "desc": "List the authenticated City agency's own design-review submissions and their status \u2014 today visible only inside PDC's manual intake.",
+     "write": false
+    },
+    {
+     "name": "submit_design_review",
+     "title": "Submit Design Review",
+     "desc": "Submit a project to the Public Design Commission for design review (architecture, landscape architecture, or art on/over City-owned property). NET-NEW workflow ",
+     "write": true
     }
    ]
   },

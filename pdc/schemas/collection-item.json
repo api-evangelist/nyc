@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pdc/schemas/collection-item.json",
+  "title": "CollectionItem",
+  "description": "A work in the City's public art and monument collection, of which PDC is caretaker and curator. Canonical schema for the 'Public Design Commission Outdoor Public Art Inventory' dataset (2pg3-gcaa, 43 columns) — City-owned monuments, memorials, artworks, and markers installed outdoors on City-owned property. Carries title, artist/architect/landscape-architect credits, material, artwork type, location, managing agency, dedication/creation dates, inscription, and Block/Lot + latitude/longitude for geolocation.",
+  "type": "object",
+  "x-source": {
+    "opendata": "https://data.cityofnewyork.us/d/2pg3-gcaa",
+    "site_archive": "https://www.nyc.gov/site/designcommission/archive/archive.page",
+    "site_conservation": "https://www.nyc.gov/site/designcommission/design-review/design-review.page"
+  },
+  "properties": {
+    "title": { "type": "string", "description": "'Title' — primary title of the work." },
+    "alternateTitle": { "type": ["string", "null"], "description": "'Alternate Title'." },
+    "artworkType1": { "type": ["string", "null"], "description": "'Artwork Type1' — primary form (e.g. Bust, Statue, Bas-relief, Column, Fountain, Flagpole, Plaque, Arch)." },
+    "artworkType2": { "type": ["string", "null"], "description": "'Artwork Type2' — secondary classification (e.g. Monument/Memorial)." },
+    "material": { "type": ["string", "null"], "description": "'Material' — e.g. Bronze, Marble, Granite." },
+    "creators": {
+      "type": "array",
+      "description": "People/organizations credited on the work — reconciled from the primary/secondary artist, primary/secondary architect, landscape architect, architecture firm, foundry, and fabricator columns.",
+      "items": { "$ref": "_common.json#/$defs/Creator" }
+    },
+    "artistsKeyword": { "type": ["string", "null"], "description": "'Artists Keyword' — free-text artist keyword search field." },
+    "subjectKeyword": { "type": ["string", "null"], "description": "'Subject Keyword' — subject/theme keywords." },
+    "dateCreated": { "type": ["string", "null"], "description": "'Date Created'." },
+    "dateCreatedApproximation": { "type": ["boolean", "null"], "description": "'Date Created_Approximation' — Y/N flag for whether the creation date is approximate." },
+    "dateDedicated": { "type": ["string", "null"], "description": "'Date Dedicated'." },
+    "dateDedicatedApproximation": { "type": ["boolean", "null"], "description": "'Date Dedicated_Approximation?' — Y/N flag for whether the dedication date is approximate." },
+    "acquisition": { "type": ["string", "null"], "description": "'Acquisition' — how the City acquired the work (e.g. gift, commission)." },
+    "inscription": { "type": ["string", "null"], "description": "'Inscription' — transcribed text on the work." },
+    "locationName": { "type": ["string", "null"], "description": "'Location Name' — park, plaza, or building where the work is sited (e.g. Flushing Meadows Corona Park)." },
+    "managingCityAgency": {
+      "$ref": "_common.json#/$defs/AgencyReference",
+      "description": "'Managing City Agency' — the agency responsible for the work's day-to-day custody/maintenance (often Parks or DOT)."
+    },
+    "pdcRecords": { "type": ["string", "null"], "description": "'PDC Records' — reference(s) to PDC's own archive records for the work." },
+    "address": { "$ref": "_common.json#/$defs/Address" },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "bbl": { "$ref": "_common.json#/$defs/BBL" },
+    "block": { "type": ["string", "null"], "description": "'Block' — tax block of the parcel the work sits on." },
+    "lot": { "type": ["string", "null"], "description": "'Lot #' — tax lot of the parcel." },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["title"],
+  "additionalProperties": false
+}

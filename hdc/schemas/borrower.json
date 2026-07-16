@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hdc/schemas/borrower.json",
+  "title": "Borrower",
+  "description": "A developer/borrower doing business with HDC — the private, nonprofit, or joint-venture entity that borrows HDC bond + subsidy financing to build or preserve affordable housing, and that submits the Developer Intake Form. HDC has no structured borrower dataset; borrower identity is derivable only from the 'Applicant Name'/'Applicant Address' fields of HPD's LIHTC project-level datasets (the 4% deals financed through HDC). This schema models the borrower as a first-class party.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nychdc.com/develop",
+    "opendata_adjacent": "https://data.cityofnewyork.us/d/p8i7-ix2s",
+    "opendata_owned": null,
+    "opendata_gap": true,
+    "note": "Borrower identity is derived from the 'Applicant Name' field of HPD's LIHTC 4% project-level dataset; HDC publishes no borrower directory."
+  },
+  "allOf": [
+    { "$ref": "_common.json#/$defs/OrganizationReference" }
+  ],
+  "properties": {
+    "name": { "type": "string", "description": "Borrower / developer organization name ('Applicant Name')." },
+    "kind": { "type": ["string", "null"], "enum": ["For-Profit Developer", "Nonprofit Developer", "Joint Venture", "HDFC", "Other", null], "description": "Type of development entity." },
+    "mwbe": { "type": ["boolean", "null"], "description": "Minority/Women-Owned Business Enterprise designation, where known." },
+    "contact": { "$ref": "_common.json#/$defs/ContactPoint" },
+    "developments": {
+      "type": "array",
+      "items": { "$ref": "_common.json#/$defs/DevelopmentReference" },
+      "description": "Developments this borrower has financed with HDC (derived)."
+    }
+  },
+  "required": ["name"],
+  "additionalProperties": true
+}

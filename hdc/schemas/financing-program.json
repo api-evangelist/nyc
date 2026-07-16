@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hdc/schemas/financing-program.json",
+  "title": "FinancingProgram",
+  "description": "An HDC financing program a developer can apply to — each defined by a published HDC (or joint HDC/HPD) term sheet PDF setting the loan structure, LTV/LTC caps, DSCR, subordinate-debt terms, and affordability requirements. Verified from nychdc.com/develop and the term-sheet PDFs (New Construction, ELLA, Mix and Match, Preservation, PACT Preservation, Sustainable Development Bonds). There is NO machine-readable program catalog today — the programs exist only as HTML pages and PDF term sheets. This schema models the program as a first-class, referenceable resource.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nychdc.com/develop",
+    "term_sheet_new_construction": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hdc-nc-term-sheet.pdf",
+    "term_sheet_ella": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/ella-term-sheet-hdc.pdf",
+    "term_sheet_mix_and_match": "https://www.nychdc.com/sites/default/files/2020-09/HDC%20Mix%20and%20Match%20Term%20Sheet.pdf",
+    "term_sheet_pact": "https://www.nychdc.com/sites/default/files/2021-07/HDC%20NYCHA%20Preservation%20Term%20Sheet.FINAL_.pdf",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "programId": { "type": "string", "description": "Stable slug for the program (e.g. 'new-construction', 'ella', 'mix-and-match', 'preservation', 'pact-preservation')." },
+    "name": { "type": "string", "description": "Program name as published (e.g. 'New Construction Program', 'ELLA', 'Mix and Match', 'Preservation Program', 'PACT Preservation Program')." },
+    "type": { "$ref": "_common.json#/$defs/FinancingProgramType" },
+    "description": { "type": ["string", "null"], "description": "What the program funds — e.g. 'Tax-exempt bonds and as-of-right 4% Low-Income Housing Tax Credits used with HDC's corporate reserves to create low, middle and moderate income housing.'" },
+    "termSheetUrl": { "type": ["string", "null"], "format": "uri", "description": "URL of the current published term sheet PDF." },
+    "termSheetVersion": { "type": ["string", "null"], "description": "Term-sheet version/date, e.g. '2024 Preservation Term Sheet'." },
+    "eligibleConstructionTypes": {
+      "type": "array",
+      "items": { "$ref": "_common.json#/$defs/ConstructionType" },
+      "description": "Whether the program funds new construction, rehabilitation, and/or preservation."
+    },
+    "affordability": { "$ref": "_common.json#/$defs/AMIBand" },
+    "maxLtv": { "type": ["number", "null"], "description": "Maximum Loan-to-Value, where the term sheet states one (e.g. 0.85 for Mix and Match, 0.80 for ELLA)." },
+    "maxLtc": { "type": ["number", "null"], "description": "Maximum Loan-to-Cost, where stated (e.g. 0.90 overall for ELLA)." },
+    "minDscr": { "type": ["number", "null"], "description": "Minimum Debt Service Coverage Ratio, where stated (e.g. 1.15 for ELLA)." },
+    "usesTaxExemptBonds": { "type": ["boolean", "null"], "description": "Whether the program uses tax-exempt bond financing (and thus as-of-right 4% LIHTC)." },
+    "uses4PercentLIHTC": { "type": ["boolean", "null"], "description": "Whether the program pairs with as-of-right 4% Low-Income Housing Tax Credits." }
+  },
+  "required": ["programId", "name"],
+  "additionalProperties": false
+}

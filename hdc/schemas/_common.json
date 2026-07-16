@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hdc/schemas/_common.json",
+  "title": "HDC — Shared Definitions",
+  "description": "Reusable JSON Schema definitions shared across New York City Housing Development Corporation (HDC) object schemas. HDC is the City's affordable-housing bond financier — a public benefit corporation that issues tax-exempt/taxable bonds and pairs them with 4% Low-Income Housing Tax Credits and its own corporate reserves to finance affordable multifamily development. HDC owns NO NYC Open Data and NO API; its record is dispersed across sibling/citywide/federal systems: HPD publishes the LIHTC award datasets (the 4% awards ARE HDC's bond-financed deals), OMB publishes 'Debt Issuance by Issuer' (HDC appears only as an Issuer Name value), and HDC's bond disclosure to investors lives on the FEDERAL MSRB EMMA platform as documents. These defs reconcile the property spine those systems carry (BBL/BIN, borough, geography) with HDC's own financing concepts (program, term sheet, bond series). Geography/identifier/party/money defs are $ref'd from nyc-commons; agency-specific defs remain local.",
+  "x-nyc-commons": {
+    "role": "consumer",
+    "source": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/nyc-commons.json",
+    "version": "0.1.0",
+    "note": "Geography/identifier/party/money definitions are $ref'd from the canonical nyc-commons set; HDC-specific financing definitions remain local."
+  },
+  "$defs": {
+    "Borough": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Borough",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Borough). The HPD LIHTC datasets that carry HDC's financed developments spell this as 'Project Borough' / 'Applicant Borough'."
+    },
+    "Coordinates": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/Coordinates",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/Coordinates); the LIHTC project-level datasets carry Latitude/Longitude."
+    },
+    "Geography": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/geography.json#/$defs/GeographySpine",
+      "$comment": "Canonical definition provided by nyc-commons (geography.json#/$defs/GeographySpine); the LIHTC project-level datasets carry Community Board, Council District, Census Tract, and NTA."
+    },
+    "BBL": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/identifiers.json#/$defs/BBL",
+      "$comment": "Canonical BBL from nyc-commons. Present on the HPD LIHTC project-level datasets — the join key that ties an HDC-financed development to Buildings/Finance/Housing records citywide."
+    },
+    "BIN": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/identifiers.json#/$defs/BIN",
+      "$comment": "Canonical BIN from nyc-commons. Present on the HPD LIHTC project-level datasets."
+    },
+    "Money": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/money.json#/$defs/MoneyUSD",
+      "$comment": "Canonical definition provided by nyc-commons (money.json#/$defs/MoneyUSD)."
+    },
+    "OrganizationReference": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/party.json#/$defs/OrganizationReference",
+      "$comment": "Canonical org reference from nyc-commons; used for the developer/borrower organization applying for financing (LIHTC 'Applicant Name')."
+    },
+    "ContactPoint": {
+      "$ref": "https://raw.githubusercontent.com/api-evangelist/nyc/main/nyc-commons/party.json#/$defs/ContactPoint",
+      "$comment": "Canonical contact shape from nyc-commons."
+    },
+    "FinancingProgramType": {
+      "type": ["string", "null"],
+      "description": "HDC financing program a development is funded under — each has a published HDC/HPD term sheet. Verified from nychdc.com/develop and the HDC term-sheet PDFs.",
+      "enum": [
+        "New Construction",
+        "ELLA",
+        "Mix and Match",
+        "Preservation",
+        "PACT Preservation",
+        "Sustainable Development Bond",
+        "Homeownership",
+        "Other",
+        null
+      ]
+    },
+    "ConstructionType": {
+      "type": ["string", "null"],
+      "description": "Whether the financed work is new construction or rehabilitation/preservation ('New Construction/Rehabilitation' on the LIHTC datasets).",
+      "enum": ["New Construction", "Rehabilitation", "Preservation", "Other", null]
+    },
+    "BondType": {
+      "type": ["string", "null"],
+      "description": "The kind of debt HDC issues. HDC is a frequent municipal issuer; its Housing Revenue Bonds and Sustainable Development Bonds (SDBs) are disclosed to investors on the federal MSRB EMMA platform.",
+      "enum": ["Tax-Exempt", "Taxable", "Sustainable Development Bond", "Other", null]
+    },
+    "AMIBand": {
+      "type": ["string", "null"],
+      "description": "Area Median Income affordability band a development or program targets (e.g. 'Up to 30% AMI', 'Up to 60% AMI', 'Up to 80% AMI', 'Middle Income'). Free-text; HDC programs mix extremely-low, low, moderate, and middle income.",
+      "examples": ["Up to 30% AMI", "Up to 60% AMI", "Up to 80% AMI", "Up to 100% AMI", "Middle Income"]
+    },
+    "CreditRating": {
+      "type": "object",
+      "description": "A credit rating on HDC's debt, as published on the Invest pages (e.g. AA / Aa2). Agency + grade.",
+      "properties": {
+        "agency": { "type": ["string", "null"], "enum": ["S&P", "Moody's", "Fitch", "Other", null] },
+        "grade": { "type": ["string", "null"], "description": "Rating grade, e.g. 'AA', 'AA+', 'Aa2'." }
+      },
+      "additionalProperties": false
+    },
+    "DevelopmentReference": {
+      "type": "object",
+      "description": "A reference to an HDC-financed affordable-housing development by its identifiers.",
+      "properties": {
+        "projectName": { "type": ["string", "null"], "description": "Development / project name ('Project Name' on the LIHTC datasets)." },
+        "bbl": { "$ref": "#/$defs/BBL" },
+        "bin": { "$ref": "#/$defs/BIN" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

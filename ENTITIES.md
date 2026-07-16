@@ -1,6 +1,6 @@
 # Master Entity List
 
-Every object modeled across the **67 assessed domains** — 422 object schemas, **328 distinct entity names**. Generated from each domain's `schemas/*.json` titles. Interactive: [entities.html](https://nyc.apievangelist.com/entities.html).
+Every object modeled across the **70 assessed domains** — 439 object schemas, **344 distinct entity names**. Generated from each domain's `schemas/*.json` titles. Interactive: [entities.html](https://nyc.apievangelist.com/entities.html).
 
 ## Recurring entities (shared across domains)
 
@@ -24,6 +24,7 @@ Entities modeled in 2+ domains — the natural candidates for shared, citywide s
 | `CommunityResource` | 4 | Bronx District Attorney, Brooklyn District Attorney, Queens District Attorney, Staten Island District Attorney |
 | `Complaint` | 5 | NYC Buildings (DOB), NYC Housing (HPD), NYC Business Integrity Commission (BIC), NYC Civilian Complaint Review (CCRB), NYC Correction (DOC) |
 | `Contract` | 2 | NYC Comptroller, NYC Youth & Community Dev (DYCD) |
+| `Development` | 2 | NYC Housing Authority (NYCHA), NYC Housing Development Corp (HDC) |
 | `DigitalCollection` | 2 | Brooklyn Public Library (BPL), Queens Public Library (QPL) |
 | `DigitalItem` | 2 | NYC Records (DORIS), New York Public Library (NYPL) |
 | `DiscretionaryFundingAward` | 3 | Bronx Borough President, Queens Borough President, Staten Island Borough President |
@@ -99,6 +100,7 @@ Entities modeled in 2+ domains — the natural candidates for shared, citywide s
 - **NYC Youth & Community Dev (DYCD)** (`dycd`) — `Contract`, `ParticipantDemographics`, `Program`, `ProgramApplication`, `ProgramSite`, `Provider`, `ServiceArea`
 - **NYC Economic Development (EDC)** (`edc`) — `DevelopmentProject`, `FerryRidership`, `MappedCompany`, `PropertyAsset`, `RFPResponse`, `Solicitation`, `WiredBuilding`
 - **NYC Fire (FDNY)** (`fdny`) — `CertificateOfFitness`, `Firehouse`, `FirePermitApplication`, `IncidentDispatch`, `Inspection`, `Violation`
+- **NYC Housing Development Corp (HDC)** (`hdc`) — `BondIssue`, `Borrower`, `Development`, `FinancingApplication`, `FinancingProgram`
 - **NYC Health + Hospitals** (`hhc`) — `Appointment`, `AppointmentRequest`, `Facility`, `FinancialAssistance`, `Pharmacy`, `Provider`, `Service`
 - **NYC Social Services (HRA)** (`hra`) — `BenefitsApplication`, `BenefitsEligibility`, `CaseAction`, `CaseloadStatistic`, `Center`, `Program`
 - **NYC Independent Budget Office (IBO)** (`ibo`) — `DataRequest`, `FiscalDataTable`, `FiscalSeries`, `Publication`, `SchoolSpending`, `TaxDistribution`
@@ -107,12 +109,14 @@ Entities modeled in 2+ domains — the natural candidates for shared, citywide s
 - **Manhattan Borough President** (`manhattanbp`) — `BoardAppointment`, `CommunityBoard`, `CommunityBoardApplication`, `ConstituentCase`, `FundingAward`, `LandUseRecommendation`, `Legislation`
 - **Manhattan District Attorney** (`manhattanda`) — `Office`, `PressRelease`, `Program`, `Prosecution`, `TipSubmission`, `VictimService`
 - **NYC Criminal Justice (MOCJ)** (`mocj`) — `DataReport`, `JailPopulationMetric`, `Program`, `ProgramReferral`, `Solicitation`, `SupervisedReleaseDocket`
+- **NYC Environmental Remediation (OER)** (`moer`) — `CleanupProject`, `EDesignation`, `EnvironmentalSite`, `NoticeToProceed`, `NoticeToProceedRequest`, `RemediationStatus`
 - **NYC Media & Entertainment (MOME)** (`mome`) — `FilmPermit`, `FilmPermitApplication`, `MarchInspection`, `MediaProgram`, `ProductionCompany`, `ScreenActivity`
 - **NYC Emergency Management (NYCEM)** (`nycem`) — `EmergencyIncident`, `EmergencyNotification`, `EvacuationCenter`, `HurricaneEvacuationZone`, `MitigationAction`, `NotifyNYCSubscription`, `PreparednessResource`
 - **New York Public Library (NYPL)** (`nypl`) — `Branch`, `CatalogItem`, `Collection`, `DigitalItem`, `Event`, `Hold`
 - **NYC Admin Trials & Hearings (OATH)** (`oath`) — `Decision`, `Hearing`, `Summons`, `SummonsDispute`, `TrialCase`
 - **NYC Medical Examiner (OCME)** (`ocme`) — `CaseStatistics`, `DeathRecordRequest`, `FamilyServicesCenter`, `ForensicService`, `MissingPerson`, `MonthlyIndicator`
 - **NYC Technology & Innovation (OTI)** (`oti`) — `APIGatewayService`, `BroadbandAsset`, `LinkNYCKiosk`, `OpenDataset`, `ServiceRequest`, `WiFiHotspot`
+- **NYC Public Design Commission (PDC)** (`pdc`) — `CollectionItem`, `Commissioner`, `DesignAward`, `DesignProject`, `DesignSubmission`, `ReviewMeeting`
 - **NYC Public Advocate** (`pubadvocate`) — `Legislation`, `OmbudsmanComplaint`, `PublicInterestRequest`, `Report`, `WatchlistBuilding`, `WorstLandlord`
 - **Queens Borough President** (`queensbp`) — `CommunityBoard`, `CommunityBoardApplication`, `CommunityBoardAppointment`, `DiscretionaryFundingAward`, `Event`, `LandUseRecommendation`, `PressRelease`
 - **Queens District Attorney** (`queensda`) — `Case`, `ColdCase`, `CommunityResource`, `PressRelease`, `Program`, `TipSubmission`, `VictimService`

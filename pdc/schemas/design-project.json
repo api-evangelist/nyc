@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pdc/schemas/design-project.json",
+  "title": "DesignProject",
+  "description": "A project submitted by a City agency and reviewed by the Public Design Commission — the core unit of PDC. Canonical schema reconciling the two PDC review datasets: 'Public Design Commission Monthly Design Review' (tfrc-rjtr, 10 columns — the per-meeting review log) and 'Public Design Commission Annual Report' (5fsv-ze7v, 12 columns — the annual roll-up of submitted/reviewed projects). Keyed on PROJECT_ID. PDC has jurisdiction over permanent architecture, landscape architecture, and art on or over City-owned property (NYC Charter Chapter 37).",
+  "type": "object",
+  "x-source": {
+    "opendata_monthly": "https://data.cityofnewyork.us/d/tfrc-rjtr",
+    "opendata_annual": "https://data.cityofnewyork.us/d/5fsv-ze7v",
+    "site": "https://www.nyc.gov/site/designcommission/design-review/design-review.page"
+  },
+  "properties": {
+    "projectId": { "type": "string", "description": "PDC project identifier ('PROJECT_ID') — primary key. Numeric in the monthly dataset, string in the annual dataset." },
+    "certificateNumber": { "type": ["string", "null"], "description": "Certificate number assigned to an approved project ('CERTIFICATE_NUMBER'), from the Monthly Design Review dataset." },
+    "title": { "type": ["string", "null"], "description": "Project title ('TITLE')." },
+    "projectType": { "$ref": "_common.json#/$defs/ProjectType" },
+    "levelOfReview": { "$ref": "_common.json#/$defs/LevelOfReview" },
+    "action": { "$ref": "_common.json#/$defs/ReviewAction" },
+    "result": { "$ref": "_common.json#/$defs/ReviewResult" },
+    "constructionType": { "$ref": "_common.json#/$defs/ConstructionType" },
+    "publicPrivate": { "$ref": "_common.json#/$defs/PublicPrivate" },
+    "leadAgency": {
+      "$ref": "_common.json#/$defs/AgencyReference",
+      "description": "The City agency with jurisdiction over the property that formally submitted the project ('AGENCY' / 'LEAD_AGENCY') — e.g. DPR, DOT, EDC, DDC, DEP."
+    },
+    "secondaryAgency": {
+      "$ref": "_common.json#/$defs/AgencyReference",
+      "description": "A second City agency co-sponsoring or holding overlapping jurisdiction ('SECONDARY_AGENCY') — e.g. DDC/DOT, EDC/DPR."
+    },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "meetingDate": { "type": ["string", "null"], "format": "date", "description": "Date of the meeting at which the project was calendared/reviewed ('DATE' / 'MEETING_DATE')." },
+    "reviewCycles": { "type": ["integer", "null"], "description": "Number of review cycles the project has been through ('REVIEW_CYCLES'), from the Annual Report dataset — a project may be reviewed conceptually, then preliminarily, then finally." },
+    "previousYearSubmission": { "type": ["boolean", "null"], "description": "True when the submission was made in December of the previous year for a January meeting of the current year ('PREVIOUS_YEAR_SUBMISSION')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" }
+  },
+  "required": ["projectId"],
+  "additionalProperties": false
+}

@@ -2,7 +2,7 @@
  "specificationVersion": "0.21",
  "aid": "nyc-programmable-city",
  "name": "NYC \u2014 Programmable City",
- "description": "Every New York City government API, MCP server, and Agent Skill in one place \u2014 67 agency APIs, 721 operations, 624 MCP tools, 7 prompts, 7 resources, and 10 common government-process skills. Design-first artifacts from the NYC Modernization assessment.",
+ "description": "Every New York City government API, MCP server, and Agent Skill in one place \u2014 70 agency APIs, 752 operations, 653 MCP tools, 7 prompts, 7 resources, and 10 common government-process skills. Design-first artifacts from the NYC Modernization assessment.",
  "image": "https://nyc.apievangelist.com/assets/social.png",
  "url": "https://nyc.apievangelist.com/experience/nyc.apis.json",
  "tags": [
@@ -1103,6 +1103,30 @@
    ]
   },
   {
+   "aid": "nyc:hdc",
+   "name": "NYC Housing Development Corporation (HDC) API (proposed)",
+   "description": "One owned, resource-oriented API for the New York City Housing Development Corporation \u2014 the City's affordable-housing bond financier \u2014 consolidating its dispersed financing record (developments, financing programs/term sheets, and bond issues) into a single contract, and adding the one net-new write surface locked in HDC's Developer Intake Portal: applying for HDC bond + subsidy financing (a FinancingApplication / Developer Intake Form).",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=hdc",
+   "tags": [
+    "NYC Housing Development Corp (HDC)",
+    "originate"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hdc/openapi/hdc.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hdc/mcp/hdc-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=hdc"
+    }
+   ]
+  },
+  {
    "aid": "nyc:hhc",
    "name": "NYC Health + Hospitals API (proposed)",
    "description": "One owned, resource-oriented API for NYC Health + Hospitals \u2014 publishing an open facility, service, provider, pharmacy, and financial-assistance directory the system does not offer today, and adding the missing write surface: requesting / booking an appointment. It is designed to sit on top of the live Epic FHIR R4 standard H+H already runs, extending it where the standard stops (booking).",
@@ -1295,6 +1319,30 @@
    ]
   },
   {
+   "aid": "nyc:moer",
+   "name": "MOER / OER API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Mayor's Office of Environmental Remediation \u2014 surfacing its environmental sites, (E)-designations, and Voluntary Cleanup Program projects as coherent, BBL-keyed resources, exposing where any cleanup stands in the remedial process, and digitizing the one net-new write OER could own: an owner/developer's request for a Notice to Proceed (or VCP enrollment) that today runs manually through the login-walled EPIC portal.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=moer",
+   "tags": [
+    "NYC Environmental Remediation (OER)",
+    "expose"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/moer/openapi/moer.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/moer/mcp/moer-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=moer"
+    }
+   ]
+  },
+  {
    "aid": "nyc:mome",
    "name": "MOME API (proposed)",
    "description": "One owned, resource-oriented API for the NYC Mayor's Office of Media & Entertainment \u2014 publishing its flagship open data (Film Permits, MARCH nightlife inspections) as coherent resources, exposing MOME's non-permit programs, and adding the missing write surface locked inside the 'MOME E-Apply' portal: applying for a film/photography permit.",
@@ -1435,6 +1483,30 @@
     {
      "type": "Documentation",
      "url": "https://nyc.apievangelist.com/domain.html?d=oti"
+    }
+   ]
+  },
+  {
+   "aid": "nyc:pdc",
+   "name": "PDC API (proposed)",
+   "description": "One owned, resource-oriented API for the NYC Public Design Commission \u2014 surfacing its design-review record (projects reviewed, monthly meeting agendas, the City's public art & monument collection, the commissioners, and the annual design awards) as coherent resources, and digitizing the one net-new write surface PDC could own: an agency submitting a project for design review, which today is a manual PDF-and-email transmittal with no online portal.",
+   "humanURL": "https://nyc.apievangelist.com/domain.html?d=pdc",
+   "tags": [
+    "NYC Public Design Commission (PDC)",
+    "digitize"
+   ],
+   "properties": [
+    {
+     "type": "OpenAPI",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pdc/openapi/pdc.yaml"
+    },
+    {
+     "type": "MCPServer",
+     "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pdc/mcp/pdc-mcp.json"
+    },
+    {
+     "type": "Documentation",
+     "url": "https://nyc.apievangelist.com/domain.html?d=pdc"
     }
    ]
   },

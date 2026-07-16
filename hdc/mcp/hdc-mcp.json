@@ -1,0 +1,444 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Consolidates HDC's dispersed financing record (developments reconciled from HPD's adjacent LIHTC datasets, financing programs/term sheets, and bond issues disclosed on federal MSRB EMMA) under one BBL-keyed model, and adds apply_for_financing \u2014 the net-new write workflow locked today inside HDC's Developer Intake Portal. HDC owns no NYC Open Data and no API.",
+    "openapi": "../openapi/hdc.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.hdc",
+    "title": "NYC Housing Development Corporation (HDC)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the New York City Housing Development Corporation \u2014 the City's affordable-housing bond financier. Surfaces HDC-financed developments (reconciled from HPD's LIHTC 4% award datasets, since HDC publishes none of its own), HDC financing programs and their term sheets (New Construction, ELLA, Mix and Match, Preservation, PACT Preservation, Sustainable Development Bonds), and HDC bond issues (Housing Revenue Bonds / SDBs, disclosed on federal MSRB EMMA), plus the net-new ability to apply for HDC bond + subsidy financing \u2014 a Developer Intake Form that today lives only in HDC's Developer Intake Portal with no API.",
+    "instructions": "Use find_developments / get_development to locate HDC-financed affordable-housing developments by borough, program, construction type, or BBL (data reconciled from HPD's adjacent LIHTC datasets \u2014 there is no HDC-owned dataset). find_financing_programs / get_financing_program return HDC's term-sheet programs and their loan terms. find_bond_issues / get_bond_issue cover HDC's bond series (note: primary investor disclosure is on the federal MSRB EMMA platform, not a City system). list_my_financing_applications reads the authenticated developer's own intake submissions. apply_for_financing (net-new) submits a Developer Intake Form requesting HDC financing; it requires an authenticated developer and mutates state \u2014 confirm the program, development (address/BBL, units, affordability), and requested amount with the user before submitting, and note that submission does NOT indicate acceptance of a project proposal. HDC serves developers and bond investors, not the public \u2014 there is no citizen transaction here."
+  },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
+    }
+  },
+  "tools": [
+    {
+      "name": "find_developments",
+      "title": "Find Developments",
+      "description": "Search HDC-financed affordable-housing developments by borough, program, construction type, application year, BBL, or free text. Data reconciled from HPD's LIHTC 4% award datasets \u2014 HDC publishes no dataset of its own.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island"
+            ]
+          },
+          "program": {
+            "type": "string",
+            "enum": [
+              "New Construction",
+              "ELLA",
+              "Mix and Match",
+              "Preservation",
+              "PACT Preservation",
+              "Sustainable Development Bond",
+              "Homeownership",
+              "Other"
+            ]
+          },
+          "constructionType": {
+            "type": "string",
+            "enum": [
+              "New Construction",
+              "Rehabilitation",
+              "Preservation",
+              "Other"
+            ]
+          },
+          "applicationYear": {
+            "type": "integer"
+          },
+          "bbl": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/development.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listDevelopments",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "get_development",
+      "title": "Get Development",
+      "description": "Fetch a single HDC-financed development (program, units, affordability, borrower, geography) by BBL.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bbl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bbl"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/development.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getDevelopment",
+      "x-agent-skill": "look-up-a-property-or-place"
+    },
+    {
+      "name": "find_financing_programs",
+      "title": "Find Financing Programs",
+      "description": "List HDC financing programs (New Construction, ELLA, Mix and Match, Preservation, PACT Preservation, Sustainable Development Bonds) with their published term sheets and loan terms.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "New Construction",
+              "ELLA",
+              "Mix and Match",
+              "Preservation",
+              "PACT Preservation",
+              "Sustainable Development Bond",
+              "Homeownership",
+              "Other"
+            ]
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/financing-program.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listFinancingPrograms",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "get_financing_program",
+      "title": "Get Financing Program",
+      "description": "Fetch an HDC financing program and its term-sheet terms (LTV/LTC caps, DSCR, affordability) by program id.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "programId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "programId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/financing-program.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getFinancingProgram",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "find_bond_issues",
+      "title": "Find Bond Issues",
+      "description": "Search HDC bond issues (Housing Revenue Bonds, Sustainable Development Bonds) by type, sustainability flag, or date. Note: primary investor disclosure lives on the federal MSRB EMMA platform, not a City system; the only City open-data trace is OMB 'Debt Issuance by Issuer'.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "bondType": {
+            "type": "string",
+            "enum": [
+              "Tax-Exempt",
+              "Taxable",
+              "Sustainable Development Bond",
+              "Other"
+            ]
+          },
+          "sustainable": {
+            "type": "boolean"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/bond-issue.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listBondIssues",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "get_bond_issue",
+      "title": "Get Bond Issue",
+      "description": "Fetch an HDC bond series (par amounts, ratings, Official Statement / EMMA disclosure links) by series id.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "seriesId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "seriesId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/bond-issue.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getBondIssue",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "list_my_financing_applications",
+      "title": "List My Financing Applications",
+      "description": "List the authenticated developer's own HDC financing applications and their status \u2014 today visible only inside HDC's Developer Intake Portal.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/financing-application.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listMyFinancingApplications",
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "get_financing_status",
+      "title": "Get Financing Status",
+      "description": "Get the review status of a submitted HDC financing application (Developer Intake Form) by application id.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "applicationId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/financing-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getFinancingStatus",
+      "x-auth": "user",
+      "x-agent-skill": "check-application-or-case-status"
+    },
+    {
+      "name": "apply_for_financing",
+      "title": "Apply for HDC Financing",
+      "description": "Submit a Developer Intake Form requesting HDC bond + subsidy financing under a program (New Construction, ELLA, Mix and Match, Preservation, PACT). NET-NEW workflow with no public API today \u2014 it lives only in HDC's Developer Intake Portal. Requires an authenticated developer. Mutates state \u2014 confirm the program, development (address/BBL, units, affordability), and requested amount first; note that submission does NOT indicate acceptance of a project proposal. This is a B2G/developer transaction; HDC has no citizen write.",
+      "inputSchema": {
+        "$ref": "../schemas/financing-application.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/financing-application.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "applyForFinancing",
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
+    }
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  },
+  "prompts": [
+    {
+      "name": "explore_hdc",
+      "domain": "hdc",
+      "description": "Search and read NYC Housing Development Corp (HDC) records \u2014 Developments, Programs, Bonds, Financing.",
+      "uses": [
+        "find_developments",
+        "get_development",
+        "find_financing_programs",
+        "get_financing_program"
+      ]
+    },
+    {
+      "name": "apply_for_hdc",
+      "domain": "hdc",
+      "description": "FinancingApplication \u2014 a developer submits a Developer Intake Form requesting HDC bond + subsidy financing under a program (New Construction/ELLA/Mix and Match/Preservation/PACT) for a development. A B2G/developer write;",
+      "uses": [
+        "apply_for_financing"
+      ]
+    },
+    {
+      "name": "check_hdc_status",
+      "domain": "hdc",
+      "description": "Check the status of a NYC Housing Development Corp (HDC) application, case, or request.",
+      "uses": [
+        "get_financing_status"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://hdc",
+      "name": "NYC Housing Development Corp (HDC) \u2014 profile",
+      "description": "NYC Housing Development Corp (HDC): 9 operations, 9 tools, verb \u201coriginate\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=hdc"
+    },
+    {
+      "uri": "nyc://hdc/openapi",
+      "name": "NYC Housing Development Corp (HDC) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hdc/openapi/hdc.yaml"
+    },
+    {
+      "uri": "nyc://hdc/developments/{id}",
+      "name": "Developments record (templated)",
+      "description": "A single NYC Housing Development Corp (HDC) Developments record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
+}

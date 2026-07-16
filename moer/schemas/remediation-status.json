@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/moer/schemas/remediation-status.json",
+  "title": "RemediationStatus",
+  "description": "The current position of an OER cleanup project within the documented remedial process, plus the determinations issued so far. This is the object returned by the getRemediationStatus operation — the single 'where does my cleanup stand?' answer that a developer, an inspecting agency (DOB, HPD), or an agent needs, and which today can only be reconstructed by reading documents in the EPIC portal. Assembled from cleanup-project.json + notice-to-proceed.json; no OER API or Open Data twin exists for live status.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/oer/remediation/remediation.page",
+    "epic_portal": "https://a002-epic.nyc.gov/",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "oerProjectNumber": { "type": "string", "description": "The OER project whose status this is." },
+    "site": { "$ref": "_common.json#/$defs/PropertyReference" },
+    "program": { "$ref": "_common.json#/$defs/OERProgram" },
+    "currentPhase": { "$ref": "_common.json#/$defs/RemedialPhase" },
+    "class": { "$ref": "_common.json#/$defs/SiteClass" },
+    "eDesignation": { "type": ["string", "null"], "description": "The (E)-designation number under resolution, if any." },
+    "noticeToProceedIssued": { "type": ["boolean", "null"], "description": "Whether a Notice to Proceed / Decision Document has been issued." },
+    "noticeOfSatisfactionIssued": { "type": ["boolean", "null"], "description": "Whether a Notice of Satisfaction / Completion has been issued (cleanup closed out)." },
+    "buildingPermitEligible": { "type": ["boolean", "null"], "description": "Derived: whether OER's sign-offs are far enough along for DOB to issue a building permit." },
+    "certificateOfOccupancyEligible": { "type": ["boolean", "null"], "description": "Derived: whether OER's requirements are satisfied to the point a certificate of occupancy may be granted." },
+    "determinations": {
+      "type": "array",
+      "description": "The OER determinations issued on this project to date (NNO, NTP/Decision Document, NOS/Completion).",
+      "items": { "$ref": "notice-to-proceed.json" }
+    },
+    "lastUpdated": { "type": ["string", "null"], "format": "date-time", "description": "When OER last updated this status." }
+  },
+  "required": ["oerProjectNumber"],
+  "additionalProperties": false
+}

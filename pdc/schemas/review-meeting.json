@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pdc/schemas/review-meeting.json",
+  "title": "ReviewMeeting",
+  "description": "A monthly Public Design Commission meeting and its agenda. PDC meets once a month; a typical meeting is a morning Committee Meeting followed by a Public Meeting with a batch vote on Consent Items and any Public Hearings, held in the City Hall Board Room and livestreamed on YouTube. NO Open Data twin exists for the calendar/agenda — meetings, agendas, and minutes are published only as HTML/PDF on the site (design-review/meetings). This schema reverse-engineers the agenda so it could be queried; each agenda item references a DesignProject.",
+  "type": "object",
+  "x-source": {
+    "site_meetings": "https://www.nyc.gov/site/designcommission/design-review/meetings/meetings.page",
+    "site_testimony": "https://www.nyc.gov/site/designcommission/design-review/testimony/public-testimony.page",
+    "opendata": null,
+    "opendata_gap": true,
+    "derived_from": "https://data.cityofnewyork.us/d/tfrc-rjtr"
+  },
+  "properties": {
+    "meetingId": { "type": ["string", "null"], "description": "Stable identifier for the meeting (e.g. yyyy-mm-dd)." },
+    "date": { "type": "string", "format": "date", "description": "Meeting date." },
+    "kind": {
+      "type": ["string", "null"],
+      "enum": ["Committee Meeting", "Public Meeting", "Public Hearing", null],
+      "description": "Which session — PDC typically runs a Committee Meeting in the morning and a Public Meeting (consent + hearings) after."
+    },
+    "location": { "type": ["string", "null"], "description": "Meeting location — typically the PDC Board Room, 3rd floor, City Hall.", "default": "Public Design Commission Board Room, 3rd floor, City Hall" },
+    "remote": { "type": ["boolean", "null"], "description": "Whether the meeting is also held/livestreamed remotely (Microsoft Teams videoconference; livestreamed on YouTube)." },
+    "submissionDeadline": { "type": ["string", "null"], "format": "date", "description": "Digital submission deadline for this meeting cycle (materials due by 12:00pm on the deadline)." },
+    "hardCopyDeadline": { "type": ["string", "null"], "format": "date", "description": "Hard-copy delivery deadline for approved projects (the Thursday after the meeting)." },
+    "agendaUrl": { "type": ["string", "null"], "format": "uri", "description": "URL of the published agenda (PDF/HTML)." },
+    "minutesUrl": { "type": ["string", "null"], "format": "uri", "description": "URL of the published meeting minutes (PDF/HTML)." },
+    "agendaItems": {
+      "type": "array",
+      "description": "Ordered agenda items. Consent items are batch-voted; public-hearing items get full Commission review.",
+      "items": { "$ref": "#/$defs/AgendaItem" }
+    }
+  },
+  "required": ["date"],
+  "additionalProperties": false,
+  "$defs": {
+    "AgendaItem": {
+      "type": "object",
+      "description": "One project on a meeting agenda, with its calendaring category and (after the meeting) its result.",
+      "properties": {
+        "itemNumber": { "type": ["string", "null"], "description": "Position/number on the agenda." },
+        "projectId": { "type": ["string", "null"], "description": "PROJECT_ID of the reviewed DesignProject." },
+        "title": { "type": ["string", "null"], "description": "Project title as listed on the agenda." },
+        "action": { "$ref": "_common.json#/$defs/ReviewAction" },
+        "levelOfReview": { "$ref": "_common.json#/$defs/LevelOfReview" },
+        "result": { "$ref": "_common.json#/$defs/ReviewResult" },
+        "leadAgency": { "$ref": "_common.json#/$defs/AgencyReference" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

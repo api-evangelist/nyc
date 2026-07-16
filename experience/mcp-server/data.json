@@ -17462,6 +17462,276 @@
     }
    ]
   },
+  "hdc": {
+   "agency": "NYC Housing Development Corp (HDC)",
+   "collections": [
+    {
+     "collection": "BondIssue",
+     "slug": "bond-issue",
+     "url": "https://nyc.apievangelist.com/experience/api/hdc/bond-issue.json",
+     "data": [
+      {
+       "seriesId": "EX-0001-1",
+       "issuerName": "Example issuerName",
+       "bondType": "Tax-Exempt",
+       "newMoneyOrRefunding": "New Money",
+       "issueDate": "2025-06-01",
+       "taxExemptParAmount": 125000.0,
+       "taxableParAmount": 125000.0,
+       "publicationDate": "2025-06-01",
+       "sustainable": true,
+       "ratings": [
+        {
+         "agency": "S&P",
+         "grade": "example grade"
+        }
+       ],
+       "officialStatementUrl": "https://www.nyc.gov",
+       "emmaUrl": "https://www.nyc.gov"
+      },
+      {
+       "seriesId": "EX-0001-2",
+       "issuerName": "Example issuerName",
+       "bondType": "Tax-Exempt",
+       "newMoneyOrRefunding": "New Money",
+       "issueDate": "2025-06-01",
+       "taxExemptParAmount": 125000.0,
+       "taxableParAmount": 125000.0,
+       "publicationDate": "2025-06-01",
+       "sustainable": true,
+       "ratings": [
+        {
+         "agency": "S&P",
+         "grade": "example grade"
+        }
+       ],
+       "officialStatementUrl": "https://www.nyc.gov",
+       "emmaUrl": "https://www.nyc.gov"
+      }
+     ]
+    },
+    {
+     "collection": "Borrower",
+     "slug": "borrower",
+     "url": "https://nyc.apievangelist.com/experience/api/hdc/borrower.json",
+     "data": [
+      {
+       "name": "Example name 1",
+       "kind": "Vendor",
+       "identifier": "example identifier"
+      },
+      {
+       "name": "Example name 2",
+       "kind": "Vendor",
+       "identifier": "example identifier"
+      }
+     ]
+    },
+    {
+     "collection": "Development",
+     "slug": "development",
+     "url": "https://nyc.apievangelist.com/experience/api/hdc/development.json",
+     "data": [
+      {
+       "projectName": "Example projectName 1",
+       "bbl": "1000160001",
+       "bin": "1000000",
+       "borough": "Manhattan",
+       "program": "New Construction",
+       "constructionType": "New Construction",
+       "totalUnits": 1,
+       "totalTaxCreditUnits": 1,
+       "affordability": "example affordability",
+       "applicationYear": 2025,
+       "creditYear": 2025,
+       "creditAmount": 125000.0,
+       "borrower": {
+        "name": "Example name",
+        "kind": "Vendor",
+        "identifier": "example identifier"
+       },
+       "geography": {
+        "communityBoard": 101,
+        "communityDistrict": 1,
+        "censusTract": "000100",
+        "nta": "MN0101",
+        "neighborhood": "example neighborhood",
+        "zip": "10007",
+        "schoolDistrict": 1,
+        "policePrecinct": 1
+       },
+       "coordinates": {
+        "latitude": 40.7127,
+        "longitude": -74.0059,
+        "xCoordinate": 1.0,
+        "yCoordinate": 1.0
+       }
+      },
+      {
+       "projectName": "Example projectName 2",
+       "bbl": "1000160001",
+       "bin": "1000000",
+       "borough": "Manhattan",
+       "program": "New Construction",
+       "constructionType": "New Construction",
+       "totalUnits": 1,
+       "totalTaxCreditUnits": 1,
+       "affordability": "example affordability",
+       "applicationYear": 2025,
+       "creditYear": 2025,
+       "creditAmount": 125000.0,
+       "borrower": {
+        "name": "Example name",
+        "kind": "Vendor",
+        "identifier": "example identifier"
+       },
+       "geography": {
+        "communityBoard": 101,
+        "communityDistrict": 1,
+        "censusTract": "000100",
+        "nta": "MN0101",
+        "neighborhood": "example neighborhood",
+        "zip": "10007",
+        "schoolDistrict": 1,
+        "policePrecinct": 1
+       },
+       "coordinates": {
+        "latitude": 40.7127,
+        "longitude": -74.0059,
+        "xCoordinate": 1.0,
+        "yCoordinate": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "collection": "FinancingApplication",
+     "slug": "financing-application",
+     "url": "https://nyc.apievangelist.com/experience/api/hdc/financing-application.json",
+     "data": [
+      {
+       "applicationId": "EX-0001-1",
+       "status": "Submitted",
+       "program": "New Construction",
+       "programId": "EX-0001",
+       "constructionType": "New Construction",
+       "development": {
+        "projectName": "Example projectName",
+        "address": "example address",
+        "borough": "Manhattan",
+        "bbl": "1000160001",
+        "bin": "1000000",
+        "totalUnits": 1,
+        "affordableUnits": 1,
+        "affordability": "example affordability"
+       },
+       "borrower": {
+        "name": "Example name",
+        "kind": "Vendor",
+        "identifier": "example identifier"
+       },
+       "requestedAmount": 125000.0,
+       "totalDevelopmentCost": 125000.0,
+       "usesTaxExemptBonds": true,
+       "narrative": "example narrative",
+       "attachments": [
+        {
+         "kind": "Pro Forma",
+         "url": "https://www.nyc.gov",
+         "filename": "Example filename"
+        }
+       ],
+       "contact": {
+        "name": "Example name",
+        "phone": "311",
+        "email": "info@example.nyc.gov"
+       },
+       "submittedDate": "2025-06-01"
+      },
+      {
+       "applicationId": "EX-0001-2",
+       "status": "Submitted",
+       "program": "New Construction",
+       "programId": "EX-0001",
+       "constructionType": "New Construction",
+       "development": {
+        "projectName": "Example projectName",
+        "address": "example address",
+        "borough": "Manhattan",
+        "bbl": "1000160001",
+        "bin": "1000000",
+        "totalUnits": 1,
+        "affordableUnits": 1,
+        "affordability": "example affordability"
+       },
+       "borrower": {
+        "name": "Example name",
+        "kind": "Vendor",
+        "identifier": "example identifier"
+       },
+       "requestedAmount": 125000.0,
+       "totalDevelopmentCost": 125000.0,
+       "usesTaxExemptBonds": true,
+       "narrative": "example narrative",
+       "attachments": [
+        {
+         "kind": "Pro Forma",
+         "url": "https://www.nyc.gov",
+         "filename": "Example filename"
+        }
+       ],
+       "contact": {
+        "name": "Example name",
+        "phone": "311",
+        "email": "info@example.nyc.gov"
+       },
+       "submittedDate": "2025-06-01"
+      }
+     ]
+    },
+    {
+     "collection": "FinancingProgram",
+     "slug": "financing-program",
+     "url": "https://nyc.apievangelist.com/experience/api/hdc/financing-program.json",
+     "data": [
+      {
+       "programId": "EX-0001-1",
+       "name": "Example name",
+       "type": "New Construction",
+       "description": "example description",
+       "termSheetUrl": "https://www.nyc.gov",
+       "termSheetVersion": "example termSheetVersion",
+       "eligibleConstructionTypes": [
+        "New Construction"
+       ],
+       "affordability": "example affordability",
+       "maxLtv": 1.0,
+       "maxLtc": 1.0,
+       "minDscr": 1.0,
+       "usesTaxExemptBonds": true,
+       "uses4PercentLIHTC": true
+      },
+      {
+       "programId": "EX-0001-2",
+       "name": "Example name",
+       "type": "New Construction",
+       "description": "example description",
+       "termSheetUrl": "https://www.nyc.gov",
+       "termSheetVersion": "example termSheetVersion",
+       "eligibleConstructionTypes": [
+        "New Construction"
+       ],
+       "affordability": "example affordability",
+       "maxLtv": 1.0,
+       "maxLtc": 1.0,
+       "minDscr": 1.0,
+       "usesTaxExemptBonds": true,
+       "uses4PercentLIHTC": true
+      }
+     ]
+    }
+   ]
+  },
   "hhc": {
    "agency": "NYC Health + Hospitals",
    "collections": [
@@ -20157,6 +20427,403 @@
     }
    ]
   },
+  "moer": {
+   "agency": "NYC Environmental Remediation (OER)",
+   "collections": [
+    {
+     "collection": "CleanupProject",
+     "slug": "cleanup-project",
+     "url": "https://nyc.apievangelist.com/experience/api/moer/cleanup-project.json",
+     "data": [
+      {
+       "oerProjectNumber": "EX-0001-1",
+       "program": "Voluntary Cleanup Program",
+       "projectName": "Example projectName",
+       "site": {
+        "oerProjectNumber": "EX-0001",
+        "projectName": "Example projectName",
+        "address": "example address"
+       },
+       "phase": "Pre-Application",
+       "class": "Active",
+       "eDesignation": "example eDesignation",
+       "volunteer": {
+        "name": "Example name",
+        "organization": "example organization",
+        "role": "Owner",
+        "phone": "311",
+        "email": "info@example.nyc.gov"
+       },
+       "environmentalConsultant": {
+        "name": "Example name",
+        "organization": "example organization",
+        "role": "Owner",
+        "phone": "311",
+        "email": "info@example.nyc.gov"
+       },
+       "enrolledDate": "2025-06-01",
+       "noticeToProceedIssued": true,
+       "noticeOfSatisfactionIssued": true,
+       "documentRepositoryUrl": "https://www.nyc.gov"
+      },
+      {
+       "oerProjectNumber": "EX-0001-2",
+       "program": "Voluntary Cleanup Program",
+       "projectName": "Example projectName",
+       "site": {
+        "oerProjectNumber": "EX-0001",
+        "projectName": "Example projectName",
+        "address": "example address"
+       },
+       "phase": "Pre-Application",
+       "class": "Active",
+       "eDesignation": "example eDesignation",
+       "volunteer": {
+        "name": "Example name",
+        "organization": "example organization",
+        "role": "Owner",
+        "phone": "311",
+        "email": "info@example.nyc.gov"
+       },
+       "environmentalConsultant": {
+        "name": "Example name",
+        "organization": "example organization",
+        "role": "Owner",
+        "phone": "311",
+        "email": "info@example.nyc.gov"
+       },
+       "enrolledDate": "2025-06-01",
+       "noticeToProceedIssued": true,
+       "noticeOfSatisfactionIssued": true,
+       "documentRepositoryUrl": "https://www.nyc.gov"
+      }
+     ]
+    },
+    {
+     "collection": "EDesignation",
+     "slug": "e-designation",
+     "url": "https://nyc.apievangelist.com/experience/api/moer/e-designation.json",
+     "data": [
+      {
+       "eNumber": "EX-0001-1",
+       "bbl": "1000160001",
+       "borough": "Manhattan",
+       "eType": [
+        "Hazardous Materials"
+       ],
+       "instrument": "E-Designation",
+       "ceqrNumber": "EX-0001",
+       "zoningAction": "example zoningAction",
+       "resolved": true,
+       "geography": {
+        "communityBoard": 101,
+        "communityDistrict": 1,
+        "censusTract": "000100",
+        "nta": "MN0101",
+        "neighborhood": "example neighborhood",
+        "zip": "10007",
+        "schoolDistrict": 1,
+        "policePrecinct": 1
+       },
+       "coordinates": {
+        "latitude": 40.7127,
+        "longitude": -74.0059,
+        "xCoordinate": 1.0,
+        "yCoordinate": 1.0
+       }
+      },
+      {
+       "eNumber": "EX-0001-2",
+       "bbl": "1000160001",
+       "borough": "Manhattan",
+       "eType": [
+        "Hazardous Materials"
+       ],
+       "instrument": "E-Designation",
+       "ceqrNumber": "EX-0001",
+       "zoningAction": "example zoningAction",
+       "resolved": true,
+       "geography": {
+        "communityBoard": 101,
+        "communityDistrict": 1,
+        "censusTract": "000100",
+        "nta": "MN0101",
+        "neighborhood": "example neighborhood",
+        "zip": "10007",
+        "schoolDistrict": 1,
+        "policePrecinct": 1
+       },
+       "coordinates": {
+        "latitude": 40.7127,
+        "longitude": -74.0059,
+        "xCoordinate": 1.0,
+        "yCoordinate": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "collection": "EnvironmentalSite",
+     "slug": "environmental-site",
+     "url": "https://nyc.apievangelist.com/experience/api/moer/environmental-site.json",
+     "data": [
+      {
+       "oerProjectNumber": "EX-0001-1",
+       "projectName": "Example projectName",
+       "oerProgram": "Voluntary Cleanup Program",
+       "class": "Active",
+       "phase": "Pre-Application",
+       "streetNumber": "Broadway",
+       "streetName": "Broadway",
+       "postcode": "10007",
+       "borough": "Manhattan",
+       "bbl": "1000160001",
+       "bin": "1000000",
+       "geography": {
+        "communityBoard": 101,
+        "communityDistrict": 1,
+        "censusTract": "000100",
+        "nta": "MN0101",
+        "neighborhood": "example neighborhood",
+        "zip": "10007",
+        "schoolDistrict": 1,
+        "policePrecinct": 1
+       },
+       "coordinates": {
+        "latitude": 40.7127,
+        "longitude": -74.0059,
+        "xCoordinate": 1.0,
+        "yCoordinate": 1.0
+       },
+       "documentRepositoryUrl": "https://www.nyc.gov"
+      },
+      {
+       "oerProjectNumber": "EX-0001-2",
+       "projectName": "Example projectName",
+       "oerProgram": "Voluntary Cleanup Program",
+       "class": "Active",
+       "phase": "Pre-Application",
+       "streetNumber": "Broadway",
+       "streetName": "Broadway",
+       "postcode": "10007",
+       "borough": "Manhattan",
+       "bbl": "1000160001",
+       "bin": "1000000",
+       "geography": {
+        "communityBoard": 101,
+        "communityDistrict": 1,
+        "censusTract": "000100",
+        "nta": "MN0101",
+        "neighborhood": "example neighborhood",
+        "zip": "10007",
+        "schoolDistrict": 1,
+        "policePrecinct": 1
+       },
+       "coordinates": {
+        "latitude": 40.7127,
+        "longitude": -74.0059,
+        "xCoordinate": 1.0,
+        "yCoordinate": 1.0
+       },
+       "documentRepositoryUrl": "https://www.nyc.gov"
+      }
+     ]
+    },
+    {
+     "collection": "NoticeToProceedRequest",
+     "slug": "notice-to-proceed-request",
+     "url": "https://nyc.apievangelist.com/experience/api/moer/notice-to-proceed-request.json",
+     "data": [
+      {
+       "requestId": "EX-0001-1",
+       "status": "Submitted",
+       "requestType": "VCP Enrollment",
+       "site": {
+        "oerProjectNumber": "EX-0001",
+        "projectName": "Example projectName",
+        "address": "example address"
+       },
+       "eDesignation": "example eDesignation",
+       "ceqrNumber": "EX-0001",
+       "eType": [
+        "Hazardous Materials"
+       ],
+       "proposedUse": "example proposedUse",
+       "remedialActionSummary": "example remedialActionSummary",
+       "applicant": {
+        "name": "Example name",
+        "organization": "example organization",
+        "role": "Owner",
+        "phone": "311",
+        "email": "info@example.nyc.gov"
+       },
+       "environmentalConsultant": {
+        "name": "Example name",
+        "organization": "example organization",
+        "role": "Owner",
+        "phone": "311",
+        "email": "info@example.nyc.gov"
+       },
+       "epicProjectId": "EX-0001",
+       "documents": [
+        {
+         "kind": "Investigation Report",
+         "url": "https://www.nyc.gov"
+        }
+       ],
+       "submittedDate": "2025-06-01"
+      },
+      {
+       "requestId": "EX-0001-2",
+       "status": "Submitted",
+       "requestType": "VCP Enrollment",
+       "site": {
+        "oerProjectNumber": "EX-0001",
+        "projectName": "Example projectName",
+        "address": "example address"
+       },
+       "eDesignation": "example eDesignation",
+       "ceqrNumber": "EX-0001",
+       "eType": [
+        "Hazardous Materials"
+       ],
+       "proposedUse": "example proposedUse",
+       "remedialActionSummary": "example remedialActionSummary",
+       "applicant": {
+        "name": "Example name",
+        "organization": "example organization",
+        "role": "Owner",
+        "phone": "311",
+        "email": "info@example.nyc.gov"
+       },
+       "environmentalConsultant": {
+        "name": "Example name",
+        "organization": "example organization",
+        "role": "Owner",
+        "phone": "311",
+        "email": "info@example.nyc.gov"
+       },
+       "epicProjectId": "EX-0001",
+       "documents": [
+        {
+         "kind": "Investigation Report",
+         "url": "https://www.nyc.gov"
+        }
+       ],
+       "submittedDate": "2025-06-01"
+      }
+     ]
+    },
+    {
+     "collection": "NoticeToProceed",
+     "slug": "notice-to-proceed",
+     "url": "https://nyc.apievangelist.com/experience/api/moer/notice-to-proceed.json",
+     "data": [
+      {
+       "noticeId": "EX-0001-1",
+       "type": "Notice to Proceed",
+       "site": {
+        "oerProjectNumber": "EX-0001",
+        "projectName": "Example projectName",
+        "address": "example address"
+       },
+       "oerProjectNumber": "EX-0001",
+       "eDesignation": "example eDesignation",
+       "issuedDate": "2025-06-01",
+       "phaseCleared": "Pre-Application",
+       "documentUrl": "https://www.nyc.gov"
+      },
+      {
+       "noticeId": "EX-0001-2",
+       "type": "Notice to Proceed",
+       "site": {
+        "oerProjectNumber": "EX-0001",
+        "projectName": "Example projectName",
+        "address": "example address"
+       },
+       "oerProjectNumber": "EX-0001",
+       "eDesignation": "example eDesignation",
+       "issuedDate": "2025-06-01",
+       "phaseCleared": "Pre-Application",
+       "documentUrl": "https://www.nyc.gov"
+      }
+     ]
+    },
+    {
+     "collection": "RemediationStatus",
+     "slug": "remediation-status",
+     "url": "https://nyc.apievangelist.com/experience/api/moer/remediation-status.json",
+     "data": [
+      {
+       "oerProjectNumber": "EX-0001-1",
+       "site": {
+        "oerProjectNumber": "EX-0001",
+        "projectName": "Example projectName",
+        "address": "example address"
+       },
+       "program": "Voluntary Cleanup Program",
+       "currentPhase": "Pre-Application",
+       "class": "Active",
+       "eDesignation": "example eDesignation",
+       "noticeToProceedIssued": true,
+       "noticeOfSatisfactionIssued": true,
+       "buildingPermitEligible": true,
+       "certificateOfOccupancyEligible": true,
+       "determinations": [
+        {
+         "noticeId": "EX-0001",
+         "type": "Notice to Proceed",
+         "site": {
+          "oerProjectNumber": "EX-0001",
+          "projectName": "Example projectName",
+          "address": "example address"
+         },
+         "oerProjectNumber": "EX-0001",
+         "eDesignation": "example eDesignation",
+         "issuedDate": "2025-06-01",
+         "phaseCleared": "Pre-Application",
+         "documentUrl": "https://www.nyc.gov"
+        }
+       ],
+       "lastUpdated": "2025-06-01T09:00:00-04:00"
+      },
+      {
+       "oerProjectNumber": "EX-0001-2",
+       "site": {
+        "oerProjectNumber": "EX-0001",
+        "projectName": "Example projectName",
+        "address": "example address"
+       },
+       "program": "Voluntary Cleanup Program",
+       "currentPhase": "Pre-Application",
+       "class": "Active",
+       "eDesignation": "example eDesignation",
+       "noticeToProceedIssued": true,
+       "noticeOfSatisfactionIssued": true,
+       "buildingPermitEligible": true,
+       "certificateOfOccupancyEligible": true,
+       "determinations": [
+        {
+         "noticeId": "EX-0001",
+         "type": "Notice to Proceed",
+         "site": {
+          "oerProjectNumber": "EX-0001",
+          "projectName": "Example projectName",
+          "address": "example address"
+         },
+         "oerProjectNumber": "EX-0001",
+         "eDesignation": "example eDesignation",
+         "issuedDate": "2025-06-01",
+         "phaseCleared": "Pre-Application",
+         "documentUrl": "https://www.nyc.gov"
+        }
+       ],
+       "lastUpdated": "2025-06-01T09:00:00-04:00"
+      }
+     ]
+    }
+   ]
+  },
   "mome": {
    "agency": "NYC Media & Entertainment (MOME)",
    "collections": [
@@ -22258,6 +22925,445 @@
         "xCoordinate": 1.0,
         "yCoordinate": 1.0
        }
+      }
+     ]
+    }
+   ]
+  },
+  "pdc": {
+   "agency": "NYC Public Design Commission (PDC)",
+   "collections": [
+    {
+     "collection": "CollectionItem",
+     "slug": "collection-item",
+     "url": "https://nyc.apievangelist.com/experience/api/pdc/collection-item.json",
+     "data": [
+      {
+       "title": "Example title 1",
+       "alternateTitle": "Example alternateTitle",
+       "artworkType1": "example artworkType1",
+       "artworkType2": "example artworkType2",
+       "material": "example material",
+       "creators": [
+        {
+         "role": "Artist",
+         "first": "example first",
+         "middle": "example middle",
+         "last": "example last",
+         "organization": "example organization"
+        }
+       ],
+       "artistsKeyword": "example artistsKeyword",
+       "subjectKeyword": "example subjectKeyword",
+       "dateCreated": "example dateCreated",
+       "dateCreatedApproximation": true,
+       "dateDedicated": "example dateDedicated",
+       "dateDedicatedApproximation": true,
+       "acquisition": "example acquisition",
+       "inscription": "example inscription",
+       "locationName": "Example locationName",
+       "managingCityAgency": {
+        "name": "Example name",
+        "code": "example code",
+        "acronym": "example acronym",
+        "domain": "example domain"
+       },
+       "pdcRecords": "example pdcRecords",
+       "address": {
+        "houseNumber": "280",
+        "lowHouseNumber": "EX-0001",
+        "highHouseNumber": "EX-0001",
+        "streetName": "Broadway",
+        "city": "example city",
+        "state": "example state",
+        "zip": "10007"
+       },
+       "borough": "Manhattan",
+       "bbl": "1000160001",
+       "block": "example block",
+       "lot": "example lot",
+       "coordinates": {
+        "latitude": 40.7127,
+        "longitude": -74.0059,
+        "xCoordinate": 1.0,
+        "yCoordinate": 1.0
+       }
+      },
+      {
+       "title": "Example title 2",
+       "alternateTitle": "Example alternateTitle",
+       "artworkType1": "example artworkType1",
+       "artworkType2": "example artworkType2",
+       "material": "example material",
+       "creators": [
+        {
+         "role": "Artist",
+         "first": "example first",
+         "middle": "example middle",
+         "last": "example last",
+         "organization": "example organization"
+        }
+       ],
+       "artistsKeyword": "example artistsKeyword",
+       "subjectKeyword": "example subjectKeyword",
+       "dateCreated": "example dateCreated",
+       "dateCreatedApproximation": true,
+       "dateDedicated": "example dateDedicated",
+       "dateDedicatedApproximation": true,
+       "acquisition": "example acquisition",
+       "inscription": "example inscription",
+       "locationName": "Example locationName",
+       "managingCityAgency": {
+        "name": "Example name",
+        "code": "example code",
+        "acronym": "example acronym",
+        "domain": "example domain"
+       },
+       "pdcRecords": "example pdcRecords",
+       "address": {
+        "houseNumber": "280",
+        "lowHouseNumber": "EX-0001",
+        "highHouseNumber": "EX-0001",
+        "streetName": "Broadway",
+        "city": "example city",
+        "state": "example state",
+        "zip": "10007"
+       },
+       "borough": "Manhattan",
+       "bbl": "1000160001",
+       "block": "example block",
+       "lot": "example lot",
+       "coordinates": {
+        "latitude": 40.7127,
+        "longitude": -74.0059,
+        "xCoordinate": 1.0,
+        "yCoordinate": 1.0
+       }
+      }
+     ]
+    },
+    {
+     "collection": "Commissioner",
+     "slug": "commissioner",
+     "url": "https://nyc.apievangelist.com/experience/api/pdc/commissioner.json",
+     "data": [
+      {
+       "commissionerId": "EX-0001-1",
+       "name": {
+        "firstName": "Example firstName",
+        "middleName": "Example middleName",
+        "lastName": "Example lastName",
+        "fullName": "Example fullName"
+       },
+       "seat": "Architect",
+       "officer": "President",
+       "proBono": true,
+       "termStart": "2025-06-01",
+       "termEnd": "2025-06-01"
+      },
+      {
+       "commissionerId": "EX-0001-2",
+       "name": {
+        "firstName": "Example firstName",
+        "middleName": "Example middleName",
+        "lastName": "Example lastName",
+        "fullName": "Example fullName"
+       },
+       "seat": "Architect",
+       "officer": "President",
+       "proBono": true,
+       "termStart": "2025-06-01",
+       "termEnd": "2025-06-01"
+      }
+     ]
+    },
+    {
+     "collection": "DesignAward",
+     "slug": "design-award",
+     "url": "https://nyc.apievangelist.com/experience/api/pdc/design-award.json",
+     "data": [
+      {
+       "awardId": "EX-0001-1",
+       "year": 2025,
+       "cycle": 1,
+       "projectTitle": "Example projectTitle",
+       "projectId": "EX-0001",
+       "projectType": "Architecture",
+       "leadAgency": {
+        "name": "Example name",
+        "code": "example code",
+        "acronym": "example acronym",
+        "domain": "example domain"
+       },
+       "designTeam": [
+        {
+         "role": "Artist",
+         "first": "example first",
+         "middle": "example middle",
+         "last": "example last",
+         "organization": "example organization"
+        }
+       ],
+       "borough": "Manhattan",
+       "citation": "example citation"
+      },
+      {
+       "awardId": "EX-0001-2",
+       "year": 2025,
+       "cycle": 1,
+       "projectTitle": "Example projectTitle",
+       "projectId": "EX-0001",
+       "projectType": "Architecture",
+       "leadAgency": {
+        "name": "Example name",
+        "code": "example code",
+        "acronym": "example acronym",
+        "domain": "example domain"
+       },
+       "designTeam": [
+        {
+         "role": "Artist",
+         "first": "example first",
+         "middle": "example middle",
+         "last": "example last",
+         "organization": "example organization"
+        }
+       ],
+       "borough": "Manhattan",
+       "citation": "example citation"
+      }
+     ]
+    },
+    {
+     "collection": "DesignProject",
+     "slug": "design-project",
+     "url": "https://nyc.apievangelist.com/experience/api/pdc/design-project.json",
+     "data": [
+      {
+       "projectId": "EX-0001-1",
+       "certificateNumber": "EX-0001",
+       "title": "Example title",
+       "projectType": "Architecture",
+       "levelOfReview": "Conceptual",
+       "action": "Calendared for Consent",
+       "result": "Approved",
+       "constructionType": "Construction",
+       "publicPrivate": "Public",
+       "leadAgency": {
+        "name": "Example name",
+        "code": "example code",
+        "acronym": "example acronym",
+        "domain": "example domain"
+       },
+       "secondaryAgency": {
+        "name": "Example name",
+        "code": "example code",
+        "acronym": "example acronym",
+        "domain": "example domain"
+       },
+       "borough": "Manhattan",
+       "meetingDate": "2025-06-01",
+       "reviewCycles": 1,
+       "previousYearSubmission": true,
+       "geography": {
+        "communityBoard": 101,
+        "communityDistrict": 1,
+        "censusTract": "000100",
+        "nta": "MN0101",
+        "neighborhood": "example neighborhood",
+        "zip": "10007",
+        "schoolDistrict": 1,
+        "policePrecinct": 1
+       }
+      },
+      {
+       "projectId": "EX-0001-2",
+       "certificateNumber": "EX-0001",
+       "title": "Example title",
+       "projectType": "Architecture",
+       "levelOfReview": "Conceptual",
+       "action": "Calendared for Consent",
+       "result": "Approved",
+       "constructionType": "Construction",
+       "publicPrivate": "Public",
+       "leadAgency": {
+        "name": "Example name",
+        "code": "example code",
+        "acronym": "example acronym",
+        "domain": "example domain"
+       },
+       "secondaryAgency": {
+        "name": "Example name",
+        "code": "example code",
+        "acronym": "example acronym",
+        "domain": "example domain"
+       },
+       "borough": "Manhattan",
+       "meetingDate": "2025-06-01",
+       "reviewCycles": 1,
+       "previousYearSubmission": true,
+       "geography": {
+        "communityBoard": 101,
+        "communityDistrict": 1,
+        "censusTract": "000100",
+        "nta": "MN0101",
+        "neighborhood": "example neighborhood",
+        "zip": "10007",
+        "schoolDistrict": 1,
+        "policePrecinct": 1
+       }
+      }
+     ]
+    },
+    {
+     "collection": "DesignSubmission",
+     "slug": "design-submission",
+     "url": "https://nyc.apievangelist.com/experience/api/pdc/design-submission.json",
+     "data": [
+      {
+       "submissionId": "EX-0001-1",
+       "status": "Draft",
+       "category": "Built Environment",
+       "requestedLevelOfReview": "Conceptual",
+       "projectType": "Architecture",
+       "constructionType": "Construction",
+       "title": "Example title",
+       "description": "example description",
+       "leadAgency": {
+        "name": "Example name",
+        "code": "example code",
+        "acronym": "example acronym",
+        "domain": "example domain"
+       },
+       "secondaryAgencies": [
+        {
+         "name": "Example name",
+         "code": "example code",
+         "acronym": "example acronym",
+         "domain": "example domain"
+        }
+       ],
+       "liaison": {
+        "name": "Example name",
+        "agency": "example agency",
+        "email": "info@example.nyc.gov",
+        "phone": "311"
+       },
+       "address": "example address",
+       "borough": "Manhattan",
+       "communityBoards": [
+        "example communityBoards"
+       ],
+       "councilDistricts": [
+        "example councilDistricts"
+       ],
+       "publicPrivate": "Public",
+       "interagencyApprovals": [
+        {
+         "agency": "example agency",
+         "obtained": true,
+         "reference": "example reference"
+        }
+       ],
+       "attachments": [
+        {
+         "kind": "Application Form",
+         "url": "https://www.nyc.gov",
+         "filename": "Example filename"
+        }
+       ],
+       "applicationSigned": true,
+       "previousProjectId": "EX-0001",
+       "targetMeetingDate": "2025-06-01",
+       "submittedDate": "2025-06-01"
+      },
+      {
+       "submissionId": "EX-0001-2",
+       "status": "Draft",
+       "category": "Built Environment",
+       "requestedLevelOfReview": "Conceptual",
+       "projectType": "Architecture",
+       "constructionType": "Construction",
+       "title": "Example title",
+       "description": "example description",
+       "leadAgency": {
+        "name": "Example name",
+        "code": "example code",
+        "acronym": "example acronym",
+        "domain": "example domain"
+       },
+       "secondaryAgencies": [
+        {
+         "name": "Example name",
+         "code": "example code",
+         "acronym": "example acronym",
+         "domain": "example domain"
+        }
+       ],
+       "liaison": {
+        "name": "Example name",
+        "agency": "example agency",
+        "email": "info@example.nyc.gov",
+        "phone": "311"
+       },
+       "address": "example address",
+       "borough": "Manhattan",
+       "communityBoards": [
+        "example communityBoards"
+       ],
+       "councilDistricts": [
+        "example councilDistricts"
+       ],
+       "publicPrivate": "Public",
+       "interagencyApprovals": [
+        {
+         "agency": "example agency",
+         "obtained": true,
+         "reference": "example reference"
+        }
+       ],
+       "attachments": [
+        {
+         "kind": "Application Form",
+         "url": "https://www.nyc.gov",
+         "filename": "Example filename"
+        }
+       ],
+       "applicationSigned": true,
+       "previousProjectId": "EX-0001",
+       "targetMeetingDate": "2025-06-01",
+       "submittedDate": "2025-06-01"
+      }
+     ]
+    },
+    {
+     "collection": "ReviewMeeting",
+     "slug": "review-meeting",
+     "url": "https://nyc.apievangelist.com/experience/api/pdc/review-meeting.json",
+     "data": [
+      {
+       "meetingId": "EX-0001-1",
+       "date": "2025-06-01",
+       "kind": "Committee Meeting",
+       "location": "example location",
+       "remote": true,
+       "submissionDeadline": "2025-06-01",
+       "hardCopyDeadline": "2025-06-01",
+       "agendaUrl": "https://www.nyc.gov",
+       "minutesUrl": "https://www.nyc.gov",
+       "agendaItems": []
+      },
+      {
+       "meetingId": "EX-0001-2",
+       "date": "2025-06-01",
+       "kind": "Committee Meeting",
+       "location": "example location",
+       "remote": true,
+       "submissionDeadline": "2025-06-01",
+       "hardCopyDeadline": "2025-06-01",
+       "agendaUrl": "https://www.nyc.gov",
+       "minutesUrl": "https://www.nyc.gov",
+       "agendaItems": []
       }
      ]
     }
@@ -26033,6 +27139,12 @@
     "collections": 6
    },
    {
+    "id": "hdc",
+    "agency": "NYC Housing Development Corp (HDC)",
+    "index": "https://nyc.apievangelist.com/experience/api/hdc/index.json",
+    "collections": 5
+   },
+   {
     "id": "hhc",
     "agency": "NYC Health + Hospitals",
     "index": "https://nyc.apievangelist.com/experience/api/hhc/index.json",
@@ -26081,6 +27193,12 @@
     "collections": 6
    },
    {
+    "id": "moer",
+    "agency": "NYC Environmental Remediation (OER)",
+    "index": "https://nyc.apievangelist.com/experience/api/moer/index.json",
+    "collections": 6
+   },
+   {
     "id": "mome",
     "agency": "NYC Media & Entertainment (MOME)",
     "index": "https://nyc.apievangelist.com/experience/api/mome/index.json",
@@ -26114,6 +27232,12 @@
     "id": "oti",
     "agency": "NYC Technology & Innovation (OTI)",
     "index": "https://nyc.apievangelist.com/experience/api/oti/index.json",
+    "collections": 6
+   },
+   {
+    "id": "pdc",
+    "agency": "NYC Public Design Commission (PDC)",
+    "index": "https://nyc.apievangelist.com/experience/api/pdc/index.json",
     "collections": 6
    },
    {
@@ -26223,8 +27347,8 @@
    "group": "Act",
    "primitive": "Apply",
    "description": "Start and track an application to the city \u2014 a building permit, business or professional license, benefit (SNAP/cash/Medicaid), grant, school or college admission, or lottery.",
-   "operationCount": 38,
-   "domainCount": 35,
+   "operationCount": 41,
+   "domainCount": 38,
    "file": "apply-for-a-permit-license-or-benefit.md"
   },
   {
@@ -26293,8 +27417,8 @@
    "group": "Know",
    "primitive": "Read \u00b7 geography",
    "description": "Resolve a NYC address, BBL, or BIN and return everything the city knows about that place across agencies \u2014 its districts, who represents it, and its records (buildings, housing, environment, complaints).",
-   "operationCount": 93,
-   "domainCount": 35,
+   "operationCount": 94,
+   "domainCount": 36,
    "file": "look-up-a-property-or-place.md"
   },
   {
@@ -26303,8 +27427,8 @@
    "group": "Know",
    "primitive": "Read \u00b7 status",
    "description": "Look up the status of an application, permit, complaint, case, or request across agencies.",
-   "operationCount": 20,
-   "domainCount": 20,
+   "operationCount": 23,
+   "domainCount": 23,
    "file": "check-application-or-case-status.md"
   },
   {
@@ -26313,8 +27437,8 @@
    "group": "Know",
    "primitive": "Read \u00b7 data",
    "description": "Search and read the city's open records and datasets \u2014 filings, permits, violations, licenses, budgets, contracts, results \u2014 the read surface across all 67 agencies.",
-   "operationCount": 531,
-   "domainCount": 67,
+   "operationCount": 555,
+   "domainCount": 70,
    "file": "search-city-data-and-records.md"
   }
  ],

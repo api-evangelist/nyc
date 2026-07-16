@@ -10,7 +10,7 @@ Interactive: **[nyc.apievangelist.com/strategy.html](https://nyc.apievangelist.c
 
 On **July 13, 2026**, Mayor Zohran Mamdani and CTO / OTI Commissioner Lisa Gelobter launched the **[Public Interest Technology (PIT) Crew](https://www.nyc.gov/content/pitcrew/pages/)** — five teams of product managers, designers, engineers, user researchers, and data experts embedded in agencies to **["Rapidly Build Digital Solutions to Public Problems,"](https://www.nyc.gov/mayors-office/news/2026/07/mayor-mamdani-launches--public-interest-technology--pit--crew--t)** moving "from idea to implementation in a matter of months" instead of years. The first crew builds a **DCWP** complaint portal enforcing the nation's first "Click to Cancel" protections.
 
-This project exists to make that speed possible — and repeatable across all 67 agencies.
+This project exists to make that speed possible — and repeatable across all 70 agencies.
 
 ## The argument in one sentence
 
@@ -29,13 +29,13 @@ The through-line: the **open-data era (2010–2018) only half-worked.** It publi
 
 ## The evidence (not opinion)
 
-The [assessment](SYNTHESIS.md) ran the identical outside-in method across **67 agencies** ([66/67 re-verified](https://nyc.apievangelist.com/qa.html)) and found **two columns flat across the entire city**:
+The [assessment](SYNTHESIS.md) ran the identical outside-in method across **70 agencies** ([69/70 re-verified](https://nyc.apievangelist.com/qa.html)) and found **two columns flat across the entire city**:
 
 | Capability | Result |
 |---|---|
-| Transactional **write** API | **65 of 67 agencies score zero** — the citizen action has no API |
-| **Agent** readiness | **67 of 67 score zero** — no agency is agent-native |
-| Vendor independence | Median agency stack is **71% proprietary** — yet an [open-source alternative exists for all 61 commercial tools](https://nyc.apievangelist.com/technology.html) |
+| Transactional **write** API | **68 of 70 agencies score zero** — the citizen action has no API |
+| **Agent** readiness | **70 of 70 score zero** — no agency is agent-native |
+| Vendor independence | Median agency stack is **71% proprietary** — yet an [open-source alternative exists for all 62 commercial tools](https://nyc.apievangelist.com/technology.html) |
 
 The service layer, not the data, is the universal gap — the same finding, now measured across a whole city instead of asserted in a blog post.
 

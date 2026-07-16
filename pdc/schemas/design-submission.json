@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pdc/schemas/design-submission.json",
+  "title": "DesignSubmission",
+  "description": "A City agency (or its design consultant, via the agency's PDC liaison) submitting a project for Public Design Commission design review — the net-new WRITE surface for this agency. PDC is agency-facing, not citizen-facing: only a City agency with jurisdiction over the property may submit, and there is NO public/citizen write anywhere in the domain. Today submission is fully MANUAL and PDF-based — a signed application form (which must list the Community Board(s) and City Council District(s)), the category-specific checklist, and drawings/photos/samples are emailed by the agency liaison by the 12:00pm submission deadline; approved projects then deliver hard copies to City Hall. There is no online portal and no submission API. This schema digitizes that transmittal so an owned PDC API can accept a structured submission. It serves both the write surface (submit) and the read surface (status of a submission). On disposition, the reviewed project appears in the Monthly Design Review / Annual Report datasets — see design-project.json.",
+  "type": "object",
+  "x-source": {
+    "site_process": "https://www.nyc.gov/site/designcommission/design-review/application-process/application-process.page",
+    "site_procedures": "https://www.nyc.gov/site/designcommission/design-review/design-review.page",
+    "application_form": "https://www.nyc.gov/site/designcommission/design-review/application-process/application-process.page",
+    "opendata": null,
+    "opendata_gap": true,
+    "citizen_write": false,
+    "channel_today": "manual PDF application form + checklist emailed by City agency liaison; hard copies delivered to City Hall"
+  },
+  "properties": {
+    "submissionId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned submission id / docket. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Draft", "Submitted", "Found Incomplete", "Under Review", "Calendared for Consent", "Calendared for Public Hearing", "Approved", "Approved with conditions", "Tabled", "Withdrawn", "Rejected", null],
+      "description": "Submission lifecycle status. Set by PDC staff / the Commission, not the submitter. Aligns with the ReviewAction/ReviewResult vocabularies once the project is calendared and reviewed.",
+      "readOnly": true
+    },
+    "category": {
+      "$ref": "_common.json#/$defs/SubmissionCategory",
+      "description": "Which of PDC's five submission categories governs the checklist and requirements. Required on create."
+    },
+    "requestedLevelOfReview": { "$ref": "_common.json#/$defs/LevelOfReview" },
+    "projectType": { "$ref": "_common.json#/$defs/ProjectType" },
+    "constructionType": { "$ref": "_common.json#/$defs/ConstructionType" },
+    "title": { "type": "string", "description": "Project title." },
+    "description": { "type": "string", "description": "Description of the proposed work on/over City-owned property." },
+    "leadAgency": {
+      "$ref": "_common.json#/$defs/AgencyReference",
+      "description": "The City agency with jurisdiction over the property, which must make the formal submission. Required — an artist or private team cannot submit directly; the sponsoring agency does."
+    },
+    "secondaryAgencies": {
+      "type": "array",
+      "description": "Additional City agencies with overlapping jurisdiction that must sign the application.",
+      "items": { "$ref": "_common.json#/$defs/AgencyReference" }
+    },
+    "liaison": {
+      "type": "object",
+      "description": "The submitting agency's designated PDC liaison, who transmits the submission on behalf of the agency and its consultants.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "agency": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "address": { "type": ["string", "null"], "description": "Street address / location of the project site." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "communityBoards": {
+      "type": "array",
+      "description": "Community Board(s) covering the site — required on the application form.",
+      "items": { "type": "string" }
+    },
+    "councilDistricts": {
+      "type": "array",
+      "description": "City Council District(s) covering the site — required on the application form.",
+      "items": { "type": "string" }
+    },
+    "publicPrivate": { "$ref": "_common.json#/$defs/PublicPrivate" },
+    "interagencyApprovals": {
+      "type": "array",
+      "description": "Confirmations that required approvals from other City agencies have been obtained prior to submission (e.g. Landmarks Preservation Commission where the site is a landmark).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "agency": { "type": ["string", "null"] },
+          "obtained": { "type": ["boolean", "null"] },
+          "reference": { "type": ["string", "null"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "attachments": {
+      "type": "array",
+      "description": "Submission package materials, referenced by URL or upload token — replacing today's emailed PDF/samples.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string", "enum": ["Application Form", "Checklist", "Drawing", "Photograph", "Rendering", "Site Plan", "Material Sample", "Model", "Specification", "Other"] },
+          "url": { "type": ["string", "null"], "format": "uri" },
+          "filename": { "type": ["string", "null"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "applicationSigned": { "type": ["boolean", "null"], "description": "Whether the application is signed by all involved City agencies, as required." },
+    "previousProjectId": { "type": ["string", "null"], "description": "PROJECT_ID of a prior related PDC submission, for resubmissions / amended reviews." },
+    "targetMeetingDate": { "type": ["string", "null"], "format": "date", "description": "The meeting cycle the submission is aimed at (must meet that cycle's submission deadline)." },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["category", "title", "description", "leadAgency"],
+  "additionalProperties": false
+}

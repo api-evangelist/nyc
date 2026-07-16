@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/moer/schemas/environmental-site.json",
+  "title": "EnvironmentalSite",
+  "description": "A property tracked by the NYC Mayor's Office of Environmental Remediation — a parcel enrolled in one of OER's cleanup programs (Voluntary Cleanup Program or E-Designation/Restrictive Declaration) or otherwise carrying an environmental requirement. The core unit of the domain. Canonical schema over the 'OER Cleanup Sites' Open Data dataset (3279-pp7v, updated Daily) and the public SPEED map (Searchable Property Environmental E-Designation, speed.cityofnewyork.us). Keyed on OER Project Number and BBL.",
+  "type": "object",
+  "x-source": {
+    "opendata_cleanup_sites": "https://data.cityofnewyork.us/d/3279-pp7v",
+    "speed_map": "https://speed.cityofnewyork.us/",
+    "epic_portal": "https://a002-epic.nyc.gov/",
+    "site": "https://www.nyc.gov/site/oer/remediation/remediation.page"
+  },
+  "properties": {
+    "oerProjectNumber": { "type": ["string", "null"], "description": "OER Project Number ('OER Project Numbers') — OER's primary project key. May carry multiple numbers for a multi-program site." },
+    "projectName": { "type": ["string", "null"], "description": "Project / site name ('Project Name')." },
+    "oerProgram": { "$ref": "_common.json#/$defs/OERProgram" },
+    "class": { "$ref": "_common.json#/$defs/SiteClass" },
+    "phase": { "$ref": "_common.json#/$defs/RemedialPhase" },
+    "streetNumber": { "type": ["string", "null"], "description": "House number ('Street Number')." },
+    "streetName": { "type": ["string", "null"], "description": "Street name ('Street Name')." },
+    "postcode": { "type": ["string", "null"], "description": "ZIP / postal code ('Postcode')." },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "bbl": { "$ref": "_common.json#/$defs/BBL" },
+    "bin": { "$ref": "_common.json#/$defs/BIN" },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" },
+    "documentRepositoryUrl": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Link to the project-specific document repository page ('Project-Specific Document Repository page') — OER's public record of the site's remedial documents, hosted in the EPIC portal."
+    }
+  },
+  "required": ["oerProjectNumber"],
+  "additionalProperties": false
+}

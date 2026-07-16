@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hdc/schemas/financing-application.json",
+  "title": "FinancingApplication",
+  "description": "A developer's request for HDC bond + subsidy financing for an affordable-housing development — the net-new WRITE surface for this financier agency. HDC is a lender / public benefit corporation: it serves developers and bond investors, NOT the public, so there is NO citizen write anywhere in the domain; the honest net-new write is B2G/developer-facing. Today this transaction exists only as HDC's 'Developer Intake Portal' — the site states: 'All new project proposals must be submitted through HDC Developer Intake Portal. Your submission of the Developer Intake Form does not indicate the acceptance of a project proposal.' There is no public API. This schema models that Developer Intake Form so an owned HDC API can front the intake flow. It serves both the write surface (submit) and the read surface (status of a submission).",
+  "type": "object",
+  "x-source": {
+    "developer_intake": "https://www.nychdc.com/develop",
+    "opendata": null,
+    "opendata_gap": true,
+    "citizen_write": false,
+    "note": "The Developer Intake Form is HDC-owned but has no API; this is the single most common act for a developer seeking HDC financing."
+  },
+  "properties": {
+    "applicationId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned intake / application id. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Under Review", "Additional Information Requested", "Term Sheet Issued", "Financing Approved", "Declined", "Withdrawn", null],
+      "description": "Review status. Set by HDC, not the submitter. NOTE: submission does not indicate acceptance of a project proposal.",
+      "readOnly": true
+    },
+    "program": {
+      "type": "string",
+      "description": "HDC financing program the developer is applying under.",
+      "enum": ["New Construction", "ELLA", "Mix and Match", "Preservation", "PACT Preservation", "Sustainable Development Bond", "Homeownership", "Other"]
+    },
+    "programId": { "type": ["string", "null"], "description": "Slug of the target FinancingProgram, if a specific program is chosen (see financing-program.json)." },
+    "constructionType": { "$ref": "_common.json#/$defs/ConstructionType" },
+    "development": {
+      "type": "object",
+      "description": "The proposed development this financing is for.",
+      "properties": {
+        "projectName": { "type": ["string", "null"] },
+        "address": { "type": ["string", "null"], "description": "Site street address." },
+        "borough": { "$ref": "_common.json#/$defs/Borough" },
+        "bbl": { "$ref": "_common.json#/$defs/BBL" },
+        "bin": { "$ref": "_common.json#/$defs/BIN" },
+        "totalUnits": { "type": ["integer", "null"] },
+        "affordableUnits": { "type": ["integer", "null"] },
+        "affordability": { "$ref": "_common.json#/$defs/AMIBand" }
+      },
+      "additionalProperties": false
+    },
+    "borrower": { "$ref": "_common.json#/$defs/OrganizationReference", "description": "The developer/borrower entity submitting the proposal." },
+    "requestedAmount": { "$ref": "_common.json#/$defs/Money", "description": "Requested HDC financing amount (bond + subsidy), where known." },
+    "totalDevelopmentCost": { "$ref": "_common.json#/$defs/Money", "description": "Estimated total development cost." },
+    "usesTaxExemptBonds": { "type": ["boolean", "null"], "description": "Whether the proposal seeks tax-exempt bond financing (and thus as-of-right 4% LIHTC)." },
+    "narrative": { "type": ["string", "null"], "description": "Free-text project description / proposal summary." },
+    "attachments": {
+      "type": "array",
+      "description": "Supporting documents (pro forma, site control, development budget) referenced by URL or upload token.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string", "enum": ["Pro Forma", "Development Budget", "Site Control", "Rent Roll", "Term Sheet Request", "Other"] },
+          "url": { "type": ["string", "null"], "format": "uri" },
+          "filename": { "type": ["string", "null"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "contact": {
+      "type": "object",
+      "description": "Submitter contact details.",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "phone": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" }
+      },
+      "additionalProperties": false
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["program", "development"],
+  "additionalProperties": false
+}

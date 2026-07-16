@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/moer/schemas/e-designation.json",
+  "title": "EDesignation",
+  "description": "An (E)-designation (or its Restrictive Declaration equivalent) carried by a property as a consequence of a zoning action or City Environmental Quality Review (CEQR). It attaches environmental requirements — hazardous materials, noise, and/or air — that OER must sign off on before the Department of Buildings will issue a building permit and before a certificate of occupancy is granted. NOTE ON OWNERSHIP: the authoritative, machine-readable (E)-designation inventory is published on NYC Open Data under the DEPARTMENT OF CITY PLANNING (DCP) label ('E-Designations' hxm3-23vy / jsrs-ggnx, 'E Designations: shapefile' mzjp-98aw), not OER. OER is the agency that administers RESOLVING the (E) requirement. This schema reconciles the DCP-published designation record with OER's remedial-resolution view of it.",
+  "type": "object",
+  "x-source": {
+    "opendata_e_designations_dcp": "https://data.cityofnewyork.us/d/hxm3-23vy",
+    "opendata_e_designations_shapefile_dcp": "https://data.cityofnewyork.us/d/mzjp-98aw",
+    "site": "https://www.nyc.gov/site/oer/remediation/e-designation.page",
+    "speed_map": "https://speed.cityofnewyork.us/",
+    "opendata_owner": "Department of City Planning (DCP) — OER administers resolution, DCP publishes the inventory."
+  },
+  "properties": {
+    "eNumber": { "type": ["string", "null"], "description": "The (E)-designation number assigned via the zoning action (e.g. 'E-123'). DCP's designation key." },
+    "bbl": { "$ref": "_common.json#/$defs/BBL" },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "eType": {
+      "type": "array",
+      "description": "The category or categories of environmental requirement the designation attaches. OER manages three: Hazardous Materials, Noise, Air. A property may carry more than one.",
+      "items": { "$ref": "_common.json#/$defs/EType" }
+    },
+    "instrument": {
+      "type": ["string", "null"],
+      "enum": ["E-Designation", "Restrictive Declaration", null],
+      "description": "Whether the requirement is carried as a zoning-map (E)-designation or as a recorded Restrictive Declaration against title."
+    },
+    "ceqrNumber": { "type": ["string", "null"], "description": "Associated City Environmental Quality Review (CEQR) number, where the requirement derives from an environmental review." },
+    "zoningAction": { "type": ["string", "null"], "description": "The rezoning / ULURP action that created the designation." },
+    "resolved": { "type": ["boolean", "null"], "description": "Whether OER has issued the sign-off (Notice of No Objection / Notice of Satisfaction) that clears the requirement for building-permit and certificate-of-occupancy purposes." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["bbl"],
+  "additionalProperties": false
+}

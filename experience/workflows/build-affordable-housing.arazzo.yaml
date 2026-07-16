@@ -1,0 +1,341 @@
+arazzo: 1.0.1
+info:
+  title: Build Affordable Housing in NYC
+  version: 0.1.0
+  summary: The end-to-end, cross-agency journey to build one affordable housing project — expressed as an open, forkable workflow.
+  description: >-
+    Building a single affordable housing project in New York City means clearing roughly
+    forty procedures and permits across some fifteen City agencies, two utilities, and two
+    state/federal bodies — today coordinated by hand, project by project, with no shared
+    thread tying the agency portals together. This Arazzo document models that journey as
+    one machine-readable workflow that chains the design-first operations already drafted
+    per agency in the NYC Modernization study: geocode and land-use at DCP, environmental
+    clearance at MOER, financing at HDC and HPD, design review at PDC and LPC, stormwater
+    and water/sewer at DEP, the building permit at DOB, the fire-alarm plan at FDNY, curb
+    and street work at DOT, tree sign-off at DPR, the Certificate of Occupancy at DOB, and
+    lease-up through HPD's lottery. It is the connective tissue open data never had: the
+    single artifact a central project-management team (or an AI agent acting for a builder)
+    needs to see every gate, its status, and its queue in one place — a design artifact,
+    not a deployment. Steps annotated "(read touchpoint)" reference an agency's existing
+    modeled read operation where the specific write workflow is not yet modeled as its own
+    net-new operation; those are the honest next writes to draft.
+  x-phases:
+    - id: environmental-review-and-planning
+      title: 1 · Environmental Review & Planning
+    - id: pre-development-and-financing
+      title: 2 · Pre-Development & Financing
+    - id: permitting-and-approvals
+      title: 3 · Permitting & Approvals
+    - id: marketing-and-lease-up
+      title: 4 · Marketing & Lease-Up
+
+sourceDescriptions:
+  - name: dcp
+    url: ../../dcp/openapi/dcp.yaml
+    type: openapi
+  - name: dof
+    url: ../../dof/openapi/dof.yaml
+    type: openapi
+  - name: moer
+    url: ../../moer/openapi/moer.yaml
+    type: openapi
+  - name: hdc
+    url: ../../hdc/openapi/hdc.yaml
+    type: openapi
+  - name: hpd
+    url: ../../hpd/openapi/hpd.yaml
+    type: openapi
+  - name: pdc
+    url: ../../pdc/openapi/pdc.yaml
+    type: openapi
+  - name: lpc
+    url: ../../lpc/openapi/lpc.yaml
+    type: openapi
+  - name: dep
+    url: ../../dep/openapi/dep.yaml
+    type: openapi
+  - name: dob
+    url: ../../dob/openapi/dob.yaml
+    type: openapi
+  - name: fdny
+    url: ../../fdny/openapi/fdny.yaml
+    type: openapi
+  - name: dot
+    url: ../../dot/openapi/dot.yaml
+    type: openapi
+  - name: dpr
+    url: ../../nycgovparks.org/openapi/nyc-parks.yaml
+    type: openapi
+
+workflows:
+  - workflowId: build-affordable-housing
+    summary: Take one affordable housing project from site through the full permitting chain to lease-up.
+    description: >-
+      Ordered across the four phases of the development lifecycle. Conditional steps
+      (rezoning, landmark review, city-property design review, environmental designation,
+      asbestos abatement for conversions) are gated on inputs so the same workflow serves a
+      private as-of-right site, a public rezoned site, and an office-to-residential
+      conversion. Data flows on the parcel's BBL (the nyc-commons geography spine) so every
+      agency composes around the project, not the org chart.
+    inputs:
+      type: object
+      required: [address]
+      properties:
+        address:
+          type: string
+          description: Street address of the development site.
+        needsRezoning:
+          type: boolean
+          default: false
+          description: True if the project requires a zoning change / ULURP land-use action.
+        onCityOwnedProperty:
+          type: boolean
+          default: false
+          description: True if built on City-owned property (triggers PDC final design review and HDC/HPD subsidy paths).
+        inLandmarkDistrict:
+          type: boolean
+          default: false
+          description: True if the site is a landmark or within a historic district (triggers LPC Certificate of Appropriateness).
+        hasEnvironmentalDesignation:
+          type: boolean
+          default: false
+          description: True if the site carries an (E)/CEQR environmental designation requiring MOER sign-off.
+        isOfficeConversion:
+          type: boolean
+          default: false
+          description: True for office-to-residential conversions (triggers DEP asbestos abatement review).
+        unitCount:
+          type: integer
+          description: Total number of apartments in the project.
+    steps:
+      # ---------------- Phase 1: Environmental Review & Planning ----------------
+      - stepId: geocode-site
+        description: "Resolve the site address to its canonical BBL and geography (DCP is the nyc-commons geography source)."
+        operationId: geocode
+        parameters:
+          - name: address
+            in: query
+            value: $inputs.address
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          bbl: $response.body#/bbl
+          borough: $response.body#/borough
+
+      - stepId: check-parcel
+        description: "Pull the tax-lot's ownership, valuation, and dimensions by BBL — the parcel baseline every downstream filing references. (read touchpoint; a tax-lot subdivision write at DOF is a next honest write)"
+        operationId: getPropertyValuation
+        parameters:
+          - name: bbl
+            in: path
+            value: $steps.geocode-site.outputs.bbl
+        successCriteria:
+          - condition: $statusCode == 200
+
+      - stepId: certify-land-use
+        description: "For projects that need a zoning change: track the land-use action through pre-certification and ULURP at DCP. (read touchpoint; DCP pre-certification is the two-year gate this workflow exists to shorten)"
+        operationId: listLandUseApplications
+        parameters:
+          - name: bbl
+            in: query
+            value: $steps.geocode-site.outputs.bbl
+        successCriteria:
+          - condition: $statusCode == 200
+
+      - stepId: environmental-notice-to-proceed
+        description: "For sites with an (E)/CEQR environmental designation: request MOER's Notice to Proceed so remediation and construction can begin."
+        operationId: requestNoticeToProceed
+        requestBody:
+          contentType: application/json
+          payload:
+            bbl: $steps.geocode-site.outputs.bbl
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          ntpId: $response.body#/id
+
+      - stepId: poll-remediation
+        description: "Poll MOER for the remediation / Notice of Satisfaction status."
+        operationId: getRemediationStatus
+        parameters:
+          - name: bbl
+            in: path
+            value: $steps.geocode-site.outputs.bbl
+        successCriteria:
+          - condition: $statusCode == 200
+
+      # ---------------- Phase 2: Pre-Development & Financing ----------------
+      - stepId: apply-financing
+        description: "Apply to HDC for bond + subsidy financing for the affordable project (the developer-facing capital write)."
+        operationId: applyForFinancing
+        requestBody:
+          contentType: application/json
+          payload:
+            bbl: $steps.geocode-site.outputs.bbl
+            unitCount: $inputs.unitCount
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          financingId: $response.body#/id
+
+      - stepId: poll-financing
+        description: "Track the HDC financing application toward loan closing."
+        operationId: getFinancingStatus
+        parameters:
+          - name: applicationId
+            in: path
+            value: $steps.apply-financing.outputs.financingId
+        successCriteria:
+          - condition: $statusCode == 200
+
+      - stepId: hpd-project
+        description: "Register / retrieve the HPD-financed affordable project record — the design-acceptance and subsidy touchpoint that carries the project through pre-development. (read touchpoint)"
+        operationId: getAffordableHousingProject
+        parameters:
+          - name: projectId
+            in: path
+            value: $steps.apply-financing.outputs.financingId
+        successCriteria:
+          - condition: $statusCode == 200
+
+      # ---------------- Phase 3: Permitting & Approvals ----------------
+      - stepId: design-review
+        description: "For projects on City-owned property: submit drawings and materials to the Public Design Commission for final design review."
+        operationId: submitDesignReview
+        requestBody:
+          contentType: application/json
+          payload:
+            bbl: $steps.geocode-site.outputs.bbl
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          designSubmissionId: $response.body#/id
+
+      - stepId: poll-design-review
+        description: "Poll the PDC design-review status."
+        operationId: getDesignReviewStatus
+        parameters:
+          - name: submissionId
+            in: path
+            value: $steps.design-review.outputs.designSubmissionId
+        successCriteria:
+          - condition: $statusCode == 200
+
+      - stepId: landmark-review
+        description: "For landmark sites / historic districts: file a Certificate of Appropriateness with LPC."
+        operationPath: "{$sourceDescriptions.lpc.url}#/paths/~1permit-applications/post"
+        requestBody:
+          contentType: application/json
+          payload:
+            bbl: $steps.geocode-site.outputs.bbl
+            workType: certificate-of-appropriateness
+        successCriteria:
+          - condition: $statusCode == 201
+
+      - stepId: stormwater-plan
+        description: "Obtain DEP acceptance of the project's Stormwater Pollution Prevention Plan (SWPPP) / stormwater construction permit — required before construction on sites disturbing 20,000+ sq ft of soil. (read touchpoint over DEP permits; a dedicated SWPPP write is a next honest write)"
+        operationId: listPermits
+        parameters:
+          - name: bbl
+            in: query
+            value: $steps.geocode-site.outputs.bbl
+        successCriteria:
+          - condition: $statusCode == 200
+
+      - stepId: asbestos-abatement
+        description: "For office-to-residential conversions: clear DEP's asbestos technical review (ATRU) before renovation/demolition. (read touchpoint over DEP permits; a dedicated asbestos-abatement write is a next honest write)"
+        operationId: listPermits
+        parameters:
+          - name: bbl
+            in: query
+            value: $steps.geocode-site.outputs.bbl
+        successCriteria:
+          - condition: $statusCode == 200
+
+      - stepId: building-permit
+        description: "File the New Building (or Alteration) permit application with DOB — the spine of construction approvals."
+        operationPath: "{$sourceDescriptions.dob.url}#/paths/~1permit-applications/post"
+        requestBody:
+          contentType: application/json
+          payload:
+            bbl: $steps.geocode-site.outputs.bbl
+            jobType: new-building
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          dobApplicationId: $response.body#/applicationId
+
+      - stepId: fire-alarm-plan
+        description: "Submit the fire-alarm system plan and emergency action plan to FDNY — one of the last life-safety approvals before a Certificate of Occupancy."
+        operationPath: "{$sourceDescriptions.fdny.url}#/paths/~1permit-applications/post"
+        requestBody:
+          contentType: application/json
+          payload:
+            bbl: $steps.geocode-site.outputs.bbl
+            permitType: fire-alarm-plan
+        successCriteria:
+          - condition: $statusCode == 201
+
+      - stepId: street-work-permit
+        description: "File DOT street-work permits (curb cut, street opening, sidewalk/pedestrian-ramp) needed to service the site."
+        operationId: createStreetWorkPermit
+        requestBody:
+          contentType: application/json
+          payload:
+            bbl: $steps.geocode-site.outputs.bbl
+            workType: curb-cut
+        successCriteria:
+          - condition: $statusCode == 201
+
+      - stepId: sewer-water-connection
+        description: "Request DEP sewer/water main site-connection approval for the building."
+        operationId: createWaterServiceRequest
+        requestBody:
+          contentType: application/json
+          payload:
+            bbl: $steps.geocode-site.outputs.bbl
+            requestType: site-connection
+        successCriteria:
+          - condition: $statusCode == 201
+
+      - stepId: tree-signoff
+        description: "Obtain DPR street-tree preservation/planting sign-off (or post a refundable deposit) required for the final Certificate of Occupancy."
+        operationPath: "{$sourceDescriptions.dpr.url}#/paths/~1permit-applications/post"
+        requestBody:
+          contentType: application/json
+          payload:
+            bbl: $steps.geocode-site.outputs.bbl
+            permitType: street-tree
+        successCriteria:
+          - condition: $statusCode == 201
+
+      # ---------------- Phase 4: Marketing & Lease-Up ----------------
+      - stepId: certificate-of-occupancy
+        description: "Confirm DOB has issued the (Temporary) Certificate of Occupancy — the gate that unlocks lease-up."
+        operationId: getCertificateOfOccupancy
+        parameters:
+          - name: bin
+            in: path
+            value: $steps.check-parcel.outputs.bin
+        successCriteria:
+          - condition: $statusCode == 200
+        outputs:
+          coStatus: $response.body#/status
+
+      - stepId: lease-up-lottery
+        description: "Open the project for lease-up through HPD's Housing Connect lottery and begin matching eligible households — including the set-aside for formerly homeless New Yorkers."
+        operationId: createLotteryApplication
+        requestBody:
+          contentType: application/json
+          payload:
+            projectBbl: $steps.geocode-site.outputs.bbl
+            unitCount: $inputs.unitCount
+        successCriteria:
+          - condition: $statusCode == 201
+        outputs:
+          lotteryId: $response.body#/id
+    outputs:
+      bbl: $steps.geocode-site.outputs.bbl
+      dobApplicationId: $steps.building-permit.outputs.dobApplicationId
+      certificateOfOccupancy: $steps.certificate-of-occupancy.outputs.coStatus
+      lotteryId: $steps.lease-up-lottery.outputs.lotteryId

@@ -1,8 +1,8 @@
 # Citizen-Transaction Taxonomy
 
-The **66 net-new write workflows** — one per domain — grouped into reusable primitives. The city needs a handful of transaction patterns, built once and reused. Interactive: [transactions.html](https://nyc.apievangelist.com/transactions.html).
+The **69 net-new write workflows** — one per domain — grouped into reusable primitives. The city needs a handful of transaction patterns, built once and reused. Interactive: [transactions.html](https://nyc.apievangelist.com/transactions.html).
 
-## Apply (30)
+## Apply (31)
 
 - **City University of New York (CUNY)** — `AdmissionsApplication (submit a CUNY application)`
 - **NYC Cultural Affairs (DCLA)** — `Apply for a Cultural Development Fund grant (GrantApplication) — the core transaction with no API, locked in the Salesforce Grants Management System`
@@ -19,6 +19,7 @@ The **66 net-new write workflows** — one per domain — grouped into reusable 
 - **NYC Citywide Admin Services (DCAS)** — `ExamRegistration — register for a civil-service exam (alt: JobApplication)`
 - **NYC Consumer & Worker Protection (DCWP)** — `File a consumer complaint (ConsumerComplaint) and apply for a business license (LicenseApplication) — the two citizen writes with no API`
 - **NYC Media & Entertainment (MOME)** — `FilmPermitApplication — apply for a film/photography permit via API instead of the login-walled E-Apply portal`
+- **NYC Housing Development Corp (HDC)** — `FinancingApplication — a developer submits a Developer Intake Form requesting HDC bond + subsidy financing under a program (New Construction/ELLA/Mix and Match/Preservation/PACT) for a development. A B2G/developer write; HDC is financier-facing, so there is no citizen write in this domain, and submission does not indicate acceptance.`
 - **NYC Fire (FDNY)** — `FirePermitApplication — apply for and track a fire permit / Certificate of Operation / inspection request via FDNY Business`
 - **NYC Housing (HPD)** — `HousingLotteryApplication`
 - **NYC Landmarks (LPC)** — `LandmarkPermitApplication — file a Certificate of Appropriateness / No Effect / Minor Work application (today Salesforce Portico only, no API)`
@@ -84,9 +85,11 @@ The **66 net-new write workflows** — one per domain — grouped into reusable 
 - **NYC Comptroller** — `ClaimFiling`
 - **NYC Admin Trials & Hearings (OATH)** — `SummonsDispute — respond to / dispute a summons (request a hearing) via an owned API`
 
-## Other (5)
+## Other (7)
 
 - **NYC Board of Elections** — `BallotRequest`
+- **NYC Public Design Commission (PDC)** — `DesignSubmission — a City agency (via its PDC liaison) submits a project for design review (category, requested level of review, lead + secondary agencies, Community Board / Council District, interagency approvals, and attachments). A B2G write; PDC is agency-facing, so there is no citizen write in this domain.`
+- **NYC Environmental Remediation (OER)** — `NoticeToProceedRequest — an owner/developer requests a Notice to Proceed (or enrolls a brownfield site in the Voluntary Cleanup Program) to proceed on a contaminated or (E)/CEQR-designated parcel. A B2G write, today a manual EPIC-portal-and-email intake; OER serves owners/developers, so there is no general citizen write in this domain.`
 - **NYC Technology & Innovation (OTI)** — `One owned, unified gateway + catalog API — plus two write surfaces: register a dataset, and request an api.nyc.gov gateway key.`
 - **NYC Economic Development (EDC)** — `RFPResponse — register interest in / submit a proposal to an EDC solicitation (RFP/RFEI)`
 - **NYC Transportation (DOT)** — `StreetWorkPermit`

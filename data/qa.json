@@ -2,16 +2,16 @@
  "method": "Automated verification with a browser UA. site: GET the domain's primary URL (ok=2xx/3xx, gated=401/403/429/503, dead=404/DNS/timeout). datasets: GET up to 3 sampled Socrata asset metadata endpoints. apis: GET up to 3 observed-API endpoints. confidence: high=no issues, medium=gated/partial, low=dead site or a dataset failed to resolve.",
  "summary": {
   "confidence": {
-   "high": 66,
+   "high": 69,
    "low": 1
   },
   "site": {
-   "ok": 63,
-   "gated": 3,
-   "dead": 1
+   "ok": 67,
+   "dead": 1,
+   "gated": 2
   },
   "flagged": [
-   "pubadvocate"
+   "dcp"
   ]
  },
  "manualSample": [
@@ -862,9 +862,9 @@
   {
    "id": "dcp",
    "short": "NYC City Planning (DCP)",
-   "site_url": "https://www.nyc.gov",
-   "site_code": 200,
-   "site": "ok",
+   "site_url": "https://s-media.nyc.gov",
+   "site_code": 404,
+   "site": "dead",
    "site_note": "",
    "datasets": [
     {
@@ -904,8 +904,10 @@
      "class": "ok"
     }
    ],
-   "confidence": "high",
-   "issues": []
+   "confidence": "low",
+   "issues": [
+    "primary site unreachable (404) \u2014 https://s-media.nyc.gov"
+   ]
   },
   {
    "id": "dcwp",
@@ -1138,9 +1140,9 @@
   {
    "id": "dob",
    "short": "NYC Buildings (DOB)",
-   "site_url": "https://a810-dobnow.nyc.gov",
-   "site_code": 403,
-   "site": "gated",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
    "site_note": "",
    "datasets": [
     {
@@ -1570,7 +1572,7 @@
   {
    "id": "dycd",
    "short": "NYC Youth & Community Dev (DYCD)",
-   "site_url": "https://discoverdycd.dycdconnect.nyc",
+   "site_url": "https://www.nyc.gov",
    "site_code": 200,
    "site": "ok",
    "site_note": "",
@@ -1706,6 +1708,38 @@
    "issues": []
   },
   {
+   "id": "hdc",
+   "short": "NYC Housing Development Corp (HDC)",
+   "site_url": "https://www.nychdc.com",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [],
+   "datasets_ok": null,
+   "apis": [
+    {
+     "endpoint": "www.nychdc.com",
+     "url": "https://www.nychdc.com",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "emma.msrb.org (MSRB EMMA)",
+     "url": "https://emma.msrb.org",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "googletagmanager.com / google-analytics.com",
+     "url": "https://googletagmanager.com",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
    "id": "hhc",
    "short": "NYC Health + Hospitals",
    "site_url": "https://www.nychealthandhospitals.org",
@@ -1788,7 +1822,7 @@
   {
    "id": "hra",
    "short": "NYC Social Services (HRA)",
-   "site_url": "https://access.nyc.gov",
+   "site_url": "https://www.nyc.gov",
    "site_code": 200,
    "site": "ok",
    "site_note": "",
@@ -2066,6 +2100,48 @@
    "issues": []
   },
   {
+   "id": "moer",
+   "short": "NYC Environmental Remediation (OER)",
+   "site_url": "https://a002-epic.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "3279-pp7v",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "r9ca-6t4q",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "b4dv-8mq4",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "a002-epic.nyc.gov (EPIC)",
+     "url": "https://a002-epic.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "www.nyc.gov/site/oer",
+     "url": "https://www.nyc.gov/site/oer",
+     "code": 404,
+     "class": "dead"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
    "id": "mome",
    "short": "NYC Media & Entertainment (MOME)",
    "site_url": "https://www.nyc.gov",
@@ -2237,7 +2313,7 @@
   {
    "id": "nycha",
    "short": "NYC Housing Authority (NYCHA)",
-   "site_url": "https://selfserve.nycha.info",
+   "site_url": "https://www.nyc.gov",
    "site_code": 200,
    "site": "ok",
    "site_note": "",
@@ -2508,11 +2584,59 @@
    "issues": []
   },
   {
+   "id": "pdc",
+   "short": "NYC Public Design Commission (PDC)",
+   "site_url": "https://www.nyc.gov",
+   "site_code": 200,
+   "site": "ok",
+   "site_note": "",
+   "datasets": [
+    {
+     "id": "2pg3-gcaa",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "tfrc-rjtr",
+     "code": 200,
+     "ok": true
+    },
+    {
+     "id": "5fsv-ze7v",
+     "code": 200,
+     "ok": true
+    }
+   ],
+   "datasets_ok": true,
+   "apis": [
+    {
+     "endpoint": "www.nyc.gov/site/designcommission",
+     "url": "https://www.nyc.gov/site/designcommission",
+     "code": 404,
+     "class": "dead"
+    },
+    {
+     "endpoint": "a836-acris.nyc.gov (ACRIS)",
+     "url": "https://a836-acris.nyc.gov",
+     "code": 200,
+     "class": "ok"
+    },
+    {
+     "endpoint": "youtube.com / MS Teams",
+     "url": "https://youtube.com",
+     "code": 200,
+     "class": "ok"
+    }
+   ],
+   "confidence": "high",
+   "issues": []
+  },
+  {
    "id": "pubadvocate",
    "short": "NYC Public Advocate",
    "site_url": "https://www.pubadvocate.nyc.gov/",
-   "site_code": 0,
-   "site": "dead",
+   "site_code": 200,
+   "site": "ok",
    "site_note": "",
    "datasets": [],
    "datasets_ok": null,
@@ -2526,8 +2650,8 @@
     {
      "endpoint": "advocate.nyc.gov (self-hosted)",
      "url": "https://advocate.nyc.gov",
-     "code": 0,
-     "class": "dead"
+     "code": 200,
+     "class": "ok"
     },
     {
      "endpoint": "legistar.council.nyc.gov (Legistar)",
@@ -2536,10 +2660,8 @@
      "class": "ok"
     }
    ],
-   "confidence": "low",
-   "issues": [
-    "primary site unreachable (0) \u2014 https://www.pubadvocate.nyc.gov/"
-   ]
+   "confidence": "high",
+   "issues": []
   },
   {
    "id": "queensbp",
@@ -2705,7 +2827,7 @@
   {
    "id": "sca",
    "short": "NYC School Construction Authority (SCA)",
-   "site_url": "https://bidset.nycsca.org",
+   "site_url": "https://www.nycsca.org",
    "site_code": 200,
    "site": "ok",
    "site_note": "",
@@ -2845,7 +2967,7 @@
    "id": "statenislandda",
    "short": "Staten Island District Attorney",
    "site_url": "https://www.statenislandda.org",
-   "site_code": 202,
+   "site_code": 200,
    "site": "ok",
    "site_note": "",
    "datasets": [],
@@ -2854,13 +2976,13 @@
     {
      "endpoint": "statenislandda.org (WordPress /wp-json)",
      "url": "https://statenislandda.org",
-     "code": 202,
+     "code": 200,
      "class": "ok"
     },
     {
      "endpoint": "statenislandda.org/drug-tip-form/ + /scam-tip-form/",
      "url": "https://statenislandda.org/drug-tip-form/",
-     "code": 202,
+     "code": 200,
      "class": "ok"
     }
    ],

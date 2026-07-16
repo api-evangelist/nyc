@@ -1189,6 +1189,32 @@
       "odCount": 17
     },
     {
+      "id": "hdc",
+      "short": "NYC Housing Development Corp (HDC)",
+      "verb": "originate",
+      "accent": "#1f8f9e",
+      "scores": {
+        "platform": 2,
+        "siteApi": 1,
+        "openData": 0,
+        "coreData": 1,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 3
+      },
+      "notes": {
+        "openData": "0 Open Data assets.",
+        "coreData": "3/6 fruit items have a machine-readable/Open-Data twin.",
+        "siteApi": "A private/undocumented/gated API exists.",
+        "writeApi": "No public write API.",
+        "agent": "No agent-native surface.",
+        "platform": "www.nychdc.com on a commercial stack (Drupal 10 on Pantheon + Fastly CDN + nginx + Google Tag Manager/GA) \u2014 NOT the shared NYC.gov Livesite chassis, because HDC is a public benefit corporation. The systems that matter are elsewhere: an HDC Developer Intake Portal (no API), PDF term sheets, HPD's LIHTC datasets, OMB's Debt Issuance by Issuer, and the federal MSRB EMMA disclosure platform.",
+        "ownership": "Owns its core API / open-source stack."
+      },
+      "odViews": 0,
+      "odCount": 0
+    },
+    {
       "id": "hhc",
       "short": "NYC Health + Hospitals",
       "verb": "extend",
@@ -1397,6 +1423,32 @@
       "odCount": 1
     },
     {
+      "id": "moer",
+      "short": "NYC Environmental Remediation (OER)",
+      "verb": "expose",
+      "accent": "#b56a35",
+      "scores": {
+        "platform": 3,
+        "siteApi": 1,
+        "openData": 2,
+        "coreData": 2,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 3
+      },
+      "notes": {
+        "openData": "12 Open Data assets.",
+        "coreData": "6/9 fruit items have a machine-readable/Open-Data twin.",
+        "siteApi": "A private/undocumented/gated API exists.",
+        "writeApi": "No public write API.",
+        "agent": "No agent-native surface.",
+        "platform": "Three surfaces: an informational site on the NYC.gov shared 'Livesite' platform (Akamai + nginx + AWS ALB + Dynatrace + Webtrends); the public SPEED map (CARTO/cartodb.js + Leaflet, on Google Cloud, a JSONP feed rather than an API); and OER's own login-walled EPIC project portal (Microsoft-IIS/10.0 + ASP.NET 4.0 + AngularJS) where the remedial workflow is trapped. Open data is on Socrata; the authoritative (E)-designation inventory is published by DCP, not OER.",
+        "ownership": "Owns its core API / open-source stack."
+      },
+      "odViews": 36972,
+      "odCount": 12
+    },
+    {
       "id": "mome",
       "short": "NYC Media & Entertainment (MOME)",
       "verb": "greenlight",
@@ -1551,6 +1603,32 @@
       },
       "odViews": 2315363,
       "odCount": 221
+    },
+    {
+      "id": "pdc",
+      "short": "NYC Public Design Commission (PDC)",
+      "verb": "digitize",
+      "accent": "#6a5a9a",
+      "scores": {
+        "platform": 2,
+        "siteApi": 1,
+        "openData": 1,
+        "coreData": 1,
+        "writeApi": 0,
+        "agent": 0,
+        "ownership": 3
+      },
+      "notes": {
+        "openData": "3 Open Data assets.",
+        "coreData": "2/6 fruit items have a machine-readable/Open-Data twin.",
+        "siteApi": "A private/undocumented/gated API exists.",
+        "writeApi": "No public write API.",
+        "agent": "No agent-native surface.",
+        "platform": "NYC.gov shared 'Livesite' platform (Akamai + nginx + Dynatrace + AWS ALB) for the informational site; 3 NYC Open Data (Socrata SODA) datasets for the review log and public-art collection; the core transaction \u2014 submitting a project for design review \u2014 is a manual PDF application form emailed by a City agency liaison, with no portal and no API.",
+        "ownership": "Owns its core API / open-source stack."
+      },
+      "odViews": 7768,
+      "odCount": 3
     },
     {
       "id": "pubadvocate",
@@ -1961,6 +2039,10 @@
       "object": "FirePermitApplication \u2014 apply for and track a fire permit / Certificate of Operation / inspection request via FDNY Business"
     },
     {
+      "domain": "NYC Housing Development Corp (HDC)",
+      "object": "FinancingApplication \u2014 a developer submits a Developer Intake Form requesting HDC bond + subsidy financing under a program (New Construction/ELLA/Mix and Match/Preservation/PACT) for a development. A B2G/developer write; HDC is financier-facing, so there is no citizen write in this domain, and submission does not indicate acceptance."
+    },
+    {
       "domain": "NYC Health + Hospitals",
       "object": "AppointmentRequest \u2014 request/book an appointment (no write in the live FHIR surface)"
     },
@@ -1993,6 +2075,10 @@
       "object": "ProgramReferral \u2014 route a person or court case to a MOCJ-coordinated program"
     },
     {
+      "domain": "NYC Environmental Remediation (OER)",
+      "object": "NoticeToProceedRequest \u2014 an owner/developer requests a Notice to Proceed (or enrolls a brownfield site in the Voluntary Cleanup Program) to proceed on a contaminated or (E)/CEQR-designated parcel. A B2G write, today a manual EPIC-portal-and-email intake; OER serves owners/developers, so there is no general citizen write in this domain."
+    },
+    {
       "domain": "NYC Media & Entertainment (MOME)",
       "object": "FilmPermitApplication \u2014 apply for a film/photography permit via API instead of the login-walled E-Apply portal"
     },
@@ -2015,6 +2101,10 @@
     {
       "domain": "NYC Technology & Innovation (OTI)",
       "object": "One owned, unified gateway + catalog API \u2014 plus two write surfaces: register a dataset, and request an api.nyc.gov gateway key."
+    },
+    {
+      "domain": "NYC Public Design Commission (PDC)",
+      "object": "DesignSubmission \u2014 a City agency (via its PDC liaison) submits a project for design review (category, requested level of review, lead + secondary agencies, Community Board / Council District, interagency approvals, and attachments). A B2G write; PDC is agency-facing, so there is no citizen write in this domain."
     },
     {
       "domain": "NYC Public Advocate",

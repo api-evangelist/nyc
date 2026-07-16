@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/moer/schemas/notice-to-proceed-request.json",
+  "title": "NoticeToProceedRequest",
+  "description": "The net-new WRITE surface for OER. An owner or developer requests OER approval to proceed on a site — either enrolling a brownfield parcel in the City Voluntary Cleanup Program, or requesting the Notice to Proceed / Decision Document that clears a site carrying an (E)-designation or CEQR environmental requirement so a building permit can be issued. Today this is a manual, document-heavy intake handled through the login-walled EPIC portal (a002-epic.nyc.gov) and email with OER project managers — there is NO OER API. This schema models that intake so an owned OER API can front it. It serves both the write surface (submit) and the read surface (status of a submitted request). This is a B2G / property-owner transaction — it requires an authenticated applicant.",
+  "type": "object",
+  "x-source": {
+    "epic_portal": "https://a002-epic.nyc.gov/",
+    "site_remediation": "https://www.nyc.gov/site/oer/remediation/remediation.page",
+    "site_edesignation": "https://www.nyc.gov/site/oer/remediation/e-designation.page",
+    "opendata": null,
+    "opendata_gap": true,
+    "citizen_write": false
+  },
+  "properties": {
+    "requestId": {
+      "type": ["string", "null"],
+      "description": "Server-assigned request id. Omit on create; returned on the created resource.",
+      "readOnly": true
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["Submitted", "Under Review", "More Info Needed", "Notice to Proceed Issued", "Enrolled", "Declined", null],
+      "description": "Review status. Set by OER, not the submitter.",
+      "readOnly": true
+    },
+    "requestType": {
+      "type": "string",
+      "enum": ["VCP Enrollment", "E-Designation Notice to Proceed", "CEQR Notice to Proceed", "Restrictive Declaration Sign-off", "Notice of No Objection"],
+      "description": "What the applicant is requesting: enroll a brownfield site in the Voluntary Cleanup Program, or obtain the OER sign-off (NTP / NNO) that clears an (E)/CEQR requirement to proceed to a building permit."
+    },
+    "site": {
+      "$ref": "_common.json#/$defs/PropertyReference",
+      "description": "The property the request is about. BBL is strongly preferred — OER is parcel-keyed."
+    },
+    "eDesignation": { "type": ["string", "null"], "description": "The (E)-designation number, if the request clears an existing (E) requirement." },
+    "ceqrNumber": { "type": ["string", "null"], "description": "Associated CEQR number, if the requirement derives from an environmental review." },
+    "eType": {
+      "type": "array",
+      "description": "Which environmental requirement categories the request addresses (Hazardous Materials, Noise, Air).",
+      "items": { "$ref": "_common.json#/$defs/EType" }
+    },
+    "proposedUse": { "type": ["string", "null"], "description": "The redevelopment / proposed use driving the cleanup (e.g. affordable housing, mixed-use)." },
+    "remedialActionSummary": { "type": ["string", "null"], "description": "Free-text summary of the proposed remedial action / work plan supporting the request." },
+    "applicant": { "$ref": "_common.json#/$defs/PartyContact" },
+    "environmentalConsultant": { "$ref": "_common.json#/$defs/PartyContact" },
+    "epicProjectId": { "type": ["string", "null"], "description": "Existing EPIC project id, if the site is already enrolled/opened in the OER portal." },
+    "documents": {
+      "type": "array",
+      "description": "References to supporting documents (investigation report, remedial action work plan) uploaded with the request.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": ["string", "null"], "enum": ["Investigation Report", "Remedial Action Work Plan", "Remedial Closure Report", "Restrictive Declaration", "Other", null] },
+          "url": { "type": ["string", "null"], "format": "uri" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "submittedDate": { "type": ["string", "null"], "format": "date-time", "readOnly": true }
+  },
+  "required": ["requestType", "site"],
+  "additionalProperties": false
+}

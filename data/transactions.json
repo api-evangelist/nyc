@@ -3,7 +3,7 @@
  "primitives": [
   {
    "primitive": "Apply",
-   "count": 30,
+   "count": 31,
    "items": [
     {
      "domain": "City University of New York (CUNY)",
@@ -64,6 +64,10 @@
     {
      "domain": "NYC Media & Entertainment (MOME)",
      "object": "FilmPermitApplication \u2014 apply for a film/photography permit via API instead of the login-walled E-Apply portal"
+    },
+    {
+     "domain": "NYC Housing Development Corp (HDC)",
+     "object": "FinancingApplication \u2014 a developer submits a Developer Intake Form requesting HDC bond + subsidy financing under a program (New Construction/ELLA/Mix and Match/Preservation/PACT) for a development. A B2G/developer write; HDC is financier-facing, so there is no citizen write in this domain, and submission does not indicate acceptance."
     },
     {
      "domain": "NYC Fire (FDNY)",
@@ -289,11 +293,19 @@
   },
   {
    "primitive": "Other",
-   "count": 5,
+   "count": 7,
    "items": [
     {
      "domain": "NYC Board of Elections",
      "object": "BallotRequest"
+    },
+    {
+     "domain": "NYC Public Design Commission (PDC)",
+     "object": "DesignSubmission \u2014 a City agency (via its PDC liaison) submits a project for design review (category, requested level of review, lead + secondary agencies, Community Board / Council District, interagency approvals, and attachments). A B2G write; PDC is agency-facing, so there is no citizen write in this domain."
+    },
+    {
+     "domain": "NYC Environmental Remediation (OER)",
+     "object": "NoticeToProceedRequest \u2014 an owner/developer requests a Notice to Proceed (or enrolls a brownfield site in the Voluntary Cleanup Program) to proceed on a contaminated or (E)/CEQR-designated parcel. A B2G write, today a manual EPIC-portal-and-email intake; OER serves owners/developers, so there is no general citizen write in this domain."
     },
     {
      "domain": "NYC Technology & Innovation (OTI)",

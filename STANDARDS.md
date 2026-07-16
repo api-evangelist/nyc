@@ -55,21 +55,21 @@ Applicable: NYC Council, Manhattan Borough President, Brooklyn Borough President
 
 The modernization itself is defined by a small stack of open standards — the design-first chain.
 
-### JSON Schema (2020-12) — Object contract (422 in this project)
+### JSON Schema (2020-12) — Object contract (439 in this project)
 A vocabulary for describing and validating the shape of a JSON object. **Why it matters:** The atom of the whole design — one canonical, machine-validatable schema per entity (Park, Permit, School…). `$ref` lets schemas reuse shared definitions, which is exactly what makes a citywide `nyc-commons` possible.
 
-### OpenAPI 3.1 — API contract (721 in this project)
+### OpenAPI 3.1 — API contract (752 in this project)
 A standard, language-agnostic description of a REST API — its paths, operations, and the schemas they read and write. **Why it matters:** Turns a pile of schemas into a described, resource-oriented API. It `$ref`s the JSON Schemas and drives docs, mocks, SDKs, and validation — the lingua franca every API tool speaks.
 
-### Model Context Protocol (MCP) — Agent contract (624 in this project)
-An open protocol for exposing tools and resources to AI agents/assistants. **Why it matters:** The agent-native layer. It maps the same resources as callable tools, mapped 1:1 to the OpenAPI operations — making a government service usable by an AI agent, not just a browser. Zero of 67 domains have this today.
+### Model Context Protocol (MCP) — Agent contract (653 in this project)
+An open protocol for exposing tools and resources to AI agents/assistants. **Why it matters:** The agent-native layer. It maps the same resources as callable tools, mapped 1:1 to the OpenAPI operations — making a government service usable by an AI agent, not just a browser. Zero of 70 domains have this today.
 
 ### Agent Skills — Agent task contract (10 in this project)
-Portable, model-agnostic skill definitions that package a task's instructions, the resources it needs, and the tools it orchestrates for an AI agent. **Why it matters:** The layer above MCP tools: one skill per common government process (apply, report, request records, schedule, pay…) that resolves the right agency and drives its tools to finish a citizen task. Ten are defined across the 67 agencies — see the Programmable City experience layer.
+Portable, model-agnostic skill definitions that package a task's instructions, the resources it needs, and the tools it orchestrates for an AI agent. **Why it matters:** The layer above MCP tools: one skill per common government process (apply, report, request records, schedule, pay…) that resolves the right agency and drives its tools to finish a citizen task. Ten are defined across the 70 agencies — see the Programmable City experience layer.
 
 ### APIs.json — Discovery / registry
 A machine-readable index that catalogs an organization's APIs and their supporting artifacts (schemas, OpenAPI, docs). **Why it matters:** The connective tissue open data never had — a discoverable registry so humans and agents can find every agency's API. The planned citywide index (see roadmap).
 
-### Socrata SODA / SoQL — Existing data source (2,666 in this project)
-The query API + query language behind NYC Open Data (data.cityofnewyork.us). **Why it matters:** The existing citywide data layer (run by OTI) that this project crosswalks every domain against — the 2,666 assets we mapped and the read-side many proposed APIs would wrap.
+### Socrata SODA / SoQL — Existing data source (2,681 in this project)
+The query API + query language behind NYC Open Data (data.cityofnewyork.us). **Why it matters:** The existing citywide data layer (run by OTI) that this project crosswalks every domain against — the 2,681 assets we mapped and the read-side many proposed APIs would wrap.
 

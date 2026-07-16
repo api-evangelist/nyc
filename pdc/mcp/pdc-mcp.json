@@ -1,0 +1,524 @@
+{
+  "x-artifact": {
+    "kind": "mcp-server-definition",
+    "designFirst": true,
+    "deployed": false,
+    "note": "Design-first artifact only \u2014 describes the MCP tool surface, not a running server. Tool input/output schemas $ref the same object schemas as the OpenAPI; each tool maps to an OpenAPI operationId. Surfaces PDC's reviewed-project / meeting / public-art-collection / commissioner / award data, and adds submit_design_review \u2014 the net-new B2G write workflow that today is a manual PDF application form emailed by a City agency liaison. There is no citizen write in this domain.",
+    "openapi": "../openapi/pdc.yaml",
+    "schemas": "../schemas/"
+  },
+  "server": {
+    "name": "io.nyc.pdc",
+    "title": "NYC Public Design Commission (PDC)",
+    "version": "0.1.0",
+    "description": "Agent-native access to the NYC Public Design Commission \u2014 the City's design-review agency for permanent architecture, landscape architecture, and art on or over City-owned property (NYC Charter Chapter 37). Search projects reviewed by the Commission, monthly meeting agendas, the City's public art & monument collection, the 11 pro-bono commissioners, and the annual design awards, plus the net-new ability for a City agency to submit a project for design review that today is a manual PDF/email transmittal.",
+    "instructions": "Use find_projects / get_project to locate projects the Commission has reviewed, by borough, project type (architecture/landscape/artwork/signage/\u2026), level of review (conceptual/preliminary/final), action (consent vs. public hearing), result, or lead/secondary agency. NOTE the project data comes from periodic Open Data snapshots (Monthly Design Review + Annual Report), not a live feed. find_meetings / get_meeting cover the monthly meeting calendar and agendas (consent items batch-voted, public hearings fully reviewed) \u2014 these are reverse-engineered from the site because there is no Open Data twin. search_collection / get_collection_item cover the City's outdoor public art & monument collection PDC curates. list_commissioners lists the 11 pro-bono members. find_awards lists Awards for Excellence in Design recipients. submit_design_review (net-new) is an agency/B2G write \u2014 only a City agency with jurisdiction over the property may submit, it must be signed by all involved agencies and list Community Board(s) and Council District(s), and it mutates state; confirm the lead agency, category, and project details with the user before submitting. This is an agency-facing commission: there is no citizen service or citizen write here."
+  },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    },
+    "resources": {
+      "listChanged": false,
+      "subscribe": false
+    }
+  },
+  "tools": [
+    {
+      "name": "find_projects",
+      "title": "Find Projects",
+      "description": "Search projects reviewed by the Public Design Commission by borough, project type, level of review, action (consent/public hearing), result, agency, year, and/or free text.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island",
+              "Citywide"
+            ]
+          },
+          "projectType": {
+            "type": "string",
+            "enum": [
+              "Architecture",
+              "Landscape architecture",
+              "Artwork",
+              "Signage",
+              "Street furniture",
+              "Newsstand",
+              "Bridge",
+              "Distinctive sidewalk",
+              "Distinctive lighting",
+              "Building systems & Modifications"
+            ]
+          },
+          "levelOfReview": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "Calendared for Consent",
+              "Calendared for Committee and Consent",
+              "Calendared for Public Hearing",
+              "Delegation Approval"
+            ]
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "Approved",
+              "Approved with conditions",
+              "Approved per delegation",
+              "Commented",
+              "Tabled",
+              "Withdrawn",
+              "Rejected",
+              "Found Incomplete",
+              "No quorum"
+            ]
+          },
+          "agency": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/design-project.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listProjects",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "get_project",
+      "title": "Get Project",
+      "description": "Fetch a reviewed project (title, type, level of review, action, result, construction type, agencies, meeting date) by PROJECT_ID.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/design-project.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getProject",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "find_meetings",
+      "title": "Find Meetings",
+      "description": "List Public Design Commission meetings and their agendas by date range or kind (Committee Meeting, Public Meeting, Public Hearing). Reverse-engineered from the site \u2014 there is no Open Data twin for the calendar/agendas.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "Committee Meeting",
+              "Public Meeting",
+              "Public Hearing"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/review-meeting.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listMeetings",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "get_meeting",
+      "title": "Get Meeting",
+      "description": "Fetch a single Commission meeting and its agenda items (consent items and public hearings) by id (date).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "meetingId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "meetingId"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/review-meeting.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getMeeting",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "search_collection",
+      "title": "Search Collection",
+      "description": "Search the City's public art & monument collection PDC curates (Outdoor Public Art Inventory) by borough, artwork type, material, artist, or managing agency.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island",
+              "Citywide"
+            ]
+          },
+          "artworkType": {
+            "type": "string"
+          },
+          "material": {
+            "type": "string"
+          },
+          "artist": {
+            "type": "string"
+          },
+          "managingCityAgency": {
+            "type": "string"
+          },
+          "q": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/collection-item.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCollectionItems",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "get_collection_item",
+      "title": "Get Collection Item",
+      "description": "Fetch a single work in the City's public art & monument collection (title, creators, material, location, inscription, dates) by title.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "outputSchema": {
+        "$ref": "../schemas/collection-item.json"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "getCollectionItem",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "list_commissioners",
+      "title": "List Commissioners",
+      "description": "List the 11 pro-bono members of the Public Design Commission and the statutory seats they fill (architect, landscape architect, painter, sculptor, lay members, museum/library/mayoral representatives).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/commissioner.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listCommissioners",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "find_awards",
+      "title": "Find Awards",
+      "description": "List Awards for Excellence in Design recipients by year, cycle, or borough.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer"
+          },
+          "cycle": {
+            "type": "integer"
+          },
+          "borough": {
+            "type": "string",
+            "enum": [
+              "Manhattan",
+              "Bronx",
+              "Brooklyn",
+              "Queens",
+              "Staten Island",
+              "Citywide"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/design-award.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listAwards",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "list_my_submissions",
+      "title": "List My Submissions",
+      "description": "List the authenticated City agency's own design-review submissions and their status \u2014 today visible only inside PDC's manual intake.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "Built Environment",
+              "Limited Scope",
+              "Signage",
+              "Artwork Installation",
+              "Artwork Relocation or Conservation"
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          },
+          "perPage": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 50
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "../schemas/design-submission.json"
+            }
+          }
+        }
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "listSubmissions",
+      "x-auth": "user",
+      "x-agent-skill": "search-city-data-and-records"
+    },
+    {
+      "name": "submit_design_review",
+      "title": "Submit Design Review",
+      "description": "Submit a project to the Public Design Commission for design review (architecture, landscape architecture, or art on/over City-owned property). NET-NEW workflow with no PDC-owned API today \u2014 submission is currently a manual PDF application form and checklist emailed by a City agency liaison, with hard copies delivered to City Hall. This is an agency/B2G transaction (no citizen write exists in this domain): only a City agency with jurisdiction over the property may submit, it must be signed by all involved agencies and list Community Board(s) and Council District(s). Mutates state \u2014 confirm lead agency, category, and project details first.",
+      "inputSchema": {
+        "$ref": "../schemas/design-submission.json"
+      },
+      "outputSchema": {
+        "$ref": "../schemas/design-submission.json"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      },
+      "x-openapi-operation": "submitDesignReview",
+      "x-auth": "user",
+      "x-agent-skill": "apply-for-a-permit-license-or-benefit"
+    }
+  ],
+  "x-agent-skills": {
+    "index": "https://nyc.apievangelist.com/experience/skills/index.json",
+    "note": "Each tool maps to one of the ten NYC common government-process Agent Skills via x-agent-skill."
+  },
+  "prompts": [
+    {
+      "name": "explore_pdc",
+      "domain": "pdc",
+      "description": "Search and read NYC Public Design Commission (PDC) records \u2014 Projects, Meetings, Collection, Commissioners.",
+      "uses": [
+        "find_projects",
+        "get_project",
+        "find_meetings",
+        "get_meeting"
+      ]
+    },
+    {
+      "name": "apply_for_pdc",
+      "domain": "pdc",
+      "description": "DesignSubmission \u2014 a City agency (via its PDC liaison) submits a project for design review (category, requested level of review, lead + secondary agencies, Community Board / Council District, interagency approvals, and a",
+      "uses": [
+        "submit_design_review"
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "uri": "nyc://pdc",
+      "name": "NYC Public Design Commission (PDC) \u2014 profile",
+      "description": "NYC Public Design Commission (PDC): 11 operations, 10 tools, verb \u201cdigitize\u201d.",
+      "mimeType": "application/json",
+      "backing": "domain.html?d=pdc"
+    },
+    {
+      "uri": "nyc://pdc/openapi",
+      "name": "NYC Public Design Commission (PDC) OpenAPI",
+      "description": "The agency's OpenAPI 3.1 contract (every operation).",
+      "mimeType": "application/yaml",
+      "url": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pdc/openapi/pdc.yaml"
+    },
+    {
+      "uri": "nyc://pdc/projects/{id}",
+      "name": "Projects record (templated)",
+      "description": "A single NYC Public Design Commission (PDC) Projects record by id.",
+      "mimeType": "application/json",
+      "template": true
+    }
+  ]
+}

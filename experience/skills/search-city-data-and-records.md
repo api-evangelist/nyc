@@ -10,7 +10,7 @@ The question needs facts from a city dataset or record. Pick the owning agency's
 
 ## What it orchestrates
 
-This skill spans **67 agencies** and **531 operations** across the corpus. It resolves the right agency for the task, then calls that agency's MCP tools (each backed by a REST operation) to complete it — anchoring any location on the [nyc-commons](https://nyc.apievangelist.com/commons.html) geography spine.
+This skill spans **70 agencies** and **555 operations** across the corpus. It resolves the right agency for the task, then calls that agency's MCP tools (each backed by a REST operation) to complete it — anchoring any location on the [nyc-commons](https://nyc.apievangelist.com/commons.html) geography spine.
 
 ## Agencies
 
@@ -50,6 +50,7 @@ This skill spans **67 agencies** and **531 operations** across the corpus. It re
 - [NYC Youth & Community Dev (DYCD)](https://nyc.apievangelist.com/domain.html?d=dycd)
 - [NYC Economic Development (EDC)](https://nyc.apievangelist.com/domain.html?d=edc)
 - [NYC Fire (FDNY)](https://nyc.apievangelist.com/domain.html?d=fdny)
+- [NYC Housing Development Corp (HDC)](https://nyc.apievangelist.com/domain.html?d=hdc)
 - [NYC Health + Hospitals](https://nyc.apievangelist.com/domain.html?d=hhc)
 - [NYC Housing (HPD)](https://nyc.apievangelist.com/domain.html?d=hpd)
 - [NYC Social Services (HRA)](https://nyc.apievangelist.com/domain.html?d=hra)
@@ -59,6 +60,7 @@ This skill spans **67 agencies** and **531 operations** across the corpus. It re
 - [Manhattan Borough President](https://nyc.apievangelist.com/domain.html?d=manhattanbp)
 - [Manhattan District Attorney](https://nyc.apievangelist.com/domain.html?d=manhattanda)
 - [NYC Criminal Justice (MOCJ)](https://nyc.apievangelist.com/domain.html?d=mocj)
+- [NYC Environmental Remediation (OER)](https://nyc.apievangelist.com/domain.html?d=moer)
 - [NYC Media & Entertainment (MOME)](https://nyc.apievangelist.com/domain.html?d=mome)
 - [NYC311](https://nyc.apievangelist.com/domain.html?d=nyc311)
 - [NYC Emergency Management (NYCEM)](https://nyc.apievangelist.com/domain.html?d=nycem)
@@ -69,6 +71,7 @@ This skill spans **67 agencies** and **531 operations** across the corpus. It re
 - [NYC Admin Trials & Hearings (OATH)](https://nyc.apievangelist.com/domain.html?d=oath)
 - [NYC Medical Examiner (OCME)](https://nyc.apievangelist.com/domain.html?d=ocme)
 - [NYC Technology & Innovation (OTI)](https://nyc.apievangelist.com/domain.html?d=oti)
+- [NYC Public Design Commission (PDC)](https://nyc.apievangelist.com/domain.html?d=pdc)
 - [NYC Public Advocate](https://nyc.apievangelist.com/domain.html?d=pubadvocate)
 - [Queens Borough President](https://nyc.apievangelist.com/domain.html?d=queensbp)
 - [Queens District Attorney](https://nyc.apievangelist.com/domain.html?d=queensda)

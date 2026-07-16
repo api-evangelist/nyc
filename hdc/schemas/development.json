@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hdc/schemas/development.json",
+  "title": "Development",
+  "description": "An affordable-housing development financed by HDC — the core unit of what HDC does. HDC pairs tax-exempt/taxable bonds with as-of-right 4% Low-Income Housing Tax Credits and its corporate reserves to fund new construction, acquisition/rehabilitation, and preservation. HDC publishes NO dataset of its own; the closest machine-readable record of HDC-financed developments is HPD's 'Low Income Housing Tax Credits Awarded by HPD' project-level datasets — the 4% awards are precisely the deals financed through HDC's tax-exempt bonds. This schema reconciles those adjacent (HPD-owned) columns into an HDC-owned resource, keyed on BBL.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nychdc.com/develop",
+    "opendata_adjacent_4pct_project": "https://data.cityofnewyork.us/d/p8i7-ix2s",
+    "opendata_adjacent_4pct_building": "https://data.cityofnewyork.us/d/h9ws-rfd9",
+    "opendata_owned": null,
+    "opendata_gap": true,
+    "note": "No HDC-owned dataset exists. Columns below are reconciled from HPD's LIHTC 4% project-level dataset (p8i7-ix2s), which carries HDC's bond-financed 4% deals."
+  },
+  "properties": {
+    "projectName": { "type": "string", "description": "Development / project name ('Project Name')." },
+    "bbl": { "$ref": "_common.json#/$defs/BBL" },
+    "bin": { "$ref": "_common.json#/$defs/BIN" },
+    "borough": { "$ref": "_common.json#/$defs/Borough" },
+    "program": { "$ref": "_common.json#/$defs/FinancingProgramType" },
+    "constructionType": { "$ref": "_common.json#/$defs/ConstructionType" },
+    "totalUnits": { "type": ["integer", "null"], "description": "Total residential units ('Total Units')." },
+    "totalTaxCreditUnits": { "type": ["integer", "null"], "description": "Units supported by tax credits ('Total Tax Credit Units')." },
+    "affordability": { "$ref": "_common.json#/$defs/AMIBand" },
+    "applicationYear": { "type": ["integer", "null"], "description": "Year the tax-credit / financing application was received ('Application Year')." },
+    "creditYear": { "type": ["integer", "null"], "description": "Tax-credit allocation year ('Credit Year')." },
+    "creditAmount": { "$ref": "_common.json#/$defs/Money", "description": "Annual credit amount ('DOCE Amount' / 'CRA Amount')." },
+    "borrower": { "$ref": "_common.json#/$defs/OrganizationReference", "description": "Developer/borrower of record ('Applicant Name')." },
+    "geography": { "$ref": "_common.json#/$defs/Geography" },
+    "coordinates": { "$ref": "_common.json#/$defs/Coordinates" }
+  },
+  "required": ["projectName"],
+  "additionalProperties": false
+}

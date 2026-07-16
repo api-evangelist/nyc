@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/pdc/schemas/commissioner.json",
+  "title": "Commissioner",
+  "description": "A member of the Public Design Commission. The Commission is made up of 11 members who serve pro bono and meet once a month to review and vote on projects submitted by City agencies. Statutory composition (NYC Charter Chapter 37): an architect, a landscape architect, a painter, a sculptor, three lay members, and representatives of the Brooklyn Museum, the Metropolitan Museum of Art, the New York Public Library, and the Mayor. There is NO Open Data twin — membership is published only as HTML on the About/People page. Reverse-engineered reference object.",
+  "type": "object",
+  "x-source": {
+    "site": "https://www.nyc.gov/site/designcommission/about/about.page",
+    "opendata": null,
+    "opendata_gap": true
+  },
+  "properties": {
+    "commissionerId": { "type": ["string", "null"], "description": "Stable identifier for the member." },
+    "name": { "$ref": "_common.json#/$defs/PersonName" },
+    "seat": {
+      "type": ["string", "null"],
+      "description": "The statutory seat the member fills.",
+      "enum": [
+        "Architect",
+        "Landscape Architect",
+        "Painter",
+        "Sculptor",
+        "Lay Member",
+        "Brooklyn Museum Representative",
+        "Metropolitan Museum of Art Representative",
+        "New York Public Library Representative",
+        "Mayoral Representative",
+        null
+      ]
+    },
+    "officer": {
+      "type": ["string", "null"],
+      "enum": ["President", "Vice President", "Secretary", "Assistant Secretary", null],
+      "description": "Officer role, if any."
+    },
+    "proBono": { "type": ["boolean", "null"], "default": true, "description": "Commission members serve pro bono." },
+    "termStart": { "type": ["string", "null"], "format": "date" },
+    "termEnd": { "type": ["string", "null"], "format": "date" }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

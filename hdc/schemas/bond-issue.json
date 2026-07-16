@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/nyc/main/hdc/schemas/bond-issue.json",
+  "title": "BondIssue",
+  "description": "A series of bonds issued by HDC to fund its lending — the investor-facing side of the corporation. HDC is one of the nation's largest municipal housing bond issuers (Housing Revenue Bonds; Sustainable Development Bonds). CRITICAL OWNERSHIP FINDING: HDC publishes no bond dataset on NYC Open Data; investor disclosure (Official Statements, financial statements, SDB annual reports) lives on the FEDERAL MSRB EMMA platform as documents, and the only City open-data trace is OMB's 'Debt Issuance by Issuer' (n5n4-5k5r), where HDC appears merely as an 'Issuer Name' value. This schema reconciles the OMB columns + EMMA disclosure fields into an HDC-owned resource.",
+  "type": "object",
+  "x-source": {
+    "invest_debt_issuance": "https://www.nychdc.com/invest",
+    "opendata_adjacent_omb": "https://data.cityofnewyork.us/d/n5n4-5k5r",
+    "disclosure_emma": "https://emma.msrb.org/",
+    "opendata_owned": null,
+    "opendata_gap": true,
+    "note": "HDC appears only as an 'Issuer Name' value in OMB's Debt Issuance by Issuer; primary disclosure is on federal EMMA, not a City system."
+  },
+  "properties": {
+    "seriesId": { "type": "string", "description": "Bond series identifier ('Series Name' on OMB's dataset), e.g. 'Multi-Family Housing Revenue Bonds, 2024 Series A'." },
+    "issuerName": { "type": ["string", "null"], "default": "New York City Housing Development Corporation", "description": "Issuer ('Issuer Name'). For this resource always HDC." },
+    "bondType": { "$ref": "_common.json#/$defs/BondType" },
+    "newMoneyOrRefunding": { "type": ["string", "null"], "enum": ["New Money", "Refunding", "New Money/Refunding", null], "description": "Whether the issue is new money or a refunding ('New Money/Refunding')." },
+    "issueDate": { "type": ["string", "null"], "format": "date", "description": "Date of issuance ('Issue Date')." },
+    "taxExemptParAmount": { "$ref": "_common.json#/$defs/Money", "description": "Tax-exempt par amount ('Tax Exempt Par Amount')." },
+    "taxableParAmount": { "$ref": "_common.json#/$defs/Money", "description": "Taxable par amount ('Taxable Par Amount')." },
+    "publicationDate": { "type": ["string", "null"], "format": "date", "description": "OMB publication date ('PUBLICATION DATE')." },
+    "sustainable": { "type": ["boolean", "null"], "description": "Whether the series is designated a Sustainable Development Bond (SDB)." },
+    "ratings": {
+      "type": "array",
+      "items": { "$ref": "_common.json#/$defs/CreditRating" },
+      "description": "Credit ratings on the issue (e.g. AA / Aa2), as published on the Invest pages."
+    },
+    "officialStatementUrl": { "type": ["string", "null"], "format": "uri", "description": "Link to the Official Statement (typically hosted on the Invest pages and MSRB EMMA)." },
+    "emmaUrl": { "type": ["string", "null"], "format": "uri", "description": "MSRB EMMA disclosure URL for the issue." }
+  },
+  "required": ["seriesId"],
+  "additionalProperties": false
+}

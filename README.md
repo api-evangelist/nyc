@@ -21,21 +21,21 @@ From roughly **2010 to 2018**, the open-data movement — led by **Socrata** (no
 
 Data liberation was step one, and it half-happened. This is step two: **making the city programmable.**
 
-All **67 agencies** have been assessed this way, and the design-first artifacts are assembled into a full stack: a cross-domain **synthesis**, an **opportunity** ranking, the **`nyc-commons`** shared schema set, a **QA** verification pass, **standards** conformance, and **the Programmable City** — the REST → MCP → Agent-Skill chain across every agency, with a callable reference API and an installable MCP server. On top of it all sits a **strategy** aimed at New York's new [Public Interest Technology (PIT) Crew](https://nyc.apievangelist.com/strategy.html).
+All **70 agencies** have been assessed this way, and the design-first artifacts are assembled into a full stack: a cross-domain **synthesis**, an **opportunity** ranking, the **`nyc-commons`** shared schema set, a **QA** verification pass, **standards** conformance, and **the Programmable City** — the REST → MCP → Agent-Skill chain across every agency, with a callable reference API and an installable MCP server. On top of it all sits a **strategy** aimed at New York's new [Public Interest Technology (PIT) Crew](https://nyc.apievangelist.com/strategy.html).
 
 ## Explore the site
 
 This repo doubles as an explorable, data-driven website (**[nyc.apievangelist.com](https://nyc.apievangelist.com)**, GitHub Pages):
 
-- `index.html` — project overview: thesis, cross-domain stats, the five verb families, the method, and cards for all 67 domains.
+- `index.html` — project overview: thesis, cross-domain stats, the five verb families, the method, and cards for all 70 domains.
 - `domain.html?d=<domain>` — per-domain explorer: interactive fruit index, searchable Open Data index, JSON Schema browser, OpenAPI operations, MCP tools, and rendered docs.
 - `strategy.html` · `references.html` — **the strategic case** for why this work matters, aimed at NYC's [Public Interest Technology (PIT) Crew](https://www.nyc.gov/content/pitcrew/pages/), plus a growing library of references (`data/references.json`).
 - `synthesis.html` — the **cross-domain synthesis**: the five verb families, the thirteen cross-cutting findings, and the aggregate maturity scorecard (the "two flat columns" — no write API, no agent surface).
 - `opportunity.html` · `linkage.html` · `transactions.html` — the assessment layer: priority ranking (demand×gap×feasibility), the cross-domain join-key graph, and the citizen-transaction taxonomy.
-- `experience.html` — **the Programmable City**: the REST operation → MCP tool → Agent Skill chain across all 67 agencies, organized by ten common government processes, with per-agency + cross-agency MCP prompts and resources. It's **runnable** — a GET-callable static **reference API** (`experience/api/`, example data off Pages) and an installable **MCP server** ([`@api-common/nyc-mcp`](experience/mcp-server/), one-click via [install.apicommons.org](https://install.apicommons.org)). Machine artifacts under `experience/` (unified OpenAPI with `x-` extensions, NYC-wide MCP, [APIs.json](https://apisjson.org) descriptor, Skills).
-- `commons.html` — the **[`nyc-commons`](nyc-commons/README.md)** shared schema set: 21 canonical definitions (borough, BBL, address, place, party, dollar), the per-definition adoption report (all 66 consumer domains migrated), and the cross-agency key registry.
-- `standards.html` · `qa.html` — the standards NYC agencies should adopt (and the standards this project is built on), and the verification pass (66/67 high confidence).
-- `entities.html` · `technology.html` — master cross-domain inventories (328 entities; 78 technologies tagged commercial/open-source with an OSS alternative for each proprietary tool).
+- `experience.html` — **the Programmable City**: the REST operation → MCP tool → Agent Skill chain across all 70 agencies, organized by ten common government processes, with per-agency + cross-agency MCP prompts and resources. It's **runnable** — a GET-callable static **reference API** (`experience/api/`, example data off Pages) and an installable **MCP server** ([`@api-common/nyc-mcp`](experience/mcp-server/), one-click via [install.apicommons.org](https://install.apicommons.org)). Machine artifacts under `experience/` (unified OpenAPI with `x-` extensions, NYC-wide MCP, [APIs.json](https://apisjson.org) descriptor, Skills).
+- `commons.html` — the **[`nyc-commons`](nyc-commons/README.md)** shared schema set: 21 canonical definitions (borough, BBL, address, place, party, dollar), the per-definition adoption report (all 69 consumer domains migrated), and the cross-agency key registry.
+- `standards.html` · `qa.html` — the standards NYC agencies should adopt (and the standards this project is built on), and the verification pass (69/70 high confidence).
+- `entities.html` · `technology.html` — master cross-domain inventories (344 entities; 79 technologies tagged commercial/open-source with an OSS alternative for each proprietary tool).
 - `docs.html?f=…` — in-browser Markdown viewer (also serves the [CHANGELOG](CHANGELOG.md), [SYNTHESIS](SYNTHESIS.md), [STRATEGY](STRATEGY.md), and the per-analysis writeups).
 - `data/manifest.json` — generated from the repo artifacts; the site reads it, so it stays accurate as domains are added. Regenerate after adding a domain: `python3 scripts/build-manifest.py && python3 scripts/build-scorecard.py` (then `build-analysis.py`, `build-inventories.py`, `build-qa.py`, `build-standards.py`; `build-commons.py` after touching any `_common.json`; `build-experience.py` then `build-gateway.py` rebuild the experience layer + reference API; `build-references.py` after editing references).
 
@@ -57,7 +57,7 @@ See the **[CHANGELOG](CHANGELOG.md)** for the full project history, and the **[c
 
 ## Contents
 
-> **All 67 assessed domains are browsable at [nyc.apievangelist.com](https://nyc.apievangelist.com)** — this Contents list highlights the first five deep-dives; every other agency folder follows the identical structure.
+> **All 70 assessed domains are browsable at [nyc.apievangelist.com](https://nyc.apievangelist.com)** — this Contents list highlights the first five deep-dives; every other agency folder follows the identical structure.
 
 - [domains.md](domains.md) — master inventory of NYC government domains (umbrella `nyc.gov`, distinct-domain agencies, `aNNN-*.nyc.gov` app hosts, public authorities, adjacent state/regional).
 - [nycgovparks.org/](nycgovparks.org/) — **first domain, taken through the full method:**
@@ -98,7 +98,7 @@ See the **[CHANGELOG](CHANGELOG.md)** for the full project history, and the **[c
 
 ## Status
 
-**All 67 domains assessed** — the full NYC government surface: **2,666 Open Data assets** mapped, **422 JSON Schemas**, **721 API operations**, **624 MCP tools**. The assessment is verified ([66/67 high confidence](https://nyc.apievangelist.com/qa.html)). One flat truth across the entire city: open data is broad, but **65 of 67 agencies have no transactional write API and all 67 have no agent surface.** The ~40 modernization verbs collapse into five families — Digitize · Expose · Unify/Federate · Transact · Standardize.
+**All 70 domains assessed** — the full NYC government surface: **2,681 Open Data assets** mapped, **439 JSON Schemas**, **752 API operations**, **653 MCP tools**. The assessment is verified ([69/70 high confidence](https://nyc.apievangelist.com/qa.html)). One flat truth across the entire city: open data is broad, but **68 of 70 agencies have no transactional write API and all 70 have no agent surface.** The ~40 modernization verbs collapse into five families — Digitize · Expose · Unify/Federate · Transact · Standardize.
 
 Five of the domains, illustrating five distinct verbs:
 
@@ -110,15 +110,16 @@ Five of the domains, illustrating five distinct verbs:
 | vote.nyc | Drupal 9 | 2 assets; results/candidates PDF-only | **digitize** |
 | portal.311.nyc.gov | Dynamics 365 | flagship dataset; Open311 standard retired | **standardize** |
 
-### Built on top of the 67 assessments
+### Built on top of the 70 assessments
 
 - **[Synthesis](SYNTHESIS.md)** — five verb families, thirteen cross-cutting findings, the aggregate maturity scorecard (`synthesis.html`).
 - **Opportunity / Linkage / Transactions** — priority ranking, the cross-domain join-key graph, and the citizen-transaction taxonomy.
-- **[`nyc-commons`](nyc-commons/README.md)** — a versioned shared schema set (geography · identifiers · address · place · party · money), factored from City Planning; **all 66 consumer domains migrated** to `$ref` it.
+- **[`nyc-commons`](nyc-commons/README.md)** — a versioned shared schema set (geography · identifiers · address · place · party · money), factored from City Planning; **all 69 consumer domains migrated** to `$ref` it.
 - **QA** — every claim re-verified; **Standards** — the sector standards NYC should adopt (Open311, FHIR, …) and the standards this project is built on.
-- **Inventories** — 328 entities and 78 technologies, each tagged commercial / open-source with a named OSS alternative for every proprietary tool.
-- **[The Programmable City](https://nyc.apievangelist.com/experience.html)** — the REST → MCP → Agent-Skill chain across all 67 agencies, ten common government-process skills, per- and cross-agency MCP prompts/resources, a **callable reference API**, and an **installable MCP server** ([`@api-common/nyc-mcp`](experience/mcp-server/)).
+- **Inventories** — 344 entities and 79 technologies, each tagged commercial / open-source with a named OSS alternative for every proprietary tool.
+- **[The Programmable City](https://nyc.apievangelist.com/experience.html)** — the REST → MCP → Agent-Skill chain across all 70 agencies, ten common government-process skills, per- and cross-agency MCP prompts/resources, a **callable reference API**, and an **installable MCP server** ([`@api-common/nyc-mcp`](experience/mcp-server/)).
 - **[Strategy](STRATEGY.md) + [References](REFERENCES.md)** — the case for the work, aimed at NYC's Public Interest Technology (PIT) Crew.
+- **[Cross-agency workflows](experience/workflows/)** — multi-agency journeys as open [Arazzo](https://spec.openapis.org/arazzo/latest.html) documents, starting with **[Build Affordable Housing in NYC](experience/workflows/build-affordable-housing.arazzo.yaml)** — the ~40-permit chain across twelve agencies as one BBL-keyed thread — and the **[housing brief](HOUSING.md)** on making affordable-housing permitting programmable.
 
 **Next** — see the [ROADMAP](ROADMAP.md): the DCWP "Click to Cancel" worked example for PIT Crew, a forkable "civic API kit" so other cities can run the method, OSS-migration playbooks, and publishing `@api-common/nyc-mcp` to npm.
 

@@ -10,7 +10,7 @@ The resident wants to know where something stands. Identify the case by its id/o
 
 ## What it orchestrates
 
-This skill spans **20 agencies** and **20 operations** across the corpus. It resolves the right agency for the task, then calls that agency's MCP tools (each backed by a REST operation) to complete it — anchoring any location on the [nyc-commons](https://nyc.apievangelist.com/commons.html) geography spine.
+This skill spans **23 agencies** and **23 operations** across the corpus. It resolves the right agency for the task, then calls that agency's MCP tools (each backed by a REST operation) to complete it — anchoring any location on the [nyc-commons](https://nyc.apievangelist.com/commons.html) geography spine.
 
 ## Agencies
 
@@ -23,11 +23,14 @@ This skill spans **20 agencies** and **20 operations** across the corpus. It res
 - [NYC Buildings (DOB)](https://nyc.apievangelist.com/domain.html?d=dob)
 - [NYC Correction (DOC)](https://nyc.apievangelist.com/domain.html?d=doc)
 - [NYC Health (DOHMH)](https://nyc.apievangelist.com/domain.html?d=dohmh)
+- [NYC Housing Development Corp (HDC)](https://nyc.apievangelist.com/domain.html?d=hdc)
 - [Manhattan District Attorney](https://nyc.apievangelist.com/domain.html?d=manhattanda)
 - [NYC Criminal Justice (MOCJ)](https://nyc.apievangelist.com/domain.html?d=mocj)
+- [NYC Environmental Remediation (OER)](https://nyc.apievangelist.com/domain.html?d=moer)
 - [NYC311](https://nyc.apievangelist.com/domain.html?d=nyc311)
 - [NYC Parks & Recreation](https://nyc.apievangelist.com/domain.html?d=nycgovparks.org)
 - [NYC Admin Trials & Hearings (OATH)](https://nyc.apievangelist.com/domain.html?d=oath)
+- [NYC Public Design Commission (PDC)](https://nyc.apievangelist.com/domain.html?d=pdc)
 - [Queens Borough President](https://nyc.apievangelist.com/domain.html?d=queensbp)
 - [Queens District Attorney](https://nyc.apievangelist.com/domain.html?d=queensda)
 - [NYC Public Schools (DOE)](https://nyc.apievangelist.com/domain.html?d=schools.nyc.gov)
