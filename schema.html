@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Schema detail — NYC Modernization</title>
+<meta name="description" content="A single object schema across NYC government — the JSON Schema, and every domain and API operation that uses it.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%233098d8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+.scard{border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:var(--radius);background:var(--bg-card);margin:0 0 18px;overflow:hidden}
+.scard .h{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px}
+.scard .h h3{margin:0;font-size:1.08rem;flex:1;min-width:180px}
+.scard .lnk{font-size:.8rem}
+.ops{padding:2px 16px 8px}
+.op{display:grid;grid-template-columns:58px 1fr;gap:10px;align-items:baseline;padding:5px 0;border-top:1px dashed var(--border);font-size:.85rem}
+.m{font-family:ui-monospace,Menlo,monospace;font-size:.66rem;font-weight:700;padding:2px 6px;border-radius:5px;text-align:center;color:#fff}
+.m.get{background:#3098d8}.m.post{background:#2e9e6b}.m.put{background:#d6923a}.m.patch{background:#b5701f}.m.delete{background:#c0504d}
+.op code{font-size:.82rem}
+pre.code{background:#0e1319;color:#d5e2f0;border-radius:0 0 var(--radius) var(--radius);padding:14px 16px;overflow:auto;font-size:.78rem;line-height:1.45;margin:0;max-height:520px}
+pre.code .k{color:#7cc7ff}pre.code .s{color:#b6e3a0}pre.code .n{color:#e0b072}
+.idx{columns:3;column-gap:26px}
+.idx a{display:block;padding:2px 0;font-size:.9rem}
+@media(max-width:760px){.idx{columns:2}}
+@media(max-width:480px){.idx{columns:1}}
+</style>
+<!--seo:start-->
+<link rel="canonical" href="https://nyc.apievangelist.com/schema.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NYC — Digital Modernization">
+<meta property="og:title" content="Schema detail — NYC Modernization">
+<meta property="og:description" content="A single object schema across NYC government — the JSON Schema, and every domain and API operation that uses it.">
+<meta property="og:url" content="https://nyc.apievangelist.com/schema.html">
+<meta property="og:image" content="https://nyc.apievangelist.com/assets/social.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Schema detail — NYC Modernization">
+<meta name="twitter:description" content="A single object schema across NYC government — the JSON Schema, and every domain and API operation that uses it.">
+<meta name="twitter:image" content="https://nyc.apievangelist.com/assets/social.png">
+<!--seo:end-->
+</head>
+<body>
+<div id="nav"></div>
+<div class="dhead"><div class="wrap">
+  <div class="eyebrow" style="color:var(--brand-dark);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase"><a href="entities.html" style="color:inherit">Entities</a> · Schema</div>
+  <h1 id="title">Schema</h1>
+  <p class="muted" id="sub" style="max-width:74ch"></p>
+  <div class="stats" style="margin-top:14px" id="stats"></div>
+</div></div>
+<div class="wrap"><div id="out"></div></div>
+<div id="footer"></div>
+<script src="assets/app.js"></script>
+<script>
+(async function(){
+  document.getElementById("nav").innerHTML=navBar();
+  document.getElementById("footer").innerHTML=footer();
+  const S=await getJSON("data/schemas.json");
+  const byTitle={}; S.schemas.forEach(s=>byTitle[s.title]=s);
+  const want=new URLSearchParams(location.search).get("e");
+  const out=document.getElementById("out");
+
+  // tiny JSON syntax highlighter for the raw schema code block
+  function hl(txt){
+    return esc(txt)
+      .replace(/(&quot;(?:[^&]|&(?!quot;))*?&quot;)(\s*:)/g,'<span class="k">$1</span>$2')
+      .replace(/:\s*(&quot;(?:[^&]|&(?!quot;))*?&quot;)/g,': <span class="s">$1</span>')
+      .replace(/:\s*(-?\d+\.?\d*|true|false|null)/g,': <span class="n">$1</span>');
+  }
+  async function getText(u){ const r=await fetch(u); if(!r.ok) throw new Error(u+" "+r.status); return r.text(); }
+
+  if(!want || !byTitle[want]){
+    document.getElementById("title").textContent="Object schemas";
+    document.getElementById("sub").textContent=(want?`No schema titled “${want}”. `:"")+`Browse all ${S.count} distinct object schemas modeled across the assessed domains.`;
+    document.getElementById("stats").innerHTML=[[S.count,"distinct schemas"],[S.total_instances,"object files"],[S.schemas.filter(s=>s.count>1).length,"shared (2+ domains)"]].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+    out.innerHTML=`<div class="idx">`+S.schemas.map(s=>`<a href="schema.html?e=${encodeURIComponent(s.title)}"><code>${esc(s.title)}</code>${s.count>1?` <span class="badge ok">${s.count}</span>`:""}</a>`).join("")+`</div>`;
+    return;
+  }
+
+  const sc=byTitle[want];
+  document.title=sc.title+" schema — NYC Modernization";
+  document.getElementById("title").innerHTML=`<code>${esc(sc.title)}</code>`;
+  const domCount=sc.count, opCount=sc.instances.reduce((n,i)=>n+i.ops.length,0);
+  document.getElementById("sub").innerHTML=`Object schema modeled in <strong>${domCount}</strong> ${domCount===1?"domain":"domains"}${opCount?` and used by <strong>${opCount}</strong> API operation${opCount===1?"":"s"}`:""}. Each domain models it in its own <code>schemas/</code> file; the JSON Schema and the operations that <code>$ref</code> it are below.`;
+  document.getElementById("stats").innerHTML=[[domCount,"domains"],[opCount,"API operations"]].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+
+  out.innerHTML=sc.instances.map((it,i)=>{
+    const ops=it.ops.length?`<div class="ops">`+it.ops.map(o=>`<div class="op"><span class="m ${o.method.toLowerCase()}">${o.method}</span>
+      <span><code>${esc(o.path)}</code> <span class="muted small">· ${esc(o.operationId)}${o.summary?" — "+esc(o.summary):""}</span></span></div>`).join("")+`</div>`
+      :`<div class="ops"><p class="muted small" style="margin:6px 0">No operation in this domain's OpenAPI <code>$ref</code>s this schema directly (it may be a nested/shared object).</p></div>`;
+    const links=[`<a class="lnk" href="domain.html?d=${encodeURIComponent(it.domain)}">Domain →</a>`,
+      `<a class="lnk" href="${it.file}">Raw schema ↗</a>`,
+      it.openapi?`<a class="lnk" href="${it.openapi}">OpenAPI ↗</a>`:""].filter(Boolean).join(" · ");
+    return `<div class="scard" style="border-left-color:${it.accent||'var(--brand)'}" id="d-${esc(it.domain)}">
+      <div class="h"><h3><a href="domain.html?d=${encodeURIComponent(it.domain)}">${esc(it.short)}</a> <span class="muted small" style="font-weight:400">${esc(it.verb)}</span></h3>
+        <span>${links}</span></div>
+      ${it.description?`<p class="muted small" style="margin:0 16px 8px">${esc(it.description)}</p>`:""}
+      ${ops}
+      <pre class="code" id="code-${i}">Loading ${esc(it.file)} …</pre></div>`;
+  }).join("");
+
+  // fetch + render each raw schema file
+  sc.instances.forEach(async (it,i)=>{
+    const el=document.getElementById("code-"+i);
+    try{ el.innerHTML=hl(await getText(it.file)); }
+    catch(e){ el.textContent="Could not load "+it.file+" ("+e.message+")"; }
+  });
+})();
+</script>
+</body>
+</html>

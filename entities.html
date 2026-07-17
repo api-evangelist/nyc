@@ -58,13 +58,13 @@
     if(mode==="entity"){
       const rows=E.byEntity.filter(r=>!q||r.entity.toLowerCase().includes(q)||r.domains.some(d=>d.short.toLowerCase().includes(q)));
       out.innerHTML=`<div class="tablewrap"><table><thead><tr><th>Entity</th><th># domains</th><th>Domains</th></tr></thead><tbody>`+
-        rows.map(r=>`<tr><td><code>${esc(r.entity)}</code></td><td>${r.count>1?`<span class="badge ok">${r.count}</span>`:1}</td>
+        rows.map(r=>`<tr><td><a href="schema.html?e=${encodeURIComponent(r.entity)}"><code>${esc(r.entity)}</code></a></td><td>${r.count>1?`<span class="badge ok">${r.count}</span>`:1}</td>
           <td class="small">${r.domains.map(domLink).join(", ")}</td></tr>`).join("")+`</tbody></table></div>`;
       document.getElementById("count").textContent=rows.length+" / "+E.byEntity.length+" entities";
     } else {
       const rows=E.byDomain.filter(d=>!q||d.short.toLowerCase().includes(q)||d.entities.some(e=>e.toLowerCase().includes(q)));
       out.innerHTML=rows.map(d=>`<div class="card" style="margin-bottom:12px"><h3 style="font-size:1.05rem;margin:0 0 .3em">${domLink(d)} <span class="muted small">${esc(d.verb)}</span></h3>
-        <p style="margin:0">${d.entities.map(e=>`<span class="badge neutral" style="margin:2px">${esc(e)}</span>`).join(" ")}</p></div>`).join("");
+        <p style="margin:0">${d.entities.map(e=>`<a href="schema.html?e=${encodeURIComponent(e)}" class="badge neutral" style="margin:2px;text-decoration:none">${esc(e)}</a>`).join(" ")}</p></div>`).join("");
       document.getElementById("count").textContent=rows.length+" / "+E.byDomain.length+" domains";
     }
   }
