@@ -1,4 +1,22 @@
-/* NYC Modernization — shared site JS. No external dependencies. */
+/* NYC Modernization — shared site JS. Loaded on every page (root + blog),
+   so it is the single place site-wide behavior lives. Only external dependency
+   is Google Analytics (gtag.js), injected below. */
+
+/* ---- Google Analytics (GA4) — loaded once, on every page that includes app.js ---- */
+(function(){
+  var ID = "G-JBMRF9CNRM";
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function(){ dataLayer.push(arguments); };
+  if (!document.querySelector('script[data-gtag]')) {
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://www.googletagmanager.com/gtag/js?id=" + ID;
+    s.setAttribute("data-gtag", "1");
+    document.head.appendChild(s);
+  }
+  gtag("js", new Date());
+  gtag("config", ID);
+})();
 
 async function getJSON(url){ const r = await fetch(url); if(!r.ok) throw new Error(url+" "+r.status); return r.json(); }
 async function getText(url){ const r = await fetch(url); if(!r.ok) throw new Error(url+" "+r.status); return r.text(); }
