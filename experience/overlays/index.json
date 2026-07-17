@@ -1,0 +1,82 @@
+{
+ "note": "Overlay-based interface localization sets across the NYC Modernization study. Each agency set localizes the API/agent interface (never the data) into the ten citywide languages of NYC Local Law 30, from one base contract.",
+ "spec": "https://spec.openapis.org/overlay/latest.html",
+ "base_language": {
+  "code": "en",
+  "name": "English",
+  "endonym": "English",
+  "dir": "ltr"
+ },
+ "languages": [
+  {
+   "code": "es",
+   "name": "Spanish",
+   "endonym": "Español",
+   "dir": "ltr"
+  },
+  {
+   "code": "zh-Hant",
+   "name": "Chinese (Traditional)",
+   "endonym": "繁體中文",
+   "dir": "ltr"
+  },
+  {
+   "code": "ru",
+   "name": "Russian",
+   "endonym": "Русский",
+   "dir": "ltr"
+  },
+  {
+   "code": "bn",
+   "name": "Bengali",
+   "endonym": "বাংলা",
+   "dir": "ltr"
+  },
+  {
+   "code": "ht",
+   "name": "Haitian Creole",
+   "endonym": "Kreyòl Ayisyen",
+   "dir": "ltr"
+  },
+  {
+   "code": "ko",
+   "name": "Korean",
+   "endonym": "한국어",
+   "dir": "ltr"
+  },
+  {
+   "code": "ar",
+   "name": "Arabic",
+   "endonym": "العربية",
+   "dir": "rtl"
+  },
+  {
+   "code": "ur",
+   "name": "Urdu",
+   "endonym": "اردو",
+   "dir": "rtl"
+  },
+  {
+   "code": "fr",
+   "name": "French",
+   "endonym": "Français",
+   "dir": "ltr"
+  },
+  {
+   "code": "pl",
+   "name": "Polish",
+   "endonym": "Polski",
+   "dir": "ltr"
+  }
+ ],
+ "agencies": [
+  {
+   "agency": "hpd",
+   "base_openapi": "hpd/openapi/hpd.yaml",
+   "languages": 10,
+   "translated_strings_per_language": 6,
+   "manifest": "hpd/index.json",
+   "readme": "README.md"
+  }
+ ]
+}

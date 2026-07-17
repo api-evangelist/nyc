@@ -123,6 +123,23 @@ json.dump(manifest, open(f"{BASE}/index.json", "w"), ensure_ascii=False, indent=
 # also expose the manifest to the site data dir for experience.html
 json.dump(manifest, open("data/overlays.json", "w"), ensure_ascii=False, indent=1)
 
+# top-level catalog across all overlay-localized agencies (currently one: hpd)
+catalog = {
+    "note": "Overlay-based interface localization sets across the NYC Modernization study. Each agency set localizes the API/agent interface (never the data) into the ten citywide languages of NYC Local Law 30, from one base contract.",
+    "spec": "https://spec.openapis.org/overlay/latest.html",
+    "base_language": langs["base"],
+    "languages": langs["languages"],
+    "agencies": [{
+        "agency": AGENCY,
+        "base_openapi": tr["base_openapi"],
+        "languages": len(built),
+        "translated_strings_per_language": len(strings),
+        "manifest": f"{AGENCY}/index.json",
+        "readme": "README.md",
+    }],
+}
+json.dump(catalog, open(f"{OVL}/index.json", "w"), ensure_ascii=False, indent=1)
+
 print(f"overlays: {len(built)} languages x {len(strings)} interface strings for '{AGENCY}'")
 print("  wrote per-language overlay.yaml + dist/openapi.yaml + dist/mcp.json + index.json + data/overlays.json")
 for b in built:
